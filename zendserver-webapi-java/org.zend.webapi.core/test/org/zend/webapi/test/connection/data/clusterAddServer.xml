@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.0">
+    
+  <requestData>
+    <apiKeyName>angel.eyes</apiKeyName>
+    <method>clusterAddServer</method>
+  </requestData>
+  
+  <responseData>
+    <serverInfo>
+      <id>25</id>
+      <name>www-05</name>
+      <address>https://www-05.local:10082/ZendServer</address>
+      <status>OK</status>
+      <messageList />
+    </serverInfo>
+  </responseData>
+
+</zendServerAPIResponse>

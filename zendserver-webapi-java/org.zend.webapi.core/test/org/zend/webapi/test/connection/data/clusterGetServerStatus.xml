@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.0">
+    
+  <requestData>
+    <apiKeyName>angel.eyes</apiKeyName>
+    <method>clusterGetServersStatus</method>
+  </requestData>
+  
+  <responseData>
+    <serversList>
+      <serverInfo>
+        <id>12</id>
+        <name>www-01</name>
+        <address>https://www-01.local:10082/ZendServer</address>
+        <status>OK</status>
+        <messageList />
+      </serverInfo>
+      <serverInfo>
+        <id>15</id>
+        <name>www-02</name>
+        <address>https://www-02.local:10082/ZendServer</address>
+        <status>pendingRestart</status>
+        <messageList>
+          <warning>This server is waiting a PHP restart</warning>
+        </messageList>
+      </serverInfo>
+    </serversList>
+  </responseData>
+
+</zendServerAPIResponse>

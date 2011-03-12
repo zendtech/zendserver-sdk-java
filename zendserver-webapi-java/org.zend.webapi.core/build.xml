@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="org.zend.webapi.core">
+	
+	<property environment="env" />
+	<property file="artifacts.properties"/>
+	
+	<path id="Plug-in Dependencies.libraryclasspath" />
+	<path id="org.zend.webapi.core.classpath">
+		<pathelement location="bin" />
+		<pathelement location="lib/org.restlet.jar" />
+		<pathelement location="lib/org.restlet.ext.xml.jar" />
+		<pathelement location="lib-test/junit-4.8.2.jar" />
+	</path>
+	
+	<target name="init">
+		<delete dir="bin" failonerror="false"></delete>
+		<mkdir dir="bin"/>
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="javadoc">
+		<javadoc packagenames="org.zend.webapi.*" sourcepath="src" defaultexcludes="yes" destdir="docs/api" author="true" version="true" use="true" windowtitle="Zend Web API">
+			<doctitle>
+				<![CDATA[<h1>Zend Web API</h1>
+					The Zend Server Web API is intended to allow automation of the management and deployment of Zend Server and Zend Server Cluster Manager, and allow integration with other Zend or 3rd party software. 
+					Particularly, the Zend Server Web API is seen as a mean of bridging the gap between Infrastructures as a Service (IAAS) cloud environments, such as Amazon EC2 or VMWare vCloud, and Platform as a Service (PAAS) cloud environments.<br> 
+					]]>
+			</doctitle>
+			<bottom>
+				<![CDATA[<i>Copyright &#169; 2000 Zend Technologies Ltd. All Rights Reserved.</i>]]>
+			</bottom>
+			<tag name="todo" scope="all" description="To do:" />
+			<link href="http://www.zend.com/server/api/1.0" />
+		</javadoc>
+	</target>
+	
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+	
+	<target depends="clean" name="cleanall" />
+	
+	<target depends="build-subprojects,build-project,AllTests,junitreport,javadoc,buildSDK" name="build" />
+	
+	<target name="build-subprojects" />
+	
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+			<src path="src"/>
+			<src path="test"/>
+			<classpath refid="org.zend.webapi.core.classpath" />
+		</javac>
+		<jar destfile="lib/zend-webapi.jar" basedir="bin" >
+			<exclude name="**/test/*.*/" />
+		</jar>
+		<jar destfile="lib/zend-test-webapi.jar" basedir="bin">
+			<include name="**/test/**/*.*" />
+		</jar>
+		
+	</target>
+
+    <target name="AllTests">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.zend.webapi.test.AllTests" todir="${junit.output.dir}"/>
+            <classpath refid="org.zend.webapi.core.classpath"/>
+        </junit>
+    </target>
+
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+	
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+
+    <target name="buildSDK">
+        <mkdir dir="${sdk.output.dir}"/>
+		<zip destfile="${sdk.output.dir}/Zend-WebApi-${webapi.version}.zip" basedir=".">
+			<include name="src/**/*.*" />
+			<include name="test/**/*.*" />
+			<include name="examples/**/*.*" />
+			<include name="lib/**/*.*" />
+			<include name="docs/**/*.*" />
+			<include name="junit/**/*.*" />
+			<include name="copyright.txt" />
+			<include name="license.html" />
+			<include name="readme.txt" />
+		</zip>						
+    </target>
+</project>
