@@ -21,14 +21,14 @@ public enum LicenseInfoStatus {
 	
 	UNKNOWN ("Unknown", "Unknown");
 
-	public final String description;
-	public final String name;
-	
+	private final String description;
+	private final String name;
+
 	private LicenseInfoStatus(String name, String description) {
 		this.description = description;
 		this.name = name;
 	}
-	
+
 	public static LicenseInfoStatus byName(String name) {
 		if (name == null) {
 			return UNKNOWN;
@@ -44,5 +44,12 @@ public enum LicenseInfoStatus {
 		return UNKNOWN;
 	}
 
-	
+	public String getName() {
+		return name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
 }
