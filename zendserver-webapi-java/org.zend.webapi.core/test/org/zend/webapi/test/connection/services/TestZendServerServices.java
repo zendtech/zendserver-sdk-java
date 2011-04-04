@@ -11,6 +11,7 @@ import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.test.Configuration;
+import org.zend.webapi.test.DataUtils;
 
 public class TestZendServerServices extends TestCommonServices {
 
@@ -39,9 +40,9 @@ public class TestZendServerServices extends TestCommonServices {
 			MalformedURLException {
 		initErrorMock(handler.clusterRemoveServer(), "clusterRemoveServer",
 				ErrorCode.notImplementedByEdition);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterRemoveServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterRemoveServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		Assert.assertEquals(serverInfo.getStatus(), ServerStatus.SHUTTING_DOWN);
 	}
 
@@ -50,9 +51,9 @@ public class TestZendServerServices extends TestCommonServices {
 			MalformedURLException {
 		initErrorMock(handler.clusterDisableServer(), "clusterDisableServer",
 				ErrorCode.notImplementedByEdition);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterDisableServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterDisableServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		Assert.assertEquals(serverInfo.getStatus(), ServerStatus.DISABLED);
 	}
 
@@ -61,9 +62,9 @@ public class TestZendServerServices extends TestCommonServices {
 			MalformedURLException {
 		initErrorMock(handler.clusterEnableServer(), "clusterEnableServer",
 				ErrorCode.notImplementedByEdition);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterEnableServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterEnableServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		ServerStatus status = serverInfo.getStatus();
 		boolean isCorrect = status != ServerStatus.SHUTTING_DOWN
 				&& status != ServerStatus.RESTARTING

@@ -9,11 +9,13 @@ package org.zend.webapi.test.connection.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import junit.framework.Assert;
@@ -24,16 +26,25 @@ import org.restlet.representation.Representation;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServersList;
+import org.zend.webapi.core.connection.request.IRequest;
+import org.zend.webapi.core.connection.request.IRequestInitializer;
 import org.zend.webapi.core.connection.request.RequestParameter;
+import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
+import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.MultipartRepresentation;
 import org.zend.webapi.test.AbstractTestServer;
 import org.zend.webapi.test.Configuration;
+import org.zend.webapi.test.DataUtils;
+import org.zend.webapi.test.server.utils.ServerUtils;
 
 public class TestServerConfiguration extends AbstractTestServer {
 
-	@Test
+	private static final String CONFIG_FOLDER = "configuration/";
+
+	// @Test
 	public void testExportConfiguration() throws WebApiException,
 			FileNotFoundException, IOException {
 		initConfigMock(handler.configurationExport(), "configurationExport",
@@ -50,16 +61,42 @@ public class TestServerConfiguration extends AbstractTestServer {
 	}
 
 	@Test
-	public void testImportConfiguration() throws WebApiException,
+	public void testConfigurationImport() throws WebApiException,
 			FileNotFoundException, IOException {
+		initMock(handler.configurationImport(), "configurationImport",
+				ResponseCode.OK);
 		final File tFile = prepareFile();
-		final ServersList list = Configuration.getClient()
-				.configuratioImport(tFile);
-
-		Assert.assertTrue(list.getServerInfo().size() > 0);
+		final ServersList list = Configuration.getClient().configuratioImport(
+				tFile);
+		DataUtils.checkValidServersList(list);
 	}
 
 	@Test
+	public void testConfigurationImportParams() throws WebApiException,
+			MalformedURLException, FileNotFoundException {
+		initMock(handler.configurationImport(), "configurationImport",
+				ResponseCode.OK);
+		final File tFile = prepareFile();
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.CONFIGURATION_IMPORT,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ConfigurationImportRequest r = (ConfigurationImportRequest) request;
+						r.setFile(tFile);
+						r.setIgnoreSystemMismatch(true);
+					}
+				});
+
+		final ConfigurationImportRequest request = (ConfigurationImportRequest) response
+				.getRequest();
+
+		String parameters = "configFile=" + tFile.toString()
+				+ "&ignoreSystemMismatch=TRUE";
+		Assert.assertEquals(parameters, request.getParametersAsString());
+	}
+
+	// @Test
 	public void testMultipart() throws IOException {
 		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
 		arrayList.add(new RequestParameter<Boolean>("ignoreSystemMismatch",
@@ -89,7 +126,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 		return file;
 	}
 
-	private File prepareFile() throws InternalWebApiException {
+	private File prepareFile() throws InternalWebApiException,
+			FileNotFoundException {
 		File tFile = null;
 		try {
 			tFile = File.createTempFile("test", "zcfg");
@@ -97,8 +135,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 		}
 		tFile.deleteOnExit();
 
-		final InputStream isSource = this.getClass().getResourceAsStream(
-				"myConfig.cfg");
+		final InputStream isSource = new FileInputStream(new File(
+				ServerUtils.createFileName(CONFIG_FOLDER + "myConfig.cfg")));
 		try {
 			BioUtils.copy(isSource, new FileOutputStream(tFile));
 		} catch (Exception e) {

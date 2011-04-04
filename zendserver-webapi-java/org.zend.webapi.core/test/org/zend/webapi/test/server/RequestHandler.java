@@ -1,7 +1,5 @@
 package org.zend.webapi.test.server;
 
-import java.io.File;
-
 import org.zend.webapi.test.server.response.ServerResponse;
 
 public interface RequestHandler {
@@ -22,6 +20,6 @@ public interface RequestHandler {
 
 	ServerResponse configurationExport();
 
-	ServerResponse configurationImport(File configFile);
+	ServerResponse configurationImport();
 
 }

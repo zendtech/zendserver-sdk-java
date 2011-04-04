@@ -80,4 +80,8 @@ public class ZendSystem {
 		return handler.configurationExport();
 	}
 
+	public ServerResponse configurationImport() {
+		return handler.configurationImport();
+	}
+
 }

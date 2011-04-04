@@ -20,6 +20,7 @@ import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.test.Configuration;
+import org.zend.webapi.test.DataUtils;
 
 public class TestClusterServices extends TestCommonServices {
 
@@ -30,7 +31,7 @@ public class TestClusterServices extends TestCommonServices {
 				ResponseCode.OK);
 		ServersList clusterServerStatus = Configuration.getClient()
 				.clusterGetServerStatus();
-		checkValidClusterServerStatus(clusterServerStatus);
+		DataUtils.checkValidClusterServerStatus(clusterServerStatus);
 	}
 
 	@Test(expected = UnexpectedResponseCode.class)
@@ -51,7 +52,7 @@ public class TestClusterServices extends TestCommonServices {
 		String guiPassword = "passwd";
 		ServerInfo serverInfo = Configuration.getClient().clusterAddServer(
 				serverName, serverUrl, guiPassword);
-		checkValidServerInfo(serverInfo);
+		DataUtils.checkValidServerInfo(serverInfo);
 	}
 
 	@Test
@@ -64,7 +65,7 @@ public class TestClusterServices extends TestCommonServices {
 		String guiPassword = "passwd";
 		ServerInfo serverInfo = Configuration.getClient().clusterAddServer(
 				serverName, serverUrl, guiPassword, true);
-		checkValidServerInfo(serverInfo);
+		DataUtils.checkValidServerInfo(serverInfo);
 	}
 
 	@Test
@@ -77,7 +78,7 @@ public class TestClusterServices extends TestCommonServices {
 		String guiPassword = "passwd";
 		ServerInfo serverInfo = Configuration.getClient().clusterAddServer(
 				serverName, serverUrl, guiPassword, true, true);
-		checkValidServerInfo(serverInfo);
+		DataUtils.checkValidServerInfo(serverInfo);
 	}
 
 	@Test
@@ -85,9 +86,9 @@ public class TestClusterServices extends TestCommonServices {
 			MalformedURLException {
 		initMock(handler.clusterRemoveServer(), "clusterRemoveServer",
 				ResponseCode.OK);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterRemoveServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterRemoveServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		Assert.assertEquals(serverInfo.getStatus(), ServerStatus.SHUTTING_DOWN);
 	}
 
@@ -96,9 +97,9 @@ public class TestClusterServices extends TestCommonServices {
 			MalformedURLException {
 		initMock(handler.clusterDisableServer(), "clusterDisableServer",
 				ResponseCode.OK);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterDisableServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterDisableServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		Assert.assertEquals(serverInfo.getStatus(), ServerStatus.DISABLED);
 	}
 
@@ -107,9 +108,9 @@ public class TestClusterServices extends TestCommonServices {
 			MalformedURLException {
 		initMock(handler.clusterEnableServer(), "clusterEnableServer",
 				ResponseCode.OK);
-		ServerInfo serverInfo = Configuration.getClient()
-				.clusterEnableServer("zend1");
-		checkValidServerInfo(serverInfo);
+		ServerInfo serverInfo = Configuration.getClient().clusterEnableServer(
+				"zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
 		ServerStatus status = serverInfo.getStatus();
 		boolean isCorrect = status != ServerStatus.SHUTTING_DOWN
 				&& status != ServerStatus.RESTARTING
