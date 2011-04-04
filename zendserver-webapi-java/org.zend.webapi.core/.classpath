@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/org.restlet.jar" sourcepath="C:/Program Files (x86)/Restlet Framework/Edition Java SE/2.0.4/src/org.restlet"/>
 	<classpathentry kind="lib" path="lib/org.restlet.ext.xml.jar" sourcepath="C:/Program Files (x86)/Restlet Framework/Edition Java SE/2.0.4/src/org.restlet.ext.xml"/>
 	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib-test/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
