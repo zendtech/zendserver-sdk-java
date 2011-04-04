@@ -88,12 +88,13 @@ public class TestRequestParams extends AbstractTestServer {
 					public void init(IRequest request) throws WebApiException {
 						ClusterRemoveServerRequest r = (ClusterRemoveServerRequest) request;
 						r.setServerId("1");
-						// TODO set force
+						r.setForce(true);
 					}
 				});
 
 		final AbstractRequest request = (AbstractRequest) response.getRequest();
-		Assert.assertEquals("serverId=1", request.getParametersAsString());
+		Assert.assertEquals("serverId=1&force=TRUE",
+				request.getParametersAsString());
 	}
 
 	@Test
