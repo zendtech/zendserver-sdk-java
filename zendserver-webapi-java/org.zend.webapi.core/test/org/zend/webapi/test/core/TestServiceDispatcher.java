@@ -1,11 +1,13 @@
 package org.zend.webapi.test.core;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Calendar;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.zend.webapi.core.WebApiException;
@@ -28,14 +30,9 @@ public class TestServiceDispatcher extends AbstractTestServer {
 		@Override
 		protected ClientResource getResource(IRequest webApiRequest)
 				throws SignatureException {
-
-			class MyResource extends ClientResource {
-				@Override
-				public Representation handle() {
-					return null;
-				}
-			}
-			return new MyResource();
+			ClientResource resource = mock(ClientResource.class);
+			when(resource.handle()).thenReturn(null);
+			return resource;
 		}
 	}
 
@@ -44,14 +41,9 @@ public class TestServiceDispatcher extends AbstractTestServer {
 		@Override
 		protected ClientResource getResource(IRequest webApiRequest)
 				throws SignatureException {
-
-			class MyResource extends ClientResource {
-				@Override
-				public Representation handle() {
-					throw new ResourceException(1);
-				}
-			}
-			return new MyResource();
+			ClientResource resource = mock(ClientResource.class);
+			when(resource.handle()).thenThrow(new ResourceException(1));
+			return resource;
 		}
 	}
 
