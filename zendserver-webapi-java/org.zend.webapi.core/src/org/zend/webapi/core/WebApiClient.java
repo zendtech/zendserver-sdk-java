@@ -67,17 +67,6 @@ public class WebApiClient {
 
 	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
-	 * using the specified account credentials with default client
-	 * configuration.
-	 * 
-	 * @param credentials
-	 */
-	public WebApiClient(WebApiCredentials credentials) {
-		this(credentials, new ClientConfiguration());
-	}
-
-	/**
-	 * Constructs a new client to invoke service methods on Zend Server API
 	 * using the specified account credentials and configurations.
 	 * 
 	 * @param credentials
@@ -274,8 +263,8 @@ public class WebApiClient {
 	 * Re-enable a cluster member. This process may be asynchronous if Session
 	 * Clustering is used – if this is the case, the initial operation will
 	 * return an HTTP 202 response. This action is idempotent. Running it on an
-	 * enabled server will result in a “200 OK” response with no consequences.
-	 * On a ZSCM with no valid license, this operation will fail.
+	 * enabled server will result in a “200 OK” response with no
+	 * consequences. On a ZSCM with no valid license, this operation will fail.
 	 * 
 	 * @return server info
 	 * @throws WebApiException
