@@ -32,7 +32,7 @@ public class UnexpectedResponseCode extends WebApiException {
 				handle);
 		final Node node = domRepresentation
 				.getNode("/zendServerAPIResponse/errorData/errorMessage");
-		this.message = node == null ? null : node.getTextContent();
+		this.message = node == null ? null : node.getTextContent().trim();
 	}
 
 	@Override
