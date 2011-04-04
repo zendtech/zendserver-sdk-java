@@ -12,6 +12,7 @@ import org.zend.webapi.test.connection.services.TestClusterServices;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
 import org.zend.webapi.test.connection.services.TestZendServerServices;
 import org.zend.webapi.test.core.TestClientConfiguration;
+import org.zend.webapi.test.core.TestServiceDispatcher;
 import org.zend.webapi.test.core.TestUtils;
 import org.zend.webapi.test.core.TestWebApiExceptions;
 
@@ -20,8 +21,9 @@ import org.zend.webapi.test.core.TestWebApiExceptions;
 		TestResponse.class, TestSignatrue.class, TestDataDigester.class,
 		TestValues.class, TestClusterServices.class,
 		TestServerConfiguration.class, TestZendServerServices.class,
-		TestClientConfiguration.class, TestWebApiExceptions.class,
-		TestValues.class, TestClientConfiguration.class, TestUtils.class,
+		TestClientConfiguration.class, TestServiceDispatcher.class,
+		TestWebApiExceptions.class, TestValues.class,
+		TestClientConfiguration.class, TestUtils.class,
 		TestWebApiExceptions.class })
 public class AllTests {
 

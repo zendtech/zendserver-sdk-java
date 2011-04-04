@@ -36,6 +36,10 @@ public class TestCredentials {
 			MalformedURLException {
 		BasicCredentials credentials = new BasicCredentials(
 				Configuration.getKeyName(), Configuration.getSecretKey());
+		Assert.assertEquals(Configuration.getKeyName(),
+				credentials.getKeyName());
+		Assert.assertEquals(Configuration.getSecretKey(),
+				credentials.getSecretKey());
 		final WebApiClient webApiClient = new WebApiClient(credentials,
 				Configuration.getHost());
 		Assert.assertNotNull(webApiClient);

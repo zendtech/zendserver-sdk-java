@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import junit.framework.Assert;
 
@@ -34,7 +33,7 @@ public class TestUtils {
 	public void testFormattedDate() throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat(
 				"E, dd MMM yyyy HH:mm:ss z", Locale.US);
-		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		formatter.setTimeZone(Utils.GMT_ZONE);
 		Date date = Calendar.getInstance().getTime();
 		String dateString = formatter.format(date);
 		String result = Utils.getFormattedDate(date);

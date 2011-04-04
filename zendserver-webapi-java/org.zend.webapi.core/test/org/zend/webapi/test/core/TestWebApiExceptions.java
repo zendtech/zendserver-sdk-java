@@ -11,6 +11,7 @@ import org.restlet.representation.Representation;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
 import org.zend.webapi.internal.core.connection.exception.NoSuchServiceMethod;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
@@ -75,5 +76,12 @@ public class TestWebApiExceptions {
 		Assert.assertNull(exception.getResponseCode());
 		Assert.assertNotNull(exception.getMessage());
 		Assert.assertEquals("No such method testMethod", exception.getMessage());
+	}
+
+	@Test
+	public void testSignatureExcepiton() {
+		SignatureException exception = new SignatureException("errorMessage");
+		Assert.assertNull(exception.getResponseCode());
+		Assert.assertNotNull(exception.getMessage());
 	}
 }
