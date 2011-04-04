@@ -16,14 +16,6 @@ import org.zend.webapi.test.DataUtils;
 public class TestZendServerServices extends TestCommonServices {
 
 	@Test(expected = UnexpectedResponseCode.class)
-	public void testClusterGetServerStatus() throws WebApiException,
-			MalformedURLException {
-		initErrorMock(handler.clusterGetServerStatus(),
-				"clusterGetServerStatus", ErrorCode.notImplementedByEdition);
-		Configuration.getClient().clusterGetServerStatus();
-	}
-
-	@Test(expected = UnexpectedResponseCode.class)
 	public void testClusterAddServer() throws WebApiException,
 			MalformedURLException {
 		initErrorMock(handler.clusterAddServer(), "clusterAddServer",

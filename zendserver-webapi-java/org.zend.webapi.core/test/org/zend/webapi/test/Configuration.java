@@ -24,10 +24,11 @@ import org.zend.webapi.test.server.utils.ServerType;
 
 public class Configuration {
 
+	private static final String PROPERTY = "org.zend.webapi.confgurationFile";
 	private static ServerType type;
 	private static String host;
 
-	private static final String CONFIG_FILE = "configuration.properties";
+	private static String configFile = "configuration.properties";
 
 	private static String keyName;
 	private static String secretKey;
@@ -67,21 +68,25 @@ public class Configuration {
 		WebApiCredentials credentials = null;
 		Properties p = new Properties();
 		try {
+			String file = System.getProperty(PROPERTY);
+			if (file != null) {
+				configFile = file;
+			}
 			InputStream stream = new BufferedInputStream(new FileInputStream(
-					new File(CONFIG_FILE)));
+					new File(configFile)));
 			p.load(stream);
 			stream.close();
 			stream = new BufferedInputStream(new FileInputStream(new File(
-					CONFIG_FILE)));
+					configFile)));
 			credentials = new PropertiesCredentials(stream);
 			stream.close();
 		} catch (Exception e) {
-			fail("Error during reading " + CONFIG_FILE);
+			fail("Error during reading " + configFile);
 		}
 		type = ServerType.byType((String) p.get("serverType"));
 		host = (String) p.get("host");
 		if (type == null || host == null) {
-			fail("missing entries type and/or host in " + CONFIG_FILE);
+			fail("missing entries type and/or host in " + configFile);
 		}
 		if (type.equals(ServerType.UNKNOWN.getType())) {
 			fail("Incorrect server type. Allowed values are EXTERNAL or EMBEDDED.");

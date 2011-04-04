@@ -14,33 +14,12 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ServerInfo;
-import org.zend.webapi.core.connection.data.ServersList;
-import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.response.ResponseCode;
-import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.test.Configuration;
 import org.zend.webapi.test.DataUtils;
 
 public class TestClusterServices extends TestCommonServices {
-
-	@Test
-	public void testClusterGetServerStatus() throws WebApiException,
-			MalformedURLException {
-		initMock(handler.clusterGetServerStatus(), "clusterGetServerStatus",
-				ResponseCode.OK);
-		ServersList clusterServerStatus = Configuration.getClient()
-				.clusterGetServerStatus();
-		DataUtils.checkValidClusterServerStatus(clusterServerStatus);
-	}
-
-	@Test(expected = UnexpectedResponseCode.class)
-	public void testClusterGetServerStaus405() throws WebApiException,
-			MalformedURLException {
-		initErrorMock(handler.clusterGetServerStatus(),
-				"clusterGetServerStatus", ErrorCode.notImplementedByEdition);
-		Configuration.getClient().clusterGetServerStatus();
-	}
 
 	@Test
 	public void testClusterAddServer() throws WebApiException,
