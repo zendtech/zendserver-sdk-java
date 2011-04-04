@@ -16,35 +16,26 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.IRequestInitializer;
 import org.zend.webapi.core.connection.response.IResponse;
+import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.request.AbstractRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterRemoveServerRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
+import org.zend.webapi.test.AbstractTestServer;
+import org.zend.webapi.test.Configuration;
 
-public class TestRequestParams {
-
-	@Test
-	public void testRestartPhpParams() throws WebApiException,
-			MalformedURLException {
-		IResponse response = TestClientConfiguration.getClient().handle(
-				WebApiMethodType.RESTART_PHP, new IRequestInitializer() {
-
-					public void init(IRequest request) throws WebApiException {
-						RestartPhpRequest r = (RestartPhpRequest) request;
-						r.setParallelRestart(true);
-						r.setServers("my-server");
-					}
-				});
-
-		final AbstractRequest request = (AbstractRequest) response.getRequest();
-		Assert.assertEquals("parallelRestart=TRUE&servers%5B0%5D=my-server",
-				request.getParametersAsString());
-	}
+public class TestRequestParams extends AbstractTestServer {
 
 	@Test
-	public void testClusterGetServerInfo() throws WebApiException,
+	public void testClusterGetServerStatus() throws WebApiException,
 			MalformedURLException {
-		IResponse response = TestClientConfiguration.getClient().handle(
+		initMock(handler.clusterGetServerStatus(), "clusterGetServerStatus",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
 				WebApiMethodType.CLUSTER_GET_SERVER_STATUS,
 				new IRequestInitializer() {
 
@@ -59,4 +50,107 @@ public class TestRequestParams {
 				"servers%5B0%5D=my-server&servers%5B1%5D=your-server",
 				request.getParametersAsString());
 	}
+
+	@Test
+	public void testClusterAddServer() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterAddServer(), "clusterAddServer",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.CLUSTER_ADD_SERVER, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ClusterAddServerRequest r = (ClusterAddServerRequest) request;
+						r.setDoStart(true);
+						r.setGuiPassword("passwd");
+						r.setPropagateSettings(false);
+						r.setServerName("zend1");
+						r.setServerUrl("https://www-02.local:10082/ZendServer");
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals(
+				"doRestart=TRUE&guiPassword=passwd&propagateSettings=FALSE"
+						+ "&serverName=zend1&serverUrl=https://www-02.local:10082/ZendServer",
+				request.getParametersAsString());
+	}
+
+	@Test
+	public void testClusterRemoveServer() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterRemoveServer(), "clusterRemoveServer",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.CLUSTER_REMOVE_SERVER,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ClusterRemoveServerRequest r = (ClusterRemoveServerRequest) request;
+						r.setServerId("1");
+						// TODO set force
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals("serverId=1", request.getParametersAsString());
+	}
+
+	@Test
+	public void testClusterDisableServer() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterDisableServer(), "clusterDisableServer",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.CLUSTER_DISABLE_SERVER,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ClusterDisableServerRequest r = (ClusterDisableServerRequest) request;
+						r.setServerId("1");
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals("serverId=1", request.getParametersAsString());
+	}
+
+	@Test
+	public void testClusterEnableServer() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterEnableServer(), "clusterEnableServer",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.CLUSTER_ENABLE_SERVER,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ClusterEnableServerRequest r = (ClusterEnableServerRequest) request;
+						r.setServerId("1");
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals("serverId=1", request.getParametersAsString());
+	}
+
+	@Test
+	public void testRestartPhpParams() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.restartPhp(), "restartPhp", ResponseCode.ACCEPTED);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.RESTART_PHP, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						RestartPhpRequest r = (RestartPhpRequest) request;
+						r.setParallelRestart(true);
+						r.setServers("my-server");
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals("parallelRestart=TRUE&servers%5B0%5D=my-server",
+				request.getParametersAsString());
+	}
+
 }

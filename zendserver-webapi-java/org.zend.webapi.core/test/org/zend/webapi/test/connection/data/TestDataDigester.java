@@ -8,17 +8,10 @@
 package org.zend.webapi.test.connection.data;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import javax.xml.parsers.DocumentBuilder;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import org.zend.webapi.core.connection.data.DataDigster;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.ServerInfo;
@@ -27,6 +20,7 @@ import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.test.server.utils.ServerUtils;
 
 /**
  * Test {@link DataDigster}
@@ -36,21 +30,7 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
  */
 public class TestDataDigester {
 
-	public static class DomRepresentationHelper extends DomRepresentation {
-
-		public DomRepresentationHelper(String fileName) throws Exception {
-			super(MediaType.APPLICATION_ALL_XML);
-			setDocument(createDocument(fileName));
-		}
-
-		private Document createDocument(String fileName) throws IOException,
-				SAXException {
-			final DocumentBuilder documentBuilder = getDocumentBuilder();
-			final URL resource = this.getClass().getResource(fileName);
-			final InputStream content = (InputStream) resource.getContent();
-			return documentBuilder.parse(content);
-		}
-	}
+	private static final String DIGSTER_FOLDER = "digster/";
 
 	@Test
 	public void testSystemInfo1() throws Exception {
@@ -91,47 +71,51 @@ public class TestDataDigester {
 	@Test
 	public void testClusterEnableServer() throws Exception {
 		final ServerInfo responseData = (ServerInfo) getResponseData(
-				"clusterEnableServer.xml", IResponseData.ResponseType.SERVER_INFO);
-		Assert.assertEquals(responseData.getAddress(), "https://www-02.local:10082/ZendServer");
+				"clusterEnableServer.xml",
+				IResponseData.ResponseType.SERVER_INFO);
+		Assert.assertEquals(responseData.getAddress(),
+				"https://www-02.local:10082/ZendServer");
 	}
 
 	@Test
 	public void testClusterDisableServer() throws Exception {
 		final ServerInfo responseData = (ServerInfo) getResponseData(
-				"clusterDisableServer.xml", IResponseData.ResponseType.SERVER_INFO);
-		Assert.assertEquals(responseData.getAddress(), "https://www-02.local:10082/ZendServer");
+				"clusterDisableServer.xml",
+				IResponseData.ResponseType.SERVER_INFO);
+		Assert.assertEquals(responseData.getAddress(),
+				"https://www-02.local:10082/ZendServer");
 	}
-	
+
 	@Test
 	public void testClusterAddServer() throws Exception {
 		final ServerInfo responseData = (ServerInfo) getResponseData(
 				"clusterAddServer.xml", IResponseData.ResponseType.SERVER_INFO);
-		Assert.assertEquals(responseData.getAddress(), "https://www-05.local:10082/ZendServer");
+		Assert.assertEquals(responseData.getAddress(),
+				"https://www-05.local:10082/ZendServer");
 	}
-	
+
 	@Test
 	public void testClusterRemoveServer() throws Exception {
 		final ServerInfo responseData = (ServerInfo) getResponseData(
-				"clusterRemoveServer.xml", IResponseData.ResponseType.SERVER_INFO);
-		Assert.assertEquals(responseData.getAddress(), "https://www-02.local:10082/ZendServer");
+				"clusterRemoveServer.xml",
+				IResponseData.ResponseType.SERVER_INFO);
+		Assert.assertEquals(responseData.getAddress(),
+				"https://www-02.local:10082/ZendServer");
 	}
-	
+
 	@Test
 	public void testClusterGetServerStatus() throws Exception {
 		final ServersList responseData = (ServersList) getResponseData(
-				"clusterGetServerStatus.xml", IResponseData.ResponseType.SERVERS_LIST);
+				"clusterGetServerStatus.xml",
+				IResponseData.ResponseType.SERVERS_LIST);
 		Assert.assertEquals(responseData.getServerInfo().size(), 2);
 	}
 
-	/**
-	 * @param fileName
-	 * @param type
-	 * @return
-	 * @throws Exception
-	 */
 	private IResponseData getResponseData(String fileName,
-			IResponseData.ResponseType type) throws Exception {
-		DomRepresentation representation = new DomRepresentationHelper(fileName);
+			IResponseData.ResponseType type) throws IOException {
+		DomRepresentation representation = ServerUtils
+				.readDomRepresentation(ServerUtils
+						.createFileName(DIGSTER_FOLDER + fileName));
 		final DataDigster dataDigster = new DataDigster(type, representation);
 		dataDigster.digest();
 		return dataDigster.getResponseData();

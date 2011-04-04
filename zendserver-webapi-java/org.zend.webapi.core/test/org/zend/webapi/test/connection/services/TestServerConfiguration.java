@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.webapi.test.connection;
+package org.zend.webapi.test.connection.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,18 +25,23 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.request.RequestParameter;
+import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
 import org.zend.webapi.internal.core.connection.request.MultipartRepresentation;
+import org.zend.webapi.test.AbstractTestServer;
+import org.zend.webapi.test.Configuration;
 
-public class TestConfiguration {
-
+public class TestServerConfiguration extends AbstractTestServer {
 
 	@Test
-	public void testExportConfiguration() throws WebApiException, FileNotFoundException, IOException {
-	
-		final ServerConfig config = TestClientConfiguration.getClient().configuratioExport();
+	public void testExportConfiguration() throws WebApiException,
+			FileNotFoundException, IOException {
+		initConfigMock(handler.configurationExport(), "configurationExport",
+				ResponseCode.OK);
+		final ServerConfig config = Configuration.getClient()
+				.configuratioExport();
 		Assert.assertTrue(config.getFileSize() > 0);
-		
+
 		final File file = File.createTempFile("abc", "test");
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.write(config.getFileContent());
@@ -45,35 +50,15 @@ public class TestConfiguration {
 	}
 
 	@Test
-	public void testImportConfiguration() throws WebApiException, FileNotFoundException, IOException {
+	public void testImportConfiguration() throws WebApiException,
+			FileNotFoundException, IOException {
 		final File tFile = prepareFile();
-		final ServersList list = TestClientConfiguration.getClient().configuratioImport(tFile);
-		
+		final ServersList list = Configuration.getClient()
+				.configuratioImport(tFile);
+
 		Assert.assertTrue(list.getServerInfo().size() > 0);
 	}
 
-	/**
-	 * @return
-	 * @throws InternalWebApiException
-	 */
-	private File prepareFile() throws InternalWebApiException {
-		File tFile = null;
-		try {
-			tFile = File.createTempFile("test", "zcfg");
-		} catch (IOException e) {
-		}
-		tFile.deleteOnExit();
-		
-		final InputStream isSource = this.getClass().getResourceAsStream("myConfig.cfg");
-		try {
-			BioUtils.copy(isSource, new FileOutputStream(tFile));
-		} catch (Exception e) {
-			throw new InternalWebApiException(e);
-		}
-		return tFile;
-	}
-
-	
 	@Test
 	public void testMultipart() throws IOException {
 		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
@@ -95,11 +80,6 @@ public class TestConfiguration {
 		Assert.assertEquals("Error comparing expected/actual", expected, actual);
 	}
 
-	/**
-	 * @param prefix
-	 * @return
-	 * @throws IOException
-	 */
 	private File getTempFile(String prefix) throws IOException {
 		File file = File.createTempFile(prefix, ".zcfg");
 		FileWriter writer = new FileWriter(file);
@@ -107,5 +87,23 @@ public class TestConfiguration {
 		writer.flush();
 		writer.close();
 		return file;
+	}
+
+	private File prepareFile() throws InternalWebApiException {
+		File tFile = null;
+		try {
+			tFile = File.createTempFile("test", "zcfg");
+		} catch (IOException e) {
+		}
+		tFile.deleteOnExit();
+
+		final InputStream isSource = this.getClass().getResourceAsStream(
+				"myConfig.cfg");
+		try {
+			BioUtils.copy(isSource, new FileOutputStream(tFile));
+		} catch (Exception e) {
+			throw new InternalWebApiException(e);
+		}
+		return tFile;
 	}
 }
