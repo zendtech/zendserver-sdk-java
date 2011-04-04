@@ -94,7 +94,7 @@ public class ClusterRemoveServerRequest extends AbstractRequest {
 	 * 
 	 * @param force
 	 */
-	public void setPropagateSettings(boolean force) {
+	public void setForce(boolean force) {
 		addParameter("force", force);
 	}
 

@@ -215,15 +215,15 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ServerInfo clusterRemoveServer(final String serverId,
-			final Boolean propagateSettings) throws WebApiException {
+			final Boolean force) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_REMOVE_SERVER,
 				new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						final ClusterRemoveServerRequest r = ((ClusterRemoveServerRequest) request)
 								.setServerId(serverId);
-						if (propagateSettings != null)
-							r.setPropagateSettings(propagateSettings);
+						if (force != null)
+							r.setForce(force);
 					}
 				});
 		return (ServerInfo) handle.getData();
