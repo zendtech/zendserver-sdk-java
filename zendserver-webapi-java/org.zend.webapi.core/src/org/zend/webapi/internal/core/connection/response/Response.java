@@ -31,6 +31,7 @@ public class Response implements IResponse {
 		this.code = ResponseCode.byCode(responseCode);
 		this.request = request;
 		this.data = info;
+		this.version = request.getVersion();
 	}
 
 	/* (non-Javadoc)
