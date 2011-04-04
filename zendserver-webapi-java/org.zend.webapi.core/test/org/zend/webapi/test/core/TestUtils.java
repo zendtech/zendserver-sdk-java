@@ -1,5 +1,12 @@
 package org.zend.webapi.test.core;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -23,4 +30,14 @@ public class TestUtils {
 		Utils.hashMac("test", "");
 	}
 
+	@Test
+	public void testFormattedDate() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				"E, dd MMM yyyy HH:mm:ss z", Locale.US);
+		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		Date date = Calendar.getInstance().getTime();
+		String dateString = formatter.format(date);
+		String result = Utils.getFormattedDate(date);
+		Assert.assertEquals(dateString, result);
+	}
 }
