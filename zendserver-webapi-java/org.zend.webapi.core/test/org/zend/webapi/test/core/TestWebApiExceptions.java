@@ -12,6 +12,7 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
+import org.zend.webapi.internal.core.connection.exception.NoSuchServiceMethod;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 import org.zend.webapi.test.server.response.ServiceResponse;
@@ -66,5 +67,13 @@ public class TestWebApiExceptions {
 		WebApiCommunicationError error = new WebApiCommunicationError();
 		Assert.assertNull(error.getResponseCode());
 		Assert.assertNotNull(error.getMessage());
+	}
+
+	@Test
+	public void testNoSuchServiceMethodExcepiton() {
+		NoSuchServiceMethod exception = new NoSuchServiceMethod("testMethod");
+		Assert.assertNull(exception.getResponseCode());
+		Assert.assertNotNull(exception.getMessage());
+		Assert.assertEquals("No such method testMethod", exception.getMessage());
 	}
 }

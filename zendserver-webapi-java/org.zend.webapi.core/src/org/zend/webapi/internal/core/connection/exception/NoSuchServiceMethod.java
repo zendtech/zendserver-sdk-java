@@ -14,12 +14,12 @@ public class NoSuchServiceMethod extends AbstractWebApiException {
 
 	private static final long serialVersionUID = 3608945554799221795L;
 
-	private NoSuchServiceMethod(String method) {
-		super("No Such method " + method);
+	public NoSuchServiceMethod(String method) {
+		super("No such method " + method);
 	}
 
 	/**
-	 * @return null 
+	 * @return null
 	 */
 	@Override
 	public ResponseCode getResponseCode() {
