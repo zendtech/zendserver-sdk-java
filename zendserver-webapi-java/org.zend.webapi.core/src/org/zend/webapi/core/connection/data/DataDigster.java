@@ -9,7 +9,6 @@ package org.zend.webapi.core.connection.data;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -288,11 +287,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 			byte[] content = new byte[size];
 			InputStream reader = representation.getStream();
 			reader.read(content);
-			int i = 0;
-			for (i = (size - 1); i > 0 && content[i] == 0; i --);
-			byte[] trim = new byte[i + 1];
-			System.arraycopy(content, 0, trim, 0, i + 1);
-			serverConfig.setFileContent(trim);
+			serverConfig.setFileContent(content);
 		} catch (IOException e) {
 			// TODO log exception
 		}

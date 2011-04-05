@@ -17,18 +17,17 @@ import org.zend.webapi.test.server.response.ServiceResponse;
 
 public class ResponseFactory {
 
-	private static final String EXPORT_CONFIG = "myConfig.cfg";
-
 	public static ServerResponse createConfigResponse(String requestName,
 			ResponseCode code) throws IOException {
-		String name = TestServerConfiguration.CONFIG_FOLDER + EXPORT_CONFIG;
+		String name = TestServerConfiguration.CONFIG_FOLDER
+				+ TestServerConfiguration.EXAMLE_CONFIG;
 		File file = new File(ServerUtils.createFileName(name));
 		FileInputStream inputStream = new FileInputStream(file);
 		int size = (int) file.length();
 		byte content[] = new byte[size];
 		inputStream.read(content);
-		return new ConfigurationResponse(code.getCode(), EXPORT_CONFIG, size,
-				content);
+		return new ConfigurationResponse(code.getCode(),
+				TestServerConfiguration.EXAMLE_CONFIG, size, content);
 	}
 
 	public static ServiceResponse createResponse(String requestName,

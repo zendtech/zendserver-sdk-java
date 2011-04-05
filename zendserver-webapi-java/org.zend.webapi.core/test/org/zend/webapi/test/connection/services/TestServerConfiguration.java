@@ -43,6 +43,7 @@ import org.zend.webapi.test.server.utils.ServerUtils;
 public class TestServerConfiguration extends AbstractTestServer {
 
 	public static final String CONFIG_FOLDER = "configuration/";
+	public static final String EXAMLE_CONFIG = "myConfig.zcfg";
 
 	@Test
 	public void testConfigurationExport() throws WebApiException,
@@ -53,6 +54,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 				.configuratioExport();
 		Assert.assertTrue(config.getFileSize() > 0);
 		Assert.assertNotNull(config.getFileContent());
+		Assert.assertEquals(config.getFileSize(),
+				config.getFileContent().length);
 	}
 
 	@Test
@@ -142,7 +145,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 		tFile.deleteOnExit();
 
 		final InputStream isSource = new FileInputStream(new File(
-				ServerUtils.createFileName(CONFIG_FOLDER + "myConfig.cfg")));
+				ServerUtils.createFileName(CONFIG_FOLDER + EXAMLE_CONFIG)));
 		try {
 			BioUtils.copy(isSource, new FileOutputStream(tFile));
 		} catch (Exception e) {
