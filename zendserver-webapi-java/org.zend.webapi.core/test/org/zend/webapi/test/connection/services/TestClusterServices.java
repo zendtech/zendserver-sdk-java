@@ -72,6 +72,17 @@ public class TestClusterServices extends TestCommonServices {
 	}
 
 	@Test
+	public void testClusterRemoveServerForce() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterRemoveServer(), "clusterRemoveServer",
+				ResponseCode.OK);
+		ServerInfo serverInfo = Configuration.getClient().clusterRemoveServer(
+				"zend1", true);
+		DataUtils.checkValidServerInfo(serverInfo);
+		Assert.assertEquals(serverInfo.getStatus(), ServerStatus.SHUTTING_DOWN);
+	}
+
+	@Test
 	public void testClusterDisableServer() throws WebApiException,
 			MalformedURLException {
 		initMock(handler.clusterDisableServer(), "clusterDisableServer",

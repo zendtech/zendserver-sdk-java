@@ -42,22 +42,17 @@ import org.zend.webapi.test.server.utils.ServerUtils;
 
 public class TestServerConfiguration extends AbstractTestServer {
 
-	private static final String CONFIG_FOLDER = "configuration/";
+	public static final String CONFIG_FOLDER = "configuration/";
 
-	// @Test
-	public void testExportConfiguration() throws WebApiException,
+	@Test
+	public void testConfigurationExport() throws WebApiException,
 			FileNotFoundException, IOException {
 		initConfigMock(handler.configurationExport(), "configurationExport",
 				ResponseCode.OK);
 		final ServerConfig config = Configuration.getClient()
 				.configuratioExport();
 		Assert.assertTrue(config.getFileSize() > 0);
-
-		final File file = File.createTempFile("abc", "test");
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write(config.getFileContent());
-		fos.close();
-		System.out.println("file is " + file.getAbsolutePath());
+		Assert.assertNotNull(config.getFileContent());
 	}
 
 	@Test
@@ -68,6 +63,17 @@ public class TestServerConfiguration extends AbstractTestServer {
 		final File tFile = prepareFile();
 		final ServersList list = Configuration.getClient().configuratioImport(
 				tFile);
+		DataUtils.checkValidServersList(list);
+	}
+
+	@Test
+	public void testConfigurationImportIgnoreMismatch() throws WebApiException,
+			FileNotFoundException, IOException {
+		initMock(handler.configurationImport(), "configurationImport",
+				ResponseCode.OK);
+		final File tFile = prepareFile();
+		final ServersList list = Configuration.getClient().configuratioImport(
+				tFile, true);
 		DataUtils.checkValidServersList(list);
 	}
 
@@ -96,7 +102,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 		Assert.assertEquals(parameters, request.getParametersAsString());
 	}
 
-	// @Test
+	@Test
 	public void testMultipart() throws IOException {
 		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
 		arrayList.add(new RequestParameter<Boolean>("ignoreSystemMismatch",
@@ -109,8 +115,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		representation.write(outputStream);
 		final String actual = outputStream.toString();
-		final InputStream resourceAsStream = this.getClass()
-				.getResourceAsStream("multipart.txt");
+		final InputStream resourceAsStream = new FileInputStream(new File(
+				ServerUtils.createFileName(CONFIG_FOLDER + "multipart.txt")));
 
 		String expected = BioUtils.toString(resourceAsStream);
 		expected = expected.replace("%filename%", file.getName());

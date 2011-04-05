@@ -8,6 +8,7 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.InputRepresentation;
@@ -101,7 +102,12 @@ public class ServerApplication extends Application {
 						.getInstance().configurationExport();
 				InputRepresentation representation = new InputRepresentation(
 						new ByteArrayInputStream(serverResponse.getContent()),
-						MediaType.APPLICATION_OCTET_STREAM);
+						MediaType.valueOf("application/vnd.zend.serverconfig"));
+				Disposition disposition = new Disposition(
+						Disposition.TYPE_ATTACHMENT);
+				disposition.setFilename(serverResponse.getFileName());
+				representation.setDisposition(disposition);
+				representation.setSize(serverResponse.getFileSize());
 				response.setEntity(representation);
 				response.setStatus(serverResponse.getStatus());
 			}

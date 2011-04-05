@@ -10,6 +10,7 @@ import org.w3c.dom.Node;
 import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.Configuration;
+import org.zend.webapi.test.connection.services.TestServerConfiguration;
 import org.zend.webapi.test.server.response.ConfigurationResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
@@ -20,7 +21,8 @@ public class ResponseFactory {
 
 	public static ServerResponse createConfigResponse(String requestName,
 			ResponseCode code) throws IOException {
-		File file = new File(ServerUtils.createFileName(EXPORT_CONFIG));
+		String name = TestServerConfiguration.CONFIG_FOLDER + EXPORT_CONFIG;
+		File file = new File(ServerUtils.createFileName(name));
 		FileInputStream inputStream = new FileInputStream(file);
 		int size = (int) file.length();
 		byte content[] = new byte[size];
