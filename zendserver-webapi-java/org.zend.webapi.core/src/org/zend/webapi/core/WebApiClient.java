@@ -124,7 +124,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_GET_SERVER_STATUS,
-				servers == null ? null : new IRequestInitializer() {
+				servers.length == 0 ? null : new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((ClusterGetServerStatusRequest) request)
 								.setServers(servers);
