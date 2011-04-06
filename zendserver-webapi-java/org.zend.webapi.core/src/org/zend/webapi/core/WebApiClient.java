@@ -317,7 +317,7 @@ public class WebApiClient {
 	 */
 	public ServersList restartPhp(final String... servers)
 			throws WebApiException {
-		return restartPhp((Boolean) null, servers);
+		return restartPhp(false, servers);
 	}
 
 	/**
