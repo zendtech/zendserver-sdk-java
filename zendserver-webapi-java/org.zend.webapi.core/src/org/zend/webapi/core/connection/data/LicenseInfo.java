@@ -30,13 +30,6 @@ public class LicenseInfo extends AbstractResponseData {
 	protected LicenseInfo(String prefix) {
 		super(ResponseType.LICENSE_INFO, prefix);
 	}
-	
-	/**
-	 * @return the limit
-	 */
-	public int getLimit() {
-		return limit;
-	}
 
 	/**
 	 * @return Licensing status.
