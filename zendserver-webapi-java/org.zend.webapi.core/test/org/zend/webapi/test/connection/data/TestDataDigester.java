@@ -35,7 +35,7 @@ public class TestDataDigester {
 	@Test
 	public void testSystemInfo1() throws Exception {
 		final SystemInfo responseData = (SystemInfo) getResponseData(
-				"systemInfo1.xml", IResponseData.ResponseType.SYSTEM_INFO);
+				"systeminfo1.xml", IResponseData.ResponseType.SYSTEM_INFO);
 		Assert.assertEquals(responseData.getEdition(),
 				SystemEdition.ZEND_SERVER_CLUSER_MANAGER);
 		Assert.assertEquals(responseData.getManagerLicenseInfo().getStatus(),
