@@ -32,10 +32,28 @@ public class TestCommonServices extends AbstractTestServer {
 	}
 
 	@Test
+	public void testClusterGetServerStatusId() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterGetServerStatus(), "clusterGetServerStatus",
+				ResponseCode.OK);
+		ServersList clusterServerStatus = Configuration.getClient()
+				.clusterGetServerStatus("0");
+		DataUtils.checkValidClusterServerStatus(clusterServerStatus);
+	}
+
+	@Test
 	public void testRestartAllPhp() throws WebApiException,
 			MalformedURLException {
 		initMock(handler.restartPhp(), "restartPhp", ResponseCode.ACCEPTED);
 		ServersList serversList = Configuration.getClient().restartPhp();
+		DataUtils.checkValidServersList(serversList);
+	}
+
+	@Test
+	public void testRestartAllPhpId() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.restartPhp(), "restartPhp", ResponseCode.ACCEPTED);
+		ServersList serversList = Configuration.getClient().restartPhp("0");
 		DataUtils.checkValidServersList(serversList);
 	}
 

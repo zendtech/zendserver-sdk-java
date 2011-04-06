@@ -10,6 +10,7 @@ import org.zend.webapi.core.connection.data.MessageList;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.core.connection.data.values.SystemStatus;
@@ -74,8 +75,14 @@ public class DataUtils {
 
 	public static void checkValidLicenceInfo(LicenseInfo licenseInfo) {
 		Assert.assertNotNull(licenseInfo);
-		Assert.assertNotNull(licenseInfo.getOrderNumber());
-		Assert.assertTrue(licenseInfo.getServerLimit() >= 0);
+		LicenseInfoStatus status = licenseInfo.getStatus();
+		Assert.assertNotSame(LicenseInfoStatus.UNKNOWN,
+				LicenseInfoStatus.byName(status.getName()));
+		if (status != LicenseInfoStatus.EXPIRED) {
+			Assert.assertNotNull(licenseInfo.getOrderNumber());
+			// Assert.assertNotNull(licenseInfo.getValidUntil());
+			Assert.assertTrue(licenseInfo.getServerLimit() >= 0);
+		}
 	}
 
 	public static void checkValidEdition(SystemEdition edition) {

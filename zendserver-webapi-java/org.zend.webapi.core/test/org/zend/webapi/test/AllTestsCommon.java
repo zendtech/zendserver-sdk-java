@@ -3,6 +3,7 @@ package org.zend.webapi.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zend.webapi.test.connection.TestCredentials;
+import org.zend.webapi.test.connection.TestRequest;
 import org.zend.webapi.test.connection.TestResponse;
 import org.zend.webapi.test.connection.TestSignatrue;
 import org.zend.webapi.test.connection.data.TestDataDigester;
@@ -15,12 +16,12 @@ import org.zend.webapi.test.core.TestWebApiExceptions;
 import org.zend.webapi.test.core.TestWebApiMethodType;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ TestCredentials.class, TestResponse.class,
-		TestSignatrue.class, TestDataDigester.class, TestValues.class,
-		TestServerConfiguration.class, TestClientConfiguration.class,
-		TestServiceDispatcher.class, TestWebApiExceptions.class,
-		TestWebApiMethodType.class, TestValues.class,
-		TestClientConfiguration.class, TestUtils.class,
+@Suite.SuiteClasses({ TestCredentials.class, TestRequest.class,
+		TestResponse.class, TestSignatrue.class, TestDataDigester.class,
+		TestValues.class, TestServerConfiguration.class,
+		TestClientConfiguration.class, TestServiceDispatcher.class,
+		TestWebApiExceptions.class, TestWebApiMethodType.class,
+		TestValues.class, TestClientConfiguration.class, TestUtils.class,
 		TestWebApiExceptions.class })
 public class AllTestsCommon {
 

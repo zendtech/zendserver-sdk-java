@@ -16,7 +16,6 @@
     <status>OK</status>
     <orderNumber>ZEND-ORDER-66</orderNumber>
     <validUntil>Sat, 31 Mar 2012 00:00:00 GMT</validUntil>
-    <serverLimit>0</serverLimit>
   </serverLicenseInfo>
   <managerLicenseInfo>
     <status>serverLimitExceeded</status>

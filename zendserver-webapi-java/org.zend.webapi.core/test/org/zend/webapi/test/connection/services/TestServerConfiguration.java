@@ -53,6 +53,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 		final ServerConfig config = Configuration.getClient()
 				.configuratioExport();
 		Assert.assertTrue(config.getFileSize() > 0);
+		Assert.assertNotNull(config.getFilename());
 		Assert.assertNotNull(config.getFileContent());
 		Assert.assertEquals(config.getFileSize(),
 				config.getFileContent().length);
@@ -124,6 +125,12 @@ public class TestServerConfiguration extends AbstractTestServer {
 		String expected = BioUtils.toString(resourceAsStream);
 		expected = expected.replace("%filename%", file.getName());
 		Assert.assertEquals("Error comparing expected/actual", expected, actual);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testMultipartNullBoundary() {
+		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
+		new MultipartRepresentation(arrayList, null);
 	}
 
 	private File getTempFile(String prefix) throws IOException {

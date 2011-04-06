@@ -8,9 +8,16 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.zend.webapi.core.connection.data.AbstractResponseData;
+import org.zend.webapi.core.connection.data.GenericResponseDataVisitor;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.IResponseDataVisitor;
+import org.zend.webapi.core.connection.data.LicenseInfo;
+import org.zend.webapi.core.connection.data.MessageList;
+import org.zend.webapi.core.connection.data.ServerConfig;
+import org.zend.webapi.core.connection.data.ServerInfo;
+import org.zend.webapi.core.connection.data.ServersList;
+import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.response.IResponse;
@@ -58,5 +65,22 @@ public class TestResponse {
 				.byCode(code.getCode()).getDescription());
 		Assert.assertEquals(ResponseCode.UNKNOWN,
 				ResponseCode.byCode((int) (Math.random() * 100000)));
+	}
+
+	@Test
+	public void testGenericResposneDataVisitor() throws Exception {
+		GenericResponseDataVisitor visitor = new GenericResponseDataVisitor();
+		Assert.assertTrue(visitor.visit((LicenseInfo) null));
+		Assert.assertTrue(visitor.visit((SystemInfo) null));
+		Assert.assertTrue(visitor.visit((MessageList) null));
+		Assert.assertTrue(visitor.visit((ServersList) null));
+		Assert.assertTrue(visitor.visit((ServerInfo) null));
+		Assert.assertTrue(visitor.visit((ServerConfig) null));
+		Assert.assertTrue(visitor.preVisit((LicenseInfo) null));
+		Assert.assertTrue(visitor.preVisit((SystemInfo) null));
+		Assert.assertTrue(visitor.preVisit((MessageList) null));
+		Assert.assertTrue(visitor.preVisit((ServersList) null));
+		Assert.assertTrue(visitor.preVisit((ServerInfo) null));
+		Assert.assertTrue(visitor.preVisit((ServerConfig) null));
 	}
 }
