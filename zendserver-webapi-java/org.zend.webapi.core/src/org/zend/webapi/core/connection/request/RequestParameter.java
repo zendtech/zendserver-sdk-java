@@ -26,8 +26,8 @@ import org.restlet.util.Couple;
  */
 public class RequestParameter<T> extends Couple<String, T> {
 
-	public RequestParameter(String first, T second) {
-		super(first, second);
+	public RequestParameter(String key, T value) {
+		super(key, value);
 	}
 
 	public String getKey() {
@@ -51,6 +51,9 @@ public class RequestParameter<T> extends Couple<String, T> {
 	 */
 	public InputStream getValueAsStream() {
 		final T second = getSecond();
+		if (second == null) {
+			throw new IllegalStateException("Value cannot be null.");
+		}
 		if (second instanceof Boolean) {
 			return new ByteArrayInputStream(second.toString().toUpperCase()
 					.getBytes());
