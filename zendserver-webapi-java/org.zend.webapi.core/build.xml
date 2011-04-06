@@ -10,6 +10,7 @@
 		<pathelement location="lib/org.restlet.jar" />
 		<pathelement location="lib/org.restlet.ext.xml.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
+		<pathelement location="lib-test/mockito-all-1.8.5.jar" />
 	</path>
 	
 	<target name="init">
@@ -75,8 +76,27 @@
             <formatter type="xml"/>
             <test name="org.zend.webapi.test.AllTests" todir="${junit.output.dir}"/>
             <classpath refid="org.zend.webapi.core.classpath"/>
+        	<jvmarg value="-Dorg.zend.webapi.confgurationFile=embedded.properties"/>
         </junit>
     </target>
+	
+	<target name="AllTestsClusterManager">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.zend.webapi.test.AllTestsClusterManager" todir="${junit.output.dir}"/>
+            <classpath refid="org.zend.webapi.core.classpath"/>
+        </junit>
+    </target>
+	
+	<target name="AllTestsZendServer">
+	        <mkdir dir="${junit.output.dir}"/>
+	        <junit fork="yes" printsummary="withOutAndErr">
+	            <formatter type="xml"/>
+	            <test name="org.zend.webapi.test.AllTestsZendServer" todir="${junit.output.dir}"/>
+	            <classpath refid="org.zend.webapi.core.classpath"/>
+	        </junit>
+	    </target>
 
     <target name="junitreport">
         <junitreport todir="${junit.output.dir}">
