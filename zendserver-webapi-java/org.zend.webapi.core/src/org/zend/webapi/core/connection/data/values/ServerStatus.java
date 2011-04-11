@@ -8,54 +8,56 @@
 package org.zend.webapi.core.connection.data.values;
 
 public enum ServerStatus {
-	
-	OK("OK"), 
-	
-	SHUTTING_DOWN("shuttingDown"), 
-	
-	STARTING_UP("startingUp"), 
-	
-	PENDING_RESTART("pendingRestart"), 
-	
-	RESTARTING("restarting"), 
-	
-	MISCONFIGURED("misconfigured"), 
-	
-	EXTENSION_MISMATCH("extensionMismatch"), 
-	
-	DAEMON_MISMATCH("daemonMismatch"), 
-	
-	NOT_RESPONDING("notResponding"), 
-	
-	DISABLED("disabled"), 
-	
-	REMOVED("removed"), 
-	
+
+	OK("OK"),
+
+	SHUTTING_DOWN("shuttingDown"),
+
+	STARTING_UP("startingUp"),
+
+	PENDING_RESTART("pendingRestart"),
+
+	RESTARTING("restarting"),
+
+	MISCONFIGURED("misconfigured"),
+
+	EXTENSION_MISMATCH("extensionMismatch"),
+
+	DAEMON_MISMATCH("daemonMismatch"),
+
+	APPLICATION_MISMATCH("applicationMismatch"),
+
+	NOT_RESPONDING("notResponding"),
+
+	DISABLED("disabled"),
+
+	REMOVED("removed"),
+
 	UNKNOWN("unknown");
-	
+
 	private final String name;
 
 	private ServerStatus(String name) {
 		this.name = name;
 	}
-		
+
 	public static ServerStatus byName(String name) {
 		if (name == null) {
 			return UNKNOWN;
 		}
-		
+
 		ServerStatus[] values = values();
 		for (ServerStatus serverStatus : values) {
 			if (name.equals(serverStatus.getName())) {
 				return serverStatus;
 			}
 		}
-		
+
 		return UNKNOWN;
 	}
 
 	public String getName() {
 		return name;
 	}
-	
+
 }
