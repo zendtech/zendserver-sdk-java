@@ -39,4 +39,20 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(ServerConfig serverConfig);
 
+	public boolean preVisit(DeployedVersionInfo deployedVersionInfo);
+
+	public boolean visit(DeployedVersionInfo deployedVersionInfo);
+
+	public boolean preVisit(DeployedVersionsList deployedVersionsList);
+
+	public boolean visit(DeployedVersionsList deployedVersionsList);
+
+	public boolean preVisit(ApplicationInfo applicationInfo);
+
+	public boolean visit(ApplicationInfo applicationInfo);
+
+	public boolean preVisit(ApplicationsList applicationsList);
+
+	public boolean visit(ApplicationsList applicationsList);
+
 }

@@ -4,12 +4,17 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.zend.webapi.core.connection.data.ApplicationInfo;
+import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.DeployedVersionInfo;
+import org.zend.webapi.core.connection.data.DeployedVersionsList;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
@@ -113,6 +118,43 @@ public class DataUtils {
 				Assert.assertNotNull(warining);
 			}
 		}
+	}
+
+	public static void checkApplicationsList(ApplicationsList applicationsList) {
+		Assert.assertNotNull(applicationsList);
+		List<ApplicationInfo> appsInfo = applicationsList.getApplicationsInfo();
+		for (ApplicationInfo applicationInfo : appsInfo) {
+			checkApplicationInfo(applicationInfo);
+		}
+	}
+
+	public static void checkApplicationInfo(ApplicationInfo applicationInfo) {
+		Assert.assertNotNull(applicationInfo);
+		Assert.assertNotNull(applicationInfo.getAppName());
+		Assert.assertNotNull(applicationInfo.getBaseUrl());
+		Assert.assertNotSame(ApplicationStatus.UNKNOWN,
+				ApplicationStatus.byName(applicationInfo.getStatus().getName()));
+		checkValidMessageList(applicationInfo.getMessageList());
+		checkDeployedVersionsList(applicationInfo.getDeployedVersionsList());
+	}
+
+	public static void checkDeployedVersionsList(
+			DeployedVersionsList versionsList) {
+		Assert.assertNotNull(versionsList);
+		List<DeployedVersionInfo> versions = versionsList
+				.getDeployedVersionInfo();
+		for (DeployedVersionInfo versionInfo : versions) {
+			checkValidDeployedVersionInfo(versionInfo);
+		}
+	}
+
+	public static void checkValidDeployedVersionInfo(
+			DeployedVersionInfo deployedVersionInfo) {
+		Assert.assertNotNull(deployedVersionInfo);
+		Assert.assertNotNull(deployedVersionInfo.getId());
+		Assert.assertNotNull(deployedVersionInfo.getVersion());
+		Assert.assertNotSame(ApplicationStatus.UNKNOWN, ApplicationStatus
+				.byName(deployedVersionInfo.getStatus().getName()));
 	}
 
 }

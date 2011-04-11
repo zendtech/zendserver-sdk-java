@@ -8,7 +8,7 @@
 package org.zend.webapi.core.connection.data;
 
 /**
- * Generic purpose response data visitor. 
+ * Generic purpose response data visitor.
  * 
  * @author Roy, 2011
  */
@@ -61,4 +61,37 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	public boolean visit(ServerConfig serverConfig) {
 		return true;
 	}
+
+	public boolean preVisit(DeployedVersionInfo deployedVersionInfo) {
+		return true;
+	}
+
+	public boolean visit(DeployedVersionInfo deployedVersionInfo) {
+		return true;
+	}
+
+	public boolean preVisit(DeployedVersionsList deployedVersionsList) {
+		return true;
+	}
+
+	public boolean visit(DeployedVersionsList deployedVersionsList) {
+		return true;
+	}
+
+	public boolean preVisit(ApplicationInfo applicationInfo) {
+		return true;
+	}
+
+	public boolean visit(ApplicationInfo applicationInfo) {
+		return true;
+	}
+
+	public boolean preVisit(ApplicationsList applicationsList) {
+		return true;
+	}
+
+	public boolean visit(ApplicationsList applicationsList) {
+		return true;
+	}
+
 }

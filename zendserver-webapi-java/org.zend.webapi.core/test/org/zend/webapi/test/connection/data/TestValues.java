@@ -3,6 +3,7 @@ package org.zend.webapi.test.connection.data;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
@@ -76,6 +77,17 @@ public class TestValues {
 		ErrorCode error = ErrorCode.notImplementedByEdition;
 		Assert.assertEquals(405, error.getCode());
 		Assert.assertNotNull(error.getMessage());
+	}
+
+	@Test
+	public void testApplicationStatus() {
+		ApplicationStatus status = ApplicationStatus.OK;
+		Assert.assertEquals(ApplicationStatus.OK,
+				ApplicationStatus.byName(status.getName()));
+		Assert.assertEquals(ApplicationStatus.UNKNOWN,
+				ApplicationStatus.byName(null));
+		Assert.assertEquals(ApplicationStatus.UNKNOWN, ApplicationStatus
+				.byName(String.valueOf(Math.random() * 100000)));
 	}
 
 }
