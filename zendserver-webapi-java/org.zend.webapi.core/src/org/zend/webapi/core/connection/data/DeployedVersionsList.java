@@ -21,8 +21,7 @@ public class DeployedVersionsList extends AbstractResponseData {
 	private List<DeployedVersionInfo> deployedVersionInfo;
 
 	protected DeployedVersionsList() {
-		super(ResponseType.DEPLOYED_VERSIONS_LIST, BASE_PATH
-				+ "/deployedVersionsList");
+		super(ResponseType.DEPLOYED_VERSIONS_LIST, BASE_PATH + "/versions");
 	}
 
 	protected DeployedVersionsList(String prefix) {

@@ -8,12 +8,12 @@
 		<versions>
 			<versionInfo>
 				<id>2</id>
-				<status>active</status>
+				<status>OK</status>
 				<version>2.14.0</version>
 			</versionInfo>
 			<versionInfo>
 				<id>1</id>
-				<status>inactive</status>
+				<status>staged</status>
 				<version>2.13.1</version>
 			</versionInfo>
 		</versions>

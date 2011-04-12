@@ -335,12 +335,50 @@ public class DataDigster extends GenericResponseDataVisitor {
 		applicationInfo.setStatus(ApplicationStatus.byName(value));
 
 		final DeployedVersionsList versionsList = new DeployedVersionsList(
-				currentPath + "/deployedVersionsList");
+				currentPath + "/versions");
 		applicationInfo.setDeployedVersionsList(versionsList);
 
 		final MessageList messageList = new MessageList(currentPath
 				+ "/messageList");
 		applicationInfo.setMessageList(messageList);
+
+		return true;
+	}
+
+	public boolean preVisit(DeployedVersionsList versions) {
+		String currentPath = versions.getPrefix();
+
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/versionInfo");
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+
+		// build version info list
+		List<DeployedVersionInfo> versionsInfo = new ArrayList<DeployedVersionInfo>(
+				size);
+		for (int index = 0; index < size; index++) {
+			versionsInfo.add(new DeployedVersionInfo(currentPath
+					+ "/versionInfo", index));
+		}
+
+		versions.setDeployedVersionInfo(versionsInfo);
+		return true;
+	}
+
+	public boolean preVisit(DeployedVersionInfo versionInfo) {
+		String currentPath = versionInfo.getPrefix();
+		int occurrence = versionInfo.getOccurrence();
+
+		String value = getValue(currentPath + "/id", occurrence);
+		versionInfo.setId(value);
+
+		value = getValue(currentPath + "/version", occurrence);
+		versionInfo.setVersion(value);
+
+		value = getValue(currentPath + "/status", occurrence);
+		versionInfo.setStatus(ApplicationStatus.byName(value));
 
 		return true;
 	}

@@ -23,7 +23,7 @@ public class DeployedVersionInfo extends AbstractResponseData {
 
 	protected DeployedVersionInfo() {
 		super(ResponseType.DEPLOYED_VERSION_INFO,
-				AbstractResponseData.BASE_PATH + "/deployedVersionInfo", 0);
+				AbstractResponseData.BASE_PATH + "/versionInfo", 0);
 	}
 
 	protected DeployedVersionInfo(String prefix, int occurrence) {
