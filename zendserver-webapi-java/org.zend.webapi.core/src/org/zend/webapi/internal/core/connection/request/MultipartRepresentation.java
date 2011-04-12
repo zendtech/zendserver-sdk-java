@@ -178,6 +178,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 		if (value instanceof HashMap<?, ?>) {
 			writeHashMapParameter(outputStream, parameter, value);
 		} else {
+			writeNewLine(outputStream, 1);
 			Disposition d = createContentDisposition(outputStream);
 			d.getParameters().add("name", parameter.getKey());
 			if (value instanceof File) {
@@ -205,7 +206,6 @@ public class MultipartRepresentation extends OutputRepresentation {
 
 	private Disposition createContentDisposition(OutputStream outputStream)
 			throws IOException {
-		writeNewLine(outputStream, 1);
 		outputStream.write(HeaderConstants.HEADER_CONTENT_DISPOSITION
 				.getBytes());
 		outputStream.write(": ".getBytes());
