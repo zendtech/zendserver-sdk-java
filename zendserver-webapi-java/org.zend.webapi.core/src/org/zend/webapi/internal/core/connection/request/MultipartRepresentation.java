@@ -12,8 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
@@ -35,9 +38,6 @@ import org.zend.webapi.core.connection.request.RequestParameter;
  */
 public class MultipartRepresentation extends OutputRepresentation {
 
-	public static final MediaType APPLICATION_SERVER_CONFIG = MediaType
-			.register("application/vnd.zend.serverconfig", "Zend Server Config");
-
 	/**
 	 * Boundary prefix constant
 	 */
@@ -54,17 +54,24 @@ public class MultipartRepresentation extends OutputRepresentation {
 	protected String boundary;
 
 	/**
+	 * Content type for binary content. Default is
+	 * {@link MediaType.MULTIPART_FORM_DATA}.
+	 */
+	protected MediaType mediaType;
+
+	/**
 	 * The content to be represented
 	 */
 	final protected byte[] contents;
 
 	public MultipartRepresentation(List<RequestParameter<?>> parameters,
-			String boundary) {
+			String boundary, MediaType mediaType) {
 		super(createMediaType(boundary));
 		if (boundary == null) {
 			throw new IllegalArgumentException(
 					"Error initializing MultipartRepresentation, null boundary");
 		}
+		this.mediaType = mediaType;
 		this.parameters = parameters;
 		this.boundary = boundary;
 		this.contents = resolveContent();
@@ -82,7 +89,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 		} catch (IOException e) {
 			// very unlikely to happen (in byte array case)
 			return null;
-		}		
+		}
 		return byteArrayOutputStream.toByteArray();
 	}
 
@@ -96,11 +103,29 @@ public class MultipartRepresentation extends OutputRepresentation {
 	}
 
 	public MultipartRepresentation(String boundary) {
-		this(null, boundary);
+		this(null, boundary, MediaType.MULTIPART_FORM_DATA);
 	}
 
 	public MultipartRepresentation(List<RequestParameter<?>> parameters) {
-		this(parameters, getRandomBoundary());
+		this(parameters, getRandomBoundary(), MediaType.MULTIPART_FORM_DATA);
+	}
+
+	public MultipartRepresentation(List<RequestParameter<?>> parameters,
+			String boundary) {
+		this(parameters, boundary, MediaType.MULTIPART_FORM_DATA);
+	}
+
+	public MultipartRepresentation(List<RequestParameter<?>> parameters,
+			MediaType mediaType) {
+		this(parameters, getRandomBoundary(), mediaType);
+	}
+
+	public MultipartRepresentation(String boundary, MediaType mediaType) {
+		this(null, boundary, mediaType);
+	}
+
+	public MultipartRepresentation(MediaType mediaType) {
+		this(null, getRandomBoundary(), mediaType);
 	}
 
 	/**
@@ -121,7 +146,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 	public void write(OutputStream outputStream) throws IOException {
 		BioUtils.copy(new ByteArrayInputStream(this.contents), outputStream);
 	}
-	
+
 	/**
 	 * internal writer method to prepare the content to write
 	 * 
@@ -149,35 +174,64 @@ public class MultipartRepresentation extends OutputRepresentation {
 
 	private void writeParameter(OutputStream outputStream,
 			RequestParameter<?> parameter) throws IOException {
-		// content disposition header
+		final Object value = parameter.getValue();
+		if (value instanceof HashMap<?, ?>) {
+			writeHashMapParameter(outputStream, parameter, value);
+		} else {
+			Disposition d = createContentDisposition(outputStream);
+			d.getParameters().add("name", parameter.getKey());
+			if (value instanceof File) {
+				d.setFilename(((File) value).getName());
+			}
+
+			final String write = DispositionWriter.write(d);
+			outputStream.write(write.getBytes());
+
+			// content type parameter
+			if (parameter.getValue() instanceof File) {
+				writeNewLine(outputStream, 1);
+				outputStream.write(HeaderConstants.HEADER_CONTENT_TYPE
+						.getBytes());
+				outputStream.write(": ".getBytes());
+				outputStream.write(mediaType.getName().getBytes());
+			}
+
+			// writing parameter's value
+			writeNewLine(outputStream, 2);
+			BioUtils.copy(parameter.getValueAsStream(), outputStream);
+			writeNewLine(outputStream, 1);
+		}
+	}
+
+	private Disposition createContentDisposition(OutputStream outputStream)
+			throws IOException {
 		writeNewLine(outputStream, 1);
 		outputStream.write(HeaderConstants.HEADER_CONTENT_DISPOSITION
 				.getBytes());
 		outputStream.write(": ".getBytes());
-
 		// disposition
 		Disposition d = new Disposition("form-data");
-		d.getParameters().add("name", parameter.getKey());
-		final Object value = parameter.getValue();
-		if (value instanceof File) {
-			d.setFilename(((File) value).getName());
-		}
-		final String write = DispositionWriter.write(d);
-		outputStream.write(write.getBytes());
+		return d;
+	}
 
-		// content type parameter
-		if (parameter.getValue() instanceof File) {
-			writeNewLine(outputStream, 1);
-			outputStream.write(HeaderConstants.HEADER_CONTENT_TYPE.getBytes());
-			outputStream.write(": ".getBytes());
-			outputStream.write(APPLICATION_SERVER_CONFIG.getName().getBytes());
-		}
-
-		// writing parameter's value
-		writeNewLine(outputStream, 2);
-		BioUtils.copy(parameter.getValueAsStream(), outputStream);
+	@SuppressWarnings("unchecked")
+	private void writeHashMapParameter(OutputStream outputStream,
+			RequestParameter<?> parameter, final Object value)
+			throws IOException {
+		HashMap<String, String> map = (HashMap<String, String>) value;
+		String mapName = parameter.getKey();
+		Set<Entry<String, String>> entries = map.entrySet();
 		writeNewLine(outputStream, 1);
-
+		for (Entry<String, String> entry : entries) {
+			Disposition d = createContentDisposition(outputStream);
+			d.getParameters().add("name",
+					mapName + "%5B" + entry.getKey() + "%5D");
+			final String write = DispositionWriter.write(d);
+			outputStream.write(write.getBytes());
+			writeNewLine(outputStream, 2);
+			outputStream.write(entry.getValue().getBytes());
+			writeNewLine(outputStream, 1);
+		}
 	}
 
 	private void footer(OutputStream outputStream) throws IOException {
@@ -188,12 +242,10 @@ public class MultipartRepresentation extends OutputRepresentation {
 	 * @param outputStream
 	 * @throws IOException
 	 */
-	private void writeSeparator(OutputStream outputStream)
-			throws IOException {
+	private void writeSeparator(OutputStream outputStream) throws IOException {
 		outputStream.write(BOUNDRY_PREFIX);
 		outputStream.write(this.boundary.getBytes());
 	}
-
 
 	/**
 	 * @param outputStream
@@ -206,9 +258,10 @@ public class MultipartRepresentation extends OutputRepresentation {
 			HeaderUtils.writeCRLF(outputStream);
 		}
 	}
-	
+
 	/**
 	 * updates the size of the representation by a given size
+	 * 
 	 * @param i
 	 */
 	protected void incrementSize(int i) {

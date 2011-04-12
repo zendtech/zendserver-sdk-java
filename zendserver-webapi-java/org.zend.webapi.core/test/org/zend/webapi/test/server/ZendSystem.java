@@ -88,4 +88,8 @@ public class ZendSystem {
 		return handler.applicationGetStatus();
 	}
 
+	public ServerResponse applicationDeploy() {
+		return handler.applicationDeploy();
+	}
+
 }

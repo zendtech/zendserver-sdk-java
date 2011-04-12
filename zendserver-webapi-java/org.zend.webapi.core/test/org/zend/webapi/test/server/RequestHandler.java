@@ -24,4 +24,6 @@ public interface RequestHandler {
 
 	ServerResponse applicationGetStatus();
 
+	ServerResponse applicationDeploy();
+
 }

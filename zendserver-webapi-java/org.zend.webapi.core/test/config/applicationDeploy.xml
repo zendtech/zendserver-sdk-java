@@ -1,0 +1,14 @@
+<application>
+	<id>1</id>
+	<appName>Home CMS</appName>
+	<baseUrl>http://example.com/</baseUrl>
+	<status>staging</status>
+	<versions>
+		<versionInfo>
+		<id>1</id>
+		<status>uploaded</status>
+		<version>1.1</version>
+		</versionInfo>
+	</versions>
+	<messageList />
+</application>

@@ -11,9 +11,11 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
@@ -27,6 +29,7 @@ import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
+import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
@@ -265,8 +268,8 @@ public class WebApiClient {
 	 * Re-enable a cluster member. This process may be asynchronous if Session
 	 * Clustering is used – if this is the case, the initial operation will
 	 * return an HTTP 202 response. This action is idempotent. Running it on an
-	 * enabled server will result in a “200 OK” response with no
-	 * consequences. On a ZSCM with no valid license, this operation will fail.
+	 * enabled server will result in a “200 OK” response with no consequences.
+	 * On a ZSCM with no valid license, this operation will fail.
 	 * 
 	 * @return server info
 	 * @throws WebApiException
@@ -410,6 +413,101 @@ public class WebApiClient {
 					}
 				});
 		return (ApplicationsList) handle.getData();
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final Boolean ignoreFailures,
+			final HashMap<String, String> userParam) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_DEPLOY, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationDeployRequest deployRequest = (ApplicationDeployRequest) request;
+						deployRequest.setAppPackage(appPackage);
+						deployRequest.setBaseUrl(baseUrl);
+						if (ignoreFailures != null) {
+							deployRequest.setIgnoreFailures(ignoreFailures);
+						}
+						if (userParam != null) {
+							deployRequest.setUserParams(userParam);
+						}
+					}
+				});
+		return (ApplicationInfo) handle.getData();
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * userParam parameter value is not specified. for more detailed see
+	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final Boolean ignoreFailures)
+			throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * ignoreFailures parameter value is not specified. for more detailed see
+	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final HashMap<String, String> userParam)
+			throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, null, userParam);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * ignoreFailures and userParam parameter values are not specified. for more
+	 * detailed see {@link ApplicationDeployRequest}
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl) throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, null, null);
 	}
 
 	/**

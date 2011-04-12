@@ -1,9 +1,12 @@
 package org.zend.webapi.test.connection.services;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
@@ -76,6 +79,16 @@ public class TestCommonServices extends AbstractTestServer {
 		ApplicationsList applicationGetStatus = Configuration.getClient()
 				.applicationGetStatus("0");
 		DataUtils.checkValidApplicationsList(applicationGetStatus);
+	}
+
+	@Test
+	public void testApplicationDeploy() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						true, null);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
 }

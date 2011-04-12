@@ -131,6 +131,15 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet applicationDeploy = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.applicationDeploy();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -149,6 +158,8 @@ public class ServerApplication extends Application {
 				configurationImport);
 		router.attach("/ZendServerManager/Api/applicationGetStatus",
 				applicationGetStatus);
+		router.attach("/ZendServerManager/Api/applicationDeploy",
+				applicationDeploy);
 
 		return router;
 	}

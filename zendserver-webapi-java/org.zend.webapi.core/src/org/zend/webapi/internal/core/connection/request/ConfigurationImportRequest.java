@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Date;
 
 import org.restlet.Request;
+import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.representation.Representation;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
@@ -20,7 +21,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 /**
  * Import a saved configuration snapshot into the server. Because this method is
  * expected to contain a file upload, parameters are expected to be encoded
- * using the ‘multipart/form-data’ content type.
+ * using the â€�multipart/form-dataâ€™ content type.
  * <p>
  * 
  * Method Parameters:
@@ -36,7 +37,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * <td>File</td>
  * <td>Yes</td>
  * <td>Configuration snapshot file to import. Content-type for the file must be
- * ‘application/vnd.zend.serverconfig’</td>
+ * â€�application/vnd.zend.serverconfigâ€™</td>
  * </tr>
  * <tr>
  * <td>ignoreSystemMismatch</td>
@@ -51,6 +52,9 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * @author Roy, 2011
  */
 public class ConfigurationImportRequest extends AbstractRequest {
+
+	public static final MediaType APPLICATION_SERVER_CONFIG = MediaType
+			.register("application/vnd.zend.serverconfig", "Zend Server Config");
 
 	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.OK };
 
@@ -105,19 +109,20 @@ public class ConfigurationImportRequest extends AbstractRequest {
 	 * system). Default is FALSE.
 	 * 
 	 * @param ignoreSystemMismatch
-	 * @return 
+	 * @return
 	 */
-	public ConfigurationImportRequest setIgnoreSystemMismatch(boolean ignoreSystemMismatch) {
+	public ConfigurationImportRequest setIgnoreSystemMismatch(
+			boolean ignoreSystemMismatch) {
 		addParameter("ignoreSystemMismatch", ignoreSystemMismatch);
 		return this;
 	}
 
 	/**
 	 * Configuration snapshot file to import. Content-type for the file must be
-	 * ‘application/vnd.zend.serverconfig’
+	 * â€�application/vnd.zend.serverconfigâ€™
 	 * 
 	 * @param configFile
-	 * @return 
+	 * @return
 	 */
 	public ConfigurationImportRequest setFile(File configFile) {
 		addParameter("configFile", configFile);
@@ -126,7 +131,8 @@ public class ConfigurationImportRequest extends AbstractRequest {
 
 	@Override
 	public void applyParameters(Request request) {
-		Representation rep = new MultipartRepresentation(getParameters());
+		Representation rep = new MultipartRepresentation(getParameters(),
+				APPLICATION_SERVER_CONFIG);
 		request.setEntity(rep);
 	}
 }

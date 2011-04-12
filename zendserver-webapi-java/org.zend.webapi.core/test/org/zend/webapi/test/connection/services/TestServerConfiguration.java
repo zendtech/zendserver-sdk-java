@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -115,22 +117,45 @@ public class TestServerConfiguration extends AbstractTestServer {
 		file.deleteOnExit();
 		arrayList.add(new RequestParameter<File>("configFile", file));
 		Representation representation = new MultipartRepresentation(arrayList,
-				"--bla-bla-bla--");
+				"--bla-bla-bla--",
+				ConfigurationImportRequest.APPLICATION_SERVER_CONFIG);
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		representation.write(outputStream);
 		final String actual = outputStream.toString();
 		final InputStream resourceAsStream = new FileInputStream(new File(
 				ServerUtils.createFileName(CONFIG_FOLDER + "multipart.txt")));
-
+		System.out.println(actual);
 		String expected = BioUtils.toString(resourceAsStream);
 		expected = expected.replace("%filename%", file.getName());
 		Assert.assertEquals("Error comparing expected/actual", expected, actual);
 	}
 
+	@Test
+	public void testMultipartHashMap() throws IOException {
+		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
+		Map<String, String> hashMap = new HashMap<String, String>();
+		hashMap.put("test1", "value1");
+		hashMap.put("test2", "value2");
+		arrayList
+				.add(new RequestParameter<Map<String, String>>("map", hashMap));
+		Representation representation = new MultipartRepresentation(arrayList,
+				"--bla-bla-bla--",
+				ConfigurationImportRequest.APPLICATION_SERVER_CONFIG);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		representation.write(outputStream);
+		final String actual = outputStream.toString();
+		final InputStream resourceAsStream = new FileInputStream(new File(
+				ServerUtils.createFileName(CONFIG_FOLDER
+						+ "multipartHashMap.txt")));
+		System.out.println(actual);
+		String expected = BioUtils.toString(resourceAsStream);
+		Assert.assertEquals(expected, actual);
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testMultipartNullBoundary() {
 		final ArrayList<RequestParameter<?>> arrayList = new ArrayList<RequestParameter<?>>();
-		new MultipartRepresentation(arrayList, null);
+		new MultipartRepresentation(arrayList, (String) null);
 	}
 
 	private File getTempFile(String prefix) throws IOException {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.restlet.ext.xml.DomRepresentation;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.DataDigster;
 import org.zend.webapi.core.connection.data.IResponseData;
@@ -128,5 +129,13 @@ public class TestDataDigester {
 				"applicationGetStatus.xml",
 				IResponseData.ResponseType.APPLICATIONS_LIST);
 		Assert.assertEquals(responseData.getApplicationsInfo().size(), 2);
+	}
+
+	@Test
+	public void testApplicationDeploy() throws Exception {
+		final ApplicationInfo responseData = (ApplicationInfo) getResponseData(
+				"applicationDeploy.xml",
+				IResponseData.ResponseType.APPLICATION_INFO);
+		Assert.assertNotNull(responseData.getAppName());
 	}
 }

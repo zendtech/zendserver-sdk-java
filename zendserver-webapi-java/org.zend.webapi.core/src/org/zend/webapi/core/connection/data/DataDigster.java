@@ -411,6 +411,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new ServerConfig();
 		case APPLICATIONS_LIST:
 			return new ApplicationsList();
+		case APPLICATION_INFO:
+			return new ApplicationInfo();
 		default:
 			return null;
 		}

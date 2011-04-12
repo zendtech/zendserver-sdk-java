@@ -9,6 +9,7 @@ package org.zend.webapi.core.service;
 
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.request.IRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
@@ -90,7 +91,9 @@ public enum WebApiMethodType {
 	 * @see ApplicationGetStatusRequest
 	 */
 	APPLICATION_GET_STATUS("applicationGetStatus",
-			ApplicationGetStatusRequest.class);
+			ApplicationGetStatusRequest.class),
+
+	APPLICATION_DEPLOY("applicationDeploy", ApplicationDeployRequest.class);
 
 	/**
 	 * Name of the service
