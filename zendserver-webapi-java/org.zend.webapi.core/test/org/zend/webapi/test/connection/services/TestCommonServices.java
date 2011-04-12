@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -55,6 +56,26 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.restartPhp(), "restartPhp", ResponseCode.ACCEPTED);
 		ServersList serversList = Configuration.getClient().restartPhp("0");
 		DataUtils.checkValidServersList(serversList);
+	}
+
+	@Test
+	public void testApplicationGetStatus() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.applicationGetStatus(), "applicationGetStatus",
+				ResponseCode.OK);
+		ApplicationsList applicationGetStatus = Configuration.getClient()
+				.applicationGetStatus();
+		DataUtils.checkValidApplicationsList(applicationGetStatus);
+	}
+
+	@Test
+	public void testApplicationGetStatusId() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.applicationGetStatus(), "applicationGetStatus",
+				ResponseCode.OK);
+		ApplicationsList applicationGetStatus = Configuration.getClient()
+				.applicationGetStatus("0");
+		DataUtils.checkValidApplicationsList(applicationGetStatus);
 	}
 
 }

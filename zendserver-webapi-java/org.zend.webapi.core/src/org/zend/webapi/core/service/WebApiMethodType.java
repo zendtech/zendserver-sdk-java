@@ -9,6 +9,7 @@ package org.zend.webapi.core.service;
 
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.request.IRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
@@ -83,7 +84,13 @@ public enum WebApiMethodType {
 	 * @see ConfigurationImportRequest
 	 */
 	CONFIGURATION_IMPORT("configurationImport",
-			ConfigurationImportRequest.class);
+			ConfigurationImportRequest.class),
+
+	/**
+	 * @see ApplicationGetStatusRequest
+	 */
+	APPLICATION_GET_STATUS("applicationGetStatus",
+			ApplicationGetStatusRequest.class);
 
 	/**
 	 * Name of the service

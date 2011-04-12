@@ -120,22 +120,27 @@ public class DataUtils {
 		}
 	}
 
-	public static void checkApplicationsList(ApplicationsList applicationsList) {
+	public static void checkValidApplicationsList(
+			ApplicationsList applicationsList) {
 		Assert.assertNotNull(applicationsList);
 		List<ApplicationInfo> appsInfo = applicationsList.getApplicationsInfo();
 		for (ApplicationInfo applicationInfo : appsInfo) {
-			checkApplicationInfo(applicationInfo);
+			checkValidApplicationInfo(applicationInfo);
 		}
 	}
 
-	public static void checkApplicationInfo(ApplicationInfo applicationInfo) {
+	public static void checkValidApplicationInfo(ApplicationInfo applicationInfo) {
 		Assert.assertNotNull(applicationInfo);
 		Assert.assertNotNull(applicationInfo.getAppName());
 		Assert.assertNotNull(applicationInfo.getBaseUrl());
 		Assert.assertNotSame(ApplicationStatus.UNKNOWN,
 				ApplicationStatus.byName(applicationInfo.getStatus().getName()));
-		checkValidMessageList(applicationInfo.getMessageList());
-		checkDeployedVersionsList(applicationInfo.getDeployedVersionsList());
+		if (applicationInfo.getMessageList() != null) {
+			checkValidMessageList(applicationInfo.getMessageList());
+		}
+		if (applicationInfo.getDeployedVersionsList() != null) {
+			checkDeployedVersionsList(applicationInfo.getDeployedVersionsList());
+		}
 	}
 
 	public static void checkDeployedVersionsList(
@@ -143,8 +148,10 @@ public class DataUtils {
 		Assert.assertNotNull(versionsList);
 		List<DeployedVersionInfo> versions = versionsList
 				.getDeployedVersionInfo();
-		for (DeployedVersionInfo versionInfo : versions) {
-			checkValidDeployedVersionInfo(versionInfo);
+		if (versions != null) {
+			for (DeployedVersionInfo versionInfo : versions) {
+				checkValidDeployedVersionInfo(versionInfo);
+			}
 		}
 	}
 

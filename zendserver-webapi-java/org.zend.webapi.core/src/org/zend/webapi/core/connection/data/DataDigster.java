@@ -22,6 +22,7 @@ import org.restlet.ext.xml.XmlRepresentation;
 import org.restlet.representation.Representation;
 import org.w3c.dom.Node;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
+import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
@@ -295,6 +296,55 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return super.preVisit(serverConfig);
 	}
 
+	public boolean preVisit(ApplicationsList applicationsList) {
+		String currentPath = applicationsList.getPrefix();
+
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/application");
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+
+		// build applications info list
+		List<ApplicationInfo> applicationsInfo = new ArrayList<ApplicationInfo>(
+				size);
+		for (int index = 0; index < size; index++) {
+			applicationsInfo.add(new ApplicationInfo(currentPath
+					+ "/application", index));
+		}
+
+		applicationsList.setApplicationsInfo(applicationsInfo);
+		return true;
+	}
+
+	public boolean preVisit(ApplicationInfo applicationInfo) {
+		String currentPath = applicationInfo.getPrefix();
+		int occurrence = applicationInfo.getOccurrence();
+
+		String value = getValue(currentPath + "/id", occurrence);
+		applicationInfo.setId(parseNumberIfExists(value));
+
+		value = getValue(currentPath + "/baseUrl", occurrence);
+		applicationInfo.setBaseUrl(value);
+
+		value = getValue(currentPath + "/appName", occurrence);
+		applicationInfo.setAppName(value);
+
+		value = getValue(currentPath + "/status", occurrence);
+		applicationInfo.setStatus(ApplicationStatus.byName(value));
+
+		final DeployedVersionsList versionsList = new DeployedVersionsList(
+				currentPath + "/deployedVersionsList");
+		applicationInfo.setDeployedVersionsList(versionsList);
+
+		final MessageList messageList = new MessageList(currentPath
+				+ "/messageList");
+		applicationInfo.setMessageList(messageList);
+
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return
@@ -321,6 +371,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new ServerInfo();
 		case SERVER_CONFIG:
 			return new ServerConfig();
+		case APPLICATIONS_LIST:
+			return new ApplicationsList();
 		default:
 			return null;
 		}

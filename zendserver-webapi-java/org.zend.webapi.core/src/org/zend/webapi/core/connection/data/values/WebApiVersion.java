@@ -8,18 +8,20 @@
 package org.zend.webapi.core.connection.data.values;
 
 /**
- * Represents version in the system 
- *
+ * Represents version in the system
+ * 
  */
 public enum WebApiVersion {
 
-	V1 ("1.0"),
-	
+	V1("1.0"),
+
+	V1_1("1.1"),
+
 	UNKNOWN("UNKNOWN");
-	
+
 	private final String versionName;
 	private static final String prefix = "application/vnd.zend.serverapi+xml;version=";
-	
+
 	private WebApiVersion(String versionName) {
 		this.versionName = versionName;
 	}
@@ -27,11 +29,11 @@ public enum WebApiVersion {
 	public String getVersionName() {
 		return versionName;
 	}
-	
+
 	public String getFullName() {
 		return prefix + getVersionName();
 	}
-	
+
 	public static WebApiVersion byFullName(String name) {
 		if (name == null) {
 			return UNKNOWN;

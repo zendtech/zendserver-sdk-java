@@ -84,4 +84,8 @@ public class ZendSystem {
 		return handler.configurationImport();
 	}
 
+	public ServerResponse applicationGetStatus() {
+		return handler.applicationGetStatus();
+	}
+
 }

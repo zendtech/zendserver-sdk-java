@@ -29,7 +29,7 @@ public class ApplicationInfo extends AbstractResponseData {
 	}
 
 	protected ApplicationInfo() {
-		this(BASE_PATH + "/applicationInfo", 0);
+		this(BASE_PATH + "/application", 0);
 	}
 
 	/**

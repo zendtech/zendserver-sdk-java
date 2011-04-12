@@ -22,4 +22,6 @@ public interface RequestHandler {
 
 	ServerResponse configurationImport();
 
+	ServerResponse applicationGetStatus();
+
 }

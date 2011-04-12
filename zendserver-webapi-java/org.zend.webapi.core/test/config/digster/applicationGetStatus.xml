@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.1">
+<requestData>
+<apiKeyName>angel.eyes</apiKeyName>
+<method>applicationGetStatus</method>
+</requestData>
+<responseData>
+<applicationsList>
+<application>
+<id>1</id>
+<appName>My Application</appName>
+<baseUrl>http://example.com/myapp</baseUrl>
+<status>OK</status>
+<versions>
+<versionInfo>
+<id>2</id>
+<status>active</status>
+<version>2.14.0</version>
+</versionInfo>
+<versionInfo>
+<id>1</id>
+<status>inactive</status>
+<version>2.13.1</version>
+</versionInfo>
+</versions>
+<messageList />
+</application>
+<application>
+<id>2</id>
+<appName>Blog 2.0</appName>
+<baseUrl>http://oapp.example.com:8080/</baseUrl>
+<status>pendingActivation</status>
+<versions>
+<versionInfo>
+<id>6</id>
+<status>activating</status>
+<version>2.0+z</version>
+</versionInfo>
+</versions>
+<messageList />
+</application>
+</applicationsList>
+</responseData>
+</zendServerAPIResponse>

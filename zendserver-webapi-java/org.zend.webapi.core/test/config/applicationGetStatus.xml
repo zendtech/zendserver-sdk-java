@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationsList>
+	<application>
+		<id>1</id>
+		<appName>My Application</appName>
+		<baseUrl>http://example.com/myapp</baseUrl>
+		<status>OK</status>
+		<versions>
+			<versionInfo>
+				<id>2</id>
+				<status>active</status>
+				<version>2.14.0</version>
+			</versionInfo>
+			<versionInfo>
+				<id>1</id>
+				<status>inactive</status>
+				<version>2.13.1</version>
+			</versionInfo>
+		</versions>
+		<messageList />
+	</application>
+	<application>
+		<id>2</id>
+		<appName>Blog 2.0</appName>
+		<baseUrl>http://oapp.example.com:8080/</baseUrl>
+		<status>uploaded</status>
+		<versions>
+			<versionInfo>
+				<id>6</id>
+				<status>activating</status>
+				<version>2.0+z</version>
+			</versionInfo>
+		</versions>
+		<messageList />
+	</application>
+</applicationsList>

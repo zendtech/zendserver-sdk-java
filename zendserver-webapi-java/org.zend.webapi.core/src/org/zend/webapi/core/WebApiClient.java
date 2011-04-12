@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
@@ -26,6 +27,7 @@ import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
+import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
@@ -53,7 +55,7 @@ import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
  */
 public class WebApiClient {
 
-	private static final WebApiVersion DEFAULT_VERSION = WebApiVersion.V1;
+	private static final WebApiVersion DEFAULT_VERSION = WebApiVersion.V1_1;
 
 	/**
 	 * credentials of this client
@@ -384,6 +386,30 @@ public class WebApiClient {
 	public ServersList configuratioImport(final File configFile)
 			throws WebApiException {
 		return configuratioImport(configFile, null);
+	}
+
+	/**
+	 * Get the list of applications currently deployed (or staged) on the server
+	 * or the cluster and information about each application. If application IDs
+	 * are specified, will return information about the specified applications;
+	 * If no IDs are specified, will return information about all applications.
+	 * 
+	 * @see WebApiMethodType#APPLICATION_GET_STATUS
+	 * 
+	 * @return applications list
+	 * @throws WebApiException
+	 */
+	public ApplicationsList applicationGetStatus(final String... applications)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_GET_STATUS,
+				applications.length == 0 ? null : new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						((ApplicationGetStatusRequest) request)
+								.setApplications(applications);
+					}
+				});
+		return (ApplicationsList) handle.getData();
 	}
 
 	/**
