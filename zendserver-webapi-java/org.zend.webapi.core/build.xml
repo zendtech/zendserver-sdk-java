@@ -22,7 +22,7 @@
 	<property name="instrumented.dir" value="${basedir}/inst/"/>
 	<path id="emma.lib">
 	    <fileset dir="${emma.dir}">
-	        <include name="*.jar"/>
+	        <include name="**/*.jar"/>
 	    </fileset>
 	</path>
 	   
