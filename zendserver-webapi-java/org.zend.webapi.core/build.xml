@@ -14,7 +14,9 @@
 	</path>
 	
 	<property name="coverage.dir" value="${basedir}/coverage" />
-	<property name="emma.dir" value="/var/www/3rd-party/emma-2.0.5312" />
+	<!-- Emma? Where are you? (Emma installation directory) -->
+	<available file="/shared/tools/php/emma-2.0.5312" property="emma.dir" value="/shared/tools/php/emma-2.0.5312" />
+	<property name='emma.dir' value='/var/www/3rd-party/emma-2.0.5312' />
 	<property name="src.dir" value="${basedir}/src/"/>
 	<property name="class.dir" value="${basedir}/bin/"/>
 	<property name="instrumented.dir" value="${basedir}/inst/"/>
@@ -69,11 +71,14 @@
 	
 	<target name="clean">
 		<delete dir="bin" />
+		<delete dir="${instrumented.dir}" />
+		<delete dir="${coverage.dir}" />
+		<delete dir="${junit.output.dir}" />
 	</target>
 	
 	<target depends="clean" name="cleanall" />
 	
-	<target depends="build-subprojects,build-project,allTestsEmmaCoverage,junitreport,javadoc,buildSDK" name="build" />
+	<target depends="clean,build-subprojects,build-project,allTestsEmmaCoverage,junitreport,javadoc,buildSDK" name="build" />
 	
 	<target name="build-subprojects" />
 	
@@ -122,6 +127,7 @@
 	    </target>
 	
 	<target name="instrEmma">
+		
 		<emma enabled="true">
 		    <instr instrpath="${class.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true">
 		    	<filter excludes="org.zend.webapi.test.*" />
