@@ -26,4 +26,10 @@ public interface RequestHandler {
 
 	ServerResponse applicationDeploy();
 
+	ServerResponse applicationUpdate();
+
+	ServerResponse applicationRemove();
+
+	ServerResponse applicationRedeploy();
+
 }

@@ -140,6 +140,33 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet applicationUpdate = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.applicationUpdate();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet applicationRemove = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.applicationRemove();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet applicationRedeploy = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.applicationRedeploy();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -160,6 +187,12 @@ public class ServerApplication extends Application {
 				applicationGetStatus);
 		router.attach("/ZendServerManager/Api/applicationDeploy",
 				applicationDeploy);
+		router.attach("/ZendServerManager/Api/applicationUpdate",
+				applicationUpdate);
+		router.attach("/ZendServerManager/Api/applicationRemove",
+				applicationRemove);
+		router.attach("/ZendServerManager/Api/applicationRedeploy",
+				applicationRedeploy);
 
 		return router;
 	}

@@ -91,4 +91,32 @@ public class TestCommonServices extends AbstractTestServer {
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
+	@Test
+	public void testApplicationUpdate() throws WebApiException, IOException {
+		initMock(handler.applicationUpdate(), "applicationUpdate",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationUpdate(1, File.createTempFile("test", "aaa"), true,
+						null);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationRemove() throws WebApiException, IOException {
+		initMock(handler.applicationRemove(), "applicationRemove",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationRemove(1);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationRedeploy() throws WebApiException, IOException {
+		initMock(handler.applicationRedeploy(), "applicationRedeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationsList applicationslist = Configuration.getClient()
+				.applicationRedeploy("1", false);
+		DataUtils.checkValidApplicationsList(applicationslist);
+	}
+
 }

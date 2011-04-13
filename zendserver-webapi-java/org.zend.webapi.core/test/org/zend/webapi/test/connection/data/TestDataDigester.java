@@ -138,4 +138,29 @@ public class TestDataDigester {
 				IResponseData.ResponseType.APPLICATION_INFO);
 		Assert.assertNotNull(responseData.getAppName());
 	}
+
+	@Test
+	public void testApplicationUpdate() throws Exception {
+		final ApplicationInfo responseData = (ApplicationInfo) getResponseData(
+				"applicationUpdate.xml",
+				IResponseData.ResponseType.APPLICATION_INFO);
+		Assert.assertNotNull(responseData.getAppName());
+	}
+
+	@Test
+	public void testApplicationRemove() throws Exception {
+		final ApplicationInfo responseData = (ApplicationInfo) getResponseData(
+				"applicationRemove.xml",
+				IResponseData.ResponseType.APPLICATION_INFO);
+		Assert.assertNotNull(responseData.getAppName());
+	}
+
+	@Test
+	public void testApplicationRedeploy() throws Exception {
+		final ApplicationsList responseData = (ApplicationsList) getResponseData(
+				"applicationRedeploy.xml",
+				IResponseData.ResponseType.APPLICATIONS_LIST);
+		Assert.assertNotNull(responseData.getApplicationsInfo().size() > 0);
+	}
+
 }

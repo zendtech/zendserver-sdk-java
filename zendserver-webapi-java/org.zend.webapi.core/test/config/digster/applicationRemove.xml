@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.1">
+	<requestData>
+		<apiKeyName>angel.eyes</apiKeyName>
+		<method>applicationRemove</method>
+	</requestData>
+	<responseData>
+		<application>
+		<id>1</id>
+		<appName>Home CMS</appName>
+		<baseUrl>http://example.com/</baseUrl>
+		<status>staging</status>
+		<versions>
+			<versionInfo>
+			<id>1</id>
+			<status>staging</status>
+			<version>1.1</version>
+			</versionInfo>
+		</versions>
+		<messageList />
+		</application>
+	</responseData>
+</zendServerAPIResponse>

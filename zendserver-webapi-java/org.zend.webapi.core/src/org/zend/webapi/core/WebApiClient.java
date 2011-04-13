@@ -511,6 +511,60 @@ public class WebApiClient {
 	}
 
 	/**
+	 * Update/redeploy an existing application. The package provided must be of
+	 * the same application. Additionally any new parameters or new values to
+	 * existing parameters must be provided. This process is asynchronous – the
+	 * initial request will wait until the package is uploaded and verified, and
+	 * the initial response will show information about the new version being
+	 * deployed – however the staging and activation process will proceed after
+	 * the response is returned. The user is expected to continue checking the
+	 * application status using the applicationGetStatus method until the
+	 * deployment process is complete.
+	 * 
+	 * @return information about updated application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationUpdate(final int appId,
+			final File appPackage, final Boolean ignoreFailures,
+			final HashMap<String, String> userParam) throws WebApiException {
+		return null;
+	}
+
+	/**
+	 * Remove/undeploy an existing application. This process is asynchronous –
+	 * the initial request will start the removal process and the initial
+	 * response will show information about the application being removed –
+	 * however the removal process will proceed after the response is returned.
+	 * The user is expected to continue checking the application status using
+	 * the applicationGetStatus method until the removal process is complete.
+	 * Once applicationGetStatus contains no information about the specific
+	 * application, it has been completely removed.
+	 * 
+	 * @return information about removed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationRemove(int appId) throws WebApiException {
+		return null;
+	}
+
+	/**
+	 * Redeploy an existing application, whether in order to fix a problem or to
+	 * reset an installation. This process is asynchronous – the initial request
+	 * will start the redeploy process and the initial response will show
+	 * information about the application being redeployed – however the
+	 * redeployment process will proceed after the response is returned. The
+	 * user is expected to continue checking the application status using the
+	 * applicationGetStatus method until the process is complete.
+	 * 
+	 * @return information about redeployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationsList applicationRedeploy(String appId,
+			Boolean ignoreFailures, String... servers) throws WebApiException {
+		return null;
+	}
+
+	/**
 	 * Zend Server Web API is intended to allow automation of the management and
 	 * deployment of Zend Server and Zend Server Cluster Manager, and allow
 	 * integration with other Zend or 3rd party software. Call a specific

@@ -92,4 +92,16 @@ public class ZendSystem {
 		return handler.applicationDeploy();
 	}
 
+	public ServerResponse applicationUpdate() {
+		return handler.applicationUpdate();
+	}
+
+	public ServerResponse applicationRemove() {
+		return handler.applicationRemove();
+	}
+
+	public ServerResponse applicationRedeploy() {
+		return handler.applicationRedeploy();
+	}
+
 }
