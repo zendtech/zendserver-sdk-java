@@ -131,6 +131,7 @@
 		<emma enabled="true">
 		    <instr instrpath="${class.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true">
 		    	<filter excludes="org.zend.webapi.test.*" />
+		    	<filter excludes="org.zend.webapi.examples*" />
 		    </instr>
 		</emma>
 	</target>
@@ -147,11 +148,11 @@
         </junit>
 		<emma enabled="true" >
 		    <report sourcepath="${src.dir}" >
+		    	<property name="report.out.encoding" value="UTF-8" />
 		        <fileset dir="${coverage.dir}" >
 		            <include name="*.emma" />
 		        </fileset>
 		    	<html outfile="${coverage.dir}/coverage.html" />
-		        <xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
 		    </report>
 		</emma>
 	</target>
