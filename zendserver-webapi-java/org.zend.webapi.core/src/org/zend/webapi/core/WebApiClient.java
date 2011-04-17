@@ -31,6 +31,7 @@ import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
@@ -720,8 +721,17 @@ public class WebApiClient {
 	 * @return information about removed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationRemove(int appId) throws WebApiException {
-		return null;
+	public ApplicationInfo applicationRemove(final int appId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_REMOVE, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationRemoveRequest removeRequest = (ApplicationRemoveRequest) request;
+						removeRequest.setAppId(appId);
+					}
+				});
+		return (ApplicationInfo) handle.getData();
 	}
 
 	/**
