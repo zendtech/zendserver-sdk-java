@@ -11,6 +11,7 @@ import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationRedeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
@@ -108,7 +109,13 @@ public enum WebApiMethodType {
 	/**
 	 * @see ApplicationRemoveRequest
 	 */
-	APPLICATION_REMOVE("applicationRemove", ApplicationRemoveRequest.class);
+	APPLICATION_REMOVE("applicationRemove", ApplicationRemoveRequest.class),
+
+	/**
+	 * @see ApplicationRemoveRequest
+	 */
+	APPLICATION_REDEPLOY("applicationRedeploy",
+			ApplicationRedeployRequest.class);
 
 	/**
 	 * Name of the service

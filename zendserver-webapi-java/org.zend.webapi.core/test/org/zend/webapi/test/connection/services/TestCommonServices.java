@@ -149,7 +149,27 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationRedeploy(), "applicationRedeploy",
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
+				.applicationRedeploy("1", false, "test1", "test2");
+		DataUtils.checkValidApplicationsList(applicationslist);
+	}
+
+	@Test
+	public void testApplicationRedeployNoServers() throws WebApiException,
+			IOException {
+		initMock(handler.applicationRedeploy(), "applicationRedeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationsList applicationslist = Configuration.getClient()
 				.applicationRedeploy("1", false);
+		DataUtils.checkValidApplicationsList(applicationslist);
+	}
+
+	@Test
+	public void testApplicationRedeployNoServersAndIgnore()
+			throws WebApiException, IOException {
+		initMock(handler.applicationRedeploy(), "applicationRedeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationsList applicationslist = Configuration.getClient()
+				.applicationRedeploy("1");
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 

@@ -31,6 +31,7 @@ import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationRedeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
@@ -746,9 +747,65 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(String appId,
-			Boolean ignoreFailures, String... servers) throws WebApiException {
-		return null;
+	public ApplicationsList applicationRedeploy(final String appId,
+			final Boolean ignoreFailures, final String... servers)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_REDEPLOY,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationRedeployRequest deployRequest = (ApplicationRedeployRequest) request;
+						deployRequest.setAppId(appId);
+						if (ignoreFailures != null) {
+							deployRequest.setIgnoreFailures(ignoreFailures);
+						}
+						if (servers.length > 0) {
+							deployRequest.setServers(servers);
+						}
+					}
+				});
+		return (ApplicationsList) handle.getData();
+	}
+
+	/**
+	 * Redeploy an existing application, whether in order to fix a problem or to
+	 * reset an installation. This process is asynchronous – the initial request
+	 * will start the redeploy process and the initial response will show
+	 * information about the application being redeployed – however the
+	 * redeployment process will proceed after the response is returned. The
+	 * user is expected to continue checking the application status using the
+	 * applicationGetStatus method until the process is complete.
+	 * 
+	 * ignoreFailures parameter value is not specified. for more detailed see
+	 * {@link ApplicationRedeployRequest}.
+	 * 
+	 * @return information about redeployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationsList applicationRedeploy(String appId, String... servers)
+			throws WebApiException {
+		return applicationRedeploy(appId, null, servers);
+	}
+
+	/**
+	 * Redeploy an existing application, whether in order to fix a problem or to
+	 * reset an installation. This process is asynchronous – the initial request
+	 * will start the redeploy process and the initial response will show
+	 * information about the application being redeployed – however the
+	 * redeployment process will proceed after the response is returned. The
+	 * user is expected to continue checking the application status using the
+	 * applicationGetStatus method until the process is complete.
+	 * 
+	 * ignoreFailures and servers parameter values are not specified. for more
+	 * detailed see {@link ApplicationRedeployRequest}.
+	 * 
+	 * @return information about redeployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationsList applicationRedeploy(String appId)
+			throws WebApiException {
+		return applicationRedeploy(appId, (Boolean) null);
 	}
 
 	/**
