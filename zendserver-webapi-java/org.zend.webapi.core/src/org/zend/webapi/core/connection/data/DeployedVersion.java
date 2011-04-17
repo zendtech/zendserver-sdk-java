@@ -7,34 +7,23 @@
  *******************************************************************************/
 package org.zend.webapi.core.connection.data;
 
-import org.zend.webapi.core.connection.data.values.ApplicationStatus;
-
 /**
  * Information about a specific deployed version of an application.
  * 
  * @author Wojtek, 2011
  * 
  */
-public class DeployedVersionInfo extends AbstractResponseData {
+public class DeployedVersion extends AbstractResponseData {
 
-	private String id;
 	private String version;
-	private ApplicationStatus status;
 
-	protected DeployedVersionInfo() {
-		super(ResponseType.DEPLOYED_VERSION_INFO,
-				AbstractResponseData.BASE_PATH + "/versionInfo", 0);
+	protected DeployedVersion() {
+		super(ResponseType.DEPLOYED_VERSION, AbstractResponseData.BASE_PATH
+				+ "/deployedVersion", 0);
 	}
 
-	protected DeployedVersionInfo(String prefix, int occurrence) {
-		super(ResponseType.DEPLOYED_VERSION_INFO, prefix, occurrence);
-	}
-
-	/**
-	 * @return Zend Server's internal ID of the deployed version.
-	 */
-	public String getId() {
-		return id;
+	protected DeployedVersion(String prefix, int occurrence) {
+		super(ResponseType.DEPLOYED_VERSION, prefix, occurrence);
 	}
 
 	/**
@@ -44,13 +33,6 @@ public class DeployedVersionInfo extends AbstractResponseData {
 		return version;
 	}
 
-	/**
-	 * @return Deployed version status (see {@link ApplicationStatus}).
-	 */
-	public ApplicationStatus getStatus() {
-		return status;
-	}
-
 	public boolean accept(IResponseDataVisitor visitor) {
 		if (visitor.preVisit(this)) {
 			return visitor.visit(this);
@@ -58,16 +40,8 @@ public class DeployedVersionInfo extends AbstractResponseData {
 		return false;
 	}
 
-	protected void setStatus(ApplicationStatus status) {
-		this.status = status;
-	}
-
 	protected void setVersion(String version) {
 		this.version = version;
-	}
-
-	protected void setId(String id) {
-		this.id = id;
 	}
 
 }

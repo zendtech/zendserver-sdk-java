@@ -429,7 +429,8 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
-			final HashMap<String, String> userParam) throws WebApiException {
+			final HashMap<String, String> userParam, final String userAppName)
+			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_DEPLOY, new IRequestInitializer() {
 
@@ -442,6 +443,9 @@ public class WebApiClient {
 						}
 						if (userParam != null) {
 							deployRequest.setUserParams(userParam);
+						}
+						if (userAppName != null) {
+							deployRequest.setUserAppName(userAppName);
 						}
 					}
 				});
@@ -457,8 +461,9 @@ public class WebApiClient {
 	 * to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
-	 * userParam parameter value is not specified. for more detailed see
-	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * appUserName and userParam parameter values are not specified. for more
+	 * detailed see {@link ApplicationDeployRequest}
 	 * 
 	 * @return information about deployed application
 	 * @throws WebApiException
@@ -466,7 +471,8 @@ public class WebApiClient {
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final Boolean ignoreFailures)
 			throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null);
+		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
+				null);
 	}
 
 	/**
@@ -478,8 +484,8 @@ public class WebApiClient {
 	 * to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
-	 * ignoreFailures parameter value is not specified. for more detailed see
-	 * {@link ApplicationDeployRequest}.
+	 * appUserName and ignoreFailures parameter values are not specified. for
+	 * more detailed see {@link ApplicationDeployRequest}
 	 * 
 	 * @return information about deployed application
 	 * @throws WebApiException
@@ -487,7 +493,27 @@ public class WebApiClient {
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final HashMap<String, String> userParam)
 			throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, null, userParam);
+		return applicationDeploy(appPackage, baseUrl, null, userParam, null);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * ignoreFailures, userParam and userAppName parameter values are not
+	 * specified. for more detailed see {@link ApplicationDeployRequest}
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl) throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, null, null, null);
 	}
 
 	/**
@@ -506,8 +532,75 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
-			final String baseUrl) throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, null, null);
+			final String baseUrl, final String userAppName)
+			throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, null, null, userAppName);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * ignoreFailures parameter value is not specified. for more detailed see
+	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final HashMap<String, String> userParam,
+			final String userAppName) throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, null, userParam,
+				userAppName);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * userAppName parameter value is not specified. for more detailed see
+	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final Boolean ignoreFailures,
+			final HashMap<String, String> userParam) throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, ignoreFailures,
+				userParam, null);
+	}
+
+	/**
+	 * Deploy a new application to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the application is
+	 * uploaded and verified, and the initial response will show information
+	 * about the application being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the application status using the
+	 * applicationGetStatus method until the deployment process is complete.
+	 * 
+	 * userParam parameter value is not specified. for more detailed see
+	 * {@link ApplicationDeployRequest}.
+	 * 
+	 * @return information about deployed application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationDeploy(final File appPackage,
+			final String baseUrl, final Boolean ignoreFailures,
+			final String userAppName) throws WebApiException {
+		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
+				userAppName);
 	}
 
 	/**

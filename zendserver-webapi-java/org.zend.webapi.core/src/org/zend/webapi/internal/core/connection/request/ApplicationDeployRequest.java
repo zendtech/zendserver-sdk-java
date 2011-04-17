@@ -143,6 +143,16 @@ public class ApplicationDeployRequest extends AbstractRequest {
 		addParameter("userParam", params);
 	}
 
+	/**
+	 * Free text for user defined application identifier; if not specified, the
+	 * baseUrl parameter will be used.
+	 * 
+	 * @param userAppName
+	 */
+	public void setUserAppName(String userAppName) {
+		addParameter("userAppName", userAppName);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -171,4 +181,5 @@ public class ApplicationDeployRequest extends AbstractRequest {
 				APPLICATION_PACKAGE);
 		request.setEntity(rep);
 	}
+
 }

@@ -300,7 +300,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = applicationsList.getPrefix();
 
 		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/application");
+				.getNodes(currentPath + "/applicationInfo");
 		final int size = nodes.size();
 		if (size == 0) {
 			return false;
@@ -311,7 +311,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 				size);
 		for (int index = 0; index < size; index++) {
 			applicationsInfo.add(new ApplicationInfo(currentPath
-					+ "/application", index));
+					+ "/applicationInfo", index));
 		}
 
 		applicationsList.setApplicationsInfo(applicationsInfo);
@@ -331,12 +331,22 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/appName", occurrence);
 		applicationInfo.setAppName(value);
 
+		value = getValue(currentPath + "/userAppName", occurrence);
+		applicationInfo.setUserAppName(value);
+
+		value = getValue(currentPath + "/installedLocation", occurrence);
+		applicationInfo.setInstalledLocation(value);
+
 		value = getValue(currentPath + "/status", occurrence);
 		applicationInfo.setStatus(ApplicationStatus.byName(value));
 
-		final DeployedVersionsList versionsList = new DeployedVersionsList(
-				currentPath + "/versions");
-		applicationInfo.setDeployedVersionsList(versionsList);
+		final ApplicationServers applicationServers = new ApplicationServers(
+				currentPath + "/servers");
+		applicationInfo.setServers(applicationServers);
+
+		final DeployedVersions deployedVersions = new DeployedVersions(
+				currentPath + "/deployedVersions");
+		applicationInfo.setDeployedVersions(deployedVersions);
 
 		final MessageList messageList = new MessageList(currentPath
 				+ "/messageList");
@@ -345,41 +355,69 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
-	public boolean preVisit(DeployedVersionsList versions) {
+	public boolean preVisit(DeployedVersions versions) {
 		String currentPath = versions.getPrefix();
 
 		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/versionInfo");
+				.getNodes(currentPath + "/deployedVersion");
 		final int size = nodes.size();
 		if (size == 0) {
 			return false;
 		}
 
-		// build version info list
-		List<DeployedVersionInfo> versionsInfo = new ArrayList<DeployedVersionInfo>(
+		// build versions list
+		List<DeployedVersion> versionsInfo = new ArrayList<DeployedVersion>(
 				size);
 		for (int index = 0; index < size; index++) {
-			versionsInfo.add(new DeployedVersionInfo(currentPath
-					+ "/versionInfo", index));
+			versionsInfo.add(new DeployedVersion(currentPath
+					+ "/deployedVersion", index));
 		}
 
-		versions.setDeployedVersionInfo(versionsInfo);
+		versions.setDeployedVersions(versionsInfo);
 		return true;
 	}
 
-	public boolean preVisit(DeployedVersionInfo versionInfo) {
-		String currentPath = versionInfo.getPrefix();
-		int occurrence = versionInfo.getOccurrence();
+	public boolean preVisit(DeployedVersion version) {
+		String currentPath = version.getPrefix();
+		int occurrence = version.getOccurrence();
+		String value = getValue(currentPath, occurrence);
+		version.setVersion(value);
+		return true;
+	}
+
+	public boolean preVisit(ApplicationServers serversList) {
+		String currentPath = serversList.getPrefix();
+
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/applicationServer");
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+
+		// build servers info list
+		List<ApplicationServer> servers = new ArrayList<ApplicationServer>(size);
+		for (int index = 0; index < size; index++) {
+			servers.add(new ApplicationServer(currentPath
+					+ "/applicationServer", index));
+		}
+
+		serversList.setAapplicationServers(servers);
+		return true;
+	}
+
+	public boolean preVisit(ApplicationServer applicationServer) {
+		String currentPath = applicationServer.getPrefix();
+		int occurrence = applicationServer.getOccurrence();
 
 		String value = getValue(currentPath + "/id", occurrence);
-		versionInfo.setId(value);
+		applicationServer.setId(parseNumberIfExists(value));
 
-		value = getValue(currentPath + "/version", occurrence);
-		versionInfo.setVersion(value);
+		value = getValue(currentPath + "/deployedVersion", occurrence);
+		applicationServer.setDeployedVersion(value);
 
 		value = getValue(currentPath + "/status", occurrence);
-		versionInfo.setStatus(ApplicationStatus.byName(value));
-
+		applicationServer.setStatus(ApplicationStatus.byName(value));
 		return true;
 	}
 

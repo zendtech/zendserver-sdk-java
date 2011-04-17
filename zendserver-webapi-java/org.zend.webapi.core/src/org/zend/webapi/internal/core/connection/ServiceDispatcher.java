@@ -20,7 +20,6 @@ import org.restlet.data.Preference;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.engine.http.header.HeaderConstants;
-import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
@@ -61,17 +60,17 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
 			if (handle == null) {
-				throw new WebApiCommunicationError(); 
+				throw new WebApiCommunicationError();
 			}
-			
+
 			final DataDigster dataDigster = new DataDigster(request, handle);
 
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-			
+
 			if (!request.isExpectedResponseCode(responseCode)) {
-				throw new UnexpectedResponseCode(responseCode, handle); 
+				throw new UnexpectedResponseCode(responseCode, handle);
 			}
 			dataDigster.digest();
 
@@ -109,7 +108,8 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 		// reference
 		final Reference baseRef = new Reference(webApiRequest.getHost());
-		final Reference reference = new Reference(baseRef, webApiRequest.getUri());
+		final Reference reference = new Reference(baseRef,
+				webApiRequest.getUri());
 		request.setResourceRef(reference);
 
 		// method
@@ -149,7 +149,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		if (parameters != null) {
 			webApiRequest.applyParameters(request);
 		}
-		
+
 		return request;
 	}
 }

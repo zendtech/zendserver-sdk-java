@@ -16,30 +16,31 @@ import java.util.List;
  * @author Wojtek, 2011
  * 
  */
-public class DeployedVersionsList extends AbstractResponseData {
+public class DeployedVersions extends AbstractResponseData {
 
-	private List<DeployedVersionInfo> deployedVersionInfo;
+	private List<DeployedVersion> deployedVersions;
 
-	protected DeployedVersionsList() {
-		super(ResponseType.DEPLOYED_VERSIONS_LIST, BASE_PATH + "/versions");
+	protected DeployedVersions() {
+		super(ResponseType.DEPLOYED_VERSIONS_LIST, BASE_PATH
+				+ "/deployedVersions");
 	}
 
-	protected DeployedVersionsList(String prefix) {
+	protected DeployedVersions(String prefix) {
 		super(ResponseType.DEPLOYED_VERSIONS_LIST, prefix);
 	}
 
 	/**
 	 * @return Version information. May appear 0 or more times
 	 */
-	public List<DeployedVersionInfo> getDeployedVersionInfo() {
-		return deployedVersionInfo;
+	public List<DeployedVersion> getDeployedVersions() {
+		return deployedVersions;
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {
 		boolean visit = visitor.preVisit(this);
 		if (visit) {
-			if (getDeployedVersionInfo() != null) {
-				for (DeployedVersionInfo info : getDeployedVersionInfo()) {
+			if (getDeployedVersions() != null) {
+				for (DeployedVersion info : getDeployedVersions()) {
 					info.accept(visitor);
 				}
 			}
@@ -48,9 +49,8 @@ public class DeployedVersionsList extends AbstractResponseData {
 		return false;
 	}
 
-	protected void setDeployedVersionInfo(
-			List<DeployedVersionInfo> deployedVersionInfo) {
-		this.deployedVersionInfo = deployedVersionInfo;
+	protected void setDeployedVersions(List<DeployedVersion> deployedVersions) {
+		this.deployedVersions = deployedVersions;
 	}
 
 }

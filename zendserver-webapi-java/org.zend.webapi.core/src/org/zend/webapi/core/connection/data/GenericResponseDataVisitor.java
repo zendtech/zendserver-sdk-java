@@ -62,19 +62,19 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
-	public boolean preVisit(DeployedVersionInfo deployedVersionInfo) {
+	public boolean preVisit(DeployedVersion deployedVersionInfo) {
 		return true;
 	}
 
-	public boolean visit(DeployedVersionInfo deployedVersionInfo) {
+	public boolean visit(DeployedVersion deployedVersionInfo) {
 		return true;
 	}
 
-	public boolean preVisit(DeployedVersionsList deployedVersionsList) {
+	public boolean preVisit(DeployedVersions deployedVersionsList) {
 		return true;
 	}
 
-	public boolean visit(DeployedVersionsList deployedVersionsList) {
+	public boolean visit(DeployedVersions deployedVersionsList) {
 		return true;
 	}
 
@@ -91,6 +91,22 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	}
 
 	public boolean visit(ApplicationsList applicationsList) {
+		return true;
+	}
+
+	public boolean preVisit(ApplicationServer applicationServer) {
+		return true;
+	}
+
+	public boolean visit(ApplicationServer applicationServer) {
+		return true;
+	}
+
+	public boolean preVisit(ApplicationServers applicationServersList) {
+		return true;
+	}
+
+	public boolean visit(ApplicationServers applicationServersList) {
 		return true;
 	}
 

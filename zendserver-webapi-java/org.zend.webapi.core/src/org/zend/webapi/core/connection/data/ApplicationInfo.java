@@ -20,8 +20,11 @@ public class ApplicationInfo extends AbstractResponseData {
 	private int id;
 	private String baseUrl;
 	private String appName;
+	private String userAppName;
+	private String installedLocation;
 	private ApplicationStatus status;
-	private DeployedVersionsList deployedVersionsList;
+	private ApplicationServers servers;
+	private DeployedVersions deployedVersions;
 	private MessageList messageList;
 
 	protected ApplicationInfo(String prefix, int occurrence) {
@@ -29,7 +32,7 @@ public class ApplicationInfo extends AbstractResponseData {
 	}
 
 	protected ApplicationInfo() {
-		this(BASE_PATH + "/application", 0);
+		this(BASE_PATH + "/applicationInfo", 0);
 	}
 
 	/**
@@ -54,6 +57,21 @@ public class ApplicationInfo extends AbstractResponseData {
 	}
 
 	/**
+	 * @return Free text for user defined application identifier.
+	 */
+	public String getUserAppName() {
+		return userAppName;
+	}
+
+	/**
+	 * @return The location on the file system where the application's source
+	 *         code is located.
+	 */
+	public String getInstalledLocation() {
+		return installedLocation;
+	}
+
+	/**
 	 * @return Application status (see {@link ApplicationStatus}).
 	 */
 	public ApplicationStatus getStatus() {
@@ -61,10 +79,17 @@ public class ApplicationInfo extends AbstractResponseData {
 	}
 
 	/**
-	 * @return List of deployed versions for this application
+	 * @return Breakdown of the the application status and version per server.
 	 */
-	public DeployedVersionsList getDeployedVersionsList() {
-		return deployedVersionsList;
+	public ApplicationServers getServers() {
+		return servers;
+	}
+
+	/**
+	 * @return List of deployed versions for this application.
+	 */
+	public DeployedVersions getDeployedVersions() {
+		return deployedVersions;
 	}
 
 	/**
@@ -77,8 +102,11 @@ public class ApplicationInfo extends AbstractResponseData {
 	public boolean accept(IResponseDataVisitor visitor) {
 		boolean visit = visitor.preVisit(this);
 		if (visit) {
-			if (this.getDeployedVersionsList() != null) {
-				this.getDeployedVersionsList().accept(visitor);
+			if (this.getServers() != null) {
+				this.getServers().accept(visitor);
+			}
+			if (this.getDeployedVersions() != null) {
+				this.getDeployedVersions().accept(visitor);
 			}
 			if (this.getMessageList() != null) {
 				this.getMessageList().accept(visitor);
@@ -100,13 +128,24 @@ public class ApplicationInfo extends AbstractResponseData {
 		this.appName = appName;
 	}
 
+	protected void setUserAppName(String userAppName) {
+		this.userAppName = userAppName;
+	}
+
+	protected void setInstalledLocation(String installedLocation) {
+		this.installedLocation = installedLocation;
+	}
+
 	protected void setStatus(ApplicationStatus status) {
 		this.status = status;
 	}
 
-	protected void setDeployedVersionsList(
-			DeployedVersionsList deployedVersionsList) {
-		this.deployedVersionsList = deployedVersionsList;
+	protected void setServers(ApplicationServers servers) {
+		this.servers = servers;
+	}
+
+	protected void setDeployedVersions(DeployedVersions deployedVersions) {
+		this.deployedVersions = deployedVersions;
 	}
 
 	protected void setMessageList(MessageList messageList) {

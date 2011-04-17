@@ -87,7 +87,7 @@ public class TestCommonServices extends AbstractTestServer {
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
 				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
-						true, null);
+						true, null, null);
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 

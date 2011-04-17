@@ -5,19 +5,31 @@
 		<method>applicationDeploy</method>
 	</requestData>
 	<responseData>
-		<application>
-		<id>1</id>
-		<appName>Home CMS</appName>
-		<baseUrl>http://example.com/</baseUrl>
-		<status>staging</status>
-		<versions>
-			<versionInfo>
+		<applicationInfo>
 			<id>1</id>
-			<status>inactive</status>
-			<version>1.1</version>
-			</versionInfo>
-		</versions>
-		<messageList />
-		</application>
+			<appName>Home CMS</appName>
+			<userAppName>User Name</userAppName>
+			<baseUrl>http://example.com/myapp</baseUrl>
+			<installedLocation>/usr/local/aaa</installedLocation>
+			<status>staging</status>
+			<servers>
+				<applicationServer>
+					<id>2</id>
+					<deployedVersion>2.14.0</deployedVersion>
+					<status>OK</status>
+				</applicationServer>
+				<applicationServer>
+					<id>2</id>
+					<deployedVersion>2.14.0</deployedVersion>
+					<status>OK</status>
+				</applicationServer>
+			</servers>
+			<deployedVersions>
+				<deployedVersion>1.4</deployedVersion>
+				<deployedVersion>1.5</deployedVersion>
+				<deployedVersion>1.6</deployedVersion>
+			</deployedVersions>
+			<messageList />
+		</applicationInfo>
 	</responseData>
 </zendServerAPIResponse>

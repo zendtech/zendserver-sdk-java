@@ -19,6 +19,7 @@ import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.request.AbstractRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
 import org.zend.webapi.test.AbstractTestServer;
@@ -63,6 +64,27 @@ public class TestCommonRequestParams extends AbstractTestServer {
 
 		final AbstractRequest request = (AbstractRequest) response.getRequest();
 		Assert.assertEquals("parallelRestart=TRUE&servers%5B0%5D=my-server",
+				request.getParametersAsString());
+	}
+
+	@Test
+	public void testApplicationGetStatus() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.applicationGetStatus(), "applicationGetStatus",
+				ResponseCode.OK);
+		IResponse response = Configuration.getClient().handle(
+				WebApiMethodType.APPLICATION_GET_STATUS,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationGetStatusRequest r = (ApplicationGetStatusRequest) request;
+						r.setApplications("test1", "test2");
+					}
+				});
+
+		final AbstractRequest request = (AbstractRequest) response.getRequest();
+		Assert.assertEquals(
+				"applications%5B0%5D=test1&applications%5B1%5D=test2",
 				request.getParametersAsString());
 	}
 
