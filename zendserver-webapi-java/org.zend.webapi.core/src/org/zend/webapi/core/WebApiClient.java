@@ -31,6 +31,7 @@ import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
@@ -620,7 +621,90 @@ public class WebApiClient {
 	public ApplicationInfo applicationUpdate(final int appId,
 			final File appPackage, final Boolean ignoreFailures,
 			final HashMap<String, String> userParam) throws WebApiException {
-		return null;
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_UPDATE, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationUpdateRequest updateRequest = (ApplicationUpdateRequest) request;
+						updateRequest.setAppId(appId);
+						updateRequest.setAppPackage(appPackage);
+						if (ignoreFailures != null) {
+							updateRequest.setIgnoreFailures(ignoreFailures);
+						}
+						if (userParam != null) {
+							updateRequest.setUserParams(userParam);
+						}
+					}
+				});
+		return (ApplicationInfo) handle.getData();
+	}
+
+	/**
+	 * Update/redeploy an existing application. The package provided must be of
+	 * the same application. Additionally any new parameters or new values to
+	 * existing parameters must be provided. This process is asynchronous – the
+	 * initial request will wait until the package is uploaded and verified, and
+	 * the initial response will show information about the new version being
+	 * deployed – however the staging and activation process will proceed after
+	 * the response is returned. The user is expected to continue checking the
+	 * application status using the applicationGetStatus method until the
+	 * deployment process is complete.
+	 * 
+	 * userParam parameter value is not specified. for more detailed see
+	 * {@link ApplicationUpdateRequest}.
+	 * 
+	 * @return information about updated application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationUpdate(final int appId,
+			final File appPackage, final Boolean ignoreFailures)
+			throws WebApiException {
+		return applicationUpdate(appId, appPackage, ignoreFailures, null);
+	}
+
+	/**
+	 * Update/redeploy an existing application. The package provided must be of
+	 * the same application. Additionally any new parameters or new values to
+	 * existing parameters must be provided. This process is asynchronous – the
+	 * initial request will wait until the package is uploaded and verified, and
+	 * the initial response will show information about the new version being
+	 * deployed – however the staging and activation process will proceed after
+	 * the response is returned. The user is expected to continue checking the
+	 * application status using the applicationGetStatus method until the
+	 * deployment process is complete.
+	 * 
+	 * ignoreFailures parameter value is not specified. for more detailed see
+	 * {@link ApplicationUpdateRequest}.
+	 * 
+	 * @return information about updated application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationUpdate(final int appId,
+			final File appPackage, final HashMap<String, String> userParam)
+			throws WebApiException {
+		return applicationUpdate(appId, appPackage, null, userParam);
+	}
+
+	/**
+	 * Update/redeploy an existing application. The package provided must be of
+	 * the same application. Additionally any new parameters or new values to
+	 * existing parameters must be provided. This process is asynchronous – the
+	 * initial request will wait until the package is uploaded and verified, and
+	 * the initial response will show information about the new version being
+	 * deployed – however the staging and activation process will proceed after
+	 * the response is returned. The user is expected to continue checking the
+	 * application status using the applicationGetStatus method until the
+	 * deployment process is complete.
+	 * 
+	 * ignoreFailures and userParam parameter values are not specified. for more
+	 * detailed see {@link ApplicationDeployRequest}
+	 * 
+	 * @return information about updated application
+	 * @throws WebApiException
+	 */
+	public ApplicationInfo applicationUpdate(final int appId,
+			final File appPackage) throws WebApiException {
+		return applicationUpdate(appId, appPackage, null, null);
 	}
 
 	/**

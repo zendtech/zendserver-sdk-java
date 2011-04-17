@@ -3,6 +3,7 @@ package org.zend.webapi.test.connection.services;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.zend.webapi.core.WebApiException;
@@ -97,7 +98,40 @@ public class TestCommonServices extends AbstractTestServer {
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
 				.applicationUpdate(1, File.createTempFile("test", "aaa"), true,
+						new HashMap<String, String>());
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationUpdateNullUserParam() throws WebApiException,
+			IOException {
+		initMock(handler.applicationUpdate(), "applicationUpdate",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationUpdate(1, File.createTempFile("test", "aaa"), true,
 						null);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationUpdateNullIgnoreAndUserParam()
+			throws WebApiException, IOException {
+		initMock(handler.applicationUpdate(), "applicationUpdate",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationUpdate(1, File.createTempFile("test", "aaa"), null,
+						null);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationUpdateNullIgnore() throws WebApiException,
+			IOException {
+		initMock(handler.applicationUpdate(), "applicationUpdate",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationUpdate(1, File.createTempFile("test", "aaa"), null,
+						new HashMap<String, String>());
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
