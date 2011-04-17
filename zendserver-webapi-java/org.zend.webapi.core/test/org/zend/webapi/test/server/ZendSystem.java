@@ -104,4 +104,8 @@ public class ZendSystem {
 		return handler.applicationRedeploy();
 	}
 
+	public ServerResponse clusterReconfigureServer() {
+		return handler.clusterReconfigureServer();
+	}
+
 }

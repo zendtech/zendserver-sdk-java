@@ -38,6 +38,7 @@ import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterReconfigureServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterRemoveServerRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
@@ -288,6 +289,44 @@ public class WebApiClient {
 					}
 				});
 		return (ServerInfo) handle.getData();
+	}
+
+	/**
+	 * Reconfigure a cluster member to match the cluster's profile. On a ZSCM
+	 * with no valid license, this operation will fail.
+	 * 
+	 * @return server info
+	 * @throws WebApiException
+	 */
+	public ServerInfo clusterReconfigureServer(final String serverId,
+			final Boolean doRestart) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CLUSTER_RECONFIGURE_SERVER,
+				new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						final ClusterReconfigureServerRequest r = (ClusterReconfigureServerRequest) request;
+						r.setServerId(serverId);
+						if (doRestart != null)
+							r.setDoRestart(doRestart);
+					}
+				});
+		return (ServerInfo) handle.getData();
+	}
+
+	/**
+	 * Reconfigure a cluster member to match the cluster's profile. On a ZSCM
+	 * with no valid license, this operation will fail.
+	 * 
+	 * 
+	 * doRestart parameter value is not specified. (for more details
+	 * {@link ClusterReconfigureServerRequest}
+	 * 
+	 * @return server info
+	 * @throws WebApiException
+	 */
+	public ServerInfo clusterReconfigureServer(final String serverId)
+			throws WebApiException {
+		return clusterReconfigureServer(serverId, null);
 	}
 
 	/**

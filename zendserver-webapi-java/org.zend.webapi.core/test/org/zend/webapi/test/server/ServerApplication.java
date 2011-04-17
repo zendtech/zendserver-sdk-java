@@ -167,6 +167,15 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet clusterReconfigureServer = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.clusterReconfigureServer();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -178,6 +187,8 @@ public class ServerApplication extends Application {
 				clusterDisableServer);
 		router.attach("/ZendServerManager/Api/clusterEnableServer",
 				clusterEnableServer);
+		router.attach("/ZendServerManager/Api/clusterReconfigureServer",
+				clusterReconfigureServer);
 		router.attach("/ZendServerManager/Api/restartPhp", restartPhp);
 		router.attach("/ZendServerManager/Api/configurationExport",
 				configurationExport);

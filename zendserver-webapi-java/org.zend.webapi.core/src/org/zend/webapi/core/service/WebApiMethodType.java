@@ -18,6 +18,7 @@ import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
+import org.zend.webapi.internal.core.connection.request.ClusterReconfigureServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterRemoveServerRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
@@ -72,6 +73,12 @@ public enum WebApiMethodType {
 	 */
 	CLUSTER_ENABLE_SERVER("clusterEnableServer",
 			ClusterEnableServerRequest.class),
+
+	/**
+	 * @see ClusterEnableServerRequest
+	 */
+	CLUSTER_RECONFIGURE_SERVER("clusterReconfigureServer",
+			ClusterReconfigureServerRequest.class),
 
 	/**
 	 * @see RestartPhpRequest

@@ -80,6 +80,15 @@ public class TestDataDigester {
 	}
 
 	@Test
+	public void testClusterReconfigureServer() throws Exception {
+		final ServerInfo responseData = (ServerInfo) getResponseData(
+				"clusterReconfigureServer.xml",
+				IResponseData.ResponseType.SERVER_INFO);
+		Assert.assertEquals(responseData.getAddress(),
+				"https://www-02.local:10082/ZendServer");
+	}
+
+	@Test
 	public void testClusterDisableServer() throws Exception {
 		final ServerInfo responseData = (ServerInfo) getResponseData(
 				"clusterDisableServer.xml",

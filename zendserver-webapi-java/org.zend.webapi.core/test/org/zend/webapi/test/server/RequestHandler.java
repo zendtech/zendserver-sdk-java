@@ -32,4 +32,6 @@ public interface RequestHandler {
 
 	ServerResponse applicationRedeploy();
 
+	ServerResponse clusterReconfigureServer();
+
 }

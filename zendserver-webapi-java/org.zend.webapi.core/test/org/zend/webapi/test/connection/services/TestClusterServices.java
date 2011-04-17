@@ -110,4 +110,24 @@ public class TestClusterServices extends TestCommonServices {
 		Assert.assertTrue(isCorrect);
 	}
 
+	@Test
+	public void testClusterReconfigureServer() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterReconfigureServer(),
+				"clusterReconfigureServer", ResponseCode.OK);
+		ServerInfo serverInfo = Configuration.getClient()
+				.clusterReconfigureServer("zend1");
+		DataUtils.checkValidServerInfo(serverInfo);
+	}
+
+	@Test
+	public void testClusterReconfigureServerDoRestart() throws WebApiException,
+			MalformedURLException {
+		initMock(handler.clusterReconfigureServer(),
+				"clusterReconfigureServer", ResponseCode.OK);
+		ServerInfo serverInfo = Configuration.getClient()
+				.clusterReconfigureServer("zend1", true);
+		DataUtils.checkValidServerInfo(serverInfo);
+	}
+
 }
