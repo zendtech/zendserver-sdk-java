@@ -23,8 +23,8 @@ public class ApplicationServers extends AbstractResponseData {
 		super(ResponseType.APPLICATION_SERVERS_LIST, BASE_PATH + "/servers");
 	}
 
-	protected ApplicationServers(String prefix) {
-		super(ResponseType.APPLICATION_SERVERS_LIST, prefix);
+	protected ApplicationServers(String prefix, int occurrance) {
+		super(ResponseType.APPLICATION_SERVERS_LIST, prefix, occurrance);
 	}
 
 	/**

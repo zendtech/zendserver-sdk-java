@@ -22,11 +22,11 @@ public class DeployedVersions extends AbstractResponseData {
 
 	protected DeployedVersions() {
 		super(ResponseType.DEPLOYED_VERSIONS_LIST, BASE_PATH
-				+ "/deployedVersions");
+				+ "/deployedVersions", 0);
 	}
 
-	protected DeployedVersions(String prefix) {
-		super(ResponseType.DEPLOYED_VERSIONS_LIST, prefix);
+	protected DeployedVersions(String prefix, int occurance) {
+		super(ResponseType.DEPLOYED_VERSIONS_LIST, prefix, occurance);
 	}
 
 	/**

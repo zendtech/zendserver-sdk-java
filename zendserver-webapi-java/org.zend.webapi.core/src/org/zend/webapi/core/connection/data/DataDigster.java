@@ -10,7 +10,6 @@ package org.zend.webapi.core.connection.data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.ext.xml.NodeList;
 import org.restlet.ext.xml.XmlRepresentation;
 import org.restlet.representation.Representation;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
@@ -92,22 +92,43 @@ public class DataDigster extends GenericResponseDataVisitor {
 	}
 
 	/**
-	 * Helper method to get a value out of a given XPath
+	 * Helper method which returns the number of nodes with specified name which
+	 * occur before the current node (occurrence) in the whole document.
 	 * 
-	 * @return value of the XPath
+	 * @return node number
 	 */
-	private String[] getValues(String path) {
+	private int getPreviousNodesLength(String path, String nodeName,
+			int occurrence) {
+		if (occurrence == 0) {
+			return 0;
+		}
 		final NodeList nodes = ((XmlRepresentation) representation)
 				.getNodes(path);
 		if (nodes.size() == 0) {
-			return null;
+			return 0;
 		}
-		String[] values = new String[nodes.size()];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = nodes.get(i).getTextContent().trim();
+		int result = 0;
+		for (int i = 0; i < occurrence; i++) {
+			Element node = (Element) nodes.get(i);
+			result += node.getElementsByTagName(nodeName).getLength();
+		}
+		return result;
+	}
 
+	/**
+	 * Helper method which returns number of nodes with specified name in a
+	 * current node (occurrence).
+	 * 
+	 * @return node number
+	 */
+	private int getNodesLength(String path, String nodeName, int occurrence) {
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(path);
+		if (nodes.size() == 0) {
+			return 0;
 		}
-		return values;
+		Element node = (Element) nodes.get(occurrence);
+		return node.getElementsByTagName(nodeName).getLength();
 	}
 
 	public boolean preVisit(SystemInfo systemInfo) {
@@ -138,8 +159,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 				+ "/serverLicenseInfo"));
 		systemInfo.setManagerLicenseInfo(new LicenseInfo(currentPath
 				+ "/managerLicenseInfo"));
-		systemInfo
-				.setMessageList(new MessageList(currentPath + "/messageList"));
+		systemInfo.setMessageList(new MessageList(currentPath + "/messageList",
+				systemInfo.getOccurrence()));
 
 		return true;
 	}
@@ -182,19 +203,32 @@ public class DataDigster extends GenericResponseDataVisitor {
 	 * </pre>
 	 */
 	public boolean preVisit(MessageList messageList) {
-		String currentPath = messageList.getPrefix();
-		String[] values;
+		// build message info list
+		List<String> errors = getMessageValues(messageList, "error");
+		messageList.setError(errors.size() > 0 ? errors : null);
 
-		values = getValues(currentPath + "/info");
-		messageList.setInfo(values != null ? Arrays.asList(values) : null);
+		List<String> warnings = getMessageValues(messageList, "warning");
+		messageList.setWarning(warnings.size() > 0 ? warnings : null);
 
-		values = getValues(currentPath + "/warning");
-		messageList.setWarning(values != null ? Arrays.asList(values) : null);
-
-		values = getValues(currentPath + "/error");
-		messageList.setError(values != null ? Arrays.asList(values) : null);
+		List<String> infos = getMessageValues(messageList, "info");
+		messageList.setInfo(infos.size() > 0 ? infos : null);
 
 		return true;
+
+	}
+
+	private List<String> getMessageValues(MessageList messageList,
+			String nodeName) {
+		String currentPath = messageList.getPrefix();
+		final int size = getNodesLength(currentPath, nodeName,
+				messageList.getOccurrence());
+		final int previousSize = getPreviousNodesLength(currentPath, nodeName,
+				messageList.getOccurrence());
+		List<String> messages = new ArrayList<String>(size);
+		for (int index = previousSize; index < previousSize + size; index++) {
+			messages.add(getValue(currentPath + "/" + nodeName, index));
+		}
+		return messages;
 	}
 
 	public IResponseData getResponseData() {
@@ -267,7 +301,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		serverInfo.setStatus(ServerStatus.byName(value));
 
 		final MessageList messageList = new MessageList(currentPath
-				+ "/messageList");
+				+ "/messageList", occurrence);
 		serverInfo.setMessageList(messageList);
 
 		return true;
@@ -341,15 +375,15 @@ public class DataDigster extends GenericResponseDataVisitor {
 		applicationInfo.setStatus(ApplicationStatus.byName(value));
 
 		final ApplicationServers applicationServers = new ApplicationServers(
-				currentPath + "/servers");
+				currentPath + "/servers", occurrence);
 		applicationInfo.setServers(applicationServers);
 
 		final DeployedVersions deployedVersions = new DeployedVersions(
-				currentPath + "/deployedVersions");
+				currentPath + "/deployedVersions", occurrence);
 		applicationInfo.setDeployedVersions(deployedVersions);
 
 		final MessageList messageList = new MessageList(currentPath
-				+ "/messageList");
+				+ "/messageList", occurrence);
 		applicationInfo.setMessageList(messageList);
 
 		return true;
@@ -357,18 +391,20 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 	public boolean preVisit(DeployedVersions versions) {
 		String currentPath = versions.getPrefix();
+		final int size = getNodesLength(currentPath, "deployedVersion",
+				versions.getOccurrence());
 
-		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/deployedVersion");
-		final int size = nodes.size();
 		if (size == 0) {
 			return false;
 		}
 
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"deployedVersion", versions.getOccurrence());
+
 		// build versions list
 		List<DeployedVersion> versionsInfo = new ArrayList<DeployedVersion>(
 				size);
-		for (int index = 0; index < size; index++) {
+		for (int index = overallSize; index < overallSize + size; index++) {
 			versionsInfo.add(new DeployedVersion(currentPath
 					+ "/deployedVersion", index));
 		}
@@ -387,17 +423,19 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 	public boolean preVisit(ApplicationServers serversList) {
 		String currentPath = serversList.getPrefix();
+		final int size = getNodesLength(currentPath, "applicationServer",
+				serversList.getOccurrence());
 
-		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/applicationServer");
-		final int size = nodes.size();
 		if (size == 0) {
 			return false;
 		}
 
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"applicationServer", serversList.getOccurrence());
+
 		// build servers info list
 		List<ApplicationServer> servers = new ArrayList<ApplicationServer>(size);
-		for (int index = 0; index < size; index++) {
+		for (int index = overallSize; index < overallSize + size; index++) {
 			servers.add(new ApplicationServer(currentPath
 					+ "/applicationServer", index));
 		}

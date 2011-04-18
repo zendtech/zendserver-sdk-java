@@ -25,14 +25,14 @@ public class MessageList extends AbstractResponseData {
 	private List<String> warning;
 	private List<String> error;
 
-	protected MessageList(String prefix) {
-		super(ResponseType.MESSAGE_LIST, prefix);
+	protected MessageList(String prefix, int occurrance) {
+		super(ResponseType.MESSAGE_LIST, prefix, occurrance);
 	}
 
 	protected MessageList() {
-		this(AbstractResponseData.BASE_PATH + "/messageList");
+		this(AbstractResponseData.BASE_PATH + "/messageList", 0);
 	}
-	
+
 	/**
 	 * Info-level message (may appear 0 or more times)
 	 */

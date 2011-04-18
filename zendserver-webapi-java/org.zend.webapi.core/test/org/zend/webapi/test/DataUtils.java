@@ -168,8 +168,10 @@ public class DataUtils {
 	public static void checkValidDeployedVersions(DeployedVersions versionsList) {
 		Assert.assertNotNull(versionsList);
 		List<DeployedVersion> versions = versionsList.getDeployedVersions();
-		for (DeployedVersion versionInfo : versions) {
-			checkValidDeployedVersion(versionInfo);
+		if (versions != null) {
+			for (DeployedVersion versionInfo : versions) {
+				checkValidDeployedVersion(versionInfo);
+			}
 		}
 	}
 
