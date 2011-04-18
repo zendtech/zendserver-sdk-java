@@ -88,7 +88,76 @@ public class TestCommonServices extends AbstractTestServer {
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
 				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
-						true, null, null);
+						true, new HashMap<String, String>(), "test");
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy2() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						true);
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy3() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						new HashMap<String, String>());
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy4() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa");
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy5() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						"test");
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy6() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						new HashMap<String, String>(), "test");
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy7() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						true, new HashMap<String, String>());
+		DataUtils.checkValidApplicationInfo(applicationInfo);
+	}
+
+	@Test
+	public void testApplicationDeploy8() throws WebApiException, IOException {
+		initMock(handler.applicationDeploy(), "applicationDeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationInfo applicationInfo = Configuration.getClient()
+				.applicationDeploy(File.createTempFile("test", "aaa"), "aaaa",
+						true, "bbbb");
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
@@ -108,8 +177,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationUpdate(), "applicationUpdate",
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
-				.applicationUpdate(1, File.createTempFile("test", "aaa"), true,
-						null);
+				.applicationUpdate(1, File.createTempFile("test", "aaa"), true);
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
@@ -119,8 +187,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationUpdate(), "applicationUpdate",
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
-				.applicationUpdate(1, File.createTempFile("test", "aaa"), null,
-						null);
+				.applicationUpdate(1, File.createTempFile("test", "aaa"));
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
 
@@ -130,7 +197,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationUpdate(), "applicationUpdate",
 				ResponseCode.ACCEPTED);
 		ApplicationInfo applicationInfo = Configuration.getClient()
-				.applicationUpdate(1, File.createTempFile("test", "aaa"), null,
+				.applicationUpdate(1, File.createTempFile("test", "aaa"),
 						new HashMap<String, String>());
 		DataUtils.checkValidApplicationInfo(applicationInfo);
 	}
@@ -170,6 +237,16 @@ public class TestCommonServices extends AbstractTestServer {
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
 				.applicationRedeploy("1");
+		DataUtils.checkValidApplicationsList(applicationslist);
+	}
+
+	@Test
+	public void testApplicationRedeployNoIgnore() throws WebApiException,
+			IOException {
+		initMock(handler.applicationRedeploy(), "applicationRedeploy",
+				ResponseCode.ACCEPTED);
+		ApplicationsList applicationslist = Configuration.getClient()
+				.applicationRedeploy("1", "test1", "test2");
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 

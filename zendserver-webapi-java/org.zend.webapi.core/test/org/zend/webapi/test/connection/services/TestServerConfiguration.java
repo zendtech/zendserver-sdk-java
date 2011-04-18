@@ -124,7 +124,6 @@ public class TestServerConfiguration extends AbstractTestServer {
 		final String actual = outputStream.toString();
 		final InputStream resourceAsStream = new FileInputStream(new File(
 				ServerUtils.createFileName(CONFIG_FOLDER + "multipart.txt")));
-		System.out.println(actual);
 		String expected = BioUtils.toString(resourceAsStream);
 		expected = expected.replace("%filename%", file.getName());
 		Assert.assertEquals("Error comparing expected/actual", expected, actual);
