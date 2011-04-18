@@ -21,7 +21,7 @@
 					</applicationServer>
 					<applicationServer>
 						<id>2</id>
-						<deployedVersion>2.14.0</deployedVersion>
+						<deployedVersion>2.15.0</deployedVersion>
 						<status>OK</status>
 					</applicationServer>
 				</servers>
@@ -30,7 +30,9 @@
 					<deployedVersion>1.5</deployedVersion>
 					<deployedVersion>1.6</deployedVersion>
 				</deployedVersions>
-				<messageList />
+				<messageList>
+					<error>test error</error>
+				</messageList>
 			</applicationInfo>
 			<applicationInfo>
 				<id>2</id>
@@ -41,15 +43,19 @@
 				<status>uploaded</status>
 				<servers>
 					<applicationServer>
-						<id>2</id>
-						<deployedVersion>2.14.0</deployedVersion>
+						<id>4</id>
+						<deployedVersion>2.1.0</deployedVersion>
 						<status>OK</status>
 					</applicationServer>
 				</servers>
 				<deployedVersions>
-					<deployedVersion>1.4</deployedVersion>
+					<deployedVersion>1.6</deployedVersion>
 				</deployedVersions>
-				<messageList />
+				<messageList>
+					<error>test second error</error>
+					<info>test info</info>
+					<warning>test warning</warning>
+				</messageList>
 			</applicationInfo>
 		</applicationsList>
 	</responseData>
