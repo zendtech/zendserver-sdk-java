@@ -9,7 +9,10 @@ package org.zend.webapi.internal.core.connection.request;
 
 import java.util.Date;
 
+import org.restlet.Request;
+import org.restlet.data.MediaType;
 import org.restlet.data.Method;
+import org.restlet.representation.Representation;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -58,6 +61,10 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * 
  */
 public class ApplicationRedeployRequest extends AbstractRequest {
+	
+	public static final MediaType FORM = MediaType.register(
+			"application/x-www-form-urlencoded",
+			"Form");
 
 	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.ACCEPTED };
 
@@ -134,6 +141,13 @@ public class ApplicationRedeployRequest extends AbstractRequest {
 	 */
 	public ResponseType getExpectedResponseDataType() {
 		return ResponseType.APPLICATIONS_LIST;
+	}
+	
+	@Override
+	public void applyParameters(Request request) {
+		Representation rep = new MultipartRepresentation(getParameters(),
+				FORM);
+		request.setEntity(rep);
 	}
 
 }
