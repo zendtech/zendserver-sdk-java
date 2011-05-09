@@ -786,7 +786,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(final String appId,
+	public ApplicationsList applicationRedeploy(final int appId,
 			final Boolean ignoreFailures, final String... servers)
 			throws WebApiException {
 		final IResponse handle = this.handle(
@@ -822,7 +822,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(String appId, String... servers)
+	public ApplicationsList applicationRedeploy(int appId, String... servers)
 			throws WebApiException {
 		return applicationRedeploy(appId, null, servers);
 	}
@@ -842,7 +842,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(String appId)
+	public ApplicationsList applicationRedeploy(int appId)
 			throws WebApiException {
 		return applicationRedeploy(appId, (Boolean) null);
 	}

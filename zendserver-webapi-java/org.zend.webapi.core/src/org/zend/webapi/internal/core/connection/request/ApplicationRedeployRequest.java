@@ -96,7 +96,7 @@ public class ApplicationRedeployRequest extends AbstractRequest {
 	 * 
 	 * @param appId
 	 */
-	public void setAppId(String appId) {
+	public void setAppId(int appId) {
 		addParameter("appId", appId);
 	}
 

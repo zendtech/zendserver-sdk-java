@@ -216,7 +216,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationRedeploy(), "applicationRedeploy",
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
-				.applicationRedeploy("1", false, "test1", "test2");
+				.applicationRedeploy(1, false, "test1", "test2");
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 
@@ -226,7 +226,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationRedeploy(), "applicationRedeploy",
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
-				.applicationRedeploy("1", false);
+				.applicationRedeploy(1, false);
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 
@@ -236,7 +236,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationRedeploy(), "applicationRedeploy",
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
-				.applicationRedeploy("1");
+				.applicationRedeploy(8);
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 
@@ -246,7 +246,7 @@ public class TestCommonServices extends AbstractTestServer {
 		initMock(handler.applicationRedeploy(), "applicationRedeploy",
 				ResponseCode.ACCEPTED);
 		ApplicationsList applicationslist = Configuration.getClient()
-				.applicationRedeploy("1", "test1", "test2");
+				.applicationRedeploy(1, "test1", "test2");
 		DataUtils.checkValidApplicationsList(applicationslist);
 	}
 
