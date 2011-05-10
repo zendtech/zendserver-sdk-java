@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applicationsList>
 	<applicationInfo>
-		<id>1</id>
+		<id>0</id>
 		<appName>My Application</appName>
 		<userAppName>User Name</userAppName>
 		<baseUrl>http://example.com/myapp</baseUrl>
@@ -27,7 +27,7 @@
 		<messageList />
 	</applicationInfo>
 	<applicationInfo>
-		<id>2</id>
+		<id>1</id>
 		<appName>Blog 2.0</appName>
 		<userAppName>User Name</userAppName>
 		<installedLocation>/usr/local/aaa</installedLocation>
