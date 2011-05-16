@@ -312,10 +312,10 @@ public class TestDeploymentServices extends AbstractTestServer {
 			ApplicationServers servers = appInfo.getServers();
 			Assert.assertTrue(servers.getApplicationServers().size() > 0);
 			int serverId = servers.getApplicationServers().get(0).getId();
-			ApplicationsList applicationslist = Configuration
+			ApplicationInfo applicationInfo = Configuration
 					.getClient()
 					.applicationRedeploy(appId, false, String.valueOf(serverId));
-			DataUtils.checkValidApplicationsList(applicationslist);
+			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
 
@@ -326,9 +326,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (isDeployed()) {
 			initMock(handler.applicationRedeploy(), "applicationRedeploy",
 					ResponseCode.ACCEPTED);
-			ApplicationsList applicationslist = Configuration.getClient()
+			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationRedeploy(appId, false);
-			DataUtils.checkValidApplicationsList(applicationslist);
+			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
 
@@ -339,9 +339,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (isDeployed()) {
 			initMock(handler.applicationRedeploy(), "applicationRedeploy",
 					ResponseCode.ACCEPTED);
-			ApplicationsList applicationslist = Configuration.getClient()
+			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationRedeploy(appId);
-			DataUtils.checkValidApplicationsList(applicationslist);
+			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
 
@@ -355,9 +355,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 			ApplicationServers servers = appInfo.getServers();
 			Assert.assertTrue(servers.getApplicationServers().size() > 0);
 			int serverId = servers.getApplicationServers().get(0).getId();
-			ApplicationsList applicationslist = Configuration.getClient()
+			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationRedeploy(appId, String.valueOf(serverId));
-			DataUtils.checkValidApplicationsList(applicationslist);
+			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
 

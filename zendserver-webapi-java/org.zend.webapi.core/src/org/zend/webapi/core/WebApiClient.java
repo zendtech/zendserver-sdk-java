@@ -786,7 +786,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(final int appId,
+	public ApplicationInfo applicationRedeploy(final int appId,
 			final Boolean ignoreFailures, final String... servers)
 			throws WebApiException {
 		final IResponse handle = this.handle(
@@ -804,7 +804,7 @@ public class WebApiClient {
 						}
 					}
 				});
-		return (ApplicationsList) handle.getData();
+		return (ApplicationInfo) handle.getData();
 	}
 
 	/**
@@ -822,7 +822,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(int appId, String... servers)
+	public ApplicationInfo applicationRedeploy(int appId, String... servers)
 			throws WebApiException {
 		return applicationRedeploy(appId, null, servers);
 	}
@@ -842,7 +842,7 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationsList applicationRedeploy(int appId)
+	public ApplicationInfo applicationRedeploy(int appId)
 			throws WebApiException {
 		return applicationRedeploy(appId, (Boolean) null);
 	}

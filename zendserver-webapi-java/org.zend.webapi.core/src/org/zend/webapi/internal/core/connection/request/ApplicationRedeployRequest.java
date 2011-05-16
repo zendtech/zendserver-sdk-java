@@ -140,7 +140,7 @@ public class ApplicationRedeployRequest extends AbstractRequest {
 	 * ()
 	 */
 	public ResponseType getExpectedResponseDataType() {
-		return ResponseType.APPLICATIONS_LIST;
+		return ResponseType.APPLICATION_INFO;
 	}
 	
 	@Override
