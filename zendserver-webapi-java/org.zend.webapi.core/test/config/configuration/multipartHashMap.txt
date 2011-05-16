@@ -1,10 +1,10 @@
 Content-Type: multipart/form-data; boundary=--bla-bla-bla--
 
 ----bla-bla-bla--
-Content-Disposition: form-data; name=map%5Btest1%5D
+Content-Disposition: form-data; name="map[test1]"
 
 value1
-Content-Disposition: form-data; name=map%5Btest2%5D
+Content-Disposition: form-data; name="map[test2]"
 
 value2
 ----bla-bla-bla----

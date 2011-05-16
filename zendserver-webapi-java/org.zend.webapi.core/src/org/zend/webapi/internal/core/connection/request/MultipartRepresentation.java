@@ -225,7 +225,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 		for (Entry<String, String> entry : entries) {
 			Disposition d = createContentDisposition(outputStream);
 			d.getParameters().add("name",
-					mapName + "%5B" + entry.getKey() + "%5D");
+					mapName + "[" + entry.getKey() + "]");
 			final String write = DispositionWriter.write(d);
 			outputStream.write(write.getBytes());
 			writeNewLine(outputStream, 2);

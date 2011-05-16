@@ -53,9 +53,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
-			String baseUrl = "http://testParam.com";
+			String baseUrl = "http://testDeployParam.com";
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "test");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationDeploy(app, baseUrl, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
@@ -87,7 +87,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		initMock(handler.applicationGetStatus(), "applicationGetStatus",
 				ResponseCode.OK);
 		ApplicationStatus status = ApplicationStatus.STAGING;
-		while (status == ApplicationStatus.STAGING) {
+		while (status != ApplicationStatus.OK) {
 			ApplicationsList applicationGetStatus = Configuration.getClient()
 					.applicationGetStatus(String.valueOf(appId));
 			List<ApplicationInfo> infos = applicationGetStatus
@@ -97,6 +97,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 					status = applicationInfo.getStatus();
 				}
 			}
+			System.out.println(status.getName());
 		}
 		return true;
 	}
@@ -130,9 +131,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
-			String baseUrl = "http://deploy.com";
+			String baseUrl = "http://deployParams1.com";
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "test");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationDeploy(app, baseUrl, true, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
@@ -182,9 +183,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
-			String baseUrl = "http://deploy.com";
+			String baseUrl = "http://deploy6.com";
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "test");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationDeploy(app, baseUrl, params, "appName");
 			DataUtils.checkValidApplicationInfo(applicationInfo);
@@ -202,9 +203,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
-			String baseUrl = "http://deploy.com";
+			String baseUrl = "http://deploy7.com";
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "test");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationDeploy(app, baseUrl, true, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
@@ -240,10 +241,9 @@ public class TestDeploymentServices extends AbstractTestServer {
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "db_host");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationUpdate(appId,
-							File.createTempFile("test", "aaa"), true, params);
+					.applicationUpdate(appId, app, true, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		} else {
 			Assert.fail("Cannot find file: " + app.getAbsolutePath());
@@ -294,7 +294,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 				+ "testParam-1.0.0.zpk"));
 		if (app.exists()) {
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("db_host", "test");
+			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationUpdate(appId, app, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);

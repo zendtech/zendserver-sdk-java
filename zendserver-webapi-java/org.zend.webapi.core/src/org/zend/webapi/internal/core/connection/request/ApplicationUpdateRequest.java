@@ -133,7 +133,7 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 	 *            params
 	 */
 	public void setUserParams(HashMap<String, String> params) {
-		addParameter("userParam", params);
+		addParameter("userParams", params);
 	}
 
 	/**

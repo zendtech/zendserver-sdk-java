@@ -172,10 +172,10 @@ public class TestDataDigester {
 
 	@Test
 	public void testApplicationRedeploy() throws Exception {
-		final ApplicationsList responseData = (ApplicationsList) getResponseData(
+		final ApplicationInfo responseData = (ApplicationInfo) getResponseData(
 				"applicationRedeploy.xml",
-				IResponseData.ResponseType.APPLICATIONS_LIST);
-		Assert.assertNotNull(responseData.getApplicationsInfo().size() > 0);
+				IResponseData.ResponseType.APPLICATION_INFO);
+		Assert.assertNotNull(responseData.getBaseUrl() != null);
 	}
 
 	@Test

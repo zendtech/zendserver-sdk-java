@@ -32,7 +32,7 @@
 		<userAppName>User Name</userAppName>
 		<installedLocation>/usr/local/aaa</installedLocation>
 		<baseUrl>http://oapp.example.com:8080/</baseUrl>
-		<status>uploaded</status>
+		<status>OK</status>
 		<servers>
 			<applicationServer>
 				<id>2</id>
