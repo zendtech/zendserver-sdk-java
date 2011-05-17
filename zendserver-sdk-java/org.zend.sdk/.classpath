@@ -10,5 +10,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/org.restlet.ext.xml.jar"/>
+	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="lib/zend-webapi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
