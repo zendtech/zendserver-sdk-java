@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
 
-package org.zend.sdk.cli.commands;
+package org.zend.sdkcli;
 
 /**
  * This interface represents Zend SDK command which can be executed by command
@@ -15,7 +15,7 @@ package org.zend.sdk.cli.commands;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public interface IZendCommand {
+public interface ICommand {
 
 	/**
 	 * Performs execution of a command which implements this interface. As an
@@ -29,31 +29,9 @@ public interface IZendCommand {
 	 * <b>parameter_value</b> - parameter value.<br>
 	 * <br>
 	 * 
-	 * @param arguments
-	 *            - array of arguments passed for a command line call
 	 * @return boolean value, <code>true</code> - if execution was performed
 	 *         successfully, <code>false</code> - otherwise.
 	 */
-	boolean execute(String[] arguments);
-
-	/**
-	 * Retrieves the value, if any, of parameter with specified name.
-	 * 
-	 * @param parameterName
-	 *            - the name of the parameter
-	 * @return Value of the argument if parameter is set, and has an value,
-	 *         otherwise <code>null</code>.
-	 */
-	String getParameterValue(String parameterName);
-
-	/**
-	 * Retrieves the array of values, if any, of parameter with specified name.
-	 * 
-	 * @param parameterName
-	 *            - the name of the parameter
-	 * @return Value of the argument if parameter is set, and has an value,
-	 *         otherwise <code>null</code>.
-	 */
-	String[] getParameterValues(String parameterName);
+	public boolean execute();
 
 }
