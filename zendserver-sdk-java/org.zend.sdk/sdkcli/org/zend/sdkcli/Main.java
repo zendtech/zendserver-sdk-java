@@ -22,7 +22,6 @@ public class Main {
 
 		// TODO logger should be assigned here
 		
-		// resolve verb and directObject
 		try {
 
 			// Manager for the command line tool
