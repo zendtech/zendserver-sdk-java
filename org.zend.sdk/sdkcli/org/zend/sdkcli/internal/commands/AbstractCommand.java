@@ -8,7 +8,6 @@
 
 package org.zend.sdkcli.internal.commands;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
@@ -22,7 +21,7 @@ import org.zend.sdkcli.ParseError;
 public abstract class AbstractCommand implements ICommand {
 
 	final protected CommandLine commandLine;
-	final protected Options options;
+	final protected CommandOptions options;
 
 	/**
 	 * @param commandLine
@@ -30,8 +29,8 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	public AbstractCommand(CommandLine commandLine) throws ParseError {
 		// build options
-		this.options = new Options();
-		createOptions();
+		this.options = new CommandOptions();
+		setupOptions();
 
 		// parse command line according to options
 		this.commandLine = commandLine;
@@ -43,39 +42,34 @@ public abstract class AbstractCommand implements ICommand {
 	 * 
 	 * @return
 	 */
-	protected abstract Options createOptions();
+	protected abstract void setupOptions();
 
 	/**
-	 * Helper method for {@link AbstractCommand#createOptions()} method
+	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
 	 * @param name
 	 * @param hasArgs
 	 */
 	protected void addOption(String name, boolean hasArgs) {
-		Option option = new Option(name, hasArgs, "");
-		options.addOption(option);
+		options.addOption(name, hasArgs);
 	}
 
 	/**
-	 * Helper method for {@link AbstractCommand#createOptions()} method
+	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
 	 * @param name
 	 * @param isRequired
 	 */
 	protected void addArgumentOption(String name, boolean isRequired) {
-		Option option = new Option(name, true, "");
-		option.setArgName(name);
-		option.setArgs(1);
-		option.setRequired(isRequired);
-		options.addOption(option);
+		options.addOption(name, isRequired);
 	}
 
 	public String getValue(String parameterName) {
-		return this.commandLine.getParameterValue(parameterName);
+		return commandLine.getParameterValue(parameterName);
 	}
 
 	public String[] getValues(String parameterName) {
-		return this.commandLine.getParameterValues(parameterName);
+		return commandLine.getParameterValues(parameterName);
 	}
 
 }
