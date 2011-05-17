@@ -6,15 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
 
-package org.zend.sdk.cli.commands;
+package org.zend.sdk.internal.cli.commands;
 
-import org.apache.commons.cli.ParseException;
-import org.zend.sdk.cli.options.CreateProjectOptions;
+import org.zend.sdk.internal.cli.options.CreateProjectOptions;
 
 /**
- * Concrete implementation of {@link ZendCommand}. It represents create-project
- * command. In the result of calling it new PHP project is created in defined
- * location.
+ * Concrete implementation of {@link AbstractZendCommand}. It represents
+ * create-project command. In the result of calling it new PHP project is
+ * created in defined location.
  * 
  * Command Parameters:
  * <table border="1">
@@ -54,9 +53,9 @@ import org.zend.sdk.cli.options.CreateProjectOptions;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class CreateProjectCommand extends ZendCommand {
+public class CreateProjectCommand extends AbstractZendCommand {
 
-	public static final String CREATE_PROJECT = "create-project";
+	public static final String NAME = "create-project";
 
 	private String target;
 	private String name;
@@ -64,24 +63,20 @@ public class CreateProjectCommand extends ZendCommand {
 	private String path;
 
 	public CreateProjectCommand() {
-		this.options = CreateProjectOptions.createOptions();
+		setOptions(CreateProjectOptions.createOptions());
 	}
 
 	@Override
-	public boolean execute(String[] arguments) throws ParseException {
-		if (super.execute(arguments)) {
-			// TODO call proper service from library
-			return true;
-		}
-		return false;
+	protected void parseParameters(String[] arguments) {
+		target = getParameterValue(CreateProjectOptions.TARGET);
+		name = getParameterValue(CreateProjectOptions.NAME);
+		index = getParameterValue(CreateProjectOptions.INDEX);
+		path = getParameterValue(CreateProjectOptions.PATH);
 	}
 
 	@Override
-	protected void parse(String[] arguments) throws ParseException {
-		super.parse(arguments);
-		target = getValue(CreateProjectOptions.TARGET);
-		name = getValue(CreateProjectOptions.NAME);
-		index = getValue(CreateProjectOptions.INDEX);
-		path = getValue(CreateProjectOptions.PATH);
+	protected boolean execute() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }
