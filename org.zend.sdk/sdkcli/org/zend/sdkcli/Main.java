@@ -8,7 +8,6 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
-import org.zend.sdkcli.internal.commands.CreateProjectCommand;
 
 /**
  * Main class which is responsible for handling command line requests.
@@ -21,37 +20,15 @@ public class Main {
 	public static void main(String[] args) {
 
 		// TODO logger should be assigned here
-		
-		try {
 
+		try {
 			// Manager for the command line tool
 			CommandLine commandLine = new CommandLine(args);
-
-			if ("create".equals(commandLine.getVerb())) {
-				
-				if ("project".equals(commandLine.getDirectObject())) {
-					new CreateProjectCommand(commandLine).execute();
-				}
-				
-			}
-
-			else if ("update ".equals(commandLine.getVerb())) {
-
-			}
-
-			else if ("delete".equals(commandLine.getVerb())) {
-
-			}
-
-			else if ("list".equals(commandLine.getVerb())) {
-				
-			} else {
-				commandLine.printUsage();
-			}
-
+			ICommand command = CommandFactory.createCommand(commandLine);
+			command.execute();
 		} catch (ParseError e) {
 			CommandLine.printUsage(e);
-			
+
 			// TODO: use logger here to log status
 		}
 	}
