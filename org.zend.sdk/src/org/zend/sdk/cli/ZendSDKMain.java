@@ -8,9 +8,8 @@
 
 package org.zend.sdk.cli;
 
-import org.apache.commons.cli.ParseException;
-import org.zend.sdk.cli.commands.CreateProjectCommand;
-import org.zend.sdk.cli.commands.ZendCommand;
+import org.zend.sdk.cli.commands.IZendCommand;
+import org.zend.sdk.internal.cli.commands.CreateProjectCommand;
 
 /**
  * Main class which is responsible for handling command line requests.
@@ -24,17 +23,12 @@ public class ZendSDKMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ZendCommand command = null;
-		if (CreateProjectCommand.CREATE_PROJECT.equals(args[0])) {
+		IZendCommand command = null;
+		if (CreateProjectCommand.NAME.equals(args[0])) {
 			command = new CreateProjectCommand();
 		}
 		if (command != null) {
-			try {
-				command.execute(args);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			command.execute(args);
 		}
 	}
 
