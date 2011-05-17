@@ -15,6 +15,8 @@ public class CommandOptions extends Options {
 
 	private static final long serialVersionUID = -2778783894326385212L;
 
+	public static final String CURR_DIR = "currDir";
+
 	public void addOption(String name, boolean hasArgs) {
 		Option option = new Option(name, hasArgs, "");
 		this.addOption(option);
@@ -26,6 +28,10 @@ public class CommandOptions extends Options {
 		option.setArgs(1);
 		option.setRequired(isRequired);
 		this.addOption(option);
+	}
+
+	protected void prepareOptions() {
+		addArgumentOption(CURR_DIR, true);
 	}
 
 }
