@@ -6,16 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
 
-package org.zend.sdk.internal.cli.options;
+package org.zend.sdkcli.internal.commands;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+/**
+ * TODO document
+ */
 public class CommandOptions extends Options {
 
 	private static final long serialVersionUID = -2778783894326385212L;
 
 	public static final String CURR_DIR = "currDir";
+
+	public CommandOptions() {
+		addArgumentOption(CURR_DIR, true);
+	}
 
 	public void addOption(String name, boolean hasArgs) {
 		Option option = new Option(name, hasArgs, "");
@@ -28,10 +35,6 @@ public class CommandOptions extends Options {
 		option.setArgs(1);
 		option.setRequired(isRequired);
 		this.addOption(option);
-	}
-
-	protected void prepareOptions() {
-		addArgumentOption(CURR_DIR, true);
 	}
 
 }
