@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
 
-package org.zend.sdk.internal.cli.commands;
+package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdk.internal.cli.options.CreateProjectOptions;
+import org.apache.commons.cli.Options;
+import org.zend.sdkcli.ParseError;
+import org.zend.sdklib.ZendProject;
 
 /**
- * Concrete implementation of {@link AbstractZendCommand}. It represents
+ * Concrete implementation of {@link AbstractCommand}. It represents
  * create-project command. In the result of calling it new PHP project is
  * created in defined location.
  * 
@@ -53,30 +55,32 @@ import org.zend.sdk.internal.cli.options.CreateProjectOptions;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class CreateProjectCommand extends AbstractZendCommand {
+public class CreateProjectCommand extends AbstractCommand {
 
-	public static final String NAME = "create-project";
+	public static final String TARGET = "target";
+	public static final String NAME = "name";
+	public static final String INDEX = "index";
+	public static final String PATH = "path";
 
-	private String target;
-	private String name;
-	private String index;
-	private String path;
-
-	public CreateProjectCommand() {
-		setOptions(CreateProjectOptions.createOptions());
+	public CreateProjectCommand(CommandLine commandLine) throws ParseError {
+		super(commandLine);
 	}
 
 	@Override
-	protected void parseParameters(String[] arguments) {
-		target = getParameterValue(CreateProjectOptions.TARGET);
-		name = getParameterValue(CreateProjectOptions.NAME);
-		index = getParameterValue(CreateProjectOptions.INDEX);
-		path = getParameterValue(CreateProjectOptions.PATH);
+	public Options createOptions() {
+		addArgumentOption(TARGET, false);
+		addArgumentOption(NAME, true);
+		addArgumentOption(INDEX, false);
+		addArgumentOption(PATH, false);
+		return this.options;
 	}
 
 	@Override
-	protected boolean execute() {
+	public boolean execute() {
+		// use parameters here, for example:
+		String value = getValue(TARGET);
+		
 		// TODO Auto-generated method stub
-		return true;
+		return new ZendProject().create();
 	}
 }
