@@ -24,16 +24,17 @@ public class CreateProjectOptions extends CommandOptions {
 	}
 
 	public static Options createOptions() {
-		CommandOptions options = new CommandOptions();
-		prepareOptions(options);
+		CommandOptions options = new CreateProjectOptions();
+		options.prepareOptions();
 		return options;
 	}
 
-	private static void prepareOptions(CommandOptions options) {
-		options.addArgumentOption(TARGET, false);
-		options.addArgumentOption(NAME, true);
-		options.addArgumentOption(INDEX, false);
-		options.addArgumentOption(PATH, false);
+	protected void prepareOptions() {
+		super.prepareOptions();
+		addArgumentOption(TARGET, false);
+		addArgumentOption(NAME, true);
+		addArgumentOption(INDEX, false);
+		addArgumentOption(PATH, false);
 	}
 
 }
