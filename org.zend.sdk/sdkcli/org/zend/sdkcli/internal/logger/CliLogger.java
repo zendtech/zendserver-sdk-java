@@ -25,10 +25,14 @@ public class CliLogger implements ILogger {
 		PropertyConfigurator.configure("log4j.properties");
 	}
 
+	private CliLogger(String creatorName) {
+		this();
+		this.logger = Logger.getLogger(creatorName);
+	}
+
 	@Override
-	public ILogger getLogger(String name) {
-		logger = Logger.getLogger(name);
-		return this;
+	public ILogger getLogger(String creatorName) {
+		return new CliLogger(creatorName);
 	}
 
 	@Override
