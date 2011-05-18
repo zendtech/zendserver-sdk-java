@@ -1,26 +1,28 @@
 /*******************************************************************************
- * Copyright (c) May 16, 2011 Zend Technologies Ltd. 
+ * Copyright (c) May 18, 2011 Zend Technologies Ltd. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.sdklib;
 
-import org.zend.sdklib.internal.library.AbstractLibrary;
+package org.zend.sdklib.internal.event;
 
-/**
- * Sample library class
- * 
- * @author Roy, 2011
- * 
- */
-public class ZendProject extends AbstractLibrary {
+import org.zend.sdklib.event.IStatusChangeEvent;
+import org.zend.sdklib.library.IStatus;
 
-	public boolean create() {
+public class StatusChangeEvent implements IStatusChangeEvent {
 
-		return true;
+	private IStatus status;
 
+	public StatusChangeEvent(IStatus status) {
+		super();
+		this.status = status;
+	}
+
+	@Override
+	public IStatus getStatus() {
+		return status;
 	}
 
 }
