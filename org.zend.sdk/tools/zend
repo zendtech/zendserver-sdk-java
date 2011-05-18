@@ -1,0 +1,27 @@
+java_cmd="java"
+
+# Mac OS X needs an additional arg, or you get an "illegal thread" complaint.
+if [ `uname` = "Darwin" ]; then
+    os_opts="-XstartOnFirstThread"
+else
+    os_opts=
+fi
+
+if [ `uname` = "Linux" ]; then
+    export GDK_NATIVE_WINDOWS=true
+fi
+
+if [ "$OSTYPE" = "cygwin" ] ; then
+    jarpath=`cygpath -w  "$frameworkdir/$jarfile"`
+    progdir=`cygpath -w  "$progdir"`
+else
+    jarpath="$frameworkdir/$jarfile"
+fi
+
+#Get path to lib folder which consists all required jars
+libpath="../lib/*"
+
+#Get current dir
+currentdir=`pwd`
+
+exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath:../bin" org.zend.sdkcli.Main "$@" -currDir "$currentdir"
