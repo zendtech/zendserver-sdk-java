@@ -8,6 +8,9 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
+import org.zend.sdkcli.internal.logger.CliLogger;
+import org.zend.sdklib.logger.ILogger;
+import org.zend.sdklib.logger.Log;
 
 /**
  * Main class which is responsible for handling command line requests.
@@ -17,10 +20,10 @@ import org.zend.sdkcli.internal.commands.CommandLine;
  */
 public class Main {
 
+	private static ILogger log;
+
 	public static void main(String[] args) {
-
-		// TODO logger should be assigned here
-
+		initLogger();
 		try {
 			// Manager for the command line tool
 			CommandLine commandLine = new CommandLine(args);
@@ -28,9 +31,13 @@ public class Main {
 			command.execute();
 		} catch (ParseError e) {
 			CommandLine.printUsage(e);
-
-			// TODO: use logger here to log status
+			log.error(e);
 		}
+	}
+
+	private static void initLogger() {
+		Log.getInstance().registerLogger(new CliLogger());
+		log = Log.getInstance().getLogger(Main.class.getName());
 	}
 
 }
