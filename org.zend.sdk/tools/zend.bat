@@ -15,12 +15,12 @@ cd /d %~dp0
 
 rem Check we have a valid Java.exe in the path.
 set java_exe=
-call lib/find_java.bat
+call ../tools/find_java.bat
 if not defined java_exe goto :EOF
 
-set jar_path=lib/commons-cli-1.2.jar
+set jar_path=../lib/*
 
 rem Finally exec the java program and end here.
-call %java_exe% -classpath "%jar_path%;bin" org.zend.sdk.cli.ZendSDKMain %* -currDir %current_dir%
+call %java_exe% -classpath "%jar_path%;../bin" org.zend.sdkcli.Main %* -currDir %current_dir%
 
 :EOF
