@@ -16,7 +16,7 @@ import org.zend.sdkcli.internal.commands.CommandLine;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public enum CommandTypes {
+public enum CommandType {
 
 	CREATE_PROJECT("create", "project"),
 
@@ -29,12 +29,12 @@ public enum CommandTypes {
 	private String verb;
 	private String directObject;
 
-	private CommandTypes(String verb, String directObject) {
+	private CommandType(String verb, String directObject) {
 		this.verb = verb;
 		this.directObject = directObject;
 	}
 
-	private CommandTypes(String verb) {
+	private CommandType(String verb) {
 		this(verb, null);
 	}
 
@@ -52,14 +52,14 @@ public enum CommandTypes {
 	 * @param
 	 * @return CommandTypes instance
 	 */
-	public static CommandTypes byCommandLine(CommandLine line) {
+	public static CommandType byCommandLine(CommandLine line) {
 		String verb = line.getVerb();
 		String directObject = line.getDirectObject();
 		if (verb == null && directObject == null) {
 			return UNKNOWN;
 		}
-		CommandTypes[] values = values();
-		for (CommandTypes type : values) {
+		CommandType[] values = values();
+		for (CommandType type : values) {
 			if (verb.equals(type.getVerb())) {
 				if (directObject != null) {
 					if (directObject.equals(type.getDirectObject())) {

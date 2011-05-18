@@ -29,7 +29,7 @@ public class CommandFactory {
 	 * @throws ParseError
 	 */
 	public static ICommand createCommand(CommandLine line) throws ParseError {
-		CommandTypes type = CommandTypes.byCommandLine(line);
+		CommandType type = CommandType.byCommandLine(line);
 		ICommand command = null;
 		switch (type) {
 		case CREATE_PROJECT:
