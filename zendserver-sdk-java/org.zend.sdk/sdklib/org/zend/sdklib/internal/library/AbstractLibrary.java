@@ -16,6 +16,8 @@ import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.internal.event.StatusChangeEvent;
 import org.zend.sdklib.library.ILibrary;
 import org.zend.sdklib.library.IStatus;
+import org.zend.sdklib.logger.ILogger;
+import org.zend.sdklib.logger.Log;
 
 /**
  * Abstract class which implement {@link ILibrary} interface. It is intended
@@ -27,9 +29,12 @@ import org.zend.sdklib.library.IStatus;
  */
 public abstract class AbstractLibrary implements ILibrary {
 
+	protected ILogger log;
+
 	private List<IStatusChangeListener> listeners;
 
 	public AbstractLibrary() {
+		this.log = Log.getInstance().getLogger(this.getClass().getName());
 		this.listeners = new ArrayList<IStatusChangeListener>();
 	}
 
