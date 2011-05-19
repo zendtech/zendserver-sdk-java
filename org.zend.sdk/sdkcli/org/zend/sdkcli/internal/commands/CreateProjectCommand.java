@@ -8,7 +8,6 @@
 
 package org.zend.sdkcli.internal.commands;
 
-import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.ZendProject;
 
@@ -76,10 +75,12 @@ public class CreateProjectCommand extends AbstractCommand {
 
 	@Override
 	public boolean execute() {
-		// use parameters here, for example:
-		String value = getValue(TARGET);
-		
-		// TODO Auto-generated method stub
-		return new ZendProject().create();
+		String path = getValue(PATH);
+		if (path == null) {
+			path = getValue(CommandOptions.CURR_DIR);
+		}
+		ZendProject project = new ZendProject(getValue(NAME), getValue(TARGET),
+				getValue(INDEX), path);
+		return project.create();
 	}
 }
