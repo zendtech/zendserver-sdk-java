@@ -4,15 +4,16 @@
 	<classpathentry kind="src" path="sdklib"/>
 	<classpathentry kind="src" path="sdkcli"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/E:/Zend/studio9/workspaces/zendSDK/TestCLI/lib/commons-cli-1.2/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/org.restlet.ext.xml.jar"/>
 	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="lib/registry.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.zend.sdk/lib/win-native"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/zend-webapi.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
