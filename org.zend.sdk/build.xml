@@ -7,14 +7,17 @@
 	<path id="org.zend.sdk.classpath">
 		<pathelement location="bin" />
 		<pathelement location="lib/commons-cli-1.2.jar" />
+		<pathelement location="lib/log4j-1.2.16.jar" />
+		<pathelement location="lib/*" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 	</path>
 	
 	<property name="coverage.dir" value="${basedir}/coverage" />
 	<!-- Emma? Where are you? (Emma installation directory) -->
 	<available file="/shared/tools/php/emma-2.0.5312" property="emma.dir" value="/shared/tools/php/emma-2.0.5312" />
-	<property name='emma.dir' value='/var/www/3rd-party/emma-2.0.5312' />
-	<property name="src.dir" value="${basedir}/src/"/>
+	<property name='emma.dir' value='e:\emma' />
+	<property name="sdkcli.dir" value="${basedir}/sdkcli/"/>
+	<property name="sdklib.dir" value="${basedir}/sdklib/"/>
 	<property name="class.dir" value="${basedir}/bin/"/>
 	<property name="instrumented.dir" value="${basedir}/inst/"/>
 	<path id="emma.lib">
@@ -29,7 +32,7 @@
 		<path refid="emma.lib" />
 		<pathelement location="${basedir}/inst" />
 		<pathelement location="bin" />
-		<pathelement location="lib/commons-cli-1.2.jar" />
+		<pathelement location="lib/*" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 	</path>
 	
@@ -37,7 +40,11 @@
 		<delete dir="bin" failonerror="false"></delete>
 		<mkdir dir="bin"/>
 		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="src">
+			<fileset dir="sdkcli">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="sdklib">
 				<exclude name="**/*.launch" />
 				<exclude name="**/*.java" />
 			</fileset>
@@ -49,7 +56,9 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc packagenames="org.zend.sdk.*" sourcepath="src" defaultexcludes="yes" destdir="docs/sdk" author="true" version="true" use="true" windowtitle="Zend SDK">
+		<javadoc packagenames="org.zend.sdk.*" defaultexcludes="yes" destdir="docs/sdk" author="true" version="true" use="true" windowtitle="Zend SDK">
+			<fileset dir="${sdkcli.dir}"/>
+			<fileset dir="${sdklib.dir}"/>
 			<doctitle>
 				<![CDATA[<h1>Zend SDK</h1>
 					]]>
@@ -78,11 +87,12 @@
 	<target depends="init" name="build-project">
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
-			<src path="src"/>
+			<src path="sdkcli"/>
+			<src path="sdklib"/>
 			<src path="test"/>
 			<classpath refid="org.zend.sdk.classpath" />
 		</javac>
-		<jar destfile="lib/zend-sdk.jar" basedir="bin" >
+		<jar destfile="lib/zend-sdk.jar" basedir="bin">
 			<exclude name="**/test/*.*/" />
 		</jar>
 		<jar destfile="lib/zend-test-sdk.jar" basedir="bin">
@@ -94,8 +104,7 @@
 	<target name="instrEmma">
 		<emma enabled="true">
 		    <instr instrpath="${class.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true">
-		    	<filter excludes="org.zend.webapi.test.*" />
-		    	<filter excludes="org.zend.webapi.examples*" />
+		    	<filter excludes="org.zend.sdk.test.*" />
 		    </instr>
 		</emma>
 	</target>
@@ -110,7 +119,15 @@
         	<jvmarg value="-Demma.coverage.out.merge=true" />
         </junit>
 		<emma enabled="true" >
-		    <report sourcepath="${src.dir}" >
+		    <report>
+		    	<sourcepath>
+		    		<dirset dir="${sdkcli.dir}">
+		    			<include name="*" /> 
+		    		</dirset>
+		    		<dirset dir="${sdklib.dir}">
+		    			<include name="*" /> 
+		    		</dirset>
+		    	</sourcepath>
 		    	<property name="report.out.encoding" value="UTF-8" />
 		        <fileset dir="${coverage.dir}" >
 		            <include name="*.emma" />
@@ -134,7 +151,8 @@
     <target name="buildSDK">
         <mkdir dir="${sdk.output.dir}"/>
 		<zip destfile="${sdk.output.dir}/Zend-SDK-${sdk.version}.zip" basedir=".">
-			<include name="src/**/*.*" />
+			<include name="sdkcli/**/*.*" />
+			<include name="sdklib/**/*.*" />
 			<include name="test/**/*.*" />
 			<include name="lib/**/*.*" />
 			<include name="docs/**/*.*" />
