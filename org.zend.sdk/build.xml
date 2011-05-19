@@ -17,7 +17,7 @@
 	<property name="coverage.dir" value="${basedir}/coverage" />
 	<!-- Emma? Where are you? (Emma installation directory) -->
 	<available file="/shared/tools/php/emma-2.0.5312" property="emma.dir" value="/shared/tools/php/emma-2.0.5312" />
-	<property name='emma.dir' value='e:\emma' />
+	<property name='emma.dir' value='/var/www/3rd-party/emma-2.0.5312' />
 	<property name="sdkcli.dir" value="${basedir}/sdkcli/"/>
 	<property name="sdklib.dir" value="${basedir}/sdklib/"/>
 	<property name="class.dir" value="${basedir}/bin/"/>
