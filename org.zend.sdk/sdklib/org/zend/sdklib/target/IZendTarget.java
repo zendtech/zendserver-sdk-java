@@ -12,8 +12,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import org.zend.webapi.core.WebApiException;
+
 /**
- * Represnts a Zend Server Target environment that can be used for SDK
+ * Represents a Zend Server Target environment that can be used for SDK
  * 
  * @author Roy, 2011
  */
@@ -54,4 +56,10 @@ public interface IZendTarget {
 	 * @return the value of the given extra property key
 	 */
 	public abstract void store(OutputStream os) throws IOException;
+
+	/**
+	 * @return true if connection success
+	 * @throws WebApiException
+	 */
+	public abstract boolean connect() throws WebApiException ;
 }

@@ -5,7 +5,6 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-
 package org.zend.sdklib.internal.target;
 
 import java.io.FileInputStream;
@@ -18,17 +17,21 @@ import java.util.Properties;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.target.IZendTarget;
 
+import com.ice.jni.registry.NoSuchKeyException;
+import com.ice.jni.registry.Registry;
+import com.ice.jni.registry.RegistryException;
+import com.ice.jni.registry.RegistryKey;
+
 /**
- * Auto detect local server 
+ * Auto detect local server
  * 
- * @author Roy, 2011 
+ * @author Roy, 2011
  */
 public class ZendTargetAutoDetect {
 
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
-	private static final String APACHE_PORT2 = "APACHE_PORT"; //$NON-NLS-1$
 
 	/**
 	 * @return returns the Local installed Zend Server, null if no local Zend
@@ -87,7 +90,7 @@ public class ZendTargetAutoDetect {
 
 		if (props != null) {
 
-			// TODO add key and secret key
+			// TODO resolve key/secretkey
 			try {
 				server = new ZendTarget(targetId, new URL("http://localhost"),
 						"fake", "fake");
@@ -100,18 +103,28 @@ public class ZendTargetAutoDetect {
 
 	private IZendTarget getLocalZendServerFromRegistry(String targetId) {
 		IZendTarget server = null;
-		final String zendServerInstallLocation = EnvironmentUtils
-				.getZendServerInstallLocation();
+		RegistryKey zendServerKey = null;
+		try {
+			zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
+					.openSubKey("Zend Technologies").openSubKey("ZendServer");
 
-		if (zendServerInstallLocation != null) {
-			try {
-				server = new ZendTarget(targetId, new URL("http://localhost"),
-						"fake", "fake");
-			} catch (MalformedURLException e) {
-				// http://localhost is valid - ignore
+			if (zendServerKey != null) {
+				final String zendServerInstallLocation = zendServerKey
+						.getStringValue("InstallLocation");
+
+				// TODO resolve key/secretkey
+				
+				if (zendServerInstallLocation != null) {
+					server = new ZendTarget(targetId, new URL(
+							"http://localhost"), "fake", "fake");
+				}
 			}
+		} catch (NoSuchKeyException e1) {
+		} catch (RegistryException e1) {
+		} catch (MalformedURLException e) {
+			// http://localhost is valid - else ignore
 		}
+
 		return server;
 	}
-
 }
