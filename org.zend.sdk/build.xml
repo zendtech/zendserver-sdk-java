@@ -8,7 +8,9 @@
 		<pathelement location="bin" />
 		<pathelement location="lib/commons-cli-1.2.jar" />
 		<pathelement location="lib/log4j-1.2.16.jar" />
-		<pathelement location="lib/*" />
+		<pathelement location="lib/org.restlet.ext.xml.jar" />
+		<pathelement location="lib/org.restlet.jar" />
+		<pathelement location="lib/zend-webapi.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 	</path>
 	
@@ -32,7 +34,11 @@
 		<path refid="emma.lib" />
 		<pathelement location="${basedir}/inst" />
 		<pathelement location="bin" />
-		<pathelement location="lib/*" />
+		<pathelement location="lib/commons-cli-1.2.jar" />
+		<pathelement location="lib/log4j-1.2.16.jar" />
+		<pathelement location="lib/org.restlet.ext.xml.jar" />
+		<pathelement location="lib/org.restlet.jar" />
+		<pathelement location="lib/zend-webapi.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 	</path>
 	
