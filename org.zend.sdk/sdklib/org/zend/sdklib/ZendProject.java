@@ -17,10 +17,21 @@ import org.zend.sdklib.internal.library.AbstractLibrary;
  */
 public class ZendProject extends AbstractLibrary {
 
+	private String name;
+	private String target;
+	private String index;
+	private String path;
+
+	public ZendProject(String name, String target, String index, String path) {
+		this.name = name;
+		this.target = target;
+		this.index = index;
+		this.path = path;
+	}
+
 	public boolean create() {
-
+		// TODO create project based on fields values
 		return true;
-
 	}
 
 }
