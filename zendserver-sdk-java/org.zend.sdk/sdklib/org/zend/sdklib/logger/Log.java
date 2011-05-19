@@ -48,6 +48,10 @@ public class Log {
 	 * @return logger
 	 */
 	public ILogger getLogger(String creatorName) {
+		if (logger == null) {
+			throw new IllegalStateException(
+					"Logger has not been registered yet");
+		}
 		return logger.getLogger(creatorName);
 	}
 
