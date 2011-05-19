@@ -12,6 +12,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdklib.logger.ILogger;
 
 /**
  * Helps forming the command line life cycle. At first it parses the right
@@ -41,11 +42,18 @@ public class CommandLine {
 	/**
 	 * Low-level command line instance 
 	 */
-	private org.apache.commons.cli.CommandLine parse;
+	private org.apache.commons.cli.CommandLine cmd;
+
+	private final ILogger log;
+
+	public CommandLine(String[] args, ILogger log) throws ParseError {
+		this.arguments = args;
+		this.log = log;
+		heuristicParse();
+	}
 
 	public CommandLine(String[] args) throws ParseError {
-		this.arguments = args;
-		heuristicParse();
+		this(args, null);
 	}
 
 	private void heuristicParse() {
@@ -75,7 +83,7 @@ public class CommandLine {
 		CommandLineParser parser = new GnuParser();
 
 		try {
-			parse = parser.parse(options, arguments);
+			cmd = parser.parse(options, arguments);
 
 		} catch (ParseException e) {
 			throw new ParseError(e);
@@ -98,7 +106,7 @@ public class CommandLine {
 	 * @return
 	 */
 	public String getParameterValue(String parameterName) {
-		return parse.getOptionValue(parameterName);
+		return cmd.getOptionValue(parameterName);
 	}
 
 	/**
@@ -106,7 +114,18 @@ public class CommandLine {
 	 * @return
 	 */
 	public String[] getParameterValues(String parameterName) {
-		return parse.getOptionValues(parameterName);
+		return cmd.getOptionValues(parameterName);
+	}
+
+	/**
+	 * @return the logger for command line
+	 */
+	public ILogger getLog() {
+		return log;
+	}
+
+	public boolean hasOption(String parameterName) {
+		return cmd.hasOption(parameterName);
 	}
 
 }

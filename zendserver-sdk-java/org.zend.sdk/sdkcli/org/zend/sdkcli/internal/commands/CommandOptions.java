@@ -21,7 +21,7 @@ public class CommandOptions extends Options {
 	public static final String CURR_DIR = "currDir";
 
 	public CommandOptions() {
-		addArgumentOption(CURR_DIR, true);
+		addArgumentOption(CURR_DIR, false);
 	}
 
 	public void addOption(String name, boolean hasArgs) {
