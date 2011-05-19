@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.sdklib.target;
+package org.zend.sdklib.internal.target;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
+
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Represents a target in the environment

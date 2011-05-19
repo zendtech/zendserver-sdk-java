@@ -16,7 +16,7 @@ import java.util.Random;
 
 import org.junit.Test;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
-import org.zend.sdklib.target.ZendTarget;
+import org.zend.sdklib.internal.target.ZendTarget;
 
 public class TestUserBasedTargetLoader {
 
@@ -62,5 +62,15 @@ public class TestUserBasedTargetLoader {
 		assertTrue(loader.loadAll().length > 0);
 
 		file.deleteOnExit();
+	}
+
+	@Test
+	public void testUser() throws MalformedURLException {
+		UserBasedTargetLoader loader = new UserBasedTargetLoader();
+		final ZendTarget target = new ZendTarget("dev3", new URL(
+				"http://localhost:10081"), "mykey", "43543");
+		loader.add(target);
+		loader.remove(target);
+		assertTrue(loader.loadAll().length == 0);
 	}
 }

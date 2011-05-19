@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.sdklib.target.ZendTarget;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
