@@ -17,21 +17,25 @@ package org.zend.sdklib.target;
 public interface ITargetLoader {
 
 	/**
+	 * Adds a target to the system
+	 * 
 	 * @param target
-	 * @return
+	 * @return the target representation or null in case the target
+	 *         couldn't be added for example if any issue was found during
+	 *         persistence operations
 	 */
-	public Target add(Target target);
+	public IZendTarget add(IZendTarget target);
 
 	/**
 	 * @param target
 	 * @return
 	 */
-	public Target remove(Target target);
+	public IZendTarget remove(IZendTarget target);
 
 	/**
 	 * Load all target environments into the system
 	 * 
 	 * @return ITarget[] targets
 	 */
-	public Target[] loadAll();
+	public IZendTarget[] loadAll();
 }

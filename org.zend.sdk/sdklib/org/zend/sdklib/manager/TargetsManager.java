@@ -7,11 +7,13 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.zend.sdklib.target.ITargetLoader;
-import org.zend.sdklib.target.Target;
+import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.ZendTarget;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
@@ -24,7 +26,7 @@ public class TargetsManager {
 	/**
 	 * All targets loaded in the manager
 	 */
-	private List<Target> all;
+	private List<IZendTarget> all = new ArrayList<IZendTarget>(1);
 
 	/**
 	 * The mechanism that is responsible to load the targets
@@ -33,14 +35,22 @@ public class TargetsManager {
 
 	public TargetsManager(ITargetLoader loader) {
 		this.loader = loader;
-
-		this.all = Arrays.asList(loader.loadAll());
+		
+		final IZendTarget[] loadAll = loader.loadAll();
+		for (IZendTarget zTarget : loadAll) {
+			if (validTarget(zTarget)) {
+				throw new IllegalArgumentException("Conflict found when adding " + zTarget.getId());
+			}
+			
+			this.all.add(zTarget);
+		}
 	}
 
-	public synchronized Target add(Target target) {
-		if (target == null) {
-			throw new IllegalArgumentException("target cannot be null");
+	public synchronized IZendTarget add(IZendTarget target) {
+		if (validTarget(target)) {
+			throw new IllegalArgumentException("Conflict found when adding " + target.getId());
 		}
+		
 		// notify loader on addition
 		this.loader.add(target);
 
@@ -49,7 +59,30 @@ public class TargetsManager {
 		return added ? target : null;
 	}
 
-	public synchronized Target remove(Target target) {
+	/**
+	 * Check for conflicts and errors in new target
+	 * @param target
+	 * @return
+	 */
+	private boolean validTarget(IZendTarget target) {
+		if (target == null) {
+			throw new IllegalArgumentException("target cannot be null");
+		}
+		
+		if (target.getId() == null) {
+			return false;
+		}
+		
+		for (IZendTarget eTarget : this.all) {
+			if (target.getId().equals(eTarget.getId())) {
+				return false;
+			}
+			
+		}
+		return true;
+	}
+
+	public synchronized IZendTarget remove(IZendTarget target) {
 		if (target == null) {
 			throw new IllegalArgumentException("target cannot be null");
 		}
@@ -70,12 +103,12 @@ public class TargetsManager {
 	 * @param i
 	 * @return the specified target
 	 */
-	public synchronized Target getTargetById(String id) {
+	public synchronized IZendTarget getTargetById(String id) {
 		if (id == null) {
 			return null;
 		}
 
-		for (Target target : list()) {
+		for (IZendTarget target : list()) {
 			if (id.equals(target.getId())) {
 				return target;
 			}
@@ -84,7 +117,7 @@ public class TargetsManager {
 		return null;
 	}
 
-	public synchronized Target[] list() {
-		return (Target[]) this.all.toArray(new Target[this.all.size()]);
+	public synchronized IZendTarget[] list() {
+		return (IZendTarget[]) this.all.toArray(new ZendTarget[this.all.size()]);
 	}
 }
