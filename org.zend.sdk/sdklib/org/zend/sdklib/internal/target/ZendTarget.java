@@ -9,16 +9,18 @@ package org.zend.sdklib.internal.target;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.auth.BasicCredentials;
+import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.SystemInfo;
 
 /**
  * Represents a target in the environment
@@ -147,4 +149,24 @@ public class ZendTarget implements IZendTarget {
 		properties.putAll(properties);
 		properties.store(os, "target properties for " + getId());
 	}
+
+	@Override
+	public boolean connect() throws WebApiException {
+		WebApiCredentials credentials = new BasicCredentials(getKey(), getSecretKey());
+		try {
+			WebApiClient client = new WebApiClient(credentials, getHost().toString() + ":10081");
+			final SystemInfo info = client.getSystemInfo();
+			addProperty("edition", info.getEdition().name());
+			addProperty("operatingSystem", info.getEdition().name());
+			addProperty("phpVersion", info.getPhpVersion());
+			addProperty("status", info.getStatus().name());
+			addProperty("serverVersion", info.getVersion());
+			addProperty("supportedApiVersions", info.getSupportedApiVersions().toString());
+		} catch (MalformedURLException e) {
+			return false;
+		} 
+		return true;
+	}
+	
+	
 }

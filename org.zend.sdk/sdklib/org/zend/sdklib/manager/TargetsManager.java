@@ -14,6 +14,7 @@ import java.util.List;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiException;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
@@ -35,22 +36,29 @@ public class TargetsManager {
 
 	public TargetsManager(ITargetLoader loader) {
 		this.loader = loader;
-		
+
 		final IZendTarget[] loadAll = loader.loadAll();
 		for (IZendTarget zTarget : loadAll) {
 			if (validTarget(zTarget)) {
-				throw new IllegalArgumentException("Conflict found when adding " + zTarget.getId());
+				throw new IllegalArgumentException(
+						"Conflict found when adding " + zTarget.getId());
 			}
-			
+
 			this.all.add(zTarget);
 		}
 	}
 
-	public synchronized IZendTarget add(IZendTarget target) {
+	public synchronized IZendTarget add(IZendTarget target) throws WebApiException {
 		if (validTarget(target)) {
-			throw new IllegalArgumentException("Conflict found when adding " + target.getId());
+			throw new IllegalArgumentException("Conflict found when adding "
+					+ target.getId());
 		}
-		
+
+		// try to connect to server
+		if (!target.connect()) {
+			return null;
+		}
+
 		// notify loader on addition
 		this.loader.add(target);
 
@@ -61,6 +69,7 @@ public class TargetsManager {
 
 	/**
 	 * Check for conflicts and errors in new target
+	 * 
 	 * @param target
 	 * @return
 	 */
@@ -68,16 +77,16 @@ public class TargetsManager {
 		if (target == null) {
 			throw new IllegalArgumentException("target cannot be null");
 		}
-		
+
 		if (target.getId() == null) {
 			return false;
 		}
-		
+
 		for (IZendTarget eTarget : this.all) {
 			if (target.getId().equals(eTarget.getId())) {
 				return false;
 			}
-			
+
 		}
 		return true;
 	}
@@ -118,6 +127,7 @@ public class TargetsManager {
 	}
 
 	public synchronized IZendTarget[] list() {
-		return (IZendTarget[]) this.all.toArray(new ZendTarget[this.all.size()]);
+		return (IZendTarget[]) this.all
+				.toArray(new ZendTarget[this.all.size()]);
 	}
 }
