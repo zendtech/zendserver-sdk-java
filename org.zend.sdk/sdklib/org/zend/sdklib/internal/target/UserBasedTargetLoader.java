@@ -8,16 +8,26 @@
 package org.zend.sdklib.internal.target;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.sdklib.target.ZendTarget;
 
+/**
+ * Default persistence layer for targets
+ * 
+ * @author Roy, 2011
+ */
 public class UserBasedTargetLoader implements ITargetLoader {
 
+	private static final String INI_EXTENSION = ".ini";
 	private static final String CONF_FILENAME = "conf";
 	private final File baseDir;
 
@@ -59,66 +69,101 @@ public class UserBasedTargetLoader implements ITargetLoader {
 	public IZendTarget add(IZendTarget target) {
 		if (target == null) {
 			throw new IllegalArgumentException("target is null");
-		}		
-		
-		File targetPath = getTargetPath(target);
-		if (targetPath.exists()) {
+		}
+
+		TargetDescriptor descriptor = loadTargetDescriptor(target.getId());
+		if (descriptor != null) {
 			throw new IllegalArgumentException("target already exists");
 		}
 
-		final boolean mkdir = targetPath.mkdir();
-		if (!mkdir) {
+		// create descriptor
+		descriptor = storeTargetDescriptor(target);
+		if (null == descriptor) {
 			return null;
 		}
 
-		final File confFile = createNewFileUnderPath(targetPath,
-				CONF_FILENAME);
-		if (null == confFile) {
-			return null;
-		}
-
-		Properties properties = new Properties();
-		properties.put("_id", target.getId());
-		properties.put("_key", target.getKey());
-		properties.put("_secretKey", target.getSecretKey());
-		properties.put("_host", target.getHost().toString());
-		properties.putAll(target.getProperties());
-		
-		FileOutputStream fos;
+		File confFile = new File(descriptor.path, CONF_FILENAME);
 		try {
-			fos = new FileOutputStream(confFile);
-			properties.store(fos, "target properties for " + target.getId());
+			confFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(confFile);
+			target.store(fos);
 			fos.close();
-		} catch (IOException e) {
+		} catch (IOException e1) {
 			return null;
 		}
 
 		return target;
 	}
 
+	private TargetDescriptor storeTargetDescriptor(IZendTarget target) {
+		try {
+			final File file = getDescriptorFile(target.getId());
+			if (!file.createNewFile()) {
+				return null;
+			}
+			final TargetDescriptor targetDescriptor = new TargetDescriptor();
+			targetDescriptor.target = target.getId();
+			targetDescriptor.path = new File(this.baseDir.getAbsolutePath(),
+					targetDescriptor.target);
+
+			final Properties properties = new Properties();
+			properties.put("target", targetDescriptor.target);
+			properties.put("path", targetDescriptor.path.getAbsolutePath());
+
+			final FileOutputStream fileOutputStream = new FileOutputStream(file);
+			properties.store(fileOutputStream, "descriptor for target "
+					+ target.getId());
+
+			fileOutputStream.close();
+			targetDescriptor.path.mkdir();
+
+			return targetDescriptor.isValid() ? targetDescriptor : null;
+		} catch (IOException e) {
+			// can't be identified as valid target - ignore
+			return null;
+		}
+	}
+
+	private TargetDescriptor loadTargetDescriptor(String target) {
+		try {
+			final File file = getDescriptorFile(target);
+			if (!file.exists()) {
+				return null;
+			}
+
+			final Properties properties = new Properties();
+			final FileInputStream fileInputStream = new FileInputStream(file);
+			properties.load(fileInputStream);
+
+			final TargetDescriptor targetDescriptor = new TargetDescriptor();
+			targetDescriptor.target = properties.getProperty("target");
+			targetDescriptor.path = new File(properties.getProperty("path"));
+
+			fileInputStream.close();
+			return targetDescriptor.isValid() ? targetDescriptor : null;
+		} catch (IOException e) {
+			// can't be identified as valid target - ignore
+			return null;
+		}
+	}
+
+	private File getDescriptorFile(String target) {
+		if (!target.endsWith(INI_EXTENSION)) {
+			target = target + INI_EXTENSION;
+		}
+		final File file = new File(this.baseDir, target);
+		return file;
+	}
+
 	private File getTargetPath(IZendTarget target) {
-		final File file = new File(this.baseDir.getAbsolutePath() + File.separator + target.getId());
+		final File file = new File(this.baseDir, target.getId());
 		if (!file.exists()) {
 			return null;
 		}
-		
-		
-		
-		final String id = target.getId();
-		File targetPath = new File(this.baseDir.getAbsolutePath()
-				+ File.separator + id);
-		return targetPath;
-	}
 
-	private File createNewFileUnderPath(File targetPath, String fileName) {
-		final File file = new File(targetPath + File.separator + fileName);
-		try {
-			file.createNewFile();
-		} catch (IOException e) {
-			targetPath.deleteOnExit();
-			return null;
-		}
-		return file;
+		final String id = target.getId();
+		File targetPath = new File(this.baseDir, id);
+		return targetPath;
 	}
 
 	@Override
@@ -127,15 +172,53 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		if (targetPath.exists()) {
 			targetPath.delete();
 		}
-		 
-		
+
 		return null;
-		
+
 	}
 
 	@Override
-	public ZendTarget[] loadAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public IZendTarget[] loadAll() {
+		final File[] targets = baseDir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File file) {
+				return file.getName().endsWith(INI_EXTENSION) && file.isFile();
+			}
+
+		});
+
+		final ArrayList<IZendTarget> arrayList = new ArrayList<IZendTarget>(
+				targets.length);
+		for (File file : targets) {
+			final TargetDescriptor d = loadTargetDescriptor(file.getName());
+			if (d.isValid()) {
+				File confFile = new File(d.path, CONF_FILENAME);
+				try {
+					InputStream is = new FileInputStream(confFile);
+					final ZendTarget target = new ZendTarget();
+					target.load(is);
+					arrayList.add(target);
+				} catch (IOException e1) {
+					// skip target loading
+				}
+			}
+		}
+
+		return (IZendTarget[]) arrayList.toArray(new IZendTarget[arrayList.size()]);
 	}
+
+	/**
+	 * Holds the name and path of a target
+	 */
+	public class TargetDescriptor {
+
+		public String target;
+		public File path;
+
+		public boolean isValid() {
+			return this.target != null && this.path.exists();
+		}
+	}
+
 }
