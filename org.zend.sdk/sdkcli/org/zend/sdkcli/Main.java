@@ -26,7 +26,7 @@ public class Main {
 		initLogger();
 		try {
 			// Manager for the command line tool
-			CommandLine commandLine = new CommandLine(args);
+			CommandLine commandLine = new CommandLine(args, log);
 			ICommand command = CommandFactory.createCommand(commandLine);
 			command.execute();
 		} catch (ParseError e) {

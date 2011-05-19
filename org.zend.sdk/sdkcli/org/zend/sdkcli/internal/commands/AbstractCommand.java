@@ -68,6 +68,10 @@ public abstract class AbstractCommand implements ICommand {
 		return commandLine.getParameterValue(parameterName);
 	}
 
+	public boolean hasOption(String parameterName) {
+		return commandLine.hasOption(parameterName);
+	}
+
 	public String[] getValues(String parameterName) {
 		return commandLine.getParameterValues(parameterName);
 	}

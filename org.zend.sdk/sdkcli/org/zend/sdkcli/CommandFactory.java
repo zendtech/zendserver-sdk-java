@@ -10,6 +10,7 @@ package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
+import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 
 /**
  * Creates command instance.
@@ -34,6 +35,9 @@ public class CommandFactory {
 		switch (type) {
 		case CREATE_PROJECT:
 			command = new CreateProjectCommand(line);
+			break;
+		case LIST_TARGETS:
+			command = new ListTargetsCommand(line);
 			break;
 		default:
 			break;
