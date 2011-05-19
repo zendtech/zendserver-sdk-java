@@ -7,7 +7,8 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
-import org.zend.sdklib.target.Target;
+import org.zend.sdklib.target.IZendTarget;
+
 
 /**
  * The ITargetLoader is an interface for the target management system. It allows
@@ -21,18 +22,18 @@ public interface ITargetLoader {
 	 * @param target
 	 * @return
 	 */
-	public Target add(Target target);
+	public IZendTarget add(IZendTarget target);
 
 	/**
 	 * @param target
 	 * @return
 	 */
-	public Target remove(Target target);
+	public IZendTarget remove(IZendTarget target);
 
 	/**
 	 * Load all target environments into the system
 	 * 
 	 * @return ITarget[] targets
 	 */
-	public Target[] loadAll();
+	public IZendTarget[] loadAll();
 }
