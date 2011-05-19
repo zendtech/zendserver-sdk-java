@@ -7,26 +7,32 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
-import org.zend.sdklib.target.ITarget;
+import org.zend.sdklib.target.Target;
 
+/**
+ * The ITargetLoader is an interface for the target management system. It allows
+ * different environments to load targets in a different way
+ * 
+ * @author Roy, 2011
+ */
 public interface ITargetLoader {
 
 	/**
 	 * @param target
-	 * @return 
+	 * @return
 	 */
-	public ITarget add(ITarget target);
+	public Target add(Target target);
 
 	/**
 	 * @param target
 	 * @return
 	 */
-	public ITarget remove(ITarget target);
+	public Target remove(Target target);
 
 	/**
-	 * @param target
-	 * @return
+	 * Load all target environments into the system
+	 * 
+	 * @return ITarget[] targets
 	 */
-	public ITarget update(ITarget target);
-
+	public Target[] loadAll();
 }
