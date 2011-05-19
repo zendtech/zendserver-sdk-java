@@ -35,10 +35,6 @@ public class CommandFactory {
 		case CREATE_PROJECT:
 			command = new CreateProjectCommand(line);
 			break;
-		case UPDATE_PROJECT:
-			break;
-		case DELETE_PROJECT:
-			break;
 		default:
 			break;
 		}
