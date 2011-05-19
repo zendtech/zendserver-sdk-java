@@ -20,10 +20,6 @@ public enum CommandType {
 
 	CREATE_PROJECT("create", "project"),
 
-	UPDATE_PROJECT("update", "project"),
-
-	DELETE_PROJECT("delete", "project"),
-
 	UNKNOWN(null);
 
 	private String verb;
