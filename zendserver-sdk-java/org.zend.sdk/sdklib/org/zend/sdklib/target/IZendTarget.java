@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.zend.sdklib.target;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.Properties;
 
 /**
  * Represnts a Zend Server Target environment that can be used for SDK
@@ -45,7 +46,12 @@ public interface IZendTarget {
 	public abstract String getProperty(String key);
 
 	/**
-	 * @return all extra properties 
+	 * @return the value of the given extra property key
 	 */
-	public abstract Properties getProperties();
+	public abstract void load(InputStream is) throws IOException;
+
+	/**
+	 * @return the value of the given extra property key
+	 */
+	public abstract void store(OutputStream os) throws IOException;
 }

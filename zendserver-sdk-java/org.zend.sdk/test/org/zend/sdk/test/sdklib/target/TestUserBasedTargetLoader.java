@@ -21,9 +21,9 @@ import org.zend.sdklib.target.ZendTarget;
 public class TestUserBasedTargetLoader {
 
 	@Test
-	public void testConstructor() throws MalformedURLException {
+	public void testAdd() throws MalformedURLException {
 		final String tempDir = System.getProperty("java.io.tmpdir");
-		File file = new File(tempDir + File.separator+ new Random().nextInt());
+		File file = new File(tempDir + File.separator + new Random().nextInt());
 		file.mkdir();
 
 		UserBasedTargetLoader loader = new UserBasedTargetLoader(file);
@@ -31,9 +31,35 @@ public class TestUserBasedTargetLoader {
 				"http://localhost:10081"), "mykey", "43543");
 		loader.add(target);
 
-		assertTrue(loader.loadAll().length > 0);
+		file.deleteOnExit();
+	}
+
+	@Test
+	public void testRemove() throws MalformedURLException {
+		final String tempDir = System.getProperty("java.io.tmpdir");
+		File file = new File(tempDir + File.separator + new Random().nextInt());
+		file.mkdir();
+
+		UserBasedTargetLoader loader = new UserBasedTargetLoader(file);
+		final ZendTarget target = new ZendTarget("dev3", new URL(
+				"http://localhost:10081"), "mykey", "43543");
+		loader.add(target);
 		loader.remove(target);
-		assertTrue(loader.loadAll().length == 0);
+
+		file.deleteOnExit();
+	}
+
+	@Test
+	public void testList() throws MalformedURLException {
+		final String tempDir = System.getProperty("java.io.tmpdir");
+		File file = new File(tempDir + File.separator + new Random().nextInt());
+		file.mkdir();
+
+		UserBasedTargetLoader loader = new UserBasedTargetLoader(file);
+		final ZendTarget target = new ZendTarget("dev3", new URL(
+				"http://localhost:10081"), "mykey", "43543");
+		loader.add(target);
+		assertTrue(loader.loadAll().length > 0);
 
 		file.deleteOnExit();
 	}
