@@ -22,7 +22,7 @@ public class CliLogger implements ILogger {
 	private Logger logger;
 
 	public CliLogger() {
-		PropertyConfigurator.configure("log4j.properties");
+		PropertyConfigurator.configure("../log4j.properties");
 	}
 
 	private CliLogger(String creatorName) {
