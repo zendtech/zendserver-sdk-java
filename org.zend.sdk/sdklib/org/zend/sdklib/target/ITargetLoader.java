@@ -7,29 +7,31 @@
  *******************************************************************************/
 package org.zend.sdklib.target;
 
-import java.net.URL;
-
 
 /**
- * Represents a target in the environment
+ * The ITargetLoader is an interface for the target management system. It allows
+ * different environments to load targets in a different way
+ * 
  * @author Roy, 2011
  */
-public interface ITarget {
-
-	
-	/**
-	 * @return URL the url of this target
-	 */
-	public URL getHost(); 
-	
-	/**
-	 * @return String the key of this target
-	 */
-	public String getKey();
+public interface ITargetLoader {
 
 	/**
-	 * @return String secret key for this target
+	 * @param target
+	 * @return
 	 */
-	public String getSecretKey();
+	public Target add(Target target);
 
+	/**
+	 * @param target
+	 * @return
+	 */
+	public Target remove(Target target);
+
+	/**
+	 * Load all target environments into the system
+	 * 
+	 * @return ITarget[] targets
+	 */
+	public Target[] loadAll();
 }
