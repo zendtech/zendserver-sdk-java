@@ -20,6 +20,8 @@ public enum CommandType {
 
 	CREATE_PROJECT("create", "project"),
 
+	LIST_TARGETS("list", "targets"),
+
 	UNKNOWN(null);
 
 	private String verb;
