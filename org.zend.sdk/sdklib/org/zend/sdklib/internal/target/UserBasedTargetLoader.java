@@ -87,7 +87,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			confFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(confFile);
 			target.store(fos);
-			fos.close();
+			fos.close();			
 		} catch (IOException e1) {
 			return null;
 		}
@@ -155,28 +155,27 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		return file;
 	}
 
-	private File getTargetPath(IZendTarget target) {
-		final File file = new File(this.baseDir, target.getId());
-		if (!file.exists()) {
-			return null;
-		}
-
-		final String id = target.getId();
-		File targetPath = new File(this.baseDir, id);
-		return targetPath;
-	}
-
 	@Override
 	public IZendTarget remove(IZendTarget target) {
-		File targetPath = getTargetPath(target);
-		if (targetPath.exists()) {
-			targetPath.delete();
+		TargetDescriptor d = loadTargetDescriptor(target.getId());
+		if (null == d) {
+			throw new IllegalArgumentException("cannot find target" + target.getId());
+		}
+		final File descriptorFile = getDescriptorFile(target.getId());
+		
+		d.path.deleteOnExit();
+		final boolean delete2 = descriptorFile.delete();
+		
+		if (!delete2) {
+			throw new IllegalArgumentException("error deleting data");
 		}
 
-		return null;
-
+		return target;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.zend.sdklib.target.ITargetLoader#loadAll()
+	 */
 	@Override
 	public IZendTarget[] loadAll() {
 		final File[] targets = baseDir.listFiles(new FileFilter() {
@@ -213,7 +212,14 @@ public class UserBasedTargetLoader implements ITargetLoader {
 	 */
 	public class TargetDescriptor {
 
+		/**
+		 * Name of the target
+		 */
 		public String target;
+		
+		/**
+		 * Path of the target directory
+		 */
 		public File path;
 
 		public boolean isValid() {
