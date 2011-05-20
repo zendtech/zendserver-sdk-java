@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -20,6 +22,10 @@ import org.zend.webapi.core.WebApiException;
  * used across threads
  * 
  * @author Roy, 2011
+ */
+/**
+ * @author roy
+ *
  */
 public class TargetsManager {
 
@@ -47,7 +53,8 @@ public class TargetsManager {
 		}
 	}
 
-	public synchronized IZendTarget add(IZendTarget target) throws WebApiException {
+	public synchronized IZendTarget add(IZendTarget target)
+			throws WebApiException {
 		if (validTarget(target)) {
 			throw new IllegalArgumentException("Conflict found when adding "
 					+ target.getId());
@@ -64,30 +71,6 @@ public class TargetsManager {
 		// adds the target to the list
 		final boolean added = this.all.add(target);
 		return added ? target : null;
-	}
-
-	/**
-	 * Check for conflicts and errors in new target
-	 * 
-	 * @param target
-	 * @return
-	 */
-	private boolean validTarget(IZendTarget target) {
-		if (target == null) {
-			throw new IllegalArgumentException("target cannot be null");
-		}
-
-		if (target.getId() == null) {
-			return false;
-		}
-
-		for (IZendTarget eTarget : this.all) {
-			if (target.getId().equals(eTarget.getId())) {
-				return false;
-			}
-
-		}
-		return true;
 	}
 
 	public synchronized IZendTarget remove(IZendTarget target) {
@@ -125,8 +108,55 @@ public class TargetsManager {
 		return null;
 	}
 
+	/**
+	 * Returns a target that represents the localhost zend server
+	 * 
+	 * @param targetId - 
+	 * @param key
+	 * @return
+	 * @throws IOException
+	 * @throws WebApiException 
+	 */
+	public synchronized IZendTarget detectLocalhostTarget(String targetId,
+			String key) throws IOException, WebApiException {
+		final IZendTarget[] list = list();
+		for (IZendTarget t : list) {
+			if (t.getHost().equals(ZendTargetAutoDetect.localhost)) {
+				return t;
+			}
+		}
+
+		// localhost not found - create one
+		final IZendTarget local = new ZendTargetAutoDetect().createLocalhostTarget(targetId, key);
+		return add(local);
+	}
+
 	public synchronized IZendTarget[] list() {
 		return (IZendTarget[]) this.all
 				.toArray(new ZendTarget[this.all.size()]);
+	}
+
+	/**
+	 * Check for conflicts and errors in new target
+	 * 
+	 * @param target
+	 * @return
+	 */
+	private boolean validTarget(IZendTarget target) {
+		if (target == null) {
+			throw new IllegalArgumentException("target cannot be null");
+		}
+
+		if (target.getId() == null) {
+			return false;
+		}
+
+		for (IZendTarget eTarget : this.all) {
+			if (target.getId().equals(eTarget.getId())) {
+				return false;
+			}
+
+		}
+		return true;
 	}
 }
