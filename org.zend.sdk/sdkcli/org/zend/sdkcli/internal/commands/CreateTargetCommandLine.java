@@ -10,12 +10,16 @@ package org.zend.sdkcli.internal.commands;
 import java.io.IOException;
 
 import org.zend.sdkcli.ParseError;
-import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
-import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
+/**
+ * Creating a new target 
+ * 
+ * @author Roy, 2011
+ *
+ */
 public class CreateTargetCommandLine extends TargetAwareCommand {
 
 	private static final String LOCALHOST = "localhost";
@@ -29,13 +33,12 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 	@Override
 	public boolean execute() {
 		if (hasOption(LOCALHOST)) {
-			final ZendTargetAutoDetect autoDetect = new ZendTargetAutoDetect();
 			final String targetId = getValue(ID) == null ? LOCALHOST
 					: getValue(ID);
 			final String key = getValue(KEY) == null ? "sdk" : getValue(KEY);
-			IZendTarget target = null;
+			// detect localhost
 			try {
-				target = autoDetect.getLocalZendServer(targetId, key);
+				getTargetManager().detectLocalhostTarget(targetId, key);
 			} catch (IOException e1) {
 				getLogger().error("Permission denied.");
 				if (EnvironmentUtils.isUnderLinux()
@@ -54,30 +57,26 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 							"\t> elevate " + commandLine.getVerb() + " "
 									+ commandLine.getDirectObject() + " ...");
 				}
-			}
-			if (target != null) {
-				try {
-					getTargetManager().add(target);
-				} catch (WebApiException e) {
-					getLogger()
-							.error("Coudn't connect to local host server, please make "
-									+ "sure you the server is up and its version is 5.5 and up.");
-					getLogger()
-							.error("More information provided by localhost:");
+				return false;
+			} catch (WebApiException e) {
+				getLogger()
+						.error("Coudn't connect to local host server, please make "
+								+ "sure you the server is up and its version is 5.5 and up.");
+				getLogger().error("More information provided by localhost:");
 
-					final ResponseCode responseCode = e.getResponseCode();
-					if (responseCode != null) {
-						getLogger().error("\tError code: " + responseCode);
-					}
-					final String message = e.getMessage();
-					if (message != null) {
-						getLogger().error("\tError message: " + message);
-					}
+				final ResponseCode responseCode = e.getResponseCode();
+				if (responseCode != null) {
+					getLogger().error("\tError code: " + responseCode);
 				}
+				final String message = e.getMessage();
+				if (message != null) {
+					getLogger().error("\tError message: " + message);
+				}
+				return false;
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
