@@ -9,8 +9,6 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.IOException;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
@@ -59,7 +57,7 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 			}
 			if (target != null) {
 				try {
-					final IZendTarget add = getTargetManager().add(target);
+					getTargetManager().add(target);
 				} catch (WebApiException e) {
 					getLogger()
 							.error("Coudn't connect to local host server, please make "
@@ -85,20 +83,13 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 	@Override
 	protected void setupOptions() {
 		// auto detection mode
-		final Option option = OptionBuilder.withDescription(
-				"auto detect localhost target").create(LOCALHOST);
-		options.addOption(option);
+		addOption(LOCALHOST, false, "auto detect localhost target");
 
 		// key name
-		final Option option1 = OptionBuilder
-				.withDescription("use given key name").hasArg().create(KEY);
-		options.addOption(option1);
+		addOption(KEY, true, "use given key name");
 
 		// key name
-		final Option option2 = OptionBuilder
-				.withDescription("use given target name").hasArg().create(ID);
-		options.addOption(option2);
-
+		addOption(ID, true, "use given target name");
 	}
 
 }

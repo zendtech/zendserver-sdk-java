@@ -17,9 +17,6 @@ import java.util.Random;
 import org.junit.Test;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
-import org.zend.sdklib.internal.utils.EnvironmentUtils;
-import org.zend.sdklib.target.IZendTarget;
 
 public class TestUserBasedTargetLoader {
 

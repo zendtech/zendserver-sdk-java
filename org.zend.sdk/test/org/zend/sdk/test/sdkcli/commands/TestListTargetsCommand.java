@@ -16,7 +16,6 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
-import org.zend.sdkcli.internal.logger.CliLogger;
 import org.zend.sdklib.logger.Log;
 
 public class TestListTargetsCommand extends AbstractTest {

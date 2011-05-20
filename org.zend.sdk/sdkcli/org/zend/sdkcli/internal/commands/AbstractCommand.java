@@ -8,6 +8,7 @@
 
 package org.zend.sdkcli.internal.commands;
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.Main;
@@ -42,14 +43,13 @@ public abstract class AbstractCommand implements ICommand {
 
 	/**
 	 * Commands setup their {@link Options}
-	 * 
-	 * @return
 	 */
 	protected abstract void setupOptions();
 
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
+	 * @see Options#addOption(Sting, boolean)
 	 * @param name
 	 * @param hasArgs
 	 */
@@ -60,11 +60,23 @@ public abstract class AbstractCommand implements ICommand {
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
+	 * @see Options#addOption(Option)
 	 * @param name
-	 * @param isRequired
+	 * @param hasArgs
 	 */
-	protected void addArgumentOption(String name, boolean isRequired) {
-		options.addOption(name, isRequired);
+	protected void addOption(Option opt) {
+		options.addOption(opt);
+	}
+
+	/**
+	 * Helper method for {@link AbstractCommand#setupOptions()} method
+	 * 
+	 * @see Options#addOption(String, boolean, String)
+	 * @param name
+	 * @param hasArgs
+	 */
+	protected void addOption(String name, boolean hasArgs, String description) {
+		options.addOption(name, hasArgs, description);
 	}
 
 	public String getValue(String parameterName) {
@@ -84,7 +96,7 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	public ILogger getLogger() {
 		return Log.getInstance().getLogger(Main.class.getName());
-				
+
 	}
-	
+
 }
