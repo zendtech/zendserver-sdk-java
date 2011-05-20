@@ -45,30 +45,169 @@ public class ZendTargetAutoDetect {
 	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
 	private static final String ZCE_PREFIX = "ZCE_PREFIX";
 
+	public static URL localhost = null;
 	private String zendServerInstallLocation = null;
+	static {
+		try {
+			localhost = new URL("http://localhost");
+		} catch (MalformedURLException e) {
+			// ignore localhost is a valid URL
+		}
+	}
+
+	/**
+	 * 
+	 * @param targetId
+	 * @param key
+	 * @return
+	 * @throws IOException
+	 */
+	public IZendTarget createLocalhostTarget(String targetId, String key)
+			throws IOException {
+		findLocalhostInstallDirectory();
+		if (zendServerInstallLocation == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
+		}
+
+		String secretKey = retrieveSecretKey(key);
+		return new ZendTarget(targetId, localhost, key, secretKey);
+	}
+
+	private String retrieveSecretKey(String key) throws IOException,
+			FileNotFoundException {
+		final String secretKey = findSecretKeyInLocalhost(key);
+		if (null != secretKey) {
+			return secretKey;
+		} else {
+			// assert permissions are elevated
+			File keysFile = getApiKeysFile();
+			if (keysFile == null) {
+				throw new IllegalStateException(MISSING_ZEND_SERVER);
+			}
+
+			if (!keysFile.canWrite()) {
+				// "Permission denied"
+				throw new IOException(NEED_TO_ELEVATE);
+			}
+
+			// write zend-server-users.ini and find key
+			BufferedReader ir = new BufferedReader(new FileReader(keysFile));
+			final File edited = new File(keysFile.getParentFile(), USER_INI
+					+ ".tmp");
+			PrintStream os = new PrintStream(edited);
+			final String sk = copyWithEdits(ir, os, key);
+			ir.close();
+			os.close();
+
+			keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI
+					+ ".bak"));
+			edited.renameTo(new File(edited.getParentFile(), USER_INI));
+			return sk;
+		}
+	}
+
+	public static String copyWithEdits(BufferedReader ir, PrintStream os,
+			String key) throws IOException {
+		String line = ir.readLine();
+
+		final String sk = generateSecretKey();
+		boolean block = false;
+		while (line != null) {
+			if ("[apiKeys]".equals(line)) {
+				writeApiKeyBlock(key, os, sk);
+				block = true;
+			} else {
+				os.println(line);
+			}
+			line = ir.readLine();
+		}
+
+		if (!block) {
+			writeApiKeyBlock(key, os, sk);
+		}
+
+		return sk;
+
+	}
+
+	public static Properties readApiKeysSection(BufferedReader reader)
+			throws IOException {
+
+		Properties properties = new Properties();
+		String line = reader.readLine();
+		while (line != null) {
+			if ("[apiKeys]".equals(line)) {
+				line = reader.readLine();
+				while (line != null && !line.startsWith("[")) {
+					final String[] split = line.split("=");
+					if (split != null && split.length == 2) {
+						properties.put(split[0].trim(), split[1].trim());
+					}
+					line = reader.readLine();
+				}
+			}
+			line = reader.readLine();
+		}
+
+		return properties;
+	}
+
+	/**
+	 * Returns a new target for the localhost target
+	 * 
+	 * @param key
+	 * @return
+	 * @throws IOException
+	 */
+	private String findSecretKeyInLocalhost(String key) throws IOException {
+		findLocalhostInstallDirectory();
+		if (zendServerInstallLocation == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
+		}
+
+		// assert permissions are elevated
+		File keysFile = getApiKeysFile();
+		if (keysFile == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
+		}
+
+		if (!keysFile.canRead()) {
+			// "Permission denied"
+			throw new IOException(NEED_TO_ELEVATE);
+		}
+
+		// read zend-server-users.ini and find key
+		final BufferedReader reader = new BufferedReader(new FileReader(
+				keysFile));
+		Properties p = readApiKeysSection(reader);
+		reader.close();
+		final String hash = p.getProperty(key + ":hash");
+		if (hash != null) {
+			// return secretKey if possible
+			return hash;
+		}
+
+		// key not found
+		return null;
+	}
 
 	/**
 	 * @return returns the Local installed Zend Server, null if no local Zend
 	 *         Server installed.
 	 * @throws IOException
 	 */
-	public IZendTarget getLocalZendServer(String targetId, String key)
-			throws IOException {
-		IZendTarget server = null;
+	private void findLocalhostInstallDirectory() throws IOException {
 		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
-			server = getLocalZendServerFromFile(targetId);
+			zendServerInstallLocation = getLocalZendServerFromFile();
 		}
 
 		if (EnvironmentUtils.isUnderWindows()) {
-			server = getLocalZendServerFromRegistry(targetId, key);
+			zendServerInstallLocation = getLocalZendServerFromRegistry();
 		}
-
-		return server;
 	}
 
-	private IZendTarget getLocalZendServerFromFile(String targetId) {
+	private String getLocalZendServerFromFile() {
 		Properties props = null;
-		IZendTarget server = null;
 
 		// Try to find the zend.rc-deb file.
 		try {
@@ -104,104 +243,22 @@ public class ZendTargetAutoDetect {
 			}
 		}
 
-		if (props != null) {
-
-			zendServerInstallLocation = props.getProperty(ZCE_PREFIX);
-
-			// TODO resolve key/secretkey
-			try {
-				server = new ZendTarget(targetId, new URL("http://localhost"),
-						"fake", "fake");
-			} catch (MalformedURLException e) {
-				// http://localhost is valid - ignore
-			}
-		}
-		return server;
+		return props != null ? props.getProperty(ZCE_PREFIX) : null;
 	}
 
-	private IZendTarget getLocalZendServerFromRegistry(String targetId,
-			String key) throws IOException {
-		IZendTarget server = null;
+	private String getLocalZendServerFromRegistry() throws IOException {
 		RegistryKey zendServerKey = null;
 		try {
 			zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
 					.openSubKey("Zend Technologies").openSubKey("ZendServer");
 
 			if (zendServerKey != null) {
-				zendServerInstallLocation = zendServerKey
-						.getStringValue("InstallLocation");
-
-				if (zendServerInstallLocation != null) {
-					// resolve key/secret key
-					final String addKeyToLocalTarget = addKeyToLocalTarget(key);
-
-					server = new ZendTarget(targetId, new URL(
-							"http://localhost"), key, addKeyToLocalTarget);
-				}
+				return zendServerKey.getStringValue("InstallLocation");
 			}
 		} catch (NoSuchKeyException e1) {
 		} catch (RegistryException e1) {
-		} catch (MalformedURLException e) {
-			// http://localhost is valid - else ignore
 		}
-
-		return server;
-	}
-
-	public String addKeyToLocalTarget(String key) throws IOException {
-		final String secretKey = getSecretKeyInLocalhost(key);
-		if (null != secretKey) {
-			return secretKey;
-		}
-
-		// assert permissions are elevated
-		File keysFile = getApiKeysFile();
-		if (keysFile == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
-
-		if (!keysFile.canWrite()) {
-			// "Permission denied"
-			throw new IOException(NEED_TO_ELEVATE);
-		}
-
-		// write zend-server-users.ini and find key
-		BufferedReader ir = new BufferedReader(new FileReader(keysFile));
-		final File edited = new File(keysFile.getParentFile(), USER_INI
-				+ ".tmp");
-		PrintStream os = new PrintStream(edited);
-		final String sk = copyWithEdits(ir, os, key);
-		ir.close();
-		os.close();
-
-		keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI + ".bak"));
-		edited.renameTo(new File(edited.getParentFile(), USER_INI));
-
-		return sk;
-	}
-
-	public static String copyWithEdits(BufferedReader ir, PrintStream os,
-			String key) throws IOException {
-		String line = ir.readLine();
-
-		final String sk = generateSecretKey();
-		boolean block = false;
-		while (line != null) {
-			if ("[apiKeys]".equals(line)) {
-				writeApiKeyBlock(key, os, sk);
-				block = true;
-			} else {
-				os.println(line);
-			}
-			line = ir.readLine();
-		}
-
-		if (!block) {
-			writeApiKeyBlock(key, os, sk);
-		}
-
-		return sk;
-
+		return null;
 	}
 
 	private static void writeApiKeyBlock(String key, PrintStream os,
@@ -242,66 +299,6 @@ public class ZendTargetAutoDetect {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Returns the secret Key (hash) for the given key
-	 * 
-	 * @param key
-	 * @return
-	 * @throws IOException
-	 */
-	public String getSecretKeyInLocalhost(String key) throws IOException {
-		if (zendServerInstallLocation == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
-
-		// assert permissions are elevated
-		File keysFile = getApiKeysFile();
-		if (keysFile == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
-
-		if (!keysFile.canRead()) {
-			// "Permission denied"
-			throw new IOException(NEED_TO_ELEVATE);
-		}
-
-		// read zend-server-users.ini and find key
-		final BufferedReader reader = new BufferedReader(new FileReader(
-				keysFile));
-		Properties p = readApiKeysSection(reader);
-		reader.close();
-		final String hash = p.getProperty(key + ":hash");
-		if (hash != null) {
-			// return secretKey if possible
-			return hash;
-		}
-
-		// key not found
-		return null;
-	}
-
-	public static Properties readApiKeysSection(BufferedReader reader)
-			throws IOException {
-
-		Properties properties = new Properties();
-		String line = reader.readLine();
-		while (line != null) {
-			if ("[apiKeys]".equals(line)) {
-				line = reader.readLine();
-				while (line != null && !line.startsWith("[")) {
-					final String[] split = line.split("=");
-					if (split != null && split.length == 2) {
-						properties.put(split[0].trim(), split[1].trim());
-					}
-					line = reader.readLine();
-				}
-			}
-			line = reader.readLine();
-		}
-
-		return properties;
 	}
 
 	private static String generateSecretKey() {
