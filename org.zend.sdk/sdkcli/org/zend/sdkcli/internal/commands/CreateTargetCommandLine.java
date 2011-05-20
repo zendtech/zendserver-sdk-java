@@ -7,10 +7,13 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.io.IOException;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
+import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -19,6 +22,7 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 
 	private static final String LOCALHOST = "localhost";
 	private static final String ID = "t";
+	private static final String KEY = "k";
 
 	public CreateTargetCommandLine(CommandLine commandLine) throws ParseError {
 		super(commandLine);
@@ -28,9 +32,32 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 	public boolean execute() {
 		if (hasOption(LOCALHOST)) {
 			final ZendTargetAutoDetect autoDetect = new ZendTargetAutoDetect();
-			final IZendTarget target = autoDetect
-					.getLocalZendServer(getValue(ID));
-			if (autoDetect != null) {
+			final String targetId = getValue(ID) == null ? LOCALHOST
+					: getValue(ID);
+			final String key = getValue(KEY) == null ? "sdk" : getValue(KEY);
+			IZendTarget target = null;
+			try {
+				target = autoDetect.getLocalZendServer(targetId, key);
+			} catch (IOException e1) {
+				getLogger().error("Permission denied.");
+				if (EnvironmentUtils.isUnderLinux()
+						|| EnvironmentUtils.isUnderMaxOSX()) {
+					getLogger().error(
+							"You need root privileges to run this command.");
+					getLogger().error("Consider using:");
+					getLogger().error(
+							"\t% sudo " + commandLine.getVerb() + " "
+									+ commandLine.getDirectObject() + " ...");
+				} else {
+					getLogger()
+							.error("Use administrator account with elevated privileges");
+					getLogger().error("Consider using:");
+					getLogger().error(
+							"\t> elevate " + commandLine.getVerb() + " "
+									+ commandLine.getDirectObject() + " ...");
+				}
+			}
+			if (target != null) {
 				try {
 					final IZendTarget add = getTargetManager().add(target);
 				} catch (WebApiException e) {
@@ -59,10 +86,19 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 	protected void setupOptions() {
 		// auto detection mode
 		final Option option = OptionBuilder.withDescription(
-				"auto detect the localhost target").create(LOCALHOST);
-
-		//
+				"auto detect localhost target").create(LOCALHOST);
 		options.addOption(option);
+
+		// key name
+		final Option option1 = OptionBuilder
+				.withDescription("use given key name").hasArg().create(KEY);
+		options.addOption(option1);
+
+		// key name
+		final Option option2 = OptionBuilder
+				.withDescription("use given target name").hasArg().create(ID);
+		options.addOption(option2);
+
 	}
 
 }
