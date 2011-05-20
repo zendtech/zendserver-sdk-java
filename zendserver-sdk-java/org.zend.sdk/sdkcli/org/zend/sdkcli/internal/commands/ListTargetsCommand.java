@@ -15,7 +15,7 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
-public class ListTargetsCommand extends AbstractCommand {
+public class ListTargetsCommand extends TargetAwareCommand {
 
 	private static final String STATUS = "status";
 
@@ -25,8 +25,7 @@ public class ListTargetsCommand extends AbstractCommand {
 
 	@Override
 	public boolean execute() {
-		TargetsManager manager = new TargetsManager(new UserBasedTargetLoader());
-		final IZendTarget[] list = manager.list();
+		final IZendTarget[] list = getTargetManager().list();
 		if (list.length == 0) {
 			commandLine.getLog().info("No Available Zend Targets.");
 			return true;

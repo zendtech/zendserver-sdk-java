@@ -10,7 +10,10 @@ package org.zend.sdkcli.internal.commands;
 
 import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
+import org.zend.sdkcli.Main;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdklib.logger.ILogger;
+import org.zend.sdklib.logger.Log;
 
 /**
  * Represents basic class for commands.
@@ -76,4 +79,12 @@ public abstract class AbstractCommand implements ICommand {
 		return commandLine.getParameterValues(parameterName);
 	}
 
+	/**
+	 * @return the available logger for command line
+	 */
+	public ILogger getLogger() {
+		return Log.getInstance().getLogger(Main.class.getName());
+				
+	}
+	
 }
