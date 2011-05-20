@@ -17,10 +17,10 @@ import org.zend.sdklib.internal.library.AbstractLibrary;
  */
 public class ZendProject extends AbstractLibrary {
 
-	private String name;
-	private String target;
-	private String index;
-	private String path;
+	protected String name;
+	protected String target;
+	protected String index;
+	protected String path;
 
 	public ZendProject(String name, String target, String index, String path) {
 		this.name = name;
