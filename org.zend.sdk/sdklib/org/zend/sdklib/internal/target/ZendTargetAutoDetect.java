@@ -32,6 +32,9 @@ public class ZendTargetAutoDetect {
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
+	private static final String ZCE_PREFIX = "ZCE_PREFIX";
+	
+	private String zendServerInstallLocation = null;
 
 	/**
 	 * @return returns the Local installed Zend Server, null if no local Zend
@@ -90,6 +93,8 @@ public class ZendTargetAutoDetect {
 
 		if (props != null) {
 
+			zendServerInstallLocation = props.getProperty(ZCE_PREFIX);
+
 			// TODO resolve key/secretkey
 			try {
 				server = new ZendTarget(targetId, new URL("http://localhost"),
@@ -109,7 +114,7 @@ public class ZendTargetAutoDetect {
 					.openSubKey("Zend Technologies").openSubKey("ZendServer");
 
 			if (zendServerKey != null) {
-				final String zendServerInstallLocation = zendServerKey
+				zendServerInstallLocation = zendServerKey
 						.getStringValue("InstallLocation");
 
 				// TODO resolve key/secretkey
@@ -127,4 +132,11 @@ public class ZendTargetAutoDetect {
 
 		return server;
 	}
+	
+	public boolean addKeyToLocalTarget(String key) {
+		
+		
+		return false;
+	}
+	
 }
