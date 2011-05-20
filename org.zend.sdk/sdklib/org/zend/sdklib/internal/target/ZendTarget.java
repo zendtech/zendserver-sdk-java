@@ -27,10 +27,6 @@ import org.zend.webapi.core.connection.data.SystemInfo;
  * 
  * @author Roy, 2011
  */
-/**
- * @author roy
- * 
- */
 public class ZendTarget implements IZendTarget {
 
 	private String id;
@@ -45,7 +41,7 @@ public class ZendTarget implements IZendTarget {
 	public ZendTarget() {
 		// empty target
 	}
-	
+
 	/**
 	 * @param id
 	 * @param host
@@ -59,6 +55,27 @@ public class ZendTarget implements IZendTarget {
 		this.key = key;
 		this.secretKey = secretKey;
 		this.properties = new Properties();
+
+		validateTarget();
+	}
+
+	private boolean validateTarget() {
+		if (id == null || host == null || secretKey == null || key == null
+				|| key.length() == 0) {
+			return false;
+		}
+		// key validation
+		if (!Character.isJavaIdentifierStart(this.key.charAt(0))) {
+			return false;
+		}
+		for (int i = 1; i < this.key.length(); i++) {
+			char c = this.key.charAt(i);
+			if (!Character.isJavaIdentifierPart(c)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Override
@@ -116,7 +133,9 @@ public class ZendTarget implements IZendTarget {
 		properties.put("extra." + key, value);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.zend.sdklib.target.IZendTarget#load(java.io.InputStream)
 	 */
 	@Override
@@ -136,7 +155,9 @@ public class ZendTarget implements IZendTarget {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.zend.sdklib.target.IZendTarget#store(java.io.OutputStream)
 	 */
 	@Override
@@ -152,21 +173,23 @@ public class ZendTarget implements IZendTarget {
 
 	@Override
 	public boolean connect() throws WebApiException {
-		WebApiCredentials credentials = new BasicCredentials(getKey(), getSecretKey());
+		WebApiCredentials credentials = new BasicCredentials(getKey(),
+				getSecretKey());
 		try {
-			WebApiClient client = new WebApiClient(credentials, getHost().toString() + ":10081");
+			WebApiClient client = new WebApiClient(credentials, getHost()
+					.toString() + ":10081");
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
 			addProperty("operatingSystem", info.getEdition().name());
 			addProperty("phpVersion", info.getPhpVersion());
 			addProperty("status", info.getStatus().name());
 			addProperty("serverVersion", info.getVersion());
-			addProperty("supportedApiVersions", info.getSupportedApiVersions().toString());
+			addProperty("supportedApiVersions", info.getSupportedApiVersions()
+					.toString());
 		} catch (MalformedURLException e) {
 			return false;
-		} 
+		}
 		return true;
 	}
-	
-	
+
 }
