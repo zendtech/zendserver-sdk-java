@@ -22,6 +22,8 @@ public enum CommandType {
 
 	LIST_TARGETS("list", "targets"),
 
+	CREATE_TARGET("create", "target"),
+
 	UNKNOWN(null);
 
 	private String verb;
