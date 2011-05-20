@@ -8,7 +8,6 @@
 package org.zend.sdklib.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.zend.sdklib.internal.target.ZendTarget;

@@ -7,11 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.zend.sdkcli.ParseError;
-import org.zend.sdklib.internal.target.UserBasedTargetLoader;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
@@ -57,8 +53,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 	@Override
 	protected void setupOptions() {
-		final Option option = OptionBuilder.withDescription("show status line").create(STATUS);
-		options.addOption(option);
+		addOption(STATUS, false, "show status line for targets");
 	}
 
 }

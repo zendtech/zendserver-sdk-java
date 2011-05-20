@@ -67,10 +67,10 @@ public class CreateProjectCommand extends AbstractCommand {
 
 	@Override
 	public void setupOptions() {
-		addArgumentOption(TARGET, false);
-		addArgumentOption(NAME, true);
-		addArgumentOption(INDEX, false);
-		addArgumentOption(PATH, false);
+		addOption(TARGET, false);
+		addOption(NAME, true);
+		addOption(INDEX, false);
+		addOption(PATH, false);
 	}
 
 	@Override
