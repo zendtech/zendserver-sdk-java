@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.logger;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.zend.sdklib.logger.ILogger;
@@ -22,7 +26,20 @@ public class CliLogger implements ILogger {
 	private Logger logger;
 
 	public CliLogger() {
-		PropertyConfigurator.configure("../log4j.properties");
+		PropertyConfigurator.configure(getLogProperties());
+	}
+
+	private Properties getLogProperties() {
+		final InputStream stream = this.getClass().getResourceAsStream(
+				"log4j.properties");
+		Properties p = new Properties();
+		try {
+			p.load(stream);
+		} catch (IOException e) {
+			throw new IllegalStateException("Cannot load log4j.properties. "
+					+ "Please place it where the CliLogger is declared");
+		}
+		return p;
 	}
 
 	private CliLogger(String creatorName) {
