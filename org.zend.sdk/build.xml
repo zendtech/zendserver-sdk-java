@@ -158,14 +158,19 @@
 <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
 
 <target name="buildSDK">
-<mkdir dir="${sdk.output.dir}" />
-<zip destfile="${sdk.output.dir}/Zend-SDK-${sdk.version}.zip" basedir=".">
-	<include name="sdkcli/**/*.*" />
-	<include name="sdklib/**/*.*" />
-	<include name="test/**/*.*" />
-	<include name="lib/**/*.*" />
-	<include name="docs/**/*.*" />
-	<include name="junit/**/*.*" />
-</zip>
+	<mkdir dir="${sdk.output.dir}" />
+	<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}.zip" basedir=".">
+		<include name="sdkcli/**/*.*" />
+		<include name="sdklib/**/*.*" />
+		<include name="test/**/*.*" />
+		<include name="lib/**/*.*" />
+		<include name="docs/**/*.*" />
+		<include name="junit/**/*.*" />
+	</zip>
+	<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
+		<include name="lib/**/*.*" />
+		<include name="docs/**/*.*" />
+		<include name="tools/**/*.*" />
+	</zip>
 </target>
 </project>
