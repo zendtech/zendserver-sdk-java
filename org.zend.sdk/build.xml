@@ -169,7 +169,6 @@
 	</zip>
 	<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
 		<include name="lib/**/*.*" />
-		<include name="docs/**/*.*" />
 		<include name="tools/**/*.*" />
 	</zip>
 </target>
