@@ -25,7 +25,7 @@ import org.zend.webapi.core.WebApiException;
  */
 /**
  * @author roy
- *
+ * 
  */
 public class TargetsManager {
 
@@ -111,11 +111,12 @@ public class TargetsManager {
 	/**
 	 * Returns a target that represents the localhost zend server
 	 * 
-	 * @param targetId - 
+	 * @param targetId
+	 *            -
 	 * @param key
 	 * @return
 	 * @throws IOException
-	 * @throws WebApiException 
+	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws IOException, WebApiException {
@@ -127,7 +128,8 @@ public class TargetsManager {
 		}
 
 		// localhost not found - create one
-		final IZendTarget local = new ZendTargetAutoDetect().createLocalhostTarget(targetId, key);
+		final IZendTarget local = new ZendTargetAutoDetect()
+				.createLocalhostTarget(targetId, key);
 		return add(local);
 	}
 
@@ -151,12 +153,6 @@ public class TargetsManager {
 			return false;
 		}
 
-		for (IZendTarget eTarget : this.all) {
-			if (target.getId().equals(eTarget.getId())) {
-				return false;
-			}
-
-		}
-		return true;
+		return null == getTargetById(target.getId());
 	}
 }
