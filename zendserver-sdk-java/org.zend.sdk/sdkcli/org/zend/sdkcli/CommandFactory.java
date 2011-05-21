@@ -12,6 +12,7 @@ import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
 import org.zend.sdkcli.internal.commands.CreateTargetCommandLine;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
+import org.zend.sdkcli.internal.commands.UsageCommanLine;
 
 /**
  * Creates command instance.
@@ -44,6 +45,7 @@ public class CommandFactory {
 			command = new CreateTargetCommandLine(line);
 			break;
 		default:
+			command = new UsageCommanLine();
 			break;
 		}
 		return command;
