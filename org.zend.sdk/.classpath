@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
 	<classpathentry kind="lib" path="lib/registry.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.zend.sdk/lib/win-native"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.zend.sdk/lib/x86"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/zend-webapi.jar"/>
