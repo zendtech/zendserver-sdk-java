@@ -63,12 +63,6 @@ public class TestLogger {
 		checkValidResultMessage(error, result);
 	}
 
-	private void checkValidResultMessage(ParseError expected, Object actual) {
-		assertTrue(actual instanceof ParseError);
-		ParseError actualError = (ParseError) actual;
-		assertSame(expected.getMessage(), actualError.getMessage());
-	}
-
 	@Test
 	public void testInfo() {
 		ILogger log = Log.getInstance().getLogger("");
@@ -91,7 +85,7 @@ public class TestLogger {
 	public void testError() {
 		ILogger log = Log.getInstance().getLogger("");
 		ParseError error = new ParseError(new ParseException("error"));
-		log.warning(error);
+		log.error(error);
 		Object result = logger.getLastLog();
 		checkValidResultMessage(error, result);
 	}
@@ -100,6 +94,12 @@ public class TestLogger {
 	public void testNullLogger() {
 		Log.getInstance().registerLogger(null);
 		Log.getInstance().getLogger("");
+	}
+
+	private void checkValidResultMessage(ParseError expected, Object actual) {
+		assertTrue(actual instanceof ParseError);
+		ParseError actualError = (ParseError) actual;
+		assertSame(expected.getMessage(), actualError.getMessage());
 	}
 
 }
