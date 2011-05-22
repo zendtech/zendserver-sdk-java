@@ -41,6 +41,7 @@ public class ZendTarget implements IZendTarget {
 	 */
 	public ZendTarget() {
 		// empty target
+		this.properties = new Properties();
 	}
 
 	/**
