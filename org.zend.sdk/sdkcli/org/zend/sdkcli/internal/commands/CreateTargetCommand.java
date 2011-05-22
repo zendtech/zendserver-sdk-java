@@ -46,8 +46,7 @@ public class CreateTargetCommand extends TargetAwareCommand {
 				: installCustomTarget(targetId);
 	}
 
-	private boolean installCustomTarget(String targetId2) {
-		final String targetId = getValue(ID);
+	private boolean installCustomTarget(String targetId) {
 		final String key = getValue(KEY);
 		final String secretKey = getValue(SECRETKEY);
 		final String host = getValue(HOST);
@@ -129,12 +128,12 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		// auto detection mode
 		addOption(LOCALHOST, false, "auto detect localhost target");
 		// key name
-		addOption(KEY, false, "use given key name");
+		addOption(KEY, true, "use given key name");
 		// target name
-		addOption(ID, false, "use given target name");
+		addOption(ID, true, "use given target name");
 		// secret key name
-		addOption(SECRETKEY, false, "use given secret key");
+		addOption(SECRETKEY, true, "use given secret key");
 		// host name
-		addOption(HOST, false, "use given host name");
+		addOption(HOST, true, "use given host name");
 	}
 }
