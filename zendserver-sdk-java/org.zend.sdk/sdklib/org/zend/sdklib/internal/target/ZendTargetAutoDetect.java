@@ -310,7 +310,7 @@ public class ZendTargetAutoDetect {
 					+ "/gui/application/data/zend-server-user.ini");
 		} else if (EnvironmentUtils.isUnderWindows()) {
 			return new File(zendServerInstallLocation
-					+ "\\GUI\\application\\data\\zend-server-user.ini");
+					+ "ZendServer\\GUI\\application\\data\\zend-server-user.ini");
 		}
 
 		return null;
