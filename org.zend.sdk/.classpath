@@ -15,5 +15,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/zend-webapi.jar"/>
 	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib-test/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
