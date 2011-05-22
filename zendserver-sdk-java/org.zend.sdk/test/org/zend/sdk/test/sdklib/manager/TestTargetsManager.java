@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -162,7 +163,7 @@ public class TestTargetsManager {
 		try {
 			target = spy(new ZendTarget("dev4", new URL("http://localhost"),
 					"mykey", "43543"));
-			when(target.connect()).thenReturn(true);
+			doReturn(true).when(target).connect();
 		} catch (MalformedURLException e) {
 			// ignore
 		}
