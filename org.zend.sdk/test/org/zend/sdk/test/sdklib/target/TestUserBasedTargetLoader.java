@@ -71,12 +71,17 @@ public class TestUserBasedTargetLoader {
 
 	@Test
 	public void testUser() throws MalformedURLException {
-		UserBasedTargetLoader loader = new UserBasedTargetLoader();
+		final String tempDir = System.getProperty("java.io.tmpdir");
+		File file = new File(tempDir + File.separator + new Random().nextInt());
+		file.mkdir();
+		UserBasedTargetLoader loader = new UserBasedTargetLoader(file);
 		final ZendTarget target = new ZendTarget("dev3", new URL(
 				"http://localhost:10081"), "mykey", "43543");
 		loader.add(target);
 		loader.remove(target);
 		assertTrue(loader.loadAll().length == 0);
+
+		file.deleteOnExit();
 	}
 
 	@Test(expected = IllegalStateException.class)
