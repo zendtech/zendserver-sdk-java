@@ -23,7 +23,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * @author Roy, 2011
  * 
  */
-public class CreateTargetCommandLine extends TargetAwareCommand {
+public class CreateTargetCommand extends TargetAwareCommand {
 
 	private static final String LOCALHOST = "localhost";
 	private static final String ID = "t";
@@ -31,7 +31,7 @@ public class CreateTargetCommandLine extends TargetAwareCommand {
 	private static final String SECRETKEY = "secret";
 	private static final String HOST = "host";
 
-	public CreateTargetCommandLine(CommandLine commandLine) throws ParseError {
+	public CreateTargetCommand(CommandLine commandLine) throws ParseError {
 		super(commandLine);
 	}
 
