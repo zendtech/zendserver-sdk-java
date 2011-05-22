@@ -29,6 +29,7 @@ import org.zend.webapi.core.connection.data.SystemInfo;
  */
 public class ZendTarget implements IZendTarget {
 
+	private static final String EXTRA = "extra.";
 	private String id;
 	private URL host;
 	private String key;
@@ -125,7 +126,7 @@ public class ZendTarget implements IZendTarget {
 	 */
 	@Override
 	public String getProperty(String key) {
-		return properties.getProperty("extra." + key);
+		return properties.getProperty(EXTRA + key);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class ZendTarget implements IZendTarget {
 	 * @param value
 	 */
 	public void addProperty(String key, String value) {
-		properties.put("extra." + key, value);
+		properties.put(EXTRA + key, value);
 	}
 
 	/*
@@ -154,7 +155,7 @@ public class ZendTarget implements IZendTarget {
 		final Set<String> stringPropertyNames = properties
 				.stringPropertyNames();
 		for (String keyName : stringPropertyNames) {
-			if (keyName.startsWith(".extra.")) {
+			if (keyName.startsWith(EXTRA)) {
 				this.properties.put(keyName, properties.getProperty(keyName));
 			}
 		}
