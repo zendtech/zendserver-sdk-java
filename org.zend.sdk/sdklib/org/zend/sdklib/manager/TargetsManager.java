@@ -55,7 +55,7 @@ public class TargetsManager {
 
 	public synchronized IZendTarget add(IZendTarget target)
 			throws WebApiException {
-		if (validTarget(target)) {
+		if (!validTarget(target)) {
 			throw new IllegalArgumentException("Conflict found when adding "
 					+ target.getId());
 		}
