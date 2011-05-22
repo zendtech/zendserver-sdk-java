@@ -122,7 +122,7 @@ public class TargetsManager {
 			String key) throws IOException, WebApiException {
 		final IZendTarget[] list = list();
 		for (IZendTarget t : list) {
-			if (t.getHost().equals(ZendTargetAutoDetect.localhost)) {
+			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
 				return t;
 			}
 		}
