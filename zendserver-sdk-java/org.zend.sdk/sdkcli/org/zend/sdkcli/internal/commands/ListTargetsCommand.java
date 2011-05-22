@@ -48,7 +48,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
