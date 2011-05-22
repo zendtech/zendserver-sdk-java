@@ -36,14 +36,22 @@ import com.ice.jni.registry.RegistryKey;
  */
 public class ZendTargetAutoDetect {
 
+	private static final String INSTALL_LOCATION = "InstallLocation";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
 	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found, "
 			+ "please refer to http://www.zend.com/server";
+
+	// linux key
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
 	private static final String ZCE_PREFIX = "ZCE_PREFIX";
+
+	// Registry
+	private static final String NODE_64 = "WOW6432node";;
+	private static final String ZEND_SERVER = "ZendServer";
+	private static final String ZEND_TECHNOLOGIES = "Zend Technologies";
 
 	public static URL localhost = null;
 	private String zendServerInstallLocation = null;
@@ -250,12 +258,19 @@ public class ZendTargetAutoDetect {
 		RegistryKey zendServerKey = null;
 		try {
 			zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
-					.openSubKey("Zend Technologies").openSubKey("ZendServer");
-
-			if (zendServerKey != null) {
-				return zendServerKey.getStringValue("InstallLocation");
-			}
+					.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
+			return zendServerKey.getStringValue(INSTALL_LOCATION);
 		} catch (NoSuchKeyException e1) {
+			// try the 64 bit
+
+			try {
+				zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
+						.openSubKey(NODE_64).openSubKey(ZEND_TECHNOLOGIES)
+						.openSubKey(ZEND_SERVER);
+				return zendServerKey.getStringValue(INSTALL_LOCATION);
+			} catch (NoSuchKeyException e) {
+			} catch (RegistryException e) {
+			}
 		} catch (RegistryException e1) {
 		}
 		return null;

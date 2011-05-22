@@ -96,7 +96,6 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	public ILogger getLogger() {
 		return Log.getInstance().getLogger(Main.class.getName());
-
 	}
 
 }
