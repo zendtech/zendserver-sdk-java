@@ -59,7 +59,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
-			if (handle == null) {
+			if (handle == null || handle.getSize() == -1) {
 				throw new WebApiCommunicationError();
 			}
 
@@ -72,6 +72,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			if (!request.isExpectedResponseCode(responseCode)) {
 				throw new UnexpectedResponseCode(responseCode, handle);
 			}
+			
 			dataDigster.digest();
 
 			// creating the response object
