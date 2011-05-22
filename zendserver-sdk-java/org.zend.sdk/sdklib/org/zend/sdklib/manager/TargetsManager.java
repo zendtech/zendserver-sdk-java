@@ -44,7 +44,7 @@ public class TargetsManager {
 
 		final IZendTarget[] loadAll = loader.loadAll();
 		for (IZendTarget zTarget : loadAll) {
-			if (validTarget(zTarget)) {
+			if (!validTarget(zTarget)) {
 				throw new IllegalArgumentException(
 						"Conflict found when adding " + zTarget.getId());
 			}
