@@ -18,7 +18,7 @@ set java_exe=
 call ../tools/find_java.bat
 if not defined java_exe goto :EOF
 
-rem Set SWT.Jar path based on current architecture (x86 or x86_64)
+rem Set registry Jar path based on current architecture (x86 or x86_64)
 for /f %%a in ('%java_exe% -jar ..\lib\archquery.jar') do set registry_path=..\lib\%%a
 
 set jar_path=../lib/*
