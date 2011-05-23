@@ -69,11 +69,11 @@ public class CreateTargetCommand extends TargetAwareCommand {
 
 		} catch (MalformedURLException e) {
 			getLogger().error("Error adding Zend Target " + targetId);
-			getLogger().error("\tpossible error" + e.getMessage());
+			getLogger().error("\tpossible error " + e.getMessage());
 			return false;
 		} catch (WebApiException e) {
 			getLogger().error("Error adding Zend Target " + targetId);
-			getLogger().error("\tpossible error" + e.getMessage());
+			getLogger().error("\tpossible error " + e.getMessage());
 			return false;
 		}
 

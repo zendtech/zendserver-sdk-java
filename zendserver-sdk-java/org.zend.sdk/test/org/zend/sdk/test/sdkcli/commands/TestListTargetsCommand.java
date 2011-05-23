@@ -8,6 +8,7 @@
 package org.zend.sdk.test.sdkcli.commands;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -79,15 +80,15 @@ public class TestListTargetsCommand extends AbstractTest {
 
 	private void addTarget() throws WebApiException {
 		target = spy(getTarget());
-		when(target.connect()).thenReturn(true);
+		doReturn(true).when(target).connect();
 		manager.add(target);
 		assertTrue(manager.list().length != 0);
 	}
 
 	private IZendTarget getTarget() {
 		try {
-			return new ZendTarget("dev4", new URL("http://localhost:10081"),
-					"mykey", "43543");
+			return new ZendTarget("dev4", new URL("http://localhost"), "mykey",
+					"43543");
 		} catch (MalformedURLException e) {
 			// ignore
 		}
