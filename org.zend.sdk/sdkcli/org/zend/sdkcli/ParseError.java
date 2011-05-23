@@ -11,8 +11,30 @@ import org.apache.commons.cli.ParseException;
 
 public class ParseError extends Exception {
 
+	private Exception e;
+
 	public ParseError(ParseException e) {
-		// TODO Auto-generated constructor stub
+		this.e = e;
+	}
+
+	@Override
+	public String getMessage() {
+		return e.getMessage();
+	}
+
+	@Override
+	public StackTraceElement[] getStackTrace() {
+		return e.getStackTrace();
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return e.getLocalizedMessage();
+	}
+
+	@Override
+	public Throwable getCause() {
+		return e.getCause();
 	}
 
 	private static final long serialVersionUID = -2792769465688391550L;
