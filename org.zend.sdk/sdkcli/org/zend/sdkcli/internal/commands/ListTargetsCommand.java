@@ -27,12 +27,11 @@ public class ListTargetsCommand extends TargetAwareCommand {
 			return true;
 		}
 
-		commandLine.getLog().info("Available Android targets:");
+		commandLine.getLog().info("Available Zend Targets:");
 		for (IZendTarget target : list) {
 			commandLine.getLog().info("id: " + target.getId());
 			commandLine.getLog().info("\tHost: " + target.getHost());
 			commandLine.getLog().info("\tKey: " + target.getKey());
-			commandLine.getLog().info("\tSecret Key: " + target.getSecretKey());
 
 			if (hasOption(STATUS)) {
 				boolean connect = false;
