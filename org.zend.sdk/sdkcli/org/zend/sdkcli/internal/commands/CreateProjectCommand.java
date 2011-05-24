@@ -56,9 +56,8 @@ import org.zend.sdklib.ZendProject;
  */
 public class CreateProjectCommand extends AbstractCommand {
 
-	public static final String TARGET = "target";
 	public static final String NAME = "name";
-	public static final String INDEX = "index";
+	public static final String NO_SCRIPTS = "no_scripts";
 	public static final String PATH = "path";
 
 	public CreateProjectCommand(CommandLine commandLine) throws ParseError {
@@ -80,8 +79,7 @@ public class CreateProjectCommand extends AbstractCommand {
 		if (path == null) {
 			path = getValue(CommandOptions.CURR_DIR);
 		}
-		ZendProject project = new ZendProject(getValue(NAME), getValue(TARGET),
-				getValue(INDEX), path);
+		ZendProject project = new ZendProject(getValue(NAME), !Boolean.parseBoolean(getValue(NO_SCRIPTS)), path);
 		return project.create();
 	}
 }
