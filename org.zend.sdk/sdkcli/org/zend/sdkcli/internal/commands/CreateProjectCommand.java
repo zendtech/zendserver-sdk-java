@@ -58,7 +58,7 @@ public class CreateProjectCommand extends AbstractCommand {
 
 	public static final String NAME = "name";
 	public static final String NO_SCRIPTS = "no_scripts";
-	public static final String PATH = "path";
+	public static final String DESTINATION = "destination";
 
 	public CreateProjectCommand(CommandLine commandLine) throws ParseError {
 		super(commandLine);
@@ -66,16 +66,14 @@ public class CreateProjectCommand extends AbstractCommand {
 
 	@Override
 	public void setupOptions() {
-		// TODO add corret option for updated command
-		// addOption(TARGET, false);
-		// addOption(NAME, true);
-		// addOption(INDEX, false);
-		// addOption(PATH, false);
+		addArgumentOption(NAME, true, "project name");
+		addArgumentOption(DESTINATION, false, "project destination");
+		addBooleanOption(NO_SCRIPTS, false, "create sample deployment scripts");
 	}
 
 	@Override
 	public boolean execute() {
-		String path = getValue(PATH);
+		String path = getValue(DESTINATION);
 		if (path == null) {
 			path = getValue(CommandOptions.CURR_DIR);
 		}
