@@ -8,9 +8,12 @@
 package org.zend.sdklib.manager;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.sdklib.internal.library.AbstractLibrary;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
@@ -27,7 +30,7 @@ import org.zend.webapi.core.WebApiException;
  * @author roy
  * 
  */
-public class TargetsManager {
+public class TargetsManager extends AbstractLibrary {
 
 	/**
 	 * All targets loaded in the manager
@@ -41,7 +44,6 @@ public class TargetsManager {
 
 	public TargetsManager(ITargetLoader loader) {
 		this.loader = loader;
-
 		final IZendTarget[] loadAll = loader.loadAll();
 		for (IZendTarget zTarget : loadAll) {
 			if (!validTarget(zTarget)) {
@@ -139,6 +141,48 @@ public class TargetsManager {
 	}
 
 	/**
+	 * Creates and adds new target based on provided parameters.
+	 * 
+	 * @param host
+	 * @param key
+	 * @param secretKey
+	 * @return
+	 */
+	public IZendTarget createTarget(String host, String key, String secretKey) {
+		final String targetId = Integer.toString(list().length);
+		return createTarget(targetId, host, key, secretKey);
+	}
+
+	/**
+	 * Creates and adds new target based on provided parameters.
+	 * 
+	 * @param targetId
+	 * @param host
+	 * @param key
+	 * @param secretKey
+	 * @return
+	 */
+	public IZendTarget createTarget(String targetId, String host, String key,
+			String secretKey) {
+		try {
+			IZendTarget target = add(new ZendTarget(targetId, new URL(host),
+					key, secretKey));
+			if (target == null) {
+				log.error("Error adding Zend Target " + targetId);
+				return null;
+			}
+			return target;
+		} catch (MalformedURLException e) {
+			log.error("Error adding Zend Target " + targetId);
+			log.error("\tpossible error " + e.getMessage());
+		} catch (WebApiException e) {
+			log.error("Error adding Zend Target " + targetId);
+			log.error("\tpossible error " + e.getMessage());
+		}
+		return null;
+	}
+
+	/**
 	 * Check for conflicts and errors in new target
 	 * 
 	 * @param target
@@ -155,4 +199,5 @@ public class TargetsManager {
 
 		return null == getTargetById(target.getId());
 	}
+
 }
