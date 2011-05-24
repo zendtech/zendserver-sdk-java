@@ -60,6 +60,24 @@ public class CommandOptions extends Options {
 	}
 
 	/**
+	 * Adds options which has one or more arguments.
+	 * 
+	 * @param name
+	 *            - option name
+	 * @param isRequired
+	 *            - boolean value which defines if option is required
+	 * @param description
+	 *            - option description
+	 */
+	public void addArgumentsOption(String name, boolean isRequired,
+			String description) {
+		Option option = new Option(name, true, description);
+		option.setArgs(Option.UNLIMITED_VALUES);
+		option.setRequired(isRequired);
+		this.addOption(option);
+	}
+
+	/**
 	 * Adds options which has no arguments.
 	 * 
 	 * @param name
