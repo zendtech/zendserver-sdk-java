@@ -31,13 +31,18 @@ public class ZendProject extends AbstractLibrary {
 		this.destination = destination;
 	}
 
+	/**
+	 * Writes project to file system.
+	 * 
+	 * @return true on success, false otherwise.
+	 */
 	public boolean create() {
 		TemplateWriter tw = new TemplateWriter();
 		
 		try {
 			tw.writeTemplate(name, withScripts, new File(destination));
 		} catch (IOException e) {
-			// TODO what with exception?
+			log.error(e.getMessage());
 			return false;
 		}
 		
