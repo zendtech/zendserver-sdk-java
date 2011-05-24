@@ -83,10 +83,8 @@ public class ZendTargetAutoDetect {
 
 	private String retrieveSecretKey(String key) throws IOException,
 			FileNotFoundException {
-		final String secretKey = findSecretKeyInLocalhost(key);
-		if (null != secretKey) {
-			return secretKey;
-		} else {
+		String secretKey = findSecretKeyInLocalhost(key);
+		if (secretKey == null) {
 			// assert permissions are elevated
 			File keysFile = getApiKeysFile();
 			if (keysFile == null) {
@@ -103,15 +101,22 @@ public class ZendTargetAutoDetect {
 			final File edited = new File(keysFile.getParentFile(), USER_INI
 					+ ".tmp");
 			PrintStream os = new PrintStream(edited);
-			final String sk = copyWithEdits(ir, os, key);
+			secretKey = copyWithEdits(ir, os, key);
 			ir.close();
 			os.close();
-
+			String oldKeysFilePath = keysFile.getAbsolutePath();
 			keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI
 					+ ".bak"));
+			File oldFile = new File(oldKeysFilePath);
+			if (oldFile.exists()) {
+				oldFile.delete();
+			}
 			edited.renameTo(new File(edited.getParentFile(), USER_INI));
-			return sk;
 		}
+		if (secretKey.startsWith("\"")) {
+			secretKey = secretKey.substring(1, secretKey.length() - 1);
+		}
+		return secretKey;
 	}
 
 	public static String copyWithEdits(BufferedReader ir, PrintStream os,
