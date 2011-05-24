@@ -61,6 +61,19 @@ public abstract class AbstractCommand implements ICommand {
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
+	 * @see CommandOptions#addArgumentsOption(Sting, boolean, String)
+	 * @param name
+	 * @param isRequired
+	 * @param description
+	 */
+	protected void addArgumentsOption(String name, boolean isRequired,
+			String description) {
+		options.addArgumentsOption(name, isRequired, description);
+	}
+
+	/**
+	 * Helper method for {@link AbstractCommand#setupOptions()} method
+	 * 
 	 * @see CommandOptions#addBooleanOption(Sting, boolean, String)
 	 * @param name
 	 * @param isRequired
