@@ -18,7 +18,6 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class CreateTargetCommand extends TargetAwareCommand {
 
-	private static final String LOCALHOST = "localhost";
 	private static final String ID = "t";
 	private static final String KEY = "key";
 	private static final String SECRETKEY = "secretKey";
@@ -52,16 +51,13 @@ public class CreateTargetCommand extends TargetAwareCommand {
 
 	@Override
 	protected void setupOptions() {
-		// auto detection mode
-		addOption(LOCALHOST, false, "auto detect localhost target");
 		// key name
-		addOption(KEY, true, "use given key name");
+		addArgumentOption(KEY, true, "use given key name");
 		// target name
-		addOption(ID, true, "use given target name");
+		addArgumentOption(ID, false, "use given target name");
 		// secret key name
-		addOption(SECRETKEY, true, "use given secret key");
+		addArgumentOption(SECRETKEY, true, "use given secret key");
 		// host name
-		addOption(HOST, true, "use given host name");
+		addArgumentOption(HOST, true, "use given host name");
 	}
-
 }
