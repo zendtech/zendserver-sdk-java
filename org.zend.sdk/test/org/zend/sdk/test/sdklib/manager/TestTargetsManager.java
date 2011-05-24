@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -17,14 +18,17 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
-public class TestTargetsManager {
+public class TestTargetsManager extends AbstractTest {
 
 	private ITargetLoader loader;
 	private File file;
@@ -156,6 +160,47 @@ public class TestTargetsManager {
 		manager.add(target);
 		assertTrue(manager.list().length == 1);
 		assertNotNull(manager.detectLocalhostTarget("", ""));
+	}
+
+	@Test
+	public void testCreateTarget() throws WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
+		assertNotNull(manager.createTarget("1", "http://localhost", "mykey",
+				"43543"));
+	}
+
+	@Test
+	public void testCreateTargetNoId() throws WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
+		assertNotNull(manager
+				.createTarget("http://localhost", "mykey", "43543"));
+	}
+
+	@Test
+	public void testCreateTargetFailAdd() throws WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		doReturn(null).when(manager).add(any(IZendTarget.class));
+		assertNull(manager.createTarget("1", "http://localhost", "mykey",
+				"43543"));
+	}
+
+	@Test
+	public void testCreateTargetInvalidUrl() throws WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		doReturn(null).when(manager).add(any(IZendTarget.class));
+		assertNull(manager.createTarget("1", "aaa11://localhost", "mykey",
+				"43543"));
+	}
+
+	@Test
+	public void testCreateTargetAddThrowsException() throws WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		Mockito.doThrow(new SignatureException("testError")).when(manager)
+				.add(any(IZendTarget.class));
+		assertNull(manager.createTarget("1", "http://localhost", "mykey",
+				"43543"));
 	}
 
 	private IZendTarget getTarget() throws WebApiException {
