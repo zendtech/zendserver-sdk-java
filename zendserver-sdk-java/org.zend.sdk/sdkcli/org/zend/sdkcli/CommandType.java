@@ -23,6 +23,8 @@ public enum CommandType {
 	LIST_TARGETS("list", "targets"),
 
 	CREATE_TARGET("create", "target"),
+	
+	DELETE_TARGET("delete", "target"),
 
 	DETECT_TARGET("detect", "target"),
 
