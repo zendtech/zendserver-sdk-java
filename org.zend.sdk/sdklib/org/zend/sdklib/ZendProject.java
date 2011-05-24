@@ -39,8 +39,10 @@ public class ZendProject extends AbstractLibrary {
 	public boolean create() {
 		TemplateWriter tw = new TemplateWriter();
 		
+		File dest = destination == null ? new File(".") : new File(destination);
+		
 		try {
-			tw.writeTemplate(name, withScripts, new File(destination));
+			tw.writeTemplate(name, withScripts, dest);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			return false;

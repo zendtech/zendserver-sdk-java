@@ -54,6 +54,7 @@ public class TemplateWriter {
 			out.append(" <scriptsdir>scripts</scriptsdir>\n");
 		}
 		out.append("</package>\n");
+		out.close();
 	}
 	
 	private CharSequence xmlEscape(String name) {
@@ -77,11 +78,21 @@ public class TemplateWriter {
 		}
 		FileOutputStream out = new FileOutputStream(destFile);
 		
-		InputStream is = url.openStream();
-		byte[] buf = new byte[4098];
-		int c;
-		while ((c = is.read(buf)) > 0) {
-			out.write(buf, 0, c);
+		InputStream is = null;
+		try {
+			is = url.openStream();
+			byte[] buf = new byte[4098];
+			int c;
+			while ((c = is.read(buf)) > 0) {
+				out.write(buf, 0, c);
+			}
+		} finally {
+			if (is != null) {
+				is.close();
+			}
+			if (out != null) {
+				out.close();
+			}
 		}
 	}
 	
