@@ -16,16 +16,25 @@ public class TestCreateProjectCommand extends AbstractTest {
 	@Test
 	public void testByCommandFactory() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-name", "testName", "-currDir", "currentDir" });
+				"project", "-name", "testName" });
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute());
 	}
 
 	@Test
-	public void testByConstructor() throws ParseError {
+	public void testByConstructor1() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-name", "testName", "-currDir", "currentDir" });
+				"project", "-name", "testName", "-destination", "abc" });
+		ICommand command = new CreateProjectCommand(cmdLine);
+		assertNotNull(command);
+		assertTrue(command.execute());
+	}
+	
+	@Test
+	public void testByConstructor2() throws ParseError {
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+				"project", "-name", "testName", "-destination", "def", "-no_scripts" });
 		ICommand command = new CreateProjectCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute());
