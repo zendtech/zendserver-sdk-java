@@ -164,7 +164,6 @@ public class TargetsManager extends AbstractLibrary {
 			// localhost not found - create one
 			final IZendTarget local = new ZendTargetAutoDetect()
 					.createLocalhostTarget(targetId, key);
-			System.out.println("aaa " + local.getId());
 			return add(local);
 		} catch (IOException e) {
 			log.error(e.getMessage());
