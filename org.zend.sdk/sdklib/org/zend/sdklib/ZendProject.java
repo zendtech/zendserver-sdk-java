@@ -40,6 +40,9 @@ public class ZendProject extends AbstractLibrary {
 		TemplateWriter tw = new TemplateWriter();
 		
 		File dest = destination == null ? new File(".") : new File(destination);
+		if (! dest.exists()) {
+			dest.mkdir();
+		}
 		
 		try {
 			tw.writeTemplate(name, withScripts, dest);
