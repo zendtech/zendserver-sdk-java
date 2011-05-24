@@ -48,14 +48,15 @@ public class TestTargetsManager extends AbstractTest {
 		file.deleteOnExit();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateManagerWithInvalidTarget() throws WebApiException,
 			MalformedURLException {
 		ITargetLoader loader = spy(new UserBasedTargetLoader(file));
 		when(loader.loadAll()).thenReturn(
 				new IZendTarget[] { new ZendTarget(null, new URL(
 						"http://localhost"), "mykey", "43543") });
-		new TargetsManager(loader);
+		TargetsManager manager = new TargetsManager(loader);
+		assertTrue(manager.list().length == 0);
 	}
 
 	@Test
@@ -77,7 +78,7 @@ public class TestTargetsManager extends AbstractTest {
 		assertTrue(manager.list().length == 1);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNullIdAddTarget() throws WebApiException,
 			MalformedURLException {
 		TargetsManager manager = new TargetsManager(loader);
@@ -85,7 +86,7 @@ public class TestTargetsManager extends AbstractTest {
 				"http://localhost:10081"), "mykey", "43543"));
 		doReturn(true).when(target).connect();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.list().length == 0);
 	}
 
 	@Test
@@ -96,12 +97,13 @@ public class TestTargetsManager extends AbstractTest {
 		assertNull(manager.add(target));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddDuplicatedTarget() throws WebApiException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
 		manager.add(target);
+		assertTrue(manager.list().length == 1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
