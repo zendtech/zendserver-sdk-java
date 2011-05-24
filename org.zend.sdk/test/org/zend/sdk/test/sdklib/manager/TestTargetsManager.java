@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +83,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = spy(new ZendTarget(null, new URL(
 				"http://localhost:10081"), "mykey", "43543"));
-		when(target.connect()).thenReturn(true);
+		doReturn(true).when(target).connect();
 		manager.add(target);
 		assertTrue(manager.list().length == 1);
 	}
@@ -159,7 +160,41 @@ public class TestTargetsManager extends AbstractTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.list().length == 1);
-		assertNotNull(manager.detectLocalhostTarget("", ""));
+		assertNotNull(manager.detectLocalhostTarget(target.getId(),
+				target.getKey()));
+	}
+
+	@Test
+	public void testDetectLocalhostNoId() throws WebApiException, IOException {
+		TargetsManager manager = new TargetsManager(loader);
+		IZendTarget target = getTarget();
+		manager.add(target);
+		assertTrue(manager.list().length == 1);
+		assertNotNull(manager.detectLocalhostTarget(target.getKey()));
+	}
+
+	@Test
+	public void testDetectLocalhostNoArgs() throws WebApiException, IOException {
+		TargetsManager manager = new TargetsManager(loader);
+		IZendTarget target = getTarget();
+		manager.add(target);
+		assertTrue(manager.list().length == 1);
+		assertNotNull(manager.detectLocalhostTarget());
+	}
+
+	@Test
+	public void testDetectLocalhostNoTarget() throws IOException {
+		TargetsManager manager = new TargetsManager(loader);
+		assertNotNull(manager.detectLocalhostTarget());
+	}
+
+	@Test
+	public void testDetectLocalhostNoTargetThrowsWebApiException()
+			throws IOException, WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		doThrow(new SignatureException("testError")).when(manager).add(
+				any(IZendTarget.class));
+		assertNull(manager.detectLocalhostTarget());
 	}
 
 	@Test

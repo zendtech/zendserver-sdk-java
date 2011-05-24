@@ -24,6 +24,8 @@ public enum CommandType {
 
 	CREATE_TARGET("create", "target"),
 
+	DETECT_TARGET("detect", "target"),
+
 	UNKNOWN(null);
 
 	private String verb;
