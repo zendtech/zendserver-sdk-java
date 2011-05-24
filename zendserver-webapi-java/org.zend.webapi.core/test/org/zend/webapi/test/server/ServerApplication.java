@@ -1,6 +1,15 @@
 package org.zend.webapi.test.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 
 import junit.framework.Assert;
 
@@ -14,6 +23,7 @@ import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.routing.Router;
+import org.w3c.dom.Document;
 import org.zend.webapi.test.server.response.ConfigurationResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
@@ -210,11 +220,25 @@ public class ServerApplication extends Application {
 
 	private void prepareResponse(Response response,
 			ServerResponse serverResponse) {
+		Document doc = ((ServiceResponse) serverResponse).getData();
 		Representation representation = new DomRepresentation(
-				MediaType.APPLICATION_XML,
-				((ServiceResponse) serverResponse).getData());
+				MediaType.APPLICATION_XML, doc);
+
+		TransformerFactory factory = TransformerFactory.newInstance();
+		try {
+			Transformer xform = factory.newTransformer();
+			Source src = new DOMSource(doc);
+			StringWriter writer = new StringWriter();
+			Result result = new javax.xml.transform.stream.StreamResult(writer);
+			xform.transform(src, result);
+			System.out.println(writer.toString());
+			representation.setSize(writer.toString().length());
+		} catch (TransformerConfigurationException e) {
+			// ignore
+		} catch (TransformerException e) {
+			// ignore
+		}
 		response.setEntity(representation);
 		response.setStatus(serverResponse.getStatus());
 	}
-
 }
