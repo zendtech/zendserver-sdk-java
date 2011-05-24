@@ -19,6 +19,7 @@ import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
@@ -31,6 +32,8 @@ import org.zend.webapi.core.WebApiException;
  * 
  */
 public class TargetsManager extends AbstractLibrary {
+
+	private static final String DEFAULT_KEY = "sdk";
 
 	/**
 	 * All targets loaded in the manager
@@ -47,8 +50,8 @@ public class TargetsManager extends AbstractLibrary {
 		final IZendTarget[] loadAll = loader.loadAll();
 		for (IZendTarget zTarget : loadAll) {
 			if (!validTarget(zTarget)) {
-				throw new IllegalArgumentException(
-						"Conflict found when adding " + zTarget.getId());
+				log.error(new IllegalArgumentException(
+						"Conflict found when adding " + zTarget.getId()));
 			}
 
 			this.all.add(zTarget);
@@ -58,8 +61,9 @@ public class TargetsManager extends AbstractLibrary {
 	public synchronized IZendTarget add(IZendTarget target)
 			throws WebApiException {
 		if (!validTarget(target)) {
-			throw new IllegalArgumentException("Conflict found when adding "
-					+ target.getId());
+			log.error(new IllegalArgumentException(
+					"Conflict found when adding " + target.getId()));
+			return null;
 		}
 
 		// try to connect to server
@@ -113,26 +117,72 @@ public class TargetsManager extends AbstractLibrary {
 	/**
 	 * Returns a target that represents the localhost zend server
 	 * 
-	 * @param targetId
-	 *            -
+	 * @return zend target for localhost
+	 * @throws IOException
+	 * @throws WebApiException
+	 */
+	public synchronized IZendTarget detectLocalhostTarget() throws IOException {
+		String targetId = Integer.toString(list().length);
+		return detectLocalhostTarget(targetId, DEFAULT_KEY);
+	}
+
+	/**
+	 * Returns a target that represents the localhost zend server
+	 * 
 	 * @param key
-	 * @return
+	 * @return zend target for localhost
+	 * @throws IOException
+	 * @throws WebApiException
+	 */
+	public synchronized IZendTarget detectLocalhostTarget(String key)
+			throws IOException {
+		final String targetId = Integer.toString(list().length);
+		return detectLocalhostTarget(targetId, key);
+	}
+
+	/**
+	 * Returns a target that represents the localhost zend server
+	 * 
+	 * @param targetId
+	 * @param key
+	 * @return zend target for localhost
 	 * @throws IOException
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key) throws IOException, WebApiException {
+			String key) throws IOException {
 		final IZendTarget[] list = list();
+		targetId = targetId != null ? targetId : Integer
+				.toString(list().length);
+		key = key != null ? key : DEFAULT_KEY;
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
 				return t;
 			}
 		}
-
-		// localhost not found - create one
-		final IZendTarget local = new ZendTargetAutoDetect()
-				.createLocalhostTarget(targetId, key);
-		return add(local);
+		try {
+			// localhost not found - create one
+			final IZendTarget local = new ZendTargetAutoDetect()
+					.createLocalhostTarget(targetId, key);
+			System.out.println("aaa " + local.getId());
+			return add(local);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+			throw e;
+		} catch (WebApiException e) {
+			log.error("Coudn't connect to localhost server, please make "
+					+ "sure you the server is up and its version is 5.5 and up.");
+			log.error("More information provided by localhost server:");
+			final ResponseCode responseCode = e.getResponseCode();
+			if (responseCode != null) {
+				log.error("\tError code: " + responseCode);
+			}
+			final String message = e.getMessage();
+			if (message != null) {
+				log.error("\tError message: " + message);
+			}
+		}
+		return null;
 	}
 
 	public synchronized IZendTarget[] list() {
