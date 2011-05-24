@@ -272,8 +272,8 @@ public class WebApiClient {
 	 * Re-enable a cluster member. This process may be asynchronous if Session
 	 * Clustering is used – if this is the case, the initial operation will
 	 * return an HTTP 202 response. This action is idempotent. Running it on an
-	 * enabled server will result in a “200 OK” response with no consequences.
-	 * On a ZSCM with no valid license, this operation will fail.
+	 * enabled server will result in a “200 OK” response with no
+	 * consequences. On a ZSCM with no valid license, this operation will fail.
 	 * 
 	 * @return server info
 	 * @throws WebApiException
@@ -461,9 +461,9 @@ public class WebApiClient {
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * @return information about deployed application
@@ -471,7 +471,8 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
-			final HashMap<String, String> userParam, final String userAppName)
+			final HashMap<String, String> userParam, final String userAppName,
+			final Boolean createVhost, final Boolean defaultServer)
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_DEPLOY, new IRequestInitializer() {
@@ -489,6 +490,12 @@ public class WebApiClient {
 						if (userAppName != null) {
 							deployRequest.setUserAppName(userAppName);
 						}
+						if (createVhost != null) {
+							deployRequest.setCreateVhost(createVhost);
+						}
+						if (defaultServer != null) {
+							deployRequest.setDefaultServer(defaultServer);
+						}
 					}
 				});
 		return (ApplicationInfo) handle.getData();
@@ -498,9 +505,9 @@ public class WebApiClient {
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * 
@@ -514,16 +521,16 @@ public class WebApiClient {
 			final String baseUrl, final Boolean ignoreFailures)
 			throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
-				null);
+				null, null, null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * appUserName and ignoreFailures parameter values are not specified. for
@@ -535,16 +542,17 @@ public class WebApiClient {
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final HashMap<String, String> userParam)
 			throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, null, userParam, null);
+		return applicationDeploy(appPackage, baseUrl, null, userParam, null,
+				null, null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * ignoreFailures, userParam and userAppName parameter values are not
@@ -555,16 +563,17 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl) throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, null, null, null);
+		return applicationDeploy(appPackage, baseUrl, null, null, null, null,
+				null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * ignoreFailures and userParam parameter values are not specified. for more
@@ -576,16 +585,17 @@ public class WebApiClient {
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final String userAppName)
 			throws WebApiException {
-		return applicationDeploy(appPackage, baseUrl, null, null, userAppName);
+		return applicationDeploy(appPackage, baseUrl, null, null, userAppName,
+				null, null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * ignoreFailures parameter value is not specified. for more detailed see
@@ -598,16 +608,16 @@ public class WebApiClient {
 			final String baseUrl, final HashMap<String, String> userParam,
 			final String userAppName) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, userParam,
-				userAppName);
+				userAppName, null, null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * userAppName parameter value is not specified. for more detailed see
@@ -620,16 +630,16 @@ public class WebApiClient {
 			final String baseUrl, final Boolean ignoreFailures,
 			final HashMap<String, String> userParam) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures,
-				userParam, null);
+				userParam, null, null, null);
 	}
 
 	/**
 	 * Deploy a new application to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the application is
 	 * uploaded and verified, and the initial response will show information
-	 * about the application being deployed – however the staging and activation
-	 * process will proceed after the response is returned. The user is expected
-	 * to continue checking the application status using the
+	 * about the application being deployed – however the staging and
+	 * activation process will proceed after the response is returned. The user
+	 * is expected to continue checking the application status using the
 	 * applicationGetStatus method until the deployment process is complete.
 	 * 
 	 * userParam parameter value is not specified. for more detailed see
@@ -642,19 +652,19 @@ public class WebApiClient {
 			final String baseUrl, final Boolean ignoreFailures,
 			final String userAppName) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
-				userAppName);
+				userAppName, null, null);
 	}
 
 	/**
 	 * Update/redeploy an existing application. The package provided must be of
 	 * the same application. Additionally any new parameters or new values to
-	 * existing parameters must be provided. This process is asynchronous – the
-	 * initial request will wait until the package is uploaded and verified, and
-	 * the initial response will show information about the new version being
-	 * deployed – however the staging and activation process will proceed after
-	 * the response is returned. The user is expected to continue checking the
-	 * application status using the applicationGetStatus method until the
-	 * deployment process is complete.
+	 * existing parameters must be provided. This process is asynchronous –
+	 * the initial request will wait until the package is uploaded and verified,
+	 * and the initial response will show information about the new version
+	 * being deployed – however the staging and activation process will
+	 * proceed after the response is returned. The user is expected to continue
+	 * checking the application status using the applicationGetStatus method
+	 * until the deployment process is complete.
 	 * 
 	 * @return information about updated application
 	 * @throws WebApiException
@@ -683,13 +693,13 @@ public class WebApiClient {
 	/**
 	 * Update/redeploy an existing application. The package provided must be of
 	 * the same application. Additionally any new parameters or new values to
-	 * existing parameters must be provided. This process is asynchronous – the
-	 * initial request will wait until the package is uploaded and verified, and
-	 * the initial response will show information about the new version being
-	 * deployed – however the staging and activation process will proceed after
-	 * the response is returned. The user is expected to continue checking the
-	 * application status using the applicationGetStatus method until the
-	 * deployment process is complete.
+	 * existing parameters must be provided. This process is asynchronous –
+	 * the initial request will wait until the package is uploaded and verified,
+	 * and the initial response will show information about the new version
+	 * being deployed – however the staging and activation process will
+	 * proceed after the response is returned. The user is expected to continue
+	 * checking the application status using the applicationGetStatus method
+	 * until the deployment process is complete.
 	 * 
 	 * userParam parameter value is not specified. for more detailed see
 	 * {@link ApplicationUpdateRequest}.
@@ -706,13 +716,13 @@ public class WebApiClient {
 	/**
 	 * Update/redeploy an existing application. The package provided must be of
 	 * the same application. Additionally any new parameters or new values to
-	 * existing parameters must be provided. This process is asynchronous – the
-	 * initial request will wait until the package is uploaded and verified, and
-	 * the initial response will show information about the new version being
-	 * deployed – however the staging and activation process will proceed after
-	 * the response is returned. The user is expected to continue checking the
-	 * application status using the applicationGetStatus method until the
-	 * deployment process is complete.
+	 * existing parameters must be provided. This process is asynchronous –
+	 * the initial request will wait until the package is uploaded and verified,
+	 * and the initial response will show information about the new version
+	 * being deployed – however the staging and activation process will
+	 * proceed after the response is returned. The user is expected to continue
+	 * checking the application status using the applicationGetStatus method
+	 * until the deployment process is complete.
 	 * 
 	 * ignoreFailures parameter value is not specified. for more detailed see
 	 * {@link ApplicationUpdateRequest}.
@@ -729,13 +739,13 @@ public class WebApiClient {
 	/**
 	 * Update/redeploy an existing application. The package provided must be of
 	 * the same application. Additionally any new parameters or new values to
-	 * existing parameters must be provided. This process is asynchronous – the
-	 * initial request will wait until the package is uploaded and verified, and
-	 * the initial response will show information about the new version being
-	 * deployed – however the staging and activation process will proceed after
-	 * the response is returned. The user is expected to continue checking the
-	 * application status using the applicationGetStatus method until the
-	 * deployment process is complete.
+	 * existing parameters must be provided. This process is asynchronous –
+	 * the initial request will wait until the package is uploaded and verified,
+	 * and the initial response will show information about the new version
+	 * being deployed – however the staging and activation process will
+	 * proceed after the response is returned. The user is expected to continue
+	 * checking the application status using the applicationGetStatus method
+	 * until the deployment process is complete.
 	 * 
 	 * ignoreFailures and userParam parameter values are not specified. for more
 	 * detailed see {@link ApplicationDeployRequest}
@@ -776,9 +786,9 @@ public class WebApiClient {
 
 	/**
 	 * Redeploy an existing application, whether in order to fix a problem or to
-	 * reset an installation. This process is asynchronous – the initial request
-	 * will start the redeploy process and the initial response will show
-	 * information about the application being redeployed – however the
+	 * reset an installation. This process is asynchronous – the initial
+	 * request will start the redeploy process and the initial response will
+	 * show information about the application being redeployed – however the
 	 * redeployment process will proceed after the response is returned. The
 	 * user is expected to continue checking the application status using the
 	 * applicationGetStatus method until the process is complete.
@@ -809,9 +819,9 @@ public class WebApiClient {
 
 	/**
 	 * Redeploy an existing application, whether in order to fix a problem or to
-	 * reset an installation. This process is asynchronous – the initial request
-	 * will start the redeploy process and the initial response will show
-	 * information about the application being redeployed – however the
+	 * reset an installation. This process is asynchronous – the initial
+	 * request will start the redeploy process and the initial response will
+	 * show information about the application being redeployed – however the
 	 * redeployment process will proceed after the response is returned. The
 	 * user is expected to continue checking the application status using the
 	 * applicationGetStatus method until the process is complete.
@@ -829,9 +839,9 @@ public class WebApiClient {
 
 	/**
 	 * Redeploy an existing application, whether in order to fix a problem or to
-	 * reset an installation. This process is asynchronous – the initial request
-	 * will start the redeploy process and the initial response will show
-	 * information about the application being redeployed – however the
+	 * reset an installation. This process is asynchronous – the initial
+	 * request will start the redeploy process and the initial response will
+	 * show information about the application being redeployed – however the
 	 * redeployment process will proceed after the response is returned. The
 	 * user is expected to continue checking the application status using the
 	 * applicationGetStatus method until the process is complete.

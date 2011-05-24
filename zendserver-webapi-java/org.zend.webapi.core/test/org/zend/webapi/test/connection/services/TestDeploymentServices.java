@@ -135,7 +135,8 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, true, params);
+					.applicationDeploy(app, baseUrl, true, params, "appName",
+							false, false);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;

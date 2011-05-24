@@ -8,9 +8,10 @@
 package org.zend.webapi.core.connection.data.values;
 
 /**
- * Error code 
+ * Error code
+ * 
  * @author Roy, 2011
- *
+ * 
  */
 public enum ErrorCode {
 
@@ -22,6 +23,10 @@ public enum ErrorCode {
 	invalidParameter(400, "One or more request parameter contains invalid data"),
 
 	missingParameter(400, "Request is missing a required parameter"),
+
+	missingVirtualHost(
+			400,
+			"The virtual host in the baseUrl does not exist. Use createVhost flag to create it"),
 
 	unknownMethod(400, "Unknown Zend Server API method"),
 

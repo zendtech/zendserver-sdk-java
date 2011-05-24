@@ -65,6 +65,22 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * package definitions, this parameter may be required; Each user parameter
  * defined in the package must be provided as a key for this parameter</td>
  * </tr>
+ * <tr>
+ * <td>createVhost</td>
+ * <td>Boolean</td>
+ * <td>No</td>
+ * <td>Create a virtual host based on the base URL if such a virtual host wasn't
+ * already created by Zend Server. Default is FALSE</td>
+ * </tr>
+ * <tr>
+ * <td>defaultServer</td>
+ * <td>Boolean</td>
+ * <td>No</td>
+ * <td>Deploy the application on the default server; the base URL host provided
+ * will be ignored and replaced with <default-server>. In case of a conjunction
+ * of this parameter and createVhost, the latter will be ignored. Default is
+ * FALSE</td>
+ * </tr>
  * </table>
  * 
  * @author Wojtek, 2011
@@ -129,6 +145,28 @@ public class ApplicationDeployRequest extends AbstractRequest {
 	 */
 	public void setIgnoreFailures(Boolean ignoreFailures) {
 		addParameter("ignoreFailures", ignoreFailures);
+	}
+
+	/**
+	 * Create a virtual host based on the base URL if such a virtual host wasn't
+	 * already created by Zend Server. Default is FALSE.
+	 * 
+	 * @param createVhost
+	 */
+	public void setCreateVhost(Boolean createVhost) {
+		addParameter("createVhost", createVhost);
+	}
+
+	/**
+	 * Deploy the application on the default server; the base URL host provided
+	 * will be ignored and replaced with <default-server>. In case of a
+	 * conjunction of this parameter and createVhost, the latter will be
+	 * ignored. Default is FALSE.
+	 * 
+	 * @param createVhost
+	 */
+	public void setDefaultServer(Boolean defaultServer) {
+		addParameter("defaultServer", defaultServer);
 	}
 
 	/**
