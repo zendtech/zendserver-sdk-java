@@ -70,7 +70,12 @@ public class TemplateWriter {
 	private void writeStaticResource(String resourceName, File destination) throws IOException {
 		URL url = getClass().getResource(resourceName);
 		
-		FileOutputStream out = new FileOutputStream(new File(destination, resourceName));
+		File destFile = new File(destination, resourceName);
+		File dir = destFile.getParentFile();
+		if (! dir.exists()) {
+			dir.mkdir();
+		}
+		FileOutputStream out = new FileOutputStream(destFile);
 		
 		InputStream is = url.openStream();
 		byte[] buf = new byte[4098];
