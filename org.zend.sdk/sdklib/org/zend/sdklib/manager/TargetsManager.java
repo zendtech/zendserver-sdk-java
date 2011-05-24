@@ -52,9 +52,9 @@ public class TargetsManager extends AbstractLibrary {
 			if (!validTarget(zTarget)) {
 				log.error(new IllegalArgumentException(
 						"Conflict found when adding " + zTarget.getId()));
+			} else {
+				this.all.add(zTarget);
 			}
-
-			this.all.add(zTarget);
 		}
 	}
 
