@@ -8,7 +8,6 @@
 
 package org.zend.sdkcli.internal.commands;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.Main;
@@ -49,34 +48,27 @@ public abstract class AbstractCommand implements ICommand {
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
-	 * @see Options#addOption(Sting, boolean)
+	 * @see CommandOptions#addArgumentOption(Sting, boolean, String)
 	 * @param name
-	 * @param hasArgs
+	 * @param isRequired
+	 * @param description
 	 */
-	protected void addOption(String name, boolean hasArgs) {
-		options.addOption(name, hasArgs);
+	protected void addArgumentOption(String name, boolean isRequired,
+			String description) {
+		options.addArgumentOption(name, isRequired, description);
 	}
 
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
 	 * 
-	 * @see Options#addOption(Option)
+	 * @see CommandOptions#addBooleanOption(Sting, boolean, String)
 	 * @param name
-	 * @param hasArgs
+	 * @param isRequired
+	 * @param description
 	 */
-	protected void addOption(Option opt) {
-		options.addOption(opt);
-	}
-
-	/**
-	 * Helper method for {@link AbstractCommand#setupOptions()} method
-	 * 
-	 * @see Options#addOption(String, boolean, String)
-	 * @param name
-	 * @param hasArgs
-	 */
-	protected void addOption(String name, boolean hasArgs, String description) {
-		options.addOption(name, hasArgs, description);
+	protected void addBooleanOption(String name, boolean isRequired,
+			String description) {
+		options.addBooleanOption(name, isRequired, description);
 	}
 
 	public String getValue(String parameterName) {

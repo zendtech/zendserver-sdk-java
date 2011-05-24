@@ -52,7 +52,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 	@Override
 	protected void setupOptions() {
-		addOption(STATUS, false, "show status line for targets");
+		addBooleanOption(STATUS, false, "show status line for targets");
 	}
 
 }
