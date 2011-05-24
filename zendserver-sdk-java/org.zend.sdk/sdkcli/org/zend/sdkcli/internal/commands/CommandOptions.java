@@ -12,7 +12,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 /**
- * TODO document
+ * Represents command line options. It extends {@link Options} to provide some
+ * helper methods for adding new options.
+ * 
+ * @author Wojciech Galanciak, 2011
+ * 
  */
 public class CommandOptions extends Options {
 
@@ -21,18 +25,53 @@ public class CommandOptions extends Options {
 	public static final String CURR_DIR = "currDir";
 
 	public CommandOptions() {
-		addArgumentOption(CURR_DIR, false);
+		addArgumentOption(CURR_DIR, false, "current directory");
 	}
 
-	public void addOption(String name, boolean hasArgs) {
-		Option option = new Option(name, hasArgs, "");
+	/**
+	 * Adds options which has one argument and has no description.
+	 * 
+	 * @param name
+	 *            - option name
+	 * @param isRequired
+	 *            - boolean value which defines if option is required
+	 */
+	public void addOption(String name, boolean isRequired) {
+		addArgumentOption(name, isRequired, "");
+	}
+
+	/**
+	 * Adds options which has one argument.
+	 * 
+	 * @param name
+	 *            - option name
+	 * @param isRequired
+	 *            - boolean value which defines if option is required
+	 * @param description
+	 *            - option description
+	 */
+	public void addArgumentOption(String name, boolean isRequired,
+			String description) {
+		Option option = new Option(name, true, description);
+		option.setArgName(name);
+		option.setArgs(1);
+		option.setRequired(isRequired);
 		this.addOption(option);
 	}
 
-	public void addArgumentOption(String name, boolean isRequired) {
-		Option option = new Option(name, true, "");
-		option.setArgName(name);
-		option.setArgs(1);
+	/**
+	 * Adds options which has no arguments.
+	 * 
+	 * @param name
+	 *            - option name
+	 * @param isRequired
+	 *            - boolean value which defines if option is required
+	 * @param description
+	 *            - option description
+	 */
+	public void addBooleanOption(String name, boolean isRequired,
+			String description) {
+		Option option = new Option(name, false, description);
 		option.setRequired(isRequired);
 		this.addOption(option);
 	}
