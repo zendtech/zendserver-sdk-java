@@ -7,7 +7,11 @@
  *******************************************************************************/
 package org.zend.sdklib;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.project.template.TemplateWriter;
 
 /**
  * Sample library class
@@ -18,19 +22,25 @@ import org.zend.sdklib.internal.library.AbstractLibrary;
 public class ZendProject extends AbstractLibrary {
 
 	protected String name;
-	protected String target;
-	protected String index;
-	protected String path;
+	protected boolean withScripts;
+	protected String destination;
 
-	public ZendProject(String name, String target, String index, String path) {
+	public ZendProject(String name, boolean withScripts, String destination) {
 		this.name = name;
-		this.target = target;
-		this.index = index;
-		this.path = path;
+		this.withScripts = withScripts;
+		this.destination = destination;
 	}
 
 	public boolean create() {
-		// TODO create project based on fields values
+		TemplateWriter tw = new TemplateWriter();
+		
+		try {
+			tw.writeTemplate(name, withScripts, new File(destination));
+		} catch (IOException e) {
+			// TODO what with exception?
+			return false;
+		}
+		
 		return true;
 	}
 
