@@ -3,8 +3,8 @@ package org.zend.sdk.test.sdkcli.commands;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
 import java.io.File;
@@ -15,7 +15,6 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
@@ -27,12 +26,11 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
 public class TestCreateTargetCommand extends AbstractTest {
 
 	private String[] validCommand = new String[] { "create", "target", "-t",
-			"1", "-key", "mykey", "-secret", "123456", "-host",
+			"1", "-key", "mykey", "-secretKey", "123456", "-host",
 			"http://test1test" };
 
 	private ITargetLoader loader;
@@ -57,7 +55,8 @@ public class TestCreateTargetCommand extends AbstractTest {
 	public void testExecute() throws ParseError, WebApiException {
 		CreateTargetCommand command = getCommand(validCommand);
 		assertNotNull(command);
-		doReturn(getTarget()).when(manager).add(Mockito.any(IZendTarget.class));
+		doReturn(getTarget()).when(manager).createTarget(anyString(),
+				anyString(), anyString(), anyString());
 		assertTrue(command.execute());
 	}
 
@@ -65,7 +64,8 @@ public class TestCreateTargetCommand extends AbstractTest {
 	public void testExecuteAddFail() throws ParseError, WebApiException {
 		CreateTargetCommand command = getCommand(validCommand);
 		assertNotNull(command);
-		doReturn(null).when(manager).add(Mockito.any(IZendTarget.class));
+		doReturn(null).when(manager).createTarget(anyString(), anyString(),
+				anyString(), anyString());
 		assertFalse(command.execute());
 	}
 
@@ -73,19 +73,9 @@ public class TestCreateTargetCommand extends AbstractTest {
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
 			MalformedURLException {
 		CreateTargetCommand command = getCommand(new String[] { "create",
-				"target", "-t", "1", "-key", "mykey", "-secret", "123456",
+				"target", "-t", "1", "-key", "mykey", "-secretKey", "123456",
 				"-host", "a111:/\test1test" });
 		assertNotNull(command);
-		assertFalse(command.execute());
-	}
-
-	@Test
-	public void testExecuteManagerThrowException() throws ParseError,
-			WebApiException {
-		CreateTargetCommand command = getCommand(validCommand);
-		assertNotNull(command);
-		doThrow(new SignatureException("testError")).when(manager).add(
-				Mockito.any(IZendTarget.class));
 		assertFalse(command.execute());
 	}
 
