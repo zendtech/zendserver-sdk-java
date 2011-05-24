@@ -28,6 +28,8 @@ public enum CommandType {
 
 	LIST_APPLICATIONS("list", "applications"),
 
+	DEPLOY_APPLICATION("deploy", "application"),
+
 	UNKNOWN(null);
 
 	private String verb;
