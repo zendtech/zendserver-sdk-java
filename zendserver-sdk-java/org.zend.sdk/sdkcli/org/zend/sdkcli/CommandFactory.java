@@ -12,6 +12,7 @@ import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
 import org.zend.sdkcli.internal.commands.CreateTargetCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
+import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdkcli.internal.commands.UsageCommanLine;
 
@@ -47,6 +48,9 @@ public class CommandFactory {
 			break;
 		case DETECT_TARGET:
 			command = new DetectTargetCommand(line);
+			break;
+		case LIST_APPLICATIONS:
+			command = new ListApplicationsCommand(line);
 			break;
 		default:
 			command = new UsageCommanLine();

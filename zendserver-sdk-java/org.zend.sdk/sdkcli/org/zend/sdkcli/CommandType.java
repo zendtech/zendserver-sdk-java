@@ -26,6 +26,8 @@ public enum CommandType {
 
 	DETECT_TARGET("detect", "target"),
 
+	LIST_APPLICATIONS("list", "applications"),
+
 	UNKNOWN(null);
 
 	private String verb;
