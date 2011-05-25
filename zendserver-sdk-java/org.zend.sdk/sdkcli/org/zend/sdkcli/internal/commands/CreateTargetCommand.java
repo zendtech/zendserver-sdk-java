@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -18,16 +19,36 @@ import org.zend.sdklib.target.IZendTarget;
 public class CreateTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
-	private static final String KEY = "key";
-	private static final String SECRETKEY = "secretKey";
-	private static final String HOST = "host";
+	private static final String KEY = "k";
+	private static final String SECRETKEY = "s";
+	private static final String HOST = "h";
+
+	@Option(opt = KEY, required = true, description = "The key to use")
+	public String getKey() {
+		return getValue(KEY);
+	}
+
+	@Option(opt = SECRETKEY, required = true, description = "The secret key to use")
+	public String getSecretKey() {
+		return getValue(SECRETKEY);
+	}
+
+	@Option(opt = ID, required = false, description = "The new target id")
+	public String getId() {
+		return getValue(ID);
+	}
+
+	@Option(opt = HOST, required = true, description = "The host name to use")
+	public String getHost() {
+		return getValue(HOST);
+	}
 
 	@Override
 	public boolean doExecute() {
-		final String targetId = getValue(ID);
-		final String key = getValue(KEY);
-		final String secretKey = getValue(SECRETKEY);
-		final String host = getValue(HOST);
+		final String targetId = getId();
+		final String key = getKey();
+		final String secretKey = getSecretKey();
+		final String host = getHost();
 		if (key == null || secretKey == null || host == null) {
 			getLogger().error("Mandatory arguments are missing.");
 			getLogger().error("\tKey: " + key);
@@ -44,15 +65,4 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		return true;
 	}
 
-	@Override
-	protected void setupOptions() {
-		// key name
-		addArgumentOption(KEY, true, "use given key name");
-		// target name
-		addArgumentOption(ID, false, "use given target name");
-		// secret key name
-		addArgumentOption(SECRETKEY, true, "use given secret key");
-		// host name
-		addArgumentOption(HOST, true, "use given host name");
-	}
 }

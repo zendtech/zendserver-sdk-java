@@ -9,23 +9,33 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.IOException;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 
 /**
  * Detect localhost target.
  * 
  * @author Wojciech Galanciak, 2011
- * 
  */
 public class DetectTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
-	private static final String KEY = "key";
+	private static final String KEY = "k";
+
+	@Option(opt = ID, required = false, description = "The target id to create")
+	public String getId() {
+		return getValue(ID);
+	}
+
+	@Option(opt = KEY, required = false, description = "The key to use")
+	public String getKey() {
+		return getValue(KEY);
+	}
 
 	@Override
 	public boolean doExecute() {
-		final String key = getValue(KEY);
-		final String targetId = getValue(ID);
+		final String key = getKey();
+		final String targetId = getId();
 		// detect localhost
 		try {
 			if (getTargetManager().detectLocalhostTarget(targetId, key) != null) {
@@ -50,13 +60,5 @@ public class DetectTargetCommand extends TargetAwareCommand {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	protected void setupOptions() {
-		// key name
-		addArgumentOption(KEY, false, "use given key name");
-		// target name
-		addArgumentOption(ID, false, "use given target name");
 	}
 }

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
@@ -18,42 +18,66 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
  */
 public class DeployApplicationCommand extends ApplicationAwareCommand {
 
-	private static final String PATH = "path";
-	private static final String BASE_URL = "baseUrl";
-	private static final String TARGET = "target";
-	private static final String PARAMS = "name";
-	private static final String NAME = "name";
-	private static final String IGNORE_FAILURES = "ignoreFailures";
-	private static final String CREATE_VHOST = "createVhost";
-	private static final String DEFAULT_SERVER = "deafultServer";
+	private static final String PATH = "p";
+	private static final String BASE_URL = "b";
+	private static final String TARGET = "t";
+	private static final String PARAMS = "pa";
+	private static final String NAME = "n";
+	private static final String IGNORE_FAILURES = "f";
+	private static final String CREATE_VHOST = "v";
+	private static final String DEFAULT_SERVER = "d";
+
+	@Option(opt = PATH, required = true, description = "The path to the project or application package")
+	public String getPath() {
+		return getValue(PATH);
+	}
+
+	@Option(opt = BASE_URL, required = true, description = "The base URL of the application")
+	public String getBaseUrl() {
+		return getValue(BASE_URL);
+	}
+
+	@Option(opt = TARGET, required = true, description = "The target id")
+	public String getTargetId() {
+		return getValue(TARGET);
+	}
+
+	@Option(opt = PARAMS, required = false, description = "The path to parameters properties file")
+	public String getParams() {
+		return getValue(PARAMS);
+	}
+
+	@Option(opt = NAME, required = false, description = "The application name")
+	public String getName() {
+		return getValue(NAME);
+	}
+
+	@Option(opt = IGNORE_FAILURES, required = false, description = "Ignore failures")
+	public boolean isIgnoreFailures() {
+		return hasOption(IGNORE_FAILURES);
+	}
+
+	@Option(opt = CREATE_VHOST, required = false, description = "Create vhost")
+	public boolean isCreateVhost() {
+		return hasOption(CREATE_VHOST);
+	}
+
+	@Option(opt = DEFAULT_SERVER, required = false, description = "Use default server")
+	public boolean isDefaultServer() {
+		return hasOption(DEFAULT_SERVER);
+	}
 
 	@Override
 	public boolean doExecute() {
-		Boolean ignoreFailures = getValue(IGNORE_FAILURES) != null ? Boolean
-				.valueOf(getValue(IGNORE_FAILURES)) : null;
-		Boolean createVhost = getValue(CREATE_VHOST) != null ? Boolean
-				.valueOf(getValue(CREATE_VHOST)) : null;
-		Boolean deafultServer = getValue(DEFAULT_SERVER) != null ? Boolean
-				.valueOf(getValue(DEFAULT_SERVER)) : null;
+		
 		ApplicationInfo info = getApplication().deploy(getValue(PATH),
 				getValue(BASE_URL), getValue(TARGET), getValue(PARAMS),
-				getValue(NAME), ignoreFailures, createVhost, deafultServer);
+				getValue(NAME), isIgnoreFailures(), isCreateVhost(), isDefaultServer());
+		
 		if (info == null) {
 			return false;
 		}
 		return true;
 	}
 
-	@Override
-	protected void setupOptions() {
-		addArgumentOption(PATH, true,
-				"path to the project or application package");
-		addArgumentOption(BASE_URL, true, "base URL");
-		addArgumentOption(TARGET, true, "target ID");
-		addArgumentOption(PARAMS, false, "path to parameters properties file");
-		addArgumentOption(NAME, false, "use given target name");
-		addArgumentOption(IGNORE_FAILURES, false, "use given target name");
-		addArgumentOption(CREATE_VHOST, false, "use given target name");
-		addArgumentOption(DEFAULT_SERVER, false, "use given target name");
-	}
 }

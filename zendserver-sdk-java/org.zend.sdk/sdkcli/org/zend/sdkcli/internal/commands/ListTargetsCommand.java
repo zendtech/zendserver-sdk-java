@@ -7,13 +7,19 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
 public class ListTargetsCommand extends TargetAwareCommand {
 
-	private static final String STATUS = "status";
+	private static final String STATUS = "s";
 
+	@Option(opt = STATUS, required = false, description = "show status line for targets")
+	public boolean isStatus() {
+		return hasOption(STATUS);
+	}
+	
 	@Override
 	public boolean doExecute() {
 		final IZendTarget[] list = getTargetManager().getTargets();
@@ -44,10 +50,4 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 		return true;
 	}
-
-	@Override
-	protected void setupOptions() {
-		addBooleanOption(STATUS, false, "show status line for targets");
-	}
-
 }
