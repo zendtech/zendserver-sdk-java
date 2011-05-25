@@ -40,7 +40,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 			WebApiException {
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length != 0);
+		assertTrue(manager.getTargets().length != 0);
 		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
 				"-status" }, Log.getInstance().getLogger("AbstractTest"));
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
