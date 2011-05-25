@@ -44,11 +44,14 @@ public class TemplateWriter {
 		out.append(" <version>\n");
 		out.append("   <release>1.0.0.0/release>\n");
 		out.append(" </version>\n");
+		out.append(" <icon></icon>\n");
 		out.append(" <eula></eula>\n");
 		out.append(" <docroot></docroot>\n");
 		if (withScripts) {
 			out.append(" <scriptsdir>scripts</scriptsdir>\n");
 		}
+		out.append(" <dependencies></dependencies>\n");
+		out.append(" <parameters></parameters>\n");
 		out.append("</package>\n");
 		out.close();
 	}
