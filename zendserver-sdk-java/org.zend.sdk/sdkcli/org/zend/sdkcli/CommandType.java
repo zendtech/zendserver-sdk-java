@@ -19,6 +19,8 @@ import org.zend.sdkcli.internal.commands.CommandLine;
 public enum CommandType {
 
 	CREATE_PROJECT("create", "project"),
+	
+	UPDATE_PROJECT("update", "project"),
 
 	LIST_TARGETS("list", "targets"),
 
