@@ -16,7 +16,7 @@ public class TestCommandTypes {
 		CommandLine line = new CommandLine(new String[] { "create", "project" });
 		CommandType type = CommandType.byCommandLine(line);
 		assertNotNull(type);
-		assertNotSame(CommandType.UNKNOWN, type);
+		assertNotSame(CommandType.HELP, type);
 		assertSame("create", type.getVerb());
 		assertSame("project", type.getDirectObject());
 	}
@@ -26,7 +26,7 @@ public class TestCommandTypes {
 		CommandLine line = new CommandLine(new String[] { "random", "123" });
 		CommandType type = CommandType.byCommandLine(line);
 		assertNotNull(type);
-		assertSame(CommandType.UNKNOWN, type);
+		assertSame(CommandType.HELP, type);
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class TestCommandTypes {
 		CommandLine line = new CommandLine(new String[] { "random" });
 		CommandType type = CommandType.byCommandLine(line);
 		assertNotNull(type);
-		assertSame(CommandType.UNKNOWN, type);
+		assertSame(CommandType.HELP, type);
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class TestCommandTypes {
 		CommandLine line = new CommandLine(new String[] {});
 		CommandType type = CommandType.byCommandLine(line);
 		assertNotNull(type);
-		assertSame(CommandType.UNKNOWN, type);
+		assertSame(CommandType.HELP, type);
 	}
 
 }
