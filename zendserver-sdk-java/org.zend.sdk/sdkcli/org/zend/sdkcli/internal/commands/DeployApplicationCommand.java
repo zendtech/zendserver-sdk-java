@@ -8,17 +8,17 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.ParseError;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
- * Deploys application to specified target.
+ * Deploys package to specified target.
  * 
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class DeployApplicationCommand extends AbstractCommand {
+public class DeployApplicationCommand extends ApplicationAwareCommand {
 
-	private static final String PROJECT = "project";
-	private static final String PACKAGE = "package";
+	private static final String PATH = "path";
 	private static final String BASE_URL = "baseUrl";
 	private static final String TARGET = "target";
 	private static final String PARAMS = "name";
@@ -33,14 +33,25 @@ public class DeployApplicationCommand extends AbstractCommand {
 
 	@Override
 	public boolean execute() {
-		// TODO implement execute
+		Boolean ignoreFailures = getValue(IGNORE_FAILURES) != null ? Boolean
+				.valueOf(getValue(IGNORE_FAILURES)) : null;
+		Boolean createVhost = getValue(CREATE_VHOST) != null ? Boolean
+				.valueOf(getValue(CREATE_VHOST)) : null;
+		Boolean deafultServer = getValue(DEFAULT_SERVER) != null ? Boolean
+				.valueOf(getValue(DEFAULT_SERVER)) : null;
+		ApplicationInfo info = getApplication().deploy(getValue(PATH),
+				getValue(BASE_URL), getValue(TARGET), getValue(PARAMS),
+				getValue(NAME), ignoreFailures, createVhost, deafultServer);
+		if (info == null) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	protected void setupOptions() {
-		addArgumentOption(PROJECT, false, "path to the project");
-		addArgumentOption(PACKAGE, false, "path to the application package");
+		addArgumentOption(PATH, true,
+				"path to the project or application package");
 		addArgumentOption(BASE_URL, true, "base URL");
 		addArgumentOption(TARGET, true, "target ID");
 		addArgumentOption(PARAMS, false, "path to parameters properties file");

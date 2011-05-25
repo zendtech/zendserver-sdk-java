@@ -54,21 +54,25 @@ public class CliLogger implements ILogger {
 
 	@Override
 	public void debug(Object message) {
+		System.out.println(message);
 		logger.debug(message);
 	}
 
 	@Override
 	public void info(Object message) {
+		System.out.println(message);
 		logger.info(message);
 	}
 
 	@Override
 	public void error(Object message) {
+		System.out.println(message);
 		logger.error(message);
 	}
 
 	@Override
 	public void warning(Object message) {
+		System.out.println(message);
 		logger.warn(message);
 	}
 
