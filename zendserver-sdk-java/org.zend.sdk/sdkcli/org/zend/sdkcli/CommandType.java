@@ -18,34 +18,41 @@ import org.zend.sdkcli.internal.commands.CommandLine;
  */
 public enum CommandType {
 
-	CREATE_PROJECT("create", "project"),
+	CREATE_PROJECT("create", "project", "creates project"),
 	
-	UPDATE_PROJECT("update", "project"),
+	UPDATE_PROJECT("update", "project", "updates project"),
 
-	LIST_TARGETS("list", "targets"),
+	LIST_TARGETS("list", "targets", "lists targets"),
 
-	CREATE_TARGET("create", "target"),
+	CREATE_TARGET("create", "target", "creates new target"),
 	
-	DELETE_TARGET("delete", "target"),
+	DELETE_TARGET("delete", "target", "deletes existing targets"),
 
-	DETECT_TARGET("detect", "target"),
+	DETECT_TARGET("detect", "target", "detects target on localhost"),
 
-	LIST_APPLICATIONS("list", "applications"),
+	LIST_APPLICATIONS("list", "applications", "lists applications installed on target"),
 
-	DEPLOY_APPLICATION("deploy", "application"),
+	DEPLOY_APPLICATION("deploy", "application", "deploys application to target"),
 
-	UNKNOWN(null);
+	HELP("help", null, "shows help information");
 
 	private String verb;
 	private String directObject;
+	private String info;
+
+	private CommandType(String verb, String directObject, String info) {
+		this.verb = verb;
+		this.directObject = directObject;
+		this.info = info;
+	}
 
 	private CommandType(String verb, String directObject) {
 		this.verb = verb;
 		this.directObject = directObject;
 	}
-
+	
 	private CommandType(String verb) {
-		this(verb, null);
+		this(verb, null, null);
 	}
 
 	public String getDirectObject() {
@@ -66,7 +73,7 @@ public enum CommandType {
 		String verb = line.getVerb();
 		String directObject = line.getDirectObject();
 		if (verb == null && directObject == null) {
-			return UNKNOWN;
+			return HELP;
 		}
 		CommandType[] values = values();
 		for (CommandType type : values) {
@@ -80,7 +87,11 @@ public enum CommandType {
 				}
 			}
 		}
-		return UNKNOWN;
+		return HELP;
+	}
+
+	public String getInfo() {
+		return info;
 	}
 
 }
