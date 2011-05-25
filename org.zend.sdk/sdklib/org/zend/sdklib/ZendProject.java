@@ -23,12 +23,12 @@ public class ZendProject extends AbstractLibrary {
 
 	protected String name;
 	protected boolean withScripts;
-	protected String destination;
+	protected File destination;
 
 	public ZendProject(String name, boolean withScripts, String destination) {
 		this.name = name;
 		this.withScripts = withScripts;
-		this.destination = destination;
+		this.destination = destination == null ? new File(".") : new File(destination);
 	}
 
 	/**
@@ -39,13 +39,8 @@ public class ZendProject extends AbstractLibrary {
 	public boolean create() {
 		TemplateWriter tw = new TemplateWriter();
 		
-		File dest = destination == null ? new File(".") : new File(destination);
-		if (! dest.exists()) {
-			dest.mkdir();
-		}
-		
 		try {
-			tw.writeTemplate(name, withScripts, dest);
+			tw.writeTemplate(name, true, withScripts, destination);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			return false;
@@ -54,4 +49,17 @@ public class ZendProject extends AbstractLibrary {
 		return true;
 	}
 
+	
+	public boolean update() {
+		TemplateWriter tw = new TemplateWriter();
+		
+		try {
+			tw.writeTemplate(name, false, withScripts, destination);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+			return false;
+		}
+		
+		return true;
+	}
 }
