@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
@@ -15,12 +14,8 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 	private static final String STATUS = "status";
 
-	public ListTargetsCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		final IZendTarget[] list = getTargetManager().getTargets();
 		if (list.length == 0) {
 			commandLine.getLog().info("No Available Zend Targets.");

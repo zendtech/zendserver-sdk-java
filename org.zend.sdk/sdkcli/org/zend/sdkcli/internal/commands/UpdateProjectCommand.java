@@ -8,7 +8,6 @@
 
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.ZendProject;
 
 /**
@@ -60,10 +59,6 @@ public class UpdateProjectCommand extends AbstractCommand {
 	public static final String NO_SCRIPTS = "no_scripts";
 	public static final String DESTINATION = "destination";
 
-	public UpdateProjectCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
 	public void setupOptions() {
 		addArgumentOption(NAME, false, "project name");
@@ -72,7 +67,7 @@ public class UpdateProjectCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		String path = getValue(DESTINATION);
 		if (path == null) {
 			path = getValue(CommandOptions.CURR_DIR);

@@ -33,7 +33,8 @@ public class TestDeployApplicationCommand extends AbstractWebApiTest {
 
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
-		DeployApplicationCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DeployApplicationCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
 		when(
@@ -42,23 +43,23 @@ public class TestDeployApplicationCommand extends AbstractWebApiTest {
 						anyBoolean(), anyBoolean())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationDeploy",
 						IResponseData.ResponseType.APPLICATION_INFO));
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		DeployApplicationCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DeployApplicationCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 
-	private DeployApplicationCommand getCommand(String[] args)
+	private DeployApplicationCommand getCommand(CommandLine cmdLine)
 			throws ParseError {
-		CommandLine cmdLine = new CommandLine(args);
 		DeployApplicationCommand command = spy((DeployApplicationCommand) CommandFactory
 				.createCommand(cmdLine));
 		return command;
