@@ -11,27 +11,47 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Writes files from template
+ *
+ */
 public class TemplateWriter {
 
 	private static final String TEMPLATES_DIR = "templates";
 	private static final String SCRIPTS_DIR = "scripts";
 	public static final String DESCRIPTOR = "descriptor.xml";
 	
-	public void writeTemplate(String name, boolean withScripts, File destination) throws IOException {
-		writeDescriptor(name, withScripts, new FileWriter(new File(destination, DESCRIPTOR)));
+	/**
+	 * 
+	 * @param name - name of the project
+	 * @param withContent - whether to write other contents than scripts and descriptor
+	 * @param withScripts - whether to write scripts
+	 * @param destination - destination directory
+	 * @throws IOException
+	 */
+	public void writeTemplate(String name, boolean withContent, boolean withScripts, File destination) throws IOException {
+		File descrFile = new File(destination, DESCRIPTOR);
+		if (! descrFile.getParentFile().exists()) {
+			descrFile.getParentFile().mkdirs();
+		}
+		
+		if (! descrFile.exists()) {
+			writeDescriptor(name, withScripts, new FileWriter(descrFile));
+		}
+		
 		String[] resources = getTemplateResources();
 		if (resources == null) {
 			return;
 		}
 		
 		for (int i = 0; i < resources.length; i++) {
-			if (withScripts || !isTemplateScriptPart(resources[i])) {
+			if (withScripts || (withContent && (!isScript(resources[i])))) {
 				writeStaticResource(resources[i], destination);
 			}
 		}
 	}
 	
-	private boolean isTemplateScriptPart(String path) {
+	private boolean isScript(String path) {
 		return path.startsWith(SCRIPTS_DIR);
 	}
 
@@ -80,7 +100,7 @@ public class TemplateWriter {
 			return;
 		}
 		
-		if (destFile.getParentFile().canWrite()) { // skip if parent directory is not writeable
+		if (!destFile.getParentFile().canWrite()) { // skip if parent directory is not writeable
 			return;
 		}
 		
