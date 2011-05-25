@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.zend.sdklib.internal.library.AbstractLibrary;
-import org.zend.sdklib.internal.project.template.TemplateWriter;
+import org.zend.sdklib.internal.project.TemplateWriter;
 
 /**
  * Sample library class
