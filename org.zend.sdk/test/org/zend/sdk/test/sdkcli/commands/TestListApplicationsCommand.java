@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
@@ -19,7 +20,7 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
-public class TestListApplicationsCommand extends AbstractAppCommandTest {
+public class TestListApplicationsCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "list", "applications",
 			"-t", "0" };
