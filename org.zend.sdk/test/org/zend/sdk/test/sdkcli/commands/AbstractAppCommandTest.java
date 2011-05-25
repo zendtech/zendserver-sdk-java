@@ -19,7 +19,7 @@ import org.zend.webapi.test.server.utils.ServerUtils;
 
 public class AbstractAppCommandTest extends AbstractTest {
 
-	private static final String FOLDER = "test/config/apps/";
+	public static final String FOLDER = "test/config/apps/";
 
 	protected ZendApplication application;
 	protected WebApiClient client;
