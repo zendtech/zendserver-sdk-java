@@ -56,21 +56,21 @@ import org.zend.sdklib.ZendProject;
  */
 public class UpdateProjectCommand extends AbstractCommand {
 
-	public static final String NAME = "name";
-	public static final String NO_SCRIPTS = "i";
-	public static final String DESTINATION = "project destination";
+	public static final String NAME = "n";
+	public static final String IGNORE_SCRIPTS = "i";
+	public static final String DESTINATION = "d";
 
-	@Option(opt = NO_SCRIPTS, required = false, description = "ignore scripts")
-	public boolean isScripts() {
-		return hasOption(NO_SCRIPTS);
+	@Option(opt = IGNORE_SCRIPTS, required = false, description = "ignore scripts")
+	public boolean isIgnoreScripts() {
+		return hasOption(IGNORE_SCRIPTS);
 	}
 
-	@Option(opt = DESTINATION, required = true, description = "The path to the project or application package")
+	@Option(opt = DESTINATION, required = false, description = "The path to the project or application package")
 	public String getDestination() {
 		return getValue(DESTINATION);
 	}
 
-	@Option(opt = NAME, required = true, description = "The project name")
+	@Option(opt = NAME, required = false, description = "The project name")
 	public String getName() {
 		return getValue(NAME);
 	}
@@ -82,7 +82,7 @@ public class UpdateProjectCommand extends AbstractCommand {
 			path = getCurrentDirectory();
 		}
 		ZendProject project = new ZendProject(getName(),
-				!isScripts(), path);
+				!isIgnoreScripts(), path);
 
 		try {
 			return project.update();

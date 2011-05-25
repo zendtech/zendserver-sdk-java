@@ -48,10 +48,10 @@ public @interface Option {
 	String longOpt() default "";
 
 	/**
-	 * @see org.apache.commons.cli.Option#getDescription()
+	 * @see org.apache.commons.cli.Option#getLongOpt()
 	 */
-	boolean optionalArg() default false;
-
+	Class type() default String.class;
+	
 	/**
 	 * @see org.apache.commons.cli.Option#getDescription()
 	 */
