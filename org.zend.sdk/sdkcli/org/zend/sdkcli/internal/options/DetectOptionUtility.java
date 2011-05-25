@@ -22,25 +22,39 @@ public class DetectOptionUtility {
 	private static final String BOOLEAN_OPTION = "is";
 	private static final String STRING_OPTION = "get";
 
-	public static void addOption(Class subject,
-			Options options) {
+	public static void addOption(Class subject, Options options) {
 		final Method[] methods = subject.getMethods();
 		for (Method method : methods) {
 			if (method.getName().startsWith(STRING_OPTION)
 					&& method.getAnnotation(Option.class) != null) {
 				final Option a = method.getAnnotation(Option.class);
-				final org.apache.commons.cli.Option o = OptionBuilder
-						.withArgName(a.opt()).withDescription(a.description())
-						.withLongOpt(a.longOpt()).withType(String.class)
-						.create(a.opt());
+
+				// create option object
+				final org.apache.commons.cli.Option o = new org.apache.commons.cli.Option(
+						a.opt(), a.description());
+				if (a.longOpt() != null && a.longOpt().length() > 0) {
+					o.setLongOpt(a.longOpt());
+				}
+				o.setArgs(a.numberOfArgs());
+				o.setRequired(a.required());
+				o.setType(a.type());
+				
+				// assign to options list
 				options.addOption(o);
 			} else if (method.getName().startsWith(BOOLEAN_OPTION)
 					&& method.getAnnotation(Option.class) != null) {
 				final Option a = method.getAnnotation(Option.class);
-				final org.apache.commons.cli.Option o = OptionBuilder
-						.withArgName(a.opt()).withDescription(a.description())
-						.withLongOpt(a.longOpt()).withType(Boolean.class)
-						.create(a.opt());
+
+				// create option object
+				final org.apache.commons.cli.Option o = new org.apache.commons.cli.Option(
+						a.opt(), a.description());
+				if (a.longOpt() != null && a.longOpt().length() > 0) {
+					o.setLongOpt(a.longOpt());
+				}
+				o.setArgs(0);
+				o.setRequired(a.required());
+				
+				// assign to options list				options.addOption(o);
 				options.addOption(o);
 			}
 		}
