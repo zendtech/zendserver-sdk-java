@@ -27,28 +27,29 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
-		ListApplicationsCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		ListApplicationsCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenReturn(
 				(ApplicationsList) getResponseData("applicationGetStatus",
 						IResponseData.ResponseType.APPLICATIONS_LIST));
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		ListApplicationsCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		ListApplicationsCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 
-	private ListApplicationsCommand getCommand(String[] args) throws ParseError {
-		CommandLine cmdLine = new CommandLine(args);
+	private ListApplicationsCommand getCommand(CommandLine cmdLine) throws ParseError {
 		ListApplicationsCommand command = spy((ListApplicationsCommand) CommandFactory
 				.createCommand(cmdLine));
 		return command;

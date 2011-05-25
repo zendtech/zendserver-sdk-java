@@ -23,22 +23,27 @@ import org.zend.sdklib.logger.Log;
  */
 public abstract class AbstractCommand implements ICommand {
 
-	final protected CommandLine commandLine;
-	final protected CommandOptions options;
+	protected CommandLine commandLine;
+	protected CommandOptions options;
 
 	/**
 	 * @param commandLine
 	 * @throws ParseError
 	 */
-	public AbstractCommand(CommandLine commandLine) throws ParseError {
+	public AbstractCommand() {
 		// build options
 		this.options = new CommandOptions();
 		setupOptions();
-
-		// parse command line according to options
-		this.commandLine = commandLine;
-		commandLine.parse(options);
 	}
+	
+	public boolean execute(CommandLine cmdLine)  throws ParseError {
+		// parse command line according to options
+		this.commandLine = cmdLine;
+		commandLine.parse(options);
+		return doExecute();
+	}
+	
+	protected abstract boolean doExecute();
 
 	/**
 	 * Commands setup their {@link Options}
@@ -101,6 +106,10 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	public ILogger getLogger() {
 		return Log.getInstance().getLogger(Main.class.getName());
+	}
+	
+	public CommandOptions getOptions() {
+		return options;
 	}
 
 }

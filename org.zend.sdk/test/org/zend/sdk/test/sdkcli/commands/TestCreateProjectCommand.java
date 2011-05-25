@@ -19,24 +19,24 @@ public class TestCreateProjectCommand extends AbstractTest {
 				"project", "-name", "testName" });
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testByConstructor1() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
 				"project", "-name", "testName", "-destination", "abc" });
-		ICommand command = new CreateProjectCommand(cmdLine);
+		ICommand command = new CreateProjectCommand();
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 	
 	@Test
 	public void testByConstructor2() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
 				"project", "-name", "testName", "-destination", "def", "-no_scripts" });
-		ICommand command = new CreateProjectCommand(cmdLine);
+		ICommand command = new CreateProjectCommand();
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 }

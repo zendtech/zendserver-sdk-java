@@ -27,12 +27,8 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	private static final String CREATE_VHOST = "createVhost";
 	private static final String DEFAULT_SERVER = "deafultServer";
 
-	public DeployApplicationCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		Boolean ignoreFailures = getValue(IGNORE_FAILURES) != null ? Boolean
 				.valueOf(getValue(IGNORE_FAILURES)) : null;
 		Boolean createVhost = getValue(CREATE_VHOST) != null ? Boolean

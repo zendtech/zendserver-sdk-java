@@ -21,34 +21,34 @@ public class TestUpdateProjectCommand extends AbstractTest {
 				"project", "-name", "testName" });
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testByConstructor1() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"project", "-name", "testName", "-destination", "abc" });
-		ICommand command = new UpdateProjectCommand(cmdLine);
+		ICommand command = new UpdateProjectCommand();
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 	
 	@Test
 	public void testByConstructor2() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"project", "-name", "testName", "-destination", "def", "-no_scripts" });
-		ICommand command = new UpdateProjectCommand(cmdLine);
+		ICommand command = new UpdateProjectCommand();
 		assertNotNull(command);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 	
 	@Test
 	public void testByConstructor3() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"-destination", "ghi" });
-		ICommand command = new UpdateProjectCommand(cmdLine);
+		ICommand command = new UpdateProjectCommand();
 		assertNotNull(command);
 		
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 }

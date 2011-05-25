@@ -17,7 +17,7 @@ import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdkcli.internal.commands.UpdateProjectCommand;
-import org.zend.sdkcli.internal.commands.UsageCommanLine;
+import org.zend.sdkcli.internal.commands.UsageCommand;
 
 /**
  * Creates command instance.
@@ -36,36 +36,41 @@ public class CommandFactory {
 	 * @return command instance
 	 * @throws ParseError
 	 */
-	public static ICommand createCommand(CommandLine line) throws ParseError {
+	public static ICommand createCommand(CommandLine line) {
 		CommandType type = CommandType.byCommandLine(line);
+		
+		return createCommand(type);
+	}
+	
+	public static ICommand createCommand(CommandType type) {
 		ICommand command = null;
 		switch (type) {
 		case CREATE_PROJECT:
-			command = new CreateProjectCommand(line);
+			command = new CreateProjectCommand();
 			break;
 		case UPDATE_PROJECT:
-			command = new UpdateProjectCommand(line);
+			command = new UpdateProjectCommand();
 			break;
 		case LIST_TARGETS:
-			command = new ListTargetsCommand(line);
+			command = new ListTargetsCommand();
 			break;
 		case CREATE_TARGET:
-			command = new CreateTargetCommand(line);
+			command = new CreateTargetCommand();
 			break;
 		case DELETE_TARGET:
-			command = new DeleteTargetCommand(line);
+			command = new DeleteTargetCommand();
 			break;
 		case DETECT_TARGET:
-			command = new DetectTargetCommand(line);
+			command = new DetectTargetCommand();
 			break;
 		case LIST_APPLICATIONS:
-			command = new ListApplicationsCommand(line);
+			command = new ListApplicationsCommand();
 			break;
 		case DEPLOY_APPLICATION:
-			command = new DeployApplicationCommand(line);
+			command = new DeployApplicationCommand();
 			break;
 		default:
-			command = new UsageCommanLine();
+			command = new UsageCommand();
 			break;
 		}
 		return command;

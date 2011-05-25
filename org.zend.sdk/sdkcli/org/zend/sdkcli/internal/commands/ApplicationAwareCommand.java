@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.ZendApplication;
 
 /**
@@ -20,8 +19,7 @@ public abstract class ApplicationAwareCommand extends AbstractCommand {
 
 	private final ZendApplication application;
 
-	public ApplicationAwareCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
+	public ApplicationAwareCommand() {
 		application = new ZendApplication();
 	}
 

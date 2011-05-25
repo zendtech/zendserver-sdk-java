@@ -9,7 +9,6 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.IOException;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 
 /**
@@ -23,12 +22,8 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	private static final String ID = "t";
 	private static final String KEY = "key";
 
-	public DetectTargetCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		final String key = getValue(KEY);
 		final String targetId = getValue(ID);
 		// detect localhost

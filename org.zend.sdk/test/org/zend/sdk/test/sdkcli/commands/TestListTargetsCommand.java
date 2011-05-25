@@ -32,7 +32,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
 				.createCommand(cmdLine));
 		when(command.getTargetManager()).thenReturn(manager);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
 				.createCommand(cmdLine));
 		when(command.getTargetManager()).thenReturn(manager);
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 }

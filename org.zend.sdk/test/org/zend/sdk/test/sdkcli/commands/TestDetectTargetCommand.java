@@ -23,15 +23,15 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
-		DetectTargetCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		IZendTarget target = getTarget();
 		doReturn(target).when(manager).add(any(IZendTarget.class));
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
-	private DetectTargetCommand getCommand(String[] args) throws ParseError {
-		CommandLine cmdLine = new CommandLine(args);
+	private DetectTargetCommand getCommand(CommandLine cmdLine) throws ParseError {
 		DetectTargetCommand command = spy((DetectTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();

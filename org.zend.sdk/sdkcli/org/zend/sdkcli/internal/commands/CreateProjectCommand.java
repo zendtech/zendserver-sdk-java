@@ -60,10 +60,6 @@ public class CreateProjectCommand extends AbstractCommand {
 	public static final String NO_SCRIPTS = "no_scripts";
 	public static final String DESTINATION = "destination";
 
-	public CreateProjectCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
 	public void setupOptions() {
 		addArgumentOption(NAME, true, "project name");
@@ -72,7 +68,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		String path = getValue(DESTINATION);
 		if (path == null) {
 			path = getValue(CommandOptions.CURR_DIR);
