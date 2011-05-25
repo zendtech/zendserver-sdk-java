@@ -70,6 +70,8 @@ public class ZendApplication extends AbstractLibrary {
 	}
 
 	/**
+	 * TODO add full description
+	 * 
 	 * @param path
 	 * @param baseUrl
 	 * @param targetId
@@ -103,10 +105,12 @@ public class ZendApplication extends AbstractLibrary {
 		}
 		try {
 			WebApiClient client = getClient(targetId);
-			File propsFile = new File(propertiesFile);
 			Map<String, String> userParams = null;
-			if (propsFile.exists()) {
-				userParams = getUserParameters(propsFile);
+			if (propertiesFile != null) {
+				File propsFile = new File(propertiesFile);
+				if (propsFile.exists()) {
+					userParams = getUserParameters(propsFile);
+				}
 			}
 			return client.applicationDeploy(zendPackage, baseUrl,
 					ignoreFailures, userParams, appName, defaultServer,
