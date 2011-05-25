@@ -5,10 +5,9 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.ZendProject;
 
 /**
@@ -56,24 +55,41 @@ import org.zend.sdklib.ZendProject;
  */
 public class CreateProjectCommand extends AbstractCommand {
 
-	public static final String NAME = "name";
-	public static final String NO_SCRIPTS = "no_scripts";
-	public static final String DESTINATION = "destination";
+	public static final String NAME = "n";
+	public static final String SCRIPTS = "a";
+	public static final String DESTINATION = "d";
 
-	@Override
-	public void setupOptions() {
-		addArgumentOption(NAME, true, "project name");
-		addArgumentOption(DESTINATION, false, "project destination");
-		addBooleanOption(NO_SCRIPTS, false, "create sample deployment scripts");
+	/**
+	 * @return The project name
+	 */
+	@Option(opt = NAME, required = true, description = "The project name")
+	public String getName() {
+		return getValue(NAME);
+	}
+
+	/**
+	 * @return The project destination
+	 */
+	@Option(opt = DESTINATION, required = false, description = "The project destination")
+	public String getDestionation() {
+		return getValue(DESTINATION);
+	}
+
+	/**
+	 * @return Whether to create sample deployment scripts
+	 */
+	@Option(opt = SCRIPTS, required = false, description = "Whether to create sample deployment scripts")
+	public boolean isScript() {
+		return hasOption(SCRIPTS);
 	}
 
 	@Override
 	public boolean doExecute() {
-		String path = getValue(DESTINATION);
+		String path = getDestionation();
 		if (path == null) {
-			path = getValue(CommandOptions.CURR_DIR);
+			path = getCurrentDirectory();
 		}
-		ZendProject project = new ZendProject(getValue(NAME), !Boolean.parseBoolean(getValue(NO_SCRIPTS)), path);
+		ZendProject project = new ZendProject(getName(), !isScript(), path);
 		return project.create();
 	}
 }

@@ -22,10 +22,7 @@ public class CommandOptions extends Options {
 
 	private static final long serialVersionUID = -2778783894326385212L;
 
-	public static final String CURR_DIR = "currDir";
-
 	public CommandOptions() {
-		addArgumentOption(CURR_DIR, false, "current directory");
 	}
 
 	/**

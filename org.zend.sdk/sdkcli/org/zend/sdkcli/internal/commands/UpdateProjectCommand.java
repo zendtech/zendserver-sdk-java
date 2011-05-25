@@ -8,6 +8,7 @@
 
 package org.zend.sdkcli.internal.commands;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.ZendProject;
 
 /**
@@ -56,24 +57,33 @@ import org.zend.sdklib.ZendProject;
 public class UpdateProjectCommand extends AbstractCommand {
 
 	public static final String NAME = "name";
-	public static final String NO_SCRIPTS = "no_scripts";
-	public static final String DESTINATION = "destination";
+	public static final String NO_SCRIPTS = "i";
+	public static final String DESTINATION = "project destination";
 
-	@Override
-	public void setupOptions() {
-		addArgumentOption(NAME, false, "project name");
-		addArgumentOption(DESTINATION, false, "project destination");
-		addBooleanOption(NO_SCRIPTS, false, "create sample deployment scripts");
+	@Option(opt = NO_SCRIPTS, required = false, description = "ignore scripts")
+	public boolean isScripts() {
+		return hasOption(NO_SCRIPTS);
+	}
+
+	@Option(opt = DESTINATION, required = true, description = "The path to the project or application package")
+	public String getDestination() {
+		return getValue(DESTINATION);
+	}
+
+	@Option(opt = NAME, required = true, description = "The project name")
+	public String getName() {
+		return getValue(NAME);
 	}
 
 	@Override
 	public boolean doExecute() {
-		String path = getValue(DESTINATION);
+		String path = getDestination();
 		if (path == null) {
-			path = getValue(CommandOptions.CURR_DIR);
+			path = getCurrentDirectory();
 		}
-		ZendProject project = new ZendProject(getValue(NAME), !Boolean.parseBoolean(getValue(NO_SCRIPTS)), path);
-		
+		ZendProject project = new ZendProject(getName(),
+				!isScripts(), path);
+
 		try {
 			return project.update();
 		} catch (IllegalArgumentException e) {

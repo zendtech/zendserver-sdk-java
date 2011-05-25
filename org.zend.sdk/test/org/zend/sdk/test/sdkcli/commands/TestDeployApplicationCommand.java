@@ -28,8 +28,8 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 public class TestDeployApplicationCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "deploy", "application",
-			"-path", FOLDER + "test-1.0.0.zpk", "-baseUrl",
-			"http://myhost.com/aaa", "-target", "0", "-name", "myApp" };
+			"-p", FOLDER + "test-1.0.0.zpk", "-b",
+			"http://myhost.com/aaa", "-t", "0", "-n", "myApp" };
 
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {

@@ -9,6 +9,7 @@ package org.zend.sdkcli.internal.commands;
 
 import java.util.List;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationServer;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -24,12 +25,22 @@ import org.zend.webapi.core.connection.data.MessageList;
 public class ListApplicationsCommand extends ApplicationAwareCommand {
 
 	private static final String ID = "t";
-	private static final String APP_ID = "appId";
+	private static final String APP_ID = "i";
+
+	@Option(opt = APP_ID, required = false, description = "one or more application IDs")
+	public String getApplicationId() {
+		return getValue(APP_ID);
+	}
+
+	@Option(opt = ID, required = true, description = "The target id to use")
+	public String getTargetId() {
+		return getValue(ID);
+	}
 
 	@Override
 	public boolean doExecute() {
-		ApplicationsList appList = getApplication().getStatus(getValue(ID),
-				getValues(APP_ID));
+		ApplicationsList appList = getApplication().getStatus(getTargetId(),
+				getApplicationId());
 		if (appList == null) {
 			return false;
 		}
@@ -94,11 +105,4 @@ public class ListApplicationsCommand extends ApplicationAwareCommand {
 		return true;
 	}
 
-	@Override
-	protected void setupOptions() {
-		// application ID(s)
-		addArgumentsOption(APP_ID, false, "one or more application IDs");
-		// target name
-		addArgumentOption(ID, true, "use given target name");
-	}
 }
