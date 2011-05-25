@@ -20,8 +20,7 @@ public abstract class TargetAwareCommand extends AbstractCommand {
 
 	private final TargetsManager manager;
 
-	public TargetAwareCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
+	public TargetAwareCommand() {
 		manager = new TargetsManager(new UserBasedTargetLoader());
 	}
 

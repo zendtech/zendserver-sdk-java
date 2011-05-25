@@ -9,7 +9,6 @@ package org.zend.sdkcli.internal.commands;
 
 import java.util.List;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationServer;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -27,12 +26,8 @@ public class ListApplicationsCommand extends ApplicationAwareCommand {
 	private static final String ID = "t";
 	private static final String APP_ID = "appId";
 
-	public ListApplicationsCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		ApplicationsList appList = getApplication().getStatus(getValue(ID),
 				getValues(APP_ID));
 		if (appList == null) {

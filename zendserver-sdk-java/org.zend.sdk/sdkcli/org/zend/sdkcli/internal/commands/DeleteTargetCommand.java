@@ -21,12 +21,8 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
 
-	public DeleteTargetCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		final String targetId = getValue(ID);
 
 		TargetsManager tm = getTargetManager();

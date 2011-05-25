@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -23,12 +22,8 @@ public class CreateTargetCommand extends TargetAwareCommand {
 	private static final String SECRETKEY = "secretKey";
 	private static final String HOST = "host";
 
-	public CreateTargetCommand(CommandLine commandLine) throws ParseError {
-		super(commandLine);
-	}
-
 	@Override
-	public boolean execute() {
+	public boolean doExecute() {
 		final String targetId = getValue(ID);
 		final String key = getValue(KEY);
 		final String secretKey = getValue(SECRETKEY);

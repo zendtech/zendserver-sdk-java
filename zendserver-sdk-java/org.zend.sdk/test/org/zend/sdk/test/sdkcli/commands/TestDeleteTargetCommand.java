@@ -1,11 +1,9 @@
 package org.zend.sdk.test.sdkcli.commands;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-
-import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,21 +21,22 @@ public class TestDeleteTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException {
-		DeleteTargetCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DeleteTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
 		doReturn(getTarget()).when(manager).remove((IZendTarget) Mockito.anyObject());
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteAddFail() throws ParseError, WebApiException {
-		DeleteTargetCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DeleteTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).remove((IZendTarget) Mockito.anyObject());
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 
-	private DeleteTargetCommand getCommand(String[] args) throws ParseError {
-		CommandLine cmdLine = new CommandLine(args);
+	private DeleteTargetCommand getCommand(CommandLine cmdLine) throws ParseError {
 		DeleteTargetCommand command = spy((DeleteTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();

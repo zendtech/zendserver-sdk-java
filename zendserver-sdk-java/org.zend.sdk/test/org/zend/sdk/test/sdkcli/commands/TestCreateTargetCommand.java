@@ -24,34 +24,36 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException {
-		CreateTargetCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		CreateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).createTarget(anyString(),
 				anyString(), anyString(), anyString());
-		assertTrue(command.execute());
+		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteAddFail() throws ParseError, WebApiException {
-		CreateTargetCommand command = getCommand(validCommand);
+		CommandLine cmdLine = new CommandLine(validCommand);
+		CreateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(null).when(manager).createTarget(anyString(), anyString(),
 				anyString(), anyString());
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
 			MalformedURLException {
-		CreateTargetCommand command = getCommand(new String[] { "create",
-				"target", "-t", "1", "-key", "mykey", "-secretKey", "123456",
-				"-host", "a111:/\test1test" });
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+			"target", "-t", "1", "-key", "mykey", "-secretKey", "123456",
+			"-host", "a111:/\test1test" });
+		CreateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
-		assertFalse(command.execute());
+		assertFalse(command.execute(cmdLine));
 	}
 
-	private CreateTargetCommand getCommand(String[] args) throws ParseError {
-		CommandLine cmdLine = new CommandLine(args);
+	private CreateTargetCommand getCommand(CommandLine cmdLine) throws ParseError {
 		CreateTargetCommand command = spy((CreateTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();
