@@ -9,7 +9,7 @@ package org.zend.webapi.internal.core.connection.request;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
@@ -177,7 +177,7 @@ public class ApplicationDeployRequest extends AbstractRequest {
 	 * @param user
 	 *            params
 	 */
-	public void setUserParams(HashMap<String, String> params) {
+	public void setUserParams(Map<String, String> params) {
 		addParameter("userParams", params);
 	}
 

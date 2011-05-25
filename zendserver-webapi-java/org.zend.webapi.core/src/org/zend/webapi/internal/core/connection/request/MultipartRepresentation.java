@@ -12,8 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
@@ -175,7 +175,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 	private void writeParameter(OutputStream outputStream,
 			RequestParameter<?> parameter) throws IOException {
 		final Object value = parameter.getValue();
-		if (value instanceof HashMap<?, ?>) {
+		if (value instanceof Map<?, ?>) {
 			writeHashMapParameter(outputStream, parameter, value);
 		} else {
 			writeNewLine(outputStream, 1);
@@ -218,14 +218,13 @@ public class MultipartRepresentation extends OutputRepresentation {
 	private void writeHashMapParameter(OutputStream outputStream,
 			RequestParameter<?> parameter, final Object value)
 			throws IOException {
-		HashMap<String, String> map = (HashMap<String, String>) value;
+		Map<String, String> map = (Map<String, String>) value;
 		String mapName = parameter.getKey();
 		Set<Entry<String, String>> entries = map.entrySet();
 		writeNewLine(outputStream, 1);
 		for (Entry<String, String> entry : entries) {
 			Disposition d = createContentDisposition(outputStream);
-			d.getParameters().add("name",
-					mapName + "[" + entry.getKey() + "]");
+			d.getParameters().add("name", mapName + "[" + entry.getKey() + "]");
 			final String write = DispositionWriter.write(d);
 			outputStream.write(write.getBytes());
 			writeNewLine(outputStream, 2);

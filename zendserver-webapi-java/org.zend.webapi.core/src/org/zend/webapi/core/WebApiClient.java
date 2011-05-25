@@ -11,7 +11,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
@@ -471,7 +471,7 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
-			final HashMap<String, String> userParam, final String userAppName,
+			final Map<String, String> userParam, final String userAppName,
 			final Boolean createVhost, final Boolean defaultServer)
 			throws WebApiException {
 		final IResponse handle = this.handle(
@@ -540,7 +540,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
-			final String baseUrl, final HashMap<String, String> userParam)
+			final String baseUrl, final Map<String, String> userParam)
 			throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, userParam, null,
 				null, null);
@@ -605,7 +605,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
-			final String baseUrl, final HashMap<String, String> userParam,
+			final String baseUrl, final Map<String, String> userParam,
 			final String userAppName) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, userParam,
 				userAppName, null, null);
@@ -628,7 +628,7 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationDeploy(final File appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
-			final HashMap<String, String> userParam) throws WebApiException {
+			final Map<String, String> userParam) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures,
 				userParam, null, null, null);
 	}
@@ -671,7 +671,7 @@ public class WebApiClient {
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
 			final File appPackage, final Boolean ignoreFailures,
-			final HashMap<String, String> userParam) throws WebApiException {
+			final Map<String, String> userParam) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_UPDATE, new IRequestInitializer() {
 
@@ -731,7 +731,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final File appPackage, final HashMap<String, String> userParam)
+			final File appPackage, final Map<String, String> userParam)
 			throws WebApiException {
 		return applicationUpdate(appId, appPackage, null, userParam);
 	}

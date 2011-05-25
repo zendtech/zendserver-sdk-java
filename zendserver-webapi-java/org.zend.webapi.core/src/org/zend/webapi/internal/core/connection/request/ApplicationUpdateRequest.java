@@ -9,7 +9,7 @@ package org.zend.webapi.internal.core.connection.request;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
@@ -24,8 +24,8 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * same application. Additionally any new parameters or new values to existing
  * parameters must be provided. This process is asynchronous – the initial
  * request will wait until the package is uploaded and verified, and the initial
- * response will show information about the new version being deployed – however
- * the staging and activation process will proceed after the response is
+ * response will show information about the new version being deployed –
+ * however the staging and activation process will proceed after the response is
  * returned. The user is expected to continue checking the application status
  * using the applicationGetStatus method until the deployment process is
  * complete.
@@ -132,7 +132,7 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 	 * @param user
 	 *            params
 	 */
-	public void setUserParams(HashMap<String, String> params) {
+	public void setUserParams(Map<String, String> params) {
 		addParameter("userParams", params);
 	}
 
