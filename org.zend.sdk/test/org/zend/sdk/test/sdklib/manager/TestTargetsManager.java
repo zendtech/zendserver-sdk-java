@@ -56,7 +56,7 @@ public class TestTargetsManager extends AbstractTest {
 				new IZendTarget[] { new ZendTarget(null, new URL(
 						"http://localhost"), "mykey", "43543") });
 		TargetsManager manager = new TargetsManager(loader);
-		assertTrue(manager.list().length == 0);
+		assertTrue(manager.getTargets().length == 0);
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class TestTargetsManager extends AbstractTest {
 				new IZendTarget[] { new ZendTarget("dev3", new URL(
 						"http://localhost"), "mykey", "43543") });
 		TargetsManager manager = new TargetsManager(loader);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class TestTargetsManager extends AbstractTest {
 				"http://localhost:10081"), "mykey", "43543"));
 		doReturn(true).when(target).connect();
 		manager.add(target);
-		assertTrue(manager.list().length == 0);
+		assertTrue(manager.getTargets().length == 0);
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class TestTargetsManager extends AbstractTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -117,9 +117,9 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 		manager.remove(target);
-		assertTrue(manager.list().length == 0);
+		assertTrue(manager.getTargets().length == 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -140,7 +140,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 		assertSame(target, manager.getTargetById(target.getId()));
 	}
 
@@ -161,7 +161,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 		assertNotNull(manager.detectLocalhostTarget(target.getId(),
 				target.getKey()));
 	}
@@ -171,7 +171,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 		assertNotNull(manager.detectLocalhostTarget(target.getKey()));
 	}
 
@@ -180,7 +180,7 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
-		assertTrue(manager.list().length == 1);
+		assertTrue(manager.getTargets().length == 1);
 		assertNotNull(manager.detectLocalhostTarget());
 	}
 
