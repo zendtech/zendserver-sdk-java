@@ -12,6 +12,8 @@ import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.Main;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.options.DetectOptionUtility;
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 
@@ -26,6 +28,8 @@ public abstract class AbstractCommand implements ICommand {
 	protected CommandLine commandLine;
 	protected CommandOptions options;
 
+	public static final String CURR_DIR = "c";
+
 	/**
 	 * @param commandLine
 	 * @throws ParseError
@@ -35,20 +39,35 @@ public abstract class AbstractCommand implements ICommand {
 		this.options = new CommandOptions();
 		setupOptions();
 	}
-	
-	public boolean execute(CommandLine cmdLine)  throws ParseError {
+
+	/* (non-Javadoc)
+	 * @see org.zend.sdkcli.ICommand#execute(org.zend.sdkcli.internal.commands.CommandLine)
+	 */
+	public boolean execute(CommandLine cmdLine) throws ParseError {
 		// parse command line according to options
 		this.commandLine = cmdLine;
 		commandLine.parse(options);
 		return doExecute();
 	}
-	
+
+	/**
+	 * @return true if process success
+	 */
 	protected abstract boolean doExecute();
+	
+	
+	@Option(description = "The current directory", opt = CURR_DIR, required = false)
+	public String getCurrentDirectory() {
+		return getValue(CURR_DIR);
+	}
+
 
 	/**
 	 * Commands setup their {@link Options}
 	 */
-	protected abstract void setupOptions();
+	protected void setupOptions() {
+		DetectOptionUtility.addOption(getClass(), options);
+	}
 
 	/**
 	 * Helper method for {@link AbstractCommand#setupOptions()} method
@@ -107,7 +126,7 @@ public abstract class AbstractCommand implements ICommand {
 	public ILogger getLogger() {
 		return Log.getInstance().getLogger(Main.class.getName());
 	}
-	
+
 	public CommandOptions getOptions() {
 		return options;
 	}

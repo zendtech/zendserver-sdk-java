@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.manager.TargetsManager;
 

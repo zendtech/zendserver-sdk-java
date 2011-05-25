@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -21,9 +21,14 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
 
+	@Option(opt = ID, required = true, description = "The target id to remove")
+	public String getId() {
+		return getValue(ID);
+	}
+
 	@Override
 	public boolean doExecute() {
-		final String targetId = getValue(ID);
+		final String targetId = getId();
 
 		TargetsManager tm = getTargetManager();
 		IZendTarget target = tm.getTargetById(targetId);
@@ -41,8 +46,4 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 		return true;
 	}
 
-	@Override
-	protected void setupOptions() {
-		addArgumentOption(ID, true, "use given target name");
-	}
 }

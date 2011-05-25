@@ -19,7 +19,7 @@ import org.zend.webapi.core.WebApiException;
 public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 
 	private String[] validCommand = new String[] { "create", "target", "-t",
-			"1", "-key", "mykey", "-secretKey", "123456", "-host",
+			"1", "-k", "mykey", "-s", "123456", "-h",
 			"http://test1test" };
 
 	@Test
