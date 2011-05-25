@@ -65,4 +65,25 @@ public class TestZendProject extends AbstractTest {
 		assertFalse(new File("testdir3/scripts/pre_unstage.php").exists());
 	}
 
+
+	@Test
+	public void testZendProjectUpdate1() throws ParseError {
+		new File("testdir4").mkdir();
+		ZendProject project = new ZendProject("name", false, "testdir4");
+		assertTrue(project.update());
+		
+		assertTrue(new File("testdir4/descriptor.xml").exists());
+		assertFalse(new File("testdir4/public").exists());
+		assertFalse(new File("testdir4/public/index.html").exists());
+		assertFalse(new File("testdir4/scripts").exists());
+		assertFalse(new File("testdir4/scripts/post_activate.php").exists());
+		assertFalse(new File("testdir4/scripts/post_deactivate.php").exists());
+		assertFalse(new File("testdir4/scripts/post_stage.php").exists());
+		assertFalse(new File("testdir4/scripts/post_unstage.php").exists());
+		assertFalse(new File("testdir4/scripts/pre_activate.php").exists());
+		assertFalse(new File("testdir4/scripts/pre_deactivate.php").exists());
+		assertFalse(new File("testdir4/scripts/pre_stage.php").exists());
+		assertFalse(new File("testdir4/scripts/pre_unstage.php").exists());
+	}
+	
 }
