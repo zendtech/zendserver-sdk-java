@@ -13,14 +13,14 @@ public class TestCommandLine {
 	@Test
 	public void testValidCommandLine() throws ParseError {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-name", "testName" });
+				"project", "-n", "testName" });
 		Options options = new Options();
-		Option listOption = new Option("name", true, "");
+		Option listOption = new Option("n", true, "");
 		options.addOption(listOption);
 		cmdLine.parse(options);
 		assertSame("project", cmdLine.getDirectObject());
 		assertSame("create", cmdLine.getVerb());
-		assertSame("testName", cmdLine.getParameterValue("name"));
+		assertSame("testName", cmdLine.getParameterValue("n"));
 	}
 
 	@Test
@@ -45,6 +45,17 @@ public class TestCommandLine {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
 				"project", "-incorrectParam" });
 		Options options = new Options();
+		cmdLine.parse(options);
+	}
+
+	@Test(expected = ParseError.class)
+	public void testInvalidCommandLine1() throws ParseError {
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+				"project" });
+		Options options = new Options();
+		final Option option = new Option("n", true, "");
+		option.setRequired(true);
+		options.addOption(option);
 		cmdLine.parse(options);
 	}
 
