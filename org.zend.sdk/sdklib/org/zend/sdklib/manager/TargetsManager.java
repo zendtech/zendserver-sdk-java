@@ -105,7 +105,7 @@ public class TargetsManager extends AbstractLibrary {
 			return null;
 		}
 
-		for (IZendTarget target : list()) {
+		for (IZendTarget target : getTargets()) {
 			if (id.equals(target.getId())) {
 				return target;
 			}
@@ -122,7 +122,7 @@ public class TargetsManager extends AbstractLibrary {
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget() throws IOException {
-		String targetId = Integer.toString(list().length);
+		String targetId = Integer.toString(getTargets().length);
 		return detectLocalhostTarget(targetId, DEFAULT_KEY);
 	}
 
@@ -136,7 +136,7 @@ public class TargetsManager extends AbstractLibrary {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String key)
 			throws IOException {
-		final String targetId = Integer.toString(list().length);
+		final String targetId = Integer.toString(getTargets().length);
 		return detectLocalhostTarget(targetId, key);
 	}
 
@@ -151,9 +151,9 @@ public class TargetsManager extends AbstractLibrary {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws IOException {
-		final IZendTarget[] list = list();
+		final IZendTarget[] list = getTargets();
 		targetId = targetId != null ? targetId : Integer
-				.toString(list().length);
+				.toString(getTargets().length);
 		key = key != null ? key : DEFAULT_KEY;
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
@@ -184,7 +184,7 @@ public class TargetsManager extends AbstractLibrary {
 		return null;
 	}
 
-	public synchronized IZendTarget[] list() {
+	public synchronized IZendTarget[] getTargets() {
 		return (IZendTarget[]) this.all
 				.toArray(new ZendTarget[this.all.size()]);
 	}
@@ -198,7 +198,7 @@ public class TargetsManager extends AbstractLibrary {
 	 * @return
 	 */
 	public IZendTarget createTarget(String host, String key, String secretKey) {
-		final String targetId = Integer.toString(list().length);
+		final String targetId = Integer.toString(getTargets().length);
 		return createTarget(targetId, host, key, secretKey);
 	}
 

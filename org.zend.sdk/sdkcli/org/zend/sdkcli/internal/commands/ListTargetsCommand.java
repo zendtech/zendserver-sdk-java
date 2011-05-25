@@ -21,7 +21,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 
 	@Override
 	public boolean execute() {
-		final IZendTarget[] list = getTargetManager().list();
+		final IZendTarget[] list = getTargetManager().getTargets();
 		if (list.length == 0) {
 			commandLine.getLog().info("No Available Zend Targets.");
 			return true;
