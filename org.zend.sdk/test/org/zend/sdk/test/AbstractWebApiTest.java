@@ -1,4 +1,4 @@
-package org.zend.sdk.test.sdkcli.commands;
+package org.zend.sdk.test;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -10,14 +10,13 @@ import java.net.MalformedURLException;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.restlet.ext.xml.DomRepresentation;
-import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.ZendApplication;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.DataDigster;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.test.server.utils.ServerUtils;
 
-public class AbstractAppCommandTest extends AbstractTest {
+public class AbstractWebApiTest extends AbstractTest {
 
 	public static final String FOLDER = "test/config/apps/";
 

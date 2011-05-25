@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
+import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
@@ -24,7 +25,7 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
-public class TestDeployApplicationCommand extends AbstractAppCommandTest {
+public class TestDeployApplicationCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "deploy", "application",
 			"-path", FOLDER + "test-1.0.0.zpk", "-baseUrl",
