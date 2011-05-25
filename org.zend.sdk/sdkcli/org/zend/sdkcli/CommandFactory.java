@@ -16,6 +16,7 @@ import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
+import org.zend.sdkcli.internal.commands.UpdateProjectCommand;
 import org.zend.sdkcli.internal.commands.UsageCommanLine;
 
 /**
@@ -41,6 +42,9 @@ public class CommandFactory {
 		switch (type) {
 		case CREATE_PROJECT:
 			command = new CreateProjectCommand(line);
+			break;
+		case UPDATE_PROJECT:
+			command = new UpdateProjectCommand(line);
 			break;
 		case LIST_TARGETS:
 			command = new ListTargetsCommand(line);
