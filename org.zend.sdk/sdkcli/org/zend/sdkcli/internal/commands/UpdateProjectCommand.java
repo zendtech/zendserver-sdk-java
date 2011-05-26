@@ -78,9 +78,6 @@ public class UpdateProjectCommand extends AbstractCommand {
 	@Override
 	public boolean doExecute() {
 		String path = getDestination();
-		if (path == null) {
-			path = getCurrentDirectory();
-		}
 		ZendProject project = new ZendProject(getName(),
 				!isIgnoreScripts(), path);
 
