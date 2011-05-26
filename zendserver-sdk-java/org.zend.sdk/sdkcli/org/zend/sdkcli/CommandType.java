@@ -39,6 +39,8 @@ public enum CommandType {
 	UPDATE_APPLICATION("update", "application", "updates application to target"),
 	
 	REMOVE_APPLICATION("remove", "application", "removes application from target"),
+	
+	CREATE_PACKAGE("create", "package", "creates deployment package"),
 
 	HELP("help", null, "shows help information");
 

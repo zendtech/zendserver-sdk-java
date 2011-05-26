@@ -39,9 +39,18 @@ public class TestZendApplication extends AbstractWebApiTest {
 	}
 
 	@Test
-	public void deploySuccess() throws WebApiException, IOException {
+	public void deployPackageSuccess() throws WebApiException, IOException {
 		setDeploySuccessCall();
 		ApplicationInfo info = application.deploy(FOLDER + "test-1.0.0.zpk",
+				"http://myhost/aaa", "0", null, null, null, null, null);
+		assertNotNull(info);
+		assertEquals("test", info.getAppName());
+	}
+
+	@Test
+	public void deployProjectSuccess() throws WebApiException, IOException {
+		setDeploySuccessCall();
+		ApplicationInfo info = application.deploy(FOLDER + "Project1",
 				"http://myhost/aaa", "0", null, null, null, null, null);
 		assertNotNull(info);
 		assertEquals("test", info.getAppName());
