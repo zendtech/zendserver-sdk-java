@@ -7,7 +7,7 @@ public class TestMain {
 
 	@Test
 	public void testValidCommandLine() {
-		Main.main(new String[] { "create", "project", "-n", "testName" });
+		Main.main(new String[] { "help" });
 	}
 
 	@Test
