@@ -1,0 +1,24 @@
+<table border=1> 
+
+    <tr> 
+      <th width="15%">Action</th> 
+ 
+      <th width="20%">Option</th> 
+ 
+      <th width="30%">Description</th> 
+ 
+      <th>Comments</th> 
+    </tr> 
+
+%loop%
+	<tr> 
+	  {0} 
+      <td><code>-{1} {2}</code></td> 
+ 
+      <td>{3}</td> 
+ 
+      <td>{4}</td> 
+    </tr> 
+%end-loop%
+
+</table> 

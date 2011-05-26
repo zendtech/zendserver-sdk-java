@@ -23,7 +23,13 @@ public class DetectOptionUtility {
 	private static final String STRING_OPTION = "get";
 
 	public static void addOption(Class subject, Options options) {
-		final Method[] methods = subject.getMethods();
+		addOption(subject, options, false);
+	}
+
+	public static void addOption(Class subject, Options options,
+			boolean specific) {
+		final Method[] methods = specific ? subject.getDeclaredMethods()
+				: subject.getMethods();
 		for (Method method : methods) {
 			if (method.getName().startsWith(STRING_OPTION)
 					&& method.getAnnotation(Option.class) != null) {
@@ -38,7 +44,7 @@ public class DetectOptionUtility {
 				o.setArgs(a.numberOfArgs());
 				o.setRequired(a.required());
 				o.setType(a.type());
-				
+
 				// assign to options list
 				options.addOption(o);
 			} else if (method.getName().startsWith(BOOLEAN_OPTION)
@@ -53,8 +59,8 @@ public class DetectOptionUtility {
 				}
 				o.setArgs(0);
 				o.setRequired(a.required());
-				
-				// assign to options list				options.addOption(o);
+
+				// assign to options list options.addOption(o);
 				options.addOption(o);
 			}
 		}
