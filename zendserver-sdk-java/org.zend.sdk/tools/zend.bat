@@ -8,9 +8,6 @@ rem http://www.eclipse.org/legal/epl-v10.html
 rem Don't modify the caller's environment
 setlocal
 
-rem Get current directory
-set current_dir=%cd%
-
 cd /d %~dp0
 
 rem Check we have a valid Java.exe in the path.
@@ -24,6 +21,6 @@ for /f %%a in ('%java_exe% -jar ..\lib\archquery.jar') do set registry_path=..\l
 set jar_path=../lib/*
 
 rem Finally exec the java program and end here.
-call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%;../bin" org.zend.sdkcli.Main %* -currDir %current_dir%
+call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%;../bin" org.zend.sdkcli.Main %*
 
 :EOF
