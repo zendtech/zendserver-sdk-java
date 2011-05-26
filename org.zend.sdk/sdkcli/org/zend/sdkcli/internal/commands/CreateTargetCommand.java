@@ -49,13 +49,6 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		final String key = getKey();
 		final String secretKey = getSecretKey();
 		final String host = getHost();
-		if (key == null || secretKey == null || host == null) {
-			getLogger().error("Mandatory arguments are missing.");
-			getLogger().error("\tKey: " + key);
-			getLogger().error("\tSecret Key: " + secretKey);
-			getLogger().error("\tHost: " + host);
-			return false;
-		}
 		IZendTarget target = targetId == null ? getTargetManager()
 				.createTarget(host, key, secretKey) : getTargetManager()
 				.createTarget(targetId, host, key, secretKey);
