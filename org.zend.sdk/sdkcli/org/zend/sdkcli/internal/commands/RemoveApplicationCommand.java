@@ -26,7 +26,7 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 		return getValue(TARGET);
 	}
 
-	@Option(opt = APPID, required = false, description = "The application id")
+	@Option(opt = APPID, required = true, description = "The application id")
 	public String getApplicationId() {
 		return getValue(APPID);
 	}
