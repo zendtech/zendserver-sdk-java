@@ -170,7 +170,8 @@ public class TargetsManager extends AbstractLibrary {
 			throw e;
 		} catch (WebApiException e) {
 			log.error("Coudn't connect to localhost server, please make "
-					+ "sure you the server is up and its version is 5.5 and up.");
+					+ "sure your server is up and running. This tool works with "
+					+ "version 5.5 and up.");
 			log.error("More information provided by localhost server:");
 			final ResponseCode responseCode = e.getResponseCode();
 			if (responseCode != null) {
