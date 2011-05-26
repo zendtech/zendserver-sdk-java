@@ -54,6 +54,8 @@ public class GenerateManual {
 		printStream.print("<h2>Application actions and options</h2>");
 		tableCommands(printStream, CommandType.DEPLOY_APPLICATION,
 				CommandType.LIST_APPLICATIONS);
+		
+		printStream.close();
 	}
 
 	private static void globalOptions(PrintStream printStream,
