@@ -57,7 +57,7 @@ public class TemplateWriter {
 
 	private void writeDescriptor(String name, boolean withScripts, Writer out) throws IOException {
 		if (name == null) {
-			throw new IllegalArgumentException("Name parameter is required in order to create descriptor");
+			throw new IllegalArgumentException("Failed to create deployment descriptor. Project name is missing");
 		}
 		out.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		out.append("<package version=\"1.4.11\" xmlns=\"http://www.zend.com/server/deployment-descriptor/1.0\" xmlns:xsi=\">http://www.w3.org/2001/XMLSchema-instance\">\n");
