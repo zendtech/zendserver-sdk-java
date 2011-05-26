@@ -33,6 +33,12 @@ public enum CommandType {
 	LIST_APPLICATIONS("list", "applications", "lists applications installed on target"),
 
 	DEPLOY_APPLICATION("deploy", "application", "deploys application to target"),
+	
+	REDEPLOY_APPLICATION("redeploy", "application", "re-deploys application on target"),
+	
+	UPDATE_APPLICATION("update", "application", "updates application to target"),
+	
+	REMOVE_APPLICATION("remove", "application", "removes application from target"),
 
 	HELP("help", null, "shows help information");
 
