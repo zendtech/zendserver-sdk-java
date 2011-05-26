@@ -58,7 +58,7 @@ public class UsageCommand implements ICommand {
 			Collection collection = opts.getOptions();
 			for (Object o : collection) {
 				Option opt = (Option) o;
-				System.out.printf("  -%-20s %s\n", opt.getOpt(), opt.getDescription());
+				System.out.printf("  -%-3s %s\n", opt.getOpt(), opt.getDescription());
 			}				
 			System.out.println();
 		}
