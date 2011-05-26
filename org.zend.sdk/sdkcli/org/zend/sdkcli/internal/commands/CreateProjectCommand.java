@@ -86,9 +86,6 @@ public class CreateProjectCommand extends AbstractCommand {
 	@Override
 	public boolean doExecute() {
 		String path = getDestionation();
-		if (path == null) {
-			path = getCurrentDirectory();
-		}
 		ZendProject project = new ZendProject(getName(), !isScript(), path);
 		return project.create();
 	}
