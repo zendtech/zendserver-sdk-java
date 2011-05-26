@@ -28,7 +28,7 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		return getValue(KEY);
 	}
 
-	@Option(opt = SECRETKEY, required = true, description = "Target environment API Key value")
+	@Option(opt = SECRETKEY, required = true, description = "Target environment API Key secret value")
 	public String getSecretKey() {
 		return getValue(SECRETKEY);
 	}
