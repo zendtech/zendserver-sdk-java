@@ -170,7 +170,7 @@
         	<arg line="docs/syntax.html"/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
-        <java classname="/org.zend.sdk/helpers/org/zend/sdkhelp/validation/ValidationReport.java">
+        <java classname="org.zend.sdkhelp.validation.ValidationReport">
         	<arg line="docs/conflicts.xml"/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
