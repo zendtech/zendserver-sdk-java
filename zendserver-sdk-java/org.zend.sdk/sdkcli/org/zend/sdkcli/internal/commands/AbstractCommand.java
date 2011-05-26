@@ -13,7 +13,6 @@ import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.Main;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.options.DetectOptionUtility;
-import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 
@@ -27,8 +26,6 @@ public abstract class AbstractCommand implements ICommand {
 
 	protected CommandLine commandLine;
 	protected CommandOptions options;
-
-	public static final String CURR_DIR = "c";
 
 	/**
 	 * @param commandLine
@@ -55,13 +52,6 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	protected abstract boolean doExecute();
 	
-	
-	@Option(description = "The current directory", opt = CURR_DIR, required = false)
-	public String getCurrentDirectory() {
-		return getValue(CURR_DIR);
-	}
-
-
 	/**
 	 * Commands setup their {@link Options}
 	 */
