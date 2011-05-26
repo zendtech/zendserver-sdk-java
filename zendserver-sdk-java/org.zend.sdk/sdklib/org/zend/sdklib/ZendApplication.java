@@ -126,6 +126,94 @@ public class ZendApplication extends AbstractLibrary {
 		}
 		return null;
 	}
+	
+	/**
+	 * TODO add full description
+	 * 
+	 */
+	public ApplicationInfo redeploy(String targetId, String appId, String[] servers, boolean ignoreFailures) {
+		try {
+			WebApiClient client = getClient(targetId);
+			int appIdint = Integer.parseInt(appId);
+			return client.applicationRedeploy(appIdint, ignoreFailures, servers);
+		} catch (MalformedURLException e) {
+			log.error(e);
+		} catch (NumberFormatException e) {
+			log.error(e.getMessage());
+		} catch (WebApiException e) {
+			log.error("Cannot connect to target '" + targetId + "'.");
+			log.error("\tpossible error " + e.getMessage());
+		}
+		return null;
+	}
+	
+	/**
+	 * TODO add full description
+	 * 
+	 */
+	public ApplicationInfo remove(String targetId, String appId) {
+		try {
+			WebApiClient client = getClient(targetId);
+			int appIdint = Integer.parseInt(appId);
+			return client.applicationRemove(appIdint);
+		} catch (MalformedURLException e) {
+			log.error(e);
+		} catch (NumberFormatException e) {
+			log.error(e.getMessage());
+		} catch (WebApiException e) {
+			log.error("Cannot connect to target '" + targetId + "'.");
+			log.error("\tpossible error " + e.getMessage());
+		}
+		return null;
+	}
+	
+	/**
+	 * TODO add full description
+	 * 
+	 */
+	public ApplicationInfo update(String path, String targetId, String appId,
+			String propertiesFile, Boolean ignoreFailures) {
+		File file = new File(path);
+		if (!file.exists()) {
+			log.error("Provided path is not vaild.");
+			return null;
+		}
+		File zendPackage = null;
+		// check if it is a package or a folder (project)
+		File tempFile = null;
+		if (file.isDirectory()) {
+			final String tempDir = System.getProperty("java.io.tmpdir");
+			tempFile = new File(tempDir + File.separator
+					+ new Random().nextInt());
+			tempFile.mkdir();
+			// zendPackage = createPackage(String path, String
+			// tmpFile.getAbsolutePath());
+		} else {
+			zendPackage = file;
+		}
+		try {
+			int appIdint = Integer.parseInt(appId);
+			WebApiClient client = getClient(targetId);
+			Map<String, String> userParams = null;
+			if (propertiesFile != null) {
+				File propsFile = new File(propertiesFile);
+				if (propsFile.exists()) {
+					userParams = getUserParameters(propsFile);
+				}
+			}
+			return client.applicationUpdate(appIdint, zendPackage,
+					ignoreFailures, userParams);
+		} catch (MalformedURLException e) {
+			log.error(e);
+		} catch (WebApiException e) {
+			log.error("Cannot connect to target '" + targetId + "'.");
+			log.error("\tpossible error " + e.getMessage());
+		}
+		if (tempFile != null) {
+			tempFile.deleteOnExit();
+		}
+		return null;
+	}
 
 	/**
 	 * @param targetId

@@ -16,6 +16,9 @@ import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
+import org.zend.sdkcli.internal.commands.RedeployApplicationCommand;
+import org.zend.sdkcli.internal.commands.RemoveApplicationCommand;
+import org.zend.sdkcli.internal.commands.UpdateApplicationCommand;
 import org.zend.sdkcli.internal.commands.UpdateProjectCommand;
 import org.zend.sdkcli.internal.commands.UsageCommand;
 
@@ -68,6 +71,15 @@ public class CommandFactory {
 			break;
 		case DEPLOY_APPLICATION:
 			command = new DeployApplicationCommand();
+			break;
+		case REDEPLOY_APPLICATION:
+			command = new RedeployApplicationCommand();
+			break;
+		case UPDATE_APPLICATION:
+			command = new UpdateApplicationCommand();
+			break;
+		case REMOVE_APPLICATION:
+			command = new RemoveApplicationCommand();
 			break;
 		default:
 			command = new UsageCommand();
