@@ -22,11 +22,11 @@ public enum CommandType {
 	
 	UPDATE_PROJECT("update", "project", "updates project"),
 
-	LIST_TARGETS("list", "targets", "lists targets"),
+	LIST_TARGETS("list", "targets", "lists known deployment target environments"),
 
-	CREATE_TARGET("create", "target", "creates new target"),
+	CREATE_TARGET("create", "target", "adds new target environment for deploying applications"),
 	
-	DELETE_TARGET("delete", "target", "deletes existing targets"),
+	DELETE_TARGET("delete", "target", "removes target from the know targets list"),
 
 	DETECT_TARGET("detect", "target", "detects target on localhost"),
 
