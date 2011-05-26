@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdklib.logger;
 
+import org.zend.sdkcli.internal.logger.CliLogger;
+
 /**
  * General class which manages logging system.
  * 
@@ -50,7 +52,8 @@ public class Log {
 	public ILogger getLogger(String creatorName) {
 		if (logger == null) {
 			throw new IllegalStateException(
-					"Logger has not been registered yet");
+					"Logger has not been registered yet, register one by" +
+					" \"Log.getInstance().registerLogger(new CliLogger());\"");
 		}
 		return logger.getLogger(creatorName);
 	}

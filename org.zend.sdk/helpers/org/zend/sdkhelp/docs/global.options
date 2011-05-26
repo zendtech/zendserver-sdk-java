@@ -1,0 +1,14 @@
+<h2>Syntax</h2> 
+  <pre>zend action [action options] [global options] </pre> 
+ 
+  <h3>Global Options</h3> 
+ 
+  <dl> 
+
+%loop%
+    <dt><code>-{0}</code></dt> 
+    <dd>{1}</dd>
+%end-loop%
+ 
+  </dl> 
+  
