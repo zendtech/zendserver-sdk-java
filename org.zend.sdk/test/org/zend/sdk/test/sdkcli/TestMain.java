@@ -7,8 +7,7 @@ public class TestMain {
 
 	@Test
 	public void testValidCommandLine() {
-		Main.main(new String[] { "create", "project", "-name", "testName",
-				"-currDir", "currentDir" });
+		Main.main(new String[] { "create", "project", "-n", "testName" });
 	}
 
 	@Test
