@@ -23,22 +23,22 @@ public class CreateTargetCommand extends TargetAwareCommand {
 	private static final String SECRETKEY = "s";
 	private static final String HOST = "h";
 
-	@Option(opt = KEY, required = true, description = "The key to use")
+	@Option(opt = KEY, required = true, description = "Target environment API Key name")
 	public String getKey() {
 		return getValue(KEY);
 	}
 
-	@Option(opt = SECRETKEY, required = true, description = "The secret key to use")
+	@Option(opt = SECRETKEY, required = true, description = "Target environment API Key value")
 	public String getSecretKey() {
 		return getValue(SECRETKEY);
 	}
 
-	@Option(opt = ID, required = false, description = "The new target id")
+	@Option(opt = ID, required = false, description = "Target id")
 	public String getId() {
 		return getValue(ID);
 	}
 
-	@Option(opt = HOST, required = true, description = "The host name to use")
+	@Option(opt = HOST, required = true, description = "Hostname")
 	public String getHost() {
 		return getValue(HOST);
 	}

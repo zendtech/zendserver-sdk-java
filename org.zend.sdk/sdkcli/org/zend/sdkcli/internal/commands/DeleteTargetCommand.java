@@ -21,7 +21,7 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
 
-	@Option(opt = ID, required = true, description = "The target id to remove")
+	@Option(opt = ID, required = true, description = "Id of target to remove")
 	public String getId() {
 		return getValue(ID);
 	}
