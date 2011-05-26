@@ -98,28 +98,30 @@ public class ZendApplication extends AbstractLibrary {
 			tempFile = new File(tempDir + File.separator
 					+ new Random().nextInt());
 			tempFile.mkdir();
-			// zendPackage = createPackage(String path, String
-			// tmpFile.getAbsolutePath());
+			PackageBuilder builder = new PackageBuilder(path);
+			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;
 		}
-		try {
-			WebApiClient client = getClient(targetId);
-			Map<String, String> userParams = null;
-			if (propertiesFile != null) {
-				File propsFile = new File(propertiesFile);
-				if (propsFile.exists()) {
-					userParams = getUserParameters(propsFile);
+		if (zendPackage != null) {
+			try {
+				WebApiClient client = getClient(targetId);
+				Map<String, String> userParams = null;
+				if (propertiesFile != null) {
+					File propsFile = new File(propertiesFile);
+					if (propsFile.exists()) {
+						userParams = getUserParameters(propsFile);
+					}
 				}
+				return client.applicationDeploy(zendPackage, baseUrl,
+						ignoreFailures, userParams, appName, defaultServer,
+						defaultServer);
+			} catch (MalformedURLException e) {
+				log.error(e);
+			} catch (WebApiException e) {
+				log.error("Cannot connect to target '" + targetId + "'.");
+				log.error("\tpossible error " + e.getMessage());
 			}
-			return client.applicationDeploy(zendPackage, baseUrl,
-					ignoreFailures, userParams, appName, defaultServer,
-					defaultServer);
-		} catch (MalformedURLException e) {
-			log.error(e);
-		} catch (WebApiException e) {
-			log.error("Cannot connect to target '" + targetId + "'.");
-			log.error("\tpossible error " + e.getMessage());
 		}
 		if (tempFile != null) {
 			tempFile.deleteOnExit();
