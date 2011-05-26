@@ -168,13 +168,14 @@
 		<include name="lib/**" />
 		<include name="docs/**" />
 		<include name="junit/**" />
-		<include name="tools/**" />
 		<include name="templates/**" />
+		<zipfileset prefix="tools" dir="tools" filemode="755" />
 	</zip>
+	
 	<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
 		<include name="lib/**" />
-		<include name="tools/**" />
 		<include name="templates/**" />
+		<zipfileset prefix="tools" dir="tools" filemode="755" />
 	</zip>
 </target>
 </project>
