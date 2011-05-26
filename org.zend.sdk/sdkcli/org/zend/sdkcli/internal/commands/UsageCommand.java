@@ -6,35 +6,34 @@ import org.apache.commons.cli.Option;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.CommandType;
 import org.zend.sdkcli.ICommand;
-import org.zend.sdkcli.ParseError;
 
 public class UsageCommand implements ICommand {
-	
+
 	@Override
 	public boolean execute(CommandLine cmdLine) {
 
 		String verb;
 		String dirObj;
 		if ("help".equals(cmdLine.getArgument(0))) {
-			 verb = cmdLine.getArgument(1);
-			 dirObj = cmdLine.getArgument(2);
+			verb = cmdLine.getArgument(1);
+			dirObj = cmdLine.getArgument(2);
 		} else {
 			verb = cmdLine.getArgument(0);
 			dirObj = cmdLine.getArgument(1);
 		}
 		CommandLine helpCmd = null;
 		ICommand cmd = null;
-		
-		helpCmd = new CommandLine(new String[] {verb, dirObj});
+
+		helpCmd = new CommandLine(new String[] { verb, dirObj });
 		cmd = CommandFactory.createCommand(helpCmd);
-		
-		if (helpCmd != null && cmd != null && (! (cmd instanceof UsageCommand))) {
+
+		if (helpCmd != null && cmd != null && (!(cmd instanceof UsageCommand))) {
 			CommandType type = CommandType.byCommandLine(helpCmd);
 			printCommandUsage(type);
 			printCommandOptions(cmd);
 			return true;
 		}
-		
+
 		printAvailableCommands();
 		return true;
 	}
@@ -52,9 +51,10 @@ public class UsageCommand implements ICommand {
 		if (dirObj == null) {
 			dirObj = "";
 		}
-		System.out.println("zend "+type.getVerb() +" "+dirObj+" [options] - "+type.getInfo());
+		System.out.println("zend " + type.getVerb() + " " + dirObj
+				+ " [options] - " + type.getInfo());
 	}
-	
+
 	private void printCommandOptions(ICommand cmd) {
 		CommandOptions opts = cmd.getOptions();
 		if (opts != null) {
@@ -62,8 +62,10 @@ public class UsageCommand implements ICommand {
 			Collection collection = opts.getOptions();
 			for (Object o : collection) {
 				Option opt = (Option) o;
-				System.out.printf("  -%-3s %s%s\n", opt.getOpt(), opt.getDescription(), opt.isRequired() ? "" : " (Optional)");
-			}				
+				System.out.printf("  -%-3s %s%s\n", opt.getOpt(), opt
+						.getDescription(), opt.isRequired() ? ""
+						: " (Optional)");
+			}
 			System.out.println();
 		}
 	}
