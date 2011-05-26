@@ -78,11 +78,11 @@ public enum CommandType {
 		CommandType[] values = values();
 		for (CommandType type : values) {
 			if (verb.equals(type.getVerb())) {
-				if (directObject != null) {
-					if (directObject.equals(type.getDirectObject())) {
+				if (type.getDirectObject() != null) {
+					if (type.getDirectObject().equals(directObject)) {
 						return type;
 					}
-				} else {
+				} else if (directObject == null) {
 					return type;
 				}
 			}

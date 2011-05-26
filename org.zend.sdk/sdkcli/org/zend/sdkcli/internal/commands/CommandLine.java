@@ -127,5 +127,9 @@ public class CommandLine {
 	public boolean hasOption(String parameterName) {
 		return cmd.hasOption(parameterName);
 	}
+	
+	public String getArgument(int idx) {
+		return idx < arguments.length ? arguments[idx] : null;
+	}
 
 }
