@@ -46,13 +46,13 @@ public class CommandLine {
 
 	private final ILogger log;
 
-	public CommandLine(String[] args, ILogger log) throws ParseError {
+	public CommandLine(String[] args, ILogger log) {
 		this.arguments = args;
 		this.log = log;
 		heuristicParse();
 	}
 
-	public CommandLine(String[] args) throws ParseError {
+	public CommandLine(String[] args) {
 		this(args, null);
 	}
 
@@ -88,16 +88,6 @@ public class CommandLine {
 		} catch (ParseException e) {
 			throw new ParseError(e);
 		}
-
-	}
-
-	public void printUsage() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void printUsage(ParseError e) {
-		// TODO Auto-generated method stub
 
 	}
 

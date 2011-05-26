@@ -8,6 +8,7 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
+import org.zend.sdkcli.internal.commands.UsageCommand;
 import org.zend.sdkcli.internal.logger.CliLogger;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
@@ -24,14 +25,15 @@ public class Main {
 
 	public static void main(String[] args) {
 		initLogger();
+		CommandLine commandLine = new CommandLine(args, log);
 		try {
 			// Manager for the command line tool
-			CommandLine commandLine = new CommandLine(args, log);
 			ICommand command = CommandFactory.createCommand(commandLine);
 			command.execute(commandLine);
 		} catch (ParseError e) {
-			CommandLine.printUsage(e);
-			log.error(e);
+			log.error("An error occured: "+e.getMessage());
+			UsageCommand helpCmd = (UsageCommand) CommandFactory.createCommand(CommandType.HELP);
+			helpCmd.execute(commandLine);
 		}
 	}
 
