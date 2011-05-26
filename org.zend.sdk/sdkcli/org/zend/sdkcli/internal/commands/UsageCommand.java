@@ -13,16 +13,20 @@ public class UsageCommand implements ICommand {
 	@Override
 	public boolean execute(CommandLine cmdLine) {
 
-		String verb = cmdLine.getArgument(1);
-		String dirObj = cmdLine.getArgument(2);
+		String verb;
+		String dirObj;
+		if ("help".equals(cmdLine.getArgument(0))) {
+			 verb = cmdLine.getArgument(1);
+			 dirObj = cmdLine.getArgument(2);
+		} else {
+			verb = cmdLine.getArgument(0);
+			dirObj = cmdLine.getArgument(1);
+		}
 		CommandLine helpCmd = null;
 		ICommand cmd = null;
-		try {
-			helpCmd = new CommandLine(new String[] {verb, dirObj});
-			cmd = CommandFactory.createCommand(helpCmd);
-		} catch (ParseError e) {
-			// ignore
-		}
+		
+		helpCmd = new CommandLine(new String[] {verb, dirObj});
+		cmd = CommandFactory.createCommand(helpCmd);
 		
 		if (helpCmd != null && cmd != null && (! (cmd instanceof UsageCommand))) {
 			CommandType type = CommandType.byCommandLine(helpCmd);
