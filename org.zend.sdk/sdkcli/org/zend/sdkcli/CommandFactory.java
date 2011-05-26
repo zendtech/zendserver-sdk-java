@@ -9,6 +9,7 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
+import org.zend.sdkcli.internal.commands.CreatePackageCommand;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
 import org.zend.sdkcli.internal.commands.CreateTargetCommand;
 import org.zend.sdkcli.internal.commands.DeleteTargetCommand;
@@ -80,6 +81,9 @@ public class CommandFactory {
 			break;
 		case REMOVE_APPLICATION:
 			command = new RemoveApplicationCommand();
+			break;
+		case CREATE_PACKAGE:
+			command = new CreatePackageCommand();
 			break;
 		default:
 			command = new UsageCommand();
