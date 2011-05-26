@@ -38,7 +38,7 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		return getValue(ID);
 	}
 
-	@Option(opt = HOST, required = true, description = "Hostname")
+	@Option(opt = HOST, required = true, description = "Target host URL")
 	public String getHost() {
 		return getValue(HOST);
 	}
