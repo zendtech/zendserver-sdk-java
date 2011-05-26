@@ -59,7 +59,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
-			if (handle == null || handle.getSize() == -1) {
+			if (handle == null) {
 				throw new WebApiCommunicationError();
 			}
 
