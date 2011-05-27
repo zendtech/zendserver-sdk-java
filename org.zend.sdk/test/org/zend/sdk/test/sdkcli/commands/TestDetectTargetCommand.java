@@ -27,6 +27,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		IZendTarget target = getTarget();
+		doReturn(target).when(manager).detectLocalhostTarget();
 		doReturn(target).when(manager).add(any(IZendTarget.class));
 		assertTrue(command.execute(cmdLine));
 	}
