@@ -65,7 +65,7 @@ public class TemplateWriter {
 		out.append(" <summary>short description</summary>\n");
 		out.append(" <description>long description</description>\n");
 		out.append(" <version>\n");
-		out.append("   <release>1.0.0.0/release>\n");
+		out.append("   <release>1.0.0.0</release>\n");
 		out.append(" </version>\n");
 		out.append(" <icon></icon>\n");
 		out.append(" <eula></eula>\n");
