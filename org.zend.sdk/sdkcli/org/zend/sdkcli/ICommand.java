@@ -9,7 +9,6 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.CommandLine;
-import org.zend.sdkcli.internal.commands.CommandOptions;
 
 /**
  * This interface represents Zend SDK command which can be executed by command
@@ -37,6 +36,4 @@ public interface ICommand {
 	 */
 	public boolean execute(CommandLine cmdLine)  throws ParseError;
 	
-	public CommandOptions getOptions();
-
 }
