@@ -53,8 +53,10 @@ public class GenerateManual {
 
 		printStream.print("<h2>Application actions and options</h2>");
 		tableCommands(printStream, CommandType.DEPLOY_APPLICATION,
-				CommandType.LIST_APPLICATIONS);
-		
+				CommandType.UPDATE_APPLICATION, CommandType.DELETE_TARGET,
+				CommandType.REDEPLOY_APPLICATION,
+				CommandType.LIST_APPLICATIONS, CommandType.CREATE_PACKAGE);
+
 		printStream.close();
 	}
 
