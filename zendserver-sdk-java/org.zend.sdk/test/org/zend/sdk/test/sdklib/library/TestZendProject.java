@@ -20,7 +20,7 @@ public class TestZendProject extends AbstractTest {
 		ZendProject project = new ZendProject("name", true, dirName);
 		assertTrue(project.create());
 		
-		assertTrue(new File(dirName+"/descriptor.xml").exists());
+		assertTrue(new File(dirName+"/deployment.xml").exists());
 		assertTrue(new File(dirName+"/public/index.html").exists());
 		assertTrue(new File(dirName+"/scripts/post_activate.php").exists());
 		assertTrue(new File(dirName+"/scripts/post_deactivate.php").exists());
@@ -38,7 +38,7 @@ public class TestZendProject extends AbstractTest {
 		ZendProject project = new ZendProject("name", true, dirName);
 		assertTrue(project.create());
 		
-		assertTrue(new File(dirName+"/descriptor.xml").exists());
+		assertTrue(new File(dirName+"/deployment.xml").exists());
 		assertTrue(new File(dirName+"/public/index.html").exists());
 		assertTrue(new File(dirName+"/scripts/post_activate.php").exists());
 		assertTrue(new File(dirName+"/scripts/post_deactivate.php").exists());
@@ -56,7 +56,7 @@ public class TestZendProject extends AbstractTest {
 		ZendProject project = new ZendProject("name", false, dirName);
 		assertTrue(project.create());
 		
-		assertTrue(new File(dirName+"/descriptor.xml").exists());
+		assertTrue(new File(dirName+"/deployment.xml").exists());
 		assertTrue(new File(dirName+"/public/index.html").exists());
 		assertFalse(new File(dirName+"/scripts/post_activate.php").exists());
 		assertFalse(new File(dirName+"/scripts/post_deactivate.php").exists());
@@ -75,7 +75,7 @@ public class TestZendProject extends AbstractTest {
 		ZendProject project = new ZendProject("name", false, dirName);
 		assertTrue(project.update());
 		
-		assertTrue(new File(dirName+"/descriptor.xml").exists());
+		assertTrue(new File(dirName+"/deployment.xml").exists());
 		assertFalse(new File(dirName+"/public").exists());
 		assertFalse(new File(dirName+"/public/index.html").exists());
 		assertFalse(new File(dirName+"/scripts").exists());
