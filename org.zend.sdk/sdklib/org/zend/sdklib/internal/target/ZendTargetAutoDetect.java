@@ -294,7 +294,7 @@ public class ZendTargetAutoDetect {
 		// roy:creationTime = 1304968104
 		os.print(key);
 		os.print(":creationTime = ");
-		os.println(new Date().getTime());
+		os.println(new Date().getTime()/1000);
 
 		// roy:hash = "c86ba2bc5fb62ee916031cf78..."
 		os.print(key);
