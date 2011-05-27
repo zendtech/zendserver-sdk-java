@@ -12,7 +12,9 @@ import org.zend.sdk.test.sdklib.target.TestUserBasedTargetLoader;
 import org.zend.sdk.test.sdklib.target.TestZendTarget;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ TestZendApplication.class, TestPackageBuilder.class,
+@Suite.SuiteClasses({ TestZendApplicationUpdate.class, TestZendApplicationDeploy.class,
+	TestZendApplicationGetStatus.class, TestZendApplicationRedeploy.class,
+	TestZendApplicationRemove.class, TestPackageBuilder.class,
 		TestIni.class, TestLibrary.class, TestStatusCode.class,
 		TestZendProject.class, TestLogger.class, TestTargetsManager.class,
 		TestUserBasedTargetLoader.class, TestZendTarget.class })
