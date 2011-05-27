@@ -56,4 +56,7 @@ public @interface Option {
 	 * @see org.apache.commons.cli.Option#getDescription()
 	 */
 	int numberOfArgs() default 1;
+	
+	String argName() default "arg";
+	
 }

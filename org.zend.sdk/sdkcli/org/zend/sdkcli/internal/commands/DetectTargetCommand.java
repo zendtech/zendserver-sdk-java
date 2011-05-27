@@ -22,12 +22,12 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	private static final String ID = "t";
 	private static final String KEY = "k";
 
-	@Option(opt = ID, required = false, description = "The target id to create")
+	@Option(opt = ID, required = false, description = "The target id to create", argName="id")
 	public String getId() {
 		return getValue(ID);
 	}
 
-	@Option(opt = KEY, required = false, description = "The key to use")
+	@Option(opt = KEY, required = false, description = "The key to use", argName="key")
 	public String getKey() {
 		return getValue(KEY);
 	}

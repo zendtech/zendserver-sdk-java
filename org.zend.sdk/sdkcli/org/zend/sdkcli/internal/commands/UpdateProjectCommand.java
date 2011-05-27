@@ -65,12 +65,12 @@ public class UpdateProjectCommand extends AbstractCommand {
 		return hasOption(IGNORE_SCRIPTS);
 	}
 
-	@Option(opt = DESTINATION, required = false, description = "The path to the project or application package")
+	@Option(opt = DESTINATION, required = false, description = "The path to the project or application package", argName="path")
 	public String getDestination() {
 		return getValue(DESTINATION);
 	}
 
-	@Option(opt = NAME, required = false, description = "The project name")
+	@Option(opt = NAME, required = false, description = "The project name", argName="name")
 	public String getName() {
 		return getValue(NAME);
 	}

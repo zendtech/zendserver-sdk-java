@@ -20,26 +20,26 @@ public class UpdateApplicationCommand extends ApplicationAwareCommand {
 
 	private static final String PATH = "p";
 	private static final String TARGET = "t";
-	private static final String APPID = "id";
-	private static final String PARAMS = "pa";
+	private static final String APPID = "a";
+	private static final String PARAMS = "m";
 	private static final String IGNORE_FAILURES = "f";
 
-	@Option(opt = PATH, required = true, description = "The path to the project or application package")
+	@Option(opt = PATH, required = true, description = "The path to the project or application package", argName="path")
 	public String getPath() {
 		return getValue(PATH);
 	}
 
-	@Option(opt = TARGET, required = true, description = "The target id")
+	@Option(opt = TARGET, required = true, description = "The target id", argName="target-id")
 	public String getTargetId() {
 		return getValue(TARGET);
 	}
 
-	@Option(opt = APPID, required = true, description = "The application id")
+	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
 	public String getApplicationId() {
 		return getValue(APPID);
 	}
 	
-	@Option(opt = PARAMS, required = false, description = "The path to parameters properties file")
+	@Option(opt = PARAMS, required = false, description = "The path to parameters properties file", argName="parameters")
 	public String getParams() {
 		return getValue(PARAMS);
 	}

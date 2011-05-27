@@ -21,12 +21,12 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 	private static final String TARGET = "t";
 	private static final String APPID = "id";
 	
-	@Option(opt = TARGET, required = true, description = "The target id")
+	@Option(opt = TARGET, required = true, description = "The target id", argName="target-id")
 	public String getTargetId() {
 		return getValue(TARGET);
 	}
 
-	@Option(opt = APPID, required = true, description = "The application id")
+	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
 	public String getApplicationId() {
 		return getValue(APPID);
 	}
