@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +32,7 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 		ListApplicationsCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
-		when(client.applicationGetStatus()).thenReturn(
+		when(client.applicationGetStatus((String[])anyVararg())).thenReturn(
 				(ApplicationsList) getResponseData("applicationGetStatus",
 						IResponseData.ResponseType.APPLICATIONS_LIST));
 		assertTrue(command.execute(cmdLine));
