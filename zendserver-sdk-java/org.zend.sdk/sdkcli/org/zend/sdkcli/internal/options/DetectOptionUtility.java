@@ -14,8 +14,9 @@ import java.util.List;
 import org.apache.commons.cli.Options;
 
 /**
- * detects options in command
+ * detects options in command according annotation
  * 
+ * @see Option
  * @author Roy, 2011
  */
 public class DetectOptionUtility {
@@ -89,6 +90,7 @@ public class DetectOptionUtility {
 		o.setArgs(a.numberOfArgs());
 		o.setRequired(a.required());
 		o.setType(a.type());
+		o.setArgName(a.argName());
 
 		// assign to options list
 		options.addOption(o);

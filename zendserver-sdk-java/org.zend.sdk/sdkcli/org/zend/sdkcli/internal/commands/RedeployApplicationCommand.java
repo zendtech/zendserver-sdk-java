@@ -19,16 +19,16 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 public class RedeployApplicationCommand extends ApplicationAwareCommand {
 
 	private static final String TARGET = "t";
-	private static final String APPID = "id";
-	private static final String IGNORE_FAILURES = "ignoreFailures";
-	private static final String SERVERS = "servers";
+	private static final String APPID = "a";
+	private static final String IGNORE_FAILURES = "i";
+	private static final String SERVERS = "s";
 	
-	@Option(opt = TARGET, required = true, description = "The target id")
+	@Option(opt = TARGET, required = true, description = "The target id" , argName="target-id")
 	public String getTargetId() {
 		return getValue(TARGET);
 	}
 
-	@Option(opt = APPID, required = true, description = "The application id")
+	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
 	public String getApplicationId() {
 		return getValue(APPID);
 	}
@@ -38,7 +38,7 @@ public class RedeployApplicationCommand extends ApplicationAwareCommand {
 		return hasOption(IGNORE_FAILURES);
 	}
 
-	@Option(opt = SERVERS, required = false, description = "Server names")
+	@Option(opt = SERVERS, required = false, description = "Server names", argName="server-names")
 	public String[] getServers() {
 		return getValues(SERVERS);
 	}

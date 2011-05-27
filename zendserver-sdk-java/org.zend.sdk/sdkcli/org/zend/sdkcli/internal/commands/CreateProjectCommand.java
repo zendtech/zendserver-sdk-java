@@ -62,7 +62,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project name
 	 */
-	@Option(opt = NAME, required = true, description = "The project name")
+	@Option(opt = NAME, required = true, description = "The project name", argName="name")
 	public String getName() {
 		return getValue(NAME);
 	}
@@ -70,7 +70,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project destination
 	 */
-	@Option(opt = DESTINATION, required = false, description = "The project destination")
+	@Option(opt = DESTINATION, required = false, description = "The project destination", argName="path")
 	public String getDestionation() {
 		return getValue(DESTINATION);
 	}

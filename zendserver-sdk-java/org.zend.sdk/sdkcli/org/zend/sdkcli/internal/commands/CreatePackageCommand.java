@@ -23,12 +23,12 @@ public class CreatePackageCommand extends TargetAwareCommand {
 	private static final String PATH = "p";
 	private static final String DESTINATION = "d";
 
-	@Option(opt = PATH, required = true, description = "Path to project")
+	@Option(opt = PATH, required = true, description = "The path to project", argName="path")
 	public String getPath() {
 		return getValue(PATH);
 	}
 
-	@Option(opt = DESTINATION, required = false, description = "Location where package will be created")
+	@Option(opt = DESTINATION, required = false, description = "The location where package will be created", argName = "path")
 	public String getDestination() {
 		return getValue(DESTINATION);
 	}
