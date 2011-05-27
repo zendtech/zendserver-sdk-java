@@ -26,7 +26,7 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 public class TestRedeployApplicationCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "redeploy", "application",
-			"-t", "0", "-id", "0" };
+			"-t", "0", "-a", "0" };
 
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
