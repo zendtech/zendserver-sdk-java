@@ -3,9 +3,11 @@ package org.zend.sdkcli.internal.commands;
 import java.util.Collection;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.CommandType;
 import org.zend.sdkcli.ICommand;
+import org.zend.sdkcli.internal.options.DetectOptionUtility;
 
 public class UsageCommand implements ICommand {
 
@@ -30,7 +32,7 @@ public class UsageCommand implements ICommand {
 		if (helpCmd != null && cmd != null && (!(cmd instanceof UsageCommand))) {
 			CommandType type = CommandType.byCommandLine(helpCmd);
 			printCommandUsage(type);
-			printCommandOptions(cmd);
+			printCommandOptions(type);
 			return true;
 		}
 
@@ -55,9 +57,14 @@ public class UsageCommand implements ICommand {
 				+ " [options] - " + type.getInfo());
 	}
 
-	private void printCommandOptions(ICommand cmd) {
-		CommandOptions opts = cmd.getOptions();
-		if (opts != null) {
+	private void printCommandOptions(CommandType type) {
+		Options opts = new Options();
+		
+		// get command specific options
+		DetectOptionUtility.addOption(CommandFactory.createCommand(type)
+				.getClass(), opts, true);
+
+		if (opts.getOptions().size() > 0) {
 			System.out.println(" Options:");
 			Collection collection = opts.getOptions();
 			for (Object o : collection) {
@@ -70,7 +77,7 @@ public class UsageCommand implements ICommand {
 		}
 	}
 
-	public CommandOptions getOptions() {
+	public Options getOptions() {
 		return null;
 	}
 }
