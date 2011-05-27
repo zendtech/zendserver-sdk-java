@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -76,10 +77,53 @@ public class TestZendApplication extends AbstractWebApiTest {
 
 	@Test
 	public void deployConnectionFailed() throws WebApiException, IOException {
-		setDeployFailedCall();
+		setUpdateSuccessCall();
 		ApplicationInfo info = application.deploy(FOLDER + "test-1.0.0.zpk",
 				"http://myhost/aaa", "0", FOLDER + "userParams.properties",
 				null, null, null, null);
+		assertNull(info);
+	}
+	
+	@Test
+	public void updatePackageSuccess() throws WebApiException, IOException {
+		setUpdateSuccessCall();
+		ApplicationInfo info = application.update(FOLDER + "test-1.0.0.zpk",
+			"0", "0",  null, false);
+		assertNotNull(info);
+		assertEquals("Home CMS", info.getAppName());
+	}
+
+	@Test
+	public void updateProjectSuccess() throws WebApiException, IOException {
+		setUpdateSuccessCall();
+		ApplicationInfo info = application.update(FOLDER + "Project1",
+			"0", "0",  null, false);
+		assertNotNull(info);
+		assertEquals("Home CMS", info.getAppName());
+	}
+
+	@Test
+	public void updateInvalidPath() throws WebApiException, IOException {
+		setUpdateSuccessCall();
+		ApplicationInfo info = application.update("invalid_path",
+			"0", "0",  FOLDER + "userParams.properties", false);
+		assertNull(info);
+	}
+
+	@Test
+	public void updateUserParams() throws WebApiException, IOException {
+		setUpdateSuccessCall();
+		ApplicationInfo info = application.update(FOLDER + "test-1.0.0.zpk",
+			"0", "0",  FOLDER + "userParams.properties", false);
+		assertNotNull(info);
+		assertEquals("Home CMS", info.getAppName());
+	}
+
+	@Test
+	public void updateConnectionFailed() throws WebApiException, IOException {
+		setUpdateFailedCall();
+		ApplicationInfo info = application.update(FOLDER + "test-1.0.0.zpk",
+			"0", "0", null, false);
 		assertNull(info);
 	}
 
@@ -103,11 +147,24 @@ public class TestZendApplication extends AbstractWebApiTest {
 						IResponseData.ResponseType.APPLICATION_INFO));
 	}
 
+	private void setUpdateSuccessCall() throws WebApiException, IOException {
+		when(
+				client.applicationUpdate(anyInt(), any(File.class), anyBoolean(), any(Map.class))).thenReturn(
+				(ApplicationInfo) getResponseData("applicationUpdate",
+						IResponseData.ResponseType.APPLICATION_INFO));
+	}
+	
 	private void setDeployFailedCall() throws WebApiException, IOException {
 		when(
 				client.applicationDeploy(any(File.class), anyString(),
 						anyBoolean(), any(Map.class), anyString(),
 						anyBoolean(), anyBoolean())).thenThrow(
+				new SignatureException("testError"));
+	}
+	
+	private void setUpdateFailedCall() throws WebApiException, IOException {
+		when(
+			client.applicationUpdate(anyInt(), any(File.class), anyBoolean(), any(Map.class))).thenThrow(
 				new SignatureException("testError"));
 	}
 
