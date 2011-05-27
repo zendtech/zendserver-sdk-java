@@ -87,7 +87,7 @@ public class ZendApplication extends AbstractLibrary {
 			Boolean createVhost, Boolean defaultServer) {
 		File file = new File(path);
 		if (!file.exists()) {
-			log.error("Provided path is not vaild.");
+			log.error("Path does not exist: "+file);
 			return null;
 		}
 		File zendPackage = null;
@@ -177,7 +177,7 @@ public class ZendApplication extends AbstractLibrary {
 			String propertiesFile, Boolean ignoreFailures) {
 		File file = new File(path);
 		if (!file.exists()) {
-			log.error("Provided path is not vaild.");
+			log.error("Path does not exist: "+file);
 			return null;
 		}
 		File zendPackage = null;
