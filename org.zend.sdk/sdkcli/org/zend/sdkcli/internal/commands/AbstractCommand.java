@@ -24,7 +24,7 @@ import org.zend.sdklib.logger.Log;
 public abstract class AbstractCommand implements ICommand {
 
 	protected CommandLine commandLine;
-	protected CommandOptions options;
+	protected Options options;
 
 	/**
 	 * @param commandLine
@@ -32,7 +32,7 @@ public abstract class AbstractCommand implements ICommand {
 	 */
 	public AbstractCommand() {
 		// build options
-		this.options = new CommandOptions();
+		this.options = new Options();
 		setupOptions();
 	}
 
@@ -58,44 +58,6 @@ public abstract class AbstractCommand implements ICommand {
 		DetectOptionUtility.addOption(getClass(), options);
 	}
 
-	/**
-	 * Helper method for {@link AbstractCommand#setupOptions()} method
-	 * 
-	 * @see CommandOptions#addArgumentOption(Sting, boolean, String)
-	 * @param name
-	 * @param isRequired
-	 * @param description
-	 */
-	protected void addArgumentOption(String name, boolean isRequired,
-			String description) {
-		options.addArgumentOption(name, isRequired, description);
-	}
-
-	/**
-	 * Helper method for {@link AbstractCommand#setupOptions()} method
-	 * 
-	 * @see CommandOptions#addArgumentsOption(Sting, boolean, String)
-	 * @param name
-	 * @param isRequired
-	 * @param description
-	 */
-	protected void addArgumentsOption(String name, boolean isRequired,
-			String description) {
-		options.addArgumentsOption(name, isRequired, description);
-	}
-
-	/**
-	 * Helper method for {@link AbstractCommand#setupOptions()} method
-	 * 
-	 * @see CommandOptions#addBooleanOption(Sting, boolean, String)
-	 * @param name
-	 * @param isRequired
-	 * @param description
-	 */
-	protected void addBooleanOption(String name, boolean isRequired,
-			String description) {
-		options.addBooleanOption(name, isRequired, description);
-	}
 
 	public String getValue(String parameterName) {
 		return commandLine.getParameterValue(parameterName);
@@ -116,7 +78,7 @@ public abstract class AbstractCommand implements ICommand {
 		return Log.getInstance().getLogger(this.getClass().getName());
 	}
 
-	public CommandOptions getOptions() {
+	public Options getOptions() {
 		return options;
 	}
 
