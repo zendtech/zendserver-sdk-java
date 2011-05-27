@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import org.junit.Test;
 import org.zend.sdk.test.AbstractWebApiTest;
@@ -29,7 +28,7 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "update", "application",
-			"-p", FOLDER + "test-1.0.0.zpk", "-t", "0", "-id", "0" };
+			"-p", FOLDER + "test-1.0.0.zpk", "-t", "0", "-a", "0" };
 
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
