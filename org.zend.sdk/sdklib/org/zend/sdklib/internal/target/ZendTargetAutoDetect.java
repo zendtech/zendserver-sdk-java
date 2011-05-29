@@ -323,6 +323,7 @@ public class ZendTargetAutoDetect {
 
 	private static String generateSecretKey() {
 		SecureRandom random = new SecureRandom();
-		return new BigInteger(256, random).toString(16);
+		final String string = new BigInteger(256, random).toString(16);
+		return  string.substring(0, 60) + "ffff";
 	}
 }
