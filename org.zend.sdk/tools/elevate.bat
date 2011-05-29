@@ -1,11 +1,12 @@
 @echo off
 if "%PROCESSOR_ARCHITECTURE%" == "x86" (
-	@start ..\lib\x86\elevate.exe -k -wait "CD %CD% & %* & exit
+  %~d0%~p0..\lib\x86\elevate.exe -wait -k "CD %CD% & %* > out & exit" & type out % del out
 ) else (
-    if "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
-		@start ..\lib\x86_64\elevate.exe -k -wait "CD %CD% & %* & exit
-    ) else (
-		echo Unsupported platform.
-		@pause
-    )
+  if "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
+    %~d0%~p0..\lib\x86_64\elevate.exe -wait -k "CD %CD% & %* > out & exit" & type out % del out
+  ) else (
+    echo Unsupported platform.
+    @pause
+  )
 )
+
