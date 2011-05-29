@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Update an existing target.
@@ -77,7 +78,11 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 
 	@Override
 	public boolean doExecute() {
-		// TODO call TargetsManager#updateTarget
+		IZendTarget result = getTargetManager().updateTarget(getId(),
+				getHost(), getKey(), getSecretKey());
+		if (result == null) {
+			return false;
+		}
 		return true;
 	}
 

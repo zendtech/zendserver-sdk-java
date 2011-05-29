@@ -232,6 +232,30 @@ public class TargetsManager extends AbstractLibrary {
 		return null;
 	}
 
+	public IZendTarget updateTarget(String targetId, String host, String key,
+			String secretKey) {
+		ZendTarget target = (ZendTarget) getTargetById(targetId);
+		if (target == null) {
+			log.info("Target with id '" + targetId + "' does not exist.");
+			return null;
+		}
+		try {
+			if (host != null) {
+				target.setHost(new URL(host));
+			}
+			if (key != null) {
+				target.setKey(key);
+			}
+			if (secretKey != null) {
+				target.setSecretKey(secretKey);
+			}
+			return loader.update(target);
+		} catch (MalformedURLException e) {
+			log.error(e);
+		}
+		return null;
+	}
+
 	/**
 	 * Check for conflicts and errors in new target
 	 * 

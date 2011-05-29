@@ -15,6 +15,7 @@ import org.zend.sdk.test.sdkcli.commands.TestRedeployApplicationCommand;
 import org.zend.sdk.test.sdkcli.commands.TestRemoveApplicationCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUpdateApplicationCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUpdateProjectCommand;
+import org.zend.sdk.test.sdkcli.commands.TestUpdateTargetCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUsageCommand;
 
 @RunWith(Suite.class)
@@ -25,7 +26,8 @@ import org.zend.sdk.test.sdkcli.commands.TestUsageCommand;
 		TestDetectTargetCommand.class, TestListApplicationsCommand.class,
 		TestListTargetsCommand.class, TestRedeployApplicationCommand.class,
 		TestRemoveApplicationCommand.class, TestUpdateApplicationCommand.class,
-		TestUpdateProjectCommand.class, TestUsageCommand.class })
+		TestUpdateProjectCommand.class, TestUpdateTargetCommand.class,
+		TestUsageCommand.class })
 public class AllCliTests {
 
 }
