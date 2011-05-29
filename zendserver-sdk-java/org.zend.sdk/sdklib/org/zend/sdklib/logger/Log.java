@@ -48,12 +48,16 @@ public class Log {
 	 * @return logger
 	 */
 	public ILogger getLogger(String creatorName) {
+		return getLogger(creatorName, false);
+	}
+
+	public ILogger getLogger(String creatorName, boolean silent) {
 		if (logger == null) {
 			throw new IllegalStateException(
 					"Logger has not been registered yet, register one by"
-							+ " \"Log.getInstance().registerLogger(new CliLogger());\"");
+					+ " \"Log.getInstance().registerLogger(new CliLogger());\"");
 		}
-		return logger.getLogger(creatorName);
+		return logger.getLogger(creatorName, silent);
 	}
 
 }

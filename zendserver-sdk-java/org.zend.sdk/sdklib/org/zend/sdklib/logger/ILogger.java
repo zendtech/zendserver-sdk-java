@@ -46,10 +46,11 @@ public interface ILogger {
 	 * class which wants to use logging mechanism. The usage of this value
 	 * depends on the logger implementation. If logger does not required it, it
 	 * will be ignored.
+	 * @param silent 
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public ILogger getLogger(String creatorName);
+	public ILogger getLogger(String creatorName, boolean silent);
 
 }

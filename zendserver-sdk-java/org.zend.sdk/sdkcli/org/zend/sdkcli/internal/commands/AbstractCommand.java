@@ -12,6 +12,7 @@ import org.apache.commons.cli.Options;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.options.DetectOptionUtility;
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 
@@ -23,6 +24,8 @@ import org.zend.sdklib.logger.Log;
  */
 public abstract class AbstractCommand implements ICommand {
 
+	private static final String SILENT = "z";
+	
 	protected CommandLine commandLine;
 	protected Options options;
 
@@ -36,6 +39,11 @@ public abstract class AbstractCommand implements ICommand {
 		setupOptions();
 	}
 
+	@Option(opt = SILENT, required = false, description = "Silent mode: only errors are printed out.")
+	public boolean isSilent() {
+		return hasOption(SILENT);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.zend.sdkcli.ICommand#execute(org.zend.sdkcli.internal.commands.CommandLine)
 	 */
@@ -75,7 +83,7 @@ public abstract class AbstractCommand implements ICommand {
 	 * @return the available logger for command line
 	 */
 	public ILogger getLogger() {
-		return Log.getInstance().getLogger(this.getClass().getName());
+		return Log.getInstance().getLogger(this.getClass().getName(), isSilent());
 	}
 
 	public Options getOptions() {
