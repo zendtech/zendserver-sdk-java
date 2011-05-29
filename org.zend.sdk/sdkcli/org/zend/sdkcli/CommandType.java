@@ -29,6 +29,8 @@ public enum CommandType {
 	DELETE_TARGET("delete", "target", "removes target from the know targets list"),
 
 	DETECT_TARGET("detect", "target", "detects target on localhost"),
+	
+	UPDATE_TARGET("update", "target", "updates target's parameters"),
 
 	LIST_APPLICATIONS("list", "applications", "lists applications installed on target"),
 
