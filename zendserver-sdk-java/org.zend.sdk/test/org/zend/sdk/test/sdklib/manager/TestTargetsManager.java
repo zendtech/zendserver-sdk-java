@@ -7,7 +7,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -50,23 +49,21 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateManagerWithInvalidTarget() throws WebApiException,
-			MalformedURLException {
+	public void testCreateManagerWithInvalidTarget() throws WebApiException, MalformedURLException {
 		ITargetLoader loader = spy(new UserBasedTargetLoader(file));
 		when(loader.loadAll()).thenReturn(
-				new IZendTarget[] { new ZendTarget(null, new URL(
-						"http://localhost"), "mykey", "43543") });
+				new IZendTarget[] { new ZendTarget(null, new URL("http://localhost"), "mykey",
+						"43543") });
 		TargetsManager manager = new TargetsManager(loader);
 		assertTrue(manager.getTargets().length == 0);
 	}
 
 	@Test
-	public void testCreateManagerWithValidTarget() throws WebApiException,
-			MalformedURLException {
+	public void testCreateManagerWithValidTarget() throws WebApiException, MalformedURLException {
 		ITargetLoader loader = spy(new UserBasedTargetLoader(file));
 		when(loader.loadAll()).thenReturn(
-				new IZendTarget[] { new ZendTarget("dev3", new URL(
-						"http://localhost"), "mykey", "43543") });
+				new IZendTarget[] { new ZendTarget("dev3", new URL("http://localhost"), "mykey",
+						"43543") });
 		TargetsManager manager = new TargetsManager(loader);
 		assertTrue(manager.getTargets().length == 1);
 	}
@@ -80,11 +77,10 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testNullIdAddTarget() throws WebApiException,
-			MalformedURLException {
+	public void testNullIdAddTarget() throws WebApiException, MalformedURLException {
 		TargetsManager manager = new TargetsManager(loader);
-		IZendTarget target = spy(new ZendTarget(null, new URL(
-				"http://localhost:10081"), "mykey", "43543"));
+		IZendTarget target = spy(new ZendTarget(null, new URL("http://localhost:10081"), "mykey",
+				"43543"));
 		doReturn(true).when(target).connect();
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 0);
@@ -163,8 +159,7 @@ public class TestTargetsManager extends AbstractTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
-		assertNotNull(manager.detectLocalhostTarget(target.getId(),
-				target.getKey()));
+		assertNotNull(manager.detectLocalhostTarget(target.getId(), target.getKey()));
 	}
 
 	@Test
@@ -186,50 +181,31 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testDetectLocalhostNoTarget() throws IOException {
-		TargetsManager manager = new TargetsManager(loader);
-		assertNotNull(manager.detectLocalhostTarget());
-	}
-
-	@Test
-	public void testDetectLocalhostNoTargetThrowsWebApiException()
-			throws IOException, WebApiException {
-		TargetsManager manager = spy(new TargetsManager(loader));
-		doThrow(new SignatureException("testError")).when(manager).add(
-				any(IZendTarget.class));
-		assertNull(manager.detectLocalhostTarget());
-	}
-
-	@Test
 	public void testCreateTarget() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
-		assertNotNull(manager.createTarget("1", "http://localhost", "mykey",
-				"43543"));
+		assertNotNull(manager.createTarget("1", "http://localhost", "mykey", "43543"));
 	}
 
 	@Test
 	public void testCreateTargetNoId() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
-		assertNotNull(manager
-				.createTarget("http://localhost", "mykey", "43543"));
+		assertNotNull(manager.createTarget("http://localhost", "mykey", "43543"));
 	}
 
 	@Test
 	public void testCreateTargetFailAdd() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
-		assertNull(manager.createTarget("1", "http://localhost", "mykey",
-				"43543"));
+		assertNull(manager.createTarget("1", "http://localhost", "mykey", "43543"));
 	}
 
 	@Test
 	public void testCreateTargetInvalidUrl() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
-		assertNull(manager.createTarget("1", "aaa11://localhost", "mykey",
-				"43543"));
+		assertNull(manager.createTarget("1", "aaa11://localhost", "mykey", "43543"));
 	}
 
 	@Test
@@ -237,16 +213,14 @@ public class TestTargetsManager extends AbstractTest {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		Mockito.doThrow(new SignatureException("testError")).when(manager)
 				.add(any(IZendTarget.class));
-		assertNull(manager.createTarget("1", "http://localhost", "mykey",
-				"43543"));
+		assertNull(manager.createTarget("1", "http://localhost", "mykey", "43543"));
 	}
 
 	@Test
 	public void testUpdateTarget() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new",
-				"00112233"));
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new", "00112233"));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
 		assertEquals("new", actual.getKey());
@@ -257,8 +231,7 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTarget2() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new",
-				null));
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new", null));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
 		assertEquals("new", actual.getKey());
@@ -269,8 +242,7 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTarget3() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", null,
-				null));
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, null));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
 		assertEquals("mykey", actual.getKey());
@@ -294,8 +266,7 @@ public class TestTargetsManager extends AbstractTest {
 	private IZendTarget getTarget() throws WebApiException {
 		IZendTarget target = null;
 		try {
-			target = spy(new ZendTarget("dev4", new URL("http://localhost"),
-					"mykey", "43543"));
+			target = spy(new ZendTarget("dev4", new URL("http://localhost"), "mykey", "43543"));
 			doReturn(true).when(target).connect();
 		} catch (MalformedURLException e) {
 			// ignore
