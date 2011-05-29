@@ -21,7 +21,7 @@ public class AbstractTest {
 			}
 
 			@Override
-			public ILogger getLogger(String creatorName) {
+			public ILogger getLogger(String creatorName, boolean silent) {
 				return this;
 			}
 

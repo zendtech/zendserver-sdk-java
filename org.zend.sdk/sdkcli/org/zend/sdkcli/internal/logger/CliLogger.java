@@ -24,6 +24,7 @@ import org.zend.sdklib.logger.ILogger;
 public class CliLogger implements ILogger {
 
 	private Logger logger;
+	private boolean silent;
 
 	public CliLogger() {
 		PropertyConfigurator.configure(getLogProperties());
@@ -48,32 +49,42 @@ public class CliLogger implements ILogger {
 	}
 
 	@Override
-	public ILogger getLogger(String creatorName) {
+	public ILogger getLogger(String creatorName, boolean silent) {
+		this.silent = silent;
 		return new CliLogger(creatorName);
 	}
 
 	@Override
 	public void debug(Object message) {
-		System.out.println(message);
+		sysout(message);
 		logger.debug(message);
 	}
 
 	@Override
 	public void info(Object message) {
-		System.out.println(message);
+		sysout(message);
 		logger.info(message);
 	}
 
 	@Override
 	public void error(Object message) {
-		System.out.println(message);
+		sysout(message);
 		logger.error(message);
 	}
 
 	@Override
 	public void warning(Object message) {
-		System.out.println(message);
+		sysout(message);
 		logger.warn(message);
 	}
 
+	private void sysout(Object message) {
+		if (!silent) {
+			if (message instanceof String) {
+				System.out.println(message);
+			} else if (message instanceof Exception) {
+				((Exception) message).printStackTrace(System.out);
+			}
+		}
+	}
 }
