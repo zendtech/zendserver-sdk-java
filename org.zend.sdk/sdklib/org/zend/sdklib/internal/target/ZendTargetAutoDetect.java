@@ -269,9 +269,9 @@ public class ZendTargetAutoDetect {
 			// try the 64 bit
 
 			try {
-				zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
-						.openSubKey(NODE_64).openSubKey(ZEND_TECHNOLOGIES)
-						.openSubKey(ZEND_SERVER);
+				zendServerKey = Registry.HKEY_LOCAL_MACHINE
+						.openSubKey("SOFTWARE").openSubKey(NODE_64)
+						.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
 				return zendServerKey.getStringValue(INSTALL_LOCATION);
 			} catch (NoSuchKeyException e) {
 			} catch (RegistryException e) {
@@ -294,7 +294,7 @@ public class ZendTargetAutoDetect {
 		// roy:creationTime = 1304968104
 		os.print(key);
 		os.print(":creationTime = ");
-		os.println(new Date().getTime()/1000);
+		os.println(new Date().getTime() / 1000);
 
 		// roy:hash = "c86ba2bc5fb62ee916031cf78..."
 		os.print(key);
@@ -314,8 +314,9 @@ public class ZendTargetAutoDetect {
 			return new File(zendServerInstallLocation
 					+ "/gui/application/data/zend-server-user.ini");
 		} else if (EnvironmentUtils.isUnderWindows()) {
-			return new File(zendServerInstallLocation
-					+ "ZendServer\\GUI\\application\\data\\zend-server-user.ini");
+			return new File(
+					zendServerInstallLocation
+							+ "ZendServer\\GUI\\application\\data\\zend-server-user.ini");
 		}
 
 		return null;
@@ -323,7 +324,23 @@ public class ZendTargetAutoDetect {
 
 	private static String generateSecretKey() {
 		SecureRandom random = new SecureRandom();
-		final String string = new BigInteger(256, random).toString(16);
-		return  string.substring(0, 60) + "ffff";
+		final BigInteger bigInteger = new BigInteger(256, random);
+		final String string = bigInteger.toString(16);
+		return string.length() == 64 ? string : pad(string, 64);
+	}
+
+	/**
+	 * Random number was prefixed with some zeros... pad it
+	 * @param string
+	 * @param i
+	 * @return
+	 */
+	final private static String pad(String string, int i) {
+		i = i - string.length();
+		StringBuilder builder = new StringBuilder(string);
+		for (int j = 0; j < i; j++) {
+			builder.append("0");
+		}
+		return builder.toString();
 	}
 }
