@@ -41,7 +41,7 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		return getValue(ID);
 	}
 
-	@Option(opt = KEY, required = true, description = "Target environment API Key name", argName = PROP_KEY)
+	@Option(opt = KEY, required = false, description = "Target environment API Key name", argName = PROP_KEY)
 	public String getKey() {
 		Properties p = getProperties();
 		if (p != null) {
@@ -51,7 +51,7 @@ public class CreateTargetCommand extends TargetAwareCommand {
 		return getValue(KEY);
 	}
 
-	@Option(opt = SECRETKEY, required = true, description = "Target environment API Key secret value", argName = "secret-key")
+	@Option(opt = SECRETKEY, required = false, description = "Target environment API Key secret value", argName = "secret-key")
 	public String getSecretKey() {
 		Properties p = getProperties();
 		if (p != null) {

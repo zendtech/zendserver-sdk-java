@@ -36,7 +36,6 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean doExecute() {
 		final String key = getKey();
 		final String targetId = getId();
-		// detect localhost
 		try {
 			if (getTargetManager().detectLocalhostTarget(targetId, key) != null) {
 				return true;
