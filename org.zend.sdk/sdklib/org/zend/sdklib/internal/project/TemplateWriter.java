@@ -13,51 +13,61 @@ import java.util.List;
 
 /**
  * Writes files from template
- *
+ * 
  */
 public class TemplateWriter {
 
 	private static final String TEMPLATES_DIR = "templates";
 	private static final String SCRIPTS_DIR = "scripts";
 	public static final String DESCRIPTOR = "deployment.xml";
-	
+	public static final String DEPLOYMENT_PROPERTIES = "deployment.properties";
+
 	/**
 	 * 
-	 * @param name - name of the project
-	 * @param withContent - whether to write other contents than scripts and descriptor
-	 * @param withScripts - whether to write scripts
-	 * @param destination - destination directory
+	 * @param name
+	 *            - name of the project
+	 * @param withContent
+	 *            - whether to write other contents than scripts and descriptor
+	 * @param withScripts
+	 *            - whether to write scripts
+	 * @param destination
+	 *            - destination directory
 	 * @throws IOException
 	 */
-	public void writeTemplate(String name, boolean withContent, boolean withScripts, File destination) throws IOException {
+	public void writeTemplate(String name, boolean withContent, boolean withScripts,
+			File destination) throws IOException {
 		File descrFile = new File(destination, DESCRIPTOR);
-		if (! descrFile.getParentFile().exists()) {
+		if (!descrFile.getParentFile().exists()) {
 			descrFile.getParentFile().mkdirs();
 		}
-		
-		if (! descrFile.exists()) {
+
+		if (!descrFile.exists()) {
 			writeDescriptor(name, withScripts, new FileWriter(descrFile));
 		}
-		
+
+		File deploymentProps = new File(destination, DEPLOYMENT_PROPERTIES);
+		deploymentProps.createNewFile();
+
 		String[] resources = getTemplateResources();
 		if (resources == null) {
 			return;
 		}
-		
+
 		for (int i = 0; i < resources.length; i++) {
 			if (withScripts || (withContent && (!isScript(resources[i])))) {
 				writeStaticResource(resources[i], destination);
 			}
 		}
 	}
-	
+
 	private boolean isScript(String path) {
 		return path.startsWith(SCRIPTS_DIR);
 	}
 
 	private void writeDescriptor(String name, boolean withScripts, Writer out) throws IOException {
 		if (name == null) {
-			throw new IllegalArgumentException("Failed to create deployment descriptor. Project name is missing");
+			throw new IllegalArgumentException(
+					"Failed to create deployment descriptor. Project name is missing");
 		}
 		out.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		out.append("<package version=\"1.4.11\" xmlns=\"http://www.zend.com/server/deployment-descriptor/1.0\" xmlns:xsi=\">http://www.w3.org/2001/XMLSchema-instance\">\n");
@@ -78,37 +88,38 @@ public class TemplateWriter {
 		out.append("</package>\n");
 		out.close();
 	}
-	
+
 	private CharSequence xmlEscape(String name) {
 		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
-			if (c == '&' || c== '<' || c == '>') {
+			if (c == '&' || c == '<' || c == '>') {
 				return "<![CDATA[" + name.replaceAll("]]>", "]]>]]><![CDATA[") + "]]>";
 			}
 		}
-		
+
 		return name;
 	}
 
 	private void writeStaticResource(String resourceName, File destination) throws IOException {
 		URL url = getTemplateResource(resourceName);
-		
+
 		File destFile = new File(destination, resourceName);
 		File dir = destFile.getParentFile();
-		if (! dir.exists()) {
+		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		
+
 		if (destFile.exists()) { // don't overwrite already existing files
 			return;
 		}
-		
-		if (!destFile.getParentFile().canWrite()) { // skip if parent directory is not writeable
+
+		if (!destFile.getParentFile().canWrite()) { // skip if parent directory
+													// is not writeable
 			return;
 		}
-		
+
 		FileOutputStream out = new FileOutputStream(destFile);
-		
+
 		InputStream is = null;
 		try {
 			is = url.openStream();
@@ -129,29 +140,31 @@ public class TemplateWriter {
 
 	private File getTemplatesRoot() {
 		// <somewhere>/org.zend.sdk/lib/zend_sdk.jar
-		File zendSDKJarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-		
+		File zendSDKJarFile = new File(getClass().getProtectionDomain().getCodeSource()
+				.getLocation().getPath());
+
 		// <somewhere>/org.zend.sdk
 		File zendSDKroot = zendSDKJarFile.getParentFile().getParentFile();
 		File templates = new File(zendSDKroot, TEMPLATES_DIR);
-		
-		// in development-time scenario, classes are in "sdklib", instead of "lib/zend_sdk.jar" 
+
+		// in development-time scenario, classes are in "sdklib", instead of
+		// "lib/zend_sdk.jar"
 		if (!templates.exists()) {
 			zendSDKroot = zendSDKJarFile.getParentFile();
 			templates = new File(zendSDKroot, TEMPLATES_DIR);
 		}
-		
+
 		return templates.exists() ? templates : null;
 	}
-	
+
 	private URL getTemplateResource(String resourceName) {
 		File root = getTemplatesRoot();
 		if (root == null) {
 			return null;
 		}
-		
+
 		File resource = new File(root, resourceName);
-		//System.out.println(resource);
+		// System.out.println(resource);
 		try {
 			return resource.toURI().toURL();
 		} catch (MalformedURLException e) {
@@ -164,16 +177,16 @@ public class TemplateWriter {
 		if (files == null) {
 			return;
 		}
-		
+
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				String relativePath = getRelativePath(files[i], root);
 				out.add(relativePath);
 			} else if (files[i].isDirectory()) {
-				//String fileName = files[i].getName();
-				//if (! fileName.startsWith(".")) { // ignore hidden files
-					recursiveFindFiles(files[i], root, out);
-				//}
+				// String fileName = files[i].getName();
+				// if (! fileName.startsWith(".")) { // ignore hidden files
+				recursiveFindFiles(files[i], root, out);
+				// }
 			}
 		}
 	}
@@ -181,11 +194,11 @@ public class TemplateWriter {
 	private String getRelativePath(File file, File root) {
 		String filePath = file.getAbsolutePath();
 		String rootPath = root.getAbsolutePath();
-		
+
 		if (filePath.startsWith(rootPath)) {
 			return filePath.substring(rootPath.length() + 1);
 		}
-		
+
 		return filePath;
 	}
 
@@ -194,11 +207,11 @@ public class TemplateWriter {
 		if (root == null) {
 			return null;
 		}
-		
+
 		List<String> files = new ArrayList<String>();
-		
+
 		recursiveFindFiles(root, root, files);
-		
+
 		return files.toArray(new String[files.size()]);
 	}
 
