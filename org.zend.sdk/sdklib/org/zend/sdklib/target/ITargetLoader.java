@@ -33,6 +33,14 @@ public interface ITargetLoader {
 	public IZendTarget remove(IZendTarget target);
 
 	/**
+	 * Update an existing target
+	 * 
+	 * @param target
+	 * @return
+	 */
+	public IZendTarget update(IZendTarget target);
+
+	/**
 	 * Load all target environments into the system
 	 * 
 	 * @return ITarget[] targets
