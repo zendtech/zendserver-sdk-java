@@ -3,7 +3,6 @@ package org.zend.sdk.test.sdkcli.commands;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -19,15 +18,14 @@ import org.zend.webapi.core.WebApiException;
 public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 
 	private String[] validCommand = new String[] { "update", "target", "-t",
-			"1", "-k", "newKey", "-s", "000000", "-h", "http://newHost" };
+			"dev4", "-k", "newKey", "-s", "000000", "-h", "http://newHost" };
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		UpdateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
-		doReturn(getTarget()).when(manager).createTarget(anyString(),
-				anyString(), anyString(), anyString());
+		manager.add(getTarget());
 		assertTrue(command.execute(cmdLine));
 	}
 
@@ -36,8 +34,6 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		UpdateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
-		doReturn(null).when(manager).createTarget(anyString(), anyString(),
-				anyString(), anyString());
 		assertFalse(command.execute(cmdLine));
 	}
 
@@ -45,9 +41,10 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
 			MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"target", "-t", "1", "-host", "a111:/\test1test" });
+				"target", "-t", "dev4", "-h", "a111:/\test1test" });
 		UpdateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
+		manager.add(getTarget());
 		assertFalse(command.execute(cmdLine));
 	}
 

@@ -111,7 +111,39 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		if (!delete2) {
 			throw new IllegalArgumentException("error deleting data");
 		}
-	
+
+		return target;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.target.ITargetLoader#update(org.zend.sdklib.target.
+	 * IZendTarget)
+	 */
+	@Override
+	public IZendTarget update(IZendTarget target) {
+		if (target == null) {
+			throw new IllegalArgumentException("target is null");
+		}
+
+		TargetDescriptor descriptor = loadTargetDescriptor(target.getId());
+		if (descriptor == null) {
+			throw new IllegalArgumentException("target does not exists");
+		}
+
+		File confFile = new File(descriptor.path, CONF_FILENAME);
+		if (confFile.exists()) {
+			confFile.delete();
+		}
+		try {
+			FileOutputStream fos = new FileOutputStream(confFile);
+			target.store(fos);
+			fos.close();
+		} catch (IOException e1) {
+			return null;
+		}
+
 		return target;
 	}
 

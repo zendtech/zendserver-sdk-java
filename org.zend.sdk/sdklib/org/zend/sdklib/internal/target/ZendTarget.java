@@ -120,6 +120,33 @@ public class ZendTarget implements IZendTarget {
 		return secretKey;
 	}
 
+	/**
+	 * Set target host
+	 * 
+	 * @param host
+	 */
+	public void setHost(URL host) {
+		this.host = host;
+	}
+
+	/**
+	 * Set target key
+	 * 
+	 * @param key
+	 */
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	/**
+	 * Set target secret key
+	 * 
+	 * @param secretKey
+	 */
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
