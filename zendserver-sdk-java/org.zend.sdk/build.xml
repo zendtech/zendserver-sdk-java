@@ -180,7 +180,8 @@
 		<mkdir dir="${sdk.output.dir}" />
 		<property name="prefix" value="zend-sdk-${sdk.version}"></property>
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}.zip" basedir="." >
-		    <zipfileset dir="sdkcli" 	prefix="${prefix}/sdkcli/"/>
+			<exclude name="*/**"/>
+			<zipfileset dir="sdkcli" 	prefix="${prefix}/sdkcli/"/>
 		    <zipfileset dir="sdklib" 	prefix="${prefix}/sdklib/"/>
 		    <zipfileset dir="test" 		prefix="${prefix}/test"/>
 		    <zipfileset dir="lib" 		prefix="${prefix}/lib"/>
@@ -191,7 +192,8 @@
 		</zip>
 		
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
-		    <zipfileset dir="lib" 			prefix="${prefix}/lib"/>
+			<exclude name="*/**"/>
+			<zipfileset dir="lib" 			prefix="${prefix}/lib"/>
 		    <zipfileset dir="templates" 	prefix="${prefix}/templates/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 		</zip>
