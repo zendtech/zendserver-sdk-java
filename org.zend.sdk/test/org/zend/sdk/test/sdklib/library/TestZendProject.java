@@ -19,17 +19,22 @@ public class TestZendProject extends AbstractTest {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject("name", true, dirName);
 		assertTrue(project.create());
-		
-		assertTrue(new File(dirName+"/deployment.xml").exists());
-		assertTrue(new File(dirName+"/public/index.html").exists());
-		assertTrue(new File(dirName+"/scripts/post_activate.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_deactivate.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_stage.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_unstage.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_activate.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_deactivate.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_stage.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_unstage.php").exists());
+
+		assertTrue(new File(dirName + "/name/deployment.xml").exists());
+		assertTrue(new File(dirName + "/name/public/index.html").exists());
+		assertTrue(new File(dirName + "/name/scripts/post_activate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/post_deactivate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/post_stage.php").exists());
+		assertTrue(new File(dirName + "/name/scripts/post_unstage.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_activate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_deactivate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_stage.php").exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_unstage.php").exists());
 	}
 
 	@Test
@@ -37,17 +42,22 @@ public class TestZendProject extends AbstractTest {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject("name", true, dirName);
 		assertTrue(project.create());
-		
-		assertTrue(new File(dirName+"/deployment.xml").exists());
-		assertTrue(new File(dirName+"/public/index.html").exists());
-		assertTrue(new File(dirName+"/scripts/post_activate.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_deactivate.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_stage.php").exists());
-		assertTrue(new File(dirName+"/scripts/post_unstage.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_activate.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_deactivate.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_stage.php").exists());
-		assertTrue(new File(dirName+"/scripts/pre_unstage.php").exists());
+
+		assertTrue(new File(dirName + "/name/deployment.xml").exists());
+		assertTrue(new File(dirName + "/name/public/index.html").exists());
+		assertTrue(new File(dirName + "/name/scripts/post_activate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/post_deactivate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/post_stage.php").exists());
+		assertTrue(new File(dirName + "/name/scripts/post_unstage.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_activate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_deactivate.php")
+				.exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_stage.php").exists());
+		assertTrue(new File(dirName + "/name/scripts/pre_unstage.php").exists());
 	}
 
 	@Test
@@ -55,38 +65,43 @@ public class TestZendProject extends AbstractTest {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject("name", false, dirName);
 		assertTrue(project.create());
-		
-		assertTrue(new File(dirName+"/deployment.xml").exists());
-		assertTrue(new File(dirName+"/public/index.html").exists());
-		assertFalse(new File(dirName+"/scripts/post_activate.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_deactivate.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_stage.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_unstage.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_activate.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_deactivate.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_stage.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_unstage.php").exists());
-	}
 
+		assertTrue(new File(dirName + "/name/deployment.xml").exists());
+		assertTrue(new File(dirName + "/name/public/index.html").exists());
+		assertFalse(new File(dirName + "/name/scripts/post_activate.php")
+				.exists());
+		assertFalse(new File(dirName + "/name/scripts/post_deactivate.php")
+				.exists());
+		assertFalse(new File(dirName + "/name/scripts/post_stage.php").exists());
+		assertFalse(new File(dirName + "/name/scripts/post_unstage.php")
+				.exists());
+		assertFalse(new File(dirName + "/name/scripts/pre_activate.php")
+				.exists());
+		assertFalse(new File(dirName + "/name/scripts/pre_deactivate.php")
+				.exists());
+		assertFalse(new File(dirName + "/name/scripts/pre_stage.php").exists());
+		assertFalse(new File(dirName + "/name/scripts/pre_unstage.php")
+				.exists());
+	}
 
 	@Test
 	public void testZendProjectUpdate1() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject("name", false, dirName);
 		assertTrue(project.update());
-		
-		assertTrue(new File(dirName+"/deployment.xml").exists());
-		assertFalse(new File(dirName+"/public").exists());
-		assertFalse(new File(dirName+"/public/index.html").exists());
-		assertFalse(new File(dirName+"/scripts").exists());
-		assertFalse(new File(dirName+"/scripts/post_activate.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_deactivate.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_stage.php").exists());
-		assertFalse(new File(dirName+"/scripts/post_unstage.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_activate.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_deactivate.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_stage.php").exists());
-		assertFalse(new File(dirName+"/scripts/pre_unstage.php").exists());
+
+		assertTrue(new File(dirName + "/deployment.xml").exists());
+		assertFalse(new File(dirName + "/public").exists());
+		assertFalse(new File(dirName + "/public/index.html").exists());
+		assertFalse(new File(dirName + "/scripts").exists());
+		assertFalse(new File(dirName + "/scripts/post_activate.php").exists());
+		assertFalse(new File(dirName + "/scripts/post_deactivate.php").exists());
+		assertFalse(new File(dirName + "/scripts/post_stage.php").exists());
+		assertFalse(new File(dirName + "/scripts/post_unstage.php").exists());
+		assertFalse(new File(dirName + "/scripts/pre_activate.php").exists());
+		assertFalse(new File(dirName + "/scripts/pre_deactivate.php").exists());
+		assertFalse(new File(dirName + "/scripts/pre_stage.php").exists());
+		assertFalse(new File(dirName + "/scripts/pre_unstage.php").exists());
 	}
-	
+
 }
