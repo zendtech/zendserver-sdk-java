@@ -87,7 +87,7 @@ public class ZendApplication extends AbstractLibrary {
 			Boolean createVhost, Boolean defaultServer) {
 		File file = new File(path);
 		if (!file.exists()) {
-			log.error("Path does not exist: "+file);
+			log.error("Path does not exist: " + file);
 			return null;
 		}
 		File zendPackage = null;
@@ -177,7 +177,7 @@ public class ZendApplication extends AbstractLibrary {
 			String propertiesFile, Boolean ignoreFailures) {
 		File file = new File(path);
 		if (!file.exists()) {
-			log.error("Path does not exist: "+file);
+			log.error("Path does not exist: " + file);
 			return null;
 		}
 		File zendPackage = null;
@@ -231,8 +231,11 @@ public class ZendApplication extends AbstractLibrary {
 		}
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
-		return new WebApiClient(credentials, target.getHost().toString()
-				+ ":10081");
+		String hostname = target.getHost().toString();
+		if (target.getHost().getPort() == -1) {
+			hostname += ":10081";
+		}
+		return new WebApiClient(credentials, hostname);
 	}
 
 	private Map<String, String> getUserParameters(File propsFile) {
