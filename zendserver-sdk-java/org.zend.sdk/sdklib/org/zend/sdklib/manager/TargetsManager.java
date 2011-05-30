@@ -61,8 +61,6 @@ public class TargetsManager extends AbstractLibrary {
 	public synchronized IZendTarget add(IZendTarget target)
 			throws WebApiException {
 		if (!validTarget(target)) {
-			log.error(new IllegalArgumentException(
-					"Conflict found when adding " + target.getId()));
 			return null;
 		}
 
@@ -218,16 +216,15 @@ public class TargetsManager extends AbstractLibrary {
 			IZendTarget target = add(new ZendTarget(targetId, new URL(host),
 					key, secretKey));
 			if (target == null) {
-				log.error("Error adding Zend Target " + targetId);
 				return null;
 			}
 			return target;
 		} catch (MalformedURLException e) {
 			log.error("Error adding Zend Target " + targetId);
-			log.error("\tpossible error " + e.getMessage());
+			log.error("\tPossible error: " + e.getMessage());
 		} catch (WebApiException e) {
 			log.error("Error adding Zend Target " + targetId);
-			log.error("\tpossible error " + e.getMessage());
+			log.error("\tPossible error: " + e.getMessage());
 		}
 		return null;
 	}
@@ -264,14 +261,18 @@ public class TargetsManager extends AbstractLibrary {
 	 */
 	private boolean validTarget(IZendTarget target) {
 		if (target == null) {
-			throw new IllegalArgumentException("target cannot be null");
-		}
-
-		if (target.getId() == null) {
+			log.error(new IllegalArgumentException("Target cannot be null."));
 			return false;
 		}
-
-		return null == getTargetById(target.getId());
+		if (target.getId() == null) {
+			log.error(new IllegalArgumentException(
+					"Target is not valid. Target id cannot be null."));
+			return false;
+		}
+		if (getTargetById(target.getId()) != null) {
+			log.error("Target with id '" + target.getId() + "' already exists.");
+			return false;
+		}
+		return true;
 	}
-
 }

@@ -103,10 +103,10 @@ public class TestTargetsManager extends AbstractTest {
 		assertTrue(manager.getTargets().length == 1);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNullTarget() throws WebApiException {
 		TargetsManager manager = new TargetsManager(loader);
-		manager.add(null);
+		assertNull(manager.add(null));
 	}
 
 	@Test
