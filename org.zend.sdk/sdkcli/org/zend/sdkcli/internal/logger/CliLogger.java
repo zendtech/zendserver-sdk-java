@@ -24,7 +24,7 @@ import org.zend.sdklib.logger.ILogger;
 public class CliLogger implements ILogger {
 
 	private Logger logger;
-	private boolean silent;
+	private boolean verbose;
 
 	public CliLogger() {
 		PropertyConfigurator.configure(getLogProperties());
@@ -49,42 +49,46 @@ public class CliLogger implements ILogger {
 	}
 
 	@Override
-	public ILogger getLogger(String creatorName, boolean silent) {
-		this.silent = silent;
+	public ILogger getLogger(String creatorName, boolean verbose) {
+		this.verbose = verbose;
 		return new CliLogger(creatorName);
 	}
 
 	@Override
-	public void debug(Object message) {
-		sysout(message);
-		logger.debug(message);
-	}
-
-	@Override
 	public void info(Object message) {
-		sysout(message);
+		printMessage(message);
 		logger.info(message);
 	}
 
 	@Override
 	public void error(Object message) {
-		sysout(message);
+		printMessage(message);
 		logger.error(message);
+	}
+	
+	@Override
+	public void debug(Object message) {
+		printVerbose(message);
+		logger.debug(message);
 	}
 
 	@Override
 	public void warning(Object message) {
-		sysout(message);
+		printVerbose(message);
 		logger.warn(message);
 	}
 
-	private void sysout(Object message) {
-		if (!silent) {
-			if (message instanceof String) {
-				System.out.println(message);
-			} else if (message instanceof Exception) {
-				((Exception) message).printStackTrace(System.out);
-			}
+	private void printVerbose(Object message) {
+		if (verbose) {
+			printMessage(message);
+		}
+	}
+
+	private void printMessage(Object message) {
+		if (message instanceof String) {
+			System.out.println(message);
+		} else if (message instanceof Exception) {
+			((Exception) message).printStackTrace(System.out);
 		}
 	}
 }
