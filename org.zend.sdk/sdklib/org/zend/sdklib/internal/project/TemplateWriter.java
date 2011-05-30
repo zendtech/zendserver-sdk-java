@@ -34,8 +34,8 @@ public class TemplateWriter {
 	 *            - destination directory
 	 * @throws IOException
 	 */
-	public void writeTemplate(String name, boolean withContent, boolean withScripts,
-			File destination) throws IOException {
+	public void writeTemplate(String name, boolean withContent,
+			boolean withScripts, File destination) throws IOException {
 		File descrFile = new File(destination, DESCRIPTOR);
 		if (!descrFile.getParentFile().exists()) {
 			descrFile.getParentFile().mkdirs();
@@ -44,9 +44,6 @@ public class TemplateWriter {
 		if (!descrFile.exists()) {
 			writeDescriptor(name, withScripts, new FileWriter(descrFile));
 		}
-
-		File deploymentProps = new File(destination, DEPLOYMENT_PROPERTIES);
-		deploymentProps.createNewFile();
 
 		String[] resources = getTemplateResources();
 		if (resources == null) {
@@ -64,7 +61,8 @@ public class TemplateWriter {
 		return path.startsWith(SCRIPTS_DIR);
 	}
 
-	private void writeDescriptor(String name, boolean withScripts, Writer out) throws IOException {
+	private void writeDescriptor(String name, boolean withScripts, Writer out)
+			throws IOException {
 		if (name == null) {
 			throw new IllegalArgumentException(
 					"Failed to create deployment descriptor. Project name is missing");
@@ -84,14 +82,16 @@ public class TemplateWriter {
 		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
 			if (c == '&' || c == '<' || c == '>') {
-				return "<![CDATA[" + name.replaceAll("]]>", "]]>]]><![CDATA[") + "]]>";
+				return "<![CDATA[" + name.replaceAll("]]>", "]]>]]><![CDATA[")
+						+ "]]>";
 			}
 		}
 
 		return name;
 	}
 
-	private void writeStaticResource(String resourceName, File destination) throws IOException {
+	private void writeStaticResource(String resourceName, File destination)
+			throws IOException {
 		URL url = getTemplateResource(resourceName);
 
 		File destFile = new File(destination, resourceName);
@@ -131,8 +131,8 @@ public class TemplateWriter {
 
 	private File getTemplatesRoot() {
 		// <somewhere>/org.zend.sdk/lib/zend_sdk.jar
-		File zendSDKJarFile = new File(getClass().getProtectionDomain().getCodeSource()
-				.getLocation().getPath());
+		File zendSDKJarFile = new File(getClass().getProtectionDomain()
+				.getCodeSource().getLocation().getPath());
 
 		// <somewhere>/org.zend.sdk
 		File zendSDKroot = zendSDKJarFile.getParentFile().getParentFile();
