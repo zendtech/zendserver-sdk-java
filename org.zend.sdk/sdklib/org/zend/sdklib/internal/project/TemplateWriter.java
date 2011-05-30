@@ -72,19 +72,10 @@ public class TemplateWriter {
 		out.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		out.append("<package version=\"1.4.11\" xmlns=\"http://www.zend.com/server/deployment-descriptor/1.0\" xmlns:xsi=\">http://www.w3.org/2001/XMLSchema-instance\">\n");
 		out.append(" <name>").append(xmlEscape(name)).append("</name>\n");
-		out.append(" <summary>short description</summary>\n");
-		out.append(" <description>long description</description>\n");
+		out.append(" <appdir></appdir>\n");
 		out.append(" <version>\n");
 		out.append("   <release>1.0.0.0</release>\n");
 		out.append(" </version>\n");
-		out.append(" <icon></icon>\n");
-		out.append(" <eula></eula>\n");
-		out.append(" <docroot></docroot>\n");
-		if (withScripts) {
-			out.append(" <scriptsdir>scripts</scriptsdir>\n");
-		}
-		out.append(" <dependencies></dependencies>\n");
-		out.append(" <parameters></parameters>\n");
 		out.append("</package>\n");
 		out.close();
 	}
