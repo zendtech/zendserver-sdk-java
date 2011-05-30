@@ -8,6 +8,7 @@
 package org.zend.sdk.test.sdkcli.commands;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +42,21 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length != 0);
+		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
+				"-status" }, Log.getInstance().getLogger("AbstractTest"));
+		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
+				.createCommand(cmdLine));
+		when(command.getTargetManager()).thenReturn(manager);
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testTargetAvailableDisconnected() throws ParseError,
+			MalformedURLException, WebApiException {
+		IZendTarget target = getTarget();
+		manager.add(target);
+		assertTrue(manager.getTargets().length != 0);
+		doReturn(false).when(target).connect();
 		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
 				"-status" }, Log.getInstance().getLogger("AbstractTest"));
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory

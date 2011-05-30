@@ -48,6 +48,40 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 		assertFalse(command.execute(cmdLine));
 	}
 
+	@Test
+	public void testExecuteNoChanges() throws ParseError, WebApiException,
+			MalformedURLException {
+		CommandLine cmdLine = new CommandLine(new String[] { "update",
+				"target", "-t", "dev4" });
+		UpdateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		manager.add(getTarget());
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteProperties() throws ParseError, WebApiException,
+			MalformedURLException {
+		CommandLine cmdLine = new CommandLine(new String[] { "update",
+				"target", "-t", "dev4", "-p",
+				this.getClass().getResource("target.properties").getPath() });
+		UpdateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		manager.add(getTarget());
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteInvalidPropertiesFile() throws ParseError,
+			WebApiException, MalformedURLException {
+		CommandLine cmdLine = new CommandLine(new String[] { "update",
+				"target", "-t", "dev4", "-p", "nofilename" });
+		UpdateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		manager.add(getTarget());
+		assertTrue(command.execute(cmdLine));
+	}
+
 	private UpdateTargetCommand getCommand(CommandLine cmdLine)
 			throws ParseError {
 		UpdateTargetCommand command = spy((UpdateTargetCommand) CommandFactory
