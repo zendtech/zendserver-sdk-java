@@ -33,7 +33,8 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 		TargetsManager tm = getTargetManager();
 		IZendTarget target = tm.getTargetById(targetId);
 		if (target == null) {
-			getLogger().error("Target '" + targetId + "' doesn't exist.");
+			getLogger().error(
+					"Target with id '" + targetId + "' does not exist.");
 			return false;
 		}
 
