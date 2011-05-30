@@ -50,14 +50,19 @@ public class Log {
 	public ILogger getLogger(String creatorName) {
 		return getLogger(creatorName, false);
 	}
-
-	public ILogger getLogger(String creatorName, boolean silent) {
+	
+	/**
+	 * @param creatorName
+	 * @param verbose
+	 * @return
+	 */
+	public ILogger getLogger(String creatorName, boolean verbose) {
 		if (logger == null) {
 			throw new IllegalStateException(
 					"Logger has not been registered yet, register one by"
 					+ " \"Log.getInstance().registerLogger(new CliLogger());\"");
 		}
-		return logger.getLogger(creatorName, silent);
+		return logger.getLogger(creatorName, verbose);
 	}
 
 }

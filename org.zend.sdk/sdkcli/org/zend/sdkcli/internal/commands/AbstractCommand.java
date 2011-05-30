@@ -24,7 +24,7 @@ import org.zend.sdklib.logger.Log;
  */
 public abstract class AbstractCommand implements ICommand {
 
-	private static final String SILENT = "z";
+	private static final String VERBOSE = "v";
 	
 	protected CommandLine commandLine;
 	protected Options options;
@@ -39,9 +39,9 @@ public abstract class AbstractCommand implements ICommand {
 		setupOptions();
 	}
 
-	@Option(opt = SILENT, required = false, description = "Silent mode: only errors are printed out.")
-	public boolean isSilent() {
-		return hasOption(SILENT);
+	@Option(opt = VERBOSE, required = false, description = "Verbose mode: errors, warnings and informational messages are printed.")
+	public boolean isVerbose() {
+		return hasOption(VERBOSE);
 	}
 	
 	/* (non-Javadoc)
@@ -83,7 +83,7 @@ public abstract class AbstractCommand implements ICommand {
 	 * @return the available logger for command line
 	 */
 	public ILogger getLogger() {
-		return Log.getInstance().getLogger(this.getClass().getName(), isSilent());
+		return Log.getInstance().getLogger(this.getClass().getName(), isVerbose());
 	}
 
 	public Options getOptions() {
