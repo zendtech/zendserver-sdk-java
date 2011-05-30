@@ -41,7 +41,7 @@ public class AbstractTargetCommandTest extends AbstractTest {
 	protected IZendTarget getTarget() throws WebApiException {
 		IZendTarget target = null;
 		try {
-			target = spy(new ZendTarget("dev4", new URL("http://test1test"),
+			target = spy(new ZendTarget("dev4", new URL("http://localhost"),
 					"mykey", "123456"));
 			doReturn(true).when(target).connect();
 		} catch (MalformedURLException e) {
