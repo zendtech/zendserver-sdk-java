@@ -46,7 +46,7 @@ public class TestCreateProjectCommand extends AbstractTest {
 	public static String getTempFileName() throws IOException {
 		File temp = File.createTempFile("temp", "tst");
 		temp.delete();
-				
+		temp.mkdir();
 		return temp.getAbsolutePath();
 	}
 }
