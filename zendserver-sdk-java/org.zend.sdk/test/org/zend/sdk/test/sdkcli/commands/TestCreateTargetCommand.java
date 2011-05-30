@@ -32,6 +32,17 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
+	public void testExecuteNoId() throws ParseError, WebApiException {
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+				"target", "-k", "mykey", "-s", "123456", "-h",
+				"http://test1test" });
+		CreateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
 	public void testExecuteAddFail() throws ParseError, WebApiException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		CreateTargetCommand command = getCommand(cmdLine);
@@ -51,7 +62,32 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 		assertFalse(command.execute(cmdLine));
 	}
 
-	private CreateTargetCommand getCommand(CommandLine cmdLine) throws ParseError {
+	@Test
+	public void testExecuteProperties() throws ParseError, WebApiException,
+			MalformedURLException {
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+				"target", "-t", "1", "-h", "http://test1test", "-p",
+				this.getClass().getResource("target.properties").getPath() });
+		CreateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteInvalidPropertiesFile() throws ParseError,
+			WebApiException, MalformedURLException {
+		CommandLine cmdLine = new CommandLine(new String[] { "create",
+				"target", "-t", "1", "-h", "http://test1test", "-p",
+				"nofilename" });
+		CreateTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
+		assertFalse(command.execute(cmdLine));
+	}
+
+	private CreateTargetCommand getCommand(CommandLine cmdLine)
+			throws ParseError {
 		CreateTargetCommand command = spy((CreateTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();

@@ -24,7 +24,8 @@ public class TestDeleteTargetCommand extends AbstractTargetCommandTest {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		DeleteTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
-		doReturn(getTarget()).when(manager).remove((IZendTarget) Mockito.anyObject());
+		doReturn(getTarget()).when(manager).remove(
+				(IZendTarget) Mockito.anyObject());
 		assertTrue(command.execute(cmdLine));
 	}
 
@@ -32,11 +33,22 @@ public class TestDeleteTargetCommand extends AbstractTargetCommandTest {
 	public void testExecuteAddFail() throws ParseError, WebApiException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		DeleteTargetCommand command = getCommand(cmdLine);
-		doReturn(getTarget()).when(manager).remove((IZendTarget) Mockito.anyObject());
+		doReturn(getTarget()).when(manager).remove(
+				(IZendTarget) Mockito.anyObject());
 		assertFalse(command.execute(cmdLine));
 	}
 
-	private DeleteTargetCommand getCommand(CommandLine cmdLine) throws ParseError {
+	@Test
+	public void testExecuteFail() throws ParseError, WebApiException {
+		CommandLine cmdLine = new CommandLine(validCommand);
+		DeleteTargetCommand command = getCommand(cmdLine);
+		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
+		doReturn(null).when(manager).remove((IZendTarget) Mockito.anyObject());
+		assertFalse(command.execute(cmdLine));
+	}
+
+	private DeleteTargetCommand getCommand(CommandLine cmdLine)
+			throws ParseError {
 		DeleteTargetCommand command = spy((DeleteTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();
