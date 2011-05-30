@@ -34,7 +34,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 			commandLine.getLog().info("\tHost: " + target.getHost());
 			commandLine.getLog().info("\tKey: " + target.getKey());
 
-			if (hasOption(STATUS)) {
+			if (isStatus()) {
 				boolean connect = false;
 				try {
 					connect = target.connect();

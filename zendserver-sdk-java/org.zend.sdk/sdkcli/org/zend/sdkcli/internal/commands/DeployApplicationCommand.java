@@ -69,12 +69,9 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 
 	@Override
 	public boolean doExecute() {
-
-		ApplicationInfo info = getApplication().deploy(getValue(PATH),
-				getValue(BASE_URL), getValue(TARGET), getValue(PARAMS),
-				getValue(NAME), isIgnoreFailures(), isCreateVhost(),
-				isDefaultServer());
-
+		ApplicationInfo info = getApplication().deploy(getPath(), getBaseUrl(),
+				getTargetId(), getParams(), getName(), isIgnoreFailures(),
+				isCreateVhost(), isDefaultServer());
 		if (info == null) {
 			return false;
 		}
