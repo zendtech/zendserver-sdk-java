@@ -81,6 +81,7 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 		if (getHost() == null && getKey() == null && getSecretKey() == null) {
 			getLogger()
 					.info("To update a target at least one of the following options is required: h, k, s, p.");
+			return true;
 		}
 		IZendTarget result = getTargetManager().updateTarget(getId(),
 				getHost(), getKey(), getSecretKey());
