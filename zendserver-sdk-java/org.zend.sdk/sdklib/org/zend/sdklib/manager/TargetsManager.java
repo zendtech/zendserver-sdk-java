@@ -249,9 +249,16 @@ public class TargetsManager extends AbstractLibrary {
 			if (secretKey != null) {
 				target.setSecretKey(secretKey);
 			}
+			if (!target.connect()) {
+				return null;
+			}
 			return loader.update(target);
 		} catch (MalformedURLException e) {
 			log.error(e);
+		} catch (WebApiException e) {
+			log.error("Error during updating Zend Target with id '" + targetId
+					+ "'");
+			log.error("\tPossible error: " + e.getMessage());
 		}
 		return null;
 	}
