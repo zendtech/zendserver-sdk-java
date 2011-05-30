@@ -156,6 +156,8 @@ public class TargetsManager extends AbstractLibrary {
 		key = key != null ? key : DEFAULT_KEY;
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
+				log.info("Localhost target is already detected with id '"
+						+ t.getId() + "'.");
 				return t;
 			}
 		}
