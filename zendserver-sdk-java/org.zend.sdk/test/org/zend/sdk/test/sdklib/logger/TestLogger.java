@@ -43,7 +43,7 @@ public class TestLogger {
 		}
 
 		@Override
-		public ILogger getLogger(String creatorName, boolean silent) {
+		public ILogger getLogger(String creatorName, boolean verbose) {
 			return this;
 		}
 	}
