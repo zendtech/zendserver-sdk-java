@@ -76,7 +76,7 @@ public class ZendTarget implements IZendTarget {
 				return false;
 			}
 		}
-		
+
 		// host validation - port should not be specified
 		if (this.host.getPort() != -1) {
 			return false;
@@ -210,8 +210,11 @@ public class ZendTarget implements IZendTarget {
 		WebApiCredentials credentials = new BasicCredentials(getKey(),
 				getSecretKey());
 		try {
-			WebApiClient client = new WebApiClient(credentials, getHost()
-					.toString() + ":10081");
+			String hostname = getHost().toString();
+			if (getHost().getPort() == -1) {
+				hostname += ":10081";
+			}
+			WebApiClient client = new WebApiClient(credentials, hostname);
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
 			addProperty("operatingSystem", info.getEdition().name());
