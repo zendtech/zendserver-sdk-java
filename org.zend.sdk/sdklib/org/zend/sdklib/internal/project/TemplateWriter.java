@@ -36,9 +36,6 @@ public class TemplateWriter {
 	public void writeTemplate(String name, boolean withContent,
 			boolean withScripts, File destination) throws IOException {
 		File descrFile = new File(destination, DESCRIPTOR);
-		if (!descrFile.getParentFile().exists()) {
-			descrFile.getParentFile().mkdirs();
-		}
 
 		if (!descrFile.exists()) {
 			writeDescriptor(name, withScripts, new FileWriter(descrFile));
