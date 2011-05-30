@@ -11,44 +11,8 @@ import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.ZendProject;
 
 /**
- * Concrete implementation of {@link AbstractCommand}. It represents
- * create-project command. In the result of calling it new PHP project is
- * created in defined location.
- * 
- * Command Parameters:
- * <table border="1">
- * <tr>
- * <th>Parameter</th>
- * <th>Required</th>
- * <th>Argument</th>
- * <th>Description</th>
- * </tr>
- * <tr>
- * <td>name</td>
- * <td>true</td>
- * <td>String</td>
- * <td>Project name.</td>
- * </tr>
- * <tr>
- * <td>target</td>
- * <td>false</td>
- * <td>String</td>
- * <td>Target ID.</td>
- * </tr>
- * <tr>
- * <td>index</td>
- * <td>false</td>
- * <td>String</td>
- * <td>Index name.</td>
- * </tr>
- * <tr>
- * <td>path</td>
- * <td>false</td>
- * <td>String</td>
- * <td>Path to the location where project should be created. If it is not
- * specified, project will be created in the current location.</td>
- * </tr>
- * </table>
+ * Represents create-project command. In the result of calling it new PHP
+ * project is created in defined location or a current location.
  * 
  * @author Wojciech Galanciak, 2011
  * 
@@ -62,7 +26,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project name
 	 */
-	@Option(opt = NAME, required = true, description = "The project name", argName="name")
+	@Option(opt = NAME, required = true, description = "The project name", argName = "name")
 	public String getName() {
 		return getValue(NAME);
 	}
@@ -70,7 +34,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project destination
 	 */
-	@Option(opt = DESTINATION, required = false, description = "The project destination", argName="path")
+	@Option(opt = DESTINATION, required = false, description = "The project destination", argName = "path")
 	public String getDestionation() {
 		return getValue(DESTINATION);
 	}

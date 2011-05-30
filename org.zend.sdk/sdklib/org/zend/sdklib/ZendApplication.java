@@ -50,9 +50,11 @@ public class ZendApplication extends AbstractLibrary {
 	 * 
 	 * @param targetId
 	 * @param applicationIds
+	 *            - array of application id(s) for which status should be
+	 *            checked
 	 * @return instance of {@link ApplicationsList} or <code>null</code> if
 	 *         there where problems with connections or target with specified id
-	 *         does not exist.
+	 *         does not exist
 	 */
 	public ApplicationsList getStatus(String targetId, String... applicationIds) {
 		try {
@@ -63,24 +65,41 @@ public class ZendApplication extends AbstractLibrary {
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (WebApiException e) {
-			log.error("Cannot connect to target '" + targetId + "'.");
-			log.error("\tpossible error " + e.getMessage());
+			log.error("Error duirng getting application status from '"
+					+ targetId + "'.");
+			log.error("\tpossible error: " + e.getMessage());
 		}
 		return null;
 	}
 
 	/**
-	 * TODO add full description
+	 * Deploys a new application to the specified target.
 	 * 
 	 * @param path
+	 *            - path to project location or application package
 	 * @param baseUrl
+	 *            - base URL to deploy the application to. Must be an HTTP URL.
 	 * @param targetId
+	 *            - target id
 	 * @param propertiesFile
+	 *            - path to properties file which consists user deployment
+	 *            parameters
+	 * 
 	 * @param appName
+	 *            - application name
 	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
 	 * @param createVhost
+	 *            - create a virtual host based on the base URL if such a
+	 *            virtual host wasn't already created by Zend Server.
 	 * @param defaultServer
-	 * @return
+	 *            - deploy the application on the default server; the base URL
+	 *            host provided will be ignored and replaced with
+	 *            <default-server>.
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
 	 */
 	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
 			String propertiesFile, String appName, Boolean ignoreFailures,
@@ -119,8 +138,9 @@ public class ZendApplication extends AbstractLibrary {
 			} catch (MalformedURLException e) {
 				log.error(e);
 			} catch (WebApiException e) {
-				log.error("Cannot connect to target '" + targetId + "'.");
-				log.error("\tpossible error " + e.getMessage());
+				log.error("Error during deploying application to '" + targetId
+						+ "':");
+				log.error("\tpossible error: " + e.getMessage());
 			}
 		}
 		if (tempFile != null) {
@@ -128,30 +148,56 @@ public class ZendApplication extends AbstractLibrary {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * TODO add full description
+	 * Redeploys an existing application, whether in order to fix a problem or
+	 * to reset an installation.
 	 * 
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @param servers
+	 *            - array of server id(s) on which application should be
+	 *            redeployed
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no application with specified id in the
+	 *         target
 	 */
-	public ApplicationInfo redeploy(String targetId, String appId, String[] servers, boolean ignoreFailures) {
+	public ApplicationInfo redeploy(String targetId, String appId,
+			String[] servers, boolean ignoreFailures) {
 		try {
 			WebApiClient client = getClient(targetId);
 			int appIdint = Integer.parseInt(appId);
-			return client.applicationRedeploy(appIdint, ignoreFailures, servers);
+			return client
+					.applicationRedeploy(appIdint, ignoreFailures, servers);
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (NumberFormatException e) {
 			log.error(e.getMessage());
 		} catch (WebApiException e) {
-			log.error("Cannot connect to target '" + targetId + "'.");
-			log.error("\tpossible error " + e.getMessage());
+			log.error("Error during redeploying application to '" + targetId
+					+ "':");
+			log.error("\tpossible error: " + e.getMessage());
 		}
 		return null;
 	}
-	
+
 	/**
-	 * TODO add full description
+	 * Removes/undeploys an existing application.
 	 * 
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no application with specified id in the
+	 *         target
 	 */
 	public ApplicationInfo remove(String targetId, String appId) {
 		try {
@@ -163,15 +209,31 @@ public class ZendApplication extends AbstractLibrary {
 		} catch (NumberFormatException e) {
 			log.error(e.getMessage());
 		} catch (WebApiException e) {
-			log.error("Cannot connect to target '" + targetId + "'.");
-			log.error("\tpossible error " + e.getMessage());
+			log.error("Error during removing application from '" + targetId
+					+ "':");
+			log.error("\tpossible error: " + e.getMessage());
 		}
 		return null;
 	}
-	
+
 	/**
-	 * TODO add full description
+	 * Updates/redeploys an existing application.
 	 * 
+	 * @param path
+	 *            - path to project location or application package
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @param propertiesFile
+	 *            - path to properties file which consists user deployment
+	 *            parameters
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
 	 */
 	public ApplicationInfo update(String path, String targetId, String appId,
 			String propertiesFile, Boolean ignoreFailures) {
@@ -188,8 +250,8 @@ public class ZendApplication extends AbstractLibrary {
 			tempFile = new File(tempDir + File.separator
 					+ new Random().nextInt());
 			tempFile.mkdir();
-			// zendPackage = createPackage(String path, String
-			// tmpFile.getAbsolutePath());
+			PackageBuilder builder = new PackageBuilder(path);
+			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;
 		}
@@ -208,8 +270,9 @@ public class ZendApplication extends AbstractLibrary {
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (WebApiException e) {
-			log.error("Cannot connect to target '" + targetId + "'.");
-			log.error("\tpossible error " + e.getMessage());
+			log.error("Error during updating application on '" + targetId
+					+ "':");
+			log.error("\tpossible error: " + e.getMessage());
 		}
 		if (tempFile != null) {
 			tempFile.deleteOnExit();
@@ -219,6 +282,7 @@ public class ZendApplication extends AbstractLibrary {
 
 	/**
 	 * @param targetId
+	 *            - target id
 	 * @return instance of a WebAPI client for specified target id. If target
 	 *         does not exist, it returns <code>null</code>
 	 * @throws MalformedURLException
