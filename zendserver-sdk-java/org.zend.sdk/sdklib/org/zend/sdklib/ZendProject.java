@@ -38,9 +38,16 @@ public class ZendProject extends AbstractLibrary {
 	 */
 	public boolean create() {
 		TemplateWriter tw = new TemplateWriter();
-		
+		if (!destination.exists()) {
+			log.error("Invalid destination path: provided location does not exist.");
+			return false;
+		}
+		File projectRoot = new File(destination, name);
+		if (!projectRoot.exists()) {
+			projectRoot.mkdir();
+		}
 		try {
-			tw.writeTemplate(name, true, withScripts, destination);
+			tw.writeTemplate(name, true, withScripts, projectRoot);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			return false;
@@ -49,7 +56,6 @@ public class ZendProject extends AbstractLibrary {
 		return true;
 	}
 
-	
 	public boolean update() {
 		TemplateWriter tw = new TemplateWriter();
 		
