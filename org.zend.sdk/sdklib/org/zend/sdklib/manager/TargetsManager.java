@@ -79,10 +79,11 @@ public class TargetsManager extends AbstractLibrary {
 
 	public synchronized IZendTarget remove(IZendTarget target) {
 		if (target == null) {
-			throw new IllegalArgumentException("target cannot be null");
+			throw new IllegalArgumentException("Target cannot be null");
 		}
 		if (!this.all.contains(target)) {
-			throw new IllegalArgumentException("provided target not found");
+			throw new IllegalArgumentException("Target with id '"
+					+ target.getId() + "' does not exist.");
 		}
 
 		this.loader.remove(target);
