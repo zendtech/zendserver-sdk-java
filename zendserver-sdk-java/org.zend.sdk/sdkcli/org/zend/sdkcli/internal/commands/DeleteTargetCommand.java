@@ -43,6 +43,7 @@ public class DeleteTargetCommand extends TargetAwareCommand {
 			return false;
 		}
 
+		getLogger().info("Target removed ('" + targetId + "').");
 		return true;
 	}
 
