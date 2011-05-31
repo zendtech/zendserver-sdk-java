@@ -3,14 +3,15 @@ package org.zend.sdk.test.sdkcli.commands;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
@@ -32,9 +33,23 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 		ListApplicationsCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
-		when(client.applicationGetStatus((String[])anyVararg())).thenReturn(
+		when(client.applicationGetStatus((String[]) anyVararg())).thenReturn(
 				(ApplicationsList) getResponseData("applicationGetStatus",
 						IResponseData.ResponseType.APPLICATIONS_LIST));
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteNoApps() throws ParseError, WebApiException,
+			IOException {
+		CommandLine cmdLine = new CommandLine(validCommand);
+		ListApplicationsCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		ApplicationsList mockList = Mockito.mock(ApplicationsList.class);
+		when(mockList.getApplicationsInfo()).thenReturn(null);
+		doReturn(application).when(command).getApplication();
+		when(client.applicationGetStatus((String[]) anyVararg())).thenReturn(
+				mockList);
 		assertTrue(command.execute(cmdLine));
 	}
 
@@ -50,7 +65,8 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 		assertFalse(command.execute(cmdLine));
 	}
 
-	private ListApplicationsCommand getCommand(CommandLine cmdLine) throws ParseError {
+	private ListApplicationsCommand getCommand(CommandLine cmdLine)
+			throws ParseError {
 		ListApplicationsCommand command = spy((ListApplicationsCommand) CommandFactory
 				.createCommand(cmdLine));
 		return command;
