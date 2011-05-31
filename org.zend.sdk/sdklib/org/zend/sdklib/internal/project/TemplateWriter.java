@@ -64,12 +64,14 @@ public class TemplateWriter {
 					"Failed to create deployment descriptor. Project name is missing");
 		}
 		out.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		out.append("<package version=\"1.4.11\" xmlns=\"http://www.zend.com/server/deployment-descriptor/1.0\" xmlns:xsi=\">http://www.w3.org/2001/XMLSchema-instance\">\n");
+		out.append("<package version=\"2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n");
 		out.append(" <name>").append(xmlEscape(name)).append("</name>\n");
-		out.append(" <appdir></appdir>\n");
 		out.append(" <version>\n");
 		out.append("   <release>1.0.0.0</release>\n");
 		out.append(" </version>\n");
+		out.append(" <appdir>public</appdir>\n");
+		out.append(" <scriptsdir>scripts</scriptsdir>\n");
+		out.append(" <dependencies></dependencies>");
 		out.append("</package>\n");
 		out.close();
 	}

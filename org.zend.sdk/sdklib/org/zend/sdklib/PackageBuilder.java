@@ -38,6 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.project.TemplateWriter;
 
 /**
  * Provides ability to create zpk application package based on
@@ -230,7 +231,7 @@ public class PackageBuilder extends AbstractLibrary {
 
 	private String getPackageName(File container) {
 		String result = null;
-		File descriptorFile = new File(container, "deployment.xml");
+		File descriptorFile = new File(container, TemplateWriter.DESCRIPTOR);
 		if (!descriptorFile.exists()) {
 			log.error(descriptorFile.getAbsoluteFile() + " does not exist.");
 			return null;
