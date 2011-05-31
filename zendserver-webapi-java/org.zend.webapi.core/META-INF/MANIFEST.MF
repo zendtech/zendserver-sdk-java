@@ -48,6 +48,4 @@ Export-Package: org.zend.webapi.core;
    org.zend.webapi.core.connection.data,
    org.zend.webapi.core.connection.request,
    org.zend.webapi.core.connection.data.values"
-Bundle-ClassPath: lib/org.restlet.ext.xml.jar,
- lib/org.restlet.jar,
- .
+Require-Bundle: org.restlet, org.restlet.ext.xml
