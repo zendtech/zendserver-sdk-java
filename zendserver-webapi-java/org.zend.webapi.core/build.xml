@@ -89,7 +89,7 @@
 			<src path="test"/>
 			<classpath refid="org.zend.webapi.core.classpath" />
 		</javac>
-		<jar destfile="lib/zend-webapi.jar" basedir="bin" >
+		<jar destfile="lib/zend-webapi.jar" basedir="bin" manifest="META-INF/MANIFEST.MF" >
 			<exclude name="**/test/*.*/" />
 		</jar>
 		<jar destfile="lib/zend-test-webapi.jar" basedir="bin">
