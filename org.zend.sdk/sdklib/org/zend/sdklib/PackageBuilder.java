@@ -80,12 +80,13 @@ public class PackageBuilder extends AbstractLibrary {
 			log.error(new IllegalArgumentException("Location cannot be null"));
 			return null;
 		}
-		String name = getPackageName(container);
-		if (name == null) {
-			return null;
-		}
-		File result = new File(location, name + EXTENSION);
 		try {
+			container = container.getCanonicalFile();
+			String name = getPackageName(container);
+			if (name == null) {
+				return null;
+			}
+			File result = new File(location, name + EXTENSION);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
 			File mappingFile = new File(container, DEPLOYMENT_PROPERTIES);
