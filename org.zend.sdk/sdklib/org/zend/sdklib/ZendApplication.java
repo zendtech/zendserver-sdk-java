@@ -133,7 +133,7 @@ public class ZendApplication extends AbstractLibrary {
 					}
 				}
 				return client.applicationDeploy(zendPackage, baseUrl,
-						ignoreFailures, userParams, appName, defaultServer,
+						ignoreFailures, userParams, appName, createVhost,
 						defaultServer);
 			} catch (MalformedURLException e) {
 				log.error(e);
