@@ -236,6 +236,34 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 		execute("delete", "target", "-t", targetId);
 	}
 
+	/**
+	 * Steps:
+	 * <ul>
+	 * <li>detect localhost target, id = 'test'</li>
+	 * <li>list targets</li>
+	 * <li>remove 'test' target</li>
+	 * </ul>
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws WebApiException
+	 */
+	@Test
+	public void targetDetectonWorkflow() throws IOException,
+			InterruptedException, WebApiException {
+		String targetId = "test";
+		// detect target
+		execute("detect", "target", "-t", targetId);
+		// list targets
+		assertFalse(execute("list", "targets").length() == 0);
+		TargetsManager manager = new TargetsManager(new UserBasedTargetLoader());
+		IZendTarget[] targets = manager.getTargets();
+		assertTrue(targets.length == 1);
+		assertEquals("sdk", targets[0].getKey());
+		// remove target
+		execute("delete", "target", "-t", targetId);
+	}
+
 	private void removeApplications(String targetId) throws WebApiException,
 			InterruptedException, IOException {
 		ApplicationsList list = getClient(targetId).applicationGetStatus();
