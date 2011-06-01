@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Zend Server Deployment
+Bundle-SymbolicName: org.zend.php.zendserver.deployment.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.zend.php.zendserver.deployment.core.DeploymentCore
+Bundle-Vendor: Zend Technologies Ltd.
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jface.text,
+ org.zend.webapi.core;resolution:=optional,
+ org.zend.sdk;resolution:=optional,
+ org.eclipse.jface
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: org.zend.php.zendserver.deployment.core,
+ org.zend.php.zendserver.deployment.core.descriptor,
+ org.zend.php.zendserver.deployment.core.internal.descriptor,
+ org.zend.php.zendserver.deployment.core.sdk,
+ org.zend.php.zendserver.deployment.core.utils
