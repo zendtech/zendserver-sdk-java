@@ -1,5 +1,6 @@
 package org.zend.sdk.test.workflows;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -11,14 +12,14 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 import org.junit.Test;
+import org.zend.sdklib.internal.target.UserBasedTargetLoader;
+import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class TestBasicWorkflows extends AbstractWorflowTest {
-
-	private String key = "wojtek";
-	private String secret = "7986042121bef4d57120921541ccf03e2c26d6621a55ec8e88a379136ae790a0";
 
 	/**
 	 * Steps:
@@ -55,7 +56,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * <li>deploy 'helloworld' application to 'test'</li>
 	 * <li>list applications on 'test'</li>
 	 * <li>remove 'helloworld' application from 'test'</li>
-	 * <li>remove 'test' target</li>
 	 * </ul>
 	 * 
 	 * @throws IOException
@@ -68,8 +68,8 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 		String projectName = "helloworld";
 		String targetId = "test";
 		// create target
-		execute("create", "target", "-t", targetId, "-h",
-				"http://studio-linux1.zend.net:10081", "-k", key, "-s", secret);
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
 		checkNoAppsDeployed(targetId);
 		// create project
 		execute("create", "project", "-n", projectName);
@@ -85,8 +85,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 				"applications", "-t", targetId)));
 		checkAppsDeployed(targetId);
 		removeApplications(targetId);
-		// remove target
-		execute("remove", "target", "-t", targetId);
 	}
 
 	/**
@@ -96,7 +94,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * <li>create project 'helloworld' in a selected location</li>
 	 * <li>deploy 'helloworld' application to 'test'</li>
 	 * <li>remove 'helloworld' package from 'test'</li>
-	 * <li>remove 'test' target</li>
 	 * </ul>
 	 * 
 	 * @throws IOException
@@ -104,7 +101,7 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * @throws WebApiException
 	 */
 	@Test
-	public void deployWorkflow() throws IOException, InterruptedException,
+	public void deployWorkflow2() throws IOException, InterruptedException,
 			WebApiException {
 		String projectName = "helloworld";
 		String targetId = "test";
@@ -114,8 +111,8 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 			sub.mkdir();
 		}
 		// create target
-		execute("create", "target", "-t", targetId, "-h",
-				"http://studio-linux1.zend.net:10081", "-k", key, "-s", secret);
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
 		checkNoAppsDeployed(targetId);
 		// create project
 		execute("create", "project", "-n", projectName, "-d", "./" + subfolder);
@@ -126,8 +123,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 				"http://myhost/helloworld", "-c");
 		checkAppsDeployed(targetId);
 		removeApplications(targetId);
-		// remove target
-		execute("remove", "target", "-t", targetId);
 	}
 
 	/**
@@ -138,7 +133,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * <li>deploy 'helloworld' application to 'test'</li>
 	 * <li>redeploy 'helloworld' to 'test'</li>
 	 * <li>remove 'helloworld' application from 'test'</li>
-	 * <li>remove 'test' target</li>
 	 * </ul>
 	 * 
 	 * @throws IOException
@@ -151,8 +145,8 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 		String projectName = "helloworld";
 		String targetId = "test";
 		// create target
-		execute("create", "target", "-t", targetId, "-h",
-				"http://studio-linux1.zend.net:10081", "-k", key, "-s", secret);
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
 		checkNoAppsDeployed(targetId);
 		// create project
 		execute("create", "project", "-n", projectName);
@@ -167,8 +161,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 				String.valueOf(id));
 		checkAppsDeployed(targetId);
 		removeApplications(targetId);
-		// remove target
-		execute("remove", "target", "-t", targetId);
 	}
 
 	/**
@@ -179,7 +171,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * <li>deploy 'helloworld' application to 'test'</li>
 	 * <li>update 'helloworld' on 'test'</li>
 	 * <li>remove 'helloworld' application from 'test'</li>
-	 * <li>remove 'test' target</li>
 	 * </ul>
 	 * 
 	 * @throws IOException
@@ -192,8 +183,8 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 		String projectName = "helloworld";
 		String targetId = "test";
 		// create target
-		execute("create", "target", "-t", targetId, "-h",
-				"http://studio-linux1.zend.net:10081", "-k", key, "-s", secret);
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
 		checkNoAppsDeployed(targetId);
 		// create project
 		execute("create", "project", "-n", projectName);
@@ -209,8 +200,6 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 				"./helloworld", "-a", String.valueOf(id));
 		checkAppsDeployed(targetId);
 		removeApplications(targetId);
-		// remove target
-		execute("remove", "target", "-t", targetId);
 	}
 
 	/**
@@ -231,16 +220,20 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 			WebApiException {
 		String targetId = "test";
 		// create target
-		execute("create", "target", "-t", targetId, "-h",
-				"http://studio-linux1.zend.net:10081", "-k", key, "-s", secret);
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
 		checkNoAppsDeployed(targetId);
 		// list targets
 		assertFalse(execute("list", "targets").length() == 0);
 		// update target
-		execute("update", "target", "-t", targetId, "-h",
-				"http://differenthost");
+		execute("update", "target", "-t", targetId, "-k", "sdk", "-s",
+				"e3afe53934138d398a8a6e6b2ff7fb151929d150355e49773d461d207ec9e698");
+		TargetsManager manager = new TargetsManager(new UserBasedTargetLoader());
+		IZendTarget[] targets = manager.getTargets();
+		assertTrue(targets.length == 1);
+		assertEquals("sdk", targets[0].getKey());
 		// remove target
-		execute("remove", "target", "-t", targetId);
+		execute("delete", "target", "-t", targetId);
 	}
 
 	private void removeApplications(String targetId) throws WebApiException,
