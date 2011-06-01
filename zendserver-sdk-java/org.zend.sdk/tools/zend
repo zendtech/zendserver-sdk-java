@@ -18,7 +18,9 @@ else
     jarpath="$frameworkdir/$jarfile"
 fi
 
-#Get path to lib folder which consists all required jars
-libpath="../lib/*"
+prog=`dirname "$0"`
 
-exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath:../bin" org.zend.sdkcli.Main "$@"
+#Get path to lib folder which consists all required jars
+libpath="${prog}/../lib/*"
+
+exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath:${prog}/../bin" org.zend.sdkcli.Main "$@"
