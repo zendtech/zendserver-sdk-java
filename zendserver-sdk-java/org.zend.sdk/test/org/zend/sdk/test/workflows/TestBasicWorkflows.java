@@ -124,6 +124,35 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 		checkAppsDeployed(targetId);
 		removeApplications(targetId);
 	}
+	
+	/**
+	 * Steps:
+	 * <ul>
+	 * <li>create new target with id = 'test'</li>
+	 * <li>deploy drupal application to 'test'</li>
+	 * <li>remove drupal package from 'test'</li>
+	 * </ul>
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws WebApiException
+	 */
+	@Test
+	public void deployExistingAppWorkflow() throws IOException, InterruptedException,
+			WebApiException {
+		String targetId = "test";
+		File drupalPackage = new File("test/config/apps/drupal-6.19.zpk");
+		File params = new File("test/config/apps/drupal.properties");
+		// create target
+		execute("create", "target", "-t", targetId, "-h", host, "-k", key,
+				"-s", secret);
+		checkNoAppsDeployed(targetId);
+		// deploy application
+		execute("deploy", "application", "-t", targetId, "-p", drupalPackage.getCanonicalPath(), "-b",
+				"http://myhost/helloworld", "-c", "-m", params.getCanonicalPath());
+		checkAppsDeployed(targetId);
+		removeApplications(targetId);
+	}
 
 	/**
 	 * Steps:
@@ -139,7 +168,7 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * @throws InterruptedException
 	 * @throws WebApiException
 	 */
-	// @Test
+	@Test
 	public void redeployWorkflow() throws IOException, InterruptedException,
 			WebApiException {
 		String projectName = "helloworld";
@@ -248,14 +277,14 @@ public class TestBasicWorkflows extends AbstractWorflowTest {
 	 * @throws InterruptedException
 	 * @throws WebApiException
 	 */
-	@Test
+	//@Test
 	public void targetDetectonWorkflow() throws IOException,
 			InterruptedException, WebApiException {
 		String targetId = "test";
 		// detect target
 		execute("detect", "target", "-t", targetId);
 		// list targets
-		assertFalse(execute("list", "targets").length() == 0);
+		assertFalse(execute("list", "targets").equals("No Available Zend Targets."));
 		TargetsManager manager = new TargetsManager(new UserBasedTargetLoader());
 		IZendTarget[] targets = manager.getTargets();
 		assertTrue(targets.length == 1);
