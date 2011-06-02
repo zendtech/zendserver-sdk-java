@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class TemplateWriter {
 
-	private static final String TEMPLATES_DIR = "templates";
+	private static final String TEMPLATES_DIR = "resources/templates";
 	private static final String SCRIPTS_DIR = "scripts";
 	public static final String DESCRIPTOR = "deployment.xml";
 
