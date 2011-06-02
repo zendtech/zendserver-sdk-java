@@ -67,7 +67,7 @@
 				<exclude name="**/*.launch" />
 				<exclude name="**/*.java" />
 			</fileset>
-			<fileset dir="templates" />
+			<fileset dir="resources" />
 		</copy>
 	</target>
 
@@ -191,14 +191,14 @@
 		    <zipfileset dir="lib" 		prefix="${prefix}/lib"/>
 		    <zipfileset dir="docs" 		prefix="${prefix}/docs"/>
 		    <zipfileset dir="junit" 		prefix="${prefix}/junit"/>
-		    <zipfileset dir="templates" 	prefix="${prefix}/templates/"/>
+		    <zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 		</zip>
 		
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
 			<exclude name="*/**"/>
 			<zipfileset dir="lib" 			prefix="${prefix}/lib"/>
-		    <zipfileset dir="templates" 	prefix="${prefix}/templates/"/>
+		    <zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 		</zip>
 	</target>
