@@ -222,6 +222,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 		String mapName = parameter.getKey();
 		Set<Entry<String, String>> entries = map.entrySet();
 		writeNewLine(outputStream, 1);
+		int iterator = entries.size();
 		for (Entry<String, String> entry : entries) {
 			Disposition d = createContentDisposition(outputStream);
 			d.getParameters().add("name", mapName + "[" + entry.getKey() + "]");
@@ -230,6 +231,10 @@ public class MultipartRepresentation extends OutputRepresentation {
 			writeNewLine(outputStream, 2);
 			outputStream.write(entry.getValue().getBytes());
 			writeNewLine(outputStream, 1);
+			if (--iterator != 0) {
+				writeSeparator(outputStream);
+				writeNewLine(outputStream, 1);
+			}
 		}
 	}
 
