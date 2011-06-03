@@ -1,0 +1,29 @@
+<!--
+    Contributors:
+        Zend Technologies
+ -->
+<project name="Builds JAXB classes" default="main">
+
+	<dirname property="antfile.dir" file="${ant.file}" />
+	<property name="schema.filename" value="${antfile.dir}/../schemas/repository.xsd"/>
+
+	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+		<classpath>
+			<fileset dir="${antfile.dir}/jaxb" includes="*.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="checkUpToDate">
+		<uptodate
+			property="upToDate"
+			srcfile="${schema.filename}"
+			targetfile="${antfile.dir}../../../sdklib/org/zend/sdklib/repository/site/Site.java" />
+	</target>
+
+	<target name="main" depends="checkUpToDate" unless="upToDate">
+		
+		<xjc schema="${antfile.dir}/../schemas/repository.xsd" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site"/>
+
+	</target>
+
+</project>

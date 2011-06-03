@@ -10,7 +10,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="description" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="artifact" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="application" minOccurs="1" maxOccurs="1" />
 				<xs:element ref="category-def" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="provider-def" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
@@ -24,9 +24,9 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="artifact">
+	<xs:element name="application">
 		<xs:annotation>
-			<xs:documentation>Artifact declaration</xs:documentation>
+			<xs:documentation>Application definition</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
@@ -35,9 +35,10 @@
 				<xs:element name="category" minOccurs="0" maxOccurs="1" />
 				<xs:element name="provider" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required" />
 			<xs:attribute name="name" type="xs:string" use="required" />
-			<xs:attribute name="url" type="xs:string" use="required" />
 			<xs:attribute name="version" type="xs:string" use="required" />
+			<xs:attribute name="url" type="xs:string" use="required" />
 		</xs:complexType>
 	</xs:element>
 
