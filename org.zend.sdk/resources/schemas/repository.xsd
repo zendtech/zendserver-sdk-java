@@ -42,7 +42,6 @@
 		</xs:complexType>
 	</xs:element>
 
-
 	<xs:element name="category-def">
 		<xs:annotation>
 			<xs:documentation>Category definition</xs:documentation>

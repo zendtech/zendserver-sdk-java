@@ -10,82 +10,29 @@ package org.zend.sdklib.repository;
 
 import java.io.OutputStream;
 
+import org.zend.sdklib.repository.site.Application;
+
 /**
+ * Interface for clients to access a repository
  * 
  * @author Roy, 2011
  */
 public interface IRepository {
 
-
 	/**
-	 * Lists all available applications in the site 
+	 * Lists all available applications in the site
 	 * 
 	 * @return
 	 */
 	public Application[] getAvailableApplications();
-	
+
 	/**
-	 * Returns a sequence of packages that 
+	 * Returns a sequence of packages that are required to install an
+	 * application
+	 * 
 	 * @param applicationId
 	 * @return
 	 */
 	public OutputStream[] getApplication(String applicationId, String version);
-	
-	
-	/**
-	 * Represents provide information <br>
-	 * {@link http ://code.google.com/p/zend-sdk/wiki/RepositorySpec}
-	 */
-	class Provider {
-
-		private String name;
-		private String icon;
-		private String URL;
-		private String description;
-
-		public String getName() {
-			return name;
-		}
-
-		public String getIcon() {
-			return icon;
-		}
-
-		public String getURL() {
-			return URL;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-	}
-
-	/**
-	 * Represents a Category <br>
-	 * {@link http ://code.google.com/p/zend-sdk/wiki/RepositorySpec}
-	 */
-	class Category {
-
-		private String name;
-		private String label;
-		private String description;
-
-		public String getName() {
-			return name;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-	}
-
-	public class Application {
-
-	}
-
 
 }
