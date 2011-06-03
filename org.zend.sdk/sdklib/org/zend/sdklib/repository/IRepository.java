@@ -10,6 +10,7 @@ package org.zend.sdklib.repository;
 
 import java.io.InputStream;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.site.Application;
 
 /**
@@ -24,7 +25,7 @@ public interface IRepository {
 	 * 
 	 * @return
 	 */
-	public Application[] getAvailableApplications();
+	public Application[] getAvailableApplications() throws SdkException;
 
 	/**
 	 * Returns a sequence of packages that are required to install an
@@ -33,6 +34,6 @@ public interface IRepository {
 	 * @param applicationId
 	 * @return
 	 */
-	public InputStream[] getApplication(String applicationId, String version);
+	public InputStream[] getApplication(String applicationId, String version) throws SdkException;
 
 }

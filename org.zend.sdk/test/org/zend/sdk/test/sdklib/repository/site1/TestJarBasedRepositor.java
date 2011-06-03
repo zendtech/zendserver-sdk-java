@@ -10,13 +10,14 @@ package org.zend.sdk.test.sdklib.repository.site1;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.local.JarBasedRepository;
 import org.zend.sdklib.repository.site.Application;
 
 public class TestJarBasedRepositor {
 
 	@Test
-	public void test() {
+	public void test() throws SdkException {
 		final JarBasedRepository repo = new JarBasedRepository(this.getClass());
 		final Application[] availableApplications = repo
 				.getAvailableApplications();
