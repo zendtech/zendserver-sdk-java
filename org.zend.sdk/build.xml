@@ -112,7 +112,11 @@
 			<classpath refid="org.zend.sdk.classpath" />
 		</javac>
 		<jar destfile="lib/zend-sdk.jar" basedir="bin" manifest="META-INF/MANIFEST.MF">
-			<exclude name="**/test/*.*/" />
+			<exclude name="test/**" />
+			<exclude name="generator/**" />
+			<exclude name="config/**" />
+			<exclude name="templates/**/" />
+			<exclude name="org/zend/sdk/test/**" />
 			<fileset dir=".">
 				<include name="lib/commons-cli-1.2.jar"/>
 				<include name="lib/log4j-1.2.16.jar"/>
