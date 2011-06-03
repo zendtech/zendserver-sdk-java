@@ -69,6 +69,8 @@
 			</fileset>
 			<fileset dir="resources" />
 		</copy>
+		
+		<ant antfile="resources/generator/build.xml" target="main"/>
 	</target>
 
 	<target name="javadoc">
