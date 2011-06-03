@@ -38,6 +38,8 @@ public class GenerateDrupalSite {
 
 		final Site s = createDrupalSite();
 		printSite(printStream, s);
+
+		printStream.close();
 	}
 
 	private static void printSite(PrintStream printStream, final Site s)
