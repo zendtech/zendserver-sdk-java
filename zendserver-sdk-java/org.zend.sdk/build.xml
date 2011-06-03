@@ -111,10 +111,15 @@
 			<src path="test" />
 			<classpath refid="org.zend.sdk.classpath" />
 		</javac>
-		<jar destfile="lib/zend-sdk.jar" basedir="bin" >
+		<jar destfile="lib/zend-sdk.jar" basedir="bin" manifest="META-INF/MANIFEST.MF">
 			<exclude name="**/test/*.*/" />
-			<fileset dir="lib">
-				<include name="registry.jar"/>
+			<fileset dir=".">
+				<include name="lib/commons-cli-1.2.jar"/>
+				<include name="lib/log4j-1.2.16.jar"/>
+				<include name="lib/org.restlet.ext.xml.jar"/>
+				<include name="lib/org.restlet.jar"/>
+				<include name="lib/registry.jar"/>
+				<include name="lib/zend-webapi.jar"/>
 			</fileset>
 		</jar>
 		<jar destfile="lib/zend-test-sdk.jar" basedir="bin">
