@@ -406,10 +406,17 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		fireChange(fModel);
 	}
 
+	public void setVariableName(IVariable var, String text) throws CoreException {
+		int idx = fModel.setVariables().indexOf(var) + 1;
+		((Variable) var).setName(text);
+		changeAttribute(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE + "["+idx+"]", "name", text);
+		fireChange(var);
+	}
+	
 	public void setVariableValue(IVariable var, String text) throws CoreException {
 		int idx = fModel.setVariables().indexOf(var) + 1;
 		((Variable) var).setValue(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE + "["+idx+"]");
+		changeAttribute(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE + "["+idx+"]", "value", text);
 		fireChange(var);
 	}
 

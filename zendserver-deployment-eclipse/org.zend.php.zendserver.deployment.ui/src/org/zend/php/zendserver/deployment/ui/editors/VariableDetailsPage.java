@@ -29,7 +29,8 @@ public class VariableDetailsPage implements IDetailsPage {
 	
 	private boolean isRefresh;
 
-	private Text variableText;
+	private Text variableName;
+	private Text variableValue;	
 	
 	public VariableDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
@@ -67,7 +68,10 @@ public class VariableDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			variableText.setText(input.getValue());
+			String name = input.getName();
+			variableName.setText(name == null ? "" : name);
+			String value = input.getValue();
+			variableValue.setText(value == null ? "" : value);
 		} finally {
 			isRefresh = false;
 		}
@@ -103,21 +107,41 @@ public class VariableDetailsPage implements IDetailsPage {
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		s1.setClient(client);
 		
-		toolkit.createLabel(client, "Variable");
-		variableText = toolkit.createText(client, "");
+		toolkit.createLabel(client, "Name");
+		variableName = toolkit.createText(client, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		variableText.setLayoutData(gd);
-		variableText.addModifyListener(new ModifyListener() {
+		variableName.setLayoutData(gd);
+		variableName.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (isRefresh) return;
-				variableChange(((Text)e.widget).getText());
+				variableNameChange(((Text)e.widget).getText());
+			}
+		});
+		
+		toolkit.createLabel(client, "Value");
+		variableValue = toolkit.createText(client, "");
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		variableValue.setLayoutData(gd);
+		variableValue.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (isRefresh) return;
+				variableValueChange(((Text)e.widget).getText());
 			}
 		});
 	}
 
-	protected void variableChange(String text) {
+	protected void variableValueChange(String text) {
 		try {
 			editor.getModel().setVariableValue(input, text);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	protected void variableNameChange(String text) {
+		try {
+			editor.getModel().setVariableName(input, text);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

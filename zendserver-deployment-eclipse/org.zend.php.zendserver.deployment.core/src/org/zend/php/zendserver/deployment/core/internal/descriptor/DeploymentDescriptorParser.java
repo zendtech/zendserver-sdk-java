@@ -160,9 +160,14 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		location = location.append(qName);
 		String locationStr = location.toPortableString().toLowerCase();
-		updateIndex(qName);
+		int index = updateIndex(qName);
 		
 		boolean read = startReadDependency(locationStr);
+		if (read) {
+			return;
+		}
+		
+		read = readVariable(locationStr, attributes, index);
 		if (read) {
 			return;
 		}
@@ -230,15 +235,23 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		}
 		
 		if (!read) {
-			read = readVariable(value, locationStr, index);
-		}
-		
-		if (!read) {
 			read = readPersistentResources(value, locationStr, index);
 		}
 		
 		location = location.removeLastSegments(1);
 		sb.setLength(0);
+	}
+	
+
+	private boolean readVariable(String locationStr, Attributes attributes, int index) {
+		if (PACKAGE_VARIABLES_VARIABLE.equals(locationStr)) {
+			String name = attributes.getValue("name");
+			String value = attributes.getValue("value");
+			Variable var = new Variable(name, value);
+			setListElement(descriptor.setVariables(), index, var);
+			return true;
+		}
+		return false;
 	}
 
 	private void markChanged(Object obj) {
@@ -250,15 +263,6 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	private boolean readPersistentResources(String value, String locationStr, int index) {
 		if (PACKAGE_PERSISTENTRESOURCES_RESOURCE.equals(locationStr)) {
 			setListElement(descriptor.setPersistentResources(), index, value);
-			return true;
-		}
-		return false;
-	}
-
-	private boolean readVariable(String value, String locationStr, int index) {
-		if (PACKAGE_VARIABLES_VARIABLE.equals(locationStr)) {
-			Variable var = new Variable(value);
-			setListElement(descriptor.setVariables(), index, var);
 			return true;
 		}
 		return false;

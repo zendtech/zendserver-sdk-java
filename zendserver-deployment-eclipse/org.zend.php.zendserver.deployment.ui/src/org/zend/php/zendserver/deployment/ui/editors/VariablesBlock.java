@@ -73,7 +73,7 @@ public class VariablesBlock extends MasterDetailsBlock {
 		public String getText(Object element) {
 			IVariable param = (IVariable) element;
 			
-			return param.getValue();
+			return param.getName();
 		}
 	}
 
@@ -182,7 +182,7 @@ public class VariablesBlock extends MasterDetailsBlock {
 		IDeploymentDescriptor descr = editor.getModel().getDescriptor();
 		int variablesSize = descr.getVariables().size() + 1;
 		
-		IVariable param = new Variable("variable"+variablesSize);
+		IVariable param = new Variable("variable"+variablesSize, "");
 		try {
 			editor.getModel().addVariable(param);
 		} catch (CoreException e) {
