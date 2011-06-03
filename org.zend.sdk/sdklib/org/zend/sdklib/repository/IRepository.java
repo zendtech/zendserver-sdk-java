@@ -8,7 +8,7 @@
 
 package org.zend.sdklib.repository;
 
-import java.io.OutputStream;
+import java.io.InputStream;
 
 import org.zend.sdklib.repository.site.Application;
 
@@ -33,6 +33,6 @@ public interface IRepository {
 	 * @param applicationId
 	 * @return
 	 */
-	public OutputStream[] getApplication(String applicationId, String version);
+	public InputStream[] getApplication(String applicationId, String version);
 
 }

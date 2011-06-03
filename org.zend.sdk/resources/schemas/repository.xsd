@@ -10,9 +10,9 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="description" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="application" minOccurs="1" maxOccurs="1" />
-				<xs:element ref="category-def" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="provider-def" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="application" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element ref="category-def" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="provider-def" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 
 			<xs:attribute name="version" type="xs:string" use="required">
