@@ -18,9 +18,8 @@ public class TestRepositoryXsd {
 
 	@Test
 	public void test() throws SAXException, IOException {
-		final InputStream xsd = this.getClass().getResourceAsStream(
-				"repository.xsd");
-		final InputStream xml = this.getClass().getResourceAsStream("site.xml");
+		final InputStream xsd = this.getClass().getResourceAsStream("test.xsd");
+		final InputStream xml = this.getClass().getResourceAsStream("test.xml");
 
 		XmlValidator.validateXsd(xsd, xml);
 	}
