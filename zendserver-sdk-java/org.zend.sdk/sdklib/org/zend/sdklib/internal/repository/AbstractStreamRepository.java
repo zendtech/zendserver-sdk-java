@@ -17,6 +17,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.repository.site.Site;
@@ -44,7 +45,7 @@ public abstract class AbstractStreamRepository implements IRepository {
 			throws IOException;
 
 	@Override
-	public Application[] getAvailableApplications() {
+	public Application[] getAvailableApplications() throws SdkException {
 		try {
 			final InputStream siteStream = getSiteStream();
 			Source source = new StreamSource(siteStream);
@@ -56,14 +57,14 @@ public abstract class AbstractStreamRepository implements IRepository {
 			return (Application[]) application
 					.toArray(new Application[application.size()]);
 		} catch (JAXBException e) {
-			throw new IllegalStateException(e);
+			throw new SdkException(e);
 		} catch (IOException e) {
-			throw new IllegalStateException(e);
+			throw new SdkException(e);
 		}
 	}
 
 	@Override
-	public InputStream[] getApplication(String applicationId, String version) {
+	public InputStream[] getApplication(String applicationId, String version) throws SdkException {
 		// validate arguments
 		if (applicationId == null || version == null) {
 			throw new IllegalArgumentException("argments must be not null");
@@ -78,10 +79,11 @@ public abstract class AbstractStreamRepository implements IRepository {
 				try {
 					return new InputStream[] { getArtifactStream(url) };
 				} catch (IOException e) {
-					// TODO: handle exception here
+					throw new SdkException(e);
 				}
 			}
 		}
+		
 		// TODO: handle dependencies
 		return null;
 	}
