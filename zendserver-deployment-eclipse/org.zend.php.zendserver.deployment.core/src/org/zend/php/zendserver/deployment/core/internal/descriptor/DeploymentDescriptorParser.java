@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.Path;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 public class DeploymentDescriptorParser extends DefaultHandler {
 
@@ -93,6 +95,8 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public static final String PACKAGE_PERSISTENTRESOURCES_RESOURCE = "package/persistentresources/resource";
 	
 	private IPath location = new Path("");
+	private List<Integer> counters = new ArrayList<Integer>();
+	private List<String> tagNames = new ArrayList<String>();
 	
 	private StringBuilder sb = new StringBuilder();
 	
@@ -156,6 +160,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		location = location.append(qName);
 		String locationStr = location.toPortableString().toLowerCase();
+		updateIndex(qName);
 		
 		boolean read = startReadDependency(locationStr);
 		if (read) {
@@ -174,11 +179,42 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		sb.append(ch, start, length);
 	}
 	
+	private int updateIndex(String name) {
+		int depth = location.segmentCount() - 1;
+		if (depth < counters.size()) {
+			String alastTag = tagNames.get(depth);
+			int index;
+			if (name.equals(alastTag)) {
+				index = counters.get(depth) + 1;
+			} else {
+				index = 0;
+				tagNames.set(depth, name);
+			}
+			
+			counters.set(depth, index);
+			return index;
+		} else {
+			counters.add(0);
+			tagNames.add(name);
+			return 0;
+		}
+	}
+	
+	private int removeIndex() {
+		int depth = location.segmentCount();
+		if (depth < counters.size()) {
+			counters.remove(depth);
+			tagNames.remove(depth);
+		}
+		
+		return counters.get(depth - 1);
+	}
 	
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		String value = sb.toString().trim();
 		String locationStr = location.toPortableString().toLowerCase();
+		int index = removeIndex();
 		
 		boolean read = readBasicInfo(value, locationStr);
 		if (read) {
@@ -187,18 +223,18 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		
 		if (!read) {
 			unboundValues.put(locationStr, value);
-			read = endReadDependency(value, locationStr);
+			read = endReadDependency(value, locationStr, index);
 		}
 		if (!read) {
-			read = readParameter(value, locationStr);
-		}
-		
-		if (!read) {
-			read = readVariable(value, locationStr);
+			read = readParameter(value, locationStr, index);
 		}
 		
 		if (!read) {
-			read = readPersistentResources(value, locationStr);
+			read = readVariable(value, locationStr, index);
+		}
+		
+		if (!read) {
+			read = readPersistentResources(value, locationStr, index);
 		}
 		
 		location = location.removeLastSegments(1);
@@ -211,26 +247,33 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		}
 	}
 
-	private boolean readPersistentResources(String value, String locationStr) {
+	private boolean readPersistentResources(String value, String locationStr, int index) {
 		if (PACKAGE_PERSISTENTRESOURCES_RESOURCE.equals(locationStr)) {
-			descriptor.setPersistentResources().add(value);
-			markChanged(descriptor);
+			setListElement(descriptor.setPersistentResources(), index, value);
 			return true;
 		}
 		return false;
 	}
 
-	private boolean readVariable(String value, String locationStr) {
+	private boolean readVariable(String value, String locationStr, int index) {
 		if (PACKAGE_VARIABLES_VARIABLE.equals(locationStr)) {
 			Variable var = new Variable(value);
-			descriptor.setVariables().add(var);
-			markChanged(var);
+			setListElement(descriptor.setVariables(), index, var);
 			return true;
 		}
 		return false;
 	}
 
-	private boolean readParameter(String value, String locationStr) {
+	private void setListElement(List list, int index, Object var) {
+		if (index < list.size()) {
+			list.set(index, var);
+		} else {
+			list.add(var);
+		}
+		markChanged(var);
+	}
+
+	private boolean readParameter(String value, String locationStr, int index) {
 		if (PACKAGE_PARAMETERS_PARAMETER_VALIDATION_ENUMS_ENUM.equals(locationStr)) {
 			validationEnums.add(value);
 			return true;
@@ -264,8 +307,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 				param.setValidValues((String[])validationEnums.toArray(new String[validationEnums.size()]));
 				validationEnums.clear();
 			}
-			descriptor.setParameters().add(param);
-			markChanged(param);
+			setListElement(descriptor.setParameters(), index, param);
 			return true;
 		}
 		
@@ -322,41 +364,35 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		}
 		return false;
 	}
-	private boolean endReadDependency(String value, String locationStr) {
+	private boolean endReadDependency(String value, String locationStr, int index) {
+		IDependency toSet = null;
 		if (DEPENDENCIES_PHP.equals(locationStr)) {
-			descriptor.setDependencies().add(phpDep);
-			markChanged(phpDep);
+			toSet = phpDep;
 			phpDep = null;
-			return true;
 		}
 		if (DEPENDENCIES_DIRECTIVE.equals(locationStr)) {
-			descriptor.setDependencies().add(directiveDep);
-			markChanged(directiveDep);
+			toSet = directiveDep;
 			directiveDep = null;
-			return true;
 		}
 		if (DEPENDENCIES_EXTENSION.equals(locationStr)) {
-			descriptor.setDependencies().add(extDep);
-			markChanged(extDep);
+			toSet = extDep;
 			extDep = null;
-			return true;
 		}
 		if (DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr)) {
-			descriptor.setDependencies().add(zfDep);
-			markChanged(extDep);
+			toSet = zfDep;
 			zfDep = null;
-			return true;
 		}
 		if (DEPENDENCIES_ZENDSERVER.equals(locationStr)) {
-			descriptor.setDependencies().add(zsDep);
-			markChanged(zsDep);
+			toSet = zsDep;
 			zsDep = null;
-			return true;
 		}
 		if (DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
-			descriptor.setDependencies().add(zsCompDep);
-			markChanged(zsCompDep);
+			toSet = zsCompDep;
 			zsCompDep = null;
+		}
+
+		if (toSet != null) {
+			setListElement(descriptor.setDependencies(), index, toSet);
 			return true;
 		}
 		
