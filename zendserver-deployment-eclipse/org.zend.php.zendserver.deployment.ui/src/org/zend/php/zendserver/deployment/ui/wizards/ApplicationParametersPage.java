@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.wizards;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,13 +39,13 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
 
-
 public class ApplicationParametersPage extends WizardPage {
 
 	private IDescriptorContainer model;
 	private Combo deployCombo;
 	private Link targetLocation;
-	private Text baseURL;
+	private BaseURL baseUrl;
+	private Text userAppName;
 
 	private List<DeploymentParameter> parameters;
 	private List<Server> serverList;
@@ -125,6 +127,81 @@ public class ApplicationParametersPage extends WizardPage {
 		}
 	}
 
+	private class BaseURL {
+
+		private Label protocol;
+		private Label pathSeparator;
+
+		private Text host;
+		private Text path;
+		private Composite parent;
+
+		public void createControl(Composite composite) {
+			parent = new Composite(composite, SWT.NONE);
+			parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			GridLayout layout = new GridLayout(6, false);
+			layout.horizontalSpacing = 0;
+			layout.verticalSpacing = 0;
+			layout.marginWidth = 0;
+			parent.setLayout(layout);
+
+			protocol = new Label(parent, SWT.NULL);
+			protocol.setText("http://");
+
+			host = new Text(parent, SWT.SINGLE | SWT.BORDER);
+			host.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			host.addKeyListener(new KeyAdapter() {
+				public void keyReleased(KeyEvent e) {
+					validatePage();
+				}
+			});
+
+			pathSeparator = new Label(parent, SWT.NULL);
+			pathSeparator.setText("/");
+
+			path = new Text(parent, SWT.SINGLE | SWT.BORDER);
+			path.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			path.addKeyListener(new KeyAdapter() {
+				public void keyReleased(KeyEvent e) {
+					validatePage();
+				}
+			});
+		}
+
+		public void setLayoutData(Object layoutData) {
+			parent.setLayoutData(layoutData);
+		}
+
+		public void setDefaultServer(boolean value) {
+			if (value) {
+				host.setEnabled(false);
+				host.setText("<DEFAULT_SERVER>");
+			} else {
+				host.setEnabled(true);
+				host.setText("");
+			}
+		}
+
+		public URL getURL() {
+			URL result = null;
+			try {
+				result = new URL(protocol.getText(), host.getText(),
+						path.getText());
+			} catch (MalformedURLException e) {
+				// ignore and return null
+			}
+			return result;
+		}
+
+		public boolean isValid() {
+			if (getURL() != null && !host.getText().isEmpty()) {
+				return true;
+			}
+			return false;
+		}
+
+	}
+
 	protected ApplicationParametersPage(IDescriptorContainer model) {
 		super(Messages.parametersPage_Title);
 		this.model = model;
@@ -139,16 +216,43 @@ public class ApplicationParametersPage extends WizardPage {
 		container.setLayout(layout);
 		createDeployCombo(container);
 		createLocationLink(container);
-		baseURL = createLabelWithText(Messages.parametersPage_baseURL, "",
-				container);
+		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
+				"", container);
+		userAppName.setToolTipText(Messages.parametersPage_appUserNameTooltip);
+		createBaseUrl(container);
 		createParameterGroups(container);
 		setControl(container);
 		setPageComplete(false);
 		validatePage();
 	}
 
+	private void createBaseUrl(Composite container) {
+		Label label = new Label(container, SWT.NULL);
+		label.setText(Messages.parametersPage_baseURL);
+		baseUrl = new BaseURL();
+		baseUrl.createControl(container);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		baseUrl.setLayoutData(gd);
+		final Button defaultServer = createLabelWithCheckbox(
+				Messages.parametersPage_defaultServer,
+				Messages.parametersPage_defaultServerTooltip, container);
+		defaultServer.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println(defaultServer.getSelection());
+				baseUrl.setDefaultServer(defaultServer.getSelection());
+				validatePage();
+			}
+		});
+	}
+
 	public String getBaseURL() {
-		return baseURL.getText();
+		URL result = baseUrl.getURL();
+		return result != null ? result.toString() : null;
+	}
+
+	public String getUserAppName() {
+		return userAppName.getText();
 	}
 
 	public Server getTargetLocation() {
@@ -313,13 +417,13 @@ public class ApplicationParametersPage extends WizardPage {
 			Composite container) {
 		Label label = new Label(container, SWT.NULL);
 		label.setText(labelText);
-		label.setToolTipText(tooltip);
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				validatePage();
 			}
 		});
+		text.setToolTipText(tooltip);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
 		return text;
@@ -373,7 +477,7 @@ public class ApplicationParametersPage extends WizardPage {
 			setPageComplete(false);
 			return;
 		}
-		if (!baseURL.getText().isEmpty()) {
+		if (baseUrl.isValid()) {
 			for (DeploymentParameter param : parameters) {
 				if (param.getParameter().isRequired()
 						&& param.getValue().isEmpty()) {

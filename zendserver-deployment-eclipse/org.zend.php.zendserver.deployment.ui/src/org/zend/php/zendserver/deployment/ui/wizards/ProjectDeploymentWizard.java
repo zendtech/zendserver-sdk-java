@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,7 +20,6 @@ import org.zend.php.zendserver.deployment.core.utils.WebApiManager;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
-
 
 public class ProjectDeploymentWizard extends Wizard {
 
@@ -56,6 +56,7 @@ public class ProjectDeploymentWizard extends Wizard {
 				.getDocumentRoot() : null;
 		final String baseUrl = parametersPage.getBaseURL();
 		final Server targetLocation = parametersPage.getTargetLocation();
+		final HashMap<String, String> params = parametersPage.getParameters();
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
 				getShell());
 		try {
@@ -74,8 +75,8 @@ public class ProjectDeploymentWizard extends Wizard {
 						e.printStackTrace();
 					}
 					if (zpkPackage != null) {
-						deployApplication(zpkPackage, baseUrl,
-								targetLocation, monitor);
+						deployApplication(zpkPackage, baseUrl, targetLocation,
+								params, monitor);
 					}
 
 				}
@@ -89,7 +90,8 @@ public class ProjectDeploymentWizard extends Wizard {
 	}
 
 	protected void deployApplication(File zpkPackage, String baseUrl,
-			Server targetLocation, IProgressMonitor monitor) {
+			Server targetLocation, HashMap<String, String> params,
+			IProgressMonitor monitor) {
 		String host = targetLocation.getBaseURL();
 		WebApiManager manager = new WebApiManager(host);
 		monitor.beginTask("Deploying application to target location...", 1);
