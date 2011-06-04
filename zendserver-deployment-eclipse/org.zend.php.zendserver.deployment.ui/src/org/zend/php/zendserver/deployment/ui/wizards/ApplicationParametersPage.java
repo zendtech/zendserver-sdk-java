@@ -181,7 +181,7 @@ public class ApplicationParametersPage extends WizardPage {
 					paramsGroup, SWT.V_SCROLL);
 			scrollComposite.setLayout(new FillLayout());
 			final Composite parent = new Composite(scrollComposite, SWT.NONE);
-			GridLayout layout = new GridLayout(1, false);
+			GridLayout layout = new GridLayout(2, false);
 			parent.setLayout(layout);
 			scrollComposite.setExpandVertical(true);
 			scrollComposite.setExpandHorizontal(true);
@@ -377,7 +377,8 @@ public class ApplicationParametersPage extends WizardPage {
 			for (DeploymentParameter param : parameters) {
 				if (param.getParameter().isRequired()
 						&& param.getValue().isEmpty()) {
-					setErrorMessage("Not all required parameters have values");
+					setErrorMessage(param.getParameter().getDisplay()
+							+ " is required.");
 					setPageComplete(false);
 					return;
 				}
