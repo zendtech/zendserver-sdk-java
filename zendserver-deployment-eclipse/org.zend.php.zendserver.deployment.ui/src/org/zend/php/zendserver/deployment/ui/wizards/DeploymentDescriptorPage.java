@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import org.eclipse.core.resources.IFile;
@@ -33,7 +40,6 @@ import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 import org.zend.php.zendserver.deployment.ui.editors.OpenFileDialog;
 
-
 public class DeploymentDescriptorPage extends WizardPage {
 
 	private IDescriptorContainer model;
@@ -66,9 +72,7 @@ public class DeploymentDescriptorPage extends WizardPage {
 		nameGd.horizontalSpan = 2;
 		name.setLayoutData(nameGd);
 		folder = createLabelWithText(Messages.descriptorPage_Folder, container);
-		GridData folderGd = new GridData(GridData.FILL_HORIZONTAL);
-		folderGd.horizontalSpan = 1;
-		folder.setLayoutData(folderGd);
+		folder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		browseButton = new Button(container, SWT.PUSH);
 		browseButton.setText(Messages.descriptorPage_FolderBrowse);
 		browseButton.addSelectionListener(new SelectionAdapter() {

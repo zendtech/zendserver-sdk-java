@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
-
 public class ParametersCategory {
+
+	public static final String SEPARATOR = "\\.";
 
 	private IParameter parameter;
 	private String name;

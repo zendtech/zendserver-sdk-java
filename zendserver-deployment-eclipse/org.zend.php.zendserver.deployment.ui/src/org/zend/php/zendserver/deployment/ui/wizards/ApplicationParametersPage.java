@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.net.MalformedURLException;
@@ -217,8 +224,7 @@ public class ApplicationParametersPage extends WizardPage {
 		createDeployCombo(container);
 		createLocationLink(container);
 		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
-				"", container);
-		userAppName.setToolTipText(Messages.parametersPage_appUserNameTooltip);
+				Messages.parametersPage_appUserNameTooltip, container);
 		createBaseUrl(container);
 		createParameterGroups(container);
 		setControl(container);
@@ -231,15 +237,13 @@ public class ApplicationParametersPage extends WizardPage {
 		label.setText(Messages.parametersPage_baseURL);
 		baseUrl = new BaseURL();
 		baseUrl.createControl(container);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		baseUrl.setLayoutData(gd);
+		baseUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final Button defaultServer = createLabelWithCheckbox(
 				Messages.parametersPage_defaultServer,
 				Messages.parametersPage_defaultServerTooltip, container);
 		defaultServer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println(defaultServer.getSelection());
 				baseUrl.setDefaultServer(defaultServer.getSelection());
 				validatePage();
 			}
@@ -285,8 +289,7 @@ public class ApplicationParametersPage extends WizardPage {
 					paramsGroup, SWT.V_SCROLL);
 			scrollComposite.setLayout(new FillLayout());
 			final Composite parent = new Composite(scrollComposite, SWT.NONE);
-			GridLayout layout = new GridLayout(2, false);
-			parent.setLayout(layout);
+			parent.setLayout(new GridLayout(2, false));
 			scrollComposite.setExpandVertical(true);
 			scrollComposite.setExpandHorizontal(true);
 			scrollComposite.setContent(parent);
@@ -312,8 +315,7 @@ public class ApplicationParametersPage extends WizardPage {
 			gd.horizontalSpan = 2;
 			paramsGroup.setLayoutData(gd);
 			paramsGroup.setText(category.getName());
-			GridLayout layout = new GridLayout(2, true);
-			paramsGroup.setLayout(layout);
+			paramsGroup.setLayout(new GridLayout(2, true));
 			List<ParametersCategory> categories = category.getCategories();
 			for (ParametersCategory cat : categories) {
 				createGroup(cat, paramsGroup);
@@ -335,7 +337,7 @@ public class ApplicationParametersPage extends WizardPage {
 		List<ParametersCategory> categories = new ArrayList<ParametersCategory>();
 		for (IParameter param : params) {
 			List<String> labels = new ArrayList<String>(Arrays.asList(param
-					.getDisplay().split("\\.")));
+					.getDisplay().split(ParametersCategory.SEPARATOR)));
 			ParametersCategory cat = createCategory(categories, labels, param);
 			if (cat != null) {
 				categories.add(cat);
@@ -399,7 +401,6 @@ public class ApplicationParametersPage extends WizardPage {
 			Composite container) {
 		Label label = new Label(container, SWT.NULL);
 		label.setText(labelText);
-		label.setToolTipText(tooltip);
 		Combo combo = new Combo(container, SWT.SIMPLE | SWT.DROP_DOWN
 				| SWT.READ_ONLY);
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -408,8 +409,8 @@ public class ApplicationParametersPage extends WizardPage {
 				validatePage();
 			}
 		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		combo.setLayoutData(gd);
+		combo.setToolTipText(tooltip);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return combo;
 	}
 
@@ -424,8 +425,7 @@ public class ApplicationParametersPage extends WizardPage {
 			}
 		});
 		text.setToolTipText(tooltip);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		text.setLayoutData(gd);
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
 	}
 
@@ -492,6 +492,6 @@ public class ApplicationParametersPage extends WizardPage {
 			setErrorMessage(Messages.parametersPage_ValidationError_BaseUrl);
 			setPageComplete(false);
 		}
-
 	}
+
 }
