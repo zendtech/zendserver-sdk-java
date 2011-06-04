@@ -29,7 +29,7 @@ public enum ApplicationStatus {
 
 	ACTIVATING("activating"),
 
-	OK("OK"),
+	DEPLOYED("deployed"),
 
 	ACTIVATE_ERROR("activateError"),
 
@@ -43,7 +43,9 @@ public enum ApplicationStatus {
 
 	UNKNOWN("unknown"),
 
-	INCONSISTENT("inconsistent");
+	INCONSISTENT("inconsistent"),
+	
+	NOT_EXISTS("notExists");
 
 	private final String name;
 

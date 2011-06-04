@@ -11,7 +11,7 @@
 			<userAppName>User Name</userAppName>
 			<baseUrl>http://example.com/myapp</baseUrl>
 			<installedLocation>/usr/local/aaa</installedLocation>
-			<status>OK</status>
+			<status>deployed</status>
 			<servers>
 				<applicationServer>
 					<id>2</id>

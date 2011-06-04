@@ -87,7 +87,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		initMock(handler.applicationGetStatus(), "applicationGetStatus",
 				ResponseCode.OK);
 		ApplicationStatus status = ApplicationStatus.STAGING;
-		while (status != ApplicationStatus.OK) {
+		while (status != ApplicationStatus.DEPLOYED) {
 			ApplicationsList applicationGetStatus = Configuration.getClient()
 					.applicationGetStatus(String.valueOf(appId));
 			List<ApplicationInfo> infos = applicationGetStatus
@@ -97,7 +97,6 @@ public class TestDeploymentServices extends AbstractTestServer {
 					status = applicationInfo.getStatus();
 				}
 			}
-			System.out.println(status.getName());
 		}
 		return true;
 	}

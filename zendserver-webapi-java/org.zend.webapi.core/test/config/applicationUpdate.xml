@@ -10,12 +10,12 @@
 		<applicationServer>
 			<id>2</id>
 			<deployedVersion>2.14.0</deployedVersion>
-			<status>OK</status>
+			<status>deployed</status>
 		</applicationServer>
 		<applicationServer>
 			<id>2</id>
 			<deployedVersion>2.14.0</deployedVersion>
-			<status>OK</status>
+			<status>deployed</status>
 		</applicationServer>
 	</servers>
 	<deployedVersions>

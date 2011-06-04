@@ -57,8 +57,10 @@ public enum ErrorCode {
 
 	serverNotLicensed(
 			500,
-			"Server does not have a valid license which is required to perform this operation");
+			"Server does not have a valid license which is required to perform this operation"),
 
+	serverVersionMismatch(500, "One or more servers in the cluster has a Zend Server version which does not support deployment feature");
+	
 	private final int code;
 	private final String description;
 

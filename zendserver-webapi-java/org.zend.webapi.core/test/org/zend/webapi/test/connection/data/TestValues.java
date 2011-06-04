@@ -81,8 +81,8 @@ public class TestValues {
 
 	@Test
 	public void testApplicationStatus() {
-		ApplicationStatus status = ApplicationStatus.OK;
-		Assert.assertEquals(ApplicationStatus.OK,
+		ApplicationStatus status = ApplicationStatus.DEPLOYED;
+		Assert.assertEquals(ApplicationStatus.DEPLOYED,
 				ApplicationStatus.byName(status.getName()));
 		Assert.assertEquals(ApplicationStatus.UNKNOWN,
 				ApplicationStatus.byName(null));

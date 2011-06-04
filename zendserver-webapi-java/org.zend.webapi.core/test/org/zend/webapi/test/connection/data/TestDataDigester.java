@@ -192,7 +192,7 @@ public class TestDataDigester {
 		Assert.assertTrue("User Name".equals(firstApp.getUserAppName()));
 		Assert.assertTrue("/usr/local/aaa".equals(firstApp
 				.getInstalledLocation()));
-		Assert.assertSame(ApplicationStatus.OK, firstApp.getStatus());
+		Assert.assertSame(ApplicationStatus.DEPLOYED, firstApp.getStatus());
 
 		ApplicationServers servers = firstApp.getServers();
 		Assert.assertNotNull(servers);

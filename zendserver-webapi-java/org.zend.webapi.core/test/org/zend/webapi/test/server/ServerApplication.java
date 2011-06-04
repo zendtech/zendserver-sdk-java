@@ -231,7 +231,6 @@ public class ServerApplication extends Application {
 			StringWriter writer = new StringWriter();
 			Result result = new javax.xml.transform.stream.StreamResult(writer);
 			xform.transform(src, result);
-			System.out.println(writer.toString());
 			representation.setSize(writer.toString().length());
 		} catch (TransformerConfigurationException e) {
 			// ignore

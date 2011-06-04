@@ -6,17 +6,17 @@
 		<userAppName>User Name</userAppName>
 		<baseUrl>http://example.com/myapp</baseUrl>
 		<installedLocation>/usr/local/aaa</installedLocation>
-		<status>OK</status>
+		<status>deployed</status>
 		<servers>
 			<applicationServer>
 				<id>2</id>
 				<deployedVersion>2.14.0</deployedVersion>
-				<status>OK</status>
+				<status>deployed</status>
 			</applicationServer>
 			<applicationServer>
 				<id>2</id>
 				<deployedVersion>2.14.0</deployedVersion>
-				<status>OK</status>
+				<status>deployed</status>
 			</applicationServer>
 		</servers>
 		<deployedVersions>
@@ -32,12 +32,12 @@
 		<userAppName>User Name</userAppName>
 		<installedLocation>/usr/local/aaa</installedLocation>
 		<baseUrl>http://oapp.example.com:8080/</baseUrl>
-		<status>OK</status>
+		<status>deployed</status>
 		<servers>
 			<applicationServer>
 				<id>2</id>
 				<deployedVersion>2.14.0</deployedVersion>
-				<status>OK</status>
+				<status>deployed</status>
 			</applicationServer>
 		</servers>
 		<deployedVersions>
