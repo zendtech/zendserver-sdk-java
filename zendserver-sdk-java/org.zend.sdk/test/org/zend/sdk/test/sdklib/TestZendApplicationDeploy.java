@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -24,8 +25,9 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 	@Test
 	public void deployPackageSuccess() throws WebApiException, IOException {
 		setDeploySuccessCall();
-		ApplicationInfo info = application.deploy(FOLDER + "test-1.0.0.zpk",
-				"http://myhost/aaa", "0", null, null, null, null, null);
+		ApplicationInfo info = application
+				.deploy(FOLDER + "test-1.0.0.zpk", "http://myhost/aaa", "0",
+						(String) null, null, null, null, null);
 		assertNotNull(info);
 		assertEquals("test", info.getAppName());
 	}
@@ -33,8 +35,9 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 	@Test
 	public void deployProjectSuccess() throws WebApiException, IOException {
 		setDeploySuccessCall();
-		ApplicationInfo info = application.deploy(FOLDER + "Project1",
-				"http://myhost/aaa", "0", null, null, null, null, null);
+		ApplicationInfo info = application
+				.deploy(FOLDER + "Project1", "http://myhost/aaa", "0",
+						(String) null, null, null, null, null);
 		assertNotNull(info);
 		assertEquals("test", info.getAppName());
 	}
@@ -42,8 +45,9 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 	@Test
 	public void deployInvalidPath() throws WebApiException, IOException {
 		setDeploySuccessCall();
-		ApplicationInfo info = application.deploy("invalid_path",
-				"http://myhost/aaa", "0", null, null, null, null, null);
+		ApplicationInfo info = application
+				.deploy("invalid_path", "http://myhost/aaa", "0",
+						(String) null, null, null, null, null);
 		assertNull(info);
 	}
 
@@ -58,6 +62,17 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 	}
 
 	@Test
+	public void deployUserParamsMap() throws WebApiException, IOException {
+		setDeploySuccessCall();
+		Map<String, String> userParams = new HashMap<String, String>();
+		userParams.put("key", "value");
+		ApplicationInfo info = application.deploy(FOLDER + "test-1.0.0.zpk",
+				"http://myhost/aaa", "0", userParams, null, null, null, null);
+		assertNotNull(info);
+		assertEquals("test", info.getAppName());
+	}
+
+	@Test
 	public void deployConnectionFailed() throws WebApiException, IOException {
 		setDeployFailedCall();
 		ApplicationInfo info = application.deploy(FOLDER + "test-1.0.0.zpk",
@@ -65,7 +80,7 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 				null, null, null, null);
 		assertNull(info);
 	}
-	
+
 	private void setDeploySuccessCall() throws WebApiException, IOException {
 		when(
 				client.applicationDeploy(any(File.class), anyString(),
@@ -74,7 +89,7 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 				(ApplicationInfo) getResponseData("applicationDeploy",
 						IResponseData.ResponseType.APPLICATION_INFO));
 	}
-	
+
 	private void setDeployFailedCall() throws WebApiException, IOException {
 		when(
 				client.applicationDeploy(any(File.class), anyString(),

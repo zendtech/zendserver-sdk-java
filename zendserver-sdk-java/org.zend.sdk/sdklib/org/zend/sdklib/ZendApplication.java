@@ -104,6 +104,48 @@ public class ZendApplication extends AbstractLibrary {
 	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
 			String propertiesFile, String appName, Boolean ignoreFailures,
 			Boolean createVhost, Boolean defaultServer) {
+		Map<String, String> userParams = null;
+		if (propertiesFile != null) {
+			File propsFile = new File(propertiesFile);
+			if (propsFile.exists()) {
+				userParams = getUserParameters(propsFile);
+			}
+		}
+		return deploy(path, baseUrl, targetId, userParams, appName,
+				ignoreFailures, createVhost, defaultServer);
+	}
+
+	/**
+	 * Deploys a new application to the specified target.
+	 * 
+	 * @param path
+	 *            - path to project location or application package
+	 * @param baseUrl
+	 *            - base URL to deploy the application to. Must be an HTTP URL.
+	 * @param targetId
+	 *            - target id
+	 * @param userParams
+	 *            - map with user parameters (key and value)
+	 * 
+	 * @param appName
+	 *            - application name
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @param createVhost
+	 *            - create a virtual host based on the base URL if such a
+	 *            virtual host wasn't already created by Zend Server.
+	 * @param defaultServer
+	 *            - deploy the application on the default server; the base URL
+	 *            host provided will be ignored and replaced with
+	 *            <default-server>.
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
+			Map<String, String> userParams, String appName,
+			Boolean ignoreFailures, Boolean createVhost, Boolean defaultServer) {
 		File file = new File(path);
 		if (!file.exists()) {
 			log.error("Path does not exist: " + file);
@@ -125,13 +167,6 @@ public class ZendApplication extends AbstractLibrary {
 		if (zendPackage != null) {
 			try {
 				WebApiClient client = getClient(targetId);
-				Map<String, String> userParams = null;
-				if (propertiesFile != null) {
-					File propsFile = new File(propertiesFile);
-					if (propsFile.exists()) {
-						userParams = getUserParameters(propsFile);
-					}
-				}
 				return client.applicationDeploy(zendPackage, baseUrl,
 						ignoreFailures, userParams, appName, createVhost,
 						defaultServer);
