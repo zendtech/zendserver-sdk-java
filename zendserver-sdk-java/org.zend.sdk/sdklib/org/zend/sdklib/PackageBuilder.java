@@ -65,8 +65,17 @@ public class PackageBuilder extends AbstractLibrary {
 		this.exclusionList = new ArrayList<String>();
 	}
 
+	public PackageBuilder(File file, List<String> exclusionList) {
+		this(file);
+		this.exclusionList.addAll(exclusionList);
+	}
+
 	public PackageBuilder(String path) {
 		this(new File(path));
+	}
+
+	public PackageBuilder(String path, List<String> exclusionList) {
+		this(new File(path), exclusionList);
 	}
 
 	/**
@@ -164,7 +173,13 @@ public class PackageBuilder extends AbstractLibrary {
 		if (container.getCanonicalPath().equals(resource.getCanonicalPath())) {
 			return false;
 		}
-		return exclusionList.contains(resource.getCanonicalPath());
+		for (String exclude : exclusionList) {
+			exclude = new File(container, exclude).getCanonicalPath();
+			if (exclude.equals(resource.getCanonicalPath())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void addFileToZip(File root, String mappingFolder,
