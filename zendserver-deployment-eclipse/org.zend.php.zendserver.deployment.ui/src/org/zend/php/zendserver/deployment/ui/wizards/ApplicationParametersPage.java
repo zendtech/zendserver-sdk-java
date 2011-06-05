@@ -54,6 +54,7 @@ public class ApplicationParametersPage extends WizardPage {
 	private BaseURL baseUrl;
 	private Text userAppName;
 	private Button defaultServer;
+	private Button ignoreFailures;
 
 	private List<DeploymentParameter> parameters;
 	private SdkTargetsManager targetsManager;
@@ -233,6 +234,9 @@ public class ApplicationParametersPage extends WizardPage {
 		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
 				Messages.parametersPage_appUserNameTooltip, container);
 		createBaseUrl(container);
+		ignoreFailures = createLabelWithCheckbox(
+				Messages.parametersPage_ignoreFailures,
+				Messages.parametersPage_ignoreFailuresTooltip, container);
 		createParameterGroups(container);
 		setControl(container);
 		setPageComplete(false);
@@ -268,6 +272,10 @@ public class ApplicationParametersPage extends WizardPage {
 
 	public boolean isDefaultServer() {
 		return defaultServer.getSelection();
+	}
+
+	public boolean isIgnoreFailures() {
+		return ignoreFailures.getSelection();
 	}
 
 	public SdkTarget getTarget() {

@@ -30,6 +30,8 @@ public class Messages extends NLS {
 	public static String parametersPage_appUserNameTooltip;
 	public static String parametersPage_defaultServer;
 	public static String parametersPage_defaultServerTooltip;
+	public static String parametersPage_ignoreFailures;
+	public static String parametersPage_ignoreFailuresTooltip;
 	public static String parametersPage_applicationParams;
 	public static String parametersPage_ValidationError_TargetLocation;
 	public static String parametersPage_ValidationError_BaseUrl;

@@ -60,6 +60,7 @@ public class ProjectDeploymentWizard extends Wizard {
 				.toString();
 		final boolean defaultServer = parametersPage.isDefaultServer();
 		final SdkTarget target = parametersPage.getTarget();
+		final boolean isIgnoreFailures = parametersPage.isIgnoreFailures();
 		// TODO add support for userParams
 		final HashMap<String, String> params = parametersPage.getParameters();
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
@@ -72,7 +73,8 @@ public class ProjectDeploymentWizard extends Wizard {
 						SdkApplication application = new SdkApplication();
 						// TODO add support for userParams
 						application.deploy(path, baseUrl, target.getId(), null,
-								name, true, !defaultServer, defaultServer);
+								name, isIgnoreFailures, !defaultServer,
+								defaultServer);
 					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
