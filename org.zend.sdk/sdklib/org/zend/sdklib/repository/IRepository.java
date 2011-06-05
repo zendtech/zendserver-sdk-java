@@ -8,6 +8,7 @@
 
 package org.zend.sdklib.repository;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.zend.sdklib.SdkException;
@@ -25,15 +26,23 @@ public interface IRepository {
 	 * 
 	 * @return
 	 */
-	public Application[] getAvailableApplications() throws SdkException;
+	public Application[] getApplications() throws SdkException;
 
 	/**
-	 * Returns a sequence of packages that are required to install an
-	 * application
+	 * Lists all available applications updates in the site
 	 * 
-	 * @param applicationId
 	 * @return
 	 */
-	public InputStream[] getApplication(String applicationId, String version) throws SdkException;
+	public Application getApplicationUpdates(String applicationName,
+			String currentVersion) throws SdkException;
 
+	/**
+	 * Connects to a package given application
+	 * 
+	 * @param application
+	 * @return
+	 * 
+	 * @throws IOException
+	 */
+	public InputStream getPackage(Application application) throws IOException;
 }

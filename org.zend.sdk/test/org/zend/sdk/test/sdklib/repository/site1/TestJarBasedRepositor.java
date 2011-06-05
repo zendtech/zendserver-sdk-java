@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.zend.sdk.test.sdklib.repository.site1;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.zend.sdklib.SdkException;
@@ -20,11 +20,11 @@ public class TestJarBasedRepositor {
 	public void test() throws SdkException {
 		final JarBasedRepository repo = new JarBasedRepository(this.getClass());
 		final Application[] availableApplications = repo
-				.getAvailableApplications();
+				.getApplications();
 		
 		assertEquals("number of application in this site is 1", 1,
 				availableApplications.length);
-		System.out.println(availableApplications[0].getId());
+		System.out.println(availableApplications[0].getName());
 	}
 
 }
