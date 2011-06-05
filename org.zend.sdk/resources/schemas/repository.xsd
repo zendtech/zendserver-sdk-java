@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns="http://zend-sdk.googlecode.com/site-descriptor/1.0"
 	targetNamespace="http://zend-sdk.googlecode.com/site-descriptor/1.0"
-	jaxb:version="1.0"
 	elementFormDefault="unqualified">
 
 	<xs:simpleType name="versionType">
