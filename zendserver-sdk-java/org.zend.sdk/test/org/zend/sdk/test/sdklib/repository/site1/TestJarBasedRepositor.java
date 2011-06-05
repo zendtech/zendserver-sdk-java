@@ -20,7 +20,7 @@ public class TestJarBasedRepositor {
 	public void test() throws SdkException {
 		final JarBasedRepository repo = new JarBasedRepository(this.getClass());
 		final Application[] availableApplications = repo
-				.getApplications();
+				.listApplications();
 		
 		assertEquals("number of application in this site is 1", 1,
 				availableApplications.length);
