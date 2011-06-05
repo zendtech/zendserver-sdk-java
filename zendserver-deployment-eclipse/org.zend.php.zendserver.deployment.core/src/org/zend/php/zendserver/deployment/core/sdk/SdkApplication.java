@@ -8,6 +8,8 @@
 
 package org.zend.php.zendserver.deployment.core.sdk;
 
+import java.util.HashMap;
+
 import org.zend.sdklib.ZendApplication;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.library.ILibrary;
@@ -22,10 +24,10 @@ public class SdkApplication implements ILibrary {
 	}
 
 	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
-			String propertiesFile, String appName, Boolean ignoreFailures,
-			Boolean createVhost, Boolean defaultServer) {
-		return this.application.deploy(path, baseUrl, targetId, propertiesFile,
-				appName, ignoreFailures, createVhost, defaultServer);
+			HashMap<String, String> userParams, String appName,
+			boolean ignoreFailures, boolean createVhost, boolean defaultServer) {
+		return application.deploy(path, baseUrl, targetId, userParams, appName,
+				ignoreFailures, createVhost, defaultServer);
 	}
 
 	public void addStatusChangeListener(IStatusChangeListener listener) {

@@ -61,8 +61,8 @@ public class ProjectDeploymentWizard extends Wizard {
 		final boolean defaultServer = parametersPage.isDefaultServer();
 		final SdkTarget target = parametersPage.getTarget();
 		final boolean isIgnoreFailures = parametersPage.isIgnoreFailures();
-		// TODO add support for userParams
-		final HashMap<String, String> params = parametersPage.getParameters();
+		final HashMap<String, String> userParams = parametersPage
+				.getParameters();
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
 				getShell());
 		try {
@@ -71,10 +71,9 @@ public class ProjectDeploymentWizard extends Wizard {
 					try {
 						createDeploymentDescriptor(name, root, monitor);
 						SdkApplication application = new SdkApplication();
-						// TODO add support for userParams
-						application.deploy(path, baseUrl, target.getId(), null,
-								name, isIgnoreFailures, !defaultServer,
-								defaultServer);
+						application.deploy(path, baseUrl, target.getId(),
+								userParams, name, isIgnoreFailures,
+								!defaultServer, defaultServer);
 					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
