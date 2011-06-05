@@ -8,8 +8,10 @@
 
 package org.zend.php.zendserver.deployment.core.sdk;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
+import org.zend.php.zendserver.deployment.core.PreferenceManager;
 import org.zend.sdklib.ZendApplication;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.library.ILibrary;
@@ -17,10 +19,13 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class SdkApplication implements ILibrary {
 
+	private static final String SEPARATOR = ",";
+
 	private ZendApplication application;
 
 	public SdkApplication() {
-		this.application = new ZendApplication();
+		this.application = new ZendApplication(
+				Arrays.asList(getExclusionsPreference()));
 	}
 
 	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
@@ -36,6 +41,15 @@ public class SdkApplication implements ILibrary {
 
 	public void removeStatusChangeListener(IStatusChangeListener listener) {
 		application.removeStatusChangeListener(listener);
+	}
+
+	private String[] getExclusionsPreference() {
+		String pref = PreferenceManager.getInstance().getString(
+				PreferenceManager.EXCLUDE);
+		if (!"".equals(pref)) {
+			return pref.split(SEPARATOR);
+		}
+		return new String[0];
 	}
 
 }
