@@ -8,8 +8,6 @@
 
 package org.zend.php.zendserver.deployment.ui.wizards;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
@@ -20,14 +18,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.sdk.SdkApplication;
+import org.zend.php.zendserver.deployment.core.sdk.SdkTarget;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
-import org.zend.php.zendserver.deployment.core.utils.PackageBuilder;
-import org.zend.php.zendserver.deployment.core.utils.WebApiManager;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.webapi.core.connection.data.ApplicationInfo;
-import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 
 public class ProjectDeploymentWizard extends Wizard {
 
@@ -58,35 +53,30 @@ public class ProjectDeploymentWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		final String name = descriptorPage != null ? descriptorPage
-				.getApplciationName() : null;
-		final String folder = descriptorPage != null ? descriptorPage
-				.getDocumentRoot() : null;
+		final String name = getName();
+		final String root = getRoot();
 		final String baseUrl = parametersPage.getBaseURL();
-		final Server targetLocation = parametersPage.getTargetLocation();
+		final String path = model.getFile().getParent().getLocation()
+				.toString();
+		final boolean defaultServer = parametersPage.isDefaultServer();
+		final SdkTarget target = parametersPage.getTarget();
+		// TODO add support for userParams
 		final HashMap<String, String> params = parametersPage.getParameters();
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
 				getShell());
 		try {
 			progressDialog.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
-					File zpkPackage = null;
 					try {
-						createDeploymentDescriptor(name, folder, monitor);
-						PackageBuilder builder = new PackageBuilder(model);
-						zpkPackage = builder.createDeploymentPackage(monitor);
+						createDeploymentDescriptor(name, root, monitor);
+						SdkApplication application = new SdkApplication();
+						// TODO add support for userParams
+						application.deploy(path, baseUrl, target.getId(), null,
+								name, true, !defaultServer, defaultServer);
 					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
-					if (zpkPackage != null) {
-						deployApplication(zpkPackage, baseUrl, targetLocation,
-								params, monitor);
-					}
-
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -95,26 +85,6 @@ public class ProjectDeploymentWizard extends Wizard {
 			// TODO Auto-generated method stub
 		}
 		return true;
-	}
-
-	protected void deployApplication(File zpkPackage, String baseUrl,
-			Server targetLocation, HashMap<String, String> params,
-			IProgressMonitor monitor) {
-		String host = targetLocation.getBaseURL();
-		WebApiManager manager = new WebApiManager(host);
-		monitor.beginTask("Deploying application to target location...", 1);
-		if (manager.connect()) {
-			ApplicationInfo info = manager.applicationDeploy(zpkPackage,
-					baseUrl);
-			monitor.done();
-			ApplicationStatus status = info.getStatus();
-			monitor.beginTask("Deploying application to target location ("
-					+ status.getName() + ")...", 1);
-			while (status == ApplicationStatus.STAGING) {
-				status = manager.getApplicationStatus(info.getId());
-			}
-		}
-
 	}
 
 	@Override
@@ -140,4 +110,14 @@ public class ProjectDeploymentWizard extends Wizard {
 			}
 		}
 	}
+
+	private String getRoot() {
+		return descriptorPage != null ? descriptorPage.getDocumentRoot() : null;
+	}
+
+	private String getName() {
+		return descriptorPage != null ? descriptorPage.getApplciationName()
+				: null;
+	}
+
 }

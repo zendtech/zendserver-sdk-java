@@ -17,8 +17,6 @@ import java.util.List;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
@@ -45,6 +43,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
+import org.zend.php.zendserver.deployment.core.sdk.SdkTarget;
+import org.zend.php.zendserver.deployment.core.sdk.SdkTargetsManager;
 
 public class ApplicationParametersPage extends WizardPage {
 
@@ -53,9 +53,10 @@ public class ApplicationParametersPage extends WizardPage {
 	private Link targetLocation;
 	private BaseURL baseUrl;
 	private Text userAppName;
+	private Button defaultServer;
 
 	private List<DeploymentParameter> parameters;
-	private List<Server> serverList;
+	private SdkTargetsManager targetsManager;
 
 	private class DeploymentParameter {
 
@@ -136,6 +137,8 @@ public class ApplicationParametersPage extends WizardPage {
 
 	private class BaseURL {
 
+		private static final String DEFAULT = "<DEFAULT_SERVER>";
+
 		private Label protocol;
 		private Label pathSeparator;
 
@@ -182,7 +185,7 @@ public class ApplicationParametersPage extends WizardPage {
 		public void setDefaultServer(boolean value) {
 			if (value) {
 				host.setEnabled(false);
-				host.setText("<DEFAULT_SERVER>");
+				host.setText(DEFAULT);
 			} else {
 				host.setEnabled(true);
 				host.setText("");
@@ -191,8 +194,11 @@ public class ApplicationParametersPage extends WizardPage {
 
 		public URL getURL() {
 			URL result = null;
+			String realHost = DEFAULT.equals(host.getText()) ? "default" : host
+					.getText();
 			try {
-				result = new URL(protocol.getText(), host.getText(),
+				result = new URL(protocol.getText().substring(0,
+						protocol.getText().length() - 3), realHost,
 						path.getText());
 			} catch (MalformedURLException e) {
 				// ignore and return null
@@ -213,6 +219,7 @@ public class ApplicationParametersPage extends WizardPage {
 		super(Messages.parametersPage_Title);
 		this.model = model;
 		this.parameters = new ArrayList<DeploymentParameter>();
+		this.targetsManager = new SdkTargetsManager();
 		setDescription(Messages.deployWizardPage_Description);
 		setTitle(Messages.parametersPage_Title);
 	}
@@ -238,7 +245,7 @@ public class ApplicationParametersPage extends WizardPage {
 		baseUrl = new BaseURL();
 		baseUrl.createControl(container);
 		baseUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		final Button defaultServer = createLabelWithCheckbox(
+		defaultServer = createLabelWithCheckbox(
 				Messages.parametersPage_defaultServer,
 				Messages.parametersPage_defaultServerTooltip, container);
 		defaultServer.addSelectionListener(new SelectionAdapter() {
@@ -259,14 +266,12 @@ public class ApplicationParametersPage extends WizardPage {
 		return userAppName.getText();
 	}
 
-	public Server getTargetLocation() {
-		String selectedLocation = deployCombo.getText();
-		for (Server server : serverList) {
-			if (server.getName().equals(selectedLocation)) {
-				return server;
-			}
-		}
-		return null;
+	public boolean isDefaultServer() {
+		return defaultServer.getSelection();
+	}
+
+	public SdkTarget getTarget() {
+		return targetsManager.getTargetById(deployCombo.getText());
 	}
 
 	public HashMap<String, String> getParameters() {
@@ -376,15 +381,16 @@ public class ApplicationParametersPage extends WizardPage {
 		targetLocation.setText(text);
 		targetLocation.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				Server prevSelection = getTargetLocation();
+				SdkTarget prevSelection = getTarget();
 				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
 						event.display.getActiveShell(),
 						"org.eclipse.php.server.internal.ui.PHPServersPreferencePage",
 						null, null);
 				if (dialog.open() == Window.OK) {
 					populateLocationList();
-					for (int i = 0; i < serverList.size(); i++) {
-						if (prevSelection == serverList.get(i)) {
+					List<SdkTarget> targets = targetsManager.getTargets();
+					for (int i = 0; i < targets.size(); i++) {
+						if (targets.get(i).getId().equals(prevSelection)) {
 							deployCombo.select(i);
 						}
 					}
@@ -447,21 +453,11 @@ public class ApplicationParametersPage extends WizardPage {
 	}
 
 	private void populateLocationList() {
-		Server[] servers = ServersManager.getServers();
-		if (serverList == null) {
-			serverList = new ArrayList<Server>();
-		}
-		serverList.clear();
-		if (servers != null) {
-			int size = servers.length;
-			for (int i = 0; i < size; i++) {
-				serverList.add(servers[i]);
-			}
-		}
+		List<SdkTarget> targets = targetsManager.getTargets();
 		deployCombo.removeAll();
-		if (!serverList.isEmpty()) {
-			for (Server server : serverList) {
-				deployCombo.add(server.getName());
+		if (!targets.isEmpty()) {
+			for (SdkTarget target : targets) {
+				deployCombo.add(target.getId());
 			}
 		}
 		if (deployCombo.getItemCount() > 0) {
@@ -472,7 +468,7 @@ public class ApplicationParametersPage extends WizardPage {
 	private void validatePage() {
 		setErrorMessage(null);
 		setMessage(null);
-		if (getTargetLocation() == null) {
+		if (getTarget() == null) {
 			setErrorMessage(Messages.parametersPage_ValidationError_TargetLocation);
 			setPageComplete(false);
 			return;
