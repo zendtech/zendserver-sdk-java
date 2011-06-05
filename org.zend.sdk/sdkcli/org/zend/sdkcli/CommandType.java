@@ -18,31 +18,31 @@ import org.zend.sdkcli.internal.commands.CommandLine;
  */
 public enum CommandType {
 
-	CREATE_PROJECT("create", "project", "creates project"),
+	CREATE_PROJECT("create", "project", "Creates a new Zend project."),
 	
-	UPDATE_PROJECT("update", "project", "updates project"),
+	UPDATE_PROJECT("update", "project", "Updates a Zend project."),
 
-	LIST_TARGETS("list", "targets", "lists known deployment target environments"),
+	LIST_TARGETS("list", "targets", "Lists known deployment target environments."),
 
-	CREATE_TARGET("create", "target", "adds new target environment for deploying applications"),
+	CREATE_TARGET("create", "target", "Adds new target environment for deploying applications."),
 	
-	DELETE_TARGET("delete", "target", "removes target from the know targets list"),
+	DELETE_TARGET("delete", "target", "Removes target from the know targets list."),
 
-	DETECT_TARGET("detect", "target", "detects target on localhost"),
+	DETECT_TARGET("detect", "target", "Detects target on localhost."),
 	
-	UPDATE_TARGET("update", "target", "updates target's parameters"),
+	UPDATE_TARGET("update", "target", "Updates target's parameters."),
 
-	LIST_APPLICATIONS("list", "applications", "lists applications installed on target"),
+	LIST_APPLICATIONS("list", "applications", "Lists applications installed on target."),
 
-	DEPLOY_APPLICATION("deploy", "application", "deploys application to target"),
+	DEPLOY_APPLICATION("deploy", "application", "Deploys application to target."),
 	
-	REDEPLOY_APPLICATION("redeploy", "application", "re-deploys application on target"),
+	REDEPLOY_APPLICATION("redeploy", "application", "Re-deploys application on target."),
 	
-	UPDATE_APPLICATION("update", "application", "updates application to target"),
+	UPDATE_APPLICATION("update", "application", "Updates application to target."),
 	
-	REMOVE_APPLICATION("remove", "application", "removes application from target"),
+	REMOVE_APPLICATION("remove", "application", "Removes application from target."),
 	
-	CREATE_PACKAGE("create", "package", "creates deployment package"),
+	CREATE_PACKAGE("create", "package", "Creates deployment package."),
 
 	HELP("help", null, "shows help information");
 
@@ -73,6 +73,10 @@ public enum CommandType {
 		return verb;
 	}
 
+	public String getInfo() {
+		return info;
+	}
+
 	/**
 	 * Creates CommandTypes instance based on first two command line arguments.
 	 * 
@@ -98,10 +102,6 @@ public enum CommandType {
 			}
 		}
 		return HELP;
-	}
-
-	public String getInfo() {
-		return info;
 	}
 
 }
