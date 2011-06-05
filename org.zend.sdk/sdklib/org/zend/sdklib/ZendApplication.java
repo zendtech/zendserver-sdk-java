@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -38,10 +39,16 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 public class ZendApplication extends AbstractLibrary {
 
 	private final TargetsManager manager;
+	private List<String> exclusionList;
 
 	public ZendApplication() {
 		super();
 		manager = new TargetsManager(new UserBasedTargetLoader());
+	}
+
+	public ZendApplication(List<String> exclusionList) {
+		this();
+		this.exclusionList = exclusionList;
 	}
 
 	/**
@@ -159,7 +166,8 @@ public class ZendApplication extends AbstractLibrary {
 			tempFile = new File(tempDir + File.separator
 					+ new Random().nextInt());
 			tempFile.mkdir();
-			PackageBuilder builder = new PackageBuilder(path);
+			PackageBuilder builder = exclusionList == null ? new PackageBuilder(
+					path) : new PackageBuilder(path, exclusionList);
 			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;
