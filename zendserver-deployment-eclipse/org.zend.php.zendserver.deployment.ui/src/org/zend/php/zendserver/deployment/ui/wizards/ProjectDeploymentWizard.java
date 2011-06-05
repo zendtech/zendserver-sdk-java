@@ -55,6 +55,7 @@ public class ProjectDeploymentWizard extends Wizard {
 	public boolean performFinish() {
 		final String name = getName();
 		final String root = getRoot();
+		final String appName = parametersPage.getUserAppName();
 		final String baseUrl = parametersPage.getBaseURL();
 		final String path = model.getFile().getParent().getLocation()
 				.toString();
@@ -72,7 +73,7 @@ public class ProjectDeploymentWizard extends Wizard {
 						createDeploymentDescriptor(name, root, monitor);
 						SdkApplication application = new SdkApplication();
 						application.deploy(path, baseUrl, target.getId(),
-								userParams, name, isIgnoreFailures,
+								userParams, appName, isIgnoreFailures,
 								!defaultServer, defaultServer);
 					} catch (CoreException e) {
 						// TODO Auto-generated catch block

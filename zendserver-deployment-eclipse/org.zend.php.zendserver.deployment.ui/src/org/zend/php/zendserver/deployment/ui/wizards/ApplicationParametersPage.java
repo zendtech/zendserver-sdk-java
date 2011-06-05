@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -198,9 +199,7 @@ public class ApplicationParametersPage extends WizardPage {
 			String realHost = DEFAULT.equals(host.getText()) ? "default" : host
 					.getText();
 			try {
-				result = new URL(protocol.getText().substring(0,
-						protocol.getText().length() - 3), realHost,
-						path.getText());
+				result = new URL(protocol.getText() + realHost + "/" + path.getText());
 			} catch (MalformedURLException e) {
 				// ignore and return null
 			}
