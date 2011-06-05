@@ -13,7 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.zend.sdklib.internal.repository.AbstractStreamRepository;
+import org.zend.sdklib.internal.repository.AbstractRepository;
 
 /**
  * Http based repository
@@ -21,7 +21,7 @@ import org.zend.sdklib.internal.repository.AbstractStreamRepository;
  * @author Roy, 2011
  * 
  */
-public class HttpRepository extends AbstractStreamRepository {
+public class HttpRepository extends AbstractRepository {
 
 	private final String baseURL;
 

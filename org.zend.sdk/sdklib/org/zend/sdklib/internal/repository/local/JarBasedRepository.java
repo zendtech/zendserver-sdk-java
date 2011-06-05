@@ -10,7 +10,7 @@ package org.zend.sdklib.internal.repository.local;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.zend.sdklib.internal.repository.AbstractStreamRepository;
+import org.zend.sdklib.internal.repository.AbstractRepository;
 
 /**
  * an implementation for local Application Repository, as described in
@@ -20,7 +20,7 @@ import org.zend.sdklib.internal.repository.AbstractStreamRepository;
  * 
  * @author Roy, 2011
  */
-public class JarBasedRepository extends AbstractStreamRepository {
+public class JarBasedRepository extends AbstractRepository {
 
 	private static final String SITE_XML = "site.xml";
 	private final Class class1;

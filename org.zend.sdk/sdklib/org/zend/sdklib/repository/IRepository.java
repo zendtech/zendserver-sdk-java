@@ -26,15 +26,7 @@ public interface IRepository {
 	 * 
 	 * @return
 	 */
-	public Application[] getApplications() throws SdkException;
-
-	/**
-	 * Lists all available applications updates in the site
-	 * 
-	 * @return
-	 */
-	public Application getApplicationUpdates(String applicationName,
-			String currentVersion) throws SdkException;
+	public Application[] listApplications() throws SdkException;
 
 	/**
 	 * Connects to a package given application
@@ -45,4 +37,5 @@ public interface IRepository {
 	 * @throws IOException
 	 */
 	public InputStream getPackage(Application application) throws IOException;
+
 }
