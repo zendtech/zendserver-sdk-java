@@ -18,7 +18,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.repository.site.Site;
 
@@ -28,7 +27,7 @@ import org.zend.sdklib.repository.site.Site;
  * 
  * @author Roy, 2011
  */
-public abstract class AbstractStreamRepository implements IRepository {
+public abstract class AbstractStreamRepository extends AbstractRepository {
 
 	/**
 	 * An access to the site descriptor. Must be implemented by sub classes
@@ -45,7 +44,7 @@ public abstract class AbstractStreamRepository implements IRepository {
 			throws IOException;
 
 	@Override
-	public Application[] getAvailableApplications() throws SdkException {
+	public Application[] getApplications() throws SdkException {
 		try {
 			final InputStream siteStream = getSiteStream();
 			Source source = new StreamSource(siteStream);
@@ -63,28 +62,16 @@ public abstract class AbstractStreamRepository implements IRepository {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.sdklib.repository.IRepository#getPackage(org.zend.sdklib.repository
+	 * .site.Application)
+	 */
 	@Override
-	public InputStream[] getApplication(String applicationId, String version) throws SdkException {
-		// validate arguments
-		if (applicationId == null || version == null) {
-			throw new IllegalArgumentException("argments must be not null");
-		}
-
-		// search top level application
-		final Application[] availableApplications = getAvailableApplications();
-		for (Application application : availableApplications) {
-			if (applicationId.equalsIgnoreCase(application.getId())
-					&& version.equals(application.getVersion())) {
-				final String url = application.getUrl();
-				try {
-					return new InputStream[] { getArtifactStream(url) };
-				} catch (IOException e) {
-					throw new SdkException(e);
-				}
-			}
-		}
-		
-		// TODO: handle dependencies
-		return null;
+	public InputStream getPackage(Application application) throws IOException {
+		return getArtifactStream(application.getUrl());
 	}
+
 }

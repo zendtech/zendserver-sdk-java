@@ -13,16 +13,11 @@
 		</classpath>
 	</taskdef>
 
-	<target name="checkUpToDate">
-		<uptodate
-			property="upToDate"
-			srcfile="${schema.filename}"
-			targetfile="${antfile.dir}../../../sdklib/org/zend/sdklib/repository/site/Site.java" />
-	</target>
-
-	<target name="main" depends="checkUpToDate" unless="upToDate">
+	<target name="main">
 		
-		<xjc schema="${antfile.dir}/../schemas/repository.xsd" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site"/>
+		<xjc schema="${schema.filename}" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site">
+			  <produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/repository/site"  includes="Application.java"/>
+		</xjc>
 
 	</target>
 
