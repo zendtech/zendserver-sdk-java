@@ -5,42 +5,50 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.sdklib.internal.repository.local;
+package org.zend.sdklib.internal.repository.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.zend.sdklib.internal.repository.AbstractStreamRepository;
 
 /**
- * an implementation for local Application Repository, as described in
- * http://code.google.com/p/zend-sdk/wiki/RepositorySpec
- * 
- * Mainly created for testing, not recommended for usage
+ * Http based repository
  * 
  * @author Roy, 2011
+ * 
  */
-public class JarBasedRepository extends AbstractStreamRepository {
+public class HttpRepository extends AbstractStreamRepository {
 
-	private static final String SITE_XML = "site.xml";
-	private final Class class1;
+	private final String baseURL;
 
 	/**
-	 * Base dir for the repository
+	 * Base URL of this application site
+	 * 
+	 * @param baseURL
 	 */
+	public HttpRepository(String baseURL) {
+		this.baseURL = baseURL;
 
-	public JarBasedRepository(Class class1) {
-		this.class1 = class1;
+		try {
+			new URL(baseURL);
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
 	public InputStream getSiteStream() throws IOException {
-		return getArtifactStream(SITE_XML);
+		return getArtifactStream("site.xml");
 	}
 
 	@Override
 	public InputStream getArtifactStream(String path) throws IOException {
-		return class1.getResourceAsStream(path);
+		URL url = new URL(this.baseURL + "/" + path);
+		URLConnection conn = url.openConnection();
+		return conn.getInputStream();
 	}
-
 }
