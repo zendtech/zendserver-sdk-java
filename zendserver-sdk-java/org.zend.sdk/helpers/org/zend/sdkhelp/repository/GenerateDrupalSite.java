@@ -57,7 +57,10 @@ public class GenerateDrupalSite {
 		s.setDescription("This is my first drupal site");
 		s.setVersion("1.0");
 		final Application a = factory.createApplication();
-		a.setId("my.drupal");
+		a.setUpdateRange("[5.0, 7.0)");
+		a.setUrl("/drupal/drupal-6.19.zpk");
+		a.setVersion("6.19");
+		a.setLabel("Drupal");
 		a.setName("drupal");
 		a.setCategory("cms");
 		a.setProvider("me");
