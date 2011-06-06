@@ -11,11 +11,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
 
+import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.repository.site.CategoryDef;
 import org.zend.sdklib.repository.site.ObjectFactory;
@@ -37,19 +35,11 @@ public class GenerateDrupalSite {
 		}
 
 		final Site s = createDrupalSite();
-		printSite(printStream, s);
+		JaxbHelper.marshal(printStream, s);
 
 		printStream.close();
 	}
 
-	private static void printSite(PrintStream printStream, final Site s)
-			throws JAXBException, PropertyException {
-		JAXBContext jc = JAXBContext
-				.newInstance("org.zend.sdklib.repository.site");
-		Marshaller m = jc.createMarshaller();
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		m.marshal(s, printStream);
-	}
 
 	private static Site createDrupalSite() {
 		ObjectFactory factory = new ObjectFactory();
