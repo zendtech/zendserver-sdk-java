@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +12,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IResourceMapping;
 
 public class ResourceMapping implements IResourceMapping {
 
-	private Map<IPath, IMapping[]> mappingRules;
-	private List<IPath> exclusions;
+	private Map<IPath, IMapping[]> mappingRules = new HashMap<IPath, IMapping[]>();
+	private List<IPath> exclusions = new ArrayList<IPath>();
 
 	public Map<IPath, IMapping[]> getMappingRules() {
 		return mappingRules;
