@@ -9,7 +9,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdklib.ZendProject;
+import org.zend.sdklib.application.ZendProject;
 
 /**
  * Updates project.

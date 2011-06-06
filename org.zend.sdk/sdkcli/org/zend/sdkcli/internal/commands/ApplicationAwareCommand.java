@@ -7,7 +7,8 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
-import org.zend.sdklib.ZendApplication;
+import org.zend.sdklib.application.ZendApplication;
+import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 
 /**
  * Base class for all command lines that need access to zend application.
@@ -20,7 +21,7 @@ public abstract class ApplicationAwareCommand extends AbstractCommand {
 	private final ZendApplication application;
 
 	public ApplicationAwareCommand() {
-		application = new ZendApplication();
+		application = new ZendApplication(new UserBasedTargetLoader());
 	}
 
 	public ZendApplication getApplication() {

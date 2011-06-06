@@ -10,7 +10,7 @@ package org.zend.sdkcli.internal.commands;
 import java.io.File;
 
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdklib.PackageBuilder;
+import org.zend.sdklib.application.PackageBuilder;
 
 /**
  * Create deployment package.

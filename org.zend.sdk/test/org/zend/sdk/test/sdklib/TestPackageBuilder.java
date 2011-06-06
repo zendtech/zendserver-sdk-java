@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
-import org.zend.sdklib.PackageBuilder;
+import org.zend.sdklib.application.PackageBuilder;
 
 public class TestPackageBuilder extends AbstractTest {
 

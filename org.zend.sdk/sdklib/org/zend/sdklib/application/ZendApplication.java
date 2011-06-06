@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.sdklib;
+package org.zend.sdklib.application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +22,7 @@ import java.util.Random;
 import org.zend.sdklib.internal.library.AbstractLibrary;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
@@ -41,13 +42,13 @@ public class ZendApplication extends AbstractLibrary {
 	private final TargetsManager manager;
 	private List<String> exclusionList;
 
-	public ZendApplication() {
+	public ZendApplication(ITargetLoader loader) {
 		super();
-		manager = new TargetsManager(new UserBasedTargetLoader());
+		manager = new TargetsManager(loader);
 	}
 
-	public ZendApplication(List<String> exclusionList) {
-		this();
+	public ZendApplication(ITargetLoader loader, List<String> exclusionList) {
+		this(loader);
 		this.exclusionList = exclusionList;
 	}
 
