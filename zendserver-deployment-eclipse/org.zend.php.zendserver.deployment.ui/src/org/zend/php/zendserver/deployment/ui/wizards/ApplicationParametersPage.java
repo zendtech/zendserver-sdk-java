@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,8 +43,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
-import org.zend.php.zendserver.deployment.core.sdk.SdkTarget;
-import org.zend.php.zendserver.deployment.core.sdk.SdkTargetsManager;
+import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 
 public class ApplicationParametersPage extends WizardPage {
 
@@ -58,7 +57,7 @@ public class ApplicationParametersPage extends WizardPage {
 	private Button ignoreFailures;
 
 	private List<DeploymentParameter> parameters;
-	private SdkTargetsManager targetsManager;
+	private TargetsManager targetsManager;
 
 	private class DeploymentParameter {
 
@@ -199,7 +198,8 @@ public class ApplicationParametersPage extends WizardPage {
 			String realHost = DEFAULT.equals(host.getText()) ? "default" : host
 					.getText();
 			try {
-				result = new URL(protocol.getText() + realHost + "/" + path.getText());
+				result = new URL(protocol.getText() + realHost + "/"
+						+ path.getText());
 			} catch (MalformedURLException e) {
 				// ignore and return null
 			}
@@ -219,7 +219,7 @@ public class ApplicationParametersPage extends WizardPage {
 		super(Messages.parametersPage_Title);
 		this.model = model;
 		this.parameters = new ArrayList<DeploymentParameter>();
-		this.targetsManager = new SdkTargetsManager();
+		this.targetsManager = new TargetsManager();
 		setDescription(Messages.deployWizardPage_Description);
 		setTitle(Messages.parametersPage_Title);
 	}
@@ -277,7 +277,7 @@ public class ApplicationParametersPage extends WizardPage {
 		return ignoreFailures.getSelection();
 	}
 
-	public SdkTarget getTarget() {
+	public IZendTarget getTarget() {
 		return targetsManager.getTargetById(deployCombo.getText());
 	}
 
@@ -388,16 +388,16 @@ public class ApplicationParametersPage extends WizardPage {
 		targetLocation.setText(text);
 		targetLocation.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				SdkTarget prevSelection = getTarget();
+				IZendTarget prevSelection = getTarget();
 				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
 						event.display.getActiveShell(),
 						"org.eclipse.php.server.internal.ui.PHPServersPreferencePage",
 						null, null);
 				if (dialog.open() == Window.OK) {
 					populateLocationList();
-					List<SdkTarget> targets = targetsManager.getTargets();
-					for (int i = 0; i < targets.size(); i++) {
-						if (targets.get(i).getId().equals(prevSelection)) {
+					IZendTarget[] targets = targetsManager.getTargets();
+					for (int i = 0; i < targets.length; i++) {
+						if (targets[i].getId().equals(prevSelection)) {
 							deployCombo.select(i);
 						}
 					}
@@ -460,10 +460,10 @@ public class ApplicationParametersPage extends WizardPage {
 	}
 
 	private void populateLocationList() {
-		List<SdkTarget> targets = targetsManager.getTargets();
+		IZendTarget[] targets = targetsManager.getTargets();
 		deployCombo.removeAll();
-		if (!targets.isEmpty()) {
-			for (SdkTarget target : targets) {
+		if (targets.length != 0) {
+			for (IZendTarget target : targets) {
 				deployCombo.add(target.getId());
 			}
 		}

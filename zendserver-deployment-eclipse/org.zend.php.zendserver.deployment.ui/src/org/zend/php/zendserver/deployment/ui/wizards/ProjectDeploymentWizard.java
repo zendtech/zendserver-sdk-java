@@ -20,7 +20,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.SdkApplication;
-import org.zend.php.zendserver.deployment.core.sdk.SdkTarget;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
@@ -60,7 +59,7 @@ public class ProjectDeploymentWizard extends Wizard {
 		final String path = model.getFile().getParent().getLocation()
 				.toString();
 		final boolean defaultServer = parametersPage.isDefaultServer();
-		final SdkTarget target = parametersPage.getTarget();
+		final String targetId = parametersPage.getTarget().getId();
 		final boolean isIgnoreFailures = parametersPage.isIgnoreFailures();
 		final HashMap<String, String> userParams = parametersPage
 				.getParameters();
@@ -72,9 +71,9 @@ public class ProjectDeploymentWizard extends Wizard {
 					try {
 						createDeploymentDescriptor(name, root, monitor);
 						SdkApplication application = new SdkApplication();
-						application.deploy(path, baseUrl, target.getId(),
-								userParams, appName, isIgnoreFailures,
-								!defaultServer, defaultServer);
+						application.deploy(path, baseUrl, targetId, userParams,
+								appName, isIgnoreFailures, !defaultServer,
+								defaultServer);
 					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
