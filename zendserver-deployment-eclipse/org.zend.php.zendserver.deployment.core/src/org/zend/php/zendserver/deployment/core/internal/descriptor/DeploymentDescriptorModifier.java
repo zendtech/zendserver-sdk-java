@@ -390,6 +390,12 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	public void addVariable(IVariable var) throws CoreException {
 		loadDomModel();
 		Map<String, String> attrs = new HashMap<String, String>();
+		if (var.getName() != null) {
+			attrs.put("name", var.getName());
+		}
+		if (var.getValue() != null) {
+			attrs.put("value", var.getValue());
+		}
 		Node node = addNode(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE, attrs);
 		node.setTextContent(var.getValue());
 		storeDomModel();
