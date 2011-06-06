@@ -35,7 +35,7 @@ public class ResourceMapper {
 				}
 			}
 		}
-		return null;
+		return path;
 	}
 
 	public IPath getPath(String path) {
