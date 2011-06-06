@@ -125,6 +125,11 @@ public class RepositoryManager extends AbstractLibrary {
 		return (Application[]) appls.toArray(new Application[appls.size()]);
 	}
 
+	public synchronized IRepository[] getRepositories() {
+		return (IRepository[]) this.all
+				.toArray(new IRepository[this.all.size()]);
+	}
+
 	/**
 	 * Creates and adds new repository based on provided parameters.
 	 * 
@@ -144,11 +149,6 @@ public class RepositoryManager extends AbstractLibrary {
 			log.error("\tPossible error: " + e.getMessage());
 		}
 		return null;
-	}
-
-	public synchronized IRepository[] getRepositories() {
-		return (IRepository[]) this.all
-				.toArray(new IRepository[this.all.size()]);
 	}
 
 	/**
