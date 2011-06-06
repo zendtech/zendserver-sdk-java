@@ -10,6 +10,7 @@ package org.zend.sdk.test.sdklib.repository;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
 import org.zend.sdklib.repository.IRepository;
@@ -18,14 +19,14 @@ import org.zend.sdklib.repository.RepositoryFactory;
 public class TestRepositoryFactory {
 
 	@Test
-	public void testFile() {
+	public void testFile() throws SdkException {
 		final IRepository createRepository = RepositoryFactory
 				.createRepository("file:/c:\\temp");
 		assertTrue(createRepository instanceof FileBasedRepository);
 	}
 
 	@Test
-	public void testHttp() {
+	public void testHttp() throws SdkException {
 		final IRepository createRepository = RepositoryFactory
 				.createRepository("http://www.cnn.com");
 		assertTrue(createRepository instanceof HttpRepository);

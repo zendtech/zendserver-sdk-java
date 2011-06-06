@@ -18,7 +18,8 @@ public class TestJarBasedRepositor {
 
 	@Test
 	public void test() throws SdkException {
-		final JarBasedRepository repo = new JarBasedRepository(this.getClass());
+		final Class class1 = this.getClass();
+		final JarBasedRepository repo = new JarBasedRepository(class1.getName(), class1);
 		final Application[] availableApplications = repo
 				.listApplications();
 		

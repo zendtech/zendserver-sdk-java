@@ -8,7 +8,10 @@
 package org.zend.sdklib.repository;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
 
@@ -40,17 +43,23 @@ public class RepositoryFactory {
 	 * 
 	 * @param url
 	 * @return
+	 * @throws SdkException
 	 */
-	final public static IRepository createRepository(String url) {
+	final public static IRepository createRepository(String url)
+			throws SdkException {
 
 		String path = path(url, false, HTTP, HTTPS);
 		if (null != path) {
-			return new HttpRepository(path);
+			try {
+				return new HttpRepository(path, new URL(path));
+			} catch (MalformedURLException e) {
+				throw new SdkException(e);
+			}
 		}
 
 		path = path(url, true, FILE);
 		if (null != path) {
-			return new FileBasedRepository(new File(path));
+			return new FileBasedRepository(url, new File(path));
 		}
 
 		return null;
