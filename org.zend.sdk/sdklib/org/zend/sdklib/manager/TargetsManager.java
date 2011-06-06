@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
@@ -44,6 +45,10 @@ public class TargetsManager extends AbstractLibrary {
 	 * The mechanism that is responsible to load the targets
 	 */
 	private final ITargetLoader loader;
+
+	public TargetsManager() {
+		this(new UserBasedTargetLoader());
+	}
 
 	public TargetsManager(ITargetLoader loader) {
 		this.loader = loader;
