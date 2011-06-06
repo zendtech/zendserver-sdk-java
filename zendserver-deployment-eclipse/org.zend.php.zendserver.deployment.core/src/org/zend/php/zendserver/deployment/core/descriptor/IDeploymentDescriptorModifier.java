@@ -37,6 +37,8 @@ public interface IDeploymentDescriptorModifier {
 	void removeVariable(IVariable var) throws CoreException;
 
 	void setVariableValue(IVariable input, String text) throws CoreException;
+	
+	void setVariableName(IVariable input, String text) throws CoreException;
 
 	void addDependency(IDependency dep) throws CoreException;
 
