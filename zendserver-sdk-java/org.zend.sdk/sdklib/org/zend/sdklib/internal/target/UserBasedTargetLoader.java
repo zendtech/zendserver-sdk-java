@@ -26,6 +26,7 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class UserBasedTargetLoader implements ITargetLoader {
 
+	private static final String PROPERTY = "target";
 	private static final String INI_EXTENSION = ".ini";
 	private static final String CONF_FILENAME = "conf";
 	private final File baseDir;
@@ -193,7 +194,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 					targetDescriptor.target);
 
 			final Properties properties = new Properties();
-			properties.put("target", targetDescriptor.target);
+			properties.put(PROPERTY, targetDescriptor.target);
 			properties.put("path", targetDescriptor.path.getAbsolutePath());
 
 			final FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -222,7 +223,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			properties.load(fileInputStream);
 
 			final TargetDescriptor targetDescriptor = new TargetDescriptor();
-			targetDescriptor.target = properties.getProperty("target");
+			targetDescriptor.target = properties.getProperty(PROPERTY);
 			targetDescriptor.path = new File(properties.getProperty("path"));
 
 			fileInputStream.close();

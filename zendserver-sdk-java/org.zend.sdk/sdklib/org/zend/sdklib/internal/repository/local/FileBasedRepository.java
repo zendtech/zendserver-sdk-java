@@ -40,26 +40,25 @@ import org.zend.sdklib.internal.repository.AbstractRepository;
  */
 public class FileBasedRepository extends AbstractRepository {
 
-	private static final String SITE_XML = "site.xml";
 	/**
 	 * Base dir for the repository
 	 */
 	private final File basedir;
 
-	public FileBasedRepository(File basedir) {
-		super();
+	public FileBasedRepository(String id, File basedir) {
+		super(id);
 		this.basedir = basedir;
-	}
-
-	@Override
-	public InputStream getSiteStream() throws IOException {
-		return getArtifactStream(SITE_XML);
 	}
 
 	@Override
 	public InputStream getArtifactStream(String path) throws IOException {
 		final File file = new File(basedir, path);
 		return new FileInputStream(file);
+	}
+
+	@Override
+	public String getId() {
+		return basedir.getAbsolutePath();
 	}
 
 }

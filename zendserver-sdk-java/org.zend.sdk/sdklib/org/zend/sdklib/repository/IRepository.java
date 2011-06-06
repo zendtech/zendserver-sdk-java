@@ -22,6 +22,11 @@ import org.zend.sdklib.repository.site.Application;
 public interface IRepository {
 
 	/**
+	 * @return the id of the repository
+	 */
+	public String getId();
+
+	/**
 	 * Lists all available applications in the site
 	 * 
 	 * @return
