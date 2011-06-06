@@ -36,7 +36,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 
 
 public class ParametersBlock extends MasterDetailsBlock {
-
+	
 	private static class MasterContentProvider implements IStructuredContentProvider {
 
 		public void dispose() {
@@ -69,21 +69,19 @@ public class ParametersBlock extends MasterDetailsBlock {
 			
 			String type = param.getType();
 			
-			if ("password".equals(type)) {
+			if (IParameter.PASSWORD.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_PASSWORD);
-			} else if ("string".equals(type)) {
+			} else if (IParameter.STRING.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_STRING);
-			} else if ("hidden".equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_HIDDEN);
-			} else if ("number".equals(type)) {
+			} else if (IParameter.NUMBER.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_NUMBER);
-			} else if ("choice".equals(type)) {
+			} else if (IParameter.CHOICE.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_CHOICE);
-			} else if ("checkbox".equals(type)) {
+			} else if (IParameter.CHECKBOX.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_CHECKBOX);
-			} else if ("hostname".equals(type)) {
+			} else if (IParameter.HOSTNAME.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_HOSTNAME);
-			} else if ("email".equals(type)) {
+			} else if (IParameter.EMAIL.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_EMAIL);
 			}
 			
@@ -94,7 +92,12 @@ public class ParametersBlock extends MasterDetailsBlock {
 		public String getText(Object element) {
 			IParameter param = (IParameter) element;
 			
-			return param.getDisplay();
+			String label = param.getDisplay();
+			if (label == null || label.trim().equals("")) {
+				label = param.getId();
+			}
+			
+			return label;
 		}
 	}
 
@@ -200,9 +203,10 @@ public class ParametersBlock extends MasterDetailsBlock {
 	}
 
 	protected void addElment() {
-		IParameter param = new Parameter();
+		IDeploymentDescriptorModifier model = editor.getModel();
+		IParameter param = new Parameter("parameter"+(model.getDescriptor().getParameters().size() + 1), IParameter.STRING);
 		try {
-			editor.getModel().addParameter(param);
+			model.addParameter(param);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

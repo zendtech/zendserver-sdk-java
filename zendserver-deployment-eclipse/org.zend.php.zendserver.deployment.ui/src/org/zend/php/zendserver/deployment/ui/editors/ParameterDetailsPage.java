@@ -138,13 +138,13 @@ public class ParameterDetailsPage implements IDetailsPage {
 
 		toolkit.createLabel(client, "Type");
 		typeCombo = new Combo(client, SWT.NONE);
-		typeCombo.add("string");
-		typeCombo.add("check");
-		typeCombo.add("choice");
-		typeCombo.add("email");
-		typeCombo.add("password");
-		typeCombo.add("ID_TIMEZONE");
-		typeCombo.add("ID_CURRENCY");
+		typeCombo.add(IParameter.CHOICE);
+		typeCombo.add(IParameter.STRING);
+		typeCombo.add(IParameter.PASSWORD);
+		typeCombo.add(IParameter.EMAIL);
+		typeCombo.add(IParameter.CHECKBOX);
+		typeCombo.add(IParameter.NUMBER);
+		typeCombo.add(IParameter.HOSTNAME);
 		toolkit.adapt(typeCombo, true, true);
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.widthHint = 100;
