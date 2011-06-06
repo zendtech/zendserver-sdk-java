@@ -4,4 +4,6 @@ public interface IVariable {
 
 	String getValue();
 
+	String getName();
+
 }
