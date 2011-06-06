@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdk.test.sdkcli.commands.TestCreateProjectCommand;
 import org.zend.sdkcli.ParseError;
-import org.zend.sdklib.ZendProject;
+import org.zend.sdklib.application.ZendProject;
 
 public class TestZendProject extends AbstractTest {
 
