@@ -21,6 +21,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 public class DeploymentDescriptorParser extends DefaultHandler {
@@ -248,10 +249,21 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 			String name = attributes.getValue("name");
 			String value = attributes.getValue("value");
 			Variable var = new Variable(name, value);
-			setListElement(descriptor.setVariables(), index, var);
+			List<IVariable> list = descriptor.setVariables();
+			if (index < list.size()) {
+				copyVariable((Variable) list.get(index), var);
+			} else {
+				list.add(var);
+			}
+			markChanged(var);
 			return true;
 		}
 		return false;
+	}
+
+	private void copyVariable(Variable dest, Variable src) {
+		dest.setName(src.getName());
+		dest.setValue(src.getValue());
 	}
 
 	private void markChanged(Object obj) {
@@ -311,13 +323,32 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 				param.setValidValues((String[])validationEnums.toArray(new String[validationEnums.size()]));
 				validationEnums.clear();
 			}
-			setListElement(descriptor.setParameters(), index, param);
+			
+			List<IParameter> list = descriptor.setParameters();
+			if (index < list.size()) {
+				copyParameter((Parameter) list.get(index), param);
+			} else {
+				list.add(param);
+			}
+			markChanged(param);
 			return true;
 		}
 		
 		return false;
 	}
 	
+	private void copyParameter(Parameter dest, Parameter src) {
+		dest.setDefaultValue(src.getDefaultValue());
+		dest.setDescription(src.getDefaultValue());
+		dest.setDisplay(src.getDisplay());
+		dest.setId(src.getId());
+		dest.setLongDescription(src.getLongDescription());
+		dest.setRequired(src.isRequired());
+		dest.setServerType(src.getServerType());
+		dest.setType(src.getType());
+		dest.setValidValues(src.getValidValues());
+	}
+
 	private boolean startReadDependency(String locationStr) {
 		if (DEPENDENCIES_PHP.equals(locationStr)) {
 			phpDep = new PHPDependency();
@@ -396,7 +427,13 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		}
 
 		if (toSet != null) {
-			setListElement(descriptor.setDependencies(), index, toSet);
+			List<IDependency> list = descriptor.setDependencies();
+			if (index < list.size()) {
+				copyDependency((Dependency)list.get(index), (Dependency)toSet);
+			} else {
+				list.add(toSet);
+			}
+			markChanged(toSet);
 			return true;
 		}
 		
@@ -413,6 +450,16 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		readZendFrameworkDependency(value, locationStr);
 		
 		return false;
+	}
+
+	private void copyDependency(Dependency dest, Dependency src) {
+		dest.setConflicts(src.getConflicts());
+		dest.setEquals(src.getEquals());
+		dest.setExcludes().clear();
+		dest.setExcludes().addAll(src.getExclude());
+		dest.setMax(src.getMax());
+		dest.setMin(src.getMin());
+		dest.setName(src.getName());
 	}
 
 	private boolean readZendFrameworkDependency(String value, String locationStr) {
