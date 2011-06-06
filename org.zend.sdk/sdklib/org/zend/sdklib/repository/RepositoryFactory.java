@@ -57,11 +57,17 @@ public class RepositoryFactory {
 			}
 		}
 
+		// fall back is always FILE protocol
+		if (!url.startsWith("file")) {
+			url += "file:/";
+		}
 		path = path(url, true, FILE);
 		if (null != path) {
 			return new FileBasedRepository(url, new File(path));
 		}
 
+		
+		
 		return null;
 	}
 

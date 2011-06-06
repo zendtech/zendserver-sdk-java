@@ -41,10 +41,18 @@ public enum CommandType {
 	UPDATE_APPLICATION("update", "application", "Updates application to target."),
 	
 	REMOVE_APPLICATION("remove", "application", "Removes application from target."),
+
+	DISCOVER_APPLICATION("discover", "application", "discover new application from the repositories list."),
 	
 	CREATE_PACKAGE("create", "package", "Creates deployment package."),
 
-	HELP("help", null, "shows help information");
+	ADD_REPOSITORY("add", "repository", "Add repository to the discovery list."),
+	
+	REMOVE_REPOSITORY("remove", "repository", "Removes repository from the discovery list."),
+	
+	LIST_REPOSITORIES("list", "repositories", "Show the list of repositories."),
+	
+	HELP("help", null, "shows help information.");
 
 	private String verb;
 	private String directObject;
