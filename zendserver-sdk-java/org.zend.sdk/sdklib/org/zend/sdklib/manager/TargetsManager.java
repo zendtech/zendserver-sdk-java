@@ -28,10 +28,6 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * 
  * @author Roy, 2011
  */
-/**
- * @author roy
- * 
- */
 public class TargetsManager extends AbstractLibrary {
 
 	private static final String DEFAULT_KEY = "sdk";
