@@ -48,6 +48,9 @@ public class FileBasedRepository extends AbstractRepository {
 	public FileBasedRepository(String id, File basedir) {
 		super(id);
 		this.basedir = basedir;
+		if (!basedir.isDirectory()) {
+			throw new IllegalArgumentException("direcotry doesn't exist " + id);
+		}
 	}
 
 	@Override

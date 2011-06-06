@@ -55,7 +55,12 @@ public class GenerateManual {
 		tableCommands(printStream, CommandType.DEPLOY_APPLICATION,
 				CommandType.UPDATE_APPLICATION, CommandType.REMOVE_APPLICATION,
 				CommandType.REDEPLOY_APPLICATION,
-				CommandType.LIST_APPLICATIONS, CommandType.CREATE_PACKAGE);
+				CommandType.LIST_APPLICATIONS,
+				CommandType.DISCOVER_APPLICATION, CommandType.CREATE_PACKAGE);
+
+		printStream.print("<h2>Repository actions and options</h2>");
+		tableCommands(printStream, CommandType.ADD_REPOSITORY,
+				CommandType.REMOVE_REPOSITORY, CommandType.LIST_REPOSITORIES);
 
 		printStream.close();
 	}
