@@ -10,12 +10,16 @@ package org.zend.sdklib.internal.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.zend.sdklib.SdkException;
+import org.zend.sdklib.repository.IRepository;
+import org.zend.sdklib.repository.site.Application;
+
 /**
  * Helps with version compare operations
  * 
  * @author Roy, 2011
  */
-public class VersionsUtility {
+public class UpdateUtils {
 
 	private final static String patternRange = "[\\(\\[]\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?(\\s)*,(\\s)*\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?[\\)\\]]";
 	private final static String patternVersion = "\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?";
@@ -63,9 +67,24 @@ public class VersionsUtility {
 
 	/**
 	 * Compare two given versions.
-	 * <pre> < 0 </pre> ver1 is greater than ver2
-	 * <pre> = 0 </pre> ver1 is equal to ver2
-	 * <pre> > 0 </pre> ver1 is smaller than ver2
+	 * 
+	 * <pre>
+	 * < 0
+	 * </pre>
+	 * 
+	 * ver1 is greater than ver2
+	 * 
+	 * <pre>
+	 * = 0
+	 * </pre>
+	 * 
+	 * ver1 is equal to ver2
+	 * 
+	 * <pre>
+	 * > 0
+	 * </pre>
+	 * 
+	 * ver1 is smaller than ver2
 	 * 
 	 * @param ver1
 	 * @param ver2
@@ -76,10 +95,10 @@ public class VersionsUtility {
 			throw new IllegalArgumentException("illegal format of version: "
 					+ ver1 + " or " + ver2);
 		}
-		
+
 		return normalizeVersion(ver1) - normalizeVersion(ver2);
 	}
-	
+
 	public static long normalizeVersion(String version) {
 		if (invalidVersion(version)) {
 			throw new IllegalArgumentException("illegal format of version: "
@@ -97,6 +116,44 @@ public class VersionsUtility {
 
 	public static boolean invalidVersion(String currentVersion) {
 		return !currentVersion.matches(patternVersion);
+	}
+
+	/**
+	 * @param applicationName
+	 * @param currentVersion
+	 * @return
+	 * @throws SdkException
+	 */
+	public static Application getApplicationUpdates(IRepository repository,
+			String applicationName, String currentVersion) throws SdkException {
+
+		final Application[] applications = repository.listApplications();
+		for (Application application : applications) {
+			if (application.getName().equalsIgnoreCase(applicationName)
+					&& validUpdate(currentVersion, application.getVersion(),
+							application.getUpdateRange())) {
+				return application;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * There is an update if <br/>
+	 * 1. current version is smaller than new version on site <br/>
+	 * 2. current version is in between the range of the update<br/>
+	 * 
+	 * @param currentVersion
+	 * @param newVersion
+	 * @param range
+	 * @return
+	 */
+	public static boolean validUpdate(String currentVersion, String newVersion,
+			String range) {
+
+		return versionCompare(newVersion, currentVersion) > 0
+				&& inBetween(currentVersion, range);
 	}
 
 }

@@ -25,10 +25,8 @@ import org.zend.sdklib.repository.site.Application;
  */
 public abstract class AbstractRepository implements IRepository {
 
-	/**
-	 * An access to the site descriptor. Must be implemented by sub classes
-	 */
-	public abstract InputStream getSiteStream() throws IOException;
+	private static final String SITE_XML = "site.xml";
+	private final String id;
 
 	/**
 	 * An access to artifacts in site. Must be implemented by sub classes
@@ -39,17 +37,25 @@ public abstract class AbstractRepository implements IRepository {
 	public abstract InputStream getArtifactStream(String path)
 			throws IOException;
 
+	public AbstractRepository(String id) {
+		this.id = id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.repository.IRepository#listApplications()
+	 */
 	@Override
 	public Application[] listApplications() throws SdkException {
 		try {
-			return JaxbHelper.unmarshal(getSiteStream());
+			return JaxbHelper.unmarshal(getArtifactStream(SITE_XML));
 		} catch (JAXBException e) {
 			throw new SdkException(e);
 		} catch (IOException e) {
 			throw new SdkException(e);
 		}
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -61,6 +67,16 @@ public abstract class AbstractRepository implements IRepository {
 	@Override
 	public InputStream getPackage(Application application) throws IOException {
 		return getArtifactStream(application.getUrl());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.repository.IRepository#getId()
+	 */
+	@Override
+	public String getId() {
+		return this.id;
 	}
 
 }

@@ -22,25 +22,19 @@ import org.zend.sdklib.internal.repository.AbstractRepository;
  */
 public class JarBasedRepository extends AbstractRepository {
 
-	private static final String SITE_XML = "site.xml";
 	private final Class class1;
 
 	/**
 	 * Base dir for the repository
 	 */
 
-	public JarBasedRepository(Class class1) {
+	public JarBasedRepository(String id, Class class1) {
+		super(id);
 		this.class1 = class1;
-	}
-
-	@Override
-	public InputStream getSiteStream() throws IOException {
-		return getArtifactStream(SITE_XML);
 	}
 
 	@Override
 	public InputStream getArtifactStream(String path) throws IOException {
 		return class1.getResourceAsStream(path);
 	}
-
 }

@@ -23,31 +23,21 @@ import org.zend.sdklib.internal.repository.AbstractRepository;
  */
 public class HttpRepository extends AbstractRepository {
 
-	private final String baseURL;
+	private final URL baseURL;
 
 	/**
 	 * Base URL of this application site
 	 * 
 	 * @param baseURL
 	 */
-	public HttpRepository(String baseURL) {
-		this.baseURL = baseURL;
-
-		try {
-			new URL(baseURL);
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	@Override
-	public InputStream getSiteStream() throws IOException {
-		return getArtifactStream("site.xml");
+	public HttpRepository(String id, URL url) {
+		super(id);
+		this.baseURL = url;
 	}
 
 	@Override
 	public InputStream getArtifactStream(String path) throws IOException {
-		URL url = new URL(this.baseURL + "/" + path);
+		URL url = new URL(this.baseURL.toString() + "/" + path);
 		URLConnection conn = url.openConnection();
 		return conn.getInputStream();
 	}
