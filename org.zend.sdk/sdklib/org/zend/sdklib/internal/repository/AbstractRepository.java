@@ -9,18 +9,13 @@ package org.zend.sdklib.internal.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
-import org.zend.sdklib.repository.site.Site;
 
 /**
  * Base abstract class for all repository that can handle resources by opening
@@ -47,21 +42,14 @@ public abstract class AbstractRepository implements IRepository {
 	@Override
 	public Application[] listApplications() throws SdkException {
 		try {
-			final InputStream siteStream = getSiteStream();
-			Source source = new StreamSource(siteStream);
-			JAXBContext jc = JAXBContext
-					.newInstance("org.zend.sdklib.repository.site");
-			Unmarshaller u = jc.createUnmarshaller();
-			Site site = (Site) u.unmarshal(source);
-			final List<Application> application = site.getApplication();
-			return (Application[]) application
-					.toArray(new Application[application.size()]);
+			return JaxbHelper.unmarshal(getSiteStream());
 		} catch (JAXBException e) {
 			throw new SdkException(e);
 		} catch (IOException e) {
 			throw new SdkException(e);
 		}
 	}
+
 
 	/*
 	 * (non-Javadoc)
