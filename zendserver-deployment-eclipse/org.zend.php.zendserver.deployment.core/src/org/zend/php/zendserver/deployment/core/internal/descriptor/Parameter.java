@@ -53,10 +53,10 @@ public class Parameter implements IParameter {
 		this.longDescription = descriptionLong;
 	}
 
-	public Parameter() {
-		this("", "", false, "", "", "", "");
+	public Parameter(String id, String type) {
+		this(id, type, false, "", "", "", "");
 	}
-
+	
 	public String getId() {
 		return id;
 	}
