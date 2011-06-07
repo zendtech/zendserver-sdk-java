@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.webapi.core;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -25,6 +24,7 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.dispatch.IServiceDispatcher;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.IRequestInitializer;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.service.WebApiMethodType;
@@ -272,7 +272,7 @@ public class WebApiClient {
 	 * Re-enable a cluster member. This process may be asynchronous if Session
 	 * Clustering is used – if this is the case, the initial operation will
 	 * return an HTTP 202 response. This action is idempotent. Running it on an
-	 * enabled server will result in a “200 OK” response with no
+	 * enabled server will result in a 200 OK response with no
 	 * consequences. On a ZSCM with no valid license, this operation will fail.
 	 * 
 	 * @return server info
@@ -401,7 +401,7 @@ public class WebApiClient {
 	 * @return servers list
 	 * @throws WebApiException
 	 */
-	public ServersList configuratioImport(final File configFile,
+	public ServersList configuratioImport(final NamedInputStream configFile,
 			final Boolean ignoreSystemMismatch) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CONFIGURATION_IMPORT,
@@ -409,7 +409,7 @@ public class WebApiClient {
 
 					public void init(IRequest request) throws WebApiException {
 						((ConfigurationImportRequest) request)
-								.setFile(configFile);
+								.setConfigStream(configFile);
 
 						if (ignoreSystemMismatch != null)
 							((ConfigurationImportRequest) request)
@@ -428,7 +428,7 @@ public class WebApiClient {
 	 * @return servers list
 	 * @throws WebApiException
 	 */
-	public ServersList configuratioImport(final File configFile)
+	public ServersList configuratioImport(final NamedInputStream configFile)
 			throws WebApiException {
 		return configuratioImport(configFile, null);
 	}
@@ -469,7 +469,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
 			final Map<String, String> userParam, final String userAppName,
 			final Boolean createVhost, final Boolean defaultServer)
@@ -517,7 +517,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Boolean ignoreFailures)
 			throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
@@ -539,7 +539,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Map<String, String> userParam)
 			throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, userParam, null,
@@ -561,7 +561,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, null, null, null,
 				null);
@@ -582,7 +582,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final String userAppName)
 			throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, null, userAppName,
@@ -604,7 +604,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Map<String, String> userParam,
 			final String userAppName) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, null, userParam,
@@ -626,7 +626,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
 			final Map<String, String> userParam) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures,
@@ -648,7 +648,7 @@ public class WebApiClient {
 	 * @return information about deployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationDeploy(final File appPackage,
+	public ApplicationInfo applicationDeploy(final NamedInputStream appPackage,
 			final String baseUrl, final Boolean ignoreFailures,
 			final String userAppName) throws WebApiException {
 		return applicationDeploy(appPackage, baseUrl, ignoreFailures, null,
@@ -670,7 +670,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final File appPackage, final Boolean ignoreFailures,
+			final NamedInputStream appPackage, final Boolean ignoreFailures,
 			final Map<String, String> userParam) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_UPDATE, new IRequestInitializer() {
@@ -708,7 +708,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final File appPackage, final Boolean ignoreFailures)
+			final NamedInputStream appPackage, final Boolean ignoreFailures)
 			throws WebApiException {
 		return applicationUpdate(appId, appPackage, ignoreFailures, null);
 	}
@@ -731,7 +731,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final File appPackage, final Map<String, String> userParam)
+			final NamedInputStream appPackage, final Map<String, String> userParam)
 			throws WebApiException {
 		return applicationUpdate(appId, appPackage, null, userParam);
 	}
@@ -754,7 +754,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final File appPackage) throws WebApiException {
+			final NamedInputStream appPackage) throws WebApiException {
 		return applicationUpdate(appId, appPackage, null, null);
 	}
 

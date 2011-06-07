@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection.request;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
@@ -17,6 +16,7 @@ import org.restlet.data.Method;
 import org.restlet.representation.Representation;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -109,7 +109,7 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 	 * 
 	 * @param appPackage
 	 */
-	public void setAppPackage(File appPackage) {
+	public void setAppPackage(NamedInputStream appPackage) {
 		addParameter("appPackage", appPackage);
 	}
 

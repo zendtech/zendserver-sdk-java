@@ -9,7 +9,6 @@ package org.zend.webapi.internal.core.connection.request;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -25,6 +24,7 @@ import org.restlet.engine.http.header.HeaderConstants;
 import org.restlet.engine.http.header.HeaderUtils;
 import org.restlet.engine.io.BioUtils;
 import org.restlet.representation.OutputRepresentation;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestParameter;
 
 /**
@@ -181,15 +181,15 @@ public class MultipartRepresentation extends OutputRepresentation {
 			writeNewLine(outputStream, 1);
 			Disposition d = createContentDisposition(outputStream);
 			d.getParameters().add("name", parameter.getKey());
-			if (value instanceof File) {
-				d.setFilename(((File) value).getName());
+			if (value instanceof NamedInputStream) {
+				d.setFilename(((NamedInputStream) value).getName());
 			}
 
 			final String write = DispositionWriter.write(d);
 			outputStream.write(write.getBytes());
 
 			// content type parameter
-			if (parameter.getValue() instanceof File) {
+			if (parameter.getValue() instanceof NamedInputStream) {
 				writeNewLine(outputStream, 1);
 				outputStream.write(HeaderConstants.HEADER_CONTENT_TYPE
 						.getBytes());

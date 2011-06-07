@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.restlet.data.Parameter;
 import org.restlet.util.Series;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.request.RequestParameter;
 import org.zend.webapi.core.service.WebApiMethodType;
@@ -36,7 +37,7 @@ public class TestRequest {
 				.createRequest(WebApiMethodType.CONFIGURATION_IMPORT,
 						WebApiVersion.V1, new Date(), "keyName", "userAgent",
 						"http://localhost:10081", "123");
-		request.setFile(null);
+		request.setConfigStream(null);
 	}
 
 	@Test
@@ -98,8 +99,8 @@ public class TestRequest {
 		FileOutputStream stream = new FileOutputStream(tFile);
 		stream.write(1);
 		stream.close();
-		RequestParameter<File> requestParams = new RequestParameter<File>(
-				"name", tFile);
+		RequestParameter<NamedInputStream> requestParams = new RequestParameter<NamedInputStream>(
+				"name", new NamedInputStream(tFile));
 		InputStream result = requestParams.getValueAsStream();
 		Assert.assertTrue(result.available() == 1);
 	}

@@ -8,9 +8,6 @@
 package org.zend.webapi.core.connection.request;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -57,15 +54,8 @@ public class RequestParameter<T> extends Couple<String, T> {
 		if (second instanceof Boolean) {
 			return new ByteArrayInputStream(second.toString().toUpperCase()
 					.getBytes());
-		} else if (second instanceof File) {
-			File file = (File) second;
-			FileInputStream fileInputStream;
-			try {
-				fileInputStream = new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-				return new ByteArrayInputStream("error reading file".getBytes());
-			}
-			return fileInputStream;
+		} else if (second instanceof NamedInputStream) {
+			return ((NamedInputStream) second).getInputStream();
 		}
 		return new ByteArrayInputStream(second.toString().getBytes());
 	}

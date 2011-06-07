@@ -1,6 +1,7 @@
 package org.zend.webapi.test.connection.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationServers;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.AbstractTestServer;
 import org.zend.webapi.test.Configuration;
@@ -29,7 +31,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 	private ApplicationInfo appInfo;
 
 	private void deployApplication() throws MalformedURLException,
-			WebApiException {
+			WebApiException, FileNotFoundException {
 		initMock(handler.applicationDeploy(), "applicationDeploy",
 				ResponseCode.ACCEPTED);
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
@@ -37,7 +39,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (app.exists()) {
 			String baseUrl = "http://test.com";
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl);
+					.applicationDeploy(new NamedInputStream(app), baseUrl);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -47,7 +49,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 	}
 
 	private void deployParamApplication() throws MalformedURLException,
-			WebApiException {
+			WebApiException, FileNotFoundException {
 		initMock(handler.applicationDeploy(), "applicationDeploy",
 				ResponseCode.ACCEPTED);
 		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
@@ -57,7 +59,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, params);
+					.applicationDeploy(new NamedInputStream(app), baseUrl, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -103,7 +105,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 
 	@Test
 	public void testApplicationGetStatus() throws WebApiException,
-			MalformedURLException {
+			MalformedURLException, FileNotFoundException {
 		deployApplication();
 		initMock(handler.applicationGetStatus(), "applicationGetStatus",
 				ResponseCode.OK);
@@ -114,7 +116,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 
 	@Test
 	public void testApplicationGetStatusId() throws WebApiException,
-			MalformedURLException {
+			MalformedURLException, FileNotFoundException {
 		deployApplication();
 		initMock(handler.applicationGetStatus(), "applicationGetStatus",
 				ResponseCode.OK);
@@ -134,7 +136,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, true, params, "appName",
+					.applicationDeploy(new NamedInputStream(app), baseUrl, true, params, "appName",
 							false, false);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
@@ -153,7 +155,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (app.exists()) {
 			String baseUrl = "http://deploy2.com";
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, true);
+					.applicationDeploy(new NamedInputStream(app), baseUrl, true);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -169,7 +171,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (app.exists()) {
 			String baseUrl = "http://deploy5.com";
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, "deploy5");
+					.applicationDeploy(new NamedInputStream(app), baseUrl, "deploy5");
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -187,7 +189,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, params, "appName");
+					.applicationDeploy(new NamedInputStream(app), baseUrl, params, "appName");
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -207,7 +209,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, true, params);
+					.applicationDeploy(new NamedInputStream(app), baseUrl, true, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -225,7 +227,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 		if (app.exists()) {
 			String baseUrl = "http://deploy8.com";
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationDeploy(app, baseUrl, true, "deploy8");
+					.applicationDeploy(new NamedInputStream(app), baseUrl, true, "deploy8");
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 			appId = applicationInfo.getId();
 			appInfo = applicationInfo;
@@ -243,7 +245,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationUpdate(appId, app, true, params);
+					.applicationUpdate(appId, new NamedInputStream(app), true, params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		} else {
 			Assert.fail("Cannot find file: " + app.getAbsolutePath());
@@ -260,7 +262,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 				+ "test-1.0.0.zpk"));
 		if (app.exists()) {
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationUpdate(appId, app, true);
+					.applicationUpdate(appId, new NamedInputStream(app), true);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		} else {
 			Assert.fail("Cannot find file: " + app.getAbsolutePath());
@@ -277,7 +279,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 				+ "test-1.0.0.zpk"));
 		if (app.exists()) {
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationUpdate(appId, app);
+					.applicationUpdate(appId, new NamedInputStream(app));
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		} else {
 			Assert.fail("Cannot find file: " + app.getAbsolutePath());
@@ -296,7 +298,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("some_parameter", "test");
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationUpdate(appId, app, params);
+					.applicationUpdate(appId, new NamedInputStream(app), params);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		} else {
 			Assert.fail("Cannot find file: " + app.getAbsolutePath());

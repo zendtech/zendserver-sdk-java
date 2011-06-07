@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -30,6 +31,7 @@ import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.IRequestInitializer;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestParameter;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -68,7 +70,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 				ResponseCode.OK);
 		final File tFile = prepareFile();
 		final ServersList list = Configuration.getClient().configuratioImport(
-				tFile);
+				new NamedInputStream(tFile));
 		DataUtils.checkValidServersList(list);
 	}
 
@@ -79,7 +81,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 				ResponseCode.OK);
 		final File tFile = prepareFile();
 		final ServersList list = Configuration.getClient().configuratioImport(
-				tFile, true);
+				new NamedInputStream(tFile), true);
 		DataUtils.checkValidServersList(list);
 	}
 
@@ -95,7 +97,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 
 					public void init(IRequest request) throws WebApiException {
 						ConfigurationImportRequest r = (ConfigurationImportRequest) request;
-						r.setFile(tFile);
+						r.setConfigStream(new NamedInputStream(tFile));
 						r.setIgnoreSystemMismatch(true);
 					}
 				});
@@ -103,9 +105,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 		final ConfigurationImportRequest request = (ConfigurationImportRequest) response
 				.getRequest();
 
-		String parameters = "configFile=" + tFile.toString()
-				+ "&ignoreSystemMismatch=TRUE";
-		Assert.assertEquals(parameters, request.getParametersAsString());
+		final List<RequestParameter<?>> parameters = request.getParameters();
+		Assert.assertEquals(2, parameters.size());
 	}
 
 	@Test
@@ -115,7 +116,7 @@ public class TestServerConfiguration extends AbstractTestServer {
 				true));
 		File file = getTempFile("mySavedConfig");
 		file.deleteOnExit();
-		arrayList.add(new RequestParameter<File>("configFile", file));
+		arrayList.add(new RequestParameter<NamedInputStream>("configFile", new NamedInputStream(file)));
 		Representation representation = new MultipartRepresentation(arrayList,
 				"--bla-bla-bla--",
 				ConfigurationImportRequest.APPLICATION_SERVER_CONFIG);

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection.request;
 
-import java.io.File;
 import java.util.Date;
 
 import org.restlet.Request;
@@ -16,6 +15,7 @@ import org.restlet.data.Method;
 import org.restlet.representation.Representation;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -124,7 +124,7 @@ public class ConfigurationImportRequest extends AbstractRequest {
 	 * @param configFile
 	 * @return
 	 */
-	public ConfigurationImportRequest setFile(File configFile) {
+	public ConfigurationImportRequest setConfigStream(NamedInputStream configFile) {
 		addParameter("configFile", configFile);
 		return this;
 	}
