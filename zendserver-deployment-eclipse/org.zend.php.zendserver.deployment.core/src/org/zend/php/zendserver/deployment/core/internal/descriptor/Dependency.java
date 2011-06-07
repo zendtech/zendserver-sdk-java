@@ -10,7 +10,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
 
 public class Dependency implements IDependency {
 
-
+	private String fType;
 	private String fName;
 	private String fEquals;
 	private String fMin;
@@ -18,17 +18,26 @@ public class Dependency implements IDependency {
 	private List<String> fExcludes;
 	private String fConflicts;
 
-	public Dependency() {
-		this(null, null, null, null, null, null);
+	public Dependency(String type) {
+		this(type, null);
 	}
 	
-	public Dependency(String name, String equals, String min, String max, String[] excludes, String conflicts) {
+	public Dependency(String type, String name) {
+		this(type, name, null, null, null, null, null);
+	}
+	
+	public Dependency(String type, String name, String equals, String min, String max, String[] excludes, String conflicts) {
+		fType = type;
 		fName = name;
 		fEquals = equals;
 		fMin = min;
 		fMax = max;
 		fExcludes = excludes == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(excludes));
 		fConflicts = conflicts;
+	}
+	
+	public String getType() {
+		return fType;
 	}
 	
 	public String getName() {
@@ -53,6 +62,10 @@ public class Dependency implements IDependency {
 
 	public String getConflicts() {
 		return fConflicts;
+	}
+	
+	public void setType(String type) {
+		this.fType = type;
 	}
 
 	public void setName(String fName) {

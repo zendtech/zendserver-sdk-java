@@ -40,44 +40,18 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 
 	public static final String PACKAGE_DEPENDENCIES_REQUIRED = "package/dependencies/required";
 	public static final String DEPENDENCIES_PHP = "package/dependencies/required/php";
-	public static final String DEPENDENCIES_PHP_EQUALS = "package/dependencies/required/php/equals";
-	public static final String DEPENDENCIES_PHP_MIN = "package/dependencies/required/php/min";
-	public static final String DEPENDENCIES_PHP_MAX = "package/dependencies/required/php/max";
-	public static final String DEPENDENCIES_PHP_EXCLUDE = "package/dependencies/required/php/exclude";
-	
 	public static final String DEPENDENCIES_EXTENSION = "package/dependencies/required/extension";
-	public static final String DEPENDENCIES_EXTENSION_NAME = "package/dependencies/required/extension/name";
-	public static final String DEPENDENCIES_EXTENSION_EQUALS = "package/dependencies/required/extension/equals";
-	public static final String DEPENDENCIES_EXTENSION_MIN = "package/dependencies/required/extension/min";
-	public static final String DEPENDENCIES_EXTENSION_MAX = "package/dependencies/required/extension/max";
-	public static final String DEPENDENCIES_EXTENSION_EXCLUDE = "package/dependencies/required/extension/exclude";
-	public static final String DEPENDENCIES_EXTENSION_CONFLICTS = "package/dependencies/required/extension/conflicts";
-	
 	public static final String DEPENDENCIES_DIRECTIVE = "package/dependencies/required/directive";
-	public static final String DEPENDENCIES_DIRECTIVE_NAME = "package/dependencies/required/directive/name";
-	public static final String DEPENDENCIES_DIRECTIVE_MAX = "package/dependencies/required/directive/max";
-	public static final String DEPENDENCIES_DIRECTIVE_MIN = "package/dependencies/required/directive/min";
-	public static final String DEPENDENCIES_DIRECTIVE_EQUALS = "package/dependencies/required/directive/equals";
-	
 	public static final String DEPENDENCIES_ZENDSERVER = "package/dependencies/required/zendserver";
-	public static final String DEPENDENCIES_ZENDSERVER_EQUALS = "package/dependencies/required/zendserver/equals";
-	public static final String DEPENDENCIES_ZENDSERVER_MIN = "package/dependencies/required/zendserver/min";
-	public static final String DEPENDENCIES_ZENDSERVER_MAX = "package/dependencies/required/zendserver/max";
-	public static final String DEPENDENCIES_ZENDSERVER_EXCLUDE = "package/dependencies/required/zendserver/exclude";
-
-	public static final String DEPENDENCIES_ZSCOMPONENT = "package/dependencies/required/zendservercomponent";
-	public static final String DEPENDENCIES_ZSCOMPONENT_NAME = "package/dependencies/required/zendservercomponent/name";
-	public static final String DEPENDENCIES_ZSCOMPONENT_EQUALS = "package/dependencies/required/zendservercomponent/equals";
-	public static final String DEPENDENCIES_ZSCOMPONENT_MIN = "package/dependencies/required/zendservercomponent/min";
-	public static final String DEPENDENCIES_ZSCOMPONENT_MAX = "package/dependencies/required/zendservercomponent/max";
-	public static final String DEPENDENCIES_ZSCOMPONENT_EXCLUDE = "package/dependencies/required/zendservercomponent/exclude";
-	public static final String DEPENDENCIES_ZSCOMPONENT_CONFLICTS = "package/dependencies/required/zendservercomponent/conflicts";
-
 	public static final String DEPENDENCIES_ZENDFRAMEWORK = "package/dependencies/required/zendframework";
-	public static final String DEPENDENCIES_ZENDFRAMEWORK_EQUALS = "package/dependencies/required/zendframework/equals";
-	public static final String DEPENDENCIES_ZENDFRAMEWORK_MIN = "package/dependencies/required/zendframework/min";
-	public static final String DEPENDENCIES_ZENDFRAMEWORK_MAX = "package/dependencies/required/zendframework/max";
-	public static final String DEPENDENCIES_ZENDFRAMEWORK_EXCLUDE = "package/dependencies/required/zendframework/exclude";
+	public static final String DEPENDENCIES_ZSCOMPONENT = "package/dependencies/required/zendservercomponent";
+	
+	public static final String DEPENDENCY_NAME = "name";
+	public static final String DEPENDENCY_EQUALS = "equals";
+	public static final String DEPENDENCY_MIN = "min";
+	public static final String DEPENDENCY_MAX = "max";
+	public static final String DEPENDENCY_EXCLUDE = "exclude";
+	public static final String DEPENDENCY_CONFLICTS = "conflicts";
 	
 	public static final String PACKAGE_PARAMETERS_PARAMETER = "package/parameters/parameter";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DISPLAY = "package/parameters/parameter[display]";
@@ -103,12 +77,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	private DeploymentDescriptor descriptor;
 	private Map<String, String> unboundValues = new HashMap<String, String>();
 	private List<String> validationEnums = new ArrayList<String>();
-	private PHPDependency phpDep;
-	private DirectiveDependency directiveDep;
-	private ExtensionDependency extDep;
-	private ZendFrameworkDependency zfDep;
-	private ZendServerDependency zsDep;
-	private ZendServerComponentDependency zsCompDep;
+	private Dependency dependency;
 	private List<String> excludeList = new ArrayList<String>();
 	private Set<Object> changedElements;
 	private boolean fRecordChanges;
@@ -340,82 +309,40 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 
 	private boolean startReadDependency(String locationStr) {
 		if (DEPENDENCIES_PHP.equals(locationStr)) {
-			phpDep = new PHPDependency();
+			dependency = new Dependency(IDependency.PHP);
 			return true;
 		}
 		if (DEPENDENCIES_DIRECTIVE.equals(locationStr)) {
-			directiveDep = new DirectiveDependency();
+			dependency = new Dependency(IDependency.DIRECTIVE);
 			return true;
 		}
 		if (DEPENDENCIES_EXTENSION.equals(locationStr)) {
-			extDep = new ExtensionDependency();
+			dependency = new Dependency(IDependency.EXTENSION);
 			return true;
 		}
 		if (DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr)) {
-			zfDep = new ZendFrameworkDependency();
+			dependency = new Dependency(IDependency.ZENDFRAMEWORK);
 			return true;
 		}
 		if (DEPENDENCIES_ZENDSERVER.equals(locationStr)) {
-			zsDep = new ZendServerDependency();
+			dependency = new Dependency(IDependency.ZENDSERVER);
 			return true;
 		}
 		if (DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
-			zsCompDep = new ZendServerComponentDependency();
-			return true;
-		}
-		if (DEPENDENCIES_PHP_EXCLUDE.equals(locationStr)) {
-			excludeList.clear();
-			return true;
-		}
-
-		if (DEPENDENCIES_EXTENSION_EXCLUDE.equals(locationStr)) {
-			excludeList.clear();
-			return true;
-		}
-
-		if (DEPENDENCIES_ZENDSERVER_EXCLUDE.equals(locationStr)) {
-			excludeList.clear();
+			dependency = new Dependency(IDependency.ZENDSERVERCOMPONENT);
 			return true;
 		}
 		
-		if (DEPENDENCIES_ZSCOMPONENT_EXCLUDE.equals(locationStr)) {
-			excludeList.clear();
-			return true;
-		}
-		if (DEPENDENCIES_ZENDFRAMEWORK_EXCLUDE.equals(locationStr)) {
+		if (locationStr.endsWith(DEPENDENCY_EXCLUDE)) {
 			excludeList.clear();
 			return true;
 		}
 		return false;
 	}
 	private boolean endReadDependency(String value, String locationStr, int index) {
-		IDependency toSet = null;
-		if (DEPENDENCIES_PHP.equals(locationStr)) {
-			toSet = phpDep;
-			phpDep = null;
-		}
-		if (DEPENDENCIES_DIRECTIVE.equals(locationStr)) {
-			toSet = directiveDep;
-			directiveDep = null;
-		}
-		if (DEPENDENCIES_EXTENSION.equals(locationStr)) {
-			toSet = extDep;
-			extDep = null;
-		}
-		if (DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr)) {
-			toSet = zfDep;
-			zfDep = null;
-		}
-		if (DEPENDENCIES_ZENDSERVER.equals(locationStr)) {
-			toSet = zsDep;
-			zsDep = null;
-		}
-		if (DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
-			toSet = zsCompDep;
-			zsCompDep = null;
-		}
-
-		if (toSet != null) {
+		if (DEPENDENCIES_PHP.equals(locationStr) || DEPENDENCIES_DIRECTIVE.equals(locationStr) || DEPENDENCIES_EXTENSION.equals(locationStr) || DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr) || DEPENDENCIES_ZENDSERVER.equals(locationStr) || DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
+			IDependency toSet = dependency;
+			dependency = null;
 			List<IDependency> list = descriptor.setDependencies();
 			if (index < list.size()) {
 				copyDependency((Dependency)list.get(index), (Dependency)toSet);
@@ -426,22 +353,13 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 			return true;
 		}
 		
-		readPHPDependency(value, locationStr);
-		
-		readExtensionDependency(value, locationStr);
-		
-		readDirectiveDependency(value, locationStr);
-		
-		readZendServerDependency(value, locationStr);
-
-		readZendServerComponentDependency(value, locationStr);
-
-		readZendFrameworkDependency(value, locationStr);
-		
+		readDependency(value, locationStr);
+				
 		return false;
 	}
 
 	private void copyDependency(Dependency dest, Dependency src) {
+		dest.setType(src.getType());
 		dest.setConflicts(src.getConflicts());
 		dest.setEquals(src.getEquals());
 		dest.setExcludes().clear();
@@ -451,142 +369,29 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		dest.setName(src.getName());
 	}
 
-	private boolean readZendFrameworkDependency(String value, String locationStr) {
-		if (DEPENDENCIES_ZENDFRAMEWORK_EQUALS.equals(locationStr)) {
-			zfDep.setEquals(value);
+	private boolean readDependency(String value, String locationStr) {
+		if (locationStr.endsWith("name")) {
+			dependency.setName(value);
 			return true;
 		}
-		if (DEPENDENCIES_ZENDFRAMEWORK_MIN.equals(locationStr)) {
-			zfDep.setMin(value);
+		if (locationStr.endsWith("conflicts")) {
+			dependency.setConflicts(value);
 			return true;
 		}
-		if (DEPENDENCIES_ZENDFRAMEWORK_MAX.equals(locationStr)) {
-			zfDep.setMax(value);
+		if (locationStr.endsWith("equals")) {
+			dependency.setEquals(value);
 			return true;
 		}
-		if (DEPENDENCIES_ZENDFRAMEWORK_EXCLUDE.equals(locationStr)) {
-			zfDep.setExcludes().addAll(excludeList);
+		if (locationStr.endsWith("min")) {
+			dependency.setMin(value);
 			return true;
 		}
-		
-		return false;
-	}
-
-	private boolean readZendServerComponentDependency(String value, String locationStr) {
-		if (DEPENDENCIES_ZSCOMPONENT_NAME.equals(locationStr)) {
-			zsCompDep.setName(value);
+		if (locationStr.endsWith("max")) {
+			dependency.setMax(value);
 			return true;
 		}
-		if (DEPENDENCIES_ZSCOMPONENT_EQUALS.equals(locationStr)) {
-			zsCompDep.setEquals(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZSCOMPONENT_MIN.equals(locationStr)) {
-			zsCompDep.setMin(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZSCOMPONENT_MAX.equals(locationStr)) {
-			zsCompDep.setMax(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZSCOMPONENT_EXCLUDE.equals(locationStr)) {
-			zsCompDep.setExcludes().addAll(excludeList);
-			return true;
-		}
-		if (DEPENDENCIES_ZSCOMPONENT_CONFLICTS.equals(locationStr)) {
-			zsCompDep.setConflicts(value);
-			return true;
-		}
-		
-		return false;
-	}
-
-	private boolean readZendServerDependency(String value, String locationStr) {
-		if (DEPENDENCIES_ZENDSERVER_EQUALS.equals(locationStr)) {
-			zsDep.setEquals(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZENDSERVER_MIN.equals(locationStr)) {
-			zsDep.setMin(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZENDSERVER_MAX.equals(locationStr)) {
-			zsDep.setMax(value);
-			return true;
-		}
-		if (DEPENDENCIES_ZENDSERVER_EXCLUDE.equals(locationStr)) {
-			zsDep.setExcludes().addAll(excludeList);
-			return true;
-		}
-		
-		return false;
-	}
-
-	private boolean readDirectiveDependency(String value, String locationStr) {
-		if (DEPENDENCIES_DIRECTIVE_NAME.equals(locationStr)) {
-			directiveDep.setName(value);
-			return true;
-		}
-		if (DEPENDENCIES_DIRECTIVE_MAX.equals(locationStr)) {
-			directiveDep.setMax(value);
-			return true;
-		}
-		if (DEPENDENCIES_DIRECTIVE_MIN.equals(locationStr)) {
-			directiveDep.setMin(value);
-			return true;
-		}
-		if (DEPENDENCIES_DIRECTIVE_EQUALS.equals(locationStr)) {
-			directiveDep.setEquals(value);
-			return true;
-		}
-		
-		return false;
-	}
-
-	private boolean readExtensionDependency(String value, String locationStr) {
-		if (DEPENDENCIES_EXTENSION_NAME.equals(locationStr)) {
-			extDep.setName(value);
-			return true;
-		}
-		if (DEPENDENCIES_EXTENSION_EQUALS.equals(locationStr)) {
-			extDep.setEquals(value);
-			return true;
-		}
-		if (DEPENDENCIES_EXTENSION_MIN.equals(locationStr)) {
-			extDep.setMin(value);
-			return true;
-		}
-		if (DEPENDENCIES_EXTENSION_MAX.equals(locationStr)) {
-			extDep.setMax(value);
-			return true;
-		}
-		if (DEPENDENCIES_EXTENSION_EXCLUDE.equals(locationStr)) {
-			extDep.setExcludes().addAll(excludeList);
-			return true;
-		}
-		if (DEPENDENCIES_EXTENSION_CONFLICTS.equals(locationStr)) {
-			extDep.setConflicts(value);
-			return true;
-		}
-		
-		return false;
-	}
-
-	private boolean readPHPDependency(String value, String locationStr) {
-		if (DEPENDENCIES_PHP_EQUALS.equals(locationStr)) {
-			phpDep.setEquals(value);
-			return true;
-		}
-		if (DEPENDENCIES_PHP_MIN.equals(locationStr)) {
-			phpDep.setMin(value);
-			return true;
-		}
-		if (DEPENDENCIES_PHP_MAX.equals(locationStr)) {
-			phpDep.setMax(value);
-			return true;
-		}
-		if (DEPENDENCIES_PHP_EXCLUDE.equals(locationStr)) {
-			phpDep.setExcludes().addAll(excludeList);
+		if (locationStr.endsWith("exclude")) {
+			dependency.setExcludes().addAll(excludeList);
 			return true;
 		}
 		

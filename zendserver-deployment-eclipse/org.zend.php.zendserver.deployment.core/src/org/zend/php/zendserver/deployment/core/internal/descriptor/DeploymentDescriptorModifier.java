@@ -7,6 +7,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,7 +39,6 @@ import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
@@ -464,7 +464,29 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	public void addDependency(IDependency prereq) throws CoreException {
 		loadDomModel();
 		Map<String, String> attrs = new HashMap<String, String>();
-		addNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED, attrs);
+		Node node = addNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/" + prereq.getType(), attrs);
+		if (prereq.getName() != null) {
+			addNode(node, DeploymentDescriptorParser.DEPENDENCY_NAME, prereq.getName());
+		}
+		if (prereq.getMin() != null) {
+			addNode(node, DeploymentDescriptorParser.DEPENDENCY_MIN, prereq.getMin());
+		}
+		if (prereq.getMax() != null) {
+			addNode(node, DeploymentDescriptorParser.DEPENDENCY_MAX, prereq.getMax());
+		}
+		if (prereq.getEquals() != null) {
+			addNode(node, DeploymentDescriptorParser.DEPENDENCY_EQUALS, prereq.getEquals());
+		}
+		if (prereq.getConflicts() != null) {
+			addNode(node, DeploymentDescriptorParser.DEPENDENCY_CONFLICTS, prereq.getConflicts());
+		}
+		if (prereq.getExclude() != null && prereq.getExclude().size() > 0) {
+			List<String> excludes = prereq.getExclude();
+			for (String exclude : excludes) {
+				addNode(node, DeploymentDescriptorParser.DEPENDENCY_EXCLUDE, exclude);
+			}
+		}
+		
 		storeDomModel();
 		fModel.setDependencies().add(prereq);
 		fireChange(fModel);
