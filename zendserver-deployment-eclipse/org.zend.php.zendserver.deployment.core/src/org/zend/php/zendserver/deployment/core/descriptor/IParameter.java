@@ -15,16 +15,16 @@ public interface IParameter {
 	String getType();
 
 	boolean isRequired();
+	
+	boolean isReadOnly();
 
 	String getDisplay();
+
+	String getIdentical();
 	
 	String getDefaultValue();
 
 	String getDescription();
 
-	String getLongDescription();
-
 	String[] getValidValues();
-
-	String getServerType();
 }

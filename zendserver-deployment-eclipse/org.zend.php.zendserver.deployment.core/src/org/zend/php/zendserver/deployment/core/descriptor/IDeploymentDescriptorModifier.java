@@ -63,6 +63,8 @@ public interface IDeploymentDescriptorModifier {
 	void removePersistentResource(String path) throws CoreException;
 
 	void setParameterRequired(IParameter input, boolean selection) throws CoreException;
+	
+	void setParameterReadonly(IParameter input, boolean selection) throws CoreException;
 
 	void setParameterId(IParameter input, String text) throws CoreException;
 
@@ -71,11 +73,13 @@ public interface IDeploymentDescriptorModifier {
 	void setParameterDefault(IParameter input, String text) throws CoreException;
 
 	void setParameterType(IParameter input, String text) throws CoreException;
+	
+	void setParameterIdentical(IParameter input, String text) throws CoreException;
 
 	void setParameterDescription(IParameter input, String text) throws CoreException;
 
-	void setParameterLongDescription(IParameter input, String text) throws CoreException;
-
+	void setParameterValidation(IParameter input, String[] newParams) throws CoreException;
+	
 	/**
 	 * Descriptor which is being modified. Changes are reflected immediately in descriptor
 	 * @return
