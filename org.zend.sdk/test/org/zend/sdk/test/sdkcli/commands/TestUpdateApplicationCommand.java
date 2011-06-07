@@ -11,7 +11,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -23,6 +22,7 @@ import org.zend.sdkcli.internal.commands.UpdateApplicationCommand;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.IResponseData;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
 public class TestUpdateApplicationCommand extends AbstractWebApiTest {
@@ -36,7 +36,7 @@ public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 		UpdateApplicationCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
-		when(client.applicationUpdate(anyInt(), any(File.class), anyBoolean(), anyMap())).thenReturn(
+		when(client.applicationUpdate(anyInt(), any(NamedInputStream.class), anyBoolean(), anyMap())).thenReturn(
 			(ApplicationInfo) getResponseData("applicationUpdate",
 						IResponseData.ResponseType.APPLICATION_INFO));
 		assertTrue(command.execute(cmdLine));

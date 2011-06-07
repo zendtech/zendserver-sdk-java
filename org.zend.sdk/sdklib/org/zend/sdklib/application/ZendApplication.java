@@ -20,7 +20,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.zend.sdklib.internal.library.AbstractLibrary;
-import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -30,6 +29,7 @@ import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 
 /**
  * Utility class which provides methods to perform operations on application.
@@ -176,7 +176,7 @@ public class ZendApplication extends AbstractLibrary {
 		if (zendPackage != null) {
 			try {
 				WebApiClient client = getClient(targetId);
-				return client.applicationDeploy(zendPackage, baseUrl,
+				return client.applicationDeploy(new NamedInputStream(zendPackage), baseUrl,
 						ignoreFailures, userParams, appName, createVhost,
 						defaultServer);
 			} catch (MalformedURLException e) {
@@ -309,7 +309,7 @@ public class ZendApplication extends AbstractLibrary {
 					userParams = getUserParameters(propsFile);
 				}
 			}
-			return client.applicationUpdate(appIdint, zendPackage,
+			return client.applicationUpdate(appIdint, new NamedInputStream(zendPackage),
 					ignoreFailures, userParams);
 		} catch (MalformedURLException e) {
 			log.error(e);

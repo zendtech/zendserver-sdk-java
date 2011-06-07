@@ -8,7 +8,6 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.IResponseData;
+import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
 public class TestZendApplicationDeploy extends AbstractWebApiTest {
@@ -83,7 +83,7 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 
 	private void setDeploySuccessCall() throws WebApiException, IOException {
 		when(
-				client.applicationDeploy(any(File.class), anyString(),
+				client.applicationDeploy(any(NamedInputStream.class), anyString(),
 						anyBoolean(), any(Map.class), anyString(),
 						anyBoolean(), anyBoolean())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationDeploy",
@@ -92,7 +92,7 @@ public class TestZendApplicationDeploy extends AbstractWebApiTest {
 
 	private void setDeployFailedCall() throws WebApiException, IOException {
 		when(
-				client.applicationDeploy(any(File.class), anyString(),
+				client.applicationDeploy(any(NamedInputStream.class), anyString(),
 						anyBoolean(), any(Map.class), anyString(),
 						anyBoolean(), anyBoolean())).thenThrow(
 				new SignatureException("testError"));
