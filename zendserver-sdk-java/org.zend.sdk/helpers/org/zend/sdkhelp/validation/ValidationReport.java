@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.CommandType;

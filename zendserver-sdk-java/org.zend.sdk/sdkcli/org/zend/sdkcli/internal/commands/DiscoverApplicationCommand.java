@@ -22,7 +22,7 @@ public class DiscoverApplicationCommand extends RepositoryAwareCommand {
 	private static final String STATUS = "s";
 	private static final String QUERY = "q";
 
-	@Option(opt = STATUS, required = false, description = "show status line for repositories")
+	@Option(opt = STATUS, required = false, description = "show status line for applications")
 	public boolean isStatus() {
 		return hasOption(STATUS);
 	}
