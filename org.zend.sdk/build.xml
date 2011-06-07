@@ -111,7 +111,15 @@
 			<src path="test" />
 			<classpath refid="org.zend.sdk.classpath" />
 		</javac>
-		<jar destfile="lib/zend-sdk.jar" basedir="bin" manifest="META-INF/MANIFEST.MF">
+		<jar destfile="lib/zend-sdk.jar" basedir="bin">
+			<exclude name="test/**" />
+			<exclude name="generator/**" />
+			<exclude name="config/**" />
+			<exclude name="templates/**/" />
+			<exclude name="org/zend/sdk/**" />
+			<exclude name="org/zend/sdkhelp/**" />
+		</jar>
+		<jar destfile="lib/org.zend.sdk.jar" basedir="bin" manifest="META-INF/MANIFEST.MF">
 			<exclude name="test/**" />
 			<exclude name="generator/**" />
 			<exclude name="config/**" />
@@ -212,7 +220,7 @@
 		
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
 			<exclude name="*/**"/>
-			<zipfileset dir="lib" 			prefix="${prefix}/lib"/>
+			<zipfileset dir="lib" excludes="org.zend.sdk.jar" prefix="${prefix}/lib" />
 		    <zipfileset dir="resources" excludes="generator/**" prefix="${prefix}/resources/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 		</zip>
