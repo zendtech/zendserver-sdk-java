@@ -36,7 +36,6 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/sample.gif";
 	public static final String IMAGE_PARAMTYPE_STRING = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_HIDDEN = "icons/sample.gif";
 	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/sample.gif";
 	public static final String IMAGE_PARAMTYPE_CHOICE = "icons/sample.gif";
 	public static final String IMAGE_PARAMTYPE_CHECKBOX = "icons/sample.gif";
