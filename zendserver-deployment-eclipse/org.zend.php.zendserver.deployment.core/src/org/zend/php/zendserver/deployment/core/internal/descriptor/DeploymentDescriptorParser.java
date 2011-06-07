@@ -82,13 +82,12 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public static final String PACKAGE_PARAMETERS_PARAMETER = "package/parameters/parameter";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DISPLAY = "package/parameters/parameter[display]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_REQUIRED = "package/parameters/parameter[required]";
+	public static final String PACKAGE_PARAMETERS_PARAMETER_READONLY = "package/parameters/parameter[readonly]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_TYPE = "package/parameters/parameter[type]";
+	public static final String PACKAGE_PARAMETERS_PARAMETER_IDENTICAL = "package/parameters/parameter[identical]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_ID = "package/parameters/parameter[id]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DEFAULTVALUE = "package/parameters/parameter/defaultvalue";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION = "package/parameters/parameter/description";
-	public static final String PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION_SHORT = "package/parameters/parameter/description/short";
-	public static final String PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION_LONG = "package/parameters/parameter/description/long";
-	public static final String PACKAGE_PARAMETERS_PARAMETER_CONDITION_WEBSERVER_CONDITION_TYPE = "package/parameters/parameter/condition/webservercondition[type]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_VALIDATION_ENUMS_ENUM = "package/parameters/parameter/validation/enums/enum";
 	
 	public static final String PACKAGE_VARIABLES_VARIABLE = "package/variables/variable";
@@ -299,25 +298,15 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 			String id = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_ID);
 			String type = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_TYPE);
 			String required = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_REQUIRED);
+			String readonly = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_READONLY);
 			String display = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_DISPLAY);
 			String description = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION);
-			String descriptionShort = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION_SHORT);
-			String descriptionLong = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION_LONG);
+			String identical = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_IDENTICAL);
 			String defaultValue = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_DEFAULTVALUE);
-			String serverTypeCondition = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_CONDITION_WEBSERVER_CONDITION_TYPE);
 			
 			description = stripWhitespaces(description);
-			descriptionShort = stripWhitespaces(descriptionShort);
-			descriptionLong = stripWhitespaces(descriptionLong);
 			
-			if ((descriptionShort == null) && (description != null)) {
-				descriptionShort = description;
-			}
-			
-			Parameter param = new Parameter(id, type, Boolean.parseBoolean(required), display, defaultValue, descriptionShort, descriptionLong);
-			if (serverTypeCondition != null) {
-				param.setServerType(serverTypeCondition);
-			}
+			Parameter param = new Parameter(id, type, Boolean.parseBoolean(required), Boolean.parseBoolean(readonly), display, defaultValue, description, identical);
 			
 			if (validationEnums.size() > 0) {
 				param.setValidValues((String[])validationEnums.toArray(new String[validationEnums.size()]));
@@ -342,10 +331,10 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		dest.setDescription(src.getDefaultValue());
 		dest.setDisplay(src.getDisplay());
 		dest.setId(src.getId());
-		dest.setLongDescription(src.getLongDescription());
 		dest.setRequired(src.isRequired());
-		dest.setServerType(src.getServerType());
+		dest.setReadOnly(src.isReadOnly());
 		dest.setType(src.getType());
+		dest.setIdentical(src.getIdentical());
 		dest.setValidValues(src.getValidValues());
 	}
 

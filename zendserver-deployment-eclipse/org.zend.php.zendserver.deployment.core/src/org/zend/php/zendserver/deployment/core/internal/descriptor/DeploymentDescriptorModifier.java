@@ -38,6 +38,7 @@ import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
@@ -175,7 +176,9 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	private String PARAMETER_DISPLAY = "display";
 	private String PARAMETER_DESCRIPTION = "description";
 	private String PARAMETER_TYPE = "type";
+	private String PARAMETER_IDENTICAL = "identical";
 	private String PARAMETER_REQUIRED = "required";
+	private String PARAMETER_READONLY = "readonly";
 	private String PARAMETER_DEFAULT = "default";
 
 	
@@ -345,6 +348,13 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		fireChange(input);
 	}
 
+	public void setParameterReadonly(IParameter input, boolean readonly) throws CoreException {
+		int idx = fModel.setParameters().indexOf(input) + 1;
+		((Parameter) input).setReadOnly(readonly);
+		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_READONLY, Boolean.toString(readonly));
+		fireChange(input);
+	}
+	
 	public void setParameterId(IParameter input, String text) throws CoreException {
 		int idx = fModel.setParameters().indexOf(input) + 1;
 		((Parameter) input).setId(text);
@@ -373,17 +383,42 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		fireChange(input);
 	}
 
+	public void setParameterIdentical(IParameter input, String text) throws CoreException {
+		int idx = fModel.setParameters().indexOf(input) + 1;
+		((Parameter) input).setIdentical(text);
+		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_IDENTICAL, text);
+		fireChange(input);
+	}
+	
 	public void setParameterDescription(IParameter input, String text) throws CoreException {
 		int idx = fModel.setParameters().indexOf(input) + 1;
 		((Parameter) input).setDescription(text);
 		changeText(text, DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]/description");
 		fireChange(input);
 	}
-
-	public void setParameterLongDescription(IParameter input, String text) throws CoreException {
+	
+	public void setParameterValidation(IParameter input, String[] array) throws CoreException {
+		loadDomModel();
 		int idx = fModel.setParameters().indexOf(input) + 1;
-		((Parameter) input).setLongDescription(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]/description/long");
+		((Parameter) input).setValidValues(array);
+		String xpath = DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]/validation/enums";
+		Node node = getNode(xpath);
+		
+		if (node != null) {
+			node.getParentNode().removeChild(node);
+		}
+		
+		if (array == null || array.length == 0) {
+			return;
+		}
+		
+		node = addNode(xpath, null);
+		
+		for (int i = 0; i < array.length; i++) {
+			Node newNode = addNode(xpath+"/enum", null);
+			newNode.setTextContent(array[i]);
+		}
+		storeDomModel();
 		fireChange(input);
 	}
 

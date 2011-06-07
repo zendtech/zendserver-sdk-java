@@ -5,56 +5,29 @@ import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
 public class Parameter implements IParameter {
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
-
-	public void setDisplay(String display) {
-		this.display = display;
-	}
-
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
-
 	private String id;
 	private String type;
 	private boolean required;
+	private boolean readOnly;
 	private String display;
 	private String defaultValue;
 	private String description;
-	private String longDescription;
 	private String[] validValues;
-	private String serverType;
+	private String identical;
 	
-	public Parameter(String id, String type, boolean required, String display, String defaultValue, String description, String descriptionLong) {
+	public Parameter(String id, String type, boolean required, boolean readOnly, String display, String defaultValue, String description, String identical) {
 		this.id = id;
 		this.type = type;
 		this.required = required;
+		this.readOnly = readOnly;
 		this.display = display;
 		this.defaultValue = defaultValue;
 		this.description = description;
-		this.longDescription = descriptionLong;
+		this.identical = identical;
 	}
 
 	public Parameter(String id, String type) {
-		this(id, type, false, "", "", "", "");
+		this(id, type, false, false, "", "", "", null);
 	}
 	
 	public String getId() {
@@ -81,25 +54,52 @@ public class Parameter implements IParameter {
 		return description;
 	}
 	
-	public String getLongDescription() {
-		return longDescription;
-	}
-	
-	public String getServerType() {
-		return serverType;
-	}
-	
 	public String[] getValidValues() {
 		return validValues;
 	}
 
-	public void setServerType(String serverType) {
-		this.serverType = serverType;
-		
-	}
-
 	public void setValidValues(String[] array) {
 		this.validValues = array;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean value) {
+		this.readOnly = value;
+	}
+	
+	public String getIdentical() {
+		return identical;
+	}
+	
+	public void setIdentical(String id) {
+		this.identical = id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	public void setDisplay(String display) {
+		this.display = display;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }
