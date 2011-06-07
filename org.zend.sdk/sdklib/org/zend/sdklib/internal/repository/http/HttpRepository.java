@@ -9,12 +9,10 @@ package org.zend.sdklib.internal.repository.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import org.zend.sdklib.internal.repository.AbstractRepository;
-import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 
 /**
  * Http based repository

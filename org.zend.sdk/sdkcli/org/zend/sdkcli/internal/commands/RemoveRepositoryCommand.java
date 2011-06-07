@@ -10,7 +10,6 @@ package org.zend.sdkcli.internal.commands;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepository;
-import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Delete an existing repository
