@@ -31,12 +31,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
-import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IZendServerComponentDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Dependency;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
@@ -71,22 +65,25 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof IPHPDependency) {
+			IDependency dep = ((IDependency) element);
+			String type = dep.getType();
+			
+			if (IDependency.PHP.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PHP);
 				
-			} else if (element instanceof IExtensionDependency) {
+			} else if (IDependency.EXTENSION.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PHP_EXTENSION);
 				
-			} else if (element instanceof IDirectiveDependency) {
+			} else if (IDependency.DIRECTIVE.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_PHP_DIRECTIVE);
 				
-			} else if (element instanceof IZendServerDependency) {
+			} else if (IDependency.ZENDSERVER.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVER);
 				
-			} else if (element instanceof IZendFrameworkDependency) {
+			} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_ZENDFRAMEWORK);
 				
-			} else if (element instanceof IZendServerComponentDependency) {
+			} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
 				return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVERCOMPONENT);
 			}
 			
@@ -95,28 +92,25 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IPHPDependency) {
-				IPHPDependency dep = (IPHPDependency) element;
+			IDependency dep = ((IDependency) element);
+			String type = dep.getType();
+			
+			if (IDependency.PHP.equals(type)) {
 				return "PHP "+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
-			} else if (element instanceof IExtensionDependency) {
-				IExtensionDependency dep = (IExtensionDependency) element;
+			} else if (IDependency.EXTENSION.equals(type)) {
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 				
-			} else if (element instanceof IDirectiveDependency) {
-				IDirectiveDependency dep = (IDirectiveDependency) element;
+			} else if (IDependency.DIRECTIVE.equals(type)) {
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
-			} else if (element instanceof IZendServerDependency) {
-				IZendServerDependency dep = (IZendServerDependency) element;
+			} else if (IDependency.ZENDSERVER.equals(type)) {
 				return "ZendServer" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
-			} else if (element instanceof IZendFrameworkDependency) {
-				IZendFrameworkDependency dep = (IZendFrameworkDependency) element;
+			} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
 				return "ZendFramework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
-			} else if (element instanceof IZendServerComponentDependency) {
-				IZendServerComponentDependency dep = (IZendServerComponentDependency) element;
+			} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 			}
 			
@@ -251,7 +245,8 @@ public class DependenciesBlock extends MasterDetailsBlock {
 	}
 
 	protected void addElment() {
-		IDependency param = new Dependency();
+		int depNo = editor.getModel().getDescriptor().getDependencies().size() + 1;
+		IDependency param = new Dependency(IDependency.PHP, "dependency"+depNo);
 		try {
 			editor.getModel().addDependency(param);
 		} catch (CoreException e) {

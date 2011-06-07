@@ -72,7 +72,9 @@ public class DependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = ((Dependency)input).getName();
+			String str = input.getType();
+			typeCombo.setText(str == null ? "" : str);
+			str = ((Dependency)input).getName();
 			nameText.setText(str == null ? "" : str);
 			str = ((Dependency)input).getMin();
 			minText.setText(str == null ? "" : str);
