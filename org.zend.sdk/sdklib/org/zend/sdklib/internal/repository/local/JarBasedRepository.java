@@ -37,4 +37,10 @@ public class JarBasedRepository extends AbstractRepository {
 	public InputStream getArtifactStream(String path) throws IOException {
 		return class1.getResourceAsStream(path);
 	}
+	
+	@Override
+	public boolean isAccessible() {
+		return class1 != null;
+	}
+	
 }

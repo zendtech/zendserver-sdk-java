@@ -25,7 +25,11 @@ import org.zend.sdklib.repository.site.Application;
  */
 public abstract class AbstractRepository implements IRepository {
 
-	private static final String SITE_XML = "site.xml";
+	public static final String SITE_XML = "site.xml";
+	
+	/**
+	 * An id of the repository
+	 */
 	private final String id;
 
 	/**
@@ -78,5 +82,4 @@ public abstract class AbstractRepository implements IRepository {
 	public String getId() {
 		return this.id;
 	}
-
 }
