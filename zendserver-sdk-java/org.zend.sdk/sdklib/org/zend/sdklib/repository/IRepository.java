@@ -27,6 +27,11 @@ public interface IRepository {
 	public String getId();
 
 	/**
+	 * @return true if the repository is currently accessible
+	 */
+	public boolean isAccessible();
+
+	/**
 	 * Lists all available applications in the site
 	 * 
 	 * @return

@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.text.MessageFormat;
+
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.repository.IRepository;
 
 /**
@@ -15,6 +18,12 @@ import org.zend.sdklib.repository.IRepository;
  * @author Roy, 2011
  */
 public class ListRepositoriesCommand extends RepositoryAwareCommand {
+	private static final String STATUS = "s";
+
+	@Option(opt = STATUS, required = false, description = "show status line for repositories")
+	public boolean isStatus() {
+		return hasOption(STATUS);
+	}
 
 	@Override
 	public boolean doExecute() {
@@ -26,8 +35,13 @@ public class ListRepositoriesCommand extends RepositoryAwareCommand {
 
 		commandLine.getLog().info("Available Repositories:");
 		for (IRepository r : list) {
-			commandLine.getLog().info("id: " + r.getId());
+			final String message = MessageFormat.format("id: {0} {1}", r.getId(), (isStatus() ? status(r) : ""));
+			commandLine.getLog().info(message);
 		}
 		return true;
+	}
+
+	private final String status(IRepository r) {
+		return r.isAccessible() ? "active" : "inactive"; 
 	}
 }

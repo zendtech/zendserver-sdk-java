@@ -52,9 +52,14 @@ public class FileBasedRepository extends AbstractRepository {
 
 	@Override
 	public InputStream getArtifactStream(String path) throws IOException {
+		if (!isAccessible()) {
+			return null;
+		}
+
 		final File file = new File(basedir, path);
 		if (!file.isFile()) {
-			throw new IllegalArgumentException("path is not a valid product in site: " + path);
+			throw new IllegalArgumentException(
+					"path is not a valid product in site: " + path);
 		}
 		return new FileInputStream(file);
 	}
@@ -64,4 +69,8 @@ public class FileBasedRepository extends AbstractRepository {
 		return basedir.getAbsolutePath();
 	}
 
+	@Override
+	public boolean isAccessible() {
+		return basedir != null && basedir.isDirectory();
+	}
 }
