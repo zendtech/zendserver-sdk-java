@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.zend.sdklib.internal.repository.AbstractRepository;
+import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 
 /**
  * Http based repository
@@ -40,5 +41,15 @@ public class HttpRepository extends AbstractRepository {
 		URL url = new URL(this.baseURL.toString() + "/" + path);
 		URLConnection conn = url.openConnection();
 		return conn.getInputStream();
+	}
+
+	@Override
+	public boolean isAccessible() {
+		try {
+			InputStream s = getArtifactStream(SITE_XML);
+			return s.read() != -1;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }

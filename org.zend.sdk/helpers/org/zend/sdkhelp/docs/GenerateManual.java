@@ -47,18 +47,18 @@ public class GenerateManual {
 				CommandType.DELETE_TARGET, CommandType.DETECT_TARGET,
 				CommandType.LIST_TARGETS);
 
-		printStream.print("<h2>Project actions and options</h2>");
+		printStream.print("<h3>Project actions and options</h3>");
 		tableCommands(printStream, CommandType.CREATE_PROJECT,
 				CommandType.UPDATE_PROJECT);
 
-		printStream.print("<h2>Application actions and options</h2>");
+		printStream.print("<h3>Application actions and options</h3>");
 		tableCommands(printStream, CommandType.DEPLOY_APPLICATION,
 				CommandType.UPDATE_APPLICATION, CommandType.REMOVE_APPLICATION,
 				CommandType.REDEPLOY_APPLICATION,
 				CommandType.LIST_APPLICATIONS,
 				CommandType.DISCOVER_APPLICATION, CommandType.CREATE_PACKAGE);
 
-		printStream.print("<h2>Repository actions and options</h2>");
+		printStream.print("<h3>Repository actions and options</h3>");
 		tableCommands(printStream, CommandType.ADD_REPOSITORY,
 				CommandType.REMOVE_REPOSITORY, CommandType.LIST_REPOSITORIES);
 
