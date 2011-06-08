@@ -22,12 +22,34 @@ public class BasicStatus implements IStatus {
 	private StatusCode code;
 	private String title;
 	private String message;
+	private int totalWork;
+	private Throwable throwable;
 
 	public BasicStatus(StatusCode code, String title, String message) {
 		super();
 		this.code = code;
 		this.title = title;
 		this.message = message;
+		this.totalWork = 1;
+	}
+
+	public BasicStatus(StatusCode code, String title, String message,
+			Throwable throwable) {
+		super();
+		this.code = code;
+		this.title = title;
+		this.message = message;
+		this.totalWork = 1;
+		this.throwable = throwable;
+	}
+
+	public BasicStatus(StatusCode code, String title, String message,
+			int totalWork) {
+		super();
+		this.code = code;
+		this.title = title;
+		this.message = message;
+		this.totalWork = totalWork;
 	}
 
 	@Override
@@ -43,6 +65,16 @@ public class BasicStatus implements IStatus {
 	@Override
 	public String getMessage() {
 		return message;
+	}
+
+	@Override
+	public int getTotalWork() {
+		return totalWork;
+	}
+
+	@Override
+	public Throwable getThrowable() {
+		return throwable;
 	}
 
 }

@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
@@ -28,7 +28,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * 
  * @author Roy, 2011
  */
-public class TargetsManager extends AbstractLibrary {
+public class TargetsManager extends AbstractChangeNotifier {
 
 	private static final String DEFAULT_KEY = "sdk";
 

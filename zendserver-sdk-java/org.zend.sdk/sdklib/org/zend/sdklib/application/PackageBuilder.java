@@ -37,8 +37,11 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.TemplateWriter;
+import org.zend.sdklib.library.IChangeNotifier;
+import org.zend.sdklib.library.StatusCode;
 
 /**
  * Provides ability to create zpk application package based on
@@ -46,10 +49,11 @@ import org.zend.sdklib.internal.project.TemplateWriter;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class PackageBuilder extends AbstractLibrary {
+public class PackageBuilder extends AbstractChangeNotifier {
 
 	private static final String EXCLUSIONS = "exclusions";
 	private static final String CONTENT = "/*";
+	private static final String ALL = "**/";
 	private static final String DEPLOYMENT_PROPERTIES = "deployment.properties";
 	private static final String EXTENSION = ".zpk";
 	private static final int BUFFER = 1024;
@@ -59,15 +63,27 @@ public class PackageBuilder extends AbstractLibrary {
 	private List<String> exclusionList;
 	private Map<String, String[]> mapping;
 
-	public PackageBuilder(File file) {
+	public PackageBuilder(File file, List<String> exclusionList,
+			IChangeNotifier notifier) {
+		super(notifier);
 		this.container = file;
 		this.mapping = new HashMap<String, String[]>();
-		this.exclusionList = new ArrayList<String>();
+		this.exclusionList = exclusionList;
 	}
 
 	public PackageBuilder(File file, List<String> exclusionList) {
-		this(file);
-		this.exclusionList.addAll(exclusionList);
+		super();
+		this.container = file;
+		this.mapping = new HashMap<String, String[]>();
+		this.exclusionList = exclusionList;
+	}
+
+	public PackageBuilder(File file, IChangeNotifier notifier) {
+		this(file, new ArrayList<String>(), notifier);
+	}
+
+	public PackageBuilder(File file) {
+		this(file, new ArrayList<String>());
 	}
 
 	public PackageBuilder(String path) {
@@ -76,6 +92,15 @@ public class PackageBuilder extends AbstractLibrary {
 
 	public PackageBuilder(String path, List<String> exclusionList) {
 		this(new File(path), exclusionList);
+	}
+
+	public PackageBuilder(String path, List<String> exclusionList,
+			IChangeNotifier notifier) {
+		this(new File(path), exclusionList, notifier);
+	}
+
+	public PackageBuilder(String path, IChangeNotifier notifier) {
+		this(new File(path), notifier);
 	}
 
 	/**
@@ -104,11 +129,19 @@ public class PackageBuilder extends AbstractLibrary {
 				mapping = getMapping(mappingFile);
 				buildExclusionList();
 			}
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Package creation", "Creating deployment package...",
+					calculateTotalWork()));
 			addFileToZip(container, null, null, false);
 			resolveMapping();
 			out.close();
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+					"Package creation",
+					"Deployment package created successfully."));
 			return result;
 		} catch (IOException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.EXCEPTION,
+					"Package creation", e.getMessage(), e));
 			log.error("Error during building deployment package");
 			log.error(e);
 		}
@@ -162,8 +195,7 @@ public class PackageBuilder extends AbstractLibrary {
 			if (EXCLUSIONS.equals(mapTo)) {
 				String[] list = entry.getValue();
 				for (String member : list) {
-					File exclude = new File(container, member);
-					exclusionList.add(exclude.getCanonicalPath());
+					exclusionList.add(member);
 				}
 			}
 		}
@@ -174,9 +206,15 @@ public class PackageBuilder extends AbstractLibrary {
 			return false;
 		}
 		for (String exclude : exclusionList) {
-			exclude = new File(container, exclude).getCanonicalPath();
-			if (exclude.equals(resource.getCanonicalPath())) {
-				return true;
+			if (exclude.startsWith(ALL)) {
+				if (exclude.substring(ALL.length()).equals(resource.getName())) {
+					return true;
+				}
+			} else {
+				exclude = new File(container, exclude).getCanonicalPath();
+				if (exclude.equals(resource.getCanonicalPath())) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -216,6 +254,8 @@ public class PackageBuilder extends AbstractLibrary {
 					out.write(data, 0, count);
 				}
 				in.close();
+				notifier.statusChanged(new BasicStatus(StatusCode.PROCESSING,
+						"Package creation", "Creating deployment package...", 1));
 			}
 		}
 	}
@@ -298,6 +338,39 @@ public class PackageBuilder extends AbstractLibrary {
 			log.error(e);
 		}
 		return null;
+	}
+
+	private int calculateTotalWork() throws IOException {
+		int totalWork = countFiles(container);
+		Set<Entry<String, String[]>> mappings = mapping.entrySet();
+		for (Entry<String, String[]> entry : mappings) {
+			for (String file : entry.getValue()) {
+				boolean isContent = file.endsWith(CONTENT);
+				if (isContent) {
+					file = file.trim().substring(0, file.length() - 2);
+				}
+				File resource = new File(container, file);
+				if (resource.exists()) {
+					totalWork += countFiles(resource);
+				}
+			}
+		}
+		return totalWork;
+	}
+
+	private int countFiles(File file) throws IOException {
+		int counter = 0;
+		if (!isExcluded(file)) {
+			if (file.isDirectory()) {
+				File[] children = file.listFiles();
+				for (File child : children) {
+					counter += countFiles(child);
+				}
+			} else {
+				counter++;
+			}
+		}
+		return counter;
 	}
 
 }

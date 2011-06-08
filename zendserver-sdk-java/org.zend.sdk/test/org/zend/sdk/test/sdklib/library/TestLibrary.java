@@ -5,14 +5,14 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 import org.zend.sdklib.event.IStatusChangeEvent;
 import org.zend.sdklib.event.IStatusChangeListener;
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.library.IStatus;
 import org.zend.sdklib.library.StatusCode;
 
 public class TestLibrary {
 
-	private class ExampleLibrary extends AbstractLibrary {
+	private class ExampleLibrary extends AbstractChangeNotifier {
 		public boolean doSomething() {
 			IStatus progressStatus = new BasicStatus(StatusCode.PROCESSING,
 					"in progress", "process is in progress");

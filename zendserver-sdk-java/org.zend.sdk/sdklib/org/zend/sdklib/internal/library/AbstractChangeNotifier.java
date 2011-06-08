@@ -14,28 +14,35 @@ import java.util.List;
 import org.zend.sdklib.event.IStatusChangeEvent;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.internal.event.StatusChangeEvent;
-import org.zend.sdklib.library.ILibrary;
+import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.IStatus;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 
 /**
- * Abstract class which implement {@link ILibrary} interface. It is intended
- * that it should be extended by all library classes. It consists common logic
- * related to spreading of status changes.
+ * Abstract class which implement {@link IChangeNotifier} interface. It is
+ * intended that it should be extended by all library classes. It consists
+ * common logic related to spreading of status changes.
  * 
  * @author Wojciech Galanciak, 2011
  * 
  */
-public abstract class AbstractLibrary implements ILibrary {
+public abstract class AbstractChangeNotifier implements IChangeNotifier {
 
 	protected ILogger log;
+	protected IChangeNotifier notifier;
 
 	private List<IStatusChangeListener> listeners;
 
-	public AbstractLibrary() {
+	public AbstractChangeNotifier() {
 		this.log = Log.getInstance().getLogger(this.getClass().getName());
 		this.listeners = new ArrayList<IStatusChangeListener>();
+		this.notifier = this;
+	}
+
+	public AbstractChangeNotifier(IChangeNotifier notifier) {
+		this();
+		this.notifier = notifier;
 	}
 
 	@Override
@@ -48,7 +55,8 @@ public abstract class AbstractLibrary implements ILibrary {
 		listeners.remove(listener);
 	}
 
-	protected void statusChanged(IStatus status) {
+	@Override
+	public void statusChanged(IStatus status) {
 		IStatusChangeEvent event = new StatusChangeEvent(status);
 		for (IStatusChangeListener listener : listeners) {
 			listener.statusChanged(event);

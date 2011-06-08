@@ -19,7 +19,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.library.BasicStatus;
+import org.zend.sdklib.internal.target.UserBasedTargetLoader;
+import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -37,10 +40,20 @@ import org.zend.webapi.core.connection.request.NamedInputStream;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class ZendApplication extends AbstractLibrary {
+public class ZendApplication extends AbstractChangeNotifier {
 
 	private final TargetsManager manager;
 	private List<String> exclusionList;
+
+	public ZendApplication() {
+		super();
+		manager = new TargetsManager(new UserBasedTargetLoader());
+	}
+
+	public ZendApplication(List<String> exclusionList) {
+		this();
+		this.exclusionList = exclusionList;
+	}
 
 	public ZendApplication(ITargetLoader loader) {
 		super();
@@ -114,11 +127,15 @@ public class ZendApplication extends AbstractLibrary {
 			Boolean createVhost, Boolean defaultServer) {
 		Map<String, String> userParams = null;
 		if (propertiesFile != null) {
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Deploying", "Reading user parameters properites file..."));
 			File propsFile = new File(propertiesFile);
 			if (propsFile.exists()) {
 				userParams = getUserParameters(propsFile);
 			}
 		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Deploying", "Reading user parametes is completed."));
 		return deploy(path, baseUrl, targetId, userParams, appName,
 				ignoreFailures, createVhost, defaultServer);
 	}
@@ -168,7 +185,7 @@ public class ZendApplication extends AbstractLibrary {
 					+ new Random().nextInt());
 			tempFile.mkdir();
 			PackageBuilder builder = exclusionList == null ? new PackageBuilder(
-					path) : new PackageBuilder(path, exclusionList);
+					path) : new PackageBuilder(path, exclusionList, this);
 			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;
@@ -176,12 +193,22 @@ public class ZendApplication extends AbstractLibrary {
 		if (zendPackage != null) {
 			try {
 				WebApiClient client = getClient(targetId);
-				return client.applicationDeploy(new NamedInputStream(zendPackage), baseUrl,
+				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+						"Deploying", "Deploying application to the target..."));
+				ApplicationInfo result = client.applicationDeploy(
+						new NamedInputStream(zendPackage), baseUrl,
 						ignoreFailures, userParams, appName, createVhost,
 						defaultServer);
+				statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
+						"Application deployed successfully"));
+				return result;
 			} catch (MalformedURLException e) {
+				statusChanged(new BasicStatus(StatusCode.EXCEPTION,
+						"Deploying", e.getMessage(), e));
 				log.error(e);
 			} catch (WebApiException e) {
+				statusChanged(new BasicStatus(StatusCode.EXCEPTION,
+						"Deploying", e.getMessage(), e));
 				log.error("Error during deploying application to '" + targetId
 						+ "':");
 				log.error("\tpossible error: " + e.getMessage());
@@ -309,8 +336,8 @@ public class ZendApplication extends AbstractLibrary {
 					userParams = getUserParameters(propsFile);
 				}
 			}
-			return client.applicationUpdate(appIdint, new NamedInputStream(zendPackage),
-					ignoreFailures, userParams);
+			return client.applicationUpdate(appIdint, new NamedInputStream(
+					zendPackage), ignoreFailures, userParams);
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (WebApiException e) {
