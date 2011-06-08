@@ -10,7 +10,7 @@ package org.zend.sdklib.application;
 import java.io.File;
 import java.io.IOException;
 
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.project.TemplateWriter;
 
 /**
@@ -19,7 +19,7 @@ import org.zend.sdklib.internal.project.TemplateWriter;
  * @author Roy, 2011
  * 
  */
-public class ZendProject extends AbstractLibrary {
+public class ZendProject extends AbstractChangeNotifier {
 
 	protected String name;
 	protected boolean withScripts;

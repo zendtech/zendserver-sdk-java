@@ -11,13 +11,13 @@ package org.zend.sdklib.library;
 import org.zend.sdklib.event.IStatusChangeListener;
 
 /**
- * Represents Zend SDK library. Library can consist one or more processes which
- * can be performed.
+ * Represents an object which can inform all registered listeners about its
+ * changes.
  * 
  * @author Wojciech Galanciak, 2011
  * 
  */
-public interface ILibrary {
+public interface IChangeNotifier {
 
 	/**
 	 * Registers specified status change listener for this library.
@@ -32,5 +32,12 @@ public interface ILibrary {
 	 * @param listener
 	 */
 	void removeStatusChangeListener(IStatusChangeListener listener);
+
+	/**
+	 * Notifies all registered listeners about a change.
+	 * 
+	 * @param status
+	 */
+	void statusChanged(IStatus status);
 
 }
