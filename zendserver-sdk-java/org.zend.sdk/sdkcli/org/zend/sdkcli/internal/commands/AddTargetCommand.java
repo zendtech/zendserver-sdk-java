@@ -23,7 +23,7 @@ import org.zend.sdklib.target.IZendTarget;
  * @author Roy, 2011
  * 
  */
-public class CreateTargetCommand extends TargetAwareCommand {
+public class AddTargetCommand extends TargetAwareCommand {
 
 	// properties file keys
 	private static final String PROP_SECRETKEY = "secretkey";

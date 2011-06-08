@@ -43,8 +43,8 @@ public class GenerateManual {
 		globalOptions(printStream, AbstractCommand.class);
 
 		printStream.print("<h3>Target actions and options</h3>");
-		tableCommands(printStream, CommandType.CREATE_TARGET,
-				CommandType.DELETE_TARGET, CommandType.DETECT_TARGET,
+		tableCommands(printStream, CommandType.ADD_TARGET,
+				CommandType.REMOVE_TARGET, CommandType.DETECT_TARGET,
 				CommandType.LIST_TARGETS);
 
 		printStream.print("<h3>Project actions and options</h3>");
