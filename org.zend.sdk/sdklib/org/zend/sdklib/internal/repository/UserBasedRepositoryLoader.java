@@ -27,6 +27,7 @@ import org.zend.sdklib.repository.RepositoryFactory;
  */
 public class UserBasedRepositoryLoader implements IRepositoryLoader {
 
+	private static final String PROPERTY_PATH = "path";
 	private static final String PROPERTY_NAME = "repository";
 	private static final String INI_EXTENSION = ".ini";
 	private static final String CONF_FILENAME = "conf";
@@ -87,14 +88,17 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		return repository;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.zend.sdklib.repository.IRepositoryLoader#remove(org.zend.sdklib.repository.IRepository)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.repository.IRepositoryLoader#remove(org.zend.sdklib.
+	 * repository.IRepository)
 	 */
 	@Override
 	public IRepository remove(IRepository repository) {
 		RepositoryDescriptor d = loadRepositoryDescriptor(repository.getId());
 		if (null == d) {
-			throw new IllegalArgumentException("cannot find repository"
+			throw new IllegalArgumentException("cannot find repository "
 					+ repository.getId());
 		}
 		final File descriptorFile = getDescriptorFile(repository.getId());
@@ -107,16 +111,20 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		return repository;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.zend.sdklib.repository.IRepositoryLoader#update(org.zend.sdklib.repository.IRepository)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.repository.IRepositoryLoader#update(org.zend.sdklib.
+	 * repository.IRepository)
 	 */
 	@Override
 	public IRepository update(IRepository repository) {
 		throw new UnsupportedOperationException();
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.zend.sdklib.repository.IRepositoryLoader#loadAll()
 	 */
 	@Override
@@ -138,7 +146,8 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 			if (d.isValid()) {
 				IRepository createRepository;
 				try {
-					createRepository = RepositoryFactory.createRepository(d.name);
+					createRepository = RepositoryFactory
+							.createRepository(d.name);
 					arrayList.add(createRepository);
 				} catch (SdkException e) {
 					// skip loading of this repository
@@ -150,7 +159,8 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 				.size()]);
 	}
 
-	private RepositoryDescriptor storeRepositoryDescriptor(IRepository repository) {
+	private RepositoryDescriptor storeRepositoryDescriptor(
+			IRepository repository) {
 		try {
 			final File file = getDescriptorFile(repository.getId());
 			if (!file.createNewFile()) {
@@ -158,12 +168,11 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 			}
 			final RepositoryDescriptor repositoryDescriptor = new RepositoryDescriptor();
 			repositoryDescriptor.name = repository.getId();
-			repositoryDescriptor.path = new File(
-					this.baseDir.getAbsolutePath(), repositoryDescriptor.name);
+			repositoryDescriptor.path = repositoryDescriptor.name;
 
 			final Properties properties = new Properties();
 			properties.put(PROPERTY_NAME, repositoryDescriptor.name);
-			properties.put("path", repositoryDescriptor.path.getAbsolutePath());
+			properties.put(PROPERTY_PATH, repository.getId());
 
 			final FileOutputStream fileOutputStream = new FileOutputStream(file);
 			properties.store(fileOutputStream, "descriptor for repository "
@@ -191,7 +200,7 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 
 			final RepositoryDescriptor repositoryDescriptor = new RepositoryDescriptor();
 			repositoryDescriptor.name = properties.getProperty(PROPERTY_NAME);
-			repositoryDescriptor.path = new File(properties.getProperty("path"));
+			repositoryDescriptor.path = properties.getProperty(PROPERTY_PATH);
 
 			fileInputStream.close();
 			return repositoryDescriptor.isValid() ? repositoryDescriptor : null;
@@ -202,9 +211,10 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 	}
 
 	private File getDescriptorFile(String repository) {
-		if (!repository.endsWith(INI_EXTENSION)) {
-			repository = repository + INI_EXTENSION;
+		if (repository.endsWith(INI_EXTENSION)) {
+			throw new IllegalStateException("repository name ends with ini");
 		}
+		repository = String.valueOf(repository.hashCode()) + INI_EXTENSION;
 		final File file = new File(this.baseDir, repository);
 		return file;
 	}
@@ -222,10 +232,10 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		/**
 		 * Path of the repository directory
 		 */
-		public File path;
+		public String path;
 
 		public boolean isValid() {
-			return this.name != null && this.path.exists();
+			return this.name != null;
 		}
 	}
 
