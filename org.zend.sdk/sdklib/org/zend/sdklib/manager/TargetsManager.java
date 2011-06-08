@@ -122,8 +122,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget() throws IOException {
-		String targetId = Integer.toString(getTargets().length);
-		return detectLocalhostTarget(targetId, DEFAULT_KEY);
+		return detectLocalhostTarget(DEFAULT_KEY);
 	}
 
 	/**
@@ -136,8 +135,22 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String key)
 			throws IOException {
-		final String targetId = Integer.toString(getTargets().length);
-		return detectLocalhostTarget(targetId, key);
+		return detectLocalhostTarget(Integer.toString(getTargets().length), key);
+	}
+	
+	/**
+	 * Returns a target that represents the localhost zend server
+	 * 
+	 * @param targetId 
+	 * @param key
+	 * @return zend target for localhost
+	 * 
+	 * @throws IOException
+	 * @throws WebApiException
+	 */
+	public synchronized IZendTarget detectLocalhostTarget(String targetId, String key)
+			throws IOException {
+		return detectLocalhostTarget(targetId, key, false);
 	}
 
 	/**
@@ -145,12 +158,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * 
 	 * @param targetId
 	 * @param key
+	 * @param addKeyOnly 
 	 * @return zend target for localhost
 	 * @throws IOException
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key) throws IOException {
+			String key, boolean addKeyOnly) throws IOException {
 		final IZendTarget[] list = getTargets();
 		targetId = targetId != null ? targetId : Integer
 				.toString(getTargets().length);
@@ -166,7 +180,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 			// localhost not found - create one
 			final IZendTarget local = new ZendTargetAutoDetect()
 					.createLocalhostTarget(targetId, key);
-			return add(local);
+			return addKeyOnly ? local : add(local);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw e;

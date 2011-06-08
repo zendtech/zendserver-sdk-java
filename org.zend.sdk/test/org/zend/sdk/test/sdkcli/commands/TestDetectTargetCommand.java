@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -21,10 +22,20 @@ import org.zend.webapi.core.WebApiException;
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
 	private String[] validCommand = new String[] { "detect", "target" };
+	private String[] validCommandOnlyAdd = new String[] { "detect", "target", "-a" };
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
 		CommandLine cmdLine = new CommandLine(validCommand);
+		DetectTargetCommand command = getCommand(cmdLine);
+		assertNotNull(command);
+		manager.add(getTarget());
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteOnlyAdd() throws ParseError, WebApiException, IOException {
+		CommandLine cmdLine = new CommandLine(validCommandOnlyAdd);
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		manager.add(getTarget());
@@ -40,7 +51,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
 		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString());
+				.detectLocalhostTarget(anyString(), anyString(), anyBoolean());
 		String backupValue = System.getProperty("os.name");
 		System.setProperty("os.name", "windows");
 		assertFalse(command.execute(cmdLine));
@@ -56,7 +67,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
 		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString());
+				.detectLocalhostTarget(anyString(), anyString(), anyBoolean());
 		String backupValue = System.getProperty("os.name");
 		System.setProperty("os.name", "linux");
 		assertFalse(command.execute(cmdLine));
