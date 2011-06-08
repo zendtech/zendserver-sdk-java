@@ -1,18 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<s:site version="" xmlns:s="http://zend-sdk.googlecode.com/site-descriptor/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://zend-sdk.googlecode.com/site-descriptor/1.0 repository.xsd ">
-  <description>My Example Application Site</description>
-  <s:application id="org.my.application" name="org.zend.drupal" version="6.19" url="/drupal/drupal-6.19.zpk">
-    <size>1328376</size>
-    <signature>67b6c6fd6d565758d2f997e7d91d320b</signature>
-    <category>cms</category>
-    <provider>bcquia</provider>
-  </s:application>
-  <s:category-def name="cms" label="Control Managment System" >
-    <description>Description of Control Managment System</description>
-  </s:category-def>
-  <s:provider-def label="Bcquia" name="bcquia">
-    <icon>http://my.fake//my.png</icon>
-    <url>http://www.zend.com</url>
-    <description>description of the application</description>
-  </s:provider-def>
-</s:site>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:site xmlns:ns2="http://zend-sdk.googlecode.com/site-descriptor/1.0" version="1.0">
+    <description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">This is my first drupal site</description>
+    <ns2:application update-range="[5.0, 7.0)" url="/drupal/drupal-6.19.zpk" version="6.19" label="Drupal" name="drupal">
+        <category xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">cms</category>
+        <provider xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">me</provider>
+    </ns2:application>
+    <ns2:category-def label="Content Managment System" name="cms"/>
+    <ns2:provider-def label="I am &quot;Me&quot;" name="me"/>
+</ns2:site>
