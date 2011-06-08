@@ -12,8 +12,8 @@ import org.zend.sdkcli.internal.commands.AddRepositoryCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreatePackageCommand;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
-import org.zend.sdkcli.internal.commands.CreateTargetCommand;
-import org.zend.sdkcli.internal.commands.DeleteTargetCommand;
+import org.zend.sdkcli.internal.commands.AddTargetCommand;
+import org.zend.sdkcli.internal.commands.RemoveTargetCommand;
 import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
@@ -63,11 +63,11 @@ public class CommandFactory {
 		case LIST_TARGETS:
 			command = new ListTargetsCommand();
 			break;
-		case CREATE_TARGET:
-			command = new CreateTargetCommand();
+		case ADD_TARGET:
+			command = new AddTargetCommand();
 			break;
-		case DELETE_TARGET:
-			command = new DeleteTargetCommand();
+		case REMOVE_TARGET:
+			command = new RemoveTargetCommand();
 			break;
 		case DETECT_TARGET:
 			command = new DetectTargetCommand();

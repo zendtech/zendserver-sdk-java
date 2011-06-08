@@ -24,9 +24,9 @@ public enum CommandType {
 
 	LIST_TARGETS("list", "targets", "Lists known deployment target environments."),
 
-	CREATE_TARGET("create", "target", "Adds new target environment for deploying applications."),
+	ADD_TARGET("add", "target", "Adds new target environment for deploying applications."),
 	
-	DELETE_TARGET("delete", "target", "Removes target from the know targets list."),
+	REMOVE_TARGET("remove", "target", "Removes target from the know targets list."),
 
 	DETECT_TARGET("detect", "target", "Detects target on localhost."),
 	
