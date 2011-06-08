@@ -22,6 +22,8 @@ public enum StatusCode {
 
 	EXCEPTION("exception"),
 
+	INIT("init"),
+
 	STARTING("starting"),
 
 	PROCESSING("processing"),

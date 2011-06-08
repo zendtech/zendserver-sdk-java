@@ -31,4 +31,15 @@ public interface IStatus {
 	 */
 	String getMessage();
 
+	/**
+	 * @return total work to be done
+	 */
+	int getTotalWork();
+
+	/**
+	 * @return {@link Throwable} instance if status is related to exceptional
+	 *         situation; can be null
+	 */
+	Throwable getThrowable();
+
 }

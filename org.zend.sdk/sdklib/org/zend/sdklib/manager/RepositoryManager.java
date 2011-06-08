@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.library.AbstractLibrary;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.IRepositoryLoader;
 import org.zend.sdklib.repository.RepositoryFactory;
@@ -22,7 +22,7 @@ import org.zend.sdklib.repository.site.Application;
  * 
  * @author Roy, 2011
  */
-public class RepositoryManager extends AbstractLibrary {
+public class RepositoryManager extends AbstractChangeNotifier {
 
 	/**
 	 * All repositories loaded in the manager
