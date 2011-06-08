@@ -11,7 +11,7 @@ package org.zend.php.zendserver.deployment.core.sdk;
 import java.util.Arrays;
 
 import org.zend.php.zendserver.deployment.core.PreferenceManager;
-import org.zend.sdklib.ZendApplication;
+import org.zend.sdklib.application.ZendApplication;
 
 public class SdkApplication extends ZendApplication {
 

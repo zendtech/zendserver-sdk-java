@@ -98,10 +98,7 @@ public class ApplicationParametersPage extends WizardPage {
 		}
 
 		public void createControl(Composite composite) {
-			String tooltip = parameter.getLongDescription();
-			if (tooltip == null) {
-				tooltip = parameter.getDescription();
-			}
+			String tooltip = parameter.getDescription();
 			switch (type) {
 			case STRING:
 			case EMAIL:

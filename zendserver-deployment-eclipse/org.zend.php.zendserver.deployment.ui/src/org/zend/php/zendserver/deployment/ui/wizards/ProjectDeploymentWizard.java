@@ -20,6 +20,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.SdkApplication;
+import org.zend.php.zendserver.deployment.core.sdk.SdkStatusChangeListener;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
@@ -71,6 +72,9 @@ public class ProjectDeploymentWizard extends Wizard {
 					try {
 						createDeploymentDescriptor(name, root, monitor);
 						SdkApplication application = new SdkApplication();
+						application
+								.addStatusChangeListener(new SdkStatusChangeListener(
+										monitor));
 						application.deploy(path, baseUrl, targetId, userParams,
 								appName, isIgnoreFailures, !defaultServer,
 								defaultServer);
