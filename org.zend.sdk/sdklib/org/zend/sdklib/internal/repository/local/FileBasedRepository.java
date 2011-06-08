@@ -65,11 +65,6 @@ public class FileBasedRepository extends AbstractRepository {
 	}
 
 	@Override
-	public String getId() {
-		return basedir.getAbsolutePath();
-	}
-
-	@Override
 	public boolean isAccessible() {
 		return basedir != null && basedir.isDirectory();
 	}

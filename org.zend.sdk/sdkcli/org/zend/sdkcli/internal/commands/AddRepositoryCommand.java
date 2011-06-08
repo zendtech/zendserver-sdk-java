@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepository;
 
@@ -42,8 +43,14 @@ public class AddRepositoryCommand extends RepositoryAwareCommand {
 		if (r == null) {
 			return false;
 		}
-
-		getLogger().info("Repository added ('" + url + "').");
+		try {
+			repositoryManager.add(r);
+		} catch (SdkException e) {
+			getLogger().info("Error adding repository ('" + url + "').");
+			return false;
+		}
+		
+		getLogger().info("Repository was added ('" + url + "').");
 		return true;
 	}
 }
