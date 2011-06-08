@@ -13,19 +13,19 @@ import org.junit.Test;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
-import org.zend.sdkcli.internal.commands.CreateTargetCommand;
+import org.zend.sdkcli.internal.commands.AddTargetCommand;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
-public class TestCreateTargetCommand extends AbstractTargetCommandTest {
+public class TestAddTargetCommand extends AbstractTargetCommandTest {
 
-	private String[] validCommand = new String[] { "create", "target", "-t",
+	private String[] validCommand = new String[] { "add", "target", "-t",
 			"1", "-k", "mykey", "-s", "123456", "-h", "http://test1test" };
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException {
 		CommandLine cmdLine = new CommandLine(validCommand);
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertTrue(command.execute(cmdLine));
@@ -33,10 +33,10 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteNoId() throws ParseError, WebApiException {
-		CommandLine cmdLine = new CommandLine(new String[] { "create",
+		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-k", "mykey", "-s", "123456", "-h",
 				"http://test1test" });
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertTrue(command.execute(cmdLine));
@@ -45,7 +45,7 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteAddFail() throws ParseError, WebApiException {
 		CommandLine cmdLine = new CommandLine(validCommand);
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(null).when(manager).add(any(IZendTarget.class));
 		assertFalse(command.execute(cmdLine));
@@ -54,10 +54,10 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "create",
+		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-t", "1", "-key", "mykey", "-secretKey", "123456",
 				"-host", "a111:/\test1test" });
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		assertFalse(command.execute(cmdLine));
 	}
@@ -65,10 +65,10 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteProperties() throws ParseError, WebApiException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "create",
+		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-t", "1", "-h", "http://test1test", "-p",
 				this.getClass().getResource("target.properties").getPath() });
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertTrue(command.execute(cmdLine));
@@ -77,18 +77,18 @@ public class TestCreateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
 			WebApiException, MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "create",
+		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-t", "1", "-h", "http://test1test", "-p",
 				"nofilename" });
-		CreateTargetCommand command = getCommand(cmdLine);
+		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertFalse(command.execute(cmdLine));
 	}
 
-	private CreateTargetCommand getCommand(CommandLine cmdLine)
+	private AddTargetCommand getCommand(CommandLine cmdLine)
 			throws ParseError {
-		CreateTargetCommand command = spy((CreateTargetCommand) CommandFactory
+		AddTargetCommand command = spy((AddTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();
 		return command;

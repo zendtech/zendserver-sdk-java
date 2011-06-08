@@ -17,7 +17,7 @@ import org.zend.sdklib.target.IZendTarget;
  * @author Roy, 2011
  * 
  */
-public class DeleteTargetCommand extends TargetAwareCommand {
+public class RemoveTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
 
