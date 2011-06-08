@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Detect localhost target.
@@ -20,6 +21,7 @@ import org.zend.sdklib.internal.utils.EnvironmentUtils;
 public class DetectTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
+	private static final String ADD_KEY_ONLY = "a";
 	private static final String KEY = "k";
 
 	@Option(opt = ID, required = false, description = "The target id to create", argName="id")
@@ -27,6 +29,11 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		return getValue(ID);
 	}
 
+	@Option(opt = ADD_KEY_ONLY, required = false, description = "This operation will only add a valid key to the localhost server")
+	public boolean isAddKeyOnly() {
+		return hasOption(ADD_KEY_ONLY);
+	}
+	
 	@Option(opt = KEY, required = false, description = "The key to use", argName="key")
 	public String getKey() {
 		return getValue(KEY);
@@ -36,8 +43,15 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean doExecute() {
 		final String key = getKey();
 		final String targetId = getId();
+		final boolean addKeyOnly = isAddKeyOnly();
 		try {
-			if (getTargetManager().detectLocalhostTarget(targetId, key) != null) {
+			final IZendTarget target = getTargetManager().detectLocalhostTarget(targetId, key, addKeyOnly);
+			if (target != null) {
+				if (addKeyOnly) {
+					getLogger().info("Key " + target.getKey() + " is available");
+				} else {
+					getLogger().info("Target " + target.getId() + " is available");
+				}
 				return true;
 			}
 		} catch (IOException e) {
@@ -58,6 +72,8 @@ public class DetectTargetCommand extends TargetAwareCommand {
 								+ commandLine.getDirectObject() + " ...");
 			}
 		}
+		getLogger().error(
+				"Operation failed.");
 		return false;
 	}
 }
