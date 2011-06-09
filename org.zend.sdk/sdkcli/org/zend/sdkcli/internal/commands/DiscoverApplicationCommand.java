@@ -47,33 +47,36 @@ public class DiscoverApplicationCommand extends RepositoryAwareCommand {
 				Application[] listApplications;
 				listApplications = r.listApplications();
 				for (Application a : listApplications) {
-					if (getQuery() != null && a.getName().matches(getQuery())) {
-						commandLine.getLog().info(
-								"\t" + a.getName() + " (" + a.getVersion() + ")");
-						if (isStatus()) {
-							commandLine.getLog().info(
-									"\t\tFull Name: " + a.getLabel());
-							final Object category = a.getCategory();
-							if (category != null) {
-								commandLine.getLog().info(
-										"\t\tCategory: "
-										+ ((CategoryDef) category)
-										.getLabel());
-							}
-							
-							final Object provider = a.getProvider();
-							if (provider != null) {
-								commandLine.getLog().info(
-										"\tProvider: "
-										+ ((ProviderDef) provider)
-										.getLabel());
-							}
-							commandLine.getLog().info(
-									"\tUpdate Range: " + a.getUpdateRange());
-						}
-						
+
+					// skip if irrelevant  
+					if (getQuery() != null && !a.getName().matches(getQuery())) {
+						break;
 					}
-					
+
+					commandLine.getLog().info(
+							"\t" + a.getName() + " (" + a.getVersion() + ")");
+					if (isStatus()) {
+						commandLine.getLog().info(
+								"\t\tFull Name: " + a.getLabel());
+						final Object category = a.getCategory();
+						if (category != null) {
+							commandLine.getLog().info(
+									"\t\tCategory: "
+											+ ((CategoryDef) category)
+													.getLabel());
+						}
+
+						final Object provider = a.getProvider();
+						if (provider != null) {
+							commandLine.getLog().info(
+									"\tProvider: "
+											+ ((ProviderDef) provider)
+													.getLabel());
+						}
+						commandLine.getLog().info(
+								"\tUpdate Range: " + a.getUpdateRange());
+
+					}
 				}
 			} catch (SdkException e) {
 				getLogger().error(e);
