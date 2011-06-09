@@ -30,7 +30,6 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 	private static final String PROPERTY_PATH = "path";
 	private static final String PROPERTY_NAME = "repository";
 	private static final String INI_EXTENSION = ".ini";
-	private static final String CONF_FILENAME = "conf";
 	private final File baseDir;
 
 	public UserBasedRepositoryLoader() {
@@ -41,7 +40,7 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		this.baseDir = baseDir;
 
 		if (!baseDir.exists()) {
-			throw new IllegalStateException("error finding user home directory");
+			throw new IllegalStateException("error finding repository directory " + baseDir.getAbsolutePath());
 		}
 	}
 
