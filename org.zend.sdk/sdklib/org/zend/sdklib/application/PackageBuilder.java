@@ -291,14 +291,14 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			pkgStream = new FileInputStream(descriptorFile);
 			p = JaxbHelper.unmarshalPackage(pkgStream);
 		} catch (IOException e) {
-			return null;
+			throw new IllegalStateException(e);
 		} catch (JAXBException e) {
-			return null;
+			throw new IllegalStateException(e);
 		} finally {
 			try {
 				pkgStream.close();
 			} catch (IOException e) {
-				return null;
+				throw new IllegalStateException(e);
 			}
 		}
 
