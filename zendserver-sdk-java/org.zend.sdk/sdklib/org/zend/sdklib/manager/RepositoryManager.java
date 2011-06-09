@@ -16,6 +16,7 @@ import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.IRepositoryLoader;
 import org.zend.sdklib.repository.RepositoryFactory;
 import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * Manager for user repositories
@@ -75,7 +76,7 @@ public class RepositoryManager extends AbstractChangeNotifier {
 		}
 
 		// try to connect to server
-		if (repository.listApplications() == null) {
+		if (repository.getSite() == null) {
 			return null;
 		}
 
@@ -114,13 +115,8 @@ public class RepositoryManager extends AbstractChangeNotifier {
 		final IRepository[] repositories = getRepositories();
 		List<Application> appls = new ArrayList<Application>(1);
 		for (IRepository r : repositories) {
-			final Application[] listApplications = r.listApplications();
-			for (Application application : listApplications) {
-				appls.add(application);
-			}
-		}
-		if (appls.size() == 0) {
-			return null;
+			final Site site = r.getSite();
+			appls.addAll(site.getApplication());
 		}
 		return (Application[]) appls.toArray(new Application[appls.size()]);
 	}

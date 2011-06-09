@@ -10,10 +10,19 @@ package org.zend.sdklib.repository;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
+import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.CategoryDef;
+import org.zend.sdklib.repository.site.ObjectFactory;
+import org.zend.sdklib.repository.site.ProviderDef;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * Creates a repository client for a given string
@@ -65,12 +74,30 @@ public class RepositoryFactory {
 		if (null != path) {
 			return new FileBasedRepository(url, new File(path));
 		}
-
-		
-		
 		return null;
 	}
 
+	final public Site merge(String description, IRepository ... repositories) throws SdkException {
+		ObjectFactory f = new ObjectFactory();
+		final Site s = f.createSite();
+		if (description != null) {
+			s.setDescription(description);
+		}
+		
+		List<Application> apps = new ArrayList<Application>(1);
+		List<ProviderDef> pros = new ArrayList<ProviderDef>(1);
+		List<CategoryDef> cats = new ArrayList<CategoryDef>(1);
+		for (IRepository r : repositories) {
+			final Site sr = r.getSite();
+			apps.addAll(sr.getApplication());
+			pros.addAll(sr.getProviderDef());
+			cats.addAll(sr.getCategoryDef());
+		}
+		
+		return s;
+	}
+	
+	
 	/**
 	 * finds the path according to the given URL hints. Trims the hints or not
 	 * according to the trim parameter

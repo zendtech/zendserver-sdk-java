@@ -22,12 +22,11 @@ import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
-import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.IRepositoryLoader;
-import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.Site;
 import org.zend.webapi.core.WebApiException;
 
 public class TestRepositoryManager extends AbstractTest {
@@ -82,7 +81,7 @@ public class TestRepositoryManager extends AbstractTest {
 	private IRepository getRepository() throws SdkException {
 		FileBasedRepository repository = spy(new FileBasedRepository(
 				"file://tmp/me", new File("/tmp/me")));
-		doReturn(new Application[] {}).when(repository).listApplications();
+		doReturn(new Site()).when(repository).getSite();
 		return repository;
 	}
 

@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * Helps with version compare operations
@@ -127,8 +128,8 @@ public class UpdateUtils {
 	public static Application getApplicationUpdates(IRepository repository,
 			String applicationName, String currentVersion) throws SdkException {
 
-		final Application[] applications = repository.listApplications();
-		for (Application application : applications) {
+		final Site site = repository.getSite();
+		for (Application application : site.getApplication()) {
 			if (application.getName().equalsIgnoreCase(applicationName)
 					&& validUpdate(currentVersion, application.getVersion(),
 							application.getUpdateRange())) {

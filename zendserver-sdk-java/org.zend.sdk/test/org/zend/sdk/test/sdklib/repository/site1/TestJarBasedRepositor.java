@@ -12,20 +12,19 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.local.JarBasedRepository;
-import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.Site;
 
 public class TestJarBasedRepositor {
 
 	@Test
 	public void test() throws SdkException {
 		final Class class1 = this.getClass();
-		final JarBasedRepository repo = new JarBasedRepository(class1.getName(), class1);
-		final Application[] availableApplications = repo
-				.listApplications();
-		
+		final JarBasedRepository repo = new JarBasedRepository(
+				class1.getName(), class1);
+		final Site s = repo.getSite();
+
 		assertEquals("number of application in this site is 1", 1,
-				availableApplications.length);
-		System.out.println(availableApplications[0].getName());
+				s.getApplication().size());
 	}
 
 }
