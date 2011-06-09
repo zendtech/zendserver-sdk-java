@@ -17,7 +17,7 @@ import org.zend.sdklib.logger.Log;
  * @author roy
  * 
  */
-public class PackageZend {
+public class CreateQuickStartPackage {
 
 	public static void main(String[] args) {
 		Log.getInstance().registerLogger(new CliLogger());

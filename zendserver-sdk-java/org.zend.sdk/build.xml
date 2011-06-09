@@ -100,7 +100,7 @@
 		<delete file="lib/zend-test-sdk.jar" />
 	</target>
 	
-	<target depends="clean,build-subprojects,build-project,AllTests,junitreport,javadoc,validation,buildSDK" name="build" />
+	<target depends="clean,build-subprojects,build-project,AllTests,junitreport,javadoc,validation,generateBasicRepository,buildSDK" name="build" />
 	
 	<target name="build-subprojects" />
 	
@@ -204,6 +204,44 @@
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
     </target>
+
+	<target name="generateBasicRepository" description="basic Zend Framework Repository">
+
+		<mkdir dir="tmp"/>
+		<property name="quickstart.dir" value="tmp/quickstart-1.11"/>
+		<property name="repository.dir" value="tmp/repository"/>
+
+		
+		<get dest="tmp" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>
+		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
+		<move todir="${quickstart.dir}" includeemptydirs="true">
+		    <fileset dir="tmp/ZendFrameworkQuickstart-20100208"/>
+		</move>
+
+        <java classname="org.zend.sdkhelp.repository.CreateQuickStartDescriptor">
+        	<arg line="${quickstart.dir}/deployment.xml"/>
+        	<classpath refid="org.zend.sdk.classpath" />
+        </java>
+		<mkdir dir="${repository.dir}"/>
+        <java classname="org.zend.sdkhelp.repository.CreateQuickStartPackage">
+        	<arg line="${quickstart.dir}"/>
+        	<arg line="${repository.dir}"/>
+        	<classpath refid="org.zend.sdk.classpath" />
+        </java>
+        <java classname="org.zend.sdkhelp.repository.CreateQuickStartRepository">
+        	<arg line="${repository.dir}/site.xml"/>
+        	<arg line="${repository.dir}/quickstart-1.0.zpk" />
+        	<arg line=""/>
+        	<classpath refid="org.zend.sdk.classpath" />
+        </java>
+		
+		<move todir="repository" >
+		    <fileset dir="${repository.dir}"/>
+		</move>
+		
+		<delete dir="tmp"/> 
+    </target>
+		
 	
 	<target name="buildSDK">
 		<mkdir dir="${sdk.output.dir}" />

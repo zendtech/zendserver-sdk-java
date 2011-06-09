@@ -28,7 +28,7 @@ import org.zend.sdklib.logger.Log;
  * 
  * @author Roy, 2011
  */
-public class CreateZendDescriptor {
+public class CreateQuickStartDescriptor {
 
 	public static void main(String[] args) throws JAXBException,
 			FileNotFoundException {

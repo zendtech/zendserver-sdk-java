@@ -8,14 +8,23 @@
 package org.zend.sdklib.repository;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
+import org.zend.sdklib.internal.utils.JaxbHelper;
+import org.zend.sdklib.internal.utils.Md5Util;
+import org.zend.sdklib.internal.utils.VersionsUtils;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.repository.site.CategoryDef;
 import org.zend.sdklib.repository.site.ObjectFactory;
@@ -76,6 +85,29 @@ public class RepositoryFactory {
 	}
 
 	/**
+	 * Prints the new site according to information provided on the package
+	 * 
+	 * @param newSiteStream print stream of the new site
+	 * @param baseSiteStream basic site, this should include all information except for the URL, Size, version, md5
+	 * @param pkgFile the package file
+	 * @param baseURL base url 
+	 * @throws IOException
+	 * @throws JAXBException
+	 * @throws NoSuchAlgorithmException 
+	 */
+	public static void createRepository(PrintStream newSiteStream, InputStream baseSiteStream, File pkgFile, String baseURL) throws IOException, JAXBException, NoSuchAlgorithmException {
+		final Site baseSite = JaxbHelper.unmarshalSite(baseSiteStream);
+		final List<Application> apps = baseSite.getApplication();
+		final Application a = apps.get(0);
+		a.setUrl(baseURL + "/" + pkgFile.getName());
+		a.setSize(String.valueOf(pkgFile.length()));
+		a.setVersion(VersionsUtils.getVersion(pkgFile.getName()));
+		a.setSignature(Md5Util.getMd5(pkgFile));
+		JaxbHelper.marshalSite(newSiteStream, baseSite);
+	}
+	
+	
+	/**
 	 * Merge several repositories into one repository
 	 * 
 	 * @param description
@@ -84,7 +116,7 @@ public class RepositoryFactory {
 	 * 
 	 * @throws SdkException
 	 */
-	final public Site merge(String description, IRepository... repositories)
+	public static Site merge(String description, IRepository... repositories)
 			throws SdkException {
 		ObjectFactory f = new ObjectFactory();
 		final Site s = f.createSite();
