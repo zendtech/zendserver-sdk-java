@@ -212,8 +212,7 @@
 		<property name="repository.dir" value="tmp/repository"/>
 
 		
-		<get dest="tmp" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>
-		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
+		<get dest="tmp/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
 		<move todir="${quickstart.dir}" includeemptydirs="true">
 		    <fileset dir="tmp/ZendFrameworkQuickstart-20100208"/>
 		</move>
