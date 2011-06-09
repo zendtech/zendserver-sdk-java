@@ -10,27 +10,27 @@ package org.zend.sdk.test.sdklib.repository;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.zend.sdklib.internal.utils.UpdateUtils;
+import org.zend.sdklib.internal.utils.VersionsUtils;
 
 public class TestVersionCompare {
 
 	@Test
 	public void testSmaller() {
-		assertTrue(UpdateUtils.versionCompare("5.1", "6.4") < 0);
+		assertTrue(VersionsUtils.versionCompare("5.1", "6.4") < 0);
 	}
 
 	@Test
 	public void testEquals() {
-		assertTrue(UpdateUtils.versionCompare("5.1", "5.1") == 0);
+		assertTrue(VersionsUtils.versionCompare("5.1", "5.1") == 0);
 	}
 
 	@Test
 	public void testGreater1() {
-		assertTrue(UpdateUtils.versionCompare("5.1", "4.4") > 0);
+		assertTrue(VersionsUtils.versionCompare("5.1", "4.4") > 0);
 	}
 
 	@Test
 	public void testGreater2() {
-		assertTrue(UpdateUtils.versionCompare("5.1.5.6", "5.1") > 0);
+		assertTrue(VersionsUtils.versionCompare("5.1.5.6", "5.1") > 0);
 	}
 }

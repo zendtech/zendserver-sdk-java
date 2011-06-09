@@ -20,7 +20,7 @@ import org.zend.sdklib.repository.site.Site;
  * 
  * @author Roy, 2011
  */
-public class UpdateUtils {
+public class VersionsUtils {
 
 	private final static String patternRange = "[\\(\\[]\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?(\\s)*,(\\s)*\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?[\\)\\]]";
 	private final static String patternVersion = "\\d{1,3}.\\d{1,3}(.\\d{1,3})?(.\\d{1,3})?";
@@ -157,4 +157,19 @@ public class UpdateUtils {
 				&& inBetween(currentVersion, range);
 	}
 
+	/**
+	 * Returns the version part out of the package name
+	 * For example <pre>"quickstart-1.23.4.zpk"</pre> returns <pre>"1.23.4"</pre>
+	 * @param packageName
+	 * @return version 
+	 */
+	public static final String getVersion(String packageName) {
+		final Matcher m = Pattern.compile(patternVersion).matcher(packageName);
+		final boolean find = m.find();
+		if (!find) {
+			throw new IllegalArgumentException("package name should include a version number");
+		}
+		return m.group();
+	}
+	
 }
