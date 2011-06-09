@@ -35,7 +35,7 @@ public class GenerateDrupalSite {
 		}
 
 		final Site s = createDrupalSite();
-		JaxbHelper.marshal(printStream, s);
+		JaxbHelper.marshalSite(printStream, s);
 
 		printStream.close();
 	}
@@ -44,16 +44,18 @@ public class GenerateDrupalSite {
 	private static Site createDrupalSite() {
 		ObjectFactory factory = new ObjectFactory();
 		final Site s = factory.createSite();
-		s.setDescription("This is my first drupal site");
+		s.setDescription("The Zend SDK official repository");
 		s.setVersion("1.0");
 		final Application a = factory.createApplication();
-		a.setUpdateRange("[5.0, 7.0)");
+		
+		// a.setUpdateRange("[5.0, 7.0)");
 		a.setUrl("/drupal/drupal-6.19.zpk");
 		a.setVersion("6.19");
 		a.setLabel("Drupal");
 		a.setName("drupal");
 		a.setCategory("cms");
-		a.setProvider("me");
+		a.setProvider("Drupal");
+		
 		s.getApplication().add(a);
 
 		final CategoryDef c = factory.createCategoryDef();
@@ -62,8 +64,9 @@ public class GenerateDrupalSite {
 		s.getCategoryDef().add(c);
 
 		final ProviderDef p = factory.createProviderDef();
-		p.setName("me");
-		p.setLabel("I am \"Me\"");
+		p.setName("Drupal");
+		p.setLabel("Drupal");
+		p.setUrl("http://drupal.org/");
 		s.getProviderDef().add(p);
 		return s;
 	}

@@ -13,6 +13,7 @@ import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.repository.site.CategoryDef;
 import org.zend.sdklib.repository.site.ProviderDef;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * List all targets and their statuses
@@ -44,11 +45,10 @@ public class DiscoverApplicationCommand extends RepositoryAwareCommand {
 			commandLine.getLog().info("id: " + r.getId());
 
 			try {
-				Application[] listApplications;
-				listApplications = r.listApplications();
-				for (Application a : listApplications) {
+				final Site site = r.getSite();
+				for (Application a : site.getApplication()) {
 
-					// skip if irrelevant  
+					// skip if irrelevant
 					if (getQuery() != null && !a.getName().matches(getQuery())) {
 						break;
 					}

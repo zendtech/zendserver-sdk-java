@@ -13,6 +13,7 @@ import java.io.InputStream;
 
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * Interface for clients to access a repository
@@ -27,6 +28,11 @@ public interface IRepository {
 	public String getId();
 
 	/**
+	 * @return description for this repository
+	 */
+	public String getDescription();
+	
+	/**
 	 * @return true if the repository is currently accessible
 	 */
 	public boolean isAccessible();
@@ -36,7 +42,7 @@ public interface IRepository {
 	 * 
 	 * @return
 	 */
-	public Application[] listApplications() throws SdkException;
+	public Site getSite() throws SdkException;
 
 	/**
 	 * Connects to a package given application
