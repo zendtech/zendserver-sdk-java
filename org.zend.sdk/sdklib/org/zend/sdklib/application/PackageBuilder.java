@@ -25,21 +25,13 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.bind.JAXBException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.TemplateWriter;
+import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
 
@@ -112,7 +104,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	 */
 	public File createDeploymentPackage(File location) {
 		if (location == null || !location.isDirectory()) {
-			log.error(new IllegalArgumentException("Location cannot be null"));
+			log.error(new IllegalArgumentException(
+					"Location cannot be null or non-existing directory"));
 			return null;
 		}
 		try {
@@ -292,53 +285,30 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			log.error(descriptorFile.getAbsoluteFile() + " does not exist.");
 			return null;
 		}
-		Document doc = readXMLFile(descriptorFile);
-		String name = getNodeValue("/package/name", doc);
-		String version = getNodeValue("/package/version/release", doc);
+		FileInputStream pkgStream = null;
+		Package p = null;
+		try {
+			pkgStream = new FileInputStream(descriptorFile);
+			p = JaxbHelper.unmarshalPackage(pkgStream);
+		} catch (IOException e) {
+			return null;
+		} catch (JAXBException e) {
+			return null;
+		} finally {
+			try {
+				pkgStream.close();
+			} catch (IOException e) {
+				return null;
+			}
+		}
+
+		String name = p.getName();
+		String version = p.getVersion().getRelease();
+
 		if (name != null && version != null) {
 			result = name + "-" + version;
 		}
 		return result;
-	}
-
-	private String getNodeValue(String path, Document doc) {
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		String value = null;
-		try {
-			XPathExpression exp = xpath.compile(path);
-			Node node = (Node) exp.evaluate(doc, XPathConstants.NODE);
-			if (node != null) {
-				value = node.getTextContent();
-				if (value != null) {
-					value = value.trim();
-				}
-			} else {
-				log.error("Invalid descriptor file. Cannot get value of node '"
-						+ path);
-			}
-		} catch (XPathExpressionException e) {
-			log.error("Invalid descriptor file. Cannot get value of node '"
-					+ path);
-			log.error(e);
-		}
-		return value;
-	}
-
-	private Document readXMLFile(File file) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder db = factory.newDocumentBuilder();
-			return db.parse(file);
-		} catch (SAXException e) {
-			log.error("Invalid descriptor file");
-			log.error(e);
-		} catch (IOException e) {
-			log.error("Problem during reading descriptor file");
-			log.error(e);
-		} catch (ParserConfigurationException e) {
-			log.error(e);
-		}
-		return null;
 	}
 
 	private int calculateTotalWork() throws IOException {

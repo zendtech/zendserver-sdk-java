@@ -146,7 +146,7 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 				IRepository createRepository;
 				try {
 					createRepository = RepositoryFactory
-							.createRepository(d.name);
+							.getRepository(d.name);
 					arrayList.add(createRepository);
 				} catch (SdkException e) {
 					// skip loading of this repository
