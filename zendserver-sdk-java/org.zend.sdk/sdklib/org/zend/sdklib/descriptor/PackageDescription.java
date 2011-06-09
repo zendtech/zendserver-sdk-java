@@ -12,10 +12,11 @@ import java.io.InputStream;
 
 import javax.xml.bind.JAXBException;
 
+import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 
 /**
- * Represents the general information for packaging description 
+ * Represents the general information for packaging description
  * 
  * @author Roy, 2011
  */
@@ -23,28 +24,28 @@ public class PackageDescription {
 
 	private final Package pkg;
 
-	public PackageDescription(InputStream packageStream) throws IOException, JAXBException {
+	public PackageDescription(InputStream packageStream) throws IOException,
+			JAXBException {
 		if (packageStream == null) {
 			throw new IllegalArgumentException("packageStream must not be null");
 		}
-		
+
 		pkg = JaxbHelper.unmarshalPackage(packageStream);
 	}
-	
+
 	/**
 	 * @return the deployment descriptor
 	 */
-	public  Package getPackage() {
+	public Package getPackage() {
 		return pkg;
-		
+
 	}
-	
+
 	/**
 	 * @return the deployment descriptor
 	 */
 	public Object getPackageProperties() {
 		throw new UnsupportedOperationException("implement me!");
 	}
-	
-	
+
 }

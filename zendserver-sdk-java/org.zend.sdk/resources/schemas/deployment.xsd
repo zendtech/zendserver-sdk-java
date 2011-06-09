@@ -9,9 +9,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" minOccurs="1" maxOccurs="1" />
-				<xs:element name="summary" minOccurs="0" maxOccurs="1" />
-				<xs:element name="description" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="summary" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="version" minOccurs="1" maxOccurs="1" />
 				<xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="eula" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="appdir" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -23,7 +24,7 @@
 				<xs:element ref="persistentresources" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 
-			<xs:attribute name="version" type="xs:string" use="required">
+			<xs:attribute name="fromat" type="xs:string" use="required">
 				<xs:annotation>
 					<xs:documentation>Package descriptor format version</xs:documentation>
 				</xs:annotation>
@@ -38,8 +39,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="release" minOccurs="1" maxOccurs="1" />
-				<xs:element name="api" minOccurs="0" maxOccurs="1" />
+				<xs:element name="release" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="api" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -50,7 +51,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="required" minOccurs="0" maxOccurs="1">
+				<xs:element name="required" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation></xs:documentation>
 					</xs:annotation>
@@ -77,10 +78,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -91,12 +92,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="conflicts" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="conflicts" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -107,10 +108,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -121,10 +122,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -135,12 +136,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="conflicts" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="conflicts" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -151,10 +152,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

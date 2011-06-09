@@ -20,6 +20,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.zend.sdklib.repository.site.Site;
+import org.zend.sdklib.descriptor.pkg.Package;
 
 /**
  * Helps marshal and un-marshal using jaxb APIs
@@ -51,6 +52,7 @@ public class JaxbHelper {
 
 	/**
 	 * Takes a Site object and converts to xml
+	 * 
 	 * @param printStream
 	 * @param s
 	 * @throws JAXBException
@@ -64,7 +66,7 @@ public class JaxbHelper {
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		m.marshal(s, printStream);
 	}
-	
+
 	/**
 	 * @param pkgStream
 	 * @return
@@ -80,7 +82,7 @@ public class JaxbHelper {
 		Package pkg = (Package) u.unmarshal(source);
 		return pkg;
 	}
-	
+
 	/**
 	 * @param printStream
 	 * @param p
