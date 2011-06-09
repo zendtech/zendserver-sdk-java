@@ -14,9 +14,7 @@
 		<pathelement location="lib/registry.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 		<pathelement location="lib-test/mockito-all-1.8.5.jar" />
-		<pathelement location="resources/generator/jaxb/jaxb-api.jar" />		
 		<pathelement location="resources/generator/jaxb/jaxb-impl.jar" />		
-		<pathelement location="resources/generator/jaxb/jaxb-xjc.jar" />		
 	</path>
 
 	<property name="coverage.dir" value="${basedir}/coverage" />
