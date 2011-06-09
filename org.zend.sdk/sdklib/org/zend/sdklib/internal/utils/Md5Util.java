@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Md5Util {
 
-	public String getMd5(File f) throws NoSuchAlgorithmException,
+	public static String getMd5(File f) throws NoSuchAlgorithmException,
 			FileNotFoundException {
 		MessageDigest digest = MessageDigest.getInstance("MD5");
 		InputStream is = new FileInputStream(f);

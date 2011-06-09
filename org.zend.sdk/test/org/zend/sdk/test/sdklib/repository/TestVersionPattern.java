@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zend.sdklib.internal.utils.UpdateUtils;
+import org.zend.sdklib.internal.utils.VersionsUtils;
 
 @RunWith(Parameterized.class)
 public class TestVersionPattern {
@@ -47,6 +47,6 @@ public class TestVersionPattern {
 
 	@Test
 	public void test() {
-		assertEquals(inBetween, UpdateUtils.inBetween(ver, range));
+		assertEquals(inBetween, VersionsUtils.inBetween(ver, range));
 	}
 }
