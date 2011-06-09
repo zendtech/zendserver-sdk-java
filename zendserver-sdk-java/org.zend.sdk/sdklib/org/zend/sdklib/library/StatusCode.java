@@ -20,20 +20,12 @@ public enum StatusCode {
 
 	WARNING("warning"),
 
-	EXCEPTION("exception"),
-
-	INIT("init"),
-
 	STARTING("starting"),
 
 	PROCESSING("processing"),
 
 	STOPPING("stopping"),
-
-	FINISHED("finished"),
-
-	STOPPED("stopped"),
-
+	
 	UNKNOWN("unknown");
 
 	private final String name;
