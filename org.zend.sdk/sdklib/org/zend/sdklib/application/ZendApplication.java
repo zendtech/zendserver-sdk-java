@@ -84,8 +84,14 @@ public class ZendApplication extends AbstractChangeNotifier {
 					: applicationIds;
 			return client.applicationGetStatus(applicationIds);
 		} catch (MalformedURLException e) {
+			statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+					"Error duirng getting application status from '" + targetId
+							+ "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
+			statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+					"Error duirng getting application status from '" + targetId
+							+ "'", e));
 			log.error("Error duirng getting application status from '"
 					+ targetId + "'.");
 			log.error("\tpossible error: " + e.getMessage());
@@ -128,7 +134,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 		Map<String, String> userParams = null;
 		if (propertiesFile != null) {
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-					"Deploying", "Reading user parameters properites file..."));
+					"Deploying", "Reading user parameters properites file...",
+					-1));
 			File propsFile = new File(propertiesFile);
 			if (propsFile.exists()) {
 				userParams = getUserParameters(propsFile);
@@ -194,7 +201,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 			try {
 				WebApiClient client = getClient(targetId);
 				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-						"Deploying", "Deploying application to the target..."));
+						"Deploying", "Deploying application to the target...",
+						-1));
 				ApplicationInfo result = client.applicationDeploy(
 						new NamedInputStream(zendPackage), baseUrl,
 						ignoreFailures, userParams, appName, createVhost,
@@ -203,12 +211,14 @@ public class ZendApplication extends AbstractChangeNotifier {
 						"Application deployed successfully"));
 				return result;
 			} catch (MalformedURLException e) {
-				statusChanged(new BasicStatus(StatusCode.EXCEPTION,
-						"Deploying", e.getMessage(), e));
+				statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying application to '" + targetId
+								+ "'", e));
 				log.error(e);
 			} catch (WebApiException e) {
-				statusChanged(new BasicStatus(StatusCode.EXCEPTION,
-						"Deploying", e.getMessage(), e));
+				statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying application to '" + targetId
+								+ "'", e));
 				log.error("Error during deploying application to '" + targetId
 						+ "':");
 				log.error("\tpossible error: " + e.getMessage());

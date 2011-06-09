@@ -17,7 +17,7 @@ public class TestLibrary {
 			IStatus progressStatus = new BasicStatus(StatusCode.PROCESSING,
 					"in progress", "process is in progress");
 			statusChanged(progressStatus);
-			IStatus endStatus = new BasicStatus(StatusCode.FINISHED,
+			IStatus endStatus = new BasicStatus(StatusCode.STOPPING,
 					"finished", "process is finished");
 			statusChanged(endStatus);
 			return true;
@@ -35,7 +35,7 @@ public class TestLibrary {
 					assertSame("in progress", status.getTitle());
 					assertSame("process is in progress", status.getMessage());
 				}
-				if (status.getCode() == StatusCode.FINISHED) {
+				if (status.getCode() == StatusCode.STOPPING) {
 					assertSame("finished", status.getTitle());
 					assertSame("process is finished", status.getMessage());
 				}
