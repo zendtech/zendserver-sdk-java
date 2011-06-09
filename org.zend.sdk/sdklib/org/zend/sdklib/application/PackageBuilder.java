@@ -140,8 +140,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					"Deployment package created successfully."));
 			return result;
 		} catch (IOException e) {
-			notifier.statusChanged(new BasicStatus(StatusCode.EXCEPTION,
-					"Package creation", e.getMessage(), e));
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Package creation",
+					"Error during building deployment package", e));
 			log.error("Error during building deployment package");
 			log.error(e);
 		}
