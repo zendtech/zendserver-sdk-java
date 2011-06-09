@@ -1,23 +1,22 @@
-package org.zend.php.zendserver.deployment.core.sdk;
+package org.zend.php.zendserver.deployment.ui.wizards;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.zend.sdklib.event.IStatusChangeEvent;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.library.IStatus;
 
-public class SdkStatusChangeListener implements IStatusChangeListener {
+public class StatusChangeListener implements IStatusChangeListener {
 
 	private IProgressMonitor monitor;
 	private String currentTask;
+	private IStatus status;
 
-	public SdkStatusChangeListener(IProgressMonitor monitor) {
+	public StatusChangeListener(IProgressMonitor monitor) {
 		this.monitor = monitor;
 	}
 
 	public void statusChanged(IStatusChangeEvent event) {
-		IStatus status = event.getStatus();
-		System.out.println(status.getTitle() + " " + status.getMessage() + " "
-				+ status.getTotalWork());
+		status = event.getStatus();
 		switch (status.getCode()) {
 		case STARTING:
 			currentTask = status.getTitle();
@@ -31,8 +30,16 @@ public class SdkStatusChangeListener implements IStatusChangeListener {
 		case PROCESSING:
 			monitor.worked(status.getTotalWork());
 			break;
+		case ERROR:
+			monitor.done();
+			break;
 		default:
 			break;
 		}
 	}
+
+	public IStatus getStatus() {
+		return status;
+	}
+
 }

@@ -111,10 +111,10 @@ public class DeploymentDescriptorPage extends WizardPage {
 		editorLink.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IProject project = model.getFile().getProject();
-				DeploymentUtils.createDescriptor(project, name.getText(),
-						folder.getText(), new NullProgressMonitor());
-				((WizardDialog) getWizard().getContainer()).close();
 				try {
+					DeploymentUtils.createDescriptor(project, name.getText(),
+							folder.getText(), new NullProgressMonitor());
+					((WizardDialog) getWizard().getContainer()).close();
 					openDescriptorInEditor(project);
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block

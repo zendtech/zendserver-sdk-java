@@ -31,6 +31,8 @@ public class DeploymentCore implements BundleActivator {
 		DeploymentCore.context = bundleContext;
 
 		sdkManager = new SdkManager();
+
+		// TODO change registered logger
 		Log.getInstance().registerLogger(new CliLogger());
 	}
 

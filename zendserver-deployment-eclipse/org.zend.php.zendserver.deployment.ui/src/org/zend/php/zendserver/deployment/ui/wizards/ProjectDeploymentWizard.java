@@ -8,21 +8,24 @@
 
 package org.zend.php.zendserver.deployment.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.SdkApplication;
-import org.zend.php.zendserver.deployment.core.sdk.SdkStatusChangeListener;
+import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
+import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 
 public class ProjectDeploymentWizard extends Wizard {
 
@@ -64,31 +67,38 @@ public class ProjectDeploymentWizard extends Wizard {
 		final boolean isIgnoreFailures = parametersPage.isIgnoreFailures();
 		final HashMap<String, String> userParams = parametersPage
 				.getParameters();
-		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
-				getShell());
-		try {
-			progressDialog.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					try {
-						createDeploymentDescriptor(name, root, monitor);
-						SdkApplication application = new SdkApplication();
-						application
-								.addStatusChangeListener(new SdkStatusChangeListener(
-										monitor));
-						application.deploy(path, baseUrl, targetId, userParams,
-								appName, isIgnoreFailures, !defaultServer,
-								defaultServer);
-					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		Job deployJob = new Job("Deploying application...") {
+			private StatusChangeListener listener;
+
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					listener = new StatusChangeListener(monitor);
+					createDeploymentDescriptor(name, root, monitor);
+					if (monitor.isCanceled()) {
+						return Status.OK_STATUS;
 					}
+					SdkApplication application = new SdkApplication();
+					application.addStatusChangeListener(listener);
+					ApplicationInfo info = application.deploy(path, baseUrl,
+							targetId, userParams, appName, isIgnoreFailures,
+							!defaultServer, defaultServer);
+					if (monitor.isCanceled()) {
+						return Status.OK_STATUS;
+					}
+					if (info != null
+							&& info.getStatus() == ApplicationStatus.STAGING) {
+						monitorApplicationStatus(targetId, info.getId(),
+								application, monitor);
+					}
+				} catch (CoreException e) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
 				}
-			});
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated method stub
-		} catch (InterruptedException e) {
-			// TODO Auto-generated method stub
-		}
+				return new SdkStatus(listener.getStatus());
+			}
+		};
+		deployJob.setUser(true);
+		deployJob.schedule();
 		return true;
 	}
 
@@ -98,21 +108,32 @@ public class ProjectDeploymentWizard extends Wizard {
 		return true;
 	}
 
+	private void monitorApplicationStatus(String targetId, int id,
+			SdkApplication application, IProgressMonitor monitor) {
+		monitor.beginTask("Checking application status...",
+				IProgressMonitor.UNKNOWN);
+		ApplicationStatus result = null;
+		while (result != ApplicationStatus.DEPLOYED) {
+			ApplicationsList info = application.getStatus(targetId,
+					String.valueOf(id));
+			if (info != null && info.getApplicationsInfo() != null) {
+				result = info.getApplicationsInfo().get(0).getStatus();
+				monitor.subTask("Current status is: " + result.getName());
+			}
+		}
+		monitor.done();
+
+	}
+
 	private void createDeploymentDescriptor(final String name,
 			final String folder, IProgressMonitor monitor) throws CoreException {
 		IProject project = model.getFile().getProject();
 		if (!model.getFile().exists()) {
-			monitor.beginTask("Creating deployment descriptor...", 1);
+			monitor.beginTask("Creating deployment descriptor...",
+					IProgressMonitor.UNKNOWN);
 			DeploymentUtils.createDescriptor(project, name, folder, monitor);
-			monitor.worked(1);
-			if (monitor.isCanceled()) {
-				return;
-			}
 			monitor.done();
 			project.refreshLocal(IResource.DEPTH_ONE, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}
 		}
 	}
 
