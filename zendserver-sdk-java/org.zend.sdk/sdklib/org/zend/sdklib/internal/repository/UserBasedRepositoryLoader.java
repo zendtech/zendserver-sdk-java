@@ -211,10 +211,9 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 	}
 
 	private File getDescriptorFile(String repository) {
-		if (repository.endsWith(INI_EXTENSION)) {
-			throw new IllegalStateException("repository name ends with ini");
+		if (!repository.endsWith(INI_EXTENSION)) {
+			repository = String.valueOf(repository.hashCode()) + INI_EXTENSION;
 		}
-		repository = String.valueOf(repository.hashCode()) + INI_EXTENSION;
 		final File file = new File(this.baseDir, repository);
 		return file;
 	}

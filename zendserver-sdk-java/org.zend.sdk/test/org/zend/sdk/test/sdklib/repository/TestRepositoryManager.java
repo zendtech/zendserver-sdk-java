@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
+import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepository;
@@ -57,6 +58,7 @@ public class TestRepositoryManager extends AbstractTest {
 						new File("/tmp/me")) });
 		RepositoryManager manager = new RepositoryManager(loader);
 		assertTrue(manager.getRepositories().length == 1);
+
 	}
 
 	@Test

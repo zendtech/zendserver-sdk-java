@@ -9,6 +9,7 @@ package org.zend.sdklib.internal.repository.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -32,6 +33,23 @@ public class HttpRepository extends AbstractRepository {
 	public HttpRepository(String id, URL url) {
 		super(id);
 		this.baseURL = url;
+	}
+
+	/**
+	 * Base URL of this application site
+	 * 
+	 * @param baseURL
+	 */
+	public HttpRepository(String id) {
+		this(id, formURL(id));
+	}
+
+	private static URL formURL(String id)  {
+		try {
+			return new URL(id);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException(id + " is not a valid URL");
+		}
 	}
 
 	@Override
