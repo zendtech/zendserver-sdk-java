@@ -134,7 +134,7 @@ public class RepositoryManager extends AbstractChangeNotifier {
 	 */
 	public IRepository createRepository(String url) {
 		try {
-			final IRepository r = RepositoryFactory.createRepository(url);
+			final IRepository r = RepositoryFactory.getRepository(url);
 			if (r != null) {
 				return r;
 			} else {

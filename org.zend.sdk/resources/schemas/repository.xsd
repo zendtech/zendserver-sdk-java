@@ -23,8 +23,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="description" minOccurs="0" maxOccurs="1" />
-                <xs:element ref="application" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />                <xs:element ref="application" minOccurs="1" maxOccurs="unbounded" />
                 <xs:element ref="category-def" minOccurs="0" maxOccurs="unbounded" />
 				<xs:element ref="provider-def" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
@@ -44,10 +43,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="size" minOccurs="0" maxOccurs="1" />
-				<xs:element name="signature" minOccurs="0" maxOccurs="1" />
-				<xs:element name="category" minOccurs="0" maxOccurs="1" />
-				<xs:element name="provider" minOccurs="0" maxOccurs="1" />
+				<xs:element name="size" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="signature" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="provider" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required" />
 			<xs:attribute name="label" type="xs:string" use="required" />
@@ -78,9 +77,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="icon" minOccurs="0" maxOccurs="1" />
-				<xs:element name="url" minOccurs="0" maxOccurs="1" />
-				<xs:element name="description" minOccurs="0" maxOccurs="1" />
+				<xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 
 			<xs:attribute name="name" type="xs:string" use="required" />
