@@ -1,10 +1,5 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
-import java.io.ByteArrayInputStream;
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,34 +7,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -50,128 +29,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifier {
 
-	public static interface DOMModelReadWrite {
-		Document read() throws CoreException;
-		void write(Document doc) throws CoreException;
-	}
-	
-	public static class FileDOMRW implements DOMModelReadWrite {
-
-		private IFile fFile;
-
-		public FileDOMRW(IFile file) {
-			this.fFile = file;
-		}
-		
-		public Document read() throws CoreException {
-			try {
-				DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = fact.newDocumentBuilder();
-
-				if (!fFile.exists()) {
-					return createEmptyDocument(builder);
-				}
-				
-				return builder.parse(fFile.getContents());
-			} catch (ParserConfigurationException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (SAXException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			}
-		}
-
-		public void write(Document doc) throws CoreException {
-			try {
-				PipedInputStream in = new PipedInputStream();
-				PipedOutputStream out = new PipedOutputStream(in);
-				Result result = new StreamResult(out);
-
-		        Source source = new DOMSource(doc);
-		        
-		        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-		        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		        xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-	            xformer.transform(source, result);
-		        out.close();
-				
-				IProgressMonitor mon = new NullProgressMonitor();
-				if (fFile.exists()) {
-					fFile.setContents(in, true, true, mon);
-				} else {
-					fFile.create(in, true, mon);
-				}
-				
-			} catch (TransformerFactoryConfigurationError e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (TransformerException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			}
-			
-		}
-		
-	}
-	
-	public static class DocumentDOMRW implements DOMModelReadWrite {
-		
-		private IDocument fDocument;
-
-		public DocumentDOMRW(IDocument document) {
-			this.fDocument = document;
-		}
-
-		public Document read() throws CoreException {
-			DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
-			try {
-				builder = fact.newDocumentBuilder();
-			} catch (ParserConfigurationException e) {
-				System.out.println("Error marker for "+e.getMessage());
-				//throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-				return null;
-			}
-
-			try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(fDocument.get().getBytes());
-				return builder.parse(bais);
-			} catch (SAXException e) {
-				System.out.println("Error marker for "+e.getMessage());
-				//throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (IOException e) {
-				System.out.println("Error marker for "+e.getMessage());
-				//throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			}
-			
-			return createEmptyDocument(builder);
-		}
-
-		public void write(Document domModel) throws CoreException {
-			try {
-				Source source = new DOMSource(domModel);
-
-		        CharArrayWriter caw = new CharArrayWriter();
-		        Result result = new StreamResult(caw);
-		        
-		        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-		        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		        xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-	            
-		        xformer.transform(source, result);
-
-		        fDocument.set(caw.toString());
-			} catch (TransformerFactoryConfigurationError e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			} catch (TransformerException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
-			}
-			
-		}
-		
-	}
-	
 	private String PARAMETER_ID = "id";
 	private String PARAMETER_DISPLAY = "display";
 	private String PARAMETER_DESCRIPTION = "description";
@@ -187,9 +44,9 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	private XPathFactory factory;
 	private DescriptorContainer fContainer;
 	private boolean autoSave;
-	private DOMModelReadWrite rw;
+	private DOMDocumentReadWriter rw;
 	
-	public DeploymentDescriptorModifier(DeploymentDescriptor fModel, DOMModelReadWrite rw, DescriptorContainer container) {
+	public DeploymentDescriptorModifier(DeploymentDescriptor fModel, DOMDocumentReadWriter rw, DescriptorContainer container) {
 		factory = XPathFactory.newInstance();
 		this.fModel = fModel;
 		this.rw = rw;
@@ -211,110 +68,43 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	}
 
 	public void setName(String name) throws CoreException {
-		String oldVal = fModel.getName();
-		if (name.equals(oldVal)) {
-			return;
-		}
-		changeText(name, DeploymentDescriptorParser.PACKAGE_NAME);
-		fModel.setName(name);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_NAME, name);
 	}
 
 	public void setSummary(String summary) throws CoreException {
-		String oldVal = fModel.getSummary();
-		if (summary.equals(oldVal)) {
-			return;
-		}
-		changeText(summary, DeploymentDescriptorParser.PACKAGE_SUMMARY);
-		fModel.setSummary(summary);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_SUMMARY, summary);
 	}
 
 	public void setDescription(String description) throws CoreException {
-		String oldVal = fModel.getDescription();
-		if (description.equals(oldVal)) {
-			return;
-		}
-		changeText(description, DeploymentDescriptorParser.PACKAGE_DESCRIPTION);
-		fModel.setDescription(description);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_DESCRIPTION, description);
 	}
 
 	public void setReleaseVersion(String version) throws CoreException {
-		String oldVal = fModel.getReleaseVersion();
-		if (((oldVal == null) && (version == null)) || version.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(version == null ? "" : version, DeploymentDescriptorParser.PACKAGE_VERSION_RELEASE);
-		fModel.setReleaseVersion(version);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, version);
 	}
 	
 	public void setApiVersion(String version) throws CoreException {
-		String oldVal = fModel.getApiVersion();
-		if (((oldVal == null) && (version == null)) || version.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(version == null ? "" : version, DeploymentDescriptorParser.PACKAGE_VERSION_API);
-		fModel.setApiVersion(version);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_VERSION_API, version);
 	}
 
 	public void setEulaLocation(String location) throws CoreException {
-		String oldVal = fModel.getEulaLocation();
-		if (((oldVal == null) && (location == null)) || location.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(location == null ? "" : location, DeploymentDescriptorParser.PACKAGE_EULA);
-		fModel.setEulaLocation(location);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_EULA, location);
 	}
 
 	public void setIconLocation(String location) throws CoreException {
-		String oldVal = fModel.getIconLocation();
-		if (((oldVal == null) && (location == null)) || location.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(location == null ? "" : location, DeploymentDescriptorParser.PACKAGE_ICON);
-		fModel.setIconLocation(location);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_ICON, location);
 	}
 
 	public void setDocumentRoot(String location) throws CoreException {
-		String oldVal = fModel.getDocumentRoot();
-		if (((oldVal == null) && (location == null)) || location.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(location == null ? "" : location, DeploymentDescriptorParser.PACKAGE_DOCROOT);
-		fModel.setDocumentRoot(location);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_DOCROOT, location);
 	}
 
 	public void setScriptsRoot(String location) throws CoreException {
-		String oldVal = fModel.getScriptsRoot();
-		if (((oldVal == null) && (location == null)) || location.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(location == null ? "" : location, DeploymentDescriptorParser.PACKAGE_SCRIPTSDIR);
-		fModel.setScriptsRoot(location);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, location);
 	}
 
 	public void setHealthcheck(String url) throws CoreException {
-		String oldVal = fModel.getHealthcheck();
-		if (((oldVal == null) && (url == null)) || url.equals(oldVal)) {
-			return;
-		}
-		
-		changeText(url == null ? "" : url, DeploymentDescriptorParser.PACKAGE_HEALTHCHECK);
-		fModel.setHealthcheck(url);
-		fireChange(fModel);
+		set(fModel, IDeploymentDescriptor.PACKAGE_HEALTHCHECK, url);
 	}
 	
 	public void addParameter(IParameter param) throws CoreException {
@@ -671,5 +461,21 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 
 	public void setAutoSave(boolean autoSave) {
 		this.autoSave = autoSave;
+	}
+
+	public void set(IDeploymentDescriptor target, String property, String value)
+			throws CoreException {
+		String oldVal = target.get(property);
+		if (((oldVal == null) && (value == null)) || value.equals(oldVal)) {
+			return;
+		}
+		
+		if (value == null) {
+			removeNode(property);
+		} else {
+			changeText(value, property);
+		}
+		target.set(property, value);
+		fireChange(fModel);
 	}
 }

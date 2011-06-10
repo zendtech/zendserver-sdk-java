@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IDeploymentDescriptorModifier {
 
+	void set(IDeploymentDescriptor target, String property, String value) throws CoreException;
+	
 	void setName(String name) throws CoreException;
 
 	void setSummary(String summary) throws CoreException;

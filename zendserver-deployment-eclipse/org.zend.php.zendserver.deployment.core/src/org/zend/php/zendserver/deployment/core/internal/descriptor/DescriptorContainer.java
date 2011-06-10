@@ -47,12 +47,12 @@ public class DescriptorContainer implements IDescriptorContainer {
 
 	public IDeploymentDescriptorModifier createWorkingCopy(IDocument document) {
 		getDescriptorModel(); // make sure model gets created
-		return new DeploymentDescriptorModifier(fModel, new DeploymentDescriptorModifier.DocumentDOMRW(document), this);
+		return new DeploymentDescriptorModifier(fModel, new EclipseDocumentDOMReadWriter(document), this);
 	}
 
 	public IDeploymentDescriptorModifier createWorkingCopy() {
 		getDescriptorModel(); // make sure model gets created
-		return new DeploymentDescriptorModifier(fModel, new DeploymentDescriptorModifier.FileDOMRW(fFile), this);
+		return new DeploymentDescriptorModifier(fModel, new JavaFileDOMReadWriter(fFile), this);
 	}
 
 	public void addChangeListener(IDescriptorChangeListener listener) {

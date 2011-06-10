@@ -21,23 +21,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 public class DeploymentDescriptorParser extends DefaultHandler {
-
-	public static final String PACKAGE = "package";
-	public static final String PACKAGE_NAME = "package/name";
-	public static final String PACKAGE_SUMMARY = "package/summary";
-	public static final String PACKAGE_DESCRIPTION = "package/description";
-	public static final String PACKAGE_VERSION_RELEASE = "package/version/release";
-	public static final String PACKAGE_VERSION_API = "package/version/api";
-	public static final String PACKAGE_EULA = "package/eula";
-	public static final String PACKAGE_ICON = "package/icon";
-	public static final String PACKAGE_DOCROOT = "package/docroot";
-	public static final String PACKAGE_SCRIPTSDIR = "package/scriptsdir";
-	public static final String PACKAGE_HEALTHCHECK = "package/healthcheck";
-
+	
 	public static final String PACKAGE_DEPENDENCIES_REQUIRED = "package/dependencies/required";
 	public static final String DEPENDENCIES_PHP = "package/dependencies/required/php";
 	public static final String DEPENDENCIES_EXTENSION = "package/dependencies/required/extension";
@@ -404,47 +393,47 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	}
 	
 	private boolean readBasicInfo(String value, String locationStr) {
-		if (PACKAGE_NAME.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_NAME.equals(locationStr)) {
 			descriptor.setName(value);
 			return true;
 		}
 		
-		if (PACKAGE_SUMMARY.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_SUMMARY.equals(locationStr)) {
 			descriptor.setSummary(value);
 			return true;
 		}
 		
-		if (PACKAGE_DESCRIPTION.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_DESCRIPTION.equals(locationStr)) {
 			descriptor.setDescription(value);
 			return true;
 		} 
 		
-		if (PACKAGE_VERSION_RELEASE.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_VERSION_RELEASE.equals(locationStr)) {
 			descriptor.setReleaseVersion(value);
 			return true;
 		}
 		
-		if (PACKAGE_VERSION_API.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_VERSION_API.equals(locationStr)) {
 			descriptor.setApiVersion(value);
 			return true;
 		} 
 		
-		if (PACKAGE_EULA.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_EULA.equals(locationStr)) {
 			descriptor.setEulaLocation(value);
 			return true;
 		}
 		
-		if (PACKAGE_ICON.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_ICON.equals(locationStr)) {
 			descriptor.setIconLocation(value);
 			return true;
 		} 
 		
-		if (PACKAGE_DOCROOT.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_DOCROOT.equals(locationStr)) {
 			descriptor.setDocumentRoot(value);
 			return true;
 		} 
 		
-		if (PACKAGE_SCRIPTSDIR.equals(locationStr)) {
+		if (IDeploymentDescriptor.PACKAGE_SCRIPTSDIR.equals(locationStr)) {
 			descriptor.setScriptsRoot(value);
 			return true;
 		} 
