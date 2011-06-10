@@ -30,4 +30,11 @@ public abstract class TargetAwareCommand extends AbstractCommand {
 		return manager;
 	}
 
+	/**
+	 * @return the default target. see
+	 *         {@link TargetsManager#getDefaultTargetId()}
+	 */
+	public String getDefaultTargetId() {
+		return manager.getDefaultTargetId();
+	}
 }

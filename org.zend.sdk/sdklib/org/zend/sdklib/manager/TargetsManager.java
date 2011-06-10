@@ -42,6 +42,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	private final ITargetLoader loader;
 
+	/**
+	 * Default target Id (for fast execution)
+	 */
+	private String defaultId = null;
+
 	public TargetsManager() {
 		this(new UserBasedTargetLoader());
 	}
@@ -75,6 +80,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		// adds the target to the list
 		final boolean added = this.all.add(target);
+
+		if (this.all.size() == 1) {
+			defaultId = this.all.get(0).getId();
+		}
+
 		return added ? target : null;
 	}
 
@@ -91,6 +101,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		// remove the specified target
 		final boolean removed = this.all.remove(target);
+
+		if (this.all.size() == 0) {
+			defaultId = null;
+		}
+
 		return removed ? target : null;
 	}
 
@@ -137,19 +152,19 @@ public class TargetsManager extends AbstractChangeNotifier {
 			throws IOException {
 		return detectLocalhostTarget(Integer.toString(getTargets().length), key);
 	}
-	
+
 	/**
 	 * Returns a target that represents the localhost zend server
 	 * 
-	 * @param targetId 
+	 * @param targetId
 	 * @param key
 	 * @return zend target for localhost
 	 * 
 	 * @throws IOException
 	 * @throws WebApiException
 	 */
-	public synchronized IZendTarget detectLocalhostTarget(String targetId, String key)
-			throws IOException {
+	public synchronized IZendTarget detectLocalhostTarget(String targetId,
+			String key) throws IOException {
 		return detectLocalhostTarget(targetId, key, false);
 	}
 
@@ -158,7 +173,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * 
 	 * @param targetId
 	 * @param key
-	 * @param addKeyOnly 
+	 * @param addKeyOnly
 	 * @return zend target for localhost
 	 * @throws IOException
 	 * @throws WebApiException
@@ -299,5 +314,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return the default target id if exists. null if no default is assigned
+	 */
+	public String getDefaultTargetId() {
+		return defaultId;
 	}
 }
