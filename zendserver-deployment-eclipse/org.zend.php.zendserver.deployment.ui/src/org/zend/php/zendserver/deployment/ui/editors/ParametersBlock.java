@@ -61,64 +61,6 @@ public class ParametersBlock extends MasterDetailsBlock {
 		
 	}
 	
-	private static class MasterLabelProvider extends LabelProvider {
-		
-		@Override
-		public Image getImage(Object element) {
-			IParameter param = (IParameter) element;
-			
-			String type = param.getType();
-			
-			if (IParameter.PASSWORD.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_PASSWORD);
-			} else if (IParameter.STRING.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_STRING);
-			} else if (IParameter.NUMBER.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_NUMBER);
-			} else if (IParameter.CHOICE.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_CHOICE);
-			} else if (IParameter.CHECKBOX.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_CHECKBOX);
-			} else if (IParameter.HOSTNAME.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_HOSTNAME);
-			} else if (IParameter.EMAIL.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_EMAIL);
-			}
-			
-			return Activator.getDefault().getImage(Activator.IMAGE_PARAMTYPE_UNKNOWN);
-		}
-		
-		@Override
-		public String getText(Object element) {
-			IParameter param = (IParameter) element;
-			
-			StringBuilder sb = new StringBuilder();
-			
-			String label = param.getDisplay();
-			if (label == null || label.trim().equals("")) {
-				sb.append(param.getId());
-			} else {
-				sb.append(label);
-			}
-			
-			if (param.isRequired()) {
-				sb.append("*");
-			}
-			
-			String defaultVal = param.getDefaultValue();
-			if (defaultVal != null && !defaultVal.trim().equals("")) {
-				sb.append(" = "+defaultVal);
-			}
-			
-			String type = param.getType();
-			if (type != null) {
-				sb.append(" (").append(type).append(")");
-			}
-			
-			return sb.toString();
-		}
-	}
-
 	private DeploymentDescriptorEditor editor;
 	private TableViewer viewer;
 
@@ -184,7 +126,7 @@ public class ParametersBlock extends MasterDetailsBlock {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new MasterLabelProvider());
+		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			

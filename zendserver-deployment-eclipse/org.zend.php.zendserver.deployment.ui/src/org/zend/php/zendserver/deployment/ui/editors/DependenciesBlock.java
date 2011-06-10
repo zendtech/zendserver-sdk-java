@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -14,7 +13,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,7 +32,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Dependency;
-import org.zend.php.zendserver.deployment.ui.Activator;
 
 
 public class DependenciesBlock extends MasterDetailsBlock {
@@ -67,105 +64,6 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		
 	}
 	
-	private static class MasterLabelProvider extends LabelProvider {
-		
-		@Override
-		public Image getImage(Object element) {
-			IDependency dep = ((IDependency) element);
-			String type = dep.getType();
-			
-			if (IDependency.PHP.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PHP);
-				
-			} else if (IDependency.EXTENSION.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PHP_EXTENSION);
-				
-			} else if (IDependency.DIRECTIVE.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_PHP_DIRECTIVE);
-				
-			} else if (IDependency.ZENDSERVER.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVER);
-				
-			} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_ZENDFRAMEWORK);
-				
-			} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
-				return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVERCOMPONENT);
-			}
-			
-			return super.getImage(element);
-		}
-		
-		@Override
-		public String getText(Object element) {
-			IDependency dep = ((IDependency) element);
-			String type = dep.getType();
-			
-			if (IDependency.PHP.equals(type)) {
-				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-					return "PHP version";
-				}
-				return "PHP "+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
-				
-			} else if (IDependency.EXTENSION.equals(type)) {
-				if (dep.getName() == null) {
-					return "PHP extension";
-				}
-				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
-				
-			} else if (IDependency.DIRECTIVE.equals(type)) {
-				if (dep.getName() == null) {
-					return "PHP directive";
-				}
-				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
-				
-			} else if (IDependency.ZENDSERVER.equals(type)) {
-				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-					return "Zend Server version";
-				}
-				return "Zend Server" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
-				
-			} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
-				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-					return "Zend Framework version";
-				}
-				return "Zend Framework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
-				
-			} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
-				if (dep.getName() == null) {
-					return "Zend Server Component";
-				}
-				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
-			}
-			
-			return super.getText(element);
-		}
-
-		private String format(String equals, String min, String max, String conflicts) {
-			if (conflicts != null) {
-				return " conflicts with " + conflicts;
-			}
-			
-			if (equals != null) {
-				return " = " + equals;
-			}
-			
-			if (min != null && max != null) {
-				return " "+min+" - " + max;
-			}
-			
-			if (min != null) {
-				return " >= " + min;
-			}
-			
-			if (max != null) {
-				return " <= " + max;
-			}
-			
-			return "";
-		}
-	}
-
 	private DeploymentDescriptorEditor editor;
 	private TableViewer viewer;
 
@@ -231,7 +129,7 @@ public class DependenciesBlock extends MasterDetailsBlock {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new MasterLabelProvider());
+		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
@@ -278,7 +176,7 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		ListDialog sd = new ListDialog(sashForm.getShell());
 		sd.setInput(input);
 		sd.setContentProvider(new MasterContentProvider());
-		sd.setLabelProvider(new MasterLabelProvider());
+		sd.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		sd.setMessage("Dependency Type:");
 		sd.setTitle("Add Dependency");
 		

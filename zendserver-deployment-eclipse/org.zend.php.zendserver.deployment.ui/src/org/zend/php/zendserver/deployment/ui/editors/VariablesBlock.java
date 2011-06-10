@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -13,7 +12,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,7 +31,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorM
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
-import org.zend.php.zendserver.deployment.ui.Activator;
 
 
 public class VariablesBlock extends MasterDetailsBlock {
@@ -62,21 +59,6 @@ public class VariablesBlock extends MasterDetailsBlock {
 		
 	}
 	
-	private static class MasterLabelProvider extends LabelProvider {
-		
-		@Override
-		public Image getImage(Object element) {
-			return Activator.getDefault().getImage(Activator.IMAGE_VARIABLE);
-		}
-		
-		@Override
-		public String getText(Object element) {
-			IVariable param = (IVariable) element;
-			
-			return param.getName();
-		}
-	}
-
 	private DeploymentDescriptorEditor editor;
 	private TableViewer viewer;
 
@@ -143,7 +125,7 @@ public class VariablesBlock extends MasterDetailsBlock {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new MasterLabelProvider());
+		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
