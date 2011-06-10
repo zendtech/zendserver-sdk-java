@@ -158,12 +158,12 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		if (depth < counters.size()) {
 			String alastTag = tagNames.get(depth);
 			int index;
-			if (name.equals(alastTag)) {
+			//if (name.equals(alastTag)) {
 				index = counters.get(depth) + 1;
-			} else {
-				index = 0;
-				tagNames.set(depth, name);
-			}
+			//} else {
+			//	index = 0;
+			//	tagNames.set(depth, name);
+			//}
 			
 			counters.set(depth, index);
 			return index;
@@ -340,7 +340,12 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		return false;
 	}
 	private boolean endReadDependency(String value, String locationStr, int index) {
-		if (DEPENDENCIES_PHP.equals(locationStr) || DEPENDENCIES_DIRECTIVE.equals(locationStr) || DEPENDENCIES_EXTENSION.equals(locationStr) || DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr) || DEPENDENCIES_ZENDSERVER.equals(locationStr) || DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
+		if (DEPENDENCIES_PHP.equals(locationStr) || 
+			DEPENDENCIES_DIRECTIVE.equals(locationStr) || 
+			DEPENDENCIES_EXTENSION.equals(locationStr) || 
+			DEPENDENCIES_ZENDFRAMEWORK.equals(locationStr) || 
+			DEPENDENCIES_ZENDSERVER.equals(locationStr) || 
+			DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
 			IDependency toSet = dependency;
 			dependency = null;
 			List<IDependency> list = descriptor.setDependencies();

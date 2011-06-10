@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -19,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
@@ -54,6 +56,10 @@ public class DependenciesBlock extends MasterDetailsBlock {
 			
 			if (input instanceof IDeploymentDescriptor) {
 				return ((IDeploymentDescriptor) input).getDependencies().toArray();
+			}
+			
+			if (input instanceof Object[]) {
+				return (Object[])input;
 			}
 			
 			return null;
@@ -96,21 +102,39 @@ public class DependenciesBlock extends MasterDetailsBlock {
 			String type = dep.getType();
 			
 			if (IDependency.PHP.equals(type)) {
+				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
+					return "PHP version";
+				}
 				return "PHP "+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
 			} else if (IDependency.EXTENSION.equals(type)) {
+				if (dep.getName() == null) {
+					return "PHP extension";
+				}
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 				
 			} else if (IDependency.DIRECTIVE.equals(type)) {
+				if (dep.getName() == null) {
+					return "PHP directive";
+				}
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
 			} else if (IDependency.ZENDSERVER.equals(type)) {
-				return "ZendServer" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
+				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
+					return "Zend Server version";
+				}
+				return "Zend Server" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
 			} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
-				return "ZendFramework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
+				if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
+					return "Zend Framework version";
+				}
+				return "Zend Framework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 				
 			} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
+				if (dep.getName() == null) {
+					return "Zend Server Component";
+				}
 				return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 			}
 			
@@ -212,20 +236,17 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(Object target) {
-				if (target instanceof IDependency) {
-					refreshViewer((IDependency)target);
-				}
+				refreshViewer(target);
 			}
 		});
 	}
 
-	protected void refreshViewer(final IDependency target) {
+	protected void refreshViewer(final Object target) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 
 			public void run() {
 				viewer.refresh(target);
 			}
-			
 		});
 	}
 
@@ -245,8 +266,28 @@ public class DependenciesBlock extends MasterDetailsBlock {
 	}
 
 	protected void addElment() {
-		int depNo = editor.getModel().getDescriptor().getDependencies().size() + 1;
-		IDependency param = new Dependency(IDependency.PHP, "dependency"+depNo);
+		Object[] input = new Object[] {
+			new Dependency(IDependency.PHP),
+			new Dependency(IDependency.DIRECTIVE),
+			new Dependency(IDependency.EXTENSION),
+			new Dependency(IDependency.ZENDFRAMEWORK),
+			new Dependency(IDependency.ZENDSERVER),
+			new Dependency(IDependency.ZENDSERVERCOMPONENT),
+		};
+		
+		ListDialog sd = new ListDialog(sashForm.getShell());
+		sd.setInput(input);
+		sd.setContentProvider(new MasterContentProvider());
+		sd.setLabelProvider(new MasterLabelProvider());
+		sd.setMessage("Dependency Type:");
+		sd.setTitle("Add Dependency");
+		
+		if (sd.open() == Window.CANCEL) {
+			return;
+		}
+		
+		Dependency param = (Dependency) sd.getResult()[0];
+		
 		try {
 			editor.getModel().addDependency(param);
 		} catch (CoreException e) {
@@ -261,13 +302,37 @@ public class DependenciesBlock extends MasterDetailsBlock {
 	protected void registerPages(DetailsPart detailsPart) {
 		detailsPart.setPageProvider(new IDetailsPageProvider() {
 			
-			private DependencyDetailsPage page = new DependencyDetailsPage(editor);
+			private IDetailsPage page = new DependencyDetailsPage(editor);
+			private IDetailsPage phpPage = new PHPDependencyDetailsPage(editor);
+			private IDetailsPage dirPage = new DirectiveDependencyDetailsPage(editor);
+			private IDetailsPage extensionPage = new ExtensionDependencyDetailsPage(editor);
+			private IDetailsPage zsPage = new ZendServerDependencyDetailsPage(editor);
+			private IDetailsPage zfPage = new ZendFrameworkDependencyDetailsPage(editor);
+			private IDetailsPage zscompPage = new ZendComponentDependencyDetailsPage(editor);
 			
 			public Object getPageKey(Object object) {
-				return "key";
+				return ((Dependency)object).getType();
 			}
 			
 			public IDetailsPage getPage(Object key) {
+				if (key.equals(IDependency.PHP)) {
+					return phpPage;
+				}
+				if (key.equals(IDependency.EXTENSION)) {
+					return extensionPage;
+				}
+				if (key.equals(IDependency.DIRECTIVE)) {
+					return dirPage;
+				}
+				if (key.equals(IDependency.ZENDSERVER)) {
+					return zsPage;
+				}
+				if (key.equals(IDependency.ZENDFRAMEWORK)) {
+					return zfPage;
+				}
+				if (key.equals(IDependency.ZENDSERVERCOMPONENT)) {
+					return zscompPage;
+				}
 				return page;
 			}
 		});

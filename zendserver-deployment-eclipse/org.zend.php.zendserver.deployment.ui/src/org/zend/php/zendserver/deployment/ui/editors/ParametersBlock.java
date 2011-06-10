@@ -171,14 +171,12 @@ public class ParametersBlock extends MasterDetailsBlock {
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(Object target) {
-				if (target instanceof IParameter) {
-					refreshViewer((IParameter)target);
-				}
+				refreshViewer(target);
 			}
 		});
 	}
 
-	protected void refreshViewer(final IParameter target) {
+	protected void refreshViewer(final Object target) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 
 			public void run() {

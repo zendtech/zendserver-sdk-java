@@ -265,7 +265,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		toolkit.createLabel(client, "Identical");
 		identical= new Combo(client, SWT.NONE);
-		toolkit.adapt(typeCombo, true, true);
+		toolkit.adapt(identical, true, true);
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.widthHint = 100;
 		identical.setLayoutData(gd);

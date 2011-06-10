@@ -8,8 +8,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -28,14 +28,27 @@ public class DependencyDetailsPage implements IDetailsPage {
 	
 	private IManagedForm mform;
 	private IDependency input;
-	private Combo typeCombo;
-
+	
 	private boolean isRefresh;
 	private Text nameText;
 	private Text minText;
 	private Text maxText;
 	private Text equalsText;
 	private Text conflictsText;
+
+	private Label nameLabel;
+
+	private Label minLabel;
+
+	private Label maxLabel;
+
+	private Label equalsLabel;
+
+	private Label conflictsLabel;
+
+	private Label excludeLabel;
+
+	private Text excludeText;
 	
 	public DependencyDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
@@ -62,7 +75,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 	}
 
 	public void setFocus() {
-		typeCombo.setFocus();
+		nameText.setFocus();
 	}
 
 	public boolean isStale() {
@@ -72,9 +85,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.getType();
-			typeCombo.setText(str == null ? "" : str);
-			str = ((Dependency)input).getName();
+			String str = ((Dependency)input).getName();
 			nameText.setText(str == null ? "" : str);
 			str = ((Dependency)input).getMin();
 			minText.setText(str == null ? "" : str);
@@ -117,24 +128,10 @@ public class DependencyDetailsPage implements IDetailsPage {
 		Composite client = toolkit.createComposite(s1);
 		client.setLayout(new GridLayout(2, false));
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
-
-		toolkit.createLabel(client, "Type");
-		typeCombo = new Combo(client, SWT.NONE);
-		typeCombo.add("php");
-		typeCombo.add("extension");
-		typeCombo.add("directive");
-		toolkit.adapt(typeCombo, true, true);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		typeCombo.setLayoutData(gd);
-		typeCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				typeChange(((Combo)e.widget).getText());
-			}
-		});
 		
-		toolkit.createLabel(client, "Name");
+		nameLabel = toolkit.createLabel(client, "Name");
 		nameText = toolkit.createText(client, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		nameText.setLayoutData(gd);
 		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -143,7 +140,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "Min");
+		minLabel = toolkit.createLabel(client, "Min");
 		minText = toolkit.createText(client, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		minText.setLayoutData(gd);
@@ -154,7 +151,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "Max");
+		maxLabel = toolkit.createLabel(client, "Max");
 		maxText = toolkit.createText(client, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		maxText.setLayoutData(gd);
@@ -165,7 +162,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "Equals");
+		equalsLabel = toolkit.createLabel(client, "Equals");
 		equalsText = toolkit.createText(client, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		equalsText.setLayoutData(gd);
@@ -176,7 +173,7 @@ public class DependencyDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "Conflicts");
+		conflictsLabel = toolkit.createLabel(client, "Conflicts");
 		conflictsText = toolkit.createText(client, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		conflictsText.setLayoutData(gd);
@@ -184,6 +181,20 @@ public class DependencyDetailsPage implements IDetailsPage {
 			public void modifyText(ModifyEvent e) {
 				if (isRefresh) return;
 				conflictsChange(((Text)e.widget).getText());
+			}
+		});
+		
+		excludeLabel = toolkit.createLabel(client, "Exclude");
+		excludeLabel.setLayoutData(new GridData());
+		excludeText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.heightHint = 100;
+		gd.widthHint = 100;
+		excludeText.setLayoutData(gd);
+		excludeText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (isRefresh) return;
+				excludeChange(((Text)e.widget).getText());
 			}
 		});
 		
@@ -195,6 +206,11 @@ public class DependencyDetailsPage implements IDetailsPage {
 		
 	}
 
+	protected void excludeChange(String text) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	protected void conflictsChange(String text) {
 		try {
 			editor.getModel().setDependencyConflicts(input, text);

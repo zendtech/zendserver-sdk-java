@@ -496,7 +496,7 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		int idx = fModel.setDependencies().indexOf(prereq) + 1;
 		fModel.setDependencies().remove(prereq);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED  + "[" + idx + "]");
+		removeNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED  + "/*[" + idx + "]");
 		storeDomModel();
 		fireChange(fModel);
 	}
