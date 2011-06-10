@@ -21,7 +21,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
@@ -364,27 +363,27 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	}
 
 	private boolean readDependency(String value, String locationStr) {
-		if (locationStr.endsWith("name")) {
+		if (locationStr.endsWith(DEPENDENCY_NAME)) {
 			dependency.setName(value);
 			return true;
 		}
-		if (locationStr.endsWith("conflicts")) {
+		if (locationStr.endsWith(DEPENDENCY_CONFLICTS)) {
 			dependency.setConflicts(value);
 			return true;
 		}
-		if (locationStr.endsWith("equals")) {
+		if (locationStr.endsWith(DEPENDENCY_EQUALS)) {
 			dependency.setEquals(value);
 			return true;
 		}
-		if (locationStr.endsWith("min")) {
+		if (locationStr.endsWith(DEPENDENCY_MIN)) {
 			dependency.setMin(value);
 			return true;
 		}
-		if (locationStr.endsWith("max")) {
+		if (locationStr.endsWith(DEPENDENCY_MAX)) {
 			dependency.setMax(value);
 			return true;
 		}
-		if (locationStr.endsWith("exclude")) {
+		if (locationStr.endsWith(DEPENDENCY_EXCLUDE)) {
 			dependency.setExcludes().addAll(excludeList);
 			return true;
 		}
