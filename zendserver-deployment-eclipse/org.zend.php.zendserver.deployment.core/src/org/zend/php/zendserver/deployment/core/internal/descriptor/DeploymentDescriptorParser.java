@@ -393,51 +393,13 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	}
 	
 	private boolean readBasicInfo(String value, String locationStr) {
-		if (IDeploymentDescriptor.PACKAGE_NAME.equals(locationStr)) {
-			descriptor.setName(value);
+		try {
+			descriptor.set(locationStr, value);
 			return true;
+		} catch (IllegalArgumentException e) {
+			// unknown property
 		}
 		
-		if (IDeploymentDescriptor.PACKAGE_SUMMARY.equals(locationStr)) {
-			descriptor.setSummary(value);
-			return true;
-		}
-		
-		if (IDeploymentDescriptor.PACKAGE_DESCRIPTION.equals(locationStr)) {
-			descriptor.setDescription(value);
-			return true;
-		} 
-		
-		if (IDeploymentDescriptor.PACKAGE_VERSION_RELEASE.equals(locationStr)) {
-			descriptor.setReleaseVersion(value);
-			return true;
-		}
-		
-		if (IDeploymentDescriptor.PACKAGE_VERSION_API.equals(locationStr)) {
-			descriptor.setApiVersion(value);
-			return true;
-		} 
-		
-		if (IDeploymentDescriptor.PACKAGE_EULA.equals(locationStr)) {
-			descriptor.setEulaLocation(value);
-			return true;
-		}
-		
-		if (IDeploymentDescriptor.PACKAGE_ICON.equals(locationStr)) {
-			descriptor.setIconLocation(value);
-			return true;
-		} 
-		
-		if (IDeploymentDescriptor.PACKAGE_DOCROOT.equals(locationStr)) {
-			descriptor.setDocumentRoot(value);
-			return true;
-		} 
-		
-		if (IDeploymentDescriptor.PACKAGE_SCRIPTSDIR.equals(locationStr)) {
-			descriptor.setScriptsRoot(value);
-			return true;
-		} 
-			
 		return false;
 	}
 	
