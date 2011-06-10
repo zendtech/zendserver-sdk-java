@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.Options;
+import org.zend.sdkcli.internal.commands.AbstractCommand;
 
 /**
  * detects options in command according annotation
@@ -43,15 +44,25 @@ public class DetectOptionUtility {
 		}
 	}
 
-	public static List<Option> getOptions(Class subject, boolean specific) {
+	/**
+	 * List all options in a command, leaving out the global options if the
+	 * ignoreGlobal is true
+	 * 
+	 * @param subject
+	 * @param ignoreGlobal
+	 * @return the list of options
+	 */
+	public static List<Option> getOptions(Class subject, boolean ignoreGlobal) {
 
-		final Method[] methods = specific ? subject.getDeclaredMethods()
-				: subject.getMethods();
+		final Method[] methods = subject.getMethods();
 
 		List<Option> result = new ArrayList<Option>();
 		for (Method method : methods) {
+			final boolean isDeclaredGlobal = method.getDeclaringClass().equals(
+					AbstractCommand.class);
 			if (hasOptionAnnotation(method)
-					&& (isString(method) || isBoolean(method))) {
+					&& (isString(method) || isBoolean(method))
+					&& (!isDeclaredGlobal || !ignoreGlobal)) {
 				result.add(method.getAnnotation(Option.class));
 			}
 		}

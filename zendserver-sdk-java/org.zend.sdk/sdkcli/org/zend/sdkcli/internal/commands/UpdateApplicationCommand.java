@@ -19,7 +19,6 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 public class UpdateApplicationCommand extends ApplicationAwareCommand {
 
 	private static final String PATH = "p";
-	private static final String TARGET = "t";
 	private static final String APPID = "a";
 	private static final String PARAMS = "m";
 	private static final String IGNORE_FAILURES = "f";
@@ -27,11 +26,6 @@ public class UpdateApplicationCommand extends ApplicationAwareCommand {
 	@Option(opt = PATH, required = true, description = "The path to the project or application package", argName="path")
 	public String getPath() {
 		return getValue(PATH);
-	}
-
-	@Option(opt = TARGET, required = true, description = "The target id", argName="target-id")
-	public String getTargetId() {
-		return getValue(TARGET);
 	}
 
 	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")

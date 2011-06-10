@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 
@@ -16,7 +17,12 @@ import org.zend.sdklib.internal.target.UserBasedTargetLoader;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public abstract class ApplicationAwareCommand extends AbstractCommand {
+public abstract class ApplicationAwareCommand extends TargetAwareCommand {
+
+	/**
+	 * The target id is mandatory for all application operations
+	 */
+	private static final String TARGET = "t";
 
 	private final ZendApplication application;
 
@@ -28,4 +34,12 @@ public abstract class ApplicationAwareCommand extends AbstractCommand {
 		return application;
 	}
 
+	@Option(opt = TARGET, required = false, description = "The target id to use, if target is not provided then the default taget is used", argName = "id")
+	public String getTargetId() {
+		String t = getValue(TARGET);
+		if (t == null) {
+			t = getDefaultTargetId();
+		}
+		return t;
+	}
 }
