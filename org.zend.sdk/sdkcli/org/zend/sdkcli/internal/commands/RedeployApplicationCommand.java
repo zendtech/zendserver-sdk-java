@@ -18,16 +18,10 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
  */
 public class RedeployApplicationCommand extends ApplicationAwareCommand {
 
-	private static final String TARGET = "t";
 	private static final String APPID = "a";
 	private static final String IGNORE_FAILURES = "i";
 	private static final String SERVERS = "s";
 	
-	@Option(opt = TARGET, required = true, description = "The target id" , argName="target-id")
-	public String getTargetId() {
-		return getValue(TARGET);
-	}
-
 	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
 	public String getApplicationId() {
 		return getValue(APPID);

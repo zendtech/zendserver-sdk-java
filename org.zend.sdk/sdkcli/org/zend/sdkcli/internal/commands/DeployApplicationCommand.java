@@ -20,7 +20,6 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 
 	private static final String PATH = "p";
 	private static final String BASE_URL = "b";
-	private static final String TARGET = "t";
 	private static final String PARAMS = "m";
 	private static final String NAME = "n";
 	private static final String IGNORE_FAILURES = "f";
@@ -35,11 +34,6 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	@Option(opt = BASE_URL, required = true, description = "The base URL of the application", argName = "url")
 	public String getBaseUrl() {
 		return getValue(BASE_URL);
-	}
-
-	@Option(opt = TARGET, required = true, description = "The target id", argName = "id")
-	public String getTargetId() {
-		return getValue(TARGET);
 	}
 
 	@Option(opt = PARAMS, required = false, description = "The path to parameters properties file", argName = "parameters")

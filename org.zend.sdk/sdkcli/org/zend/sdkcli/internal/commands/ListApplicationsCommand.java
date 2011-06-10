@@ -24,17 +24,11 @@ import org.zend.webapi.core.connection.data.MessageList;
  */
 public class ListApplicationsCommand extends ApplicationAwareCommand {
 
-	private static final String ID = "t";
 	private static final String APP_ID = "i";
 
 	@Option(opt = APP_ID, required = false, description = "one or more application IDs", argName = "app-id")
 	public String[] getApplicationId() {
 		return getValues(APP_ID);
-	}
-
-	@Option(opt = ID, required = true, description = "The target id to use", argName = "target-id")
-	public String getTargetId() {
-		return getValue(ID);
 	}
 
 	@Override
