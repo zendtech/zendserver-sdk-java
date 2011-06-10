@@ -92,12 +92,30 @@ public class ParametersBlock extends MasterDetailsBlock {
 		public String getText(Object element) {
 			IParameter param = (IParameter) element;
 			
+			StringBuilder sb = new StringBuilder();
+			
 			String label = param.getDisplay();
 			if (label == null || label.trim().equals("")) {
-				label = param.getId();
+				sb.append(param.getId());
+			} else {
+				sb.append(label);
 			}
 			
-			return label;
+			if (param.isRequired()) {
+				sb.append("*");
+			}
+			
+			String defaultVal = param.getDefaultValue();
+			if (defaultVal != null && !defaultVal.trim().equals("")) {
+				sb.append(" = "+defaultVal);
+			}
+			
+			String type = param.getType();
+			if (type != null) {
+				sb.append(" (").append(type).append(")");
+			}
+			
+			return sb.toString();
 		}
 	}
 
