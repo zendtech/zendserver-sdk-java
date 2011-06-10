@@ -1,20 +1,11 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.IManagedForm;
@@ -36,27 +27,34 @@ import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
 public class OverviewPage extends DescriptorEditorPage {
 
-	private Text nameText;
-	private Text summaryText;
-	private Text descriptionText;
-	private Text releaseVersionText;
-	private Text apiVersionText;
-	private Text licenseText;
-	private Text iconText;
-	private Text docrootText;
-	/*private Text healthText;*/
-	private Text scriptsDirText;
-	private Button licenseBrowseButton;
-	private Button iconBrowseButton;
-	private Button docrootBrowseButton;
-	private boolean isRefresh;
+	private TextField name;
+	private TextField summary;
+	private TextField description;
+	private TextField releaseVersion;
+	private TextField apiVersion;
+	private FileField license;
+	private FileField icon;
+	private FolderField docRoot;
+	private FolderField appDir;
+	private FolderField scriptsDir;
+	
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
 	private ImageHyperlink exportPackageLink;
-	private Button scriptsDirBrowseButton;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, "overview", "Overview");
+		 name = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_NAME, "Name");
+		 summary = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_SUMMARY, "Summary");
+		 description = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_DESCRIPTION, "Description");
+		 releaseVersion = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, "Release Version");
+		 apiVersion = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_VERSION_API, "API Version");
+		 
+		 license = new FileField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_EULA, "License", editor.getProject());
+		 icon = new FileField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_ICON, "Icon", editor.getProject());
+		 docRoot = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_DOCROOT, "Document root", editor.getProject());
+		 scriptsDir = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, "Scripts directory", editor.getProject());
+		 appDir = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_APPDIR, "Application dir", editor.getProject());
 	}
 
 	@Override
@@ -99,14 +97,10 @@ public class OverviewPage extends DescriptorEditorPage {
 		td.heightHint = 250;
 		section.setLayoutData(td);
 		
-		toolkit.createLabel(sectionClient, "Scripts directory");
-		scriptsDirText = toolkit.createText(sectionClient, "");
-		scriptsDirBrowseButton = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		scriptsDirText.setLayoutData(gd);
+		scriptsDir.create(sectionClient, toolkit);
 		
 		Label label = toolkit.createLabel(sectionClient, "Double-click on deployment phase to edit script.");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 		
@@ -180,202 +174,21 @@ public class OverviewPage extends DescriptorEditorPage {
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
 		
-		toolkit.createLabel(sectionClient, "Name");
-		nameText = toolkit.createText(sectionClient, "");
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		nameText.setLayoutData(gd);
+		name.create(sectionClient, toolkit);
+		summary.create(sectionClient, toolkit);
+		description.create(sectionClient, toolkit);
+		apiVersion.create(sectionClient, toolkit);
+		releaseVersion.create(sectionClient, toolkit);
 		
-		toolkit.createLabel(sectionClient, "Summary");
-		summaryText = toolkit.createText(sectionClient, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		summaryText.setLayoutData(gd);
+		license.create(sectionClient, toolkit);
 		
-		toolkit.createLabel(sectionClient, "Description");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		descriptionText = toolkit.createText(sectionClient, "");
-		descriptionText.setLayoutData(gd);
+		icon.create(sectionClient, toolkit);
 		
-		toolkit.createLabel(sectionClient, "Release Version");
-		releaseVersionText = toolkit.createText(sectionClient, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		releaseVersionText.setLayoutData(gd);
-		
-		toolkit.createLabel(sectionClient, "API Version");
-		apiVersionText = toolkit.createText(sectionClient, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		apiVersionText.setLayoutData(gd);
-		
-		toolkit.createLabel(sectionClient, "License");
-		licenseText = toolkit.createText(sectionClient, "");
-		licenseBrowseButton = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		licenseText.setLayoutData(gd);
-		
-		toolkit.createLabel(sectionClient, "Icon");
-		iconText = toolkit.createText(sectionClient, "");
-		iconBrowseButton = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		iconText.setLayoutData(gd);
-		
-		toolkit.createLabel(sectionClient, "Document Root");
-		docrootText = toolkit.createText(sectionClient, "");
-		docrootBrowseButton = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		docrootText.setLayoutData(gd);
-		
-		/** Health-check is not in specification now
-		toolkit.createLabel(sectionClient, "Health-check");
-		healthText = toolkit.createText(sectionClient, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		healthText.setLayoutData(gd);
-		*/
+		docRoot.create(sectionClient, toolkit);
+		appDir.create(sectionClient, toolkit);
 	}
 	
 	private void createActions() {
-		nameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				nameChange(((Text)e.widget).getText());
-			}
-		});
-		
-		summaryText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				summaryChange(((Text)e.widget).getText());
-			}
-		});
-		
-		descriptionText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				descriptionChange(((Text)e.widget).getText());
-			}
-		});
-		
-		releaseVersionText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				releaseVersionChange(((Text)e.widget).getText());
-			}
-		});
-		
-		apiVersionText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				apiVersionChange(((Text)e.widget).getText());
-			}
-		});
-		
-		licenseText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				eulaChange(((Text)e.widget).getText());
-			}
-		});
-		
-		licenseBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = getSite().getShell();
-				IProject proj = getDeploymentEditor().getProject();
-				String newSelection = OpenFileDialog.openFile(shell, proj, "License", "Select file with License:", licenseText.getText());
-				if (newSelection != null) {
-					licenseText.setText(newSelection);
-				}
-			}
-		});
-		
-		iconText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				iconChange(((Text)e.widget).getText());
-			}
-		});
-		
-		iconBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = getSite().getShell();
-				IProject proj = getDeploymentEditor().getProject();
-				String newSelection = OpenFileDialog.openFile(shell, proj, "License", "Select application icon:", iconText.getText());
-				if (newSelection != null) {
-					iconText.setText(newSelection);
-				}
-			}
-		});
-		
-		docrootText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				docrootChange(((Text)e.widget).getText());
-			}
-		});
-		
-		docrootBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = getSite().getShell();
-				IProject proj = getDeploymentEditor().getProject();
-				String newSelection = OpenFileDialog.openFolder(shell, proj, "Document root", "Select application document root:", docrootText.getText());
-				if (newSelection != null) {
-					docrootText.setText(newSelection);
-				}
-			}
-		});
-		
-		/*
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				healthChange(((Text)e.widget).getText());
-			}
-		});*/
-		
-		scriptsDirText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) {
-					return;
-				}
-				scriptsDirChange(((Text)e.widget).getText());
-			}
-		});
-		
-		scriptsDirBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = getSite().getShell();
-				IProject proj = getDeploymentEditor().getProject();
-				String newSelection = OpenFileDialog.openFolder(shell, proj, "Scripts directory", "Select directory with deployment scripts:", scriptsDirText.getText());
-				if (newSelection != null) {
-					scriptsDirText.setText(newSelection);
-				}
-			}
-		});
-		
 		runApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				new RunApplicationAction().run();
@@ -405,7 +218,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	
 	@Override
 	public void setFocus() {
-		nameText.setFocus();
+		name.setFocus();
 	}
 	
 	protected DeploymentDescriptorEditor getDeploymentEditor() {
@@ -417,112 +230,15 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	public void refresh() {
-		IDeploymentDescriptor model = getModel().getDescriptor();
-		
-		isRefresh = true;
-		try {
-			nameText.setText(model.getName());
-			summaryText.setText(model.getSummary());
-			descriptionText.setText(model.getDescription());
-			releaseVersionText.setText(model.getReleaseVersion());
-			licenseText.setText(model.getEulaLocation());
-			iconText.setText(model.getIconLocation());
-			docrootText.setText(model.getDocumentRoot());
-			/*healthText.setText(model.getHealthcheck());*/
-			scriptsDirText.setText(model.getScriptsRoot());
-		} finally {
-			isRefresh = false;
-		}
+		name.refresh();
+		summary.refresh();
+		description.refresh();
+		releaseVersion.refresh();
+		apiVersion.refresh();
+		license.refresh();
+		icon.refresh();
+		docRoot.refresh();
+		appDir.refresh();
+		scriptsDir.refresh();
 	}
-
-	private void nameChange(String text) {
-		try {
-			getModel().setName(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void healthChange(String text) {
-		try {
-			getModel().setHealthcheck(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void docrootChange(String text) {
-		try {
-			getModel().setDocumentRoot(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	protected void scriptsDirChange(String text) {
-		try {
-			getModel().setScriptsRoot(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void iconChange(String text) {
-		try {
-			getModel().setIconLocation(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void eulaChange(String text) {
-		try {
-			getModel().setEulaLocation(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void releaseVersionChange(String text) {
-		try {
-			getModel().setReleaseVersion(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	protected void apiVersionChange(String text) {
-		try {
-			getModel().setApiVersion(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void descriptionChange(String text) {
-		try {
-			getModel().setDescription(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void summaryChange(String text) {
-		try {
-			getModel().setSummary(text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }

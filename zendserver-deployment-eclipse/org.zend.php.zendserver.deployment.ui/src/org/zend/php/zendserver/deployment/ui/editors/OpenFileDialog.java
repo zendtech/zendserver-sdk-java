@@ -25,26 +25,26 @@ public class OpenFileDialog {
 
 	protected static final IStatus OK = new Status(IStatus.OK, Activator.PLUGIN_ID, "");
 
-	public static String openFile(Shell shell, IContainer root, String title, String description, String initialPath) {
-		String[] out = open(shell, root, title, description, initialPath, false, new Class[] {IResource.class}, IFile.class);
-		return out == null ? null : out[0];
-	}
+	private ElementTreeSelectionDialog dialog;
 	
-	public static String openFolder(Shell shell, IContainer root, String title, String description, String initialPath) {
-		String[] out = open(shell, root, title, description, initialPath, false, new Class[] {IContainer.class}, IFolder.class);
-		return out == null ? null : out[0];
-	}
-	
-	public static String open(Shell shell, IContainer root, String title, String description, String initialPath) {
-		String[] out = open(shell, root, title, description, initialPath, false, new Class[] {IResource.class}, IResource.class);
-		return out == null ? null : out[0];
-	}
-	
-	public static String[] openMany(Shell shell, IContainer root, String title, String description, String initialPath) {
-		return open(shell, root, title, description, initialPath, true, new Class[] {IResource.class}, IResource.class);
-	}
-	
-	private static String[] open(Shell shell, IContainer root, String title, String description, String initialPath, boolean allowMultiple, final Class[] visibleTypes, final Class selectable) {
+	public OpenFileDialog(Shell shell, IContainer root, String title, String description, String initialPath) {
+		ILabelProvider lp = new WorkbenchLabelProvider();
+		ITreeContentProvider cp = new WorkbenchContentProvider();
+		dialog = new ElementTreeSelectionDialog(shell, lp, cp);
+		
+		IResource initialElement = null;
+		if (initialPath != null) {
+			initialElement = root.findMember(
+					new Path(initialPath));
+			if (initialElement == null || !initialElement.exists()) {
+				initialElement = null;
+			}
+		}
+
+		dialog.setTitle(title);
+		dialog.setMessage(description);
+		dialog.setInput(root);
+		
 		ISelectionStatusValidator validator = new ISelectionStatusValidator() {
 
 			public IStatus validate(Object[] selection) {
@@ -52,6 +52,56 @@ public class OpenFileDialog {
 			}
 			
 		};
+		dialog.setValidator(validator);
+		dialog.setInitialSelection(initialElement);
+		
+		dialog.setComparator(new ResourceComparator(
+				ResourceComparator.NAME));
+		dialog.setHelpAvailable(false);
+
+	}
+	
+	public String openFile() {
+		String[] out = open(false, new Class[] {IResource.class}, IFile.class);
+		return out == null ? null : out[0];
+	}
+	
+	public String openFolder() {
+		String[] out = open(false, new Class[] {IContainer.class}, IFolder.class);
+		return out == null ? null : out[0];
+	}
+	
+	public String open() {
+		String[] out = open(false, new Class[] {IResource.class}, IResource.class);
+		return out == null ? null : out[0];
+	}
+	
+	public String[] openMany() {
+		return open(true, new Class[] {IResource.class}, IResource.class);
+	}
+	
+	public static String openFile(Shell shell, IContainer root, String title, String description, String initialPath) {
+		OpenFileDialog dialog = new OpenFileDialog(shell, root, title, description, initialPath);
+		return dialog.openFile();
+	}
+	
+	public static String openFolder(Shell shell, IContainer root, String title, String description, String initialPath) {
+		OpenFileDialog dialog = new OpenFileDialog(shell, root, title, description, initialPath);
+		return dialog.openFolder();
+	}
+	
+	public static String open(Shell shell, IContainer root, String title, String description, String initialPath) {
+		OpenFileDialog dialog = new OpenFileDialog(shell, root, title, description, initialPath);
+		return dialog.open();
+	}
+	
+	public static String[] openMany(Shell shell, IContainer root, String title, String description, String initialPath) {
+		OpenFileDialog dialog = new OpenFileDialog(shell, root, title, description, initialPath);
+		return dialog.openMany();
+	}
+	
+	private String[] open(boolean allowMultiple, final Class[] visibleTypes, final Class selectable) {
+
 		ViewerFilter filter = new ViewerFilter() {
 
 			@Override
@@ -65,29 +115,8 @@ public class OpenFileDialog {
 			}
 			
 		};
-
-		ILabelProvider lp = new WorkbenchLabelProvider();
-		ITreeContentProvider cp = new WorkbenchContentProvider();
-
-		IResource initialElement = null;
-		if (initialPath != null) {
-			initialElement = root.findMember(
-					new Path(initialPath));
-			if (initialElement == null || !initialElement.exists()) {
-				initialElement = null;
-			}
-		}
-
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, lp, cp);
-		dialog.setTitle(title);
-		dialog.setValidator(validator);
-		dialog.setMessage(description);
 		dialog.addFilter(filter);
-		dialog.setInput(root);
-		dialog.setInitialSelection(initialElement);
-		dialog.setComparator(new ResourceComparator(
-				ResourceComparator.NAME));
-		dialog.setHelpAvailable(false);
+		
 		dialog.setAllowMultiple(allowMultiple);
 
 		if (dialog.open() == Window.OK) {
