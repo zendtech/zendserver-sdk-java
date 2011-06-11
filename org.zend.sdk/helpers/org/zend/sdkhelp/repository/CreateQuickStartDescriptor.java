@@ -71,7 +71,7 @@ public class CreateQuickStartDescriptor {
 		r.getZendframework().add(z);
 
 		final Dependencies d = f.createDependencies();
-		d.getRequired().add(r);
+		d.setRequired(r);
 
 		p.setDependencies(d);
 
