@@ -3,7 +3,7 @@ package org.zend.php.zendserver.deployment.core.descriptor;
 import java.util.List;
 
 
-public interface IDependency {
+public interface IDependency extends IModelObject {
 	
 	String PHP = "php";
 	String EXTENSION = "extension";

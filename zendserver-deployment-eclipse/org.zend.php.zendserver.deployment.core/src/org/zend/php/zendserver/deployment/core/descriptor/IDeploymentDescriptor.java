@@ -5,17 +5,23 @@ import java.util.List;
 public interface IDeploymentDescriptor {
 
 	String PACKAGE = "package";
-	String PACKAGE_NAME = "package/name";
-	String PACKAGE_SUMMARY = "package/summary";
-	String PACKAGE_DESCRIPTION = "package/description";
-	String PACKAGE_VERSION_RELEASE = "package/version/release";
-	String PACKAGE_VERSION_API = "package/version/api";
-	String PACKAGE_EULA = "package/eula";
-	String PACKAGE_ICON = "package/icon";
-	String PACKAGE_DOCROOT = "package/docroot";
-	String PACKAGE_SCRIPTSDIR = "package/scriptsdir";
-	String PACKAGE_HEALTHCHECK = "package/healthcheck";
-	String PACKAGE_APPDIR = "package/appdir";
+	String NAME = "package/name";
+	String SUMMARY = "package/summary";
+	String DESCRIPTION = "package/description";
+	String VERSION_RELEASE = "package/version/release";
+	String VERSION_API = "package/version/api";
+	String EULA = "package/eula";
+	String ICON = "package/icon";
+	String DOCROOT = "package/docroot";
+	String SCRIPTSDIR = "package/scriptsdir";
+	String HEALTHCHECK = "package/healthcheck";
+	String APPDIR = "package/appdir";
+	
+	String DEPENDENCIES = "package/dependencies/required";
+	String PARAMETERS = "package/parameters/parameter";
+	String VARIABLES = "package/variables/variable";
+	String PERSISTENT_RESOURCES = "package/persistentresources/resource";
+	
 	
 	String getName();
 
@@ -54,7 +60,14 @@ public interface IDeploymentDescriptor {
 
 	List<String> getPersistentResources();
 	
+	
 	void set(String key, String value);
 	
 	String get(String key);
+	
+	void set(String key, int index, Object value);
+	
+	void add(String key, Object value);
+	
+	void remove(String key, int index);
 }

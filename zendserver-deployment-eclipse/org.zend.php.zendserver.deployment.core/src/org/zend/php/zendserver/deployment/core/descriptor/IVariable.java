@@ -1,6 +1,6 @@
 package org.zend.php.zendserver.deployment.core.descriptor;
 
-public interface IVariable {
+public interface IVariable extends IModelObject {
 
 	String getValue();
 

@@ -47,17 +47,17 @@ public class OverviewPage extends DescriptorEditorPage {
 		IDeploymentDescriptorModifier mdl = editor.getModel();
 		IDeploymentDescriptor descr = mdl.getDescriptor();
 		
-		name = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_NAME, "Name"));
-		summary = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_SUMMARY, "Summary"));
-		description = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_DESCRIPTION, "Description"));
-		releaseVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, "Release Version"));
-		apiVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_VERSION_API, "API Version"));
+		name = addField(new TextField(descr, mdl, IDeploymentDescriptor.NAME, "Name"));
+		summary = addField(new TextField(descr, mdl, IDeploymentDescriptor.SUMMARY, "Summary"));
+		description = addField(new TextField(descr, mdl, IDeploymentDescriptor.DESCRIPTION, "Description"));
+		releaseVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.VERSION_RELEASE, "Release Version"));
+		apiVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.VERSION_API, "API Version"));
 		 
-		license = addField(new FileField(descr, mdl, IDeploymentDescriptor.PACKAGE_EULA, "License", editor.getProject()));
-		icon = addField(new FileField(descr, mdl, IDeploymentDescriptor.PACKAGE_ICON, "Icon", editor.getProject()));
-		docRoot = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_DOCROOT, "Document root", editor.getProject()));
-		scriptsDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, "Scripts directory", editor.getProject()));
-		appDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_APPDIR, "Application dir", editor.getProject()));
+		license = addField(new FileField(descr, mdl, IDeploymentDescriptor.EULA, "License", editor.getProject()));
+		icon = addField(new FileField(descr, mdl, IDeploymentDescriptor.ICON, "Icon", editor.getProject()));
+		docRoot = addField(new FolderField(descr, mdl, IDeploymentDescriptor.DOCROOT, "Document root", editor.getProject()));
+		scriptsDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.SCRIPTSDIR, "Scripts directory", editor.getProject()));
+		appDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.APPDIR, "Application dir", editor.getProject()));
 	}
 
 	@Override

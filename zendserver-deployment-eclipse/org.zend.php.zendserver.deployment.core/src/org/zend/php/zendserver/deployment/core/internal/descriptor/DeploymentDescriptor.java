@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
@@ -33,130 +34,198 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 	}
 	
 	public String getName() {
-		return get(PACKAGE_NAME);
+		return get(NAME);
 	}
 	public void setName(String name) {
-		set(PACKAGE_NAME, name);
+		set(NAME, name);
 	}
 	public String getReleaseVersion() {
-		return get(PACKAGE_VERSION_RELEASE);
+		return get(VERSION_RELEASE);
 	}
 	public void setReleaseVersion(String version) {
-		set(PACKAGE_VERSION_RELEASE, version);
+		set(VERSION_RELEASE, version);
 	}
 	public String getEulaLocation() {
-		return get(PACKAGE_EULA);
+		return get(EULA);
 	}
 	public void setEulaLocation(String eulaLocation) {
-		set(PACKAGE_EULA, eulaLocation);
+		set(EULA, eulaLocation);
 	}
 	public String getIconLocation() {
-		return get(PACKAGE_ICON);
+		return get(ICON);
 	}
 	public void setIconLocation(String iconLocation) {
-		set(PACKAGE_ICON, iconLocation);
+		set(ICON, iconLocation);
 	}
 	public String getDocumentRoot() {
-		return get(PACKAGE_DOCROOT);
+		return get(DOCROOT);
 	}
 	public void setDocumentRoot(String documentRoot) {
-		set(PACKAGE_DOCROOT, documentRoot);
+		set(DOCROOT, documentRoot);
 	}
 	public String getScriptsRoot() {
-		return get(PACKAGE_SCRIPTSDIR);
+		return get(SCRIPTSDIR);
 	}
 	public void setScriptsRoot(String scriptsRoot) {
-		set(PACKAGE_SCRIPTSDIR, scriptsRoot);
+		set(SCRIPTSDIR, scriptsRoot);
 	}
 	public String getHealthcheck() {
-		return get(PACKAGE_HEALTHCHECK);
+		return get(HEALTHCHECK);
 	}
 	public void setHealthcheck(String healthcheck) {
-		set(PACKAGE_HEALTHCHECK, healthcheck);
+		set(HEALTHCHECK, healthcheck);
 	}
+	
 	public List<IParameter> getParameters() {
 		return Collections.unmodifiableList(parameters);
 	}
-	public List<IParameter> setParameters() {
-		return this.parameters;
-	}
+	
 	public List<IVariable> getVariables() {
 		return Collections.unmodifiableList(variables);
 	}
-	public List<IVariable> setVariables() {
-		return this.variables;
-	}
+	
 	public List<IDependency> getDependencies() {
 		return Collections.unmodifiableList(dependencies);
 	}
-	public List<IDependency> setDependencies() {
-		return this.dependencies;
-	}
+	
 	public List<String> getPersistentResources() {
 		return Collections.unmodifiableList(persistent);
 	}
 	public String getSummary() {
-		return get(PACKAGE_SUMMARY);
+		return get(SUMMARY);
 	}
 	public String getDescription() {
-		return get(PACKAGE_DESCRIPTION);
+		return get(DESCRIPTION);
 	}
 	public void setSummary(String summary) {
-		set(PACKAGE_SUMMARY, summary);
+		set(SUMMARY, summary);
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public List<String> setPersistentResources() {
-		return this.persistent;
+	
+	public void addPersistentResource(String resource) {
+		add(PERSISTENT_RESOURCES, resource);
+	}
+	
+	public void removePersistentResource(int index) {
+		remove(PERSISTENT_RESOURCES, index);
+	}
+	
+	public void setPersistentResource(int index, String resource) {
+		set(PERSISTENT_RESOURCES, index, resource);
+	}
+	
+	public void addDependency(IDependency dep) {
+		add(DEPENDENCIES, dep);
+	}
+	
+	public void removeDependency(int index) {
+		remove(DEPENDENCIES, index);
+	}
+	
+	public void setDependency(int index, IDependency dep) {
+		set(DEPENDENCIES, index, dep);
+	}
+	
+	public void addVariable(IVariable resource) {
+		add(VARIABLES, resource);
+	}
+	
+	public void removeVariable(int index) {
+		remove(VARIABLES, index);
+	}
+	
+	public void setVariable(int index, IVariable resource) {
+		set(VARIABLES, index, resource);
+	}
+	
+	public void addParameter(IParameter resource) {
+		add(PARAMETERS, resource);
+	}
+	
+	public void removeParameter(int index) {
+		remove(PARAMETERS, index);
+	}
+	
+	public void setParameter(int index, IParameter resource) {
+		set(PARAMETERS, index, resource);
 	}
 	
 	public void setApiVersion(String value) {
-		set(PACKAGE_VERSION_API, value);
+		set(VERSION_API, value);
 	}
 	
 	public String getApiVersion() {
-		return get(PACKAGE_VERSION_API);
+		return get(VERSION_API);
 	}
 
 	public String getApplicationDir() {
-		return get(PACKAGE_APPDIR);
-	}
-	
-	public void add(String key, Object value) {
-		
-	}
-	
-	public void remove(String key) {
-		
+		return get(APPDIR);
 	}
 	
 	public void setApplicationDir(String appDir) {
-		set(PACKAGE_APPDIR, appDir);
+		set(APPDIR, appDir);
 	}
 
+	private List getList(String key) {
+		if (DEPENDENCIES.equals(key)) {
+			return dependencies;
+		} else if (PARAMETERS.equals(key)) {
+			return parameters;
+		} else if (PERSISTENT_RESOURCES.equals(key)) {
+			return persistent;
+		} else if (VARIABLES.equals(key)) {
+			return variables;
+		}
+		
+		throw new IllegalArgumentException("Unknown list property name "+key);
+	}
+
+	public void add(String key, Object value) {
+		getList(key).add(value);
+	}
+	
+	public void remove(String key, int index) {
+		getList(key).remove(index);
+	}
+	
+	public void set(String key, int index, Object value) {
+		List list = getList(key);
+		if (index < list.size()) {
+			Object dest = list.get(index);
+			if (dest instanceof IModelObject) {
+				((IModelObject)dest).copy((IModelObject)value);
+			} else {
+				list.set(index, value);
+			}
+		} else {
+			list.add(value);
+		}
+	}
+	
 	public void set(String key, String value) {
-		if (PACKAGE_NAME.equals(key)) {
+		if (NAME.equals(key)) {
 			name = value;
-		} else if (PACKAGE_SUMMARY.equals(key)) {
+		} else if (SUMMARY.equals(key)) {
 			summary = value;
-		} else if (PACKAGE_DESCRIPTION.equals(key)) {
+		} else if (DESCRIPTION.equals(key)) {
 			description = value;
-		} else if (PACKAGE_VERSION_RELEASE.equals(key)) {
+		} else if (VERSION_RELEASE.equals(key)) {
 			releaseVersion = value;
-		} else if (PACKAGE_VERSION_API.equals(key)) {
+		} else if (VERSION_API.equals(key)) {
 			apiVersion = value;
-		} else if (PACKAGE_EULA.equals(key)) {
+		} else if (EULA.equals(key)) {
 			eulaLocation = value;
-		} else if (PACKAGE_ICON.equals(key)) {
+		} else if (ICON.equals(key)) {
 			iconLocation = value;
-		} else if (PACKAGE_DOCROOT.equals(key)) {
+		} else if (DOCROOT.equals(key)) {
 			documentRoot = value;
-		} else if (PACKAGE_SCRIPTSDIR.equals(key)) {
+		} else if (SCRIPTSDIR.equals(key)) {
 			scriptsRoot = value;
-		} else if (PACKAGE_HEALTHCHECK.equals(key)) {
+		} else if (HEALTHCHECK.equals(key)) {
 			healthcheck = value;
-		} else if (PACKAGE_APPDIR.equals(key)) {
+		} else if (APPDIR.equals(key)) {
 			appDir = value;
 		} else {
 			throw new IllegalArgumentException("Can't set unknown property "+key);
@@ -164,27 +233,27 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 	}
 
 	public String get(String key) {
-		if (PACKAGE_NAME.equals(key)) {
+		if (NAME.equals(key)) {
 			return name;
-		} else if (PACKAGE_SUMMARY.equals(key)) {
+		} else if (SUMMARY.equals(key)) {
 			return summary;
-		} else if (PACKAGE_DESCRIPTION.equals(key)) {
+		} else if (DESCRIPTION.equals(key)) {
 			return description;
-		} else if (PACKAGE_VERSION_RELEASE.equals(key)) {
+		} else if (VERSION_RELEASE.equals(key)) {
 			return releaseVersion;
-		} else if (PACKAGE_VERSION_API.equals(key)) {
+		} else if (VERSION_API.equals(key)) {
 			return apiVersion;
-		} else if (PACKAGE_EULA.equals(key)) {
+		} else if (EULA.equals(key)) {
 			return eulaLocation;
-		} else if (PACKAGE_ICON.equals(key)) {
+		} else if (ICON.equals(key)) {
 			return iconLocation;
-		} else if (PACKAGE_DOCROOT.equals(key)) {
+		} else if (DOCROOT.equals(key)) {
 			return documentRoot;
-		} else if (PACKAGE_SCRIPTSDIR.equals(key)) {
+		} else if (SCRIPTSDIR.equals(key)) {
 			return scriptsRoot;
-		} else if (PACKAGE_HEALTHCHECK.equals(key)) {
+		} else if (HEALTHCHECK.equals(key)) {
 			return healthcheck;
-		} else if (PACKAGE_APPDIR.equals(key)) {
+		} else if (APPDIR.equals(key)) {
 			return appDir;
 		} else {
 			throw new IllegalArgumentException("Can't get unknown property "+key);

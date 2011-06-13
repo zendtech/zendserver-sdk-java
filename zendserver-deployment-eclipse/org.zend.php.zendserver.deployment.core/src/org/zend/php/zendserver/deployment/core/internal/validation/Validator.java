@@ -12,17 +12,17 @@ public class Validator {
 	public Validator() {
 		testers = new ArrayList<PropertyTester>();
 		testers.add(new FieldNotEmptyTester(new String[] {
-				IDeploymentDescriptor.PACKAGE_NAME,
-				IDeploymentDescriptor.PACKAGE_VERSION_RELEASE,
-				IDeploymentDescriptor.PACKAGE_APPDIR,
+				IDeploymentDescriptor.NAME,
+				IDeploymentDescriptor.VERSION_RELEASE,
+				IDeploymentDescriptor.APPDIR,
 		}));
 		
 		testers.add(new FileExistsTester(new String[] {
-			IDeploymentDescriptor.PACKAGE_APPDIR,
-			IDeploymentDescriptor.PACKAGE_ICON,
-			IDeploymentDescriptor.PACKAGE_EULA,
-			IDeploymentDescriptor.PACKAGE_SCRIPTSDIR,
-			IDeploymentDescriptor.PACKAGE_DOCROOT
+			IDeploymentDescriptor.APPDIR,
+			IDeploymentDescriptor.ICON,
+			IDeploymentDescriptor.EULA,
+			IDeploymentDescriptor.SCRIPTSDIR,
+			IDeploymentDescriptor.DOCROOT
 		}));
 	}
 	

@@ -21,12 +21,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 public class DeploymentDescriptorParser extends DefaultHandler {
 	
-	public static final String PACKAGE_DEPENDENCIES_REQUIRED = "package/dependencies/required";
 	public static final String DEPENDENCIES_PHP = "package/dependencies/required/php";
 	public static final String DEPENDENCIES_EXTENSION = "package/dependencies/required/extension";
 	public static final String DEPENDENCIES_DIRECTIVE = "package/dependencies/required/directive";
@@ -41,7 +41,6 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public static final String DEPENDENCY_EXCLUDE = "exclude";
 	public static final String DEPENDENCY_CONFLICTS = "conflicts";
 	
-	public static final String PACKAGE_PARAMETERS_PARAMETER = "package/parameters/parameter";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DISPLAY = "package/parameters/parameter[display]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_REQUIRED = "package/parameters/parameter[required]";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_READONLY = "package/parameters/parameter[readonly]";
@@ -51,10 +50,6 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DEFAULTVALUE = "package/parameters/parameter/defaultvalue";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_DESCRIPTION = "package/parameters/parameter/description";
 	public static final String PACKAGE_PARAMETERS_PARAMETER_VALIDATION_ENUMS_ENUM = "package/parameters/parameter/validation/enums/enum";
-	
-	public static final String PACKAGE_VARIABLES_VARIABLE = "package/variables/variable";
-	
-	public static final String PACKAGE_PERSISTENTRESOURCES_RESOURCE = "package/persistentresources/resource";
 	
 	private IPath location = new Path("");
 	private List<Integer> counters = new ArrayList<Integer>();
@@ -201,25 +196,15 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	
 
 	private boolean readVariable(String locationStr, Attributes attributes, int index) {
-		if (PACKAGE_VARIABLES_VARIABLE.equals(locationStr)) {
+		if (IDeploymentDescriptor.VARIABLES.equals(locationStr)) {
 			String name = attributes.getValue("name");
 			String value = attributes.getValue("value");
 			Variable var = new Variable(name, value);
-			List<IVariable> list = descriptor.setVariables();
-			if (index < list.size()) {
-				copyVariable((Variable) list.get(index), var);
-			} else {
-				list.add(var);
-			}
+			descriptor.set(IDeploymentDescriptor.VARIABLES, index, var);
 			markChanged(var);
 			return true;
 		}
 		return false;
-	}
-
-	private void copyVariable(Variable dest, Variable src) {
-		dest.setName(src.getName());
-		dest.setValue(src.getValue());
 	}
 
 	private void markChanged(Object obj) {
@@ -229,20 +214,12 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 	}
 
 	private boolean readPersistentResources(String value, String locationStr, int index) {
-		if (PACKAGE_PERSISTENTRESOURCES_RESOURCE.equals(locationStr)) {
-			setListElement(descriptor.setPersistentResources(), index, value);
+		if (IDeploymentDescriptor.PERSISTENT_RESOURCES.equals(locationStr)) {
+			descriptor.setPersistentResource(index, value);
+			markChanged(descriptor);
 			return true;
 		}
 		return false;
-	}
-
-	private void setListElement(List list, int index, Object var) {
-		if (index < list.size()) {
-			list.set(index, var);
-		} else {
-			list.add(var);
-		}
-		markChanged(var);
 	}
 
 	private boolean readParameter(String value, String locationStr, int index) {
@@ -251,7 +228,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 			return true;
 		}
 		
-		if (PACKAGE_PARAMETERS_PARAMETER.equals(locationStr)) {
+		if (IDeploymentDescriptor.PARAMETERS.equals(locationStr)) {
 			String id = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_ID);
 			String type = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_TYPE);
 			String required = unboundValues.remove(PACKAGE_PARAMETERS_PARAMETER_REQUIRED);
@@ -270,12 +247,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 				validationEnums.clear();
 			}
 			
-			List<IParameter> list = descriptor.setParameters();
-			if (index < list.size()) {
-				copyParameter((Parameter) list.get(index), param);
-			} else {
-				list.add(param);
-			}
+			descriptor.set(IDeploymentDescriptor.PARAMETERS, index, param);
 			markChanged(param);
 			return true;
 		}
@@ -283,18 +255,6 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		return false;
 	}
 	
-	private void copyParameter(Parameter dest, Parameter src) {
-		dest.setDefaultValue(src.getDefaultValue());
-		dest.setDescription(src.getDefaultValue());
-		dest.setDisplay(src.getDisplay());
-		dest.setId(src.getId());
-		dest.setRequired(src.isRequired());
-		dest.setReadOnly(src.isReadOnly());
-		dest.setType(src.getType());
-		dest.setIdentical(src.getIdentical());
-		dest.setValidValues(src.getValidValues());
-	}
-
 	private boolean startReadDependency(String locationStr) {
 		if (DEPENDENCIES_PHP.equals(locationStr)) {
 			dependency = new Dependency(IDependency.PHP);
@@ -336,12 +296,7 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 			DEPENDENCIES_ZSCOMPONENT.equals(locationStr)) {
 			IDependency toSet = dependency;
 			dependency = null;
-			List<IDependency> list = descriptor.setDependencies();
-			if (index < list.size()) {
-				copyDependency((Dependency)list.get(index), (Dependency)toSet);
-			} else {
-				list.add(toSet);
-			}
+			descriptor.set(IDeploymentDescriptor.DEPENDENCIES, index, toSet);
 			markChanged(toSet);
 			return true;
 		}
@@ -349,17 +304,6 @@ public class DeploymentDescriptorParser extends DefaultHandler {
 		readDependency(value, locationStr);
 				
 		return false;
-	}
-
-	private void copyDependency(Dependency dest, Dependency src) {
-		dest.setType(src.getType());
-		dest.setConflicts(src.getConflicts());
-		dest.setEquals(src.getEquals());
-		dest.setExcludes().clear();
-		dest.setExcludes().addAll(src.getExclude());
-		dest.setMax(src.getMax());
-		dest.setMin(src.getMin());
-		dest.setName(src.getName());
 	}
 
 	private boolean readDependency(String value, String locationStr) {

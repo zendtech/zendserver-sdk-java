@@ -68,43 +68,43 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 	}
 
 	public void setName(String name) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_NAME, name);
+		set(fModel, IDeploymentDescriptor.NAME, name);
 	}
 
 	public void setSummary(String summary) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_SUMMARY, summary);
+		set(fModel, IDeploymentDescriptor.SUMMARY, summary);
 	}
 
 	public void setDescription(String description) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_DESCRIPTION, description);
+		set(fModel, IDeploymentDescriptor.DESCRIPTION, description);
 	}
 
 	public void setReleaseVersion(String version) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, version);
+		set(fModel, IDeploymentDescriptor.VERSION_RELEASE, version);
 	}
 	
 	public void setApiVersion(String version) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_VERSION_API, version);
+		set(fModel, IDeploymentDescriptor.VERSION_API, version);
 	}
 
 	public void setEulaLocation(String location) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_EULA, location);
+		set(fModel, IDeploymentDescriptor.EULA, location);
 	}
 
 	public void setIconLocation(String location) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_ICON, location);
+		set(fModel, IDeploymentDescriptor.ICON, location);
 	}
 
 	public void setDocumentRoot(String location) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_DOCROOT, location);
+		set(fModel, IDeploymentDescriptor.DOCROOT, location);
 	}
 
 	public void setScriptsRoot(String location) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, location);
+		set(fModel, IDeploymentDescriptor.SCRIPTSDIR, location);
 	}
 
 	public void setHealthcheck(String url) throws CoreException {
-		set(fModel, IDeploymentDescriptor.PACKAGE_HEALTHCHECK, url);
+		set(fModel, IDeploymentDescriptor.HEALTHCHECK, url);
 	}
 	
 	public void addParameter(IParameter param) throws CoreException {
@@ -115,83 +115,83 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		attrs.put(PARAMETER_DEFAULT, param.getDefaultValue());
 		attrs.put(PARAMETER_DISPLAY, param.getDisplay());
 		attrs.put(PARAMETER_TYPE, param.getType());
-		Node n = addNode(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER, attrs);
+		Node n = addNode(IDeploymentDescriptor.PARAMETERS, attrs);
 		addNode(n, PARAMETER_DESCRIPTION, param.getDescription());
 		storeDomModel();
-		fModel.setParameters().add(param);
+		fModel.add(IDeploymentDescriptor.PARAMETERS, param);
 		fireChange(fModel);
 	}
 
 	public void removeParameter(IParameter param) throws CoreException {
-		int idx = fModel.setParameters().indexOf(param) + 1;
-		fModel.setParameters().remove(param);
+		int idx = fModel.getParameters().indexOf(param) + 1;
+		fModel.remove(IDeploymentDescriptor.PARAMETERS, idx);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER  + "[" + idx + "]");
+		removeNode(IDeploymentDescriptor.PARAMETERS  + "[" + idx + "]");
 		storeDomModel();
 		fireChange(fModel);
 	}
 
 	public void setParameterRequired(IParameter input, boolean required) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setRequired(required);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_REQUIRED, Boolean.toString(required));
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_REQUIRED, Boolean.toString(required));
 		fireChange(input);
 	}
 
 	public void setParameterReadonly(IParameter input, boolean readonly) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setReadOnly(readonly);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_READONLY, Boolean.toString(readonly));
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_READONLY, Boolean.toString(readonly));
 		fireChange(input);
 	}
 	
 	public void setParameterId(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setId(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_ID, text);
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_ID, text);
 		fireChange(input);
 	}
 
 	public void setParameterDisplay(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setDisplay(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_DISPLAY, text);
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_DISPLAY, text);
 		fireChange(input);
 	}
 
 	public void setParameterDefault(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setDefaultValue(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_DEFAULT, text);
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_DEFAULT, text);
 		fireChange(input);
 	}
 
 	public void setParameterType(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setType(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_TYPE, text);
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_TYPE, text);
 		fireChange(input);
 	}
 
 	public void setParameterIdentical(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setIdentical(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]" ,PARAMETER_IDENTICAL, text);
+		changeAttribute(IDeploymentDescriptor.PARAMETERS + "["+idx+"]" ,PARAMETER_IDENTICAL, text);
 		fireChange(input);
 	}
 	
 	public void setParameterDescription(IParameter input, String text) throws CoreException {
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setDescription(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]/description");
+		changeText(text, IDeploymentDescriptor.PARAMETERS + "["+idx+"]/description");
 		fireChange(input);
 	}
 	
 	public void setParameterValidation(IParameter input, String[] array) throws CoreException {
 		loadDomModel();
-		int idx = fModel.setParameters().indexOf(input) + 1;
+		int idx = fModel.getParameters().indexOf(input) + 1;
 		((Parameter) input).setValidValues(array);
-		String xpath = DeploymentDescriptorParser.PACKAGE_PARAMETERS_PARAMETER + "["+idx+"]/validation/enums";
+		String xpath = IDeploymentDescriptor.PARAMETERS + "["+idx+"]/validation/enums";
 		Node node = getNode(xpath);
 		
 		if (node != null) {
@@ -221,40 +221,40 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		if (var.getValue() != null) {
 			attrs.put("value", var.getValue());
 		}
-		Node node = addNode(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE, attrs);
+		Node node = addNode(IDeploymentDescriptor.VARIABLES, attrs);
 		node.setTextContent(var.getValue());
 		storeDomModel();
-		fModel.setVariables().add(var);
+		fModel.add(IDeploymentDescriptor.VARIABLES, var);
 		fireChange(fModel);
 	}
 
 	public void removeVariable(IVariable var) throws CoreException {
-		int idx = fModel.setVariables().indexOf(var) + 1;
-		fModel.setVariables().remove(var);
+		int idx = fModel.getVariables().indexOf(var) + 1;
+		fModel.remove(IDeploymentDescriptor.VARIABLES, idx);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE  + "[" + idx + "]");
+		removeNode(IDeploymentDescriptor.VARIABLES  + "[" + idx + "]");
 		storeDomModel();
 		fireChange(fModel);
 	}
 
 	public void setVariableName(IVariable var, String text) throws CoreException {
-		int idx = fModel.setVariables().indexOf(var) + 1;
+		int idx = fModel.getVariables().indexOf(var) + 1;
 		((Variable) var).setName(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE + "["+idx+"]", "name", text);
+		changeAttribute(IDeploymentDescriptor.VARIABLES + "["+idx+"]", "name", text);
 		fireChange(var);
 	}
 	
 	public void setVariableValue(IVariable var, String text) throws CoreException {
-		int idx = fModel.setVariables().indexOf(var) + 1;
+		int idx = fModel.getVariables().indexOf(var) + 1;
 		((Variable) var).setValue(text);
-		changeAttribute(DeploymentDescriptorParser.PACKAGE_VARIABLES_VARIABLE + "["+idx+"]", "value", text);
+		changeAttribute(IDeploymentDescriptor.VARIABLES + "["+idx+"]", "value", text);
 		fireChange(var);
 	}
 
 	public void addDependency(IDependency prereq) throws CoreException {
 		loadDomModel();
 		Map<String, String> attrs = new HashMap<String, String>();
-		Node node = addNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/" + prereq.getType(), attrs);
+		Node node = addNode(IDeploymentDescriptor.DEPENDENCIES + "/" + prereq.getType(), attrs);
 		if (prereq.getName() != null) {
 			addNode(node, DeploymentDescriptorParser.DEPENDENCY_NAME, prereq.getName());
 		}
@@ -278,88 +278,88 @@ public class DeploymentDescriptorModifier implements IDeploymentDescriptorModifi
 		}
 		
 		storeDomModel();
-		fModel.setDependencies().add(prereq);
+		fModel.add(IDeploymentDescriptor.DEPENDENCIES, prereq);
 		fireChange(fModel);
 	}
 
 	public void removeDependency(IDependency prereq) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(prereq) + 1;
-		fModel.setDependencies().remove(prereq);
+		int idx = fModel.getDependencies().indexOf(prereq) + 1;
+		fModel.remove(IDeploymentDescriptor.DEPENDENCIES, idx);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED  + "/*[" + idx + "]");
+		removeNode(IDeploymentDescriptor.DEPENDENCIES  + "/*[" + idx + "]");
 		storeDomModel();
 		fireChange(fModel);
 	}
 
 	public void setDependencyName(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setName(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/name");
+		changeText(text, IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/name");
 		fireChange(dep);
 	}
 
 	public void setDependencyMin(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setMin(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/min");
+		changeText(text, IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/min");
 		fireChange(dep);
 	}
 
 	public void setDependencyMax(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setMax(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/max");
+		changeText(text, IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/max");
 		fireChange(dep);
 	}
 
 	public void setDependencyEquals(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setEquals(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/equals");
+		changeText(text, IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/equals");
 		fireChange(dep);
 	}
 
 	public void setDependencyConflicts(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setConflicts(text);
-		changeText(text, DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/conflicts");
+		changeText(text, IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/conflicts");
 		fireChange(dep);
 	}
 
 	public void addDependencyExclude(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		((Dependency) dep).setExcludes().add(text);
 		loadDomModel();
-		Node n = addNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/exclude", null);
+		Node n = addNode(IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/exclude", null);
 		n.setTextContent(text);
 		storeDomModel();
 		fireChange(dep);
 	}
 
 	public void removeDependencyExclude(IDependency dep, String text) throws CoreException {
-		int idx = fModel.setDependencies().indexOf(dep) + 1;
+		int idx = fModel.getDependencies().indexOf(dep) + 1;
 		int excludeIdx = ((Dependency) dep).setExcludes().indexOf(text);
 		((Dependency) dep).setExcludes().remove(text);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_DEPENDENCIES_REQUIRED + "/*["+idx+"]/exclude["+excludeIdx+"]");
+		removeNode(IDeploymentDescriptor.DEPENDENCIES + "/*["+idx+"]/exclude["+excludeIdx+"]");
 		storeDomModel();
 		fireChange(dep);
 	}
 
 	public void addPersistentResource(String path) throws CoreException {
 		loadDomModel();
-		Node n = addNode(DeploymentDescriptorParser.PACKAGE_PERSISTENTRESOURCES_RESOURCE, null);
+		Node n = addNode(IDeploymentDescriptor.PERSISTENT_RESOURCES, null);
 		n.setTextContent(path);
 		storeDomModel();
-		fModel.setPersistentResources().add(path);
+		fModel.addPersistentResource(path);
 		fireChange(fModel);
 	}
 
 	public void removePersistentResource(String path) throws CoreException {
-		int idx = fModel.setPersistentResources().indexOf(path) + 1;
-		fModel.setPersistentResources().remove(path);
+		int idx = fModel.getPersistentResources().indexOf(path) + 1;
+		fModel.removePersistentResource(idx);
 		loadDomModel();
-		removeNode(DeploymentDescriptorParser.PACKAGE_PERSISTENTRESOURCES_RESOURCE  + "[" + idx + "]");
+		removeNode(IDeploymentDescriptor.PERSISTENT_RESOURCES  + "[" + idx + "]");
 		storeDomModel();
 		fireChange(fModel);
 	}

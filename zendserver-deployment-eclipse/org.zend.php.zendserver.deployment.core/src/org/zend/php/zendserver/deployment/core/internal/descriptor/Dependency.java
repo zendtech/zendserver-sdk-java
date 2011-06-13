@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 
 public class Dependency implements IDependency {
@@ -90,5 +91,17 @@ public class Dependency implements IDependency {
 
 	public void setConflicts(String fConflicts) {
 		this.fConflicts = fConflicts;
+	}
+	
+	public void copy(IModelObject obj) {
+		IDependency src = (IDependency) obj; 
+		setType(src.getType());
+		setConflicts(src.getConflicts());
+		setEquals(src.getEquals());
+		setExcludes().clear();
+		setExcludes().addAll(src.getExclude());
+		setMax(src.getMax());
+		setMin(src.getMin());
+		setName(src.getName());
 	}
 }

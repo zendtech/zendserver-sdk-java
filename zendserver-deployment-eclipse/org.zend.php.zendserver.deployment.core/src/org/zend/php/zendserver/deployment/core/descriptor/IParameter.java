@@ -1,6 +1,6 @@
 package org.zend.php.zendserver.deployment.core.descriptor;
 
-public interface IParameter {
+public interface IParameter extends IModelObject {
 
 	String EMAIL = "email";
 	String HOSTNAME = "hostname";

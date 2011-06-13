@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
 
@@ -100,6 +101,19 @@ public class Parameter implements IParameter {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public void copy(IModelObject obj) {
+		IParameter src = (IParameter) obj;
+		setDefaultValue(src.getDefaultValue());
+		setDescription(src.getDefaultValue());
+		setDisplay(src.getDisplay());
+		setId(src.getId());
+		setRequired(src.isRequired());
+		setReadOnly(src.isReadOnly());
+		setType(src.getType());
+		setIdentical(src.getIdentical());
+		setValidValues(src.getValidValues());
 	}
 	
 }
