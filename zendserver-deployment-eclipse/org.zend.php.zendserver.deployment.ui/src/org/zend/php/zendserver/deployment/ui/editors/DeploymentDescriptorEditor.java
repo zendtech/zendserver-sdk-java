@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -19,7 +21,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -32,6 +33,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorM
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
+import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
+import org.zend.php.zendserver.deployment.core.internal.validation.Validator;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
 
@@ -50,6 +53,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	public static final String ID = "org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor";
 
 	private SourcePage sourcePage;
+	
+	private Validator validator;
 
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
@@ -84,6 +89,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		fDocumentProvider = new DescriptorDocumentProvider();
+		validator = new Validator();
 	}
 
 	/**
@@ -163,8 +169,21 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			public void run() {
 				String newIconLocation = descr.getIconLocation();
 				changeIcon(newIconLocation);
+				
+				validate(descr);
 			}
 		});
+	}
+	
+	private void validate(IDeploymentDescriptor descr) {
+		List<ValidationStatus> statuses = validator.validate(descr);
+		
+		IFormPage page = getActivePageInstance();
+		
+		if (page instanceof DescriptorEditorPage) {
+			DescriptorEditorPage descrPage = (DescriptorEditorPage) page;
+			descrPage.showStatuses(statuses);
+		}
 	}
 
 	private void changeIcon(String newIconLocation) {

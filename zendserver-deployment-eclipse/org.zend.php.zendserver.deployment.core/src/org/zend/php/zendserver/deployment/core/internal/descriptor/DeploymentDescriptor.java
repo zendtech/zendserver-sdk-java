@@ -27,8 +27,7 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 	private List<IParameter> parameters = new ArrayList<IParameter>();
 	private List<IVariable> variables = new ArrayList<IVariable>();
 	private List<IDependency> dependencies = new ArrayList<IDependency>();
-	private List<String> noKeepReDeployment = new ArrayList<String>();
-	private List<String> noKeepRemoval = new ArrayList<String>();
+	private List<String> persistent = new ArrayList<String>();
 	
 	public DeploymentDescriptor() {
 	}
@@ -94,10 +93,7 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 		return this.dependencies;
 	}
 	public List<String> getPersistentResources() {
-		return Collections.unmodifiableList(noKeepReDeployment);
-	}
-	public List<String> getNoKeepRemoval() {
-		return Collections.unmodifiableList(noKeepRemoval);
+		return Collections.unmodifiableList(persistent);
 	}
 	public String getSummary() {
 		return get(PACKAGE_SUMMARY);
@@ -112,7 +108,7 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 		this.description = description;
 	}
 	public List<String> setPersistentResources() {
-		return this.noKeepReDeployment;
+		return this.persistent;
 	}
 	
 	public void setApiVersion(String value) {
@@ -125,6 +121,14 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 
 	public String getApplicationDir() {
 		return get(PACKAGE_APPDIR);
+	}
+	
+	public void add(String key, Object value) {
+		
+	}
+	
+	public void remove(String key) {
+		
 	}
 	
 	public void setApplicationDir(String appDir) {

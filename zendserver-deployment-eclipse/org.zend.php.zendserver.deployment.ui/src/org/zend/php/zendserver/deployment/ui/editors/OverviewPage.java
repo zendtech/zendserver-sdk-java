@@ -32,11 +32,11 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField description;
 	private TextField releaseVersion;
 	private TextField apiVersion;
-	private FileField license;
-	private FileField icon;
-	private FolderField docRoot;
-	private FolderField appDir;
-	private FolderField scriptsDir;
+	private TextField license;
+	private TextField icon;
+	private TextField docRoot;
+	private TextField appDir;
+	private TextField scriptsDir;
 	
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
@@ -44,17 +44,20 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, "overview", "Overview");
-		 name = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_NAME, "Name");
-		 summary = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_SUMMARY, "Summary");
-		 description = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_DESCRIPTION, "Description");
-		 releaseVersion = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, "Release Version");
-		 apiVersion = new TextField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_VERSION_API, "API Version");
+		IDeploymentDescriptorModifier mdl = editor.getModel();
+		IDeploymentDescriptor descr = mdl.getDescriptor();
+		
+		name = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_NAME, "Name"));
+		summary = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_SUMMARY, "Summary"));
+		description = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_DESCRIPTION, "Description"));
+		releaseVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_VERSION_RELEASE, "Release Version"));
+		apiVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.PACKAGE_VERSION_API, "API Version"));
 		 
-		 license = new FileField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_EULA, "License", editor.getProject());
-		 icon = new FileField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_ICON, "Icon", editor.getProject());
-		 docRoot = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_DOCROOT, "Document root", editor.getProject());
-		 scriptsDir = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, "Scripts directory", editor.getProject());
-		 appDir = new FolderField(editor.getModel().getDescriptor(), editor.getModel(), IDeploymentDescriptor.PACKAGE_APPDIR, "Application dir", editor.getProject());
+		license = addField(new FileField(descr, mdl, IDeploymentDescriptor.PACKAGE_EULA, "License", editor.getProject()));
+		icon = addField(new FileField(descr, mdl, IDeploymentDescriptor.PACKAGE_ICON, "Icon", editor.getProject()));
+		docRoot = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_DOCROOT, "Document root", editor.getProject()));
+		scriptsDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_SCRIPTSDIR, "Scripts directory", editor.getProject()));
+		appDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.PACKAGE_APPDIR, "Application dir", editor.getProject()));
 	}
 
 	@Override
@@ -132,8 +135,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		tm2.setExpanded(true);
 		tm2 = new TreeItem(tm, SWT.NONE);
 		tm2.setText("Post-Staging");
-		tm2.setExpanded(true);
-		
+		tm.setExpanded(true);
 	}
 
 	private void createTestingSection(IManagedForm managedForm) {

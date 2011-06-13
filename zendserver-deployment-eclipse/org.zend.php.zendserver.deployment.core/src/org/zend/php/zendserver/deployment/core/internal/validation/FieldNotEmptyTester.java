@@ -8,7 +8,7 @@ public class FieldNotEmptyTester extends PropertyTester {
 
 	@Override
 	String test(Object property) {
-		return property == null ? "Property must be set" : null;
+		return property == null || "".equals(((String)property).trim())? "Property must be set" : null;
 	}
 
 }

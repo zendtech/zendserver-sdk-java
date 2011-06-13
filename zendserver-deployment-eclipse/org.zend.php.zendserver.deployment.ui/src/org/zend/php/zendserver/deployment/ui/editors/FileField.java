@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,10 +27,11 @@ public class FileField extends TextField {
 	@Override
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		toolkit.createLabel(parent, label);
-		nameText = toolkit.createText(parent, "");
+		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		nameText.setLayoutData(gd);
+		text.setLayoutData(gd);
 		licenseBrowseButton = toolkit.createButton(parent, "Browse...", SWT.PUSH);
+		controlDecoration = new ControlDecoration(text, SWT.LEFT);
 	}
 	
 	@Override
@@ -39,10 +41,10 @@ public class FileField extends TextField {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell shell = e.widget.getDisplay().getActiveShell();
-				OpenFileDialog dialog = new OpenFileDialog(shell, root, label, "Select file with "+label+":", nameText.getText());
+				OpenFileDialog dialog = new OpenFileDialog(shell, root, label, "Select file with "+label+":", text.getText());
 				String newSelection = openDialog(dialog);
 				if (newSelection != null) {
-					nameText.setText(newSelection);
+					text.setText(newSelection);
 				}
 			}
 		});

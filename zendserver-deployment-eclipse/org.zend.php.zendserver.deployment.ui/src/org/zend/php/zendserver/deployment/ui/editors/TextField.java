@@ -1,6 +1,9 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -13,12 +16,13 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorM
 
 public class TextField {
 
-	protected Text nameText;
+	protected Text text;
 	protected String label;
 	protected IDeploymentDescriptor target;
 	protected IDeploymentDescriptorModifier modifier;
 	protected String key;
 	protected boolean isRefresh;
+	protected ControlDecoration controlDecoration;
 	
 	public TextField(IDeploymentDescriptor target, IDeploymentDescriptorModifier modifier,String key, String label) {
 		this.target = target;
@@ -27,11 +31,15 @@ public class TextField {
 		this.label = label;
 	}
 	
+	public String getKey() {
+		return key;
+	}
+	
 	public void refresh() {
 		isRefresh = true;
 		try {
 			String value = target.get(key);
-			nameText.setText(value == null ? "" : value);
+			text.setText(value == null ? "" : value);
 		} finally {
 			isRefresh = false;
 		}
@@ -44,14 +52,37 @@ public class TextField {
 	
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		toolkit.createLabel(parent, label);
-		nameText = toolkit.createText(parent, "");
+		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
-		nameText.setLayoutData(gd);
+		text.setLayoutData(gd);
+		controlDecoration = new ControlDecoration(text, SWT.LEFT);		
+	}
+	
+	public void setErrorMessage(String message) {
+		if (message == null) {
+			controlDecoration.hide();
+			return;
+		}
+		FieldDecoration img = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+		controlDecoration.setImage(img.getImage());
+		controlDecoration.setDescriptionText(message);
+		controlDecoration.show();
+	}
+	
+	public void setWarningMessage(String message) {
+		if (message == null) {
+			controlDecoration.hide();
+			return;
+		}
+		FieldDecoration img = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+		controlDecoration.setImage(img.getImage());
+		controlDecoration.setDescriptionText(message);
+		controlDecoration.show();
 	}
 	
 	protected void createActions() {
-		nameText.addModifyListener(new ModifyListener() {
+		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (isRefresh) {
 					return;
@@ -73,7 +104,7 @@ public class TextField {
 	}
 
 	public void setFocus() {
-		nameText.setFocus();
+		text.setFocus();
 	}
 	
 }
