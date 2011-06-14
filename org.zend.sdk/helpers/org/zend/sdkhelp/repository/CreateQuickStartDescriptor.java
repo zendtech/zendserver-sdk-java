@@ -53,7 +53,7 @@ public class CreateQuickStartDescriptor {
 		p.setName("quickstart");
 		p.setAppdir("data");
 		p.setDocroot("public");
-		p.setFromat("1.0");
+		p.setDescriptorVersion("1.0");
 		
 		p.setSummary("This QuickStart will introduce you to some of Zend Framework's "
 				+ "most commonly used components, including Zend_Controller, Zend_Layout, "
