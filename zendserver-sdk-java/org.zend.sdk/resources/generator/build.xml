@@ -5,8 +5,8 @@
 <project name="Builds JAXB classes" default="main">
 
 	<dirname property="antfile.dir" file="${ant.file}" />
-	<property name="schema.filename.repository" value="${antfile.dir}/../schemas/repository.xsd"/>
-	<property name="schema.filename.deployment" value="${antfile.dir}/../schemas/deployment.xsd"/>
+	<property name="schema.dirname" value="${antfile.dir}/../schemas/"/>
+
 
 	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
 		<classpath>
@@ -16,11 +16,11 @@
 
 	<target name="main">
 		
-		<xjc schema="${schema.filename.repository}" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site">
+		<xjc schema="${schema.dirname}/repository.xsd" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site">
 			  <produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/repository/site"  includes="Application.java"/>
 		</xjc>
-		<xjc schema="${schema.filename.deployment}" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.descriptor.pkg">
-			  <produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/descriptor/pkg"  includes="Package.java"/>
+		<xjc schema="${schema.dirname}/deployment.xsd" destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.descriptor.pkg" binding="${antfile.dir}/*.xjb">
+			<produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/descriptor/pkg"  includes="Package.java"/>
 		</xjc>
 
 	</target>
