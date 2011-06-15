@@ -4,7 +4,7 @@
                xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
                jxb:extensionBindingPrefixes="xjc">
   
-  <jxb:bindings schemaLocation="deployment.xsd" node="/xs:schema">
+  <jxb:bindings schemaLocation="../schemas/deployment.xsd" node="/xs:schema">
 
     <jxb:bindings node="//xs:element[@name='package']//xs:complexType//xs:attribute[@name='version']">
 	      <jxb:property name="descriptorVersion" />
