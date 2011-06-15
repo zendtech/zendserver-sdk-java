@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package packagerversion="1.4.11" version="2.0"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
-
-  <name>Magento</name>
-  <summary>Magento short description</summary>
-  <description>Magento long description</description>
-  <version>
-    <release>1.4.1.1</release>    
-  </version>
-  <eula>data/LICENSE.txt</eula>
-  <docroot>public</docroot>
-  <dependencies></dependencies>
+<package xmlns="http://www.zend.com/server/deployment-descriptor/1.0"
+	version="1.0">
+	
+	<name>Magento</name>
+	<summary>Magento short description</summary>
+	<description>Magento long description</description>
+	<appdir>data</appdir>
+	<version>
+		<release>1.4.1.1</release>
+	</version>
+	<eula>data/LICENSE.txt</eula>
+	<docroot>public</docroot>
 </package>
