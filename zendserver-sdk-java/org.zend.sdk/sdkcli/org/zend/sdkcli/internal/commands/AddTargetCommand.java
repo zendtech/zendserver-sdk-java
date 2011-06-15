@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.ZendDevCloudDetect;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -21,7 +23,6 @@ import org.zend.sdklib.target.IZendTarget;
  * Creating a new target
  * 
  * @author Roy, 2011
- * 
  */
 public class AddTargetCommand extends TargetAwareCommand {
 
@@ -35,6 +36,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String SECRETKEY = "s";
 	private static final String HOST = "h";
 	private static final String PROPERTIES = "p";
+	private static final String DEVPASS = "d";
 
 	@Option(opt = ID, required = false, description = "Target id", argName = "id")
 	public String getId() {
@@ -61,7 +63,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 		return getValue(SECRETKEY);
 	}
 
-	@Option(opt = HOST, required = true, description = "Target host URL", argName = "host")
+	@Option(opt = HOST, required = false, description = "Target host URL", argName = "host")
 	public String getHost() {
 		return getValue(HOST);
 	}
@@ -77,16 +79,33 @@ public class AddTargetCommand extends TargetAwareCommand {
 		return file;
 	}
 
+	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
+	public String getDevPaas() {
+		return getValue(DEVPASS);
+	}
+
 	@Override
 	public boolean doExecute() {
 		final String targetId = getId();
-		final String key = getKey();
-		final String secretKey = getSecretKey();
-		final String host = getHost();
+		final String devPaas = getDevPaas();
+		String key = getKey();
+		String secretKey = getSecretKey();
+		String host = getHost();
 
-		if (key == null && secretKey == null) {
-			getLogger()
-					.error("To create target it is required to provide key and secret key or properties file.");
+		// resolve devpaas account properties
+		if (devPaas != null) {
+			IZendTarget t = resolveTarget(devPaas);
+			if (t != null) {
+				host = t.getHost().toString();
+				key = t.getKey();
+				secretKey = t.getSecretKey();
+			}
+		}
+
+		if (key == null && secretKey == null || host == null) {
+			getLogger().error(
+					"To create target it is required to provide hostname, key and secret key. "
+							+ "It can be provided through a properties file.");
 			return false;
 		}
 
@@ -99,6 +118,35 @@ public class AddTargetCommand extends TargetAwareCommand {
 			return false;
 		}
 		return true;
+	}
+
+	private IZendTarget resolveTarget(final String devPaas) {
+		final ZendDevCloudDetect detect = new ZendDevCloudDetect();
+		final String[] split = devPaas.split(":");
+		if (split.length != 2) {
+
+			final String message = "Error resolving devpaas account properties: "
+					+ devPaas
+					+ ". Argument should include both user and password concatenated by "
+					+ "colon, for example john.dohe:8hi8Rfe";
+
+			getLogger().error(message);
+			throw new IllegalStateException(message);
+
+		}
+		try {
+			final IZendTarget[] targets = detect.detectTarget(split[0],
+					split[1]);
+
+			if (targets != null && targets.length > 0) {
+				return targets[0];
+			}
+		} catch (SdkException e) {
+			getLogger().error(e);
+		} catch (IOException e) {
+			getLogger().error(e);
+		}
+		return null;
 	}
 
 	/**

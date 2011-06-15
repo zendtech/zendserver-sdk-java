@@ -14,6 +14,7 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.application.PackageBuilder;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
@@ -73,18 +74,16 @@ public class TestPackageBuilder extends AbstractTest {
 		assertNull(result);
 	}
 
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void testCreatePackageNoVersion() throws IOException {
 		PackageBuilder builder = new PackageBuilder(FOLDER + "Project3");
-		File result = builder.createDeploymentPackage(file);
-		assertNull(result);
+		builder.createDeploymentPackage(file);
 	}
 
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void testCreatePackageInvalidDescriptor() throws IOException {
 		PackageBuilder builder = new PackageBuilder(FOLDER + "Project4");
-		File result = builder.createDeploymentPackage(file);
-		assertNull(result);
+		builder.createDeploymentPackage(file);
 	}
 
 	@Test
