@@ -28,6 +28,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.bind.JAXBException;
 
 import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.TemplateWriter;
@@ -303,7 +304,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		}
 
 		String name = p.getName();
-		String version = p.getVersion().getRelease();
+		final Version version2 = p.getVersion();
+		if (version2 == null) {
+			throw new IllegalStateException(
+					"Error, missing <version> element in deployment descriptor");
+		}
+
+		String version = version2.getRelease();
 
 		if (name != null && version != null) {
 			result = name + "-" + version;
