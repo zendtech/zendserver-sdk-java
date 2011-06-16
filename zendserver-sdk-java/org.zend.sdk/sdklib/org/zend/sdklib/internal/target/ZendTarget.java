@@ -212,7 +212,11 @@ public class ZendTarget implements IZendTarget {
 		try {
 			String hostname = getHost().toString();
 			if (getHost().getPort() == -1) {
-				hostname += ":10081";
+				if ("https".equalsIgnoreCase(getHost().getProtocol())) {
+					hostname += ":10082";
+				} else {
+					hostname += ":10081";
+				}
 			}
 			WebApiClient client = new WebApiClient(credentials, hostname);
 			final SystemInfo info = client.getSystemInfo();
