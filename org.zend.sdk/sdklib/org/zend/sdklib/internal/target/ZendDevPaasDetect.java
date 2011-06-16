@@ -33,7 +33,7 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  * @author Roy, 2011
  */
-public class ZendDevCloudDetect {
+public class ZendDevPaasDetect {
 
 	// devpass baseurl
 	private static final String INTERNAL_DEVPASS_URL = "https://devpaas.zend.com";
@@ -46,16 +46,16 @@ public class ZendDevCloudDetect {
 	private final String baseUrl;
 
 	/**
-	 * Use {@link ZendDevCloudDetect#INTERNAL_DEVPASS_URL} as basepath
+	 * Use {@link ZendDevPaasDetect#INTERNAL_DEVPASS_URL} as basepath
 	 */
-	public ZendDevCloudDetect() {
+	public ZendDevPaasDetect() {
 		this(INTERNAL_DEVPASS_URL);
 	}
 
 	/**
 	 * @param baseUrl
 	 */
-	public ZendDevCloudDetect(String baseUrl) {
+	public ZendDevPaasDetect(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 
