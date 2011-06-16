@@ -100,6 +100,9 @@ public class ZendTargetAutoDetect {
 			BufferedReader ir = new BufferedReader(new FileReader(keysFile));
 			final File edited = new File(keysFile.getParentFile(), USER_INI
 					+ ".tmp");
+			if (!edited.exists()) {
+				edited.createNewFile();
+			}
 			PrintStream os = new PrintStream(edited);
 			secretKey = copyWithEdits(ir, os, key);
 			ir.close();

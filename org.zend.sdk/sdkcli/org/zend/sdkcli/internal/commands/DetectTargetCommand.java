@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
@@ -24,7 +25,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	private static final String ADD_KEY_ONLY = "a";
 	private static final String KEY = "k";
 
-	@Option(opt = ID, required = false, description = "The target id to create", argName="id")
+	@Option(opt = ID, required = false, description = "The target id to create", argName = "id")
 	public String getId() {
 		return getValue(ID);
 	}
@@ -33,8 +34,8 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean isAddKeyOnly() {
 		return hasOption(ADD_KEY_ONLY);
 	}
-	
-	@Option(opt = KEY, required = false, description = "The key to use", argName="key")
+
+	@Option(opt = KEY, required = false, description = "The key to use", argName = "key")
 	public String getKey() {
 		return getValue(KEY);
 	}
@@ -45,12 +46,33 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		final String targetId = getId();
 		final boolean addKeyOnly = isAddKeyOnly();
 		try {
-			final IZendTarget target = getTargetManager().detectLocalhostTarget(targetId, key, addKeyOnly);
+			final IZendTarget target = getTargetManager()
+					.detectLocalhostTarget(targetId, key, addKeyOnly);
 			if (target != null) {
 				if (addKeyOnly) {
-					getLogger().info("Key " + target.getKey() + " is available");
+					getLogger().info(
+							"The following key is available for target "
+									+ target.getHost());
+					getLogger().info("\tKey: " + target.getKey());
+					getLogger().info("\tSecret key: " + target.getKey());
+					getLogger()
+							.info("\tThis key must be kept secret and immediately revoked if "
+									+ "there is any chance that it has been compromised");
 				} else {
-					getLogger().info("Target " + target.getId() + " is available");
+					getLogger().info(
+							MessageFormat.format(
+									"Local server {0} is now available.",
+									target.getHost()));
+
+					getLogger().info(
+							"\tThis target can be referred as target with id "
+									+ target.getId());
+
+					if (target.getId().equalsIgnoreCase(
+							getTargetManager().getDefaultTargetId())) {
+						getLogger()
+								.info("\tThe localhost server will be used as the default target.");
+					}
 				}
 				return true;
 			}
@@ -72,8 +94,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 								+ commandLine.getDirectObject() + " ...");
 			}
 		}
-		getLogger().error(
-				"Operation failed.");
+		getLogger().error("Operation failed.");
 		return false;
 	}
 }

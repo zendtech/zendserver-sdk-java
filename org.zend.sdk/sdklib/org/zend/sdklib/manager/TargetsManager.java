@@ -10,6 +10,7 @@ package org.zend.sdklib.manager;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,8 +187,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 		key = key != null ? key : DEFAULT_KEY;
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
-				log.info("Localhost target is already detected with id '"
-						+ t.getId() + "'.");
+				log.info(MessageFormat
+						.format("Local server {0} has been already detected with id {1}.",
+								t.getHost(), t.getId()));
 				return t;
 			}
 		}
@@ -197,7 +199,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 					.createLocalhostTarget(targetId, key);
 			return addKeyOnly ? local : add(local);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error(e);
 			throw e;
 		} catch (WebApiException e) {
 			log.error("Coudn't connect to localhost server, please make "
