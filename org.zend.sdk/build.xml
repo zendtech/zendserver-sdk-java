@@ -255,6 +255,7 @@
 		    <zipfileset dir="junit" 		prefix="${prefix}/junit"/>
 		    <zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
+			<zipfileset includes="README" fullpath="docs/README"  />
 		</zip>
 		
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}-bin.zip" basedir=".">
@@ -262,6 +263,7 @@
 			<zipfileset dir="lib" excludes="org.zend.sdk.jar" prefix="${prefix}/lib" />
 		    <zipfileset dir="resources" excludes="generator/**" prefix="${prefix}/resources/"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
+			<zipfileset includes="README" fullpath="docs/README"  />
 		</zip>
 	</target>
 </project>
