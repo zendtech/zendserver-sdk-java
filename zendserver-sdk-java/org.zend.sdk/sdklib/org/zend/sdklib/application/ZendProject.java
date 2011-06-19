@@ -95,18 +95,22 @@ public class ZendProject extends AbstractChangeNotifier {
 	 * sample applications
 	 */
 	public enum SampleApplications {
-		HELLO_WORLD("applications/helloworld/map"),
+		HELLO_WORLD("applications/helloworld/"),
 
-		ZF_QUICKSTART("applications/zf/map");
+		ZF_QUICKSTART("applications/zf/");
 
-		private final String mapPath;
+		private final String basePath;
 
 		private SampleApplications(String mapPath) {
-			this.mapPath = mapPath;
+			this.basePath = mapPath;
 		}
 
 		public String getMap() {
-			return mapPath;
+			return getBasePath() + "map";
+		}
+
+		public String getBasePath() {
+			return basePath;
 		}
 	}
 
