@@ -117,7 +117,6 @@
 			<exclude name="test/**" />
 			<exclude name="generator/**" />
 			<exclude name="config/**" />
-			<exclude name="templates/**/" />
 			<exclude name="org/zend/sdk/**" />
 			<exclude name="org/zend/sdkhelp/**" />
 		</jar>
@@ -125,7 +124,6 @@
 			<exclude name="test/**" />
 			<exclude name="generator/**" />
 			<exclude name="config/**" />
-			<exclude name="templates/**/" />
 			<exclude name="org/zend/sdk/test/**" />
 			<fileset dir=".">
 				<include name="lib/commons-cli-1.2.jar"/>
@@ -212,7 +210,8 @@
 		<property name="repository.dir" value="tmp/repository"/>
 
 		
-		<get dest="tmp/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
+		<get dest="tmp/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>		
+		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
 		<move todir="${quickstart.dir}" includeemptydirs="true">
 		    <fileset dir="tmp/ZendFrameworkQuickstart-20100208"/>
 		</move>

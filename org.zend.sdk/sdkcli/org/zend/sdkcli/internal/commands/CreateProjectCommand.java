@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.io.File;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
+import org.zend.sdklib.application.ZendProject.SampleApplications;
 
 /**
  * Represents create-project command. In the result of calling it new PHP
@@ -20,7 +23,7 @@ import org.zend.sdklib.application.ZendProject;
 public class CreateProjectCommand extends AbstractCommand {
 
 	public static final String NAME = "n";
-	public static final String SCRIPTS = "a";
+	public static final String OMIT_SCRIPTS = "a";
 	public static final String DESTINATION = "d";
 
 	/**
@@ -42,15 +45,18 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return Whether to create sample deployment scripts
 	 */
-	@Option(opt = SCRIPTS, required = false, description = "Whether to create sample deployment scripts")
-	public boolean isScript() {
-		return hasOption(SCRIPTS);
+	@Option(opt = OMIT_SCRIPTS, required = false, description = "Omit deployment scripts")
+	public boolean isOmitScript() {
+		return hasOption(OMIT_SCRIPTS);
 	}
 
 	@Override
 	public boolean doExecute() {
 		String path = getDestionation();
-		ZendProject project = new ZendProject(getName(), !isScript(), path);
-		return project.create();
+		if (path == null) {
+			path = getCurrentDirectory();
+		}
+		ZendProject project = new ZendProject(getName(), !isOmitScript(), new File(path));
+		return project.create(SampleApplications.HELLO_WORLD);
 	}
 }
