@@ -32,7 +32,9 @@ public class ScriptsWriter {
 
 		PRE_STAGE("preStage", "pre_stage.php"),
 
-		PRE_UNSTAGE("preUnstage", "pre_unstage.php");
+		PRE_UNSTAGE("preUnstage", "pre_unstage.php"),
+
+		UNKNOWN(null, null);
 
 		private final String filename;
 		private final String description;
@@ -48,6 +50,19 @@ public class ScriptsWriter {
 
 		public String getDescription() {
 			return description;
+		}
+
+		public static DeploymentScriptTypes byName(String name) {
+			if (name == null) {
+				return UNKNOWN;
+			}
+			DeploymentScriptTypes[] values = values();
+			for (DeploymentScriptTypes types : values) {
+				if (name.equals(types.getDescription())) {
+					return types;
+				}
+			}
+			return UNKNOWN;
 		}
 	}
 
