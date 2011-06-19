@@ -22,26 +22,26 @@ import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 public class ZendProject extends AbstractChangeNotifier {
 
 	protected String name;
-	protected boolean withScripts;
+	protected String withScripts;
 	protected File destination;
 
 	/**
-	 * sample applications
+	 * @param name
+	 * @param scripts
+	 *            list of scripts to generate (all or null are options as well)
+	 * @param destination
+	 * @param nest
+	 *            true if the project should be one level under the destination
+	 * 
 	 */
-	public enum SampleApplications {
-		HELLO_WORLD("applications/helloworld/map"),
-
-		ZF_QUICKSTART("applications/zf/map");
-
-		private final String mapPath;
-
-		private SampleApplications(String mapPath) {
-			this.mapPath = mapPath;
+	public ZendProject(String scripts, File destination) {
+		if (destination == null) {
+			throw new IllegalArgumentException(
+					"can't handle project under given destination");
 		}
-
-		public String getMap() {
-			return mapPath;
-		}
+		
+		this.withScripts = scripts;
+		this.destination = destination;
 	}
 
 	/**
@@ -54,25 +54,8 @@ public class ZendProject extends AbstractChangeNotifier {
 	 *            true if the project will be created under a nested directory
 	 *            with the project name
 	 */
-	public ZendProject(String name, boolean withScripts, File destination,
-			boolean nest) {
-		this.name = name;
-		this.withScripts = withScripts;
-		this.destination = resolveDestination(nest, destination);
-		if (destination == null) {
-			throw new IllegalArgumentException(
-					"can't handle project under given destination");
-		}
-	}
-
-	/**
-	 * 
-	 * @param name
-	 * @param withScripts
-	 * @param destination
-	 */
-	public ZendProject(String name, boolean withScripts, File destination) {
-		this(name, withScripts, destination, false);
+	public ZendProject(boolean withScripts, File destination) {
+		this(withScripts ? "all" : null, destination);
 	}
 
 	/**
@@ -80,7 +63,7 @@ public class ZendProject extends AbstractChangeNotifier {
 	 * 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean create(SampleApplications app) {
+	public boolean create(String name, SampleApplications app) {
 		ProjectResourcesWriter tw = new ProjectResourcesWriter(name,
 				withScripts);
 
@@ -102,12 +85,9 @@ public class ZendProject extends AbstractChangeNotifier {
 
 		try {
 			tw.writeDescriptor(destination);
-			if (withScripts) {
+			if (withScripts != null) {
 				final File scripts = new File(destination, "scripts");
-				if (!scripts.exists()) {
-					scripts.mkdir();
-				}
-				tw.writeAllScripts(scripts);
+				tw.writeScriptsByName(scripts, withScripts);
 			}
 		} catch (IOException e) {
 			log.error(e);
@@ -124,25 +104,22 @@ public class ZendProject extends AbstractChangeNotifier {
 	}
 
 	/**
-	 * If nest flag is on, resolve the nested destination folder
-	 * 
-	 * @param destination2
-	 * @param nest2
-	 * @return
+	 * sample applications
 	 */
-	private File resolveDestination(boolean nest, File destination) {
-		if (!destination.exists()) {
-			log.error("Invalid destination path: provided location does not exist.");
-			return null;
+	public enum SampleApplications {
+		HELLO_WORLD("applications/helloworld/map"),
+
+		ZF_QUICKSTART("applications/zf/map");
+
+		private final String mapPath;
+
+		private SampleApplications(String mapPath) {
+			this.mapPath = mapPath;
 		}
-		// resolve project root
-		File projectRoot = nest ? new File(destination, name) : destination;
-		if (!projectRoot.exists()) {
-			final boolean mkdir = projectRoot.mkdir();
-			if (!mkdir) {
-				return null;
-			}
+
+		public String getMap() {
+			return mapPath;
 		}
-		return projectRoot;
 	}
+
 }

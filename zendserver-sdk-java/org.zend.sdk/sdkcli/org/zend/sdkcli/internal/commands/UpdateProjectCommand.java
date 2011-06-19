@@ -21,37 +21,34 @@ import org.zend.sdklib.application.ZendProject;
  */
 public class UpdateProjectCommand extends AbstractCommand {
 
-	public static final String NAME = "n";
-	public static final String IGNORE_SCRIPTS = "i";
+	public static final String SCRIPTS = "s";
 	public static final String DESTINATION = "d";
 
-	@Option(opt = IGNORE_SCRIPTS, required = false, description = "ignore scripts")
-	public boolean isIgnoreScripts() {
-		return hasOption(IGNORE_SCRIPTS);
+	/**
+	 * @return The project destination
+	 */
+	@Option(opt = DESTINATION, required = false, description = "The project destination", argName = "path")
+	public File getDestination() {
+		String value = getValue(DESTINATION);
+		if (value == null) {
+			value = getCurrentDirectory();
+		}
+		return new File(value);
 	}
 
-	@Option(opt = DESTINATION, required = true, description = "The path to the project folder", argName = "path")
-	public String getDestination() {
-		return getValue(DESTINATION);
-	}
-
-	@Option(opt = NAME, required = false, description = "The project name", argName="name")
-	public String getName() {
-		return getValue(NAME);
+	@Option(opt = SCRIPTS, required = false, description = "Generate deployment scripts, "
+			+ "consider using one of these options [all|postActivate|postDeactivate|postStage|postUnstage|preActivate|preDeactivate|preStage|preUnstage]")
+	public String getScripts() {
+		return getValue(SCRIPTS);
 	}
 
 	@Override
 	public boolean doExecute() {
-		String path = getDestination();
-		if (path == null) {
-			path = getCurrentDirectory();
-		}
-		
-		ZendProject project = new ZendProject(getName(),
-				!isIgnoreScripts(), new File(path));
+		ZendProject project = new ZendProject(getScripts(), getDestination());
 
 		try {
 			return project.update();
+		
 		} catch (IllegalArgumentException e) {
 			getLogger().error(e.getMessage());
 			return false;
