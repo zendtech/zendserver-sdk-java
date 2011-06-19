@@ -2,6 +2,7 @@ package org.zend.sdklib.internal.project;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.application.ZendProject.SampleApplications;
+import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
+import org.zend.sdklib.internal.utils.JaxbHelper;
 
 /**
  * Project creation and update handling including descriptor, scripts and
@@ -28,7 +31,6 @@ public class ProjectResourcesWriter {
 
 	// properties of the new project
 	private final String name;
-	private final String withScripts;
 
 	/**
 	 * @param name
@@ -40,9 +42,8 @@ public class ProjectResourcesWriter {
 	 * @param WelcomePgae
 	 * @param isZend
 	 */
-	public ProjectResourcesWriter(String name, String withScripts) {
+	public ProjectResourcesWriter(String name) {
 		this.name = name;
-		this.withScripts = withScripts;
 	}
 
 	/**
@@ -60,13 +61,14 @@ public class ProjectResourcesWriter {
 	 * @throws JAXBException
 	 * @throws PropertyException
 	 */
-	public void writeDescriptor(File destination) throws IOException,
+	public File writeDescriptor(File destination) throws IOException,
 			PropertyException, JAXBException {
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
 			writeDescriptor(new FileOutputStream(descrFile));
 		}
+		return descrFile;
 	}
 
 	/**
@@ -86,32 +88,34 @@ public class ProjectResourcesWriter {
 
 		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
 				"1.0");
-		if (withScripts != null) {
-			w.setScripts("scripts");
-		}
 		w.write(outputStream);
 		outputStream.close();
 	}
 
 	/**
-	 * Writes scripts under destination with a given list of scripts (all or nothing are
+	 * Writes scripts under destination with a given list of scripts (all or
+	 * nothing are
 	 * 
 	 * @param destination
 	 * @param withScripts
 	 * @throws IOException
+	 * @throws JAXBException
 	 */
-	public void writeScriptsByName(File destination, String withScripts) throws IOException {
+	public void writeScriptsByName(File descriptor, String withScripts)
+			throws IOException, JAXBException {
 		if (withScripts == null) {
 			return;
 		}
-		
+
+		File destination = getScriptsDirectory(descriptor);
 		final ScriptsWriter w = new ScriptsWriter();
 		if ("all".equals(withScripts)) {
 			w.writeAllScripts(destination);
 			return;
 		}
-		
-		final DeploymentScriptTypes n = DeploymentScriptTypes.byName(withScripts);
+
+		final DeploymentScriptTypes n = DeploymentScriptTypes
+				.byName(withScripts);
 		if (n != null) {
 			w.writeSpecificScript(destination, n);
 		} else {
@@ -119,7 +123,21 @@ public class ProjectResourcesWriter {
 					"script with name {0} cannot be found", withScripts));
 		}
 	}
-	
+
+	// TODO: change the way scripts is resolved, should be resolved by
+	// descriptor.properties
+	private File getScriptsDirectory(File descriptor) throws IOException,
+			JAXBException, FileNotFoundException {
+		final Package pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
+				descriptor));
+		String scriptsdir = pkg.getScriptsdir();
+		if (scriptsdir == null) {
+			scriptsdir = "scripts";
+		}
+		File destination = new File(descriptor.getParentFile(), scriptsdir);
+		return destination;
+	}
+
 	/**
 	 * Writes an application to a given destination directory
 	 * 
