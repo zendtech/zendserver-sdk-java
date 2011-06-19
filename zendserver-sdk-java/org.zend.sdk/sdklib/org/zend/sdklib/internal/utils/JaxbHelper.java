@@ -9,6 +9,7 @@ package org.zend.sdklib.internal.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.xml.bind.JAXBContext;
@@ -19,8 +20,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.zend.sdklib.repository.site.Site;
 import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.repository.site.Site;
 
 /**
  * Helps marshal and un-marshal using jaxb APIs
@@ -89,7 +90,7 @@ public class JaxbHelper {
 	 * @throws JAXBException
 	 * @throws PropertyException
 	 */
-	public static void marshalPackage(PrintStream printStream, final Package p)
+	public static void marshalPackage(OutputStream printStream, final Package p)
 			throws JAXBException, PropertyException {
 		JAXBContext jc = JAXBContext
 				.newInstance(ORG_ZEND_SDKLIB_DESCRIPTOR_PKG);
