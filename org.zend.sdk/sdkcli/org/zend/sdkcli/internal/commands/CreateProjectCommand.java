@@ -20,11 +20,27 @@ import org.zend.sdklib.application.ZendProject.SampleApplications;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class CreateProjectCommand extends AbstractCommand {
+public class CreateProjectCommand extends AbstractCommand  {
 
 	public static final String NAME = "n";
-	public static final String OMIT_SCRIPTS = "a";
+	public static final String SCRIPTS = "s";
 	public static final String DESTINATION = "d";
+
+	/**
+	 * @return The project destination
+	 */
+	@Option(opt = DESTINATION, required = false, description = "The project destination", argName = "path")
+	public File getDestination() {
+		final String value = getValue(DESTINATION);
+		return value == null ? resolveDestination(getCurrentDirectory(),
+				getName()) : new File(value);
+	}
+
+	@Option(opt = SCRIPTS, required = false, description = "Generate deployment scripts, "
+			+ "consider using one of these options [all|postActivate|postDeactivate|postStage|postUnstage|preActivate|preDeactivate|preStage|preUnstage]")
+	public String getScripts() {
+		return getValue(SCRIPTS);
+	}
 
 	/**
 	 * @return The project name
@@ -34,29 +50,35 @@ public class CreateProjectCommand extends AbstractCommand {
 		return getValue(NAME);
 	}
 
-	/**
-	 * @return The project destination
-	 */
-	@Option(opt = DESTINATION, required = false, description = "The project destination", argName = "path")
-	public String getDestionation() {
-		return getValue(DESTINATION);
-	}
-
-	/**
-	 * @return Whether to create sample deployment scripts
-	 */
-	@Option(opt = OMIT_SCRIPTS, required = false, description = "Omit deployment scripts")
-	public boolean isOmitScript() {
-		return hasOption(OMIT_SCRIPTS);
-	}
-
 	@Override
 	public boolean doExecute() {
-		String path = getDestionation();
-		if (path == null) {
-			path = getCurrentDirectory();
-		}
-		ZendProject project = new ZendProject(getName(), !isOmitScript(), new File(path));
-		return project.create(SampleApplications.HELLO_WORLD);
+		ZendProject project = new ZendProject(getScripts(), getDestination());
+		return project.create(getName(), getProjectType());
 	}
+
+	/**
+	 * @return
+	 */
+	protected SampleApplications getProjectType() {
+		return SampleApplications.HELLO_WORLD;
+	}
+
+	/**
+	 * If nest is on, resolve the nested destination folder
+	 * 
+	 * @param destination2
+	 * @param nest2
+	 * @return
+	 */
+	private File resolveDestination(String destination, String name) {
+		File projectRoot = new File(destination, name);
+		if (!projectRoot.exists()) {
+			final boolean mkdir = projectRoot.mkdir();
+			if (!mkdir) {
+				return null;
+			}
+		}
+		return projectRoot;
+	}
+
 }

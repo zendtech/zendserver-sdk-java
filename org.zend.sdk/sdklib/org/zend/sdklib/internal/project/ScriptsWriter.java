@@ -16,56 +16,6 @@ import java.io.IOException;
  */
 public class ScriptsWriter {
 
-	enum DeploymentScriptTypes {
-
-		POST_ACTIVATE("postActivate", "post_activate.php"),
-
-		POST_DEACTIVATE("postDeactivate", "post_deactivate.php"),
-
-		POST_STAGE("postStage", "post_stage.php"),
-
-		POST_UNSTAGE("postUnstage", "post_unstage.php "),
-
-		PRE_ACTIVATE("preActivate", "pre_activate.php"),
-
-		PRE_DEACTIVATE("preDeactivate", "pre_deactivate.php"),
-
-		PRE_STAGE("preStage", "pre_stage.php"),
-
-		PRE_UNSTAGE("preUnstage", "pre_unstage.php"),
-
-		UNKNOWN(null, null);
-
-		private final String filename;
-		private final String description;
-
-		private DeploymentScriptTypes(String name, String filename) {
-			this.description = name;
-			this.filename = filename;
-		}
-
-		public String getFilename() {
-			return "scripts/" + filename;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public static DeploymentScriptTypes byName(String name) {
-			if (name == null) {
-				return UNKNOWN;
-			}
-			DeploymentScriptTypes[] values = values();
-			for (DeploymentScriptTypes types : values) {
-				if (name.equals(types.getDescription())) {
-					return types;
-				}
-			}
-			return UNKNOWN;
-		}
-	}
-
 	/**
 	 * Writes all deployment scripts to a given destination directory
 	 * 
@@ -76,15 +26,10 @@ public class ScriptsWriter {
 		if (dest == null || !dest.isDirectory()) {
 			throw new IllegalArgumentException("destination directory problem");
 		}
-
-		writeResource(dest, DeploymentScriptTypes.POST_ACTIVATE);
-		writeResource(dest, DeploymentScriptTypes.POST_DEACTIVATE);
-		writeResource(dest, DeploymentScriptTypes.POST_STAGE);
-		writeResource(dest, DeploymentScriptTypes.POST_UNSTAGE);
-		writeResource(dest, DeploymentScriptTypes.PRE_ACTIVATE);
-		writeResource(dest, DeploymentScriptTypes.PRE_DEACTIVATE);
-		writeResource(dest, DeploymentScriptTypes.PRE_STAGE);
-		writeResource(dest, DeploymentScriptTypes.PRE_UNSTAGE);
+		
+		for (DeploymentScriptTypes type : DeploymentScriptTypes.values()) {
+			writeResource(dest, type);
+		}
 	}                       
 
 	/**
@@ -115,5 +60,55 @@ public class ScriptsWriter {
 				new FileOutputStream(file));
 		ior.copy();
 	}
+
+	public enum DeploymentScriptTypes {
+
+		POST_ACTIVATE("postActivate", "post_activate.php"),
+
+		POST_DEACTIVATE("postDeactivate", "post_deactivate.php"),
+
+		POST_STAGE("postStage", "post_stage.php"),
+
+		POST_UNSTAGE("postUnstage", "post_unstage.php "),
+
+		PRE_ACTIVATE("preActivate", "pre_activate.php"),
+
+		PRE_DEACTIVATE("preDeactivate", "pre_deactivate.php"),
+
+		PRE_STAGE("preStage", "pre_stage.php"),
+
+		PRE_UNSTAGE("preUnstage", "pre_unstage.php");
+
+		private final String filename;
+		private final String description;
+
+		private DeploymentScriptTypes(String name, String filename) {
+			this.description = name;
+			this.filename = filename;
+		}
+
+		public String getFilename() {
+			return "scripts/" + filename;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public static DeploymentScriptTypes byName(String name) {
+			if (name == null) {
+				return null;
+			}
+			
+			DeploymentScriptTypes[] values = values();
+			for (DeploymentScriptTypes types : values) {
+				if (name.equals(types.getDescription())) {
+					return types;
+				}
+			}
+			return null;
+		}
+	}
+
 
 }
