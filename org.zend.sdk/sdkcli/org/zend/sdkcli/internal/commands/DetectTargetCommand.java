@@ -22,7 +22,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class DetectTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
-	private static final String ADD_KEY_ONLY = "a";
+	private static final String GENERATE_KEY_ONLY = "g";
 	private static final String KEY = "k";
 
 	@Option(opt = ID, required = false, description = "The target id to create", argName = "id")
@@ -30,9 +30,9 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		return getValue(ID);
 	}
 
-	@Option(opt = ADD_KEY_ONLY, required = false, description = "This operation will only add a valid key to the localhost server")
-	public boolean isAddKeyOnly() {
-		return hasOption(ADD_KEY_ONLY);
+	@Option(opt = GENERATE_KEY_ONLY, required = false, description = "This operation will only generate a valid key to the localhost server")
+	public boolean isGenerateKeyOnly() {
+		return hasOption(GENERATE_KEY_ONLY);
 	}
 
 	@Option(opt = KEY, required = false, description = "The key to use", argName = "key")
@@ -44,12 +44,12 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean doExecute() {
 		final String key = getKey();
 		final String targetId = getId();
-		final boolean addKeyOnly = isAddKeyOnly();
+		final boolean keyOnly = isGenerateKeyOnly();
 		try {
 			final IZendTarget target = getTargetManager()
-					.detectLocalhostTarget(targetId, key, addKeyOnly);
+					.detectLocalhostTarget(targetId, key, keyOnly);
 			if (target != null) {
-				if (addKeyOnly) {
+				if (keyOnly) {
 					getLogger().info(
 							"The following key is available for target "
 									+ target.getHost());

@@ -31,7 +31,7 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
-import org.zend.sdklib.internal.project.TemplateWriter;
+import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
@@ -281,7 +281,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private String getPackageName(File container) {
 		String result = null;
-		File descriptorFile = new File(container, TemplateWriter.DESCRIPTOR);
+		File descriptorFile = new File(container, ProjectResourcesWriter.DESCRIPTOR);
 		if (!descriptorFile.exists()) {
 			log.error(descriptorFile.getAbsoluteFile() + " does not exist.");
 			return null;

@@ -8,6 +8,8 @@
 
 package org.zend.sdkcli.internal.commands;
 
+import java.io.File;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
 
@@ -41,8 +43,12 @@ public class UpdateProjectCommand extends AbstractCommand {
 	@Override
 	public boolean doExecute() {
 		String path = getDestination();
+		if (path == null) {
+			path = getCurrentDirectory();
+		}
+		
 		ZendProject project = new ZendProject(getName(),
-				!isIgnoreScripts(), path);
+				!isIgnoreScripts(), new File(path));
 
 		try {
 			return project.update();
