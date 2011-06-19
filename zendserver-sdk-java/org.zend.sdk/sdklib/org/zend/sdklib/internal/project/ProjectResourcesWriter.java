@@ -160,8 +160,15 @@ public class ProjectResourcesWriter {
 
 	private void copyFile(File destination, String path) throws IOException,
 			FileNotFoundException {
+		if (path.length() == 0) {
+			return;
+		}
 		final InputStream is = this.getClass().getResourceAsStream(path);
 		File outputFile = new File(destination, path);
+		
+		// create canonical structure
+		final boolean mkdirs = outputFile.getParentFile().mkdirs();
+		
 		if (!outputFile.createNewFile()) {
 			throw new IOException("Cannot create file "
 					+ outputFile.getAbsolutePath());
@@ -183,6 +190,7 @@ public class ProjectResourcesWriter {
 		String readLine = reader.readLine();
 		while (readLine != null) {
 			paths.add(readLine.trim());
+			readLine = reader.readLine();
 		}
 		return paths;
 	}

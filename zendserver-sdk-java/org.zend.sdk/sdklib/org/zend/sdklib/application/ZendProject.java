@@ -29,9 +29,9 @@ public class ZendProject extends AbstractChangeNotifier {
 	 * sample applications
 	 */
 	public enum SampleApplications {
-		HELLO_WORLD("/applications/helloworld/map"),
+		HELLO_WORLD("applications/helloworld/map"),
 
-		ZF_QUICKSTART("/applications/zf/map");
+		ZF_QUICKSTART("applications/zf/map");
 
 		private final String mapPath;
 
@@ -103,7 +103,11 @@ public class ZendProject extends AbstractChangeNotifier {
 		try {
 			tw.writeDescriptor(destination);
 			if (withScripts) {
-				tw.writeAllScripts(destination);
+				final File scripts = new File(destination, "scripts");
+				if (!scripts.exists()) {
+					scripts.mkdir();
+				}
+				tw.writeAllScripts(scripts);
 			}
 		} catch (IOException e) {
 			log.error(e);
