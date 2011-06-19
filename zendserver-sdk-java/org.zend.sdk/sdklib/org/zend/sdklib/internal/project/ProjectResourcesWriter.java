@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) May 18, 2011 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.sdklib.internal.project;
 
 import java.io.BufferedReader;
@@ -29,13 +36,13 @@ public class ProjectResourcesWriter {
 
 	public static final String DESCRIPTOR = "deployment.xml";
 
-	// properties of the new project
+	// properties of the subject project
 	private final String name;
 
 	/**
 	 * @param name
 	 *            of the application
-	 * @param destination
+	 * @param path
 	 *            project root
 	 * @param withScripts2
 	 *            true if scripts are added to the project
@@ -44,6 +51,10 @@ public class ProjectResourcesWriter {
 	 */
 	public ProjectResourcesWriter(String name) {
 		this.name = name;
+	}
+
+	public ProjectResourcesWriter(File projectPath) {
+		this(getProjectName(new File(projectPath, DESCRIPTOR)));
 	}
 
 	/**
@@ -96,7 +107,7 @@ public class ProjectResourcesWriter {
 	 * Writes scripts under destination with a given list of scripts (all or
 	 * nothing are
 	 * 
-	 * @param destination
+	 * @param path
 	 * @param withScripts
 	 * @throws IOException
 	 * @throws JAXBException
@@ -130,12 +141,32 @@ public class ProjectResourcesWriter {
 			JAXBException, FileNotFoundException {
 		final Package pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
 				descriptor));
+		
 		String scriptsdir = pkg.getScriptsdir();
 		if (scriptsdir == null) {
 			scriptsdir = "scripts";
 		}
 		File destination = new File(descriptor.getParentFile(), scriptsdir);
 		return destination;
+	}
+
+	private static String getProjectName(File descriptor) {
+
+		Package pkg;
+		try {
+			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
+					descriptor));
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Error reading descriptor file "
+					+ descriptor.getAbsolutePath());
+		} 
+		
+		if (pkg == null) {
+			throw new IllegalArgumentException("Error reading descriptor file "
+					+ descriptor.getAbsolutePath());
+		}
+
+		return pkg.getName();
 	}
 
 	/**

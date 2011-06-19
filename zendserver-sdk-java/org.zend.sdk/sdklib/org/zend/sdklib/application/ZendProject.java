@@ -22,24 +22,24 @@ import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 public class ZendProject extends AbstractChangeNotifier {
 
 	protected String name;
-	protected File destination;
+	protected File path;
 
 	/**
 	 * @param name
 	 * @param scripts
 	 *            list of scripts to generate (all or null are options as well)
-	 * @param destination
+	 * @param path
 	 * @param nest
 	 *            true if the project should be one level under the destination
 	 * 
 	 */
-	public ZendProject(File destination) {
-		if (destination == null) {
+	public ZendProject(File path) {
+		if (path == null) {
 			throw new IllegalArgumentException(
 					"can't handle project under given destination");
 		}
 
-		this.destination = destination;
+		this.path = path;
 	}
 
 	/**
@@ -52,8 +52,15 @@ public class ZendProject extends AbstractChangeNotifier {
 
 		// first create the base application
 		try {
-			tw.writeApplication(destination, app);
+			tw.writeApplication(path, app);
+			tw.writeDescriptor(path);
 		} catch (IOException e) {
+			log.error(e);
+			return false;
+		} catch (PropertyException e) {
+			log.error(e);
+			return false;
+		} catch (JAXBException e) {
 			log.error(e);
 			return false;
 		}
@@ -63,10 +70,10 @@ public class ZendProject extends AbstractChangeNotifier {
 	}
 
 	public boolean update(String generateScripts) {
-		ProjectResourcesWriter tw = new ProjectResourcesWriter(name);
+		ProjectResourcesWriter tw = new ProjectResourcesWriter(path);
 
 		try {
-			final File d = tw.writeDescriptor(destination);
+			final File d = tw.writeDescriptor(path);
 			if (generateScripts != null) {
 				tw.writeScriptsByName(d, generateScripts);
 			}
@@ -83,7 +90,6 @@ public class ZendProject extends AbstractChangeNotifier {
 
 		return true;
 	}
-
 
 	/**
 	 * sample applications
