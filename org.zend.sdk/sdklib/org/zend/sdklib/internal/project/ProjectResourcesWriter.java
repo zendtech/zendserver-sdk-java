@@ -79,7 +79,8 @@ public class ProjectResourcesWriter {
 		if (!descrFile.exists()) {
 			final boolean n = descrFile.createNewFile();
 			if (!n) {
-				throw new IOException("Error creating file " + destination.getAbsolutePath());
+				throw new IOException("Error creating file "
+						+ destination.getAbsolutePath());
 			}
 			writeDescriptor(new FileOutputStream(descrFile));
 		}
@@ -126,7 +127,7 @@ public class ProjectResourcesWriter {
 		if (destination != null && !destination.isDirectory()) {
 			destination.mkdirs();
 		}
-		
+
 		final ScriptsWriter w = new ScriptsWriter();
 		if ("all".equals(withScripts)) {
 			w.writeAllScripts(destination);
@@ -149,7 +150,7 @@ public class ProjectResourcesWriter {
 			JAXBException, FileNotFoundException {
 		final Package pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
 				descriptor));
-		
+
 		String scriptsdir = pkg.getScriptsdir();
 		if (scriptsdir == null) {
 			scriptsdir = "scripts";
@@ -161,21 +162,20 @@ public class ProjectResourcesWriter {
 	private static String getProjectName(File descriptor) {
 
 		Package pkg;
-			try {
-				pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
-						descriptor));
-			} catch (FileNotFoundException e) {
-				// no descriptor file - choose project name as direcory name 
-				final File parentFile = descriptor.getParentFile();
-				return parentFile.getName();
-			} catch (IOException e) {
-				throw new IllegalArgumentException("Error reading descriptor file "
-						+ descriptor.getAbsolutePath());
-			} catch (JAXBException e) {
-				throw new IllegalArgumentException("Error reading descriptor file "
-						+ descriptor.getAbsolutePath());
-			}
-		
+		try {
+			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(descriptor));
+		} catch (FileNotFoundException e) {
+			// no descriptor file - choose project name as direcory name
+			final File parentFile = descriptor.getParentFile();
+			return parentFile.getName();
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Error reading descriptor file "
+					+ descriptor.getAbsolutePath());
+		} catch (JAXBException e) {
+			throw new IllegalArgumentException("Error reading descriptor file "
+					+ descriptor.getAbsolutePath());
+		}
+
 		if (pkg == null) {
 			throw new IllegalArgumentException("Error reading descriptor file "
 					+ descriptor.getAbsolutePath());
@@ -200,7 +200,7 @@ public class ProjectResourcesWriter {
 
 			// file handling
 			if (!path.endsWith("/")) {
-				copyFile(destination, path);
+				copyFile(destination, path, app);
 			} else {
 				createFolder(destination, path);
 			}
@@ -213,13 +213,13 @@ public class ProjectResourcesWriter {
 		return file.mkdirs();
 	}
 
-	private void copyFile(File destination, String path) throws IOException,
+	private void copyFile(File destination, String path, SampleApplications app) throws IOException,
 			FileNotFoundException {
 		if (path.length() == 0) {
 			return;
 		}
 		final InputStream is = this.getClass().getResourceAsStream(path);
-		File outputFile = new File(destination, path);
+		File outputFile = new File(destination, relativeToApp(path, app));
 
 		// create canonical structure
 		outputFile.getParentFile().mkdirs();
@@ -232,6 +232,13 @@ public class ProjectResourcesWriter {
 		InputOutputResource ior = new InputOutputResource(is,
 				new FileOutputStream(outputFile));
 		ior.copy();
+	}
+
+	private String relativeToApp(String path, SampleApplications app) {
+		final int length = app.getBasePath().length();
+		final String trim = path.trim();
+		path = path.substring(length);
+		return path;
 	}
 
 	private List<String> getAllResources(SampleApplications app)
