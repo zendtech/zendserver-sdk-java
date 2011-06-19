@@ -119,6 +119,10 @@ public class ProjectResourcesWriter {
 		}
 
 		File destination = getScriptsDirectory(descriptor);
+		if (destination != null && !destination.isDirectory()) {
+			destination.mkdirs();
+		}
+		
 		final ScriptsWriter w = new ScriptsWriter();
 		if ("all".equals(withScripts)) {
 			w.writeAllScripts(destination);

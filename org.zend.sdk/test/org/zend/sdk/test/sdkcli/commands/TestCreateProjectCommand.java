@@ -37,7 +37,7 @@ public class TestCreateProjectCommand extends AbstractTest {
 	@Test
 	public void testByConstructor2() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-n", "testName", "-d", getTempFileName(), "-a" });
+				"project", "-n", "testName", "-d", getTempFileName(), "-s", "all" });
 		ICommand command = new CreateProjectCommand();
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
