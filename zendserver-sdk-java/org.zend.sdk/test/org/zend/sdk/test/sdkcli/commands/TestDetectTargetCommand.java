@@ -22,7 +22,7 @@ import org.zend.webapi.core.WebApiException;
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
 	private String[] validCommand = new String[] { "detect", "target" };
-	private String[] validCommandOnlyAdd = new String[] { "detect", "target", "-a" };
+	private String[] validCommandOnlyAdd = new String[] { "detect", "target", "-g" };
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
