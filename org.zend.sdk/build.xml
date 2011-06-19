@@ -209,7 +209,6 @@
 		<property name="quickstart.dir" value="tmp/quickstart-1.11"/>
 		<property name="repository.dir" value="tmp/repository"/>
 
-		
 		<get dest="tmp/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>		
 		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
 		<move todir="${quickstart.dir}" includeemptydirs="true">

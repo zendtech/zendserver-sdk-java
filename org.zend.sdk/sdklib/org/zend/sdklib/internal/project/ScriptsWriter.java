@@ -45,7 +45,7 @@ public class ScriptsWriter {
 		}
 
 		public String getFilename() {
-			return filename;
+			return "scripts/" + filename;
 		}
 
 		public String getDescription() {
@@ -85,7 +85,7 @@ public class ScriptsWriter {
 		writeResource(dest, DeploymentScriptTypes.PRE_DEACTIVATE);
 		writeResource(dest, DeploymentScriptTypes.PRE_STAGE);
 		writeResource(dest, DeploymentScriptTypes.PRE_UNSTAGE);
-	}
+	}                       
 
 	/**
 	 * write specific script to a destination directory
@@ -106,8 +106,13 @@ public class ScriptsWriter {
 	private void writeResource(File dest, DeploymentScriptTypes type)
 			throws IOException {
 
+		final File file = new File(dest, type.filename);
+		if (!file.getParentFile().isDirectory()) {
+			file.getParentFile().mkdirs();
+		}
+
 		final InputOutputResource ior = new InputOutputResource(type,
-				new FileOutputStream(new File(dest, type.filename)));
+				new FileOutputStream(file));
 		ior.copy();
 	}
 
