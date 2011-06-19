@@ -31,12 +31,20 @@ public class InputOutputResource {
 	}
 
 	/**
-	 * @param scripttype 
+	 * @param scripttype
 	 * @param os
 	 */
 	public InputOutputResource(DeploymentScriptTypes type, OutputStream os) {
-		this(InputOutputResource.class.getResourceAsStream(type.getFilename()),
-				os);
+		this(getInputSTream(type), os);
+	}
+
+	private static InputStream getInputSTream(DeploymentScriptTypes type) {
+		final InputStream s = InputOutputResource.class
+				.getResourceAsStream(type.getFilename());
+		if (s == null) {
+			throw new IllegalStateException("Error finding script for " + type.getFilename());
+		}
+		return s;
 	}
 
 	public void copy() throws IOException {
