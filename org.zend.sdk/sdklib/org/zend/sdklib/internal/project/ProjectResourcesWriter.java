@@ -2,26 +2,53 @@ package org.zend.sdklib.internal.project;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.PropertyException;
+
 /**
  * Writes files from template
  * 
  */
-public class TemplateWriter {
+public class ProjectResourcesWriter {
 
 	private static final String TEMPLATES_DIR = "resources/templates";
 	private static final String SCRIPTS_DIR = "scripts";
 	public static final String DESCRIPTOR = "deployment.xml";
 
+	// properties of the new project
+	private final String name;
+	private final boolean withScripts;
+	private final boolean welcomePgae;
+	private final boolean isZend;
+
 	/**
+	 * @param name
+	 *            of the application
+	 * @param destination
+	 *            project root
+	 * @param withScripts
+	 *            true if scripts are added to the project
+	 * @param WelcomePgae
+	 * @param isZend
+	 */
+	public ProjectResourcesWriter(String name, boolean withScripts,
+			boolean WelcomePgae, boolean isZend) {
+		this.name = name;
+		this.withScripts = withScripts;
+		this.welcomePgae = WelcomePgae;
+		this.isZend = isZend;
+	}
+
+	/**
+	 * Writing descriptor file to the root project
 	 * 
 	 * @param name
 	 *            - name of the project
@@ -32,51 +59,57 @@ public class TemplateWriter {
 	 * @param destination
 	 *            - destination directory
 	 * @throws IOException
+	 * @throws JAXBException
+	 * @throws PropertyException
 	 */
-	public void writeTemplate(String name, boolean withContent,
-			boolean withScripts, File destination) throws IOException {
+	public void writeDescriptor(File destination) throws IOException,
+			PropertyException, JAXBException {
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
-			writeDescriptor(name, withScripts, new FileWriter(descrFile));
+			writeDescriptor(new FileOutputStream(descrFile));
+		}
+	}
+
+	/**
+	 * Writing project descriptor to a given output stream
+	 * 
+	 * @param outputStream
+	 * @throws IOException
+	 * @throws PropertyException
+	 * @throws JAXBException
+	 */
+	public void writeDescriptor(OutputStream outputStream) throws IOException,
+			PropertyException, JAXBException {
+		if (name == null) {
+			throw new IllegalArgumentException(
+					"Failed to create deployment descriptor. Project name is missing");
 		}
 
-		String[] resources = getTemplateResources();
-		if (resources == null) {
-			return;
+		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
+				"1.0");
+		if (withScripts) {
+			w.setScripts("scripts");
 		}
+		w.write(outputStream);
+		outputStream.close();
+	}
 
-		for (int i = 0; i < resources.length; i++) {
-			if (withScripts || (withContent && (!isScript(resources[i])))) {
-				writeStaticResource(resources[i], destination);
-			}
-		}
+	/**
+	 * Write all scripts under a given destination
+	 * @param destination
+	 * @throws IOException
+	 */
+	public void writeAllScripts(File destination) throws IOException {
+		final ScriptsWriter w = new ScriptsWriter();
+		w.writeAllScripts(destination);
 	}
 
 	private boolean isScript(String path) {
 		return path.startsWith(SCRIPTS_DIR);
 	}
 
-	private void writeDescriptor(String name, boolean withScripts, Writer out)
-			throws IOException {
-		if (name == null) {
-			throw new IllegalArgumentException(
-					"Failed to create deployment descriptor. Project name is missing");
-		}
-		out.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		out.append("<package version=\"2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n");
-		out.append(" <name>").append(xmlEscape(name)).append("</name>\n");
-		out.append(" <version>\n");
-		out.append("   <release>1.0.0.0</release>\n");
-		out.append(" </version>\n");
-		out.append(" <appdir>public</appdir>\n");
-		out.append(" <scriptsdir>scripts</scriptsdir>\n");
-		out.append(" <dependencies></dependencies>");
-		out.append("</package>\n");
-		out.close();
-	}
-
-	private CharSequence xmlEscape(String name) {
+	private String xmlEscape(String name) {
 		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
 			if (c == '&' || c == '<' || c == '>') {
@@ -203,5 +236,4 @@ public class TemplateWriter {
 
 		return files.toArray(new String[files.size()]);
 	}
-
 }
