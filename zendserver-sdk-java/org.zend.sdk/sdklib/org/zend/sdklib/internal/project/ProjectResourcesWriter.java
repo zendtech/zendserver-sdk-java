@@ -77,6 +77,10 @@ public class ProjectResourcesWriter {
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
+			final boolean n = descrFile.createNewFile();
+			if (!n) {
+				throw new IOException("Error creating file " + destination.getAbsolutePath());
+			}
 			writeDescriptor(new FileOutputStream(descrFile));
 		}
 		return descrFile;

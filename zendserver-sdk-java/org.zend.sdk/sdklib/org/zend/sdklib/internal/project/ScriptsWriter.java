@@ -55,9 +55,11 @@ public class ScriptsWriter {
 		if (!file.getParentFile().isDirectory()) {
 			file.getParentFile().mkdirs();
 		}
-
+		file.createNewFile();
+		
+		final FileOutputStream os = new FileOutputStream(file);
 		final InputOutputResource ior = new InputOutputResource(type,
-				new FileOutputStream(file));
+				os);
 		ior.copy();
 	}
 
