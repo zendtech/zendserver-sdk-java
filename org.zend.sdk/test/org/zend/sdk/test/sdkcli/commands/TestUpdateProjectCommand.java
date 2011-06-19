@@ -19,7 +19,7 @@ public class TestUpdateProjectCommand extends AbstractTest {
 	@Test
 	public void testByCommandFactory() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"project", "-n", "testName", "-d", TestCreateProjectCommand.getTempFileName() });
+				"project", "-d", TestCreateProjectCommand.getTempFileName() });
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -28,16 +28,7 @@ public class TestUpdateProjectCommand extends AbstractTest {
 	@Test
 	public void testByConstructor1() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"project", "-n", "testName", "-d", TestCreateProjectCommand.getTempFileName() });
-		ICommand command = new UpdateProjectCommand();
-		assertNotNull(command);
-		assertTrue(command.execute(cmdLine));
-	}
-
-	@Test
-	public void testByConstructor2() throws ParseError, IOException {
-		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"project", "-n", "testName", "-d", TestCreateProjectCommand.getTempFileName(), "-i" });
+				"project", "-d", TestCreateProjectCommand.getTempFileName() });
 		ICommand command = new UpdateProjectCommand();
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -50,6 +41,6 @@ public class TestUpdateProjectCommand extends AbstractTest {
 		ICommand command = new UpdateProjectCommand();
 		assertNotNull(command);
 
-		assertFalse(command.execute(cmdLine));
+		assertTrue(command.execute(cmdLine));
 	}
 }

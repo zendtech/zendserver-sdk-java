@@ -153,13 +153,20 @@ public class ProjectResourcesWriter {
 	private static String getProjectName(File descriptor) {
 
 		Package pkg;
-		try {
-			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
-					descriptor));
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Error reading descriptor file "
-					+ descriptor.getAbsolutePath());
-		} 
+			try {
+				pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
+						descriptor));
+			} catch (FileNotFoundException e) {
+				// no descriptor file - choose project name as direcory name 
+				final File parentFile = descriptor.getParentFile();
+				return parentFile.getName();
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Error reading descriptor file "
+						+ descriptor.getAbsolutePath());
+			} catch (JAXBException e) {
+				throw new IllegalArgumentException("Error reading descriptor file "
+						+ descriptor.getAbsolutePath());
+			}
 		
 		if (pkg == null) {
 			throw new IllegalArgumentException("Error reading descriptor file "
