@@ -71,7 +71,7 @@ public class ScriptsWriter {
 
 		POST_STAGE("postStage", "post_stage.php"),
 
-		POST_UNSTAGE("postUnstage", "post_unstage.php "),
+		POST_UNSTAGE("postUnstage", "post_unstage.php"),
 
 		PRE_ACTIVATE("preActivate", "pre_activate.php"),
 
