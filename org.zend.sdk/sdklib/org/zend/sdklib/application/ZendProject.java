@@ -22,7 +22,6 @@ import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 public class ZendProject extends AbstractChangeNotifier {
 
 	protected String name;
-	protected String withScripts;
 	protected File destination;
 
 	/**
@@ -34,28 +33,13 @@ public class ZendProject extends AbstractChangeNotifier {
 	 *            true if the project should be one level under the destination
 	 * 
 	 */
-	public ZendProject(String scripts, File destination) {
+	public ZendProject(File destination) {
 		if (destination == null) {
 			throw new IllegalArgumentException(
 					"can't handle project under given destination");
 		}
-		
-		this.withScripts = scripts;
-		this.destination = destination;
-	}
 
-	/**
-	 * Project handler allowing users to create and update projects
-	 * 
-	 * @param name
-	 * @param withScripts
-	 * @param destination
-	 * @param nest
-	 *            true if the project will be created under a nested directory
-	 *            with the project name
-	 */
-	public ZendProject(boolean withScripts, File destination) {
-		this(withScripts ? "all" : null, destination);
+		this.destination = destination;
 	}
 
 	/**
@@ -63,9 +47,8 @@ public class ZendProject extends AbstractChangeNotifier {
 	 * 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean create(String name, SampleApplications app) {
-		ProjectResourcesWriter tw = new ProjectResourcesWriter(name,
-				withScripts);
+	public boolean create(String name, SampleApplications app, String generateScripts) {
+		ProjectResourcesWriter tw = new ProjectResourcesWriter(name);
 
 		// first create the base application
 		try {
@@ -76,18 +59,16 @@ public class ZendProject extends AbstractChangeNotifier {
 		}
 
 		// update with deployment resources
-		return update();
+		return update(generateScripts);
 	}
 
-	public boolean update() {
-		ProjectResourcesWriter tw = new ProjectResourcesWriter(name,
-				withScripts);
+	public boolean update(String generateScripts) {
+		ProjectResourcesWriter tw = new ProjectResourcesWriter(name);
 
 		try {
-			tw.writeDescriptor(destination);
-			if (withScripts != null) {
-				final File scripts = new File(destination, "scripts");
-				tw.writeScriptsByName(scripts, withScripts);
+			final File d = tw.writeDescriptor(destination);
+			if (generateScripts != null) {
+				tw.writeScriptsByName(d, generateScripts);
 			}
 		} catch (IOException e) {
 			log.error(e);
@@ -102,6 +83,7 @@ public class ZendProject extends AbstractChangeNotifier {
 
 		return true;
 	}
+
 
 	/**
 	 * sample applications
