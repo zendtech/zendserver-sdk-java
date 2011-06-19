@@ -44,11 +44,10 @@ public class UpdateProjectCommand extends AbstractCommand {
 
 	@Override
 	public boolean doExecute() {
-		ZendProject project = new ZendProject(getScripts(), getDestination());
+		ZendProject project = new ZendProject(getDestination());
 
 		try {
-			return project.update();
-		
+			return project.update(getScripts());
 		} catch (IllegalArgumentException e) {
 			getLogger().error(e.getMessage());
 			return false;
