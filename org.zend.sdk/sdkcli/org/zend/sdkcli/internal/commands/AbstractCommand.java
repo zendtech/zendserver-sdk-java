@@ -42,7 +42,7 @@ public abstract class AbstractCommand implements ICommand {
 		setupOptions();
 	}
 
-	@Option(opt = VERBOSE, required = false, description = "Verbose mode: errors and debug messages are printed.")
+	@Option(opt = VERBOSE, required = false, description = "Verbose mode: warning and debug messages are printed.")
 	public boolean isVerbose() {
 		return hasOption(VERBOSE);
 	}

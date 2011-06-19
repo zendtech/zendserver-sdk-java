@@ -18,8 +18,8 @@ public class TestZendProject extends AbstractTest {
 	@Test
 	public void testZendProjectCreation1() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
-		ZendProject project = new ZendProject("name", true, new File(dirName));
-		assertTrue(project.create(SampleApplications.HELLO_WORLD));
+		ZendProject project = new ZendProject(true, new File(dirName));
+		assertTrue(project.create("name", SampleApplications.HELLO_WORLD));
 
 		assertTrue(new File(dirName + "/name/deployment.xml").exists());
 		assertTrue(new File(dirName + "/name/public/index.html").exists());
@@ -41,8 +41,8 @@ public class TestZendProject extends AbstractTest {
 	@Test
 	public void testZendProjectCreation2() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
-		ZendProject project = new ZendProject("name", true, new File(dirName));
-		assertTrue(project.create(SampleApplications.HELLO_WORLD));
+		ZendProject project = new ZendProject(true, new File(dirName));
+		assertTrue(project.create("name", SampleApplications.HELLO_WORLD));
 
 		assertTrue(new File(dirName + "/name/deployment.xml").exists());
 		assertTrue(new File(dirName + "/name/public/index.html").exists());
@@ -64,8 +64,8 @@ public class TestZendProject extends AbstractTest {
 	@Test
 	public void testZendProjectCreation3() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
-		ZendProject project = new ZendProject("name", false, new File(dirName));
-		assertTrue(project.create(SampleApplications.HELLO_WORLD));
+		ZendProject project = new ZendProject(false, new File(dirName));
+		assertTrue(project.create("name", SampleApplications.HELLO_WORLD));
 
 		assertTrue(new File(dirName + "/name/deployment.xml").exists());
 		assertTrue(new File(dirName + "/name/public/index.html").exists());
@@ -88,7 +88,7 @@ public class TestZendProject extends AbstractTest {
 	@Test
 	public void testZendProjectUpdate1() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
-		ZendProject project = new ZendProject("name", false, new File(dirName));
+		ZendProject project = new ZendProject(false, new File(dirName));
 		assertTrue(project.update());
 
 		assertTrue(new File(dirName + "/deployment.xml").exists());

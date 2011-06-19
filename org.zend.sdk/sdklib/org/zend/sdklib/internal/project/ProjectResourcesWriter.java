@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,19 +28,19 @@ public class ProjectResourcesWriter {
 
 	// properties of the new project
 	private final String name;
-	private final boolean withScripts;
+	private final String withScripts;
 
 	/**
 	 * @param name
 	 *            of the application
 	 * @param destination
 	 *            project root
-	 * @param withScripts
+	 * @param withScripts2
 	 *            true if scripts are added to the project
 	 * @param WelcomePgae
 	 * @param isZend
 	 */
-	public ProjectResourcesWriter(String name, boolean withScripts) {
+	public ProjectResourcesWriter(String name, String withScripts) {
 		this.name = name;
 		this.withScripts = withScripts;
 	}
@@ -85,7 +86,7 @@ public class ProjectResourcesWriter {
 
 		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
 				"1.0");
-		if (withScripts) {
+		if (withScripts != null) {
 			w.setScripts("scripts");
 		}
 		w.write(outputStream);
@@ -93,42 +94,32 @@ public class ProjectResourcesWriter {
 	}
 
 	/**
-	 * Write all scripts under a given destination directory
+	 * Writes scripts under destination with a given list of scripts (all or nothing are
 	 * 
 	 * @param destination
+	 * @param withScripts
 	 * @throws IOException
 	 */
-	public void writeAllScripts(File destination) throws IOException {
+	public void writeScriptsByName(File destination, String withScripts) throws IOException {
+		if (withScripts == null) {
+			return;
+		}
+		
 		final ScriptsWriter w = new ScriptsWriter();
-		w.writeAllScripts(destination);
+		if ("all".equals(withScripts)) {
+			w.writeAllScripts(destination);
+			return;
+		}
+		
+		final DeploymentScriptTypes n = DeploymentScriptTypes.byName(withScripts);
+		if (n != null) {
+			w.writeSpecificScript(destination, n);
+		} else {
+			throw new IllegalArgumentException(MessageFormat.format(
+					"script with name {0} cannot be found", withScripts));
+		}
 	}
-
-	/**
-	 * Write specific script to a given destination directory
-	 * 
-	 * @param type
-	 * @param destination
-	 * @throws IOException
-	 */
-	public void writeSpecificScript(DeploymentScriptTypes type, File destination)
-			throws IOException {
-		final ScriptsWriter w = new ScriptsWriter();
-		w.writeSpecificScript(destination, type);
-	}
-
-	/**
-	 * Write specific script to a given destination directory
-	 * 
-	 * @param type
-	 * @param destination
-	 * @throws IOException
-	 */
-	public void writeSpecificScript(String type, File destination)
-			throws IOException {
-		final ScriptsWriter w = new ScriptsWriter();
-		w.writeSpecificScript(destination, DeploymentScriptTypes.byName(type));
-	}
-
+	
 	/**
 	 * Writes an application to a given destination directory
 	 * 
@@ -165,10 +156,10 @@ public class ProjectResourcesWriter {
 		}
 		final InputStream is = this.getClass().getResourceAsStream(path);
 		File outputFile = new File(destination, path);
-		
+
 		// create canonical structure
-		final boolean mkdirs = outputFile.getParentFile().mkdirs();
-		
+		outputFile.getParentFile().mkdirs();
+
 		if (!outputFile.createNewFile()) {
 			throw new IOException("Cannot create file "
 					+ outputFile.getAbsolutePath());
