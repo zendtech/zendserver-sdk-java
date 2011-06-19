@@ -99,7 +99,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	/**
 	 * Creates compressed package file in the given folder.
 	 * 
-	 * @param destination
+	 * @param path
 	 *            - location where package should be created
 	 * @return
 	 */
@@ -157,7 +157,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	/**
 	 * Creates compressed package file in the current location.
 	 * 
-	 * @param destination
+	 * @param path
 	 *            - location where package should be created
 	 * @return
 	 */
