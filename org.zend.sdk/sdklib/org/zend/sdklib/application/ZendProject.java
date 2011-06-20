@@ -47,7 +47,8 @@ public class ZendProject extends AbstractChangeNotifier {
 	 * 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean create(String name, SampleApplications app, String generateScripts) {
+	public boolean create(String name, TemplateApplications app,
+			String generateScripts) {
 		ProjectResourcesWriter tw = new ProjectResourcesWriter(name);
 
 		// first create the base application
@@ -94,14 +95,16 @@ public class ZendProject extends AbstractChangeNotifier {
 	/**
 	 * sample applications
 	 */
-	public enum SampleApplications {
-		HELLO_WORLD("applications/helloworld/"),
+	public enum TemplateApplications {
+		ZEND("applications/zf/"),
 
-		ZF_QUICKSTART("applications/zf/");
+		SIMPLE("applications/helloworld/"),
+
+		QUICKSTART("applications/quickstart/");
 
 		private final String basePath;
 
-		private SampleApplications(String mapPath) {
+		private TemplateApplications(String mapPath) {
 			this.basePath = mapPath;
 		}
 
@@ -112,6 +115,9 @@ public class ZendProject extends AbstractChangeNotifier {
 		public String getBasePath() {
 			return basePath;
 		}
+		
+		public static TemplateApplications getDefault() {
+			return ZEND;
+		}
 	}
-
 }

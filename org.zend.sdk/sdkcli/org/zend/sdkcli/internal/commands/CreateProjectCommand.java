@@ -11,7 +11,7 @@ import java.io.File;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
-import org.zend.sdklib.application.ZendProject.SampleApplications;
+import org.zend.sdklib.application.ZendProject.TemplateApplications;
 
 /**
  * Represents create-project command. In the result of calling it new PHP
@@ -20,11 +20,12 @@ import org.zend.sdklib.application.ZendProject.SampleApplications;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class CreateProjectCommand extends AbstractCommand  {
+public class CreateProjectCommand extends AbstractCommand {
 
 	public static final String NAME = "n";
 	public static final String SCRIPTS = "s";
 	public static final String DESTINATION = "d";
+	public static final String TEMPLATE = "t";
 
 	/**
 	 * @return The project destination
@@ -50,17 +51,28 @@ public class CreateProjectCommand extends AbstractCommand  {
 		return getValue(NAME);
 	}
 
+	/**
+	 * @return The project name
+	 */
+	@Option(opt = TEMPLATE, required = false, description = "The template name to use (zend | quickstart | simple). Default is zend application", argName = "name")
+	public TemplateApplications getTemplate() {
+		TemplateApplications result = TemplateApplications.getDefault();
+		final String value = getValue(TEMPLATE);
+		if (value != null) {
+			try {
+				result = TemplateApplications.valueOf(value.toUpperCase());
+			} catch (Exception e) {
+				throw new IllegalArgumentException(value
+						+ " is not a valid template name");
+			}
+		}
+		return result;
+	}
+
 	@Override
 	public boolean doExecute() {
 		ZendProject project = new ZendProject(getDestination());
-		return project.create(getName(), getProjectType(), getScripts());
-	}
-
-	/**
-	 * @return
-	 */
-	protected SampleApplications getProjectType() {
-		return SampleApplications.HELLO_WORLD;
+		return project.create(getName(), getTemplate(), getScripts());
 	}
 
 	/**

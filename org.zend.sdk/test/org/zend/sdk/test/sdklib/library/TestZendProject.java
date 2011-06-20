@@ -10,7 +10,7 @@ import org.zend.sdk.test.AbstractTest;
 import org.zend.sdk.test.sdkcli.commands.TestCreateProjectCommand;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.application.ZendProject;
-import org.zend.sdklib.application.ZendProject.SampleApplications;
+import org.zend.sdklib.application.ZendProject.TemplateApplications;
 
 public class TestZendProject extends AbstractTest {
 
@@ -19,7 +19,7 @@ public class TestZendProject extends AbstractTest {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
 		assertTrue(project
-				.create("name", SampleApplications.HELLO_WORLD, "all"));
+				.create("name", TemplateApplications.SIMPLE, "all"));
 
 		assertTrue(new File(dirName + "/deployment.xml").exists());
 		assertTrue(new File(dirName + "/public/index.html").exists());
@@ -38,7 +38,7 @@ public class TestZendProject extends AbstractTest {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
 		assertTrue(project
-				.create("name", SampleApplications.HELLO_WORLD, "all"));
+				.create("name", TemplateApplications.SIMPLE, "all"));
 
 		assertTrue(new File(dirName + "/deployment.xml").exists());
 		assertTrue(new File(dirName + "/public/index.html").exists());
