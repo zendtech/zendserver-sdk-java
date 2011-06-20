@@ -54,7 +54,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 							"The following key is available for target "
 									+ target.getHost());
 					getLogger().info("\tKey: " + target.getKey());
-					getLogger().info("\tSecret key: " + target.getKey());
+					getLogger().info("\tSecret key: " + target.getSecretKey());
 					getLogger()
 							.info("\tThis key must be kept secret and immediately revoked if "
 									+ "there is any chance that it has been compromised");
