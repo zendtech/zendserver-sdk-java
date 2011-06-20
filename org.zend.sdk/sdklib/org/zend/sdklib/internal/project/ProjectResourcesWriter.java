@@ -23,7 +23,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
-import org.zend.sdklib.application.ZendProject.SampleApplications;
+import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
@@ -191,7 +191,7 @@ public class ProjectResourcesWriter {
 	 * @param app
 	 * @throws IOException
 	 */
-	public void writeApplication(File destination, SampleApplications app)
+	public void writeApplication(File destination, TemplateApplications app)
 			throws IOException {
 
 		final List<String> allResources = getAllResources(app);
@@ -213,7 +213,7 @@ public class ProjectResourcesWriter {
 		return file.mkdirs();
 	}
 
-	private void copyFile(File destination, String path, SampleApplications app) throws IOException,
+	private void copyFile(File destination, String path, TemplateApplications app) throws IOException,
 			FileNotFoundException {
 		if (path.length() == 0) {
 			return;
@@ -234,14 +234,12 @@ public class ProjectResourcesWriter {
 		ior.copy();
 	}
 
-	private String relativeToApp(String path, SampleApplications app) {
+	private String relativeToApp(String path, TemplateApplications app) {
 		final int length = app.getBasePath().length();
-		final String trim = path.trim();
-		path = path.substring(length);
-		return path;
+		return path.substring(length);
 	}
 
-	private List<String> getAllResources(SampleApplications app)
+	private List<String> getAllResources(TemplateApplications app)
 			throws IOException {
 		final InputStream iStream = this.getClass().getResourceAsStream(
 				app.getMap());
