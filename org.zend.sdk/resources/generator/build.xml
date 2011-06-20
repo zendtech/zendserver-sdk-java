@@ -7,7 +7,10 @@
 	<dirname property="antfile.dir" file="${ant.file}" />
 	<property name="schema.dirname" value="${antfile.dir}/../schemas" />
 	<property name="cacheDirectory" value="${java.io.tmpdir}" />
+	<property name="applications.dir" value="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/" />
 
+	
+	
 	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
 		<classpath>
 			<fileset dir="${antfile.dir}/jaxb" includes="*.jar" />
@@ -32,14 +35,14 @@
 
     <target name="fetchQuickStart" depends="check-exists" unless="zf.present" description="fetch zf quick start" >
 		<get dest="${cacheDirectory}/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip" usetimestamp="true"/>		
-		<unzip src="${cacheDirectory}/ZendFrameworkQuickstart.zip" dest="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/zf" />
-		<move todir="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/zf" includeemptydirs="true">
-		    <fileset dir="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/zf/ZendFrameworkQuickstart-20100208"/>
+		<unzip src="${cacheDirectory}/ZendFrameworkQuickstart.zip" dest="${applications.dir}/quickstart" />
+		<move todir="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/quickstart" includeemptydirs="true">
+		    <fileset dir="${applications.dir}/quickstart/ZendFrameworkQuickstart-20100208"/>
 		</move>
     </target>
 
 	<target name="check-exists">
-	    <available file="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/zf/.zfproject.xml" property="zf.present"/>
+	    <available file="${applications.dir}/quickstart/.zfproject.xml" property="zf.present"/>
 	</target>
 	
 </project>
