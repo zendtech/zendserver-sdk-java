@@ -92,7 +92,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="db_name"
     display="Configuration.Database Connection.Database Name"
     required="true" type="string">
-      <defaultValue>magento</defaultValue>
+      <defaultvalue>magento</defaultvalue>
       <description>
        
       </description>
@@ -100,7 +100,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="db_username"
     display="Configuration.Database Connection.User Name"
     required="true" type="string">
-      <defaultValue>root</defaultValue>
+      <defaultvalue>root</defaultvalue>
       <description>
         
       </description>
@@ -108,7 +108,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="db_password"
     display="Configuration.Database Connection.User Password"
     required="false" type="string">
-      <defaultValue></defaultValue>
+      <defaultvalue></defaultvalue>
       <description>
         
       </description>
@@ -116,7 +116,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="db_tables_prefix"
     display="Configuration.Database Connection.Tables Prefix"
     required="false" type="string">
-      <defaultValue></defaultValue>
+      <defaultvalue></defaultvalue>
       <description>
         
         (Optional. Leave blank for no prefix)
@@ -135,7 +135,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="admin_path"
     display="Configuration.Web access options.Admin Path"
     required="true" type="string">
-      <defaultValue>admin</defaultValue>
+      <defaultvalue>admin</defaultvalue>
       <description>
         Additional path added after Base URL to access your
         Administrative Panel (e.g. admin, backend, control
@@ -145,7 +145,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="skip_base"
     display="Configuration.Web access options.Skip Base URL Validation Before the Next Step"
     required="false" type="checkbox">
-      <defaultValue>false</defaultValue>
+      <defaultvalue>false</defaultvalue>
       <description>
         Check this box only if it is not possible to
         automatically validate the Base URL.
@@ -154,22 +154,21 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="use_apache_rewrites"
     display="Configuration.Web access options.Skip Base URL Validation Before the Next Step"
     required="false" type="checkbox">
-      <defaultValue>false</defaultValue>
+      <defaultvalue>false</defaultvalue>
       <condition>
         <webserverCondition type="apache" />
       </condition>
       <description>
-        <short></short>
-        <long>You could enable this option to use web server
+      	You could enable this option to use web server
         rewrites functionality for improved search engines
         optimization. Please make sure that mod_rewrite is enabled
-        in Apache configuration.</long>
+        in Apache configuration.
       </description>
     </parameter>
     <parameter id="use_ssl"
     display="Configuration.Web access options.Use Secure URLs (SSL)"
     required="false" type="checkbox">
-      <defaultValue>false</defaultValue>
+      <defaultvalue>false</defaultvalue>
       <description>
         Enable this option only if you have SSL
         available.
@@ -184,7 +183,7 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
           <enum>Database</enum>
         </enums>
       </validation>
-      <defaultValue>File System</defaultValue>
+      <defaultvalue>File System</defaultvalue>
       <description>
         
       </description>

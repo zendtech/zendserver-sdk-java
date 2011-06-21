@@ -5,30 +5,28 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.DeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.DeploymentDescriptorParser;
-import org.zend.php.zendserver.deployment.core.tests.Activator;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.CoreException;
+import org.xml.sax.SAXException;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.tests.Activator;
 
-public class DeploymentDescriptorParserTest1 extends TestCase {
+
+public class ModelSerializerReadTests extends TestCase {
 
 	private IDeploymentDescriptor descr;
 
-	public void setUp() throws IOException {
-		DeploymentDescriptor descr = new DeploymentDescriptor();
-		DeploymentDescriptorParser parser = new DeploymentDescriptorParser(descr);
+	public void setUp() throws CoreException, IOException, ParserConfigurationException, SAXException, XPathExpressionException {
 		URL entry = Activator.getInstance().getBundleContext().getBundle().getEntry("example1.xml");
+		ModelSerializer lm = new ModelSerializer();
 		
-		parser.load(entry.openStream());
-		this.descr = descr;
+		descr = new DeploymentDescriptor();
+		lm.load(entry.openStream(), descr);
 	}
 	
 	
@@ -36,14 +34,14 @@ public class DeploymentDescriptorParserTest1 extends TestCase {
 		assertEquals("Magento", descr.getName());
 		assertEquals("Magento short description", descr.getSummary());
 		assertEquals("Magento long description", descr.getDescription());
-		assertEquals("1.4.1.1", descr.getReleaseVersion());
 		assertEquals("data/LICENSE.txt", descr.getEulaLocation());
 		assertEquals("", descr.getDocumentRoot());
 		assertEquals("", descr.getScriptsRoot());
+		assertEquals("1.4.1.1", descr.getReleaseVersion());
 	}
 	
 	
-	public void testPrereq0() {
+	/*public void testPrereq0() {
 		List<IDependency> prereqs = descr.getDependencies();
 		IDependency prereq = prereqs.get(0);
 		assertTrue(prereq instanceof IPHPDependency);
@@ -149,7 +147,7 @@ public class DeploymentDescriptorParserTest1 extends TestCase {
 		IDirectiveDependency dep = (IDirectiveDependency) prereq;
 		assertEquals("safe_mode", dep.getName());
 		// assertEquals("off", prereq.getValue()); // TODO
-	}
+	} */
 	
 	
 	public void testParams0() {
@@ -287,10 +285,8 @@ public class DeploymentDescriptorParserTest1 extends TestCase {
 		assertEquals("Configuration.Web access options.Skip Base URL Validation Before the Next Step", param.getDisplay());
 		assertFalse(param.isRequired());
 		assertEquals("checkbox", param.getType());
-		assertEquals("", param.getDescription());
-		assertEquals("You could enable this option to use web server rewrites functionality for improved search engines optimization. Please make sure that mod_rewrite is enabled in Apache configuration.", param.getLongDescription());
+		assertEquals("You could enable this option to use web server rewrites functionality for improved search engines optimization. Please make sure that mod_rewrite is enabled in Apache configuration.", param.getDescription());
 		assertEquals("false", param.getDefaultValue());
-		assertEquals("apache", param.getServerType());
 	}
 	
 	
@@ -315,7 +311,7 @@ public class DeploymentDescriptorParserTest1 extends TestCase {
 		assertEquals("choice", param.getType());
 		assertEquals("File System", param.getDefaultValue());
 		assertEquals("", param.getDescription());
-		assertEquals(Arrays.asList(new String[] {"File System", "Database"}), Arrays.asList(param.getValidValues()));
+		assertEquals(Arrays.asList(new String[] {"File System", "Database"}), param.getValidValues());
 	}
 	
 	

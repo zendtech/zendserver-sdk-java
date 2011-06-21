@@ -10,10 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
-import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
 public class DescriptorContainerManagerTest extends TestCase {
 
@@ -48,8 +44,7 @@ public class DescriptorContainerManagerTest extends TestCase {
 		assertFalse(nonExistingFile.exists());
 		
 		IDescriptorContainer descr = service.openDescriptorContainer(nonExistingFile);
-		IDeploymentDescriptorModifier wc = descr.createWorkingCopy();
-		wc.save();
+		descr.save();
 		
 		assertTrue(nonExistingFile.exists());
 	}
@@ -72,7 +67,12 @@ public class DescriptorContainerManagerTest extends TestCase {
 		assertEquals("", model.getIconLocation());
 		assertEquals("", model.getReleaseVersion());
 		assertEquals("", model.getScriptsRoot());
-		assertEquals(0, model.getDependencies().size());
+		assertEquals(0, model.getPHPDependencies().size());
+		assertEquals(0, model.getDirectiveDependencies().size());
+		assertEquals(0, model.getExtensionDependencies().size());
+		assertEquals(0, model.getZendServerDependencies().size());
+		assertEquals(0, model.getZendFrameworkDependencies().size());
+		assertEquals(0, model.getZendComponentDependencies().size());
 		assertEquals(0, model.getPersistentResources().size());
 		assertEquals(0, model.getParameters().size());
 		assertEquals(0, model.getVariables().size());
@@ -85,9 +85,9 @@ public class DescriptorContainerManagerTest extends TestCase {
 		assertFalse(nonExistingFile.exists());
 		
 		IDescriptorContainer descr = service.openDescriptorContainer(nonExistingFile);
-		IDeploymentDescriptorModifier wc = descr.createWorkingCopy();
-		wc.setName("new name");
-		wc.save();
+		IDeploymentDescriptor model = descr.getDescriptorModel();
+		model.setName("new name");
+		descr.save();
 		
 		assertTrue(nonExistingFile.exists());
 	}
