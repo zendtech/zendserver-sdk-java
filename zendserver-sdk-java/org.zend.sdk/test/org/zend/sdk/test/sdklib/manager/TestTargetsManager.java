@@ -172,16 +172,7 @@ public class TestTargetsManager extends AbstractTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
-		assertNotNull(manager.detectLocalhostTarget(target.getKey()));
-	}
-
-	@Test
-	public void testDetectLocalhostNoArgs() throws WebApiException, IOException {
-		TargetsManager manager = new TargetsManager(loader);
-		IZendTarget target = getTarget();
-		manager.add(target);
-		assertTrue(manager.getTargets().length == 1);
-		assertNotNull(manager.detectLocalhostTarget());
+		assertNotNull(manager.detectLocalhostTarget(target.getKey(), null));
 	}
 
 	@Test

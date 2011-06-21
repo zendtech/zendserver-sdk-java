@@ -42,14 +42,14 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			throw new IllegalStateException("error finding user home directory");
 		}
 	}
-	
-	private static File getDefaultTargetsDirectory() {
+
+	public static File getDefaultTargetsDirectory() {
 		final String property = System.getProperty("user.home");
 		final File user = new File(property);
 		if (user.exists()) {
-			final File targetsDir = new File(user.getAbsolutePath()
-					+ File.separator + ".zend" + File.separator + "targets");
-			if (!targetsDir.exists()) {
+			final File targetsDir = new File(user, ".zend" + File.separator
+					+ "targets");
+			if (!targetsDir.isDirectory()) {
 				targetsDir.mkdirs();
 			}
 			return targetsDir;
@@ -87,7 +87,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			confFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(confFile);
 			target.store(fos);
-			fos.close();			
+			fos.close();
 		} catch (IOException e1) {
 			return null;
 		}
@@ -95,20 +95,24 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		return target;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.zend.sdklib.target.ITargetLoader#remove(org.zend.sdklib.target.IZendTarget)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.target.ITargetLoader#remove(org.zend.sdklib.target.
+	 * IZendTarget)
 	 */
 	@Override
 	public IZendTarget remove(IZendTarget target) {
 		TargetDescriptor d = loadTargetDescriptor(target.getId());
 		if (null == d) {
-			throw new IllegalArgumentException("cannot find target" + target.getId());
+			throw new IllegalArgumentException("cannot find target"
+					+ target.getId());
 		}
 		final File descriptorFile = getDescriptorFile(target.getId());
-		
+
 		d.path.deleteOnExit();
 		final boolean delete2 = descriptorFile.delete();
-		
+
 		if (!delete2) {
 			throw new IllegalArgumentException("error deleting data");
 		}
@@ -148,20 +152,22 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		return target;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.zend.sdklib.target.ITargetLoader#loadAll()
 	 */
 	@Override
 	public IZendTarget[] loadAll() {
 		final File[] targets = baseDir.listFiles(new FileFilter() {
-	
+
 			@Override
 			public boolean accept(File file) {
 				return file.getName().endsWith(INI_EXTENSION) && file.isFile();
 			}
-	
+
 		});
-	
+
 		final ArrayList<IZendTarget> arrayList = new ArrayList<IZendTarget>(
 				targets.length);
 		for (File file : targets) {
@@ -178,8 +184,9 @@ public class UserBasedTargetLoader implements ITargetLoader {
 				}
 			}
 		}
-	
-		return (IZendTarget[]) arrayList.toArray(new IZendTarget[arrayList.size()]);
+
+		return (IZendTarget[]) arrayList.toArray(new IZendTarget[arrayList
+				.size()]);
 	}
 
 	private TargetDescriptor storeTargetDescriptor(IZendTarget target) {
@@ -190,8 +197,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			}
 			final TargetDescriptor targetDescriptor = new TargetDescriptor();
 			targetDescriptor.target = target.getId();
-			targetDescriptor.path = new File(this.baseDir.getAbsolutePath(),
-					targetDescriptor.target);
+			targetDescriptor.path = new File(baseDir, targetDescriptor.target);
 
 			final Properties properties = new Properties();
 			properties.put(PROPERTY, targetDescriptor.target);
@@ -234,11 +240,11 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 	}
 
-	private File getDescriptorFile(String target) {
+	public File getDescriptorFile(String target) {
 		if (!target.endsWith(INI_EXTENSION)) {
 			target = target + INI_EXTENSION;
 		}
-		final File file = new File(this.baseDir, target);
+		final File file = new File(baseDir, target);
 		return file;
 	}
 
@@ -251,7 +257,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		 * Name of the target
 		 */
 		public String target;
-		
+
 		/**
 		 * Path of the target directory
 		 */
