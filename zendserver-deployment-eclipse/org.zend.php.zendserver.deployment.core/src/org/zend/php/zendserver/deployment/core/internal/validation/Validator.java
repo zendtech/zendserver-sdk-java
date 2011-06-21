@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class Validator {
 
@@ -11,13 +12,13 @@ public class Validator {
 	
 	public Validator() {
 		testers = new ArrayList<PropertyTester>();
-		testers.add(new FieldNotEmptyTester(new String[] {
+		testers.add(new FieldNotEmptyTester(new Feature[] {
 				IDeploymentDescriptor.NAME,
 				IDeploymentDescriptor.VERSION_RELEASE,
 				IDeploymentDescriptor.APPDIR,
 		}));
 		
-		testers.add(new FileExistsTester(new String[] {
+		testers.add(new FileExistsTester(new Feature[] {
 			IDeploymentDescriptor.APPDIR,
 			IDeploymentDescriptor.ICON,
 			IDeploymentDescriptor.EULA,

@@ -5,7 +5,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
 public class DeploymentUtils {
@@ -17,11 +16,11 @@ public class DeploymentUtils {
 		IDescriptorContainer container = DescriptorContainerManager
 				.getService().openDescriptorContainer(project);
 
-		IDeploymentDescriptorModifier mo = container.createWorkingCopy();
-		mo.setName(name);
-		mo.setDocumentRoot(folder);
-		mo.save();
-		return container.getDescriptorModel();
+		IDeploymentDescriptor model = container.getDescriptorModel();
+		model.setName(name);
+		model.setDocumentRoot(folder);
+		container.save();
+		return model;
 
 	}
 

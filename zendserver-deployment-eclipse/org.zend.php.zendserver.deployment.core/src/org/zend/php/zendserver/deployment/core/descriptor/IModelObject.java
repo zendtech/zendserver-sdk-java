@@ -1,7 +1,44 @@
 package org.zend.php.zendserver.deployment.core.descriptor;
 
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
+/**
+ * Basic model element.
+ * 
+ */
 public interface IModelObject {
 
-	void copy(IModelObject source);
+	/**
+	 * Sets model property to new value.
+	 * 
+	 * @param key property name
+	 * @param value new value
+	 */
+	void set(Feature key, String value);
+
+	/**
+	 * Sets model property to new boolean value.
+	 * 
+	 * @param key property name
+	 * @param value new value
+	 */
+	void set(Feature key, boolean value);
+
+	/**
+	 * Retrieves model's property value.
+	 * 
+	 * @param key property name
+	 * @return value, or null if value is not set
+	 */
+	String get(Feature key);
 	
+	/**
+	 * Retrieves model's boolean property value.
+	 *  
+	 * @param key property name
+	 * @return value, or false if value is not set
+	 */
+	boolean getBoolean(Feature key);
+	
+	Feature[] getPropertyNames();
 }

@@ -1,10 +1,12 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.util.List;
+
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
 
-public class Parameter implements IParameter {
+public class Parameter  extends ModelContainer implements IParameter {
 
 	private String id;
 	private String type;
@@ -13,22 +15,21 @@ public class Parameter implements IParameter {
 	private String display;
 	private String defaultValue;
 	private String description;
-	private String[] validValues;
 	private String identical;
 	
-	public Parameter(String id, String type, boolean required, boolean readOnly, String display, String defaultValue, String description, String identical) {
-		this.id = id;
-		this.type = type;
-		this.required = required;
-		this.readOnly = readOnly;
-		this.display = display;
-		this.defaultValue = defaultValue;
-		this.description = description;
-		this.identical = identical;
-	}
-
-	public Parameter(String id, String type) {
-		this(id, type, false, false, "", "", "", null);
+	public Parameter() {
+		super(new Feature[] {
+				DISPLAY,
+				REQUIRED,
+				READONLY,
+				TYPE,
+				IDENTICAL, 
+				ID,
+				DEFAULTVALUE,
+				DESCRIPTION,
+		}, new Feature[] {
+				VALIDATION
+		});
 	}
 	
 	public String getId() {
@@ -55,12 +56,8 @@ public class Parameter implements IParameter {
 		return description;
 	}
 	
-	public String[] getValidValues() {
-		return validValues;
-	}
-
-	public void setValidValues(String[] array) {
-		this.validValues = array;
+	public List<String> getValidValues() {
+		return super.getList(VALIDATION);
 	}
 
 	public boolean isReadOnly() {
@@ -113,7 +110,62 @@ public class Parameter implements IParameter {
 		setReadOnly(src.isReadOnly());
 		setType(src.getType());
 		setIdentical(src.getIdentical());
-		setValidValues(src.getValidValues());
+	}
+
+	public void set(Feature key, boolean value) {
+		if (REQUIRED.equals(key)) {
+			setRequired(value);
+		} else if (READONLY.equals(key)) {
+			setReadOnly(value);
+		} else throw new IllegalArgumentException("Unknown parametery property to set: "+key);
 	}
 	
+	public void set(Feature key, String value) {
+		if (DISPLAY.equals(key)) {
+			setDisplay(value);
+		} else if (TYPE.equals(key)) {
+			setType(value);
+		} else if (IDENTICAL.equals(key)) {
+			setIdentical(value);
+		} else if (ID.equals(key)) {
+			setId(value);
+		} else if (DEFAULTVALUE.equals(key)) {
+			setDefaultValue(value);
+		} else if (DESCRIPTION.equals(key)) {
+			setDescription(value);
+		} else set(key, Boolean.parseBoolean(value));
+	}
+
+	public boolean getBoolean(Feature key) {
+		if (REQUIRED.equals(key)) {
+			return required;
+		} else if (READONLY.equals(key)) {
+			return readOnly;
+		} else throw new IllegalArgumentException("Unknown parametery property to set: "+key);
+	}
+	
+	public String get(Feature key) {
+		if (DISPLAY.equals(key)) {
+			return getDisplay();
+		} else if (TYPE.equals(key)) {
+			return getType();
+		} else if (IDENTICAL.equals(key)) {
+			return getIdentical();
+		} else if (ID.equals(key)) {
+			return getId();
+		} else if (DEFAULTVALUE.equals(key)) {
+			return getDefaultValue();
+		} else if (DESCRIPTION.equals(key)) {
+			return getDescription();
+		} else return Boolean.toString(getBoolean(key));
+	}
+	
+	@Override
+	public String toString() {
+		return "Parameter [id=" + id + ", type=" + type + ", required="
+				+ required + ", readOnly=" + readOnly + ", display=" + display
+				+ ", defaultValue=" + defaultValue + ", description="
+				+ description + ", identical=" + identical + "]";
+	}
+
 }

@@ -2,16 +2,21 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 
 import java.io.File;
 
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 public class FileExistsTester extends PropertyTester {
 
-	public FileExistsTester(String[] strings) {
+	public FileExistsTester(Feature[] strings) {
 		super(ValidationStatus.ERROR, strings);
 	}
 
 	@Override
-	String test(Object property) {
-		if ((property != null) && (property instanceof String)) {
-			File f = new File((String) property);
+	String test(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof String) {
+			File f = new File((String) value);
 			if (f.exists()) {
 				return null;
 			}

@@ -1,8 +1,10 @@
 package org.zend.php.zendserver.deployment.core.internal.validation;
 
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 public class FieldNotEmptyTester extends PropertyTester {
 
-	public FieldNotEmptyTester(String[] strings) {
+	public FieldNotEmptyTester(Feature[] strings) {
 		super(ValidationStatus.ERROR, strings);
 	}
 

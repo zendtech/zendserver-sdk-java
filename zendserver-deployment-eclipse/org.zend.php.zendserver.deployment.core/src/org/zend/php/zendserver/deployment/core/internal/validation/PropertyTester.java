@@ -3,19 +3,20 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public abstract class PropertyTester {
 
-	private String[] properties;
+	private Feature[] properties;
 	private int severity;
 	
-	public PropertyTester(int severity, String[] properties) {
+	public PropertyTester(int severity, Feature[] properties) {
 		this.severity = severity;
 		this.properties = properties;
 	}
 	
 	public void validate(IDeploymentDescriptor target, List<ValidationStatus> statuses) {
-		for (String key : properties) {
+		for (Feature key : properties) {
 			String message = test(target.get(key));
 			if (message != null) {
 				statuses.add(new ValidationStatus(key, severity, message));

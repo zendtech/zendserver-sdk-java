@@ -1,40 +1,61 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
 
-public class DeploymentDescriptor implements IDeploymentDescriptor {
+public class DeploymentDescriptor extends ModelContainer implements IDeploymentDescriptor {
 
-	private String name = "";
-	private String summary = "";
-	private String description = "";
-	private String releaseVersion = "";
+	private String name;
+	private String summary;
+	private String description;
+	private String releaseVersion;
 	private String apiVersion;
-	private String eulaLocation = "";
-	private String iconLocation = "";
-	private String documentRoot = "";
+	private String eulaLocation;
+	private String iconLocation;
+	private String documentRoot;
 	private String appDir;
-	private String scriptsRoot = "";
-	private String healthcheck = "";
-	
-	private List<IParameter> parameters = new ArrayList<IParameter>();
-	private List<IVariable> variables = new ArrayList<IVariable>();
-	private List<IDependency> dependencies = new ArrayList<IDependency>();
-	private List<String> persistent = new ArrayList<String>();
+	private String scriptsRoot;
+	private String healthcheck;
 	
 	public DeploymentDescriptor() {
+		super(new Feature[] {
+				NAME,
+				SUMMARY, 
+				DESCRIPTION, 
+				VERSION_RELEASE, 
+				VERSION_API, 
+				EULA, 
+				ICON, 
+				DOCROOT, 
+				SCRIPTSDIR, 
+				HEALTHCHECK,
+				APPDIR
+		},
+		new Feature[] {
+			DEPENDENCIES_PHP,
+			DEPENDENCIES_DIRECTIVE,
+			DEPENDENCIES_EXTENSION,
+			DEPENDENCIES_ZENDFRAMEWORK,
+			DEPENDENCIES_ZENDSERVER,
+			DEPENDENCIES_ZSCOMPONENT,
+			PARAMETERS,
+			VARIABLES,
+			PERSISTENT_RESOURCES
+		});
 	}
 	
 	public String getName() {
-		return get(NAME);
+		return name;
 	}
 	public void setName(String name) {
 		set(NAME, name);
@@ -77,19 +98,39 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 	}
 	
 	public List<IParameter> getParameters() {
-		return Collections.unmodifiableList(parameters);
+		return super.getList(PARAMETERS);
 	}
 	
 	public List<IVariable> getVariables() {
-		return Collections.unmodifiableList(variables);
+		return super.getList(VARIABLES);
 	}
 	
-	public List<IDependency> getDependencies() {
-		return Collections.unmodifiableList(dependencies);
+	public List<IPHPDependency> getPHPDependencies() {
+		return super.getList(DEPENDENCIES_PHP);
+	}
+	
+	public List<IDirectiveDependency> getDirectiveDependencies() {
+		return super.getList(DEPENDENCIES_DIRECTIVE);
+	}
+	
+	public List<IExtensionDependency> getExtensionDependencies() {
+		return super.getList(DEPENDENCIES_EXTENSION);
+	}
+	
+	public List<IZendServerDependency> getZendServerDependencies() {
+		return super.getList(DEPENDENCIES_ZENDSERVER);
+	}
+	
+	public List<IZendComponentDependency> getZendComponentDependencies() {
+		return super.getList(DEPENDENCIES_ZSCOMPONENT);
+	}
+	
+	public List<IZendFrameworkDependency> getZendFrameworkDependencies() {
+		return super.getList(DEPENDENCIES_ZENDFRAMEWORK);
 	}
 	
 	public List<String> getPersistentResources() {
-		return Collections.unmodifiableList(persistent);
+		return super.getList(PERSISTENT_RESOURCES);
 	}
 	public String getSummary() {
 		return get(SUMMARY);
@@ -116,16 +157,76 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 		set(PERSISTENT_RESOURCES, index, resource);
 	}
 	
-	public void addDependency(IDependency dep) {
-		add(DEPENDENCIES, dep);
+	public void addPHPDependency(IPHPDependency dep) {
+		add(DEPENDENCIES_PHP, dep);
 	}
 	
-	public void removeDependency(int index) {
-		remove(DEPENDENCIES, index);
+	public void removePHPDependency(int index) {
+		remove(DEPENDENCIES_PHP, index);
 	}
 	
-	public void setDependency(int index, IDependency dep) {
-		set(DEPENDENCIES, index, dep);
+	public void setPHPDependency(int index, IPHPDependency dep) {
+		set(DEPENDENCIES_PHP, index, dep);
+	}
+	
+	public void addExtensionDependency(IPHPDependency dep) {
+		add(DEPENDENCIES_EXTENSION, dep);
+	}
+	
+	public void removeExtensionDependency(int index) {
+		remove(DEPENDENCIES_EXTENSION, index);
+	}
+	
+	public void setExtensionDependency(int index, IPHPDependency dep) {
+		set(DEPENDENCIES_EXTENSION, index, dep);
+	}
+	
+	public void addDirectiveDependency(IDirectiveDependency dep) {
+		add(DEPENDENCIES_DIRECTIVE, dep);
+	}
+	
+	public void removeDirectiveDependency(int index) {
+		remove(DEPENDENCIES_DIRECTIVE, index);
+	}
+	
+	public void setDirectiveDependency(int index, IDirectiveDependency dep) {
+		set(DEPENDENCIES_DIRECTIVE, index, dep);
+	}
+	
+	public void addZendServerDependency(IZendServerDependency dep) {
+		add(DEPENDENCIES_ZENDSERVER, dep);
+	}
+	
+	public void removeZendServerDependency(int index) {
+		remove(DEPENDENCIES_ZENDSERVER, index);
+	}
+	
+	public void setZendServerDependency(int index, IZendServerDependency dep) {
+		set(DEPENDENCIES_ZENDSERVER, index, dep);
+	}
+	
+	public void addZendFrameworkDependency(IZendFrameworkDependency dep) {
+		add(DEPENDENCIES_ZENDFRAMEWORK, dep);
+	}
+	
+	public void removeZendFrameworkDependency(int index) {
+		remove(DEPENDENCIES_ZENDFRAMEWORK, index);
+	}
+	
+	public void setZendFrameworkDependency(int index, IZendFrameworkDependency dep) {
+		set(DEPENDENCIES_ZENDFRAMEWORK, index, dep);
+	}
+	
+	public void addZendComponentDependency(IZendComponentDependency dep) {
+		add(DEPENDENCIES_ZSCOMPONENT, dep);
+	}
+	
+	public void removeZendComponentDependency(int index) {
+		remove(DEPENDENCIES_ZSCOMPONENT, index);
+	}
+	
+	public void setZendComponentDependency(int index, IZendComponentDependency dep) {
+		set(DEPENDENCIES_ZSCOMPONENT, index, dep);
 	}
 	
 	public void addVariable(IVariable resource) {
@@ -168,43 +269,8 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 		set(APPDIR, appDir);
 	}
 
-	private List getList(String key) {
-		if (DEPENDENCIES.equals(key)) {
-			return dependencies;
-		} else if (PARAMETERS.equals(key)) {
-			return parameters;
-		} else if (PERSISTENT_RESOURCES.equals(key)) {
-			return persistent;
-		} else if (VARIABLES.equals(key)) {
-			return variables;
-		}
-		
-		throw new IllegalArgumentException("Unknown list property name "+key);
-	}
-
-	public void add(String key, Object value) {
-		getList(key).add(value);
-	}
 	
-	public void remove(String key, int index) {
-		getList(key).remove(index);
-	}
-	
-	public void set(String key, int index, Object value) {
-		List list = getList(key);
-		if (index < list.size()) {
-			Object dest = list.get(index);
-			if (dest instanceof IModelObject) {
-				((IModelObject)dest).copy((IModelObject)value);
-			} else {
-				list.set(index, value);
-			}
-		} else {
-			list.add(value);
-		}
-	}
-	
-	public void set(String key, String value) {
+	public void set(Feature key, String value) {
 		if (NAME.equals(key)) {
 			name = value;
 		} else if (SUMMARY.equals(key)) {
@@ -232,7 +298,7 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 		}
 	}
 
-	public String get(String key) {
+	public String get(Feature key) {
 		if (NAME.equals(key)) {
 			return name;
 		} else if (SUMMARY.equals(key)) {
@@ -259,6 +325,4 @@ public class DeploymentDescriptor implements IDeploymentDescriptor {
 			throw new IllegalArgumentException("Can't get unknown property "+key);
 		}
 	}
-	
-
 }

@@ -1,22 +1,24 @@
 package org.zend.php.zendserver.deployment.core.internal.validation;
 
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 public class ValidationStatus {
 
 	public static final int ERROR = 1;
 	public static final int WARNING = 2;
 	public static final int INFO = 4;
 	
-	private String property;
+	private Feature property;
 	private int severity;
 	private String message;
 
-	public ValidationStatus(String target, int severity, String message) {
+	public ValidationStatus(Feature target, int severity, String message) {
 		this.property = target;
 		this.severity = severity;
 		this.message = message;
 	}
 	
-	public String getProperty() {
+	public Feature getProperty() {
 		return property;
 	}
 	

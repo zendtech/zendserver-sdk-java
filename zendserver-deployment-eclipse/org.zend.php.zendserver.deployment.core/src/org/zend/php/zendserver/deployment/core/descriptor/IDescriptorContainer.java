@@ -22,22 +22,6 @@ public interface IDescriptorContainer {
 	IResourceMapping getResourceMapping();
 	
 	/**
-	 * Working copy connected with provided document. All changes will be reflected in this document.
-	 * Useful e.g. to reflect model changes in live document in editor.
-	 * 
-	 * @param iDocument
-	 * @return
-	 */
-	IDeploymentDescriptorModifier createWorkingCopy(IDocument iDocument);
-	
-	/**
-	 * Working copy connected with container file. All changes will be reflected with underlying file.
-	 * 
-	 * @return
-	 */
-	IDeploymentDescriptorModifier createWorkingCopy();
-	
-	/**
 	 * Adds a listener to be notified on any model changes.
 	 * 
 	 * @param listener
@@ -70,5 +54,9 @@ public interface IDescriptorContainer {
 	 * @param o changed object
 	 */
 	void fireChange(Object o);
+
+	void save();
+
+	void connect(IDocument document);
 
 }
