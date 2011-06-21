@@ -3,7 +3,6 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -17,7 +16,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -100,11 +98,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			defaultCombo.setText(str == null ? "" : str);
 			requiredCheck.setSelection(input.isRequired());
 			readonlyCheck.setSelection(input.isReadOnly());
-			String[] validValues = input.getValidValues();
+			List<String> validValues = input.getValidValues();
 			if (validValues != null) {
 				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < validValues.length; i++) {
-					sb.append(validValues[i]).append("\n");
+				for (int i = 0; i < validValues.size(); i++) {
+					sb.append(validValues.get(i)).append("\n");
 				}
 				validationText.setText(sb.toString());
 			} else {
@@ -325,58 +323,27 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 
 	protected void isRequiredChange(boolean selection) {
-		try {
-			editor.getModel().setParameterRequired(input, selection);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setRequired(selection);
 	}
 	
 	protected void isReadonlyChange(boolean selection) {
-		try {
-			editor.getModel().setParameterReadonly(input, selection);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setReadOnly(selection);
 	}
 
 	protected void idChange(String text) {
-		try {
-			editor.getModel().setParameterId(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setId(text);
 	}
 
 	protected void displayChange(String text) {
-		try {
-			editor.getModel().setParameterDisplay(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		input.setDisplay(text);
 	}
 
 	protected void defaultChange(String text) {
-		try {
-			editor.getModel().setParameterDefault(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setDefaultValue(text);
 	}
 
 	protected void typeChange(String text) {
-		try {
-			editor.getModel().setParameterType(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setType(text);
 		
 		showChoiceWidgets(text);
 	}
@@ -405,23 +372,14 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 
 	protected void identicalChange(String text) {
-		try {
-			editor.getModel().setParameterIdentical(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setIdentical(text);
 	}
 	
 	protected void validationChange(String text) {
 		String[] newParams = text.split("\n");
 		
-		try {
-			editor.getModel().setParameterValidation(input, newParams);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.getValidValues().clear();
+		input.getValidValues().addAll(Arrays.asList(newParams));
 		
 		String currentDefault = defaultCombo.getText();
 		defaultCombo.setItems(newParams);
@@ -434,11 +392,6 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 	
 	protected void descriptionChange(String text) {
-		try {
-			editor.getModel().setParameterDescription(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setDescription(text);
 	}
 }

@@ -29,7 +29,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
@@ -76,7 +75,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	private IDescriptorContainer fModel;
-	private IDeploymentDescriptorModifier fWorkingCopy;
 	private IDocumentProvider fDocumentProvider;
 	private String iconLocation;
 
@@ -150,8 +148,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			throw new PartInitException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
-		fWorkingCopy = fModel.createWorkingCopy(getDocument());
-		fWorkingCopy.setAutoSave(true);
+		
+		fModel.connect(getDocument());
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 		fModel.addChangeListener(new IDescriptorChangeListener() {
 
@@ -260,8 +258,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	}
 
-	public IDeploymentDescriptorModifier getModel() {
-		return fWorkingCopy;
+	public IDeploymentDescriptor getModel() {
+		return fModel.getDescriptorModel();
 	}
 
 	public IDescriptorContainer getDescriptorContainer() {

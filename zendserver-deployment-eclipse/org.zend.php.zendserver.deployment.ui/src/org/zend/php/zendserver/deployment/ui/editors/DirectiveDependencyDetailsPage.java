@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -18,7 +17,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 
 public class DirectiveDependencyDetailsPage implements IDetailsPage {
@@ -26,7 +26,7 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	private DeploymentDescriptorEditor editor;
 	
 	private IManagedForm mform;
-	private IDependency input;
+	private IModelObject input;
 	
 	private boolean isRefresh;
 	private Text nameText;
@@ -68,7 +68,7 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.getName();
+			String str = input.get(IDirectiveDependency.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -79,7 +79,7 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (IDependency)ssel.getFirstElement();
+			input = (IModelObject) ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -126,11 +126,6 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		try {
-			editor.getModel().setDependencyName(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.set(IDirectiveDependency.DEPENDENCY_NAME, text);
 	}
 }

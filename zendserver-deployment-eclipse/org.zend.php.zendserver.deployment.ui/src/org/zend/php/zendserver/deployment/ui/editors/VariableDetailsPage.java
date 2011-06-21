@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -131,20 +130,10 @@ public class VariableDetailsPage implements IDetailsPage {
 	}
 
 	protected void variableValueChange(String text) {
-		try {
-			editor.getModel().setVariableValue(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setValue(text);
 	}
 	
 	protected void variableNameChange(String text) {
-		try {
-			editor.getModel().setVariableName(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setName(text);
 	}
 }

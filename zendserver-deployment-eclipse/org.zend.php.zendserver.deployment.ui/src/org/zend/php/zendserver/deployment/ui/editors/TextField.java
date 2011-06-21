@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -12,26 +11,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class TextField {
 
 	protected Text text;
 	protected String label;
 	protected IDeploymentDescriptor target;
-	protected IDeploymentDescriptorModifier modifier;
-	protected String key;
+	protected Feature key;
 	protected boolean isRefresh;
 	protected ControlDecoration controlDecoration;
 	
-	public TextField(IDeploymentDescriptor target, IDeploymentDescriptorModifier modifier,String key, String label) {
+	public TextField(IDeploymentDescriptor target,Feature key, String label) {
 		this.target = target;
-		this.modifier = modifier;
 		this.key = key;
 		this.label = label;
 	}
 	
-	public String getKey() {
+	public Feature getKey() {
 		return key;
 	}
 	
@@ -89,12 +86,7 @@ public class TextField {
 				}
 				
 				String text = ((Text)e.widget).getText();
-				try {
-					modifier.set(target, key, text);
-				} catch (CoreException ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
-				}
+				target.set(key, text);
 			}
 		});
 	}

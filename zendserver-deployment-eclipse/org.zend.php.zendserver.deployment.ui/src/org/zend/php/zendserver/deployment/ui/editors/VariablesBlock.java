@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
@@ -46,10 +45,6 @@ public class VariablesBlock extends MasterDetailsBlock {
 		}
 
 		public Object[] getElements(Object input) {
-			if (input instanceof IDeploymentDescriptorModifier) {
-				input = ((IDeploymentDescriptorModifier) input).getDescriptor();
-			}
-			
 			if (input instanceof IDeploymentDescriptor) {
 				return ((IDeploymentDescriptor) input).getVariables().toArray();
 			}
@@ -150,27 +145,19 @@ public class VariablesBlock extends MasterDetailsBlock {
 		Object elem = sel.getFirstElement();
 		if (elem instanceof IVariable) {
 			IVariable param = (IVariable) elem;
-			try {
-				editor.getModel().removeVariable(param);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			editor.getModel().getVariables().remove(param);
 		}
 		viewer.refresh();
 	}
 
 	protected void addElment() {
-		IDeploymentDescriptor descr = editor.getModel().getDescriptor();
+		IDeploymentDescriptor descr = editor.getModel();
 		int variablesSize = descr.getVariables().size() + 1;
 		
-		IVariable param = new Variable("variable"+variablesSize, "");
-		try {
-			editor.getModel().addVariable(param);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IVariable param = new Variable();
+		param.setName("variable"+variablesSize);
+		editor.getModel().getVariables().add(param);
+		
 		viewer.refresh();
 		viewer.setSelection(new StructuredSelection(param));
 	}

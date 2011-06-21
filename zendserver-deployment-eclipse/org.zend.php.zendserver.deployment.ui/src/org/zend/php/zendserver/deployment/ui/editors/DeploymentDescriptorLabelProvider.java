@@ -2,9 +2,14 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
 public class DeploymentDescriptorLabelProvider extends LabelProvider {
@@ -63,25 +68,22 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 	}
 	
 	public Image getDependencyImage(Object element) {
-		IDependency dep = ((IDependency) element);
-		String type = dep.getType();
-		
-		if (IDependency.PHP.equals(type)) {
+		if (element instanceof IPHPDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_PHP);
 			
-		} else if (IDependency.EXTENSION.equals(type)) {
+		} else if (element instanceof IExtensionDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_PHP_EXTENSION);
 			
-		} else if (IDependency.DIRECTIVE.equals(type)) {
+		} else if (element instanceof IDirectiveDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_PHP_DIRECTIVE);
 			
-		} else if (IDependency.ZENDSERVER.equals(type)) {
+		} else if (element instanceof IZendServerDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVER);
 			
-		} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
+		} else if (element instanceof IZendFrameworkDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_ZENDFRAMEWORK);
 			
-		} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
+		} else if (element instanceof IZendComponentDependency) {
 			return Activator.getDefault().getImage(Activator.IMAGE_ZENDSERVERCOMPONENT);
 		}
 		
@@ -89,40 +91,43 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 	}
 	
 	public String getDependencyText(Object element) {
-		IDependency dep = ((IDependency) element);
-		String type = dep.getType();
-		
-		if (IDependency.PHP.equals(type)) {
+		if (element instanceof IPHPDependency) {
+			IPHPDependency dep = (IPHPDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
 				return "PHP version";
 			}
 			return "PHP "+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
-		} else if (IDependency.EXTENSION.equals(type)) {
+		} else if (element instanceof IExtensionDependency) {
+			IExtensionDependency dep = (IExtensionDependency) element;
 			if (dep.getName() == null) {
 				return "PHP extension";
 			}
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 			
-		} else if (IDependency.DIRECTIVE.equals(type)) {
+		} else if (element instanceof IDirectiveDependency) {
+			IDirectiveDependency dep = (IDirectiveDependency) element;
 			if (dep.getName() == null) {
 				return "PHP directive";
 			}
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
-		} else if (IDependency.ZENDSERVER.equals(type)) {
+		} else if (element instanceof IZendServerDependency) {
+			IZendComponentDependency dep = (IZendComponentDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
 				return "Zend Server version";
 			}
 			return "Zend Server" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
-		} else if (IDependency.ZENDFRAMEWORK.equals(type)) {
+		} else if (element instanceof IZendFrameworkDependency) {
+			IZendComponentDependency dep = (IZendComponentDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
 				return "Zend Framework version";
 			}
 			return "Zend Framework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
-		} else if (IDependency.ZENDSERVERCOMPONENT.equals(type)) {
+		} else if (element instanceof IZendComponentDependency) {
+			IZendComponentDependency dep = (IZendComponentDependency) element;
 			if (dep.getName() == null) {
 				return "Zend Server Component";
 			}
@@ -168,10 +173,6 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 	
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IDependency) {
-			return getDependencyImage(element);
-		}
-		
 		if (element instanceof IParameter) {
 			return getParameterImage(element);
 		}
@@ -180,15 +181,11 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 			return getVariableImage(element);
 		}
 		
-		return super.getImage(element);
+		return getDependencyImage(element);
 	}
 	
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IDependency) {
-			return getDependencyText(element);
-		}
-		
 		if (element instanceof IParameter) {
 			return getParameterText(element);
 		}
@@ -197,6 +194,6 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 			return getVariableText(element);
 		}
 		
-		return super.getText(element);
+		return getDependencyText(element);
 	}
 }

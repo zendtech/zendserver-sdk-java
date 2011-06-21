@@ -18,7 +18,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 
 public class ExtensionDependencyDetailsPage implements IDetailsPage {
@@ -26,7 +27,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	private DeploymentDescriptorEditor editor;
 	
 	private IManagedForm mform;
-	private IDependency input;
+	private IModelObject input;
 	
 	private boolean isRefresh;
 	private Text nameText;
@@ -70,7 +71,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.getName();
+			String str = input.get(IExtensionDependency.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -81,7 +82,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (IDependency)ssel.getFirstElement();
+			input = (IModelObject) ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -128,11 +129,6 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		try {
-			editor.getModel().setDependencyName(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.set(IExtensionDependency.DEPENDENCY_NAME, text);
 	}
 }

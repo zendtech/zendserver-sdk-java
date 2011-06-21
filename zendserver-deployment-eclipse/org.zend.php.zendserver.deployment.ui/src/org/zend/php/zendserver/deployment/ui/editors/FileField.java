@@ -11,21 +11,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class FileField extends TextField {
 
 	private Button licenseBrowseButton;
 	private IContainer root;
 	
-	public FileField(IDeploymentDescriptor target,
-			IDeploymentDescriptorModifier modifier, String key, String label, IContainer root) {
-		super(target, modifier, key, label);
+	public FileField(IDeploymentDescriptor target, Feature key, String label, IContainer root) {
+		super(target, key, label);
 		this.root = root;
 	}
 
 	@Override
 	protected void createControls(Composite parent, FormToolkit toolkit) {
+		// todo add creation 
 		toolkit.createLabel(parent, label);
 		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);

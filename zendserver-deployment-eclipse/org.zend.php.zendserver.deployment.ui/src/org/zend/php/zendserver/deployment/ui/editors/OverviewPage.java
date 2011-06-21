@@ -18,7 +18,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
@@ -44,20 +43,19 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, "overview", "Overview");
-		IDeploymentDescriptorModifier mdl = editor.getModel();
-		IDeploymentDescriptor descr = mdl.getDescriptor();
+		IDeploymentDescriptor descr = editor.getModel();
 		
-		name = addField(new TextField(descr, mdl, IDeploymentDescriptor.NAME, "Name"));
-		summary = addField(new TextField(descr, mdl, IDeploymentDescriptor.SUMMARY, "Summary"));
-		description = addField(new TextField(descr, mdl, IDeploymentDescriptor.DESCRIPTION, "Description"));
-		releaseVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.VERSION_RELEASE, "Release Version"));
-		apiVersion = addField(new TextField(descr, mdl, IDeploymentDescriptor.VERSION_API, "API Version"));
+		name = addField(new TextField(descr, IDeploymentDescriptor.NAME, "Name"));
+		summary = addField(new TextField(descr, IDeploymentDescriptor.SUMMARY, "Summary"));
+		description = addField(new TextField(descr, IDeploymentDescriptor.DESCRIPTION, "Description"));
+		releaseVersion = addField(new TextField(descr, IDeploymentDescriptor.VERSION_RELEASE, "Release Version"));
+		apiVersion = addField(new TextField(descr, IDeploymentDescriptor.VERSION_API, "API Version"));
 		 
-		license = addField(new FileField(descr, mdl, IDeploymentDescriptor.EULA, "License", editor.getProject()));
-		icon = addField(new FileField(descr, mdl, IDeploymentDescriptor.ICON, "Icon", editor.getProject()));
-		docRoot = addField(new FolderField(descr, mdl, IDeploymentDescriptor.DOCROOT, "Document root", editor.getProject()));
-		scriptsDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.SCRIPTSDIR, "Scripts directory", editor.getProject()));
-		appDir = addField(new FolderField(descr, mdl, IDeploymentDescriptor.APPDIR, "Application dir", editor.getProject()));
+		license = addField(new FileField(descr, IDeploymentDescriptor.EULA, "License", editor.getProject()));
+		icon = addField(new FileField(descr, IDeploymentDescriptor.ICON, "Icon", editor.getProject()));
+		docRoot = addField(new FolderField(descr, IDeploymentDescriptor.DOCROOT, "Document root", editor.getProject()));
+		scriptsDir = addField(new FolderField(descr, IDeploymentDescriptor.SCRIPTSDIR, "Scripts directory", editor.getProject()));
+		appDir = addField(new FolderField(descr, IDeploymentDescriptor.APPDIR, "Application dir", editor.getProject()));
 	}
 
 	@Override
@@ -223,14 +221,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		name.setFocus();
 	}
 	
-	protected DeploymentDescriptorEditor getDeploymentEditor() {
-		return (DeploymentDescriptorEditor) getEditor();
-	}
-	
-	protected IDeploymentDescriptorModifier getModel() {
-		return getDeploymentEditor().getModel();
-	}
-
 	public void refresh() {
 		name.refresh();
 		summary.refresh();

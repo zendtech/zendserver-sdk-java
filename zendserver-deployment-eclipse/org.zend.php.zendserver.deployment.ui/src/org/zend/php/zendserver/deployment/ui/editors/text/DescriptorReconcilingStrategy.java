@@ -1,16 +1,19 @@
 package org.zend.php.zendserver.deployment.ui.editors.text;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
+import javax.xml.xpath.XPathExpressionException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
+import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.DeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.DeploymentDescriptorParser;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.ModelSerializer;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 
 
@@ -34,16 +37,24 @@ public class DescriptorReconcilingStrategy implements IReconcilingStrategy {
 	public void reconcile(IRegion partition) {
 		IDescriptorContainer container = fEditor.getDescriptorContainer();
 		DeploymentDescriptor model = (DeploymentDescriptor) container.getDescriptorModel();
-		DeploymentDescriptorParser parser = new DeploymentDescriptorParser(model);
-		parser.setRecordChanges(true);
+		ModelSerializer ms = new ModelSerializer();
+		
 		
 		ByteArrayInputStream charArray = new ByteArrayInputStream(fDocument.get().getBytes()); // TODO get document encoding
-		parser.load(charArray);
-		Object[] elements = parser.getChangedElements();
-		if (elements != null) {
-			for (int i = 0; i < elements.length; i++) {
-			container.fireChange(elements[i]);			
-			}
+		try {
+			ms.load(charArray, model);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

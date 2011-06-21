@@ -116,8 +116,8 @@ public class ApplicationParametersPage extends WizardPage {
 				break;
 			case CHOICE:
 				control = createLabelWithCombo(name, tooltip, composite);
-				String[] values = parameter.getValidValues();
-				((Combo) control).setItems(values);
+				List<String> values = parameter.getValidValues();
+				((Combo) control).setItems(values.toArray(new String[values.size()]));
 				break;
 			case CHECKBOX:
 				control = createLabelWithCheckbox(name, tooltip, composite);

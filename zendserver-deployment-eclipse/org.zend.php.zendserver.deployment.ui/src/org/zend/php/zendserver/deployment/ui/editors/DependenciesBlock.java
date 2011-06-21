@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -27,11 +30,16 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Dependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendServerDependency;
 
 
 public class DependenciesBlock extends MasterDetailsBlock {
@@ -47,12 +55,17 @@ public class DependenciesBlock extends MasterDetailsBlock {
 		}
 
 		public Object[] getElements(Object input) {
-			if (input instanceof IDeploymentDescriptorModifier) {
-				input = ((IDeploymentDescriptorModifier) input).getDescriptor();
-			}
+			IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
+			List all = new ArrayList();
+			all.addAll(descr.getPHPDependencies());
+			all.addAll(descr.getDirectiveDependencies());
+			all.addAll(descr.getExtensionDependencies());
+			all.addAll(descr.getZendFrameworkDependencies());
+			all.addAll(descr.getZendServerDependencies());
+			all.addAll(descr.getZendComponentDependencies());
 			
 			if (input instanceof IDeploymentDescriptor) {
-				return ((IDeploymentDescriptor) input).getDependencies().toArray();
+				return all.toArray();
 			}
 			
 			if (input instanceof Object[]) {
@@ -151,26 +164,20 @@ public class DependenciesBlock extends MasterDetailsBlock {
 	protected void removeElement(ISelection selection) {
 		IStructuredSelection sel = (IStructuredSelection) selection;
 		Object elem = sel.getFirstElement();
-		if (elem instanceof IDependency) {
-			IDependency param = (IDependency) elem;
-			try {
-				editor.getModel().removeDependency(param);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
+		Feature feature = DeploymentDescriptorFactory.getFeature(elem);
+		editor.getModel().getChildren(feature).remove(elem);
 		viewer.refresh();
 	}
 
 	protected void addElment() {
 		Object[] input = new Object[] {
-			new Dependency(IDependency.PHP),
-			new Dependency(IDependency.DIRECTIVE),
-			new Dependency(IDependency.EXTENSION),
-			new Dependency(IDependency.ZENDFRAMEWORK),
-			new Dependency(IDependency.ZENDSERVER),
-			new Dependency(IDependency.ZENDSERVERCOMPONENT),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_EXTENSION),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER),
+			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT),
 		};
 		
 		ListDialog sd = new ListDialog(sashForm.getShell());
@@ -184,23 +191,18 @@ public class DependenciesBlock extends MasterDetailsBlock {
 			return;
 		}
 		
-		Dependency param = (Dependency) sd.getResult()[0];
+		Object result = sd.getResult()[0];
+		Feature feature = DeploymentDescriptorFactory.getFeature(result);
 		
-		try {
-			editor.getModel().addDependency(param);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		editor.getModel().add(feature, result);
 		viewer.refresh();
-		viewer.setSelection(new StructuredSelection(param));
+		viewer.setSelection(new StructuredSelection(result));
 	}
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		detailsPart.setPageProvider(new IDetailsPageProvider() {
 			
-			private IDetailsPage page = new DependencyDetailsPage(editor);
 			private IDetailsPage phpPage = new PHPDependencyDetailsPage(editor);
 			private IDetailsPage dirPage = new DirectiveDependencyDetailsPage(editor);
 			private IDetailsPage extensionPage = new ExtensionDependencyDetailsPage(editor);
@@ -209,29 +211,30 @@ public class DependenciesBlock extends MasterDetailsBlock {
 			private IDetailsPage zscompPage = new ZendComponentDependencyDetailsPage(editor);
 			
 			public Object getPageKey(Object object) {
-				return ((Dependency)object).getType();
+				return object.getClass();
 			}
 			
 			public IDetailsPage getPage(Object key) {
-				if (key.equals(IDependency.PHP)) {
+				Class clazz = (Class) key;
+				if (IPHPDependency.class.isAssignableFrom(clazz)) {
 					return phpPage;
 				}
-				if (key.equals(IDependency.EXTENSION)) {
+				if (IDirectiveDependency.class.isAssignableFrom(clazz)) {
 					return extensionPage;
 				}
-				if (key.equals(IDependency.DIRECTIVE)) {
+				if (IExtensionDependency.class.isAssignableFrom(clazz)) {
 					return dirPage;
 				}
-				if (key.equals(IDependency.ZENDSERVER)) {
+				if (IZendFrameworkDependency.class.isAssignableFrom(clazz)) {
 					return zsPage;
 				}
-				if (key.equals(IDependency.ZENDFRAMEWORK)) {
+				if (ZendServerDependency.class.isAssignableFrom(clazz)) {
 					return zfPage;
 				}
-				if (key.equals(IDependency.ZENDSERVERCOMPONENT)) {
+				if (IZendComponentDependency.class.isAssignableFrom(clazz)) {
 					return zscompPage;
 				}
-				return page;
+				return null;
 			}
 		});
 	}

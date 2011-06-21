@@ -55,7 +55,7 @@ public class PersistentResourcesPage extends DescriptorEditorPage {
 			
 			@Override
 			public Object[] getElements(Object input) {
-				List<String> list = editor.getModel().getDescriptor().getPersistentResources();
+				List<String> list = editor.getModel().getPersistentResources();
 				return editor.getResourceMapper().getResources(list.toArray(new String[list.size()]));
 			}
 			
@@ -67,13 +67,9 @@ public class PersistentResourcesPage extends DescriptorEditorPage {
 				if (newPaths == null) {
 					return;
 				}
-				try {
-					for (int i = 0; i < newPaths.length; i++) {
-						editor.getModel().addPersistentResource(newPaths[i]);
-					}
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				
+				for (int i = 0; i < newPaths.length; i++) {
+					editor.getModel().getPersistentResources().add(newPaths[i]);
 				}
 			}
 			
@@ -87,24 +83,14 @@ public class PersistentResourcesPage extends DescriptorEditorPage {
 				if (newPath == null) {
 					return;
 				}
-				try {
-					editor.getModel().removePersistentResource(currPath);
-					editor.getModel().addPersistentResource(newPath);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				editor.getModel().getPersistentResources().remove(currPath);
+				editor.getModel().getPersistentResources().add(newPath);
 			}
 			
 			@Override
 			protected void removePath(Object element) {
 				String path = (String) element;
-				try {
-					editor.getModel().removePersistentResource(path);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				editor.getModel().getPersistentResources().remove(path);
 			}
 		};
 		

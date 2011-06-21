@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -13,7 +12,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,11 +26,9 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptorModifier;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Parameter;
-import org.zend.php.zendserver.deployment.ui.Activator;
 
 
 public class ParametersBlock extends MasterDetailsBlock {
@@ -48,10 +44,6 @@ public class ParametersBlock extends MasterDetailsBlock {
 		}
 
 		public Object[] getElements(Object input) {
-			if (input instanceof IDeploymentDescriptorModifier) {
-				input = ((IDeploymentDescriptorModifier) input).getDescriptor();
-			}
-			
 			if (input instanceof IDeploymentDescriptor) {
 				return ((IDeploymentDescriptor) input).getParameters().toArray();
 			}
@@ -150,25 +142,17 @@ public class ParametersBlock extends MasterDetailsBlock {
 		Object elem = sel.getFirstElement();
 		if (elem instanceof IParameter) {
 			IParameter param = (IParameter) elem;
-			try {
-				editor.getModel().removeParameter(param);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			editor.getModel().getParameters().remove(param);
 		}
 		viewer.refresh();
 	}
 
 	protected void addElment() {
-		IDeploymentDescriptorModifier model = editor.getModel();
-		IParameter param = new Parameter("parameter"+(model.getDescriptor().getParameters().size() + 1), IParameter.STRING);
-		try {
-			model.addParameter(param);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IDeploymentDescriptor model = editor.getModel();
+		IParameter param = new Parameter();
+		param.setId("parameter"+(model.getParameters().size() + 1));
+		param.setType(IParameter.STRING);
+		model.getParameters().add(param);
 		viewer.refresh();
 		viewer.setSelection(new StructuredSelection(param));
 	}

@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.zend.php.zendserver.deployment.core.descriptor.IDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
 
 
 public class ZendComponentDependencyDetailsPage implements IDetailsPage {
@@ -26,7 +26,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	private DeploymentDescriptorEditor editor;
 	
 	private IManagedForm mform;
-	private IDependency input;
+	private IZendComponentDependency input;
 	
 	private boolean isRefresh;
 	private Text nameText;
@@ -81,7 +81,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (IDependency)ssel.getFirstElement();
+			input = (IZendComponentDependency)ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -128,11 +128,6 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		try {
-			editor.getModel().setDependencyName(input, text);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		input.setName(text);
 	}
 }
