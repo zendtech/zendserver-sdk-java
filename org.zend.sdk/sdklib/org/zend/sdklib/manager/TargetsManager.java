@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
+import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -65,14 +67,30 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 	}
 
+	/**
+	 * @param target
+	 * @return
+	 * @throws WebApiException
+	 */
 	public synchronized IZendTarget add(IZendTarget target)
 			throws WebApiException {
+		return add(target, false);
+	}
+
+	/**
+	 * @param target
+	 * @param suppressConnect
+	 * @return
+	 * @throws WebApiException
+	 */
+	public synchronized IZendTarget add(IZendTarget target,
+			boolean suppressConnect) throws WebApiException {
 		if (!validTarget(target)) {
 			return null;
 		}
 
 		// try to connect to server
-		if (!target.connect()) {
+		if (!suppressConnect && !target.connect()) {
 			return null;
 		}
 
@@ -133,74 +151,69 @@ public class TargetsManager extends AbstractChangeNotifier {
 	/**
 	 * Returns a target that represents the localhost zend server
 	 * 
-	 * @return zend target for localhost
-	 * @throws IOException
-	 * @throws WebApiException
-	 */
-	public synchronized IZendTarget detectLocalhostTarget() throws IOException {
-		return detectLocalhostTarget(DEFAULT_KEY);
-	}
-
-	/**
-	 * Returns a target that represents the localhost zend server
-	 * 
-	 * @param key
-	 * @return zend target for localhost
-	 * @throws IOException
-	 * @throws WebApiException
-	 */
-	public synchronized IZendTarget detectLocalhostTarget(String key)
-			throws IOException {
-		return detectLocalhostTarget(Integer.toString(getTargets().length), key);
-	}
-
-	/**
-	 * Returns a target that represents the localhost zend server
-	 * 
 	 * @param targetId
+	 *            target id to use, null if not specified
 	 * @param key
-	 * @return zend target for localhost
-	 * 
+	 *            key to use, null if not specified
+	 * @return the detected localhost target
 	 * @throws IOException
-	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws IOException {
-		return detectLocalhostTarget(targetId, key, false);
-	}
 
-	/**
-	 * Returns a target that represents the localhost zend server
-	 * 
-	 * @param targetId
-	 * @param key
-	 * @param addKeyOnly
-	 * @return zend target for localhost
-	 * @throws IOException
-	 * @throws WebApiException
-	 */
-	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key, boolean addKeyOnly) throws IOException {
-		final IZendTarget[] list = getTargets();
+		// resolve target id and key
 		targetId = targetId != null ? targetId : Integer
 				.toString(getTargets().length);
 		key = key != null ? key : DEFAULT_KEY;
+
+		final IZendTarget[] list = getTargets();
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
 				log.info(MessageFormat
-						.format("Local server {0} has been already detected with id {1}.",
+						.format("Local server {0} has been already detected with id {1}. ",
 								t.getHost(), t.getId()));
 				return t;
 			}
 		}
+
+		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
+
 		try {
+
 			// localhost not found - create one
-			final IZendTarget local = new ZendTargetAutoDetect()
-					.createLocalhostTarget(targetId, key);
-			return addKeyOnly ? local : add(local);
+			final IZendTarget local = detection.createLocalhostTarget(targetId,
+					key);
+
+			return add(local);
+
 		} catch (IOException e) {
-			log.error(e);
-			throw e;
+
+			log.warning(e);
+
+			if (EnvironmentUtils.isUnderLinux()
+					|| EnvironmentUtils.isUnderMaxOSX()) {
+
+				final IZendTarget local = detection.createTempLocalhost(
+						targetId, key);
+				try {
+					// suppress connect cause the
+					add(local, true);
+				} catch (WebApiException e1) {
+					// since the key is not registered yet, most probably there
+					// will be a failure here
+				}
+				log.error("Error writing to configuration files (with permission denied)");
+				
+				log.error("Please consider running:");
+				log.error("\t> sudo ./zend detect target -g "
+						+ getTargetConf(local));
+
+			} else {
+				log.error("Error writing to configuration files of localhost target (permission denied)");
+				log.info("This command requires elevated permissions, please consider using");
+				log.info("\t> elevate zend detect target");
+			}
+
 		} catch (WebApiException e) {
 			log.error("Coudn't connect to localhost server, please make "
 					+ "sure your server is up and running. This tool works with "
@@ -214,6 +227,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (message != null) {
 				log.error("\tError message: " + message);
 			}
+		}
+		return null;
+	}
+
+	private String getTargetConf(IZendTarget local) {
+		// tricky, TODO try to form an API for this end... 
+		if (loader instanceof UserBasedTargetLoader) {
+			final File descriptorFile = ((UserBasedTargetLoader) loader).getDescriptorFile(local.getId());
+			return descriptorFile.getAbsolutePath();
 		}
 		return null;
 	}
