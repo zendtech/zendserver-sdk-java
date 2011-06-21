@@ -67,22 +67,36 @@ public class ZendTargetAutoDetect {
 	 * 
 	 * @param targetId
 	 * @param key
-	 * @return
+	 * @return the new target
 	 * @throws IOException
 	 */
 	public IZendTarget createLocalhostTarget(String targetId, String key)
 			throws IOException {
-		findLocalhostInstallDirectory();
-		if (zendServerInstallLocation == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
 
-		String secretKey = retrieveSecretKey(key);
+		// find localhost install directory
+		final String secretKey = retrieveSecretKey(key);
+
+		// create the target
 		return new ZendTarget(targetId, localhost, key, secretKey);
+	}
+
+	/**
+	 * Generates a secret key and assigns locally. this key is not yet applied
+	 * to the local zend server
+	 * 
+	 * @param targetId
+	 * @param key
+	 * @return the new target
+	 */
+	public IZendTarget createTempLocalhost(String targetId, String key) {
+		final String sk = generateSecretKey();
+
+		return new ZendTarget(targetId, localhost, key, sk);
 	}
 
 	private String retrieveSecretKey(String key) throws IOException,
 			FileNotFoundException {
+
 		String secretKey = findSecretKeyInLocalhost(key);
 		if (secretKey == null) {
 			// assert permissions are elevated
@@ -177,9 +191,6 @@ public class ZendTargetAutoDetect {
 	 */
 	private String findSecretKeyInLocalhost(String key) throws IOException {
 		findLocalhostInstallDirectory();
-		if (zendServerInstallLocation == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
 
 		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
@@ -213,12 +224,17 @@ public class ZendTargetAutoDetect {
 	 * @throws IOException
 	 */
 	private void findLocalhostInstallDirectory() throws IOException {
-		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
-			zendServerInstallLocation = getLocalZendServerFromFile();
+		if (zendServerInstallLocation == null) {
+			if (EnvironmentUtils.isUnderLinux()
+					|| EnvironmentUtils.isUnderMaxOSX()) {
+				zendServerInstallLocation = getLocalZendServerFromFile();
+			} else if (EnvironmentUtils.isUnderWindows()) {
+				zendServerInstallLocation = getLocalZendServerFromRegistry();
+			}
 		}
 
-		if (EnvironmentUtils.isUnderWindows()) {
-			zendServerInstallLocation = getLocalZendServerFromRegistry();
+		if (zendServerInstallLocation == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
 		}
 	}
 
@@ -334,6 +350,7 @@ public class ZendTargetAutoDetect {
 
 	/**
 	 * Random number was prefixed with some zeros... pad it
+	 * 
 	 * @param string
 	 * @param i
 	 * @return
@@ -346,4 +363,5 @@ public class ZendTargetAutoDetect {
 		}
 		return builder.toString();
 	}
+
 }

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -51,7 +50,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
 		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString(), anyBoolean());
+				.detectLocalhostTarget(anyString(), anyString());
 		String backupValue = System.getProperty("os.name");
 		System.setProperty("os.name", "windows");
 		assertFalse(command.execute(cmdLine));
@@ -67,7 +66,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		manager.add(target);
 		assertTrue(manager.getTargets().length == 1);
 		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString(), anyBoolean());
+				.detectLocalhostTarget(anyString(), anyString());
 		String backupValue = System.getProperty("os.name");
 		System.setProperty("os.name", "linux");
 		assertFalse(command.execute(cmdLine));
