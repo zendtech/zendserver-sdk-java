@@ -74,7 +74,8 @@ public class ZendTargetAutoDetect {
 			throws IOException {
 
 		// find localhost install directory
-		final String secretKey = retrieveSecretKey(key);
+		final String existingSK = findExistingSecretKey(key);
+		final String secretKey = applySecretKey(key, existingSK);
 
 		// create the target
 		return new ZendTarget(targetId, localhost, key, secretKey);
@@ -94,10 +95,9 @@ public class ZendTargetAutoDetect {
 		return new ZendTarget(targetId, localhost, key, sk);
 	}
 
-	private String retrieveSecretKey(String key) throws IOException,
+	public String applySecretKey(String key, String secretKey) throws IOException,
 			FileNotFoundException {
 
-		String secretKey = findSecretKeyInLocalhost(key);
 		if (secretKey == null) {
 			// assert permissions are elevated
 			File keysFile = getApiKeysFile();
@@ -189,7 +189,7 @@ public class ZendTargetAutoDetect {
 	 * @return
 	 * @throws IOException
 	 */
-	private String findSecretKeyInLocalhost(String key) throws IOException {
+	private String findExistingSecretKey(String key) throws IOException {
 		findLocalhostInstallDirectory();
 
 		// assert permissions are elevated

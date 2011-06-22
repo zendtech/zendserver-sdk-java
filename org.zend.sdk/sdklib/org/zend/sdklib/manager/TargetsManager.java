@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.sdklib.manager;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -166,18 +165,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 				.toString(getTargets().length);
 		key = key != null ? key : DEFAULT_KEY;
 
-		final IZendTarget[] list = getTargets();
-		for (IZendTarget t : list) {
-			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
-				log.info(MessageFormat
-						.format("Local server {0} has been already detected with id {1}. ",
-								t.getHost(), t.getId()));
-				return t;
-			}
+		final IZendTarget existing = getExistingLocalhost();
+		if (existing != null) {
+			return existing;
 		}
 
 		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
-
 		try {
 
 			// localhost not found - create one
@@ -203,11 +196,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 					// will be a failure here
 				}
 				log.error("Error writing to configuration files (with permission denied)");
-				
-				log.error("Please consider running:");
-				log.error("\t> sudo ./zend detect target -g "
-						+ getTargetConf(local));
 
+				log.error("Please consider running:");
+				log.error(MessageFormat.format(
+						"\t> sudo ./zend detect target -k {0} -s {1}",
+						local.getKey(), local.getSecretKey()));
 			} else {
 				log.error("Error writing to configuration files of localhost target (permission denied)");
 				log.info("This command requires elevated permissions, please consider using");
@@ -231,11 +224,21 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private String getTargetConf(IZendTarget local) {
-		// tricky, TODO try to form an API for this end... 
-		if (loader instanceof UserBasedTargetLoader) {
-			final File descriptorFile = ((UserBasedTargetLoader) loader).getDescriptorFile(local.getId());
-			return descriptorFile.getAbsolutePath();
+	public synchronized String applyKeyToLocalhost(String key, String secretKey) throws IOException {
+		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
+		final String appliedSecretKey = detection.applySecretKey(key, secretKey);
+		return appliedSecretKey;
+	}
+
+	private IZendTarget getExistingLocalhost() {
+		final IZendTarget[] list = getTargets();
+		for (IZendTarget t : list) {
+			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
+				log.info(MessageFormat
+						.format("Local server {0} has been already detected with id {1}. ",
+								t.getHost(), t.getId()));
+				return t;
+			}
 		}
 		return null;
 	}
@@ -346,4 +349,5 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public String getDefaultTargetId() {
 		return defaultId;
 	}
+
 }

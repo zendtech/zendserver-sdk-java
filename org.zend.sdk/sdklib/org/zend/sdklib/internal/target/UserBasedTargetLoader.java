@@ -71,7 +71,8 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			throw new IllegalArgumentException("target is null");
 		}
 
-		TargetDescriptor descriptor = loadTargetDescriptor(target.getId());
+		final File df = getDescriptorFile(target.getId());
+		TargetDescriptor descriptor = loadTargetDescriptor(df);
 		if (descriptor != null) {
 			throw new IllegalArgumentException("target already exists");
 		}
@@ -103,12 +104,13 @@ public class UserBasedTargetLoader implements ITargetLoader {
 	 */
 	@Override
 	public IZendTarget remove(IZendTarget target) {
-		TargetDescriptor d = loadTargetDescriptor(target.getId());
+		final File df = getDescriptorFile(target.getId());
+		TargetDescriptor d = loadTargetDescriptor(df);
 		if (null == d) {
 			throw new IllegalArgumentException("cannot find target"
 					+ target.getId());
 		}
-		final File descriptorFile = getDescriptorFile(target.getId());
+		final File descriptorFile = df;
 
 		d.path.deleteOnExit();
 		final boolean delete2 = descriptorFile.delete();
@@ -132,7 +134,8 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			throw new IllegalArgumentException("target is null");
 		}
 
-		TargetDescriptor descriptor = loadTargetDescriptor(target.getId());
+		final File df = getDescriptorFile(target.getId());
+		TargetDescriptor descriptor = loadTargetDescriptor(df);
 		if (descriptor == null) {
 			throw new IllegalArgumentException("target does not exists");
 		}
@@ -171,7 +174,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		final ArrayList<IZendTarget> arrayList = new ArrayList<IZendTarget>(
 				targets.length);
 		for (File file : targets) {
-			final TargetDescriptor d = loadTargetDescriptor(file.getName());
+			final TargetDescriptor d = loadTargetDescriptor(file);
 			if (d.isValid()) {
 				File confFile = new File(d.path, CONF_FILENAME);
 				try {
@@ -217,9 +220,8 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 	}
 
-	private TargetDescriptor loadTargetDescriptor(String target) {
+	public TargetDescriptor loadTargetDescriptor(File file) {
 		try {
-			final File file = getDescriptorFile(target);
 			if (!file.exists()) {
 				return null;
 			}

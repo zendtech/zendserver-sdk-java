@@ -21,7 +21,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class DetectTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
-	private static final String APPLY_KEY = "g";
+	private static final String SECRET_KEY = "s";
 	private static final String KEY = "k";
 
 	@Option(opt = ID, required = false, description = "The target id to create", argName = "id")
@@ -29,9 +29,9 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		return getValue(ID);
 	}
 
-	@Option(opt = APPLY_KEY, required = false, description = "Apply the generate key to the localhost server", argName = "conf-file")
-	public String getApplyKey() {
-		return getValue(APPLY_KEY);
+	@Option(opt = SECRET_KEY, required = false, description = "The target secret key to create", argName = "secret-key")
+	public String getSecretKey() {
+		return getValue(SECRET_KEY);
 	}
 
 	@Option(opt = KEY, required = false, description = "The key to use", argName = "key")
@@ -43,14 +43,33 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean doExecute() {
 		final String key = getKey();
 		final String targetId = getId();
-		final String genertaedKeyFile = getApplyKey();
+		final String secretKey = getSecretKey();
 
 		// usually on linux/mac, users run this to apply the generated key
-		if (genertaedKeyFile != null) {
-			return applyKeyToLocalhost();
+		if (key != null && secretKey != null) {
+			try {
+				final String appliedSK = getTargetManager()
+						.applyKeyToLocalhost(secretKey, secretKey);
+				getLogger().info("Key was generated for localhost target. ");
+				getLogger().info("\tKey: " + key);
+				getLogger().info("\tSecret key: " + appliedSK);
+				getLogger()
+						.info("\tThis key must be kept secret and immediately revoked if "
+								+ "there is any chance that it has been compromised");
+				return true;
+			} catch (IOException e) {
+				getLogger().error(
+						"root privileges are required to run this command.");
+				getLogger().error("Please consider using:");
+				getLogger().error(
+						"\t% sudo " + commandLine.getVerb() + " "
+								+ commandLine.getDirectObject() + " ...");
+			}
+			return false;
 		}
 
 		try {
+			// detect localhost
 			final IZendTarget target = getTargetManager()
 					.detectLocalhostTarget(targetId, key);
 			if (target != null) {
@@ -68,8 +87,8 @@ public class DetectTargetCommand extends TargetAwareCommand {
 			if (EnvironmentUtils.isUnderLinux()
 					|| EnvironmentUtils.isUnderMaxOSX()) {
 				getLogger().error(
-						"You need root privileges to run this command.");
-				getLogger().error("Consider using:");
+						"root privileges are required to run this command.");
+				getLogger().error("Please consider using:");
 				getLogger().error(
 						"\t% sudo " + commandLine.getVerb() + " "
 								+ commandLine.getDirectObject() + " ...");
@@ -82,10 +101,6 @@ public class DetectTargetCommand extends TargetAwareCommand {
 								+ commandLine.getDirectObject() + " ...");
 			}
 		}
-		return false;
-	}
-
-	private boolean applyKeyToLocalhost() {
 		return false;
 	}
 }
