@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -39,7 +40,7 @@ public class ZendTargetAutoDetect {
 	private static final String INSTALL_LOCATION = "InstallLocation";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
-	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found, "
+	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found (file {0} not found)"
 			+ "please refer to http://www.zend.com/server";
 
 	// linux key
@@ -104,10 +105,6 @@ public class ZendTargetAutoDetect {
 
 		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
-		if (keysFile == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
-
 		if (!keysFile.canWrite()) {
 			// "Permission denied"
 			throw new IOException(NEED_TO_ELEVATE);
@@ -193,10 +190,6 @@ public class ZendTargetAutoDetect {
 
 		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
-		if (keysFile == null) {
-			throw new IllegalStateException(MISSING_ZEND_SERVER);
-		}
-
 		if (!keysFile.canRead()) {
 			// "Permission denied"
 			throw new IOException(NEED_TO_ELEVATE);
@@ -328,13 +321,20 @@ public class ZendTargetAutoDetect {
 	}
 
 	private File getApiKeysFile() {
+		File keysFile = null;
 		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
-			return new File(zendServerInstallLocation
+			keysFile = new File(zendServerInstallLocation
 					+ "/gui/application/data/zend-server-user.ini");
 		} else if (EnvironmentUtils.isUnderWindows()) {
-			return new File(
+			keysFile = new File(
 					zendServerInstallLocation
 							+ "ZendServer\\GUI\\application\\data\\zend-server-user.ini");
+		}
+
+		if (keysFile == null || !keysFile.isFile()) {
+			throw new IllegalStateException(MessageFormat.format(
+					MISSING_ZEND_SERVER,
+					keysFile == null ? null : keysFile.getAbsoluteFile()));
 		}
 
 		return null;
