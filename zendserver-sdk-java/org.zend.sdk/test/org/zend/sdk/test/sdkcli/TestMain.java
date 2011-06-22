@@ -7,10 +7,12 @@ public class TestMain {
 
 	@Test
 	public void testValidCommandLine() {
-		// Main.main(new String[] { "help" });
-		Main.main(new String[] { "list", "targets", "-s" });
+		Main.main(new String[] { "help" });
 	}
 
-
+	@Test
+	public void testInalidCommandLine() {
+		Main.main(new String[] { "create", "project", });
+	}
 
 }
