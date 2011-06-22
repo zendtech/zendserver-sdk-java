@@ -1,11 +1,8 @@
 package org.zend.sdk.test.sdkcli.commands;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
@@ -15,7 +12,6 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
-import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
@@ -31,37 +27,6 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 		assertTrue(command.execute(cmdLine));
 	}
 
-	@Test
-	public void testDetectLocalhostIOExceptionWindows() throws WebApiException,
-			IOException, ParseError {
-		CommandLine cmdLine = new CommandLine(validCommand);
-		DetectTargetCommand command = getCommand(cmdLine);
-		IZendTarget target = getTarget();
-		manager.add(target);
-		assertTrue(manager.getTargets().length == 1);
-		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString());
-		String backupValue = System.getProperty("os.name");
-		System.setProperty("os.name", "windows");
-		assertFalse(command.execute(cmdLine));
-		System.setProperty("os.name", backupValue);
-	}
-
-	@Test
-	public void testDetectLocalhostIOExceptionLinux() throws WebApiException,
-			IOException, ParseError {
-		CommandLine cmdLine = new CommandLine(validCommand);
-		DetectTargetCommand command = getCommand(cmdLine);
-		IZendTarget target = getTarget();
-		manager.add(target);
-		assertTrue(manager.getTargets().length == 1);
-		doThrow(new IOException("testException")).when(manager)
-				.detectLocalhostTarget(anyString(), anyString());
-		String backupValue = System.getProperty("os.name");
-		System.setProperty("os.name", "linux");
-		assertFalse(command.execute(cmdLine));
-		System.setProperty("os.name", backupValue);
-	}
 
 	private DetectTargetCommand getCommand(CommandLine cmdLine)
 			throws ParseError {
