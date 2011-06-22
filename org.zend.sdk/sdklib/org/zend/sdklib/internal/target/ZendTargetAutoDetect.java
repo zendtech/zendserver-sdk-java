@@ -74,8 +74,10 @@ public class ZendTargetAutoDetect {
 			throws IOException {
 
 		// find localhost install directory
-		final String existingSK = findExistingSecretKey(key);
-		final String secretKey = applySecretKey(key, existingSK);
+		String secretKey = findExistingSecretKey(key);
+		if (secretKey == null) {
+			secretKey = applySecretKey(key, generateSecretKey());
+		}
 
 		// create the target
 		return new ZendTarget(targetId, localhost, key, secretKey);
@@ -83,53 +85,53 @@ public class ZendTargetAutoDetect {
 
 	/**
 	 * Generates a secret key and assigns locally. this key is not yet applied
-	 * to the local zend server
+	 * to the local zend server. Read
+	 * {@link ZendTargetAutoDetect#applySecretKey(String, String)} to apply the
+	 * generated key
 	 * 
 	 * @param targetId
 	 * @param key
 	 * @return the new target
 	 */
-	public IZendTarget createTempLocalhost(String targetId, String key) {
+	public IZendTarget createTemporaryLocalhost(String targetId, String key) {
 		final String sk = generateSecretKey();
 
 		return new ZendTarget(targetId, localhost, key, sk);
 	}
 
-	public String applySecretKey(String key, String secretKey) throws IOException,
-			FileNotFoundException {
+	public String applySecretKey(String key, String secretKey)
+			throws IOException, FileNotFoundException {
 
-		if (secretKey == null) {
-			// assert permissions are elevated
-			File keysFile = getApiKeysFile();
-			if (keysFile == null) {
-				throw new IllegalStateException(MISSING_ZEND_SERVER);
-			}
-
-			if (!keysFile.canWrite()) {
-				// "Permission denied"
-				throw new IOException(NEED_TO_ELEVATE);
-			}
-
-			// write zend-server-users.ini and find key
-			BufferedReader ir = new BufferedReader(new FileReader(keysFile));
-			final File edited = new File(keysFile.getParentFile(), USER_INI
-					+ ".tmp");
-			if (!edited.exists()) {
-				edited.createNewFile();
-			}
-			PrintStream os = new PrintStream(edited);
-			secretKey = copyWithEdits(ir, os, key);
-			ir.close();
-			os.close();
-			String oldKeysFilePath = keysFile.getAbsolutePath();
-			keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI
-					+ ".bak"));
-			File oldFile = new File(oldKeysFilePath);
-			if (oldFile.exists()) {
-				oldFile.delete();
-			}
-			edited.renameTo(new File(edited.getParentFile(), USER_INI));
+		// assert permissions are elevated
+		File keysFile = getApiKeysFile();
+		if (keysFile == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
 		}
+
+		if (!keysFile.canWrite()) {
+			// "Permission denied"
+			throw new IOException(NEED_TO_ELEVATE);
+		}
+
+		// write zend-server-users.ini and find key
+		BufferedReader ir = new BufferedReader(new FileReader(keysFile));
+		final File edited = new File(keysFile.getParentFile(), USER_INI
+				+ ".tmp");
+		if (!edited.exists()) {
+			edited.createNewFile();
+		}
+		PrintStream os = new PrintStream(edited);
+		secretKey = copyWithEdits(ir, os, key, secretKey);
+		ir.close();
+		os.close();
+		String oldKeysFilePath = keysFile.getAbsolutePath();
+		keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI + ".bak"));
+		File oldFile = new File(oldKeysFilePath);
+		if (oldFile.exists()) {
+			oldFile.delete();
+		}
+		edited.renameTo(new File(edited.getParentFile(), USER_INI));
+
 		if (secretKey.startsWith("\"")) {
 			secretKey = secretKey.substring(1, secretKey.length() - 1);
 		}
@@ -137,14 +139,12 @@ public class ZendTargetAutoDetect {
 	}
 
 	public static String copyWithEdits(BufferedReader ir, PrintStream os,
-			String key) throws IOException {
+			String key, String secretKey) throws IOException {
 		String line = ir.readLine();
-
-		final String sk = generateSecretKey();
 		boolean block = false;
 		while (line != null) {
 			if ("[apiKeys]".equals(line)) {
-				writeApiKeyBlock(key, os, sk);
+				writeApiKeyBlock(key, os, secretKey);
 				block = true;
 			} else {
 				os.println(line);
@@ -153,11 +153,10 @@ public class ZendTargetAutoDetect {
 		}
 
 		if (!block) {
-			writeApiKeyBlock(key, os, sk);
+			writeApiKeyBlock(key, os, secretKey);
 		}
 
-		return sk;
-
+		return secretKey;
 	}
 
 	public static Properties readApiKeysSection(BufferedReader reader)

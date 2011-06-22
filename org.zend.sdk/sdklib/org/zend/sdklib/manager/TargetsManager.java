@@ -186,7 +186,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (EnvironmentUtils.isUnderLinux()
 					|| EnvironmentUtils.isUnderMaxOSX()) {
 
-				final IZendTarget local = detection.createTempLocalhost(
+				final IZendTarget local = detection.createTemporaryLocalhost(
 						targetId, key);
 				try {
 					// suppress connect cause the

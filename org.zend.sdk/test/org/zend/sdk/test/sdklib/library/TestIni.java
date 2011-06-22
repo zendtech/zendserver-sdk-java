@@ -37,8 +37,9 @@ public class TestIni {
 		InputStream is = this.getClass().getResourceAsStream(
 				"zend-server-user.ini");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		final String copyWithEdits = ZendTargetAutoDetect.copyWithEdits(reader,
-				System.out, "sdk");
+		final String copyWithEdits = ZendTargetAutoDetect
+				.copyWithEdits(reader, System.out, "sdk",
+						"9b3f33e96c5b476e8fe7435bd333993b366c2b88d38a475bc4a08eda2007acab");
 		assertNotNull(copyWithEdits);
 	}
 
