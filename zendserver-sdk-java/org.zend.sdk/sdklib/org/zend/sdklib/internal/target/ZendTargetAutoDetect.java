@@ -103,34 +103,44 @@ public class ZendTargetAutoDetect {
 		return new ZendTarget(targetId, localhost, key, sk);
 	}
 
+	/**
+	 * Apply key and secret key to the installed local server
+	 * @param key
+	 * @param secretKey
+	 * @return
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
 	public String applySecretKey(String key, String secretKey)
 			throws IOException, FileNotFoundException {
 
-		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
+
+		// assert permissions are elevated
 		if (!keysFile.canWrite()) {
-			// "Permission denied"
 			throw new IOException(NEED_TO_ELEVATE);
 		}
 
-		// write zend-server-users.ini and find key
-		BufferedReader ir = new BufferedReader(new FileReader(keysFile));
+		// backup file
 		final File edited = new File(keysFile.getParentFile(), USER_INI
 				+ ".tmp");
 		if (!edited.exists()) {
 			edited.createNewFile();
 		}
+
+		// backup file
+		BufferedReader ir = new BufferedReader(new FileReader(keysFile));
 		PrintStream os = new PrintStream(edited);
+		copyWithoutEdits(ir, os);
+		ir.close();
+		os.close();
+
+		// write zend-server-users.ini and find key
+		ir = new BufferedReader(new FileReader(edited));
+		os = new PrintStream(keysFile);
 		secretKey = copyWithEdits(ir, os, key, secretKey);
 		ir.close();
 		os.close();
-		String oldKeysFilePath = keysFile.getAbsolutePath();
-		keysFile.renameTo(new File(keysFile.getParentFile(), USER_INI + ".bak"));
-		File oldFile = new File(oldKeysFilePath);
-		if (oldFile.exists()) {
-			oldFile.delete();
-		}
-		edited.renameTo(new File(edited.getParentFile(), USER_INI));
 
 		if (secretKey.startsWith("\"")) {
 			secretKey = secretKey.substring(1, secretKey.length() - 1);
@@ -157,6 +167,15 @@ public class ZendTargetAutoDetect {
 		}
 
 		return secretKey;
+	}
+
+	public static void copyWithoutEdits(BufferedReader ir, PrintStream os)
+			throws IOException {
+		String line = ir.readLine();
+		while (line != null) {
+			os.println(line);
+			line = ir.readLine();
+		}
 	}
 
 	public static Properties readApiKeysSection(BufferedReader reader)
@@ -223,8 +242,8 @@ public class ZendTargetAutoDetect {
 
 		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
 			zendServerInstallLocation = getLocalZendServerFromFile();
-		} else { 
-			// (EnvironmentUtils.isUnderWindows()) 
+		} else {
+			// (EnvironmentUtils.isUnderWindows())
 			zendServerInstallLocation = getLocalZendServerFromRegistry();
 		}
 
