@@ -21,20 +21,10 @@ import org.zend.webapi.core.WebApiException;
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
 	private String[] validCommand = new String[] { "detect", "target" };
-	private String[] validCommandOnlyAdd = new String[] { "detect", "target", "-g" };
 
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
 		CommandLine cmdLine = new CommandLine(validCommand);
-		DetectTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		manager.add(getTarget());
-		assertTrue(command.execute(cmdLine));
-	}
-
-	@Test
-	public void testExecuteOnlyAdd() throws ParseError, WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommandOnlyAdd);
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		manager.add(getTarget());
