@@ -13,7 +13,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -32,9 +33,17 @@ public class ApplicationDeployHandler extends AbstractHandler {
 				&& !((IStructuredSelection) selection).isEmpty()) {
 			Object element = ((IStructuredSelection) selection)
 					.getFirstElement();
-			if (element instanceof IScriptProject) {
-				currentProject = ((IScriptProject) element).getProject();
+			if (element instanceof IAdaptable) {
+				Object obj = ((IAdaptable) element).getAdapter(IResource.class);
+				if (obj != null) {
+					element = obj;
+				}
 			}
+			
+			if (element instanceof IProject) {
+				currentProject = (IProject) element;
+			}
+			
 			if (element instanceof IFile) {
 				currentProject = ((IFile) element).getProject();
 			}
