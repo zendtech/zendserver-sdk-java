@@ -158,7 +158,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @throws IOException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key) throws IOException {
+			String key) {
 
 		// resolve target id and key
 		targetId = targetId != null ? targetId : Integer
@@ -195,16 +195,17 @@ public class TargetsManager extends AbstractChangeNotifier {
 					// since the key is not registered yet, most probably there
 					// will be a failure here
 				}
-				log.error("Error writing to configuration files (with permission denied)");
 
-				log.error("Please consider running:");
+				log.error("Localhost target was detected, to apply the secret key please "
+						+ "consider running: ");
 				log.error(MessageFormat.format(
 						"\t> sudo ./zend detect target -k {0} -s {1}",
 						local.getKey(), local.getSecretKey()));
+				return local;
 			} else {
-				log.error("Error writing to configuration files of localhost target (permission denied)");
-				log.info("This command requires elevated permissions, please consider using");
-				log.info("\t> elevate zend detect target");
+				log.error("Use administrator account with elevated privileges");
+				log.error("Please consider using:");
+				log.error("\t> elevate detect target");
 			}
 
 		} catch (WebApiException e) {
@@ -224,9 +225,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	public synchronized String applyKeyToLocalhost(String key, String secretKey) throws IOException {
+	public synchronized String applyKeyToLocalhost(String key, String secretKey)
+			throws IOException {
 		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
-		final String appliedSecretKey = detection.applySecretKey(key, secretKey);
+		final String appliedSecretKey = detection
+				.applySecretKey(key, secretKey);
 		return appliedSecretKey;
 	}
 
