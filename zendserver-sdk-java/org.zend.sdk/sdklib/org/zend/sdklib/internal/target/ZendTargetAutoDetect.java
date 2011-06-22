@@ -18,7 +18,6 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -40,7 +39,7 @@ public class ZendTargetAutoDetect {
 	private static final String INSTALL_LOCATION = "InstallLocation";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
-	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found (file {0} not found)"
+	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found"
 			+ "please refer to http://www.zend.com/server";
 
 	// linux key
@@ -62,6 +61,10 @@ public class ZendTargetAutoDetect {
 		} catch (MalformedURLException e) {
 			// ignore localhost is a valid URL
 		}
+	}
+
+	public ZendTargetAutoDetect() throws IOException {
+		findLocalhostInstallDirectory();
 	}
 
 	/**
@@ -186,8 +189,6 @@ public class ZendTargetAutoDetect {
 	 * @throws IOException
 	 */
 	private String findExistingSecretKey(String key) throws IOException {
-		findLocalhostInstallDirectory();
-
 		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
 		if (!keysFile.canRead()) {
@@ -216,13 +217,15 @@ public class ZendTargetAutoDetect {
 	 * @throws IOException
 	 */
 	private void findLocalhostInstallDirectory() throws IOException {
-		if (zendServerInstallLocation == null) {
-			if (EnvironmentUtils.isUnderLinux()
-					|| EnvironmentUtils.isUnderMaxOSX()) {
-				zendServerInstallLocation = getLocalZendServerFromFile();
-			} else if (EnvironmentUtils.isUnderWindows()) {
-				zendServerInstallLocation = getLocalZendServerFromRegistry();
-			}
+		if (zendServerInstallLocation != null) {
+			return;
+		}
+
+		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
+			zendServerInstallLocation = getLocalZendServerFromFile();
+		} else { 
+			// (EnvironmentUtils.isUnderWindows()) 
+			zendServerInstallLocation = getLocalZendServerFromRegistry();
 		}
 
 		if (zendServerInstallLocation == null) {
@@ -331,13 +334,15 @@ public class ZendTargetAutoDetect {
 							+ "ZendServer\\GUI\\application\\data\\zend-server-user.ini");
 		}
 
-		if (keysFile == null || !keysFile.isFile()) {
-			throw new IllegalStateException(MessageFormat.format(
-					MISSING_ZEND_SERVER,
-					keysFile == null ? null : keysFile.getAbsoluteFile()));
+		if (keysFile == null) {
+			throw new IllegalStateException(MISSING_ZEND_SERVER);
+		}
+		if (!keysFile.exists()) {
+			throw new IllegalArgumentException("The file "
+					+ keysFile.getAbsolutePath() + " does not exist.");
 		}
 
-		return null;
+		return keysFile;
 	}
 
 	private static String generateSecretKey() {
