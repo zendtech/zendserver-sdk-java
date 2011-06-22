@@ -57,6 +57,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 								+ "there is any chance that it has been compromised");
 				return true;
 			} catch (IOException e) {
+				getLogger().error(e);
 				getLogger().error(
 						"root privileges are required to run this command.");
 				getLogger().error("Please consider using:");
