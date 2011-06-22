@@ -8,6 +8,9 @@
 		<pathelement location="bin" />
 		<pathelement location="lib/commons-cli-1.2.jar" />
 		<pathelement location="lib/log4j-1.2.16.jar" />
+		<pathelement location="lib/jul-to-slf4j-1.6.1.jar" />
+		<pathelement location="lib/slf4j-api-1.6.1.jar" />
+		<pathelement location="lib/slf4j-log4j12-1.6.1.jar" />
 		<pathelement location="lib/org.restlet.ext.xml.jar" />
 		<pathelement location="lib/org.restlet.jar" />
 		<pathelement location="lib/zend-webapi.jar" />
@@ -40,6 +43,9 @@
 		<pathelement location="bin" />
 		<pathelement location="lib/commons-cli-1.2.jar" />
 		<pathelement location="lib/log4j-1.2.16.jar" />
+		<pathelement location="lib/jul-to-slf4j-1.6.1.jar" />
+		<pathelement location="lib/slf4j-api-1.6.1.jar" />
+		<pathelement location="lib/slf4j-log4j12-1.6.1.jar" />
 		<pathelement location="lib/org.restlet.ext.xml.jar" />
 		<pathelement location="lib/org.restlet.jar" />
 		<pathelement location="lib/zend-webapi.jar" />
@@ -128,6 +134,9 @@
 			<fileset dir=".">
 				<include name="lib/commons-cli-1.2.jar"/>
 				<include name="lib/log4j-1.2.16.jar"/>
+				<include name="lib/jul-to-slf4j-1.6.1.jar" />
+				<include name="lib/slf4j-api-1.6.1.jar" />
+				<include name="lib/slf4j-log4j12-1.6.1.jar" />
 				<include name="lib/org.restlet.ext.xml.jar"/>
 				<include name="lib/org.restlet.jar"/>
 				<include name="lib/registry.jar"/>
