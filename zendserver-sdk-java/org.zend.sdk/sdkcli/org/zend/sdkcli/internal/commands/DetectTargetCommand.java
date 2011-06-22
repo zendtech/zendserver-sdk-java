@@ -10,7 +10,6 @@ package org.zend.sdkcli.internal.commands;
 import java.io.IOException;
 
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -68,39 +67,21 @@ public class DetectTargetCommand extends TargetAwareCommand {
 			return false;
 		}
 
-		try {
-			// detect localhost
-			final IZendTarget target = getTargetManager()
-					.detectLocalhostTarget(targetId, key);
-			if (target != null) {
-				getLogger().info(
-						"The following key is available for target "
-								+ target.getHost());
-				getLogger().info("\tKey: " + target.getKey());
-				getLogger().info("\tSecret key: " + target.getSecretKey());
-				getLogger()
-						.info("\tThis key must be kept secret and immediately revoked if "
-								+ "there is any chance that it has been compromised");
-				return true;
-			}
-		} catch (IOException e) {
-			if (EnvironmentUtils.isUnderLinux()
-					|| EnvironmentUtils.isUnderMaxOSX()) {
-				getLogger().error(
-						"root privileges are required to run this command.");
-				getLogger().error("Please consider using:");
-				getLogger().error(
-						"\t% sudo " + commandLine.getVerb() + " "
-								+ commandLine.getDirectObject() + " ...");
-			} else {
-				getLogger().error(
-						"Use administrator account with elevated privileges");
-				getLogger().error("Consider using:");
-				getLogger().error(
-						"\t> elevate " + commandLine.getVerb() + " "
-								+ commandLine.getDirectObject() + " ...");
-			}
+		// detect localhost
+		final IZendTarget target = getTargetManager().detectLocalhostTarget(
+				targetId, key);
+		if (target == null) {
+			return false;
 		}
-		return false;
+
+		// announce target created
+		getLogger().info(
+				"The localhost target was detected " + target.getHost());
+		getLogger().info("\tKey: " + target.getKey());
+		getLogger().info("\tSecret key: " + target.getSecretKey());
+		getLogger().info(
+				"\tThis key must be kept secret and immediately revoked if "
+						+ "there is any chance that it has been compromised");
+		return true;
 	}
 }
