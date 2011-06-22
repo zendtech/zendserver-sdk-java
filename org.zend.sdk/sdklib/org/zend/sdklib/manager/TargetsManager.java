@@ -170,7 +170,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 			return existing;
 		}
 
-		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
+		ZendTargetAutoDetect detection = null;
+		try {
+			detection = new ZendTargetAutoDetect();
+		} catch (IOException e) {
+			// missing zend server
+			log.error(e);
+			return null;
+		}
+		
 		try {
 
 			// localhost not found - create one
