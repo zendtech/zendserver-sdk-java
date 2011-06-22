@@ -82,7 +82,6 @@ public class DetectTargetCommand extends TargetAwareCommand {
 								+ commandLine.getDirectObject() + " ...");
 			}
 		}
-		getLogger().error("Operation failed.");
 		return false;
 	}
 

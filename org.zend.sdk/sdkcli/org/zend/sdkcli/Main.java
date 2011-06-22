@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.zend.sdkcli;
 
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.UsageCommand;
 import org.zend.sdkcli.internal.logger.CliLogger;
@@ -31,8 +35,9 @@ public class Main {
 			ICommand command = CommandFactory.createCommand(commandLine);
 			command.execute(commandLine);
 		} catch (ParseError e) {
-			log.error("An error occured: "+e.getMessage());
-			UsageCommand helpCmd = (UsageCommand) CommandFactory.createCommand(CommandType.HELP);
+			log.error("An error occured: " + e.getMessage());
+			UsageCommand helpCmd = (UsageCommand) CommandFactory
+					.createCommand(CommandType.HELP);
 			helpCmd.execute(commandLine);
 		}
 	}
@@ -40,6 +45,14 @@ public class Main {
 	private static void initLogger() {
 		Log.getInstance().registerLogger(new CliLogger());
 		log = Log.getInstance().getLogger(Main.class.getName());
+		java.util.logging.Logger rootLogger = LogManager.getLogManager()
+				.getLogger("");
+		Handler[] handlers = rootLogger.getHandlers();
+		for (int i = 0; i < handlers.length; i++) {
+			rootLogger.removeHandler(handlers[i]);
+		}
+		SLF4JBridgeHandler.install();
+
 	}
 
 }
