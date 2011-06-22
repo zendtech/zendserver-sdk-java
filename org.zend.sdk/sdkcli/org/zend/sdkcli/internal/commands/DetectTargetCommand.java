@@ -40,35 +40,20 @@ public class DetectTargetCommand extends TargetAwareCommand {
 
 	@Override
 	public boolean doExecute() {
-		final String key = getKey();
 		final String targetId = getId();
+		final String key = getKey();
 		final String secretKey = getSecretKey();
 
-		// usually on linux/mac, users run this to apply the generated key
+		// users run this command to apply the generated key
 		if (key != null && secretKey != null) {
-			try {
-				final String appliedSK = getTargetManager()
-						.applyKeyToLocalhost(secretKey, secretKey);
-				getLogger().info("Key was generated for localhost target. ");
-				getLogger().info("\tKey: " + key);
-				getLogger().info("\tSecret key: " + appliedSK);
-				getLogger()
-						.info("\tThis key must be kept secret and immediately revoked if "
-								+ "there is any chance that it has been compromised");
-				return true;
-			} catch (IOException e) {
-				getLogger().error(e);
-				getLogger().error(
-						"root privileges are required to run this command.");
-				getLogger().error("Please consider using:");
-				getLogger().error(
-						"\t% sudo " + commandLine.getVerb() + " "
-								+ commandLine.getDirectObject() + " ...");
-			}
-			return false;
+			return applyKey(key, secretKey);
 		}
 
 		// detect localhost
+		return detectLocalhostTarget(targetId, key);
+	}
+
+	private boolean detectLocalhostTarget(String targetId, String key) {
 		final IZendTarget target = getTargetManager().detectLocalhostTarget(
 				targetId, key);
 		if (target == null) {
@@ -84,5 +69,28 @@ public class DetectTargetCommand extends TargetAwareCommand {
 				"\tThis key must be kept secret and immediately revoked if "
 						+ "there is any chance that it has been compromised");
 		return true;
+	}
+
+	private boolean applyKey(final String key, final String secretKey) {
+		try {
+			final String appliedSK = getTargetManager().applyKeyToLocalhost(
+					key, secretKey);
+			getLogger().info("Key was generated for localhost target. ");
+			getLogger().info("\tKey: " + key);
+			getLogger().info("\tSecret key: " + appliedSK);
+			getLogger()
+					.info("\tThis key must be kept secret and immediately revoked if "
+							+ "there is any chance that it has been compromised");
+			return true;
+		} catch (IOException e) {
+			getLogger().error(e);
+			getLogger().error(
+					"root privileges are required to run this command.");
+			getLogger().error("Please consider using:");
+			getLogger().error(
+					"\t% sudo " + commandLine.getVerb() + " "
+							+ commandLine.getDirectObject() + " ...");
+		}
+		return false;
 	}
 }
