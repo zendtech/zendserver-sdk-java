@@ -163,7 +163,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		// resolve target id and key
 		targetId = targetId != null ? targetId : Integer
 				.toString(getTargets().length);
-		key = key != null ? key : DEFAULT_KEY;
+		key = key != null ? key : DEFAULT_KEY + "." + System.getProperty("user.name");
 
 		final IZendTarget existing = getExistingLocalhost();
 		if (existing != null) {
