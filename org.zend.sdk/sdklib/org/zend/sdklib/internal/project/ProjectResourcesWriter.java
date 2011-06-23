@@ -202,14 +202,14 @@ public class ProjectResourcesWriter {
 			if (!path.endsWith("/")) {
 				copyFile(destination, path, app);
 			} else {
-				createFolder(destination, path);
+				createFolder(destination, path, app);
 			}
 
 		}
 	}
 
-	private boolean createFolder(File destination, String path) {
-		final File file = new File(destination, path);
+	private boolean createFolder(File destination, String path, TemplateApplications app) {
+		final File file = new File(destination, relativeToApp(path, app));
 		return file.mkdirs();
 	}
 
