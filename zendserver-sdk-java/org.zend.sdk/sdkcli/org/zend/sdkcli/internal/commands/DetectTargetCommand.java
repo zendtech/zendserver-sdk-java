@@ -23,17 +23,17 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	private static final String SECRET_KEY = "s";
 	private static final String KEY = "k";
 
-	@Option(opt = ID, required = false, description = "The target id to create", argName = "id")
+	@Option(opt = ID, required = false, description = "Id of the new target", argName = "id")
 	public String getId() {
 		return getValue(ID);
 	}
 
-	@Option(opt = SECRET_KEY, required = false, description = "The target secret key to create", argName = "secret-key")
+	@Option(opt = SECRET_KEY, required = false, description = "Secret key of the new target (to be applied or used)", argName = "secret-key")
 	public String getSecretKey() {
 		return getValue(SECRET_KEY);
 	}
 
-	@Option(opt = KEY, required = false, description = "The key to use", argName = "key")
+	@Option(opt = KEY, required = false, description = "Key of the new target (to be applied)", argName = "key")
 	public String getKey() {
 		return getValue(KEY);
 	}

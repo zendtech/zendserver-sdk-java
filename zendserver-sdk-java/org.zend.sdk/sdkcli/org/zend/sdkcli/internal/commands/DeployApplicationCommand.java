@@ -26,7 +26,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	private static final String CREATE_VHOST = "c";
 	private static final String DEFAULT_SERVER = "d";
 
-	@Option(opt = PATH, required = false, description = "The path to the project or application package", argName = "path")
+	@Option(opt = PATH, required = false, description = "Application package location or project's directory, if not provided current directory is considered", argName = "path")
 	public String getPath() {
 		final String value = getValue(PATH);
 		if (value == null) {
@@ -35,17 +35,17 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return value;
 	}
 
-	@Option(opt = BASE_URL, required = false, description = "The base URL of the application", argName = "url")
+	@Option(opt = BASE_URL, required = false, description = "Base URL of this application, if not provided project name is considered", argName = "url")
 	public String getBaseUrl() {
 		return getValue(BASE_URL);
 	}
 
-	@Option(opt = PARAMS, required = false, description = "The path to parameters properties file", argName = "parameters")
+	@Option(opt = PARAMS, required = false, description = "Properties file path of the parameters given to this application", argName = "parameters")
 	public String getParams() {
 		return getValue(PARAMS);
 	}
 
-	@Option(opt = NAME, required = false, description = "The application name", argName = "name")
+	@Option(opt = NAME, required = false, description = "Application name", argName = "name")
 	public String getName() {
 		return getValue(NAME);
 	}
@@ -55,11 +55,6 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return hasOption(IGNORE_FAILURES);
 	}
 
-	@Option(opt = CREATE_VHOST, required = false, description = "Create vhost")
-	public boolean isCreateVhost() {
-		return !isDefaultServer();
-	}
-
 	/**
 	 * Validates that both create + default are not present together. If none is
 	 * chosen then the default option should be considered. Else just return the
@@ -67,7 +62,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	 * 
 	 * @return true iff default server
 	 */
-	@Option(opt = DEFAULT_SERVER, required = false, description = "Use default server")
+	@Option(opt = DEFAULT_SERVER, required = false, description = "Use default server for this application")
 	public boolean isDefaultServer() {
 		final boolean defaultServer = hasOption(DEFAULT_SERVER);
 		final boolean vhost = hasOption(CREATE_VHOST);
@@ -89,6 +84,11 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 
 		// only one is enabled
 		return defaultServer;
+	}
+
+	@Option(opt = CREATE_VHOST, required = false, description = "Create vhost for this application")
+	public boolean isCreateVhost() {
+		return !isDefaultServer();
 	}
 
 	@Override

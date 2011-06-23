@@ -38,12 +38,12 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String PROPERTIES = "p";
 	private static final String DEVPASS = "d";
 
-	@Option(opt = ID, required = false, description = "Target id", argName = "id")
+	@Option(opt = ID, required = false, description = "id of the new target", argName = "id")
 	public String getId() {
 		return getValue(ID);
 	}
 
-	@Option(opt = KEY, required = false, description = "Target environment API Key name", argName = PROP_KEY)
+	@Option(opt = KEY, required = false, description = "API key used by the new target", argName = PROP_KEY)
 	public String getKey() {
 		Properties p = getProperties();
 		if (p != null) {
@@ -53,7 +53,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 		return getValue(KEY);
 	}
 
-	@Option(opt = SECRETKEY, required = false, description = "Target environment API Key secret value", argName = "secret-key")
+	@Option(opt = SECRETKEY, required = false, description = "API secret key used by the new target", argName = "secret-key")
 	public String getSecretKey() {
 		Properties p = getProperties();
 		if (p != null) {
@@ -63,12 +63,12 @@ public class AddTargetCommand extends TargetAwareCommand {
 		return getValue(SECRETKEY);
 	}
 
-	@Option(opt = HOST, required = false, description = "Target host URL", argName = "host")
+	@Option(opt = HOST, required = false, description = "Host URL of the new target", argName = "host")
 	public String getHost() {
 		return getValue(HOST);
 	}
 
-	@Option(opt = PROPERTIES, required = false, description = "The properties file", argName = "file")
+	@Option(opt = PROPERTIES, required = false, description = "Properties file specifies 'key' and 'secretkey' values", argName = "path-to-file")
 	public File getPropertiesFile() {
 		final String filename = getValue(PROPERTIES);
 

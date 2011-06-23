@@ -219,6 +219,10 @@ public class ProjectResourcesWriter {
 			return;
 		}
 		final InputStream is = this.getClass().getResourceAsStream(path);
+		if (is == null) {
+			throw new IOException(path + " path is not found");
+		}
+		
 		File outputFile = new File(destination, relativeToApp(path, app));
 
 		// create canonical structure

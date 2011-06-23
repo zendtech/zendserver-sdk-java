@@ -107,7 +107,7 @@ public class UsageCommand implements ICommand {
 				System.out
 						.printf("  -%-3s %s%s\n", opt.getOpt(), opt
 								.getDescription(),
-								opt.isRequired() ? "[required]" : "");
+								opt.isRequired() ? " [required]" : "");
 			}
 		} else {
 			System.out.println("  No options");
