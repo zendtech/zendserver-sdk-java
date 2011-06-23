@@ -30,7 +30,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project destination
 	 */
-	@Option(opt = DESTINATION, required = false, description = "The project destination", argName = "path")
+	@Option(opt = DESTINATION, required = false, description = "Project destination", argName = "path")
 	public File getDestination() {
 		final String value = getValue(DESTINATION);
 		return value == null ? resolveDestination(getCurrentDirectory(),
@@ -46,7 +46,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project name
 	 */
-	@Option(opt = NAME, required = true, description = "The project name", argName = "name")
+	@Option(opt = NAME, required = true, description = "Project name", argName = "name")
 	public String getName() {
 		return getValue(NAME);
 	}
@@ -54,7 +54,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project name
 	 */
-	@Option(opt = TEMPLATE, required = false, description = "The template name to use (zend | quickstart | simple). Default is zend application", argName = "name")
+	@Option(opt = TEMPLATE, required = false, description = "Template name (zend | quickstart | simple). Default is zend application", argName = "name")
 	public TemplateApplications getTemplate() {
 		TemplateApplications result = TemplateApplications.getDefault();
 		final String value = getValue(TEMPLATE);
