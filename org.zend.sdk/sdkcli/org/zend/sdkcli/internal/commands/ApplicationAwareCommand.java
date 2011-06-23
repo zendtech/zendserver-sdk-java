@@ -34,7 +34,7 @@ public abstract class ApplicationAwareCommand extends TargetAwareCommand {
 		return application;
 	}
 
-	@Option(opt = TARGET, required = false, description = "The target id to use, if target is not provided then the default taget is used", argName = "id")
+	@Option(opt = TARGET, required = false, description = "Target id of the this application, if target id is not specified then the default taget is used", argName = "id")
 	public String getTargetId() {
 		String t = getValue(TARGET);
 		if (t == null) {
