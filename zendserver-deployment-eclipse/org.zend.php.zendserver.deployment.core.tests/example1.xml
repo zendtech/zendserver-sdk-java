@@ -125,8 +125,8 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
     <parameter id="base_url"
     display="Configuration.Web access options.Base URL"
     required="true" type="string">
-      <defaultValue>
-      $(WEBSERVER_SCHEMA)://$(WEBSERVER_HOSTNAME)/$(WEBSERVER_PATH)</defaultValue>
+      <defaultvalue>
+      $(WEBSERVER_SCHEMA)://$(WEBSERVER_HOSTNAME)/$(WEBSERVER_PATH)</defaultvalue>
       <description>
         <short></short>
         <long></long>
