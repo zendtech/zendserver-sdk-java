@@ -4,21 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ListDialog;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 
-public class DependenciesBlock extends DescriptorMasterDetailsBlock {
+public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
 	
-	public DependenciesBlock(DeploymentDescriptorEditor editor) {
-		super(editor, "Dependencies", "Following will be required in order to install application.");
+	public String getDescription() {
+		return "Following will be required in order to install application.";
 	}
 	
-	protected Object[] doGetElements(Object input) {
+	public Object[] doGetElements(Object input) {
 		IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
 		List all = new ArrayList();
 		all.addAll(descr.getPHPDependencies());
@@ -39,7 +37,7 @@ public class DependenciesBlock extends DescriptorMasterDetailsBlock {
 		return null;
 	}
 	
-	protected void addElment() {
+	public Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block) {
 		Object[] input = new Object[] {
 			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP),
 			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE),
@@ -49,22 +47,17 @@ public class DependenciesBlock extends DescriptorMasterDetailsBlock {
 			DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT),
 		};
 		
-		ListDialog sd = new ListDialog(sashForm.getShell());
+		ListDialog sd = new ListDialog(block.viewer.getControl().getShell());
 		sd.setInput(input);
-		sd.setContentProvider((IStructuredContentProvider) viewer.getContentProvider());
+		sd.setContentProvider((IStructuredContentProvider) block.viewer.getContentProvider());
 		sd.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		sd.setMessage("Dependency Type:");
 		sd.setTitle("Add Dependency");
 		
 		if (sd.open() == Window.CANCEL) {
-			return;
+			return null;
 		}
 		
-		Object result = sd.getResult()[0];
-		Feature feature = DeploymentDescriptorFactory.getFeature(result);
-		
-		editor.getModel().add(feature, result);
-		viewer.refresh();
-		viewer.setSelection(new StructuredSelection(result));
+		return sd.getResult()[0];
 	}
 }

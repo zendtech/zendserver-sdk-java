@@ -7,17 +7,17 @@ import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
+public class DescriptorMasterDetailsPage extends DescriptorEditorPage  {
 
-public class ParametersPage extends DescriptorEditorPage {
-
-	private ParametersBlock block;
-
-	public ParametersPage(DeploymentDescriptorEditor editor) {
-		super(editor, "parameters", "Parameters");
+	private DescriptorMasterDetailsBlock block;
+	
+	public DescriptorMasterDetailsPage(DeploymentDescriptorEditor editor, MasterDetailsProvider provider, String id, String title) {
+		super(editor, id, title);
 		
-		block = new ParametersBlock(editor);
+		block = new DescriptorMasterDetailsBlock(editor, provider, title, provider.getDescription());
 	}
 	
+
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();

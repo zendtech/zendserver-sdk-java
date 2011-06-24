@@ -1,19 +1,17 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Parameter;
 
 
-public class ParametersBlock extends DescriptorMasterDetailsBlock {
+public class ParametersMasterDetailsProvider implements MasterDetailsProvider {
 	
-	public ParametersBlock(DeploymentDescriptorEditor editor) {
-		super(editor, "Parameters", "Following information will be required in order\nto deploy application.");
-		this.editor = editor;
+	public String getDescription() {
+		return "Following information will be required in order\nto deploy application.";
 	}
 	
-	protected Object[] doGetElements(Object input) {
+	public Object[] doGetElements(Object input) {
 		if (input instanceof IDeploymentDescriptor) {
 			return ((IDeploymentDescriptor) input).getParameters().toArray();
 		}
@@ -21,13 +19,10 @@ public class ParametersBlock extends DescriptorMasterDetailsBlock {
 		return null;
 	}
 	
-	protected void addElment() {
-		IDeploymentDescriptor model = editor.getModel();
+	public Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block) {
 		IParameter param = new Parameter();
 		param.setId("parameter"+(model.getParameters().size() + 1));
 		param.setType(IParameter.STRING);
-		model.getParameters().add(param);
-		viewer.refresh();
-		viewer.setSelection(new StructuredSelection(param));
+		return param;
 	}
 }

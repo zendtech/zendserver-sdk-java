@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -25,7 +26,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFa
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
-public abstract class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
+public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
 	private class MasterContentProvider implements IStructuredContentProvider {
 
@@ -38,7 +39,7 @@ public abstract class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		}
 
 		public Object[] getElements(Object input) {
-			return doGetElements(input);
+			return provider.doGetElements(input);
 		}
 		
 	}
@@ -48,15 +49,14 @@ public abstract class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	protected TableViewer viewer;
 	private String title;
 	private String description;
+	private MasterDetailsProvider provider;
 
-	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor, String title, String description) {
+	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor, MasterDetailsProvider prov, String title, String description) {
 		this.editor = editor;
+		this.provider = prov;
 		this.title = title;
 		this.description = description;
 	}
-	
-
-	abstract protected Object[] doGetElements(Object input);
 
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
@@ -95,7 +95,15 @@ public abstract class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				addElment();
+				Object result = provider.addElment(editor.getModel(), DescriptorMasterDetailsBlock.this);
+				if (result == null) {
+					return;
+				}
+				
+				Feature feature = DeploymentDescriptorFactory.getFeature(result);
+				editor.getModel().add(feature, result);
+				viewer.refresh();
+				viewer.setSelection(new StructuredSelection(result));
 			}
 		});
 		Button removeButton = toolkit.createButton(buttons, "Remove", SWT.NONE);
@@ -125,9 +133,6 @@ public abstract class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 	}
-
-	abstract protected void addElment();
-
 
 	protected void refreshViewer(final Object target) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {

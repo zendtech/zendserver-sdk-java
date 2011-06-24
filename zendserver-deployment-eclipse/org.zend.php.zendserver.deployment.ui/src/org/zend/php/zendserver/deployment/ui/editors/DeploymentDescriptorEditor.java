@@ -63,9 +63,9 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			addPage(new VariablesPage(this));
-			addPage(new ParametersPage(this));
-			addPage(new DependenciesPage(this));
+			addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", "Variables"));
+			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", "Parameters"));
+			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", "Dependencies"));
 			addPage(new PersistentResourcesPage(this));
 			sourcePage = new SourcePage(this);
 			addPage(sourcePage, getEditorInput());
