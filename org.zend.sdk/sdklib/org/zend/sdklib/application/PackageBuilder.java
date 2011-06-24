@@ -12,15 +12,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -31,10 +23,13 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
+import org.zend.sdklib.internal.mapping.ResourceMappingParser;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
+import org.zend.sdklib.mapping.IMapping;
+import org.zend.sdklib.mapping.ResourceMapper;
 
 /**
  * Provides ability to create zpk application package based on
@@ -44,52 +39,47 @@ import org.zend.sdklib.library.StatusCode;
  */
 public class PackageBuilder extends AbstractChangeNotifier {
 
-	private static final String EXCLUSIONS = "exclusions";
-	private static final String CONTENT = "/*";
-	private static final String ALL = "**/";
-	private static final String DEPLOYMENT_PROPERTIES = "deployment.properties";
 	private static final String EXTENSION = ".zpk";
 	private static final int BUFFER = 1024;
 
 	private ZipOutputStream out;
 	private File container;
-	private List<String> exclusionList;
-	private Map<String, String[]> mapping;
 
-	public PackageBuilder(File file, List<String> exclusionList,
+	private ResourceMapper mapper;
+	private String[] defaultExclusion;
+
+	public PackageBuilder(File file, String[] defaultExclusion,
 			IChangeNotifier notifier) {
 		super(notifier);
 		this.container = file;
-		this.mapping = new HashMap<String, String[]>();
-		this.exclusionList = exclusionList;
+		this.defaultExclusion = defaultExclusion;
 	}
 
-	public PackageBuilder(File file, List<String> exclusionList) {
+	public PackageBuilder(File file, String[] defaultExclusion) {
 		super();
 		this.container = file;
-		this.mapping = new HashMap<String, String[]>();
-		this.exclusionList = exclusionList;
+		this.defaultExclusion = defaultExclusion;
 	}
 
 	public PackageBuilder(File file, IChangeNotifier notifier) {
-		this(file, new ArrayList<String>(), notifier);
+		this(file, null, notifier);
 	}
 
 	public PackageBuilder(File file) {
-		this(file, new ArrayList<String>());
+		this(file, (String[]) null);
 	}
 
 	public PackageBuilder(String path) {
 		this(new File(path));
 	}
 
-	public PackageBuilder(String path, List<String> exclusionList) {
-		this(new File(path), exclusionList);
+	public PackageBuilder(String path, String[] defaultExclusion) {
+		this(new File(path), defaultExclusion);
 	}
 
-	public PackageBuilder(String path, List<String> exclusionList,
+	public PackageBuilder(String path, String[] defaultExclusion,
 			IChangeNotifier notifier) {
-		this(new File(path), exclusionList, notifier);
+		this(new File(path), defaultExclusion, notifier);
 	}
 
 	public PackageBuilder(String path, IChangeNotifier notifier) {
@@ -118,16 +108,22 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File result = new File(location, name + EXTENSION);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
-			File mappingFile = new File(container, DEPLOYMENT_PROPERTIES);
-			if (mappingFile.exists()) {
-				mapping = getMapping(mappingFile);
-				buildExclusionList();
+
+			ResourceMappingParser parser = new ResourceMappingParser();
+			if (defaultExclusion != null) {
+				mapper = new ResourceMapper(parser.load(container),
+						parser.getMappings(defaultExclusion));
+			} else {
+				mapper = new ResourceMapper(parser.load(container));
 			}
+
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Package creation", "Creating deployment package...",
 					calculateTotalWork()));
-			addFileToZip(container, null, null, false);
-			resolveMapping();
+			File descriptorFile = new File(container,
+					ProjectResourcesWriter.DESCRIPTOR);
+			addFileToZip(descriptorFile, null, null, null);
+			resolveMappings();
 			out.close();
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 					"Package creation",
@@ -165,78 +161,49 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		return createDeploymentPackage(new File("."));
 	}
 
-	private void resolveMapping() throws IOException {
-		Set<Entry<String, String[]>> mappings = mapping.entrySet();
-		for (Entry<String, String[]> entry : mappings) {
-			String mapTo = entry.getKey();
-			for (String file : entry.getValue()) {
-				boolean isContent = file.endsWith(CONTENT);
-				if (isContent) {
-					file = file.trim().substring(0, file.length() - 2);
-				}
-				File resource = new File(container, file);
-				if (resource.exists()) {
-					addFileToZip(resource, mapTo, resource.getCanonicalPath(),
-							isContent);
-				}
-			}
+	private void resolveMappings() throws IOException {
+		String appdir = getAppdirName(container);
+		String scriptsdir = getScriptsdirName(container);
+		if (appdir != null) {
+			resolveMapping("appdir", appdir);
+		}
+		if (scriptsdir != null) {
+			resolveMapping("scriptsdir", scriptsdir);
 		}
 	}
 
-	private void buildExclusionList() throws IOException {
-		Set<Entry<String, String[]>> mappings = mapping.entrySet();
-		for (Entry<String, String[]> entry : mappings) {
-			String mapTo = entry.getKey();
-			if (EXCLUSIONS.equals(mapTo)) {
-				String[] list = entry.getValue();
-				for (String member : list) {
-					exclusionList.add(member);
-				}
+	private void resolveMapping(String tag, String folderName)
+			throws IOException {
+		Set<IMapping> includes = mapper.getInclusion(tag);
+		for (IMapping mapping : includes) {
+			File resource = new File(mapping.getPath());
+			if (resource.exists()) {
+				addFileToZip(resource, folderName, mapping, tag);
 			}
 		}
-	}
-
-	private boolean isExcluded(File resource) throws IOException {
-		if (container.getCanonicalPath().equals(resource.getCanonicalPath())) {
-			return false;
-		}
-		for (String exclude : exclusionList) {
-			if (exclude.startsWith(ALL)) {
-				if (exclude.substring(ALL.length()).equals(resource.getName())) {
-					return true;
-				}
-			} else {
-				exclude = new File(container, exclude).getCanonicalPath();
-				if (exclude.equals(resource.getCanonicalPath())) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	private void addFileToZip(File root, String mappingFolder,
-			String rootFolder, boolean isContent) throws IOException {
-		boolean isMapped = mappingFolder == null ? mapping.containsKey(root
-				.getName()) : false;
-		if (!isExcluded(root) && !isMapped) {
+			IMapping mapping, String tag) throws IOException {
+		if (!mapper.isExcluded(root.getCanonicalPath(), tag)) {
 			if (root.isDirectory()) {
 				File[] children = root.listFiles();
 				for (File child : children) {
-					addFileToZip(child, mappingFolder, rootFolder, isContent);
+					addFileToZip(child, mappingFolder, mapping, tag);
 				}
 			} else {
 				String location = root.getCanonicalPath();
 				BufferedInputStream in = new BufferedInputStream(
 						new FileInputStream(location), BUFFER);
 				String path = getContainerRelativePath(location);
-				if (mappingFolder != null && rootFolder != null) {
+				if (mapping != null && mapping.getPath() != null) {
 					path = root.getCanonicalPath();
 					int position = 0;
-					if (isContent) {
-						position = rootFolder.length();
+					if (mapping.isContent()) {
+						position = mapping.getPath().length();
 					} else {
-						position = rootFolder.lastIndexOf(File.separator);
+						position = mapping.getPath()
+								.lastIndexOf(File.separator);
 					}
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
@@ -260,28 +227,47 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		return path.substring(position);
 	}
 
-	private Map<String, String[]> getMapping(File mappingFile) {
-		Properties props = new Properties();
-		Map<String, String[]> result = new HashMap<String, String[]>();
-		try {
-			props.load(new FileReader(mappingFile));
-			Enumeration<?> e = props.propertyNames();
-			while (e.hasMoreElements()) {
-				String folderName = (String) e.nextElement();
-				String[] files = ((String) props.getProperty(folderName))
-						.split(",");
-				result.put(folderName, files);
+	private String getPackageName(File container) {
+		String result = null;
+		Package p = getPackage(container);
+		if (p != null) {
+			String name = p.getName();
+			final Version version2 = p.getVersion();
+			if (version2 == null) {
+				throw new IllegalStateException(
+						"Error, missing <version> element in deployment descriptor");
 			}
-		} catch (IOException e) {
-			log.error("Problem during reading " + DEPLOYMENT_PROPERTIES);
-			log.error(e);
+
+			String version = version2.getRelease();
+
+			if (name != null && version != null) {
+				result = name + "-" + version;
+			}
 		}
 		return result;
 	}
 
-	private String getPackageName(File container) {
+	private String getAppdirName(File container) {
 		String result = null;
-		File descriptorFile = new File(container, ProjectResourcesWriter.DESCRIPTOR);
+		Package p = getPackage(container);
+		if (p != null) {
+			result = p.getAppdir();
+		}
+		return result;
+	}
+
+	private String getScriptsdirName(File container) {
+		String result = null;
+		Package p = getPackage(container);
+		if (p != null) {
+			result = p.getScriptsdir();
+		}
+		return result;
+	}
+
+	private Package getPackage(File container) {
+		File descriptorFile = new File(container,
+				ProjectResourcesWriter.DESCRIPTOR);
 		if (!descriptorFile.exists()) {
 			log.error(descriptorFile.getAbsoluteFile() + " does not exist.");
 			return null;
@@ -302,47 +288,33 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				throw new IllegalStateException(e);
 			}
 		}
-
-		String name = p.getName();
-		final Version version2 = p.getVersion();
-		if (version2 == null) {
-			throw new IllegalStateException(
-					"Error, missing <version> element in deployment descriptor");
-		}
-
-		String version = version2.getRelease();
-
-		if (name != null && version != null) {
-			result = name + "-" + version;
-		}
-		return result;
+		return p;
 	}
 
 	private int calculateTotalWork() throws IOException {
-		int totalWork = countFiles(container);
-		Set<Entry<String, String[]>> mappings = mapping.entrySet();
-		for (Entry<String, String[]> entry : mappings) {
-			for (String file : entry.getValue()) {
-				boolean isContent = file.endsWith(CONTENT);
-				if (isContent) {
-					file = file.trim().substring(0, file.length() - 2);
-				}
-				File resource = new File(container, file);
+		// is 1 because of deployment.xml file which is always added to the
+		// package
+		int totalWork = 1;
+		Set<String> folders = mapper.getFolders();
+		for (String folder : folders) {
+			Set<IMapping> includes = mapper.getInclusion(folder);
+			for (IMapping mapping : includes) {
+				File resource = new File(mapping.getPath());
 				if (resource.exists()) {
-					totalWork += countFiles(resource);
+					totalWork += countFiles(resource, folder);
 				}
 			}
 		}
 		return totalWork;
 	}
 
-	private int countFiles(File file) throws IOException {
+	private int countFiles(File file, String folder) throws IOException {
 		int counter = 0;
-		if (!isExcluded(file)) {
+		if (!mapper.isExcluded(file.getCanonicalPath(), folder)) {
 			if (file.isDirectory()) {
 				File[] children = file.listFiles();
 				for (File child : children) {
-					counter += countFiles(child);
+					counter += countFiles(child, folder);
 				}
 			} else {
 				counter++;
