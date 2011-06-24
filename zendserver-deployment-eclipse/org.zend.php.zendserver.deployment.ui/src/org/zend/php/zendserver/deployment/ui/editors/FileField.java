@@ -26,7 +26,7 @@ public class FileField extends TextField {
 	@Override
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		// todo add creation 
-		toolkit.createLabel(parent, label);
+		label = toolkit.createLabel(parent, labelTxt);
 		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		text.setLayoutData(gd);
@@ -41,7 +41,7 @@ public class FileField extends TextField {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell shell = e.widget.getDisplay().getActiveShell();
-				OpenFileDialog dialog = new OpenFileDialog(shell, root, label, "Select file with "+label+":", text.getText());
+				OpenFileDialog dialog = new OpenFileDialog(shell, root, labelTxt, "Select file with "+labelTxt+":", text.getText());
 				String newSelection = openDialog(dialog);
 				if (newSelection != null) {
 					text.setText(newSelection);

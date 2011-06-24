@@ -8,24 +8,26 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class TextField {
 
+	protected Label label;
 	protected Text text;
-	protected String label;
-	protected IDeploymentDescriptor target;
+	protected String labelTxt;
+	protected IModelObject target;
 	protected Feature key;
 	protected boolean isRefresh;
 	protected ControlDecoration controlDecoration;
 	
-	public TextField(IDeploymentDescriptor target,Feature key, String label) {
+	public TextField(IModelObject target,Feature key, String label) {
 		this.target = target;
 		this.key = key;
-		this.label = label;
+		this.labelTxt = label;
 	}
 	
 	public Feature getKey() {
@@ -35,7 +37,7 @@ public class TextField {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String value = target.get(key);
+			String value = target != null ? target.get(key) : null;
 			text.setText(value == null ? "" : value);
 		} finally {
 			isRefresh = false;
@@ -48,9 +50,11 @@ public class TextField {
 	}
 	
 	protected void createControls(Composite parent, FormToolkit toolkit) {
-		toolkit.createLabel(parent, label);
+		label = toolkit.createLabel(parent, labelTxt);
+		GridData gd = new GridData();
+		label.setLayoutData(gd);
 		text = toolkit.createText(parent, "");
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		controlDecoration = new ControlDecoration(text, SWT.LEFT);		
@@ -86,7 +90,9 @@ public class TextField {
 				}
 				
 				String text = ((Text)e.widget).getText();
-				target.set(key, text);
+				if (target != null) {
+					target.set(key, text);
+				}
 			}
 		});
 	}
@@ -97,6 +103,22 @@ public class TextField {
 
 	public void setFocus() {
 		text.setFocus();
+	}
+
+	public void setInput(IModelObject input) {
+		target = input;
+	}
+	
+	public Text getText() {
+		return text;
+	}
+
+	public void setVisible(boolean visible) {
+		label.setVisible(visible);
+		text.setVisible(visible);
+		((GridData)text.getLayoutData()).exclude = visible;
+		((GridData)label.getLayoutData()).exclude = visible;
+		
 	}
 	
 }

@@ -11,13 +11,13 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 
 public class ZendFrameworkDependencyDetailsPage implements IDetailsPage {
 	
 	private IManagedForm mform;
-	private IZendFrameworkDependency input;
+	private IModelObject input;
 	
 	private VersionControl version;
 	
@@ -59,7 +59,7 @@ public class ZendFrameworkDependencyDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (IZendFrameworkDependency)ssel.getFirstElement();
+			input = (IModelObject)ssel.getFirstElement();
 		}
 		else
 			input = null;

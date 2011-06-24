@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -18,6 +17,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
 
 
@@ -26,7 +26,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	private DeploymentDescriptorEditor editor;
 	
 	private IManagedForm mform;
-	private IZendComponentDependency input;
+	private IModelObject input;
 	
 	private boolean isRefresh;
 	private Text nameText;
@@ -70,7 +70,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.getName();
+			String str = input.get(IZendComponentDependency.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -81,7 +81,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (IZendComponentDependency)ssel.getFirstElement();
+			input = (IModelObject)ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -128,6 +128,6 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		input.setName(text);
+		input.set(IZendComponentDependency.DEPENDENCY_NAME, text);
 	}
 }

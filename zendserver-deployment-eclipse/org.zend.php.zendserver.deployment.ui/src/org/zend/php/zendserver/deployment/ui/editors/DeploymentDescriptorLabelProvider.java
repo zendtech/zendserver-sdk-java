@@ -113,14 +113,14 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IZendServerDependency) {
-			IZendComponentDependency dep = (IZendComponentDependency) element;
+			IZendServerDependency dep = (IZendServerDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
 				return "Zend Server version";
 			}
 			return "Zend Server" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IZendFrameworkDependency) {
-			IZendComponentDependency dep = (IZendComponentDependency) element;
+			IZendFrameworkDependency dep = (IZendFrameworkDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
 				return "Zend Framework version";
 			}

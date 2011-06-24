@@ -2,13 +2,8 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -16,23 +11,20 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 
 public class VariableDetailsPage implements IDetailsPage {
 
-	private DeploymentDescriptorEditor editor;
-	
 	private IManagedForm mform;
-	private IVariable input;
 	
-	private boolean isRefresh;
-
-	private Text variableName;
-	private Text variableValue;	
+	private TextField name;
+	private TextField value;	
 	
 	public VariableDetailsPage(DeploymentDescriptorEditor editor) {
-		this.editor = editor;
+		name = new TextField(null, IVariable.NAME, "Name");
+		value = new TextField(null, IVariable.VALUE, "Value");
 	}
 	
 	public void initialize(IManagedForm form) {
@@ -56,8 +48,7 @@ public class VariableDetailsPage implements IDetailsPage {
 	}
 
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		name.setFocus();
 	}
 
 	public boolean isStale() {
@@ -65,24 +56,20 @@ public class VariableDetailsPage implements IDetailsPage {
 	}
 
 	public void refresh() {
-		isRefresh = true;
-		try {
-			String name = input.getName();
-			variableName.setText(name == null ? "" : name);
-			String value = input.getValue();
-			variableValue.setText(value == null ? "" : value);
-		} finally {
-			isRefresh = false;
-		}
+		name.refresh();
+		value.refresh();
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
+		IModelObject input;
 		if (ssel.size()==1) {
-			input = (IVariable)ssel.getFirstElement();
+			input = (IModelObject)ssel.getFirstElement();
 		}
 		else
 			input = null;
+		name.setInput(input);
+		value.setInput(input);
 		refresh();
 	}
 
@@ -102,38 +89,11 @@ public class VariableDetailsPage implements IDetailsPage {
 		s1.marginHeight = 5;
 		
 		Composite client = toolkit.createComposite(s1);
-		client.setLayout(new GridLayout(2, false));
+		client.setLayout(new GridLayout(3, false));
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		s1.setClient(client);
 		
-		toolkit.createLabel(client, "Name");
-		variableName = toolkit.createText(client, "");
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		variableName.setLayoutData(gd);
-		variableName.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				variableNameChange(((Text)e.widget).getText());
-			}
-		});
-		
-		toolkit.createLabel(client, "Value");
-		variableValue = toolkit.createText(client, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		variableValue.setLayoutData(gd);
-		variableValue.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				variableValueChange(((Text)e.widget).getText());
-			}
-		});
-	}
-
-	protected void variableValueChange(String text) {
-		input.setValue(text);
-	}
-	
-	protected void variableNameChange(String text) {
-		input.setName(text);
+		name.create(client, toolkit);
+		value.create(client, toolkit);
 	}
 }
