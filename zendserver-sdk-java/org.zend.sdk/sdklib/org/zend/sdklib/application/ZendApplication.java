@@ -7,14 +7,14 @@
  *******************************************************************************/
 package org.zend.sdklib.application;
 
+//import java.io.File;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -43,14 +43,14 @@ import org.zend.webapi.core.connection.request.NamedInputStream;
 public class ZendApplication extends AbstractChangeNotifier {
 
 	private final TargetsManager manager;
-	private List<String> exclusionList;
+	private String[] exclusionList;
 
 	public ZendApplication() {
 		super();
 		manager = new TargetsManager(new UserBasedTargetLoader());
 	}
 
-	public ZendApplication(List<String> exclusionList) {
+	public ZendApplication(String[] exclusionList) {
 		this();
 		this.exclusionList = exclusionList;
 	}
@@ -60,7 +60,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 		manager = new TargetsManager(loader);
 	}
 
-	public ZendApplication(ITargetLoader loader, List<String> exclusionList) {
+	public ZendApplication(ITargetLoader loader, String[] exclusionList) {
 		this(loader);
 		this.exclusionList = exclusionList;
 	}
@@ -387,7 +387,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 		Map<String, String> result = null;
 		Properties p = new Properties();
 		try {
-			p.load(new FileReader(propsFile));
+			p.load(new FileInputStream(propsFile));
 			Enumeration<?> e = p.propertyNames();
 			if (e.hasMoreElements()) {
 				result = new HashMap<String, String>();
