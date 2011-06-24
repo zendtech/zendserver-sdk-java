@@ -8,8 +8,6 @@
 
 package org.zend.php.zendserver.deployment.core.sdk;
 
-import java.util.Arrays;
-
 import org.zend.php.zendserver.deployment.core.PreferenceManager;
 import org.zend.sdklib.application.ZendApplication;
 
@@ -18,7 +16,7 @@ public class SdkApplication extends ZendApplication {
 	private static final String SEPARATOR = ",";
 
 	public SdkApplication() {
-		super(Arrays.asList(getExclusionsPreference()));
+		super(getExclusionsPreference());
 	}
 
 	private static String[] getExclusionsPreference() {
