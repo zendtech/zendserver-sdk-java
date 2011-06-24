@@ -168,10 +168,7 @@ public class ModelSerializerWriteTests extends TestCase {
 "    </parameter>\n" +
 "  </parameters>\n" +
 "  <variables>\n" +
-"    <variable>\n" +
-"      <value>ls -l</value>\n" +
-"      <name>variable1</name>\n" +
-"    </variable>\n" +
+"    <variable name=\"variable1\" value=\"ls -l\"/>\n" +
 "  </variables>\n" +
 "</package>\n", txt.toString());
 	}

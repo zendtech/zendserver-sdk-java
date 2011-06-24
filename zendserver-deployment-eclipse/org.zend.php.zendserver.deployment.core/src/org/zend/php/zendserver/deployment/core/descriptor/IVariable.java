@@ -4,8 +4,8 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public interface IVariable extends IModelObject {
 
-	Feature NAME = new Feature("name", null, String.class);
-	Feature VALUE = new Feature("value", null, String.class);
+	Feature NAME = new Feature(null, "name", String.class);
+	Feature VALUE = new Feature(null, "value", String.class);
 	
 	String getValue();
 	

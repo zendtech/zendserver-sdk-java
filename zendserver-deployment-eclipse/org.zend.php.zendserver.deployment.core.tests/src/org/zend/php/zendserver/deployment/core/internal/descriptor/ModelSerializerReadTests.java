@@ -13,7 +13,11 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.tests.Activator;
 
 
@@ -40,114 +44,104 @@ public class ModelSerializerReadTests extends TestCase {
 		assertEquals("1.4.1.1", descr.getReleaseVersion());
 	}
 	
+	public void testVariable0() {
+		List<IVariable> vars = descr.getVariables();
+		IVariable var = vars.get(0);
+		assertEquals("LS", var.getName());
+		assertEquals("ls -l", var.getValue());
+	}
 	
-	/*public void testPrereq0() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(0);
-		assertTrue(prereq instanceof IPHPDependency);
-		IPHPDependency php = (IPHPDependency) prereq;
+	public void testVariable1() {
+		List<IVariable> vars = descr.getVariables();
+		IVariable var = vars.get(1);
+		assertEquals("UNAME", var.getName());
+		assertEquals("uname -a -l", var.getValue());
+	}
+	
+	
+	public void testPrereq0() {
+		List<IPHPDependency> prereqs = descr.getPHPDependencies();
+		IPHPDependency php = prereqs.get(0);
 		assertEquals("5.2.13", php.getMin());
 	}
 	
 	
 	public void testPrereq1() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(1);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(0);
 		assertEquals("pdo_mysql", dep.getName());
 	}
 	
 	
 	public void testPrereq2() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(2);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(1);
 		assertEquals("curl", dep.getName());
 	}
 	
 	
 	public void testPrereq3() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(3);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(2);
 		assertEquals("gd", dep.getName());
 	}
 	
 	
 	public void testPrereq4() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(4);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(3);
 		assertEquals("mcrypt", dep.getName());
 	}
 	
 	
 	public void testPrereq5() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(5);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(4);
 		assertEquals("pdo", dep.getName());
 	}
 	
 	
 	public void testPrereq6() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(6);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(5);
 		assertEquals("dom", dep.getName());
 	}
 	
 	
 	public void testPrereq7() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(7);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(6);
 		assertEquals("hash", dep.getName());
 	}
 	
 	
 	public void testPrereq8() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(8);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(7);
 		assertEquals("iconv", dep.getName());
 	}
 	
 	
 	public void testPrereq9() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(9);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(8);
 		assertEquals("pcre", dep.getName());
 	}
 	
 	
 	public void testPrereq10() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(10);
-		assertTrue(prereq instanceof IExtensionDependency);
-		IExtensionDependency dep = (IExtensionDependency) prereq;
+		List<IExtensionDependency> prereqs = descr.getExtensionDependencies();
+		IExtensionDependency dep = prereqs.get(9);
 		assertEquals("simplexml", dep.getName());
 	}
 	
 	
 	public void testPrereq11() {
-		List<IDependency> prereqs = descr.getDependencies();
-		IDependency prereq = prereqs.get(11);
-		assertTrue(prereq instanceof IDirectiveDependency);
-		IDirectiveDependency dep = (IDirectiveDependency) prereq;
+		List<IDirectiveDependency> prereqs = descr.getDirectiveDependencies();
+		IDirectiveDependency dep = prereqs.get(0);
 		assertEquals("safe_mode", dep.getName());
-		// assertEquals("off", prereq.getValue()); // TODO
-	} */
+		assertEquals("off", dep.getEquals());
+	}
 	
 	
 	public void testParams0() {

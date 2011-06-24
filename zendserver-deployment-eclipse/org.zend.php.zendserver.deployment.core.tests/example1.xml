@@ -52,11 +52,16 @@ xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
 	  
 	  <directive>
 		<name>safe_mode</name>
-		<value>off</value>
+		<equals>off</equals>
       </directive>
 	  
     </required>
   </dependencies>
+  
+  <variables>
+    <variable name="LS" value="ls -l"/>
+  <variable name="UNAME" value="uname -a -l"/>
+  </variables>
   <parameters>
     <parameter id="locale"
     display="Localization.Locale Settings.Locale"
