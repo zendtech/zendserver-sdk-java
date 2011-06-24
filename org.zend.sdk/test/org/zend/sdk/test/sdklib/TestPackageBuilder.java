@@ -14,7 +14,6 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.application.PackageBuilder;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
@@ -105,6 +104,6 @@ public class TestPackageBuilder extends AbstractTest {
 		assertEquals(StatusCode.STARTING, statuses.get(0).getCode());
 		assertEquals(StatusCode.STOPPING, statuses.get(statuses.size() - 1)
 				.getCode());
-		assertEquals(4, statuses.size() - 2);
+		assertEquals(2, statuses.size() - 2);
 	}
 }
