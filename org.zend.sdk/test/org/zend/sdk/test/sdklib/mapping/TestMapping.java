@@ -38,7 +38,7 @@ public class TestMapping {
 	@Test
 	public void testMapper() throws IOException {
 		ResourceMappingParser parser = new ResourceMappingParser();
-		ResourceMapper mapper = new ResourceMapper(
+		ResourceMapper mapper = new ResourceMapper(new File(FOLDER),
 				parser.load(new File(FOLDER)));
 		assertNotNull(mapper.getExclusion("data"));
 		assertNotNull(mapper.getInclusion("data"));

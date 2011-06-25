@@ -22,15 +22,17 @@ public class ResourceMapper {
 
 	private IResourceMapping mapping;
 	private Set<IMapping> customExclusion;
+	private File container;
 
-	public ResourceMapper(IResourceMapping mapping,
+	public ResourceMapper(File container, IResourceMapping mapping,
 			Set<IMapping> customExclusion) {
 		this.mapping = mapping;
 		this.customExclusion = customExclusion;
+		this.container = container;
 	}
 
-	public ResourceMapper(IResourceMapping mapping) {
-		this(mapping, new HashSet<IMapping>());
+	public ResourceMapper(File container, IResourceMapping mapping) {
+		this(container, mapping, new HashSet<IMapping>());
 	}
 
 	/**
@@ -38,8 +40,9 @@ public class ResourceMapper {
 	 * 
 	 * @param path
 	 * @return mapped folder name
+	 * @throws IOException
 	 */
-	public String getFolder(String path) {
+	public String getFolder(String path) throws IOException {
 		Set<String> folders = getFolders();
 		for (String folder : folders) {
 			Set<IMapping> includes = getInclusion(folder);
@@ -51,7 +54,9 @@ public class ResourceMapper {
 						return folder;
 					}
 				} else if (include.isContent()) {
-					if (path.startsWith(include.getPath())) {
+					String fullPath = new File(container, include.getPath())
+							.getCanonicalPath();
+					if (path.startsWith(fullPath)) {
 						return folder;
 					}
 				} else {
@@ -119,7 +124,8 @@ public class ResourceMapper {
 		return isInternalExcluded(path, getExclusion(folder));
 	}
 
-	private boolean isInternalExcluded(String path, Set<IMapping> excludes) {
+	private boolean isInternalExcluded(String path, Set<IMapping> excludes)
+			throws IOException {
 		for (IMapping exclude : excludes) {
 			if (exclude.isGlobal()) {
 				String fileName = path.substring(path
@@ -128,7 +134,9 @@ public class ResourceMapper {
 					return true;
 				}
 			} else {
-				if (exclude.getPath().equals(path)) {
+				String fullPath = new File(container, exclude.getPath())
+						.getCanonicalPath();
+				if (fullPath.equals(path)) {
 					return true;
 				}
 			}

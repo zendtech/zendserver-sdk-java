@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.zend.sdklib.internal.mapping;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IResourceMapping;
@@ -21,8 +21,8 @@ public class ResourceMapping implements IResourceMapping {
 	private Set<IMapping> defaultExclusion;
 
 	public ResourceMapping() {
-		this.inclusion = new HashMap<String, Set<IMapping>>();
-		this.exclusion = new HashMap<String, Set<IMapping>>();
+		this.inclusion = new TreeMap<String, Set<IMapping>>();
+		this.exclusion = new TreeMap<String, Set<IMapping>>();
 	}
 
 	@Override
