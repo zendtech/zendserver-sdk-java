@@ -25,7 +25,7 @@ import org.zend.sdklib.mapping.IResourceMapping;
 
 public class ResourceMappingParser {
 
-	private static final String MAPPING_DEFAULT = "tools/conf/mapping.default";
+	private static final String MAPPING_DEFAULT = "tools/conf/excludes.default";
 	private static final String CONTENT = "/*";
 	private static final String SEPARATOR = ",";
 	private static final String GLOBAL = "**/";
