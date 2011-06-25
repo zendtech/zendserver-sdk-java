@@ -111,10 +111,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 			ResourceMappingParser parser = new ResourceMappingParser();
 			if (defaultExclusion != null) {
-				mapper = new ResourceMapper(parser.load(container),
+				mapper = new ResourceMapper(container, parser.load(container),
 						parser.getMappings(defaultExclusion));
 			} else {
-				mapper = new ResourceMapper(parser.load(container));
+				mapper = new ResourceMapper(container, parser.load(container));
 			}
 
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
@@ -176,7 +176,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			throws IOException {
 		Set<IMapping> includes = mapper.getInclusion(tag);
 		for (IMapping mapping : includes) {
-			File resource = new File(mapping.getPath());
+			File resource = new File(
+					new File(container, mapping.getPath()).getCanonicalPath());
 			if (resource.exists()) {
 				addFileToZip(resource, folderName, mapping, tag);
 			}
@@ -198,12 +199,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				String path = getContainerRelativePath(location);
 				if (mapping != null && mapping.getPath() != null) {
 					path = root.getCanonicalPath();
+					String fullMapping = new File(container, mapping.getPath())
+							.getCanonicalPath();
 					int position = 0;
 					if (mapping.isContent()) {
-						position = mapping.getPath().length();
+						position = fullMapping.length();
 					} else {
-						position = mapping.getPath()
-								.lastIndexOf(File.separator);
+						position = fullMapping.lastIndexOf(File.separator);
 					}
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
@@ -299,7 +301,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		for (String folder : folders) {
 			Set<IMapping> includes = mapper.getInclusion(folder);
 			for (IMapping mapping : includes) {
-				File resource = new File(mapping.getPath());
+				File resource = new File(
+						new File(container, mapping.getPath())
+								.getCanonicalPath());
 				if (resource.exists()) {
 					totalWork += countFiles(resource, folder);
 				}

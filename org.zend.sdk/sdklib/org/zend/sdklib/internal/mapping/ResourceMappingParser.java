@@ -10,15 +10,17 @@ package org.zend.sdklib.internal.mapping;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IResourceMapping;
@@ -48,19 +50,57 @@ public class ResourceMappingParser {
 		return mapping;
 	}
 
+	public void save(IResourceMapping mapping, File file) throws IOException {
+		if (file == null || !file.exists()) {
+			throw new IllegalArgumentException("Povided file does not exist");
+		}
+		this.container = file;
+		Properties props = loadProperties(new FileInputStream(new File(file,
+				DEPLOYMENT_PROPERTIES)));
+		props.clear();
+		addProperties(props, mapping.getInclusion(), INCLUDES);
+		addProperties(props, mapping.getExclusion(), EXCLUDES);
+		props.store(new FileOutputStream(new File(container,
+				DEPLOYMENT_PROPERTIES)), null);
+	}
+
+	private void addProperties(Properties props,
+			Map<String, Set<IMapping>> entries, String suffix) {
+		Set<Entry<String, Set<IMapping>>> entrySet = entries.entrySet();
+		for (Entry<String, Set<IMapping>> toAdd : entrySet) {
+			String key = toAdd.getKey() + suffix;
+			StringBuilder value = new StringBuilder();
+			Set<IMapping> mappings = toAdd.getValue();
+			int size = mappings.size() - 1;
+			for (IMapping entry : mappings) {
+				String file = entry.getPath();
+				if (entry.isContent()) {
+					file += CONTENT;
+				}
+				if (entry.isGlobal()) {
+					file = GLOBAL + file;
+				}
+				value.append(file);
+				if (size-- > 0) {
+					value.append(SEPARATOR);
+				}
+			}
+			props.put(key, value.toString());
+		}
+	}
+
 	public Set<IMapping> getMappings(String[] result) throws IOException {
-		Set<IMapping> mappings = new HashSet<IMapping>();
+		Set<IMapping> mappings = new LinkedHashSet<IMapping>();
 		for (int i = 0; i < result.length; i++) {
 			String file = result[i].trim();
 			boolean isContent = file.endsWith(CONTENT);
 			if (isContent) {
-				file = file.substring(0, file.length() - SEPARATOR.length());
+				file = file
+						.substring(0, file.length() - SEPARATOR.length() - 1);
 			}
 			boolean isGlobal = file.startsWith(GLOBAL);
 			if (isGlobal) {
 				file = file.substring(GLOBAL.length());
-			} else {
-				file = new File(container, file).getCanonicalPath();
 			}
 			mappings.add(new Mapping(file, isContent, isGlobal));
 		}
@@ -69,7 +109,7 @@ public class ResourceMappingParser {
 
 	private Map<String, Set<IMapping>> getMapping(Properties props, String kind)
 			throws IOException {
-		Map<String, Set<IMapping>> result = new HashMap<String, Set<IMapping>>();
+		Map<String, Set<IMapping>> result = new TreeMap<String, Set<IMapping>>();
 		Enumeration<?> e = props.propertyNames();
 		while (e.hasMoreElements()) {
 			String folderName = (String) e.nextElement();
