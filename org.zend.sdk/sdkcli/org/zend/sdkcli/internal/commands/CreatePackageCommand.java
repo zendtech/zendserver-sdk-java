@@ -23,9 +23,11 @@ public class CreatePackageCommand extends TargetAwareCommand {
 	private static final String PATH = "p";
 	private static final String DESTINATION = "d";
 
-	@Option(opt = PATH, required = true, description = "The project's directory", argName = "path")
-	public String getPath() {
-		return getValue(PATH);
+	@Option(opt = PATH, required = false, description = "The project's directory", argName = "path")
+	public File getPath() {
+		final String value = getValue(DESTINATION);
+		return value != null ? new File(value)
+				: new File(getCurrentDirectory());
 	}
 
 	@Option(opt = DESTINATION, required = false, description = "The output package directory", argName = "path")
@@ -36,8 +38,7 @@ public class CreatePackageCommand extends TargetAwareCommand {
 	@Override
 	public boolean doExecute() {
 
-		String path = getPath();
-		File project = new File(path);
+		File project = getPath();
 		if (!project.exists() || !project.isDirectory()) {
 			getLogger()
 					.error("Provided path is not a path to a vaild project.");
