@@ -23,20 +23,6 @@ public interface IDescriptorContainer {
 	IResourceMapping getResourceMapping();
 	
 	/**
-	 * Adds a listener to be notified on any model changes.
-	 * 
-	 * @param listener
-	 */
-	void addChangeListener(IDescriptorChangeListener listener);
-	
-	/**
-	 * Removes listener from the listeners list.
-	 * 
-	 * @param listener
-	 */
-	void removeChangeListener(IDescriptorChangeListener listener);
-
-	/**
 	 * @deprecated use getFileInstead
 	 */
 	IProject getProject();

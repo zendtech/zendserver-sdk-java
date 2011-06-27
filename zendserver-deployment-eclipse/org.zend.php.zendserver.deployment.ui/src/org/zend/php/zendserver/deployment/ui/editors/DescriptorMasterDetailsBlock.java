@@ -127,7 +127,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.setContentProvider(new MasterContentProvider());
 		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		viewer.setInput(editor.getModel());
-		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
+		editor.getModel().addListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(ChangeEvent event) {
 				refreshViewer(event.target);

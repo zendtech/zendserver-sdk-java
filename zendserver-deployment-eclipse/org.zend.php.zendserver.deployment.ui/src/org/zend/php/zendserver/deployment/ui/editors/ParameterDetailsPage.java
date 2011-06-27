@@ -203,7 +203,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		readonly.create(client, toolkit);
 		
 		identical.create(client, toolkit);
-		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
+		editor.getModel().addListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(ChangeEvent event) {
 				if (event.target instanceof IParameter) {

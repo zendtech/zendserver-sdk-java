@@ -114,7 +114,7 @@ public abstract class ResourceListSection {
 		viewer.setContentProvider(new MasterContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(editor.getModel());
-		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
+		editor.getModel().addListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(ChangeEvent event) {
 				if (event.target instanceof IParameter) {
