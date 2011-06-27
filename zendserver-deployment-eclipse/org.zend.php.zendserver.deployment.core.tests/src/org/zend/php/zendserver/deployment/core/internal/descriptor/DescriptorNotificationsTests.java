@@ -1,13 +1,16 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -17,69 +20,75 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependen
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
 public class DescriptorNotificationsTests extends TestCase {
+	
+	private EventRecorder events;
+	private DeploymentDescriptor descr;
 
-	public static class TestEvent implements IDescriptorChangeListener {
-
-		private int eventNo;
-		private IModelObject expectedTarget;
-		private Feature expectedFeature;
-		private int expectedType;
+	public static class Event {
+		IModelObject target;
+		Feature feature;
+		int type;
 		
-		private int eventCounter;
-		public boolean eventFound;
-		
-		public static TestEvent assertEvent(int eventNo, IModelContainer expectedTarget, Feature expectedFeature, int expectedType) {
-			TestEvent event = new TestEvent(eventNo, expectedTarget, expectedFeature, expectedType);
-			expectedTarget.addListener(event);
-			
-			return event;
-		}
-		
-		private TestEvent(int eventNo, IModelObject expectedTarget, Feature expectedFeature, int expectedType) {
-			this.eventNo = eventNo;
-			this.expectedTarget = expectedTarget;
-			this.expectedFeature = expectedFeature;
-			this.expectedType = expectedType;
-			
-		}
-			
-		public void descriptorChanged(IModelObject target, Feature feature, int type) {
-			if (eventCounter == eventNo) {
-				assertSame(expectedTarget, target);
-				assertSame(expectedFeature, feature);
-				assertEquals(expectedType, type);
-				this.eventFound = true;
-			}
-			eventCounter++;	
+		public Event(IModelObject target, Feature feature, int type) {
+			this.target = target;
+			this.feature = feature;
+			this.type = type;
 		}
 	}
 	
-	public void testDescriptorSet() {
-		DeploymentDescriptor descr = new DeploymentDescriptor();
+	public static class EventRecorder implements IDescriptorChangeListener {
+
+		private List<Event> expected = new ArrayList<Event>();
+		private List<Event> actual = new ArrayList<Event>(); 
 		
-		TestEvent ev1 = TestEvent.assertEvent(0, descr, IDeploymentDescriptor.NAME, IDescriptorChangeListener.SET);
-		TestEvent.assertEvent(1, descr, IDeploymentDescriptor.VERSION_API, IDescriptorChangeListener.SET);
-		TestEvent.assertEvent(2, descr, IDeploymentDescriptor.SUMMARY, IDescriptorChangeListener.SET);
+		public void assertEvent(IModelObject expectedTarget, Feature expectedFeature, int expectedType) {
+			expected.add(new Event(expectedTarget, expectedFeature, expectedType));
+		}
+			
+		public void descriptorChanged(ChangeEvent event) {
+			actual.add(new Event(event.target, event.feature, event.type));
+		}
+		
+		public void assertEquals() {
+			assertSame(expected.size(), actual.size());
+			for (int i = 0; i < expected.size(); i++) {
+				Event e = expected.get(i);
+				Event a = actual.get(i);
+				assertSame("Event target should be same for event "+i, e.target, a.target);
+				assertSame("Event feature should be same for event "+i, e.feature, a.feature);
+				assertSame("Event type should be same for event "+i, e.type, a.type);
+			}
+		}
+	}
+	
+	public void setUp() {
+		events = new EventRecorder();
+		descr = new DeploymentDescriptor();
+		descr.addListener(events);
+	}
+	
+	public void testDescriptorSet() {
+		events.assertEvent(descr, IDeploymentDescriptor.NAME, IDescriptorChangeListener.SET);
+		events.assertEvent(descr, IDeploymentDescriptor.VERSION_API, IDescriptorChangeListener.SET);
+		events.assertEvent(descr, IDeploymentDescriptor.SUMMARY, IDescriptorChangeListener.SET);
 		
 		descr.setName("newName");
 		descr.setApiVersion("1.2.0");
 		descr.set(IDeploymentDescriptor.SUMMARY, "new summary");
 		
-		assertEquals(3, ev1.eventCounter);
+		events.assertEquals();
 	}
 	
 	public void testDescriptorAdd() {
-		DeploymentDescriptor descr = new DeploymentDescriptor();
-		
-		TestEvent ev1 = TestEvent.assertEvent(0, descr, IDeploymentDescriptor.VARIABLES, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(1, descr, IDeploymentDescriptor.DEPENDENCIES_PHP, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(2, descr, IDeploymentDescriptor.PARAMETERS, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(3, descr, IDeploymentDescriptor.PERSISTENT_RESOURCES, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(4, descr, IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(5, descr, IDeploymentDescriptor.DEPENDENCIES_EXTENSION, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(6, descr, IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(7, descr, IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT, IDescriptorChangeListener.ADD);
-		TestEvent.assertEvent(8, descr, IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.VARIABLES, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_PHP, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.PARAMETERS, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.PERSISTENT_RESOURCES, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_EXTENSION, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER, IDescriptorChangeListener.ADD);
 		
 		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
 		descr.getVariables().add(var);
@@ -108,6 +117,21 @@ public class DescriptorNotificationsTests extends TestCase {
 		descr.getZendServerDependencies().add(zs);
 		
 		
-		assertEquals(9, ev1.eventCounter);
+		events.assertEquals();
+	}
+	
+	public void testDescriptorEventBubble() {
+		events.assertEvent(descr, IDeploymentDescriptor.VARIABLES, IDescriptorChangeListener.ADD);
+		
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
+		events.assertEvent(var, IVariable.NAME, IDescriptorChangeListener.SET);
+
+		var.setName("newName"); // no event for that in descr
+		
+		descr.getVariables().add(var); // event for that in descr
+		
+		var.setName("changedName"); // event for that in descr
+		
+		events.assertEquals();
 	}
 }
