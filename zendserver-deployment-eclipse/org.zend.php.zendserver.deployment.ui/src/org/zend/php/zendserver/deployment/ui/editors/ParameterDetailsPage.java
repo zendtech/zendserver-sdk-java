@@ -35,20 +35,20 @@ public class ParameterDetailsPage implements IDetailsPage {
 	
 	private IManagedForm mform;
 	private IParameter input;
-	private Text idText;
-	private Text displayText;
-	private Text defaultText;
+	
+	private TextField id;
+	private TextField display;
+	private TextField defaultValue;
 	private Combo defaultCombo;
 	private Text validationText;
 	private Button requiredCheck;
 	private Button readonlyCheck;
 	private Combo typeCombo;
 	private Combo identical;
-	private Text descrText;
+	private TextField description;
 
 	private boolean isRefresh;
 
-	private Label defaultTextLabel;
 	private Label defaultComboLabel;
 	private Label validationTextLabel;
 
@@ -56,6 +56,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 	
 	public ParameterDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
+		
+		id = new TextField(null, IParameter.ID, "Id");
+		display = new TextField(null, IParameter.DISPLAY, "Display text");
+		defaultValue = new TextField(null, IParameter.DEFAULTVALUE, "Default value");
+		description = new TextField(null, IParameter.DESCRIPTION, "Description");
 	}
 	
 	public void initialize(IManagedForm form) {
@@ -79,7 +84,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 
 	public void setFocus() {
-		idText.setFocus();
+		id.setFocus();
 	}
 
 	public boolean isStale() {
@@ -89,13 +94,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.getId();
-			idText.setText(str == null ? "" : str);
-			str = input.getDisplay();
-			displayText.setText(str == null ? "" : str);
-			str = input.getDefaultValue();
-			defaultText.setText(str == null ? "" : str);
-			defaultCombo.setText(str == null ? "" : str);
+			id.refresh();
+			display.refresh();
+			defaultValue.refresh();
 			requiredCheck.setSelection(input.isRequired());
 			readonlyCheck.setSelection(input.isReadOnly());
 			List<String> validValues = input.getValidValues();
@@ -108,12 +109,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			} else {
 				validationText.setText("");
 			}
-			str = input.getType();
+			String str = input.getType();
 			typeCombo.setText(str == null ? "" : str);
 			str = input.getIdentical();
 			identical.setText(str == null ? "" : str);
-			str = input.getDescription();
-			descrText.setText(str == null ? "" : str);
+			description.refresh();
 			refreshParametersList();
 			showChoiceWidgets(input.getType());
 		} finally {
@@ -128,6 +128,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 		}
 		else
 			input = null;
+		
+		id.setInput(input);
+		defaultValue.setInput(input);
+		display.setInput(input);
+		description.setInput(input);
 		refresh();
 	}
 
@@ -147,23 +152,13 @@ public class ParameterDetailsPage implements IDetailsPage {
 		section.marginHeight = 5;
 		
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout(2, false));
+		client.setLayout(new GridLayout(3, false));
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		section.setClient(client);
 		
-		toolkit.createLabel(client, "Id");
-		idText = toolkit.createText(client, "");
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		idText.setLayoutData(gd);
-		idText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				idChange(((Text)e.widget).getText());
-			}
-		});
+		id.create(client, toolkit);
+		((GridData)id.getText().getLayoutData()).widthHint = 100;
 		
-
 		toolkit.createLabel(client, "Type");
 		typeCombo = new Combo(client, SWT.NONE);
 		typeCombo.add(IParameter.CHOICE);
@@ -174,7 +169,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		typeCombo.add(IParameter.NUMBER);
 		typeCombo.add(IParameter.HOSTNAME);
 		toolkit.adapt(typeCombo, true, true);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.widthHint = 100;
 		typeCombo.setLayoutData(gd);
 		typeCombo.addModifyListener(new ModifyListener() {
@@ -196,30 +191,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "Display text");
-		displayText = toolkit.createText(client, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		displayText.setLayoutData(gd);
-		displayText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				displayChange(((Text)e.widget).getText());
-			}
-		});
+		display.create(client, toolkit);
+		((GridData)display.getText().getLayoutData()).widthHint = 100;
 		
-		defaultTextLabel = toolkit.createLabel(client, "Default value");
-		defaultTextLabel.setLayoutData(new GridData());
-		defaultText = toolkit.createText(client, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		defaultText.setLayoutData(gd);
-		defaultText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				defaultChange(((Text)e.widget).getText());
-			}
-		});
+		defaultValue.create(client, toolkit);
+		((GridData)defaultValue.getText().getLayoutData()).widthHint = 100;
 		
 		defaultComboLabel = toolkit.createLabel(client, "Default value");
 		defaultComboLabel.setLayoutData(new GridData());
@@ -286,19 +262,10 @@ public class ParameterDetailsPage implements IDetailsPage {
 			}
 		});
 		
-
-		toolkit.createLabel(client, "Description");
-		descrText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		description.create(client, toolkit);
+		gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;
 		gd.widthHint = 100;
-		descrText.setLayoutData(gd);
-		descrText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				descriptionChange(((Text)e.widget).getText());
-			}
-		});
 	}
 	
 	private void refreshParametersList() {
@@ -330,14 +297,6 @@ public class ParameterDetailsPage implements IDetailsPage {
 		input.setReadOnly(selection);
 	}
 
-	protected void idChange(String text) {
-		input.setId(text);
-	}
-
-	protected void displayChange(String text) {
-		input.setDisplay(text);
-	}
-
 	protected void defaultChange(String text) {
 		input.setDefaultValue(text);
 	}
@@ -350,11 +309,8 @@ public class ParameterDetailsPage implements IDetailsPage {
 	
 	private void showChoiceWidgets(String text) {
 		boolean showChoiceWidgets = IParameter.CHOICE.equals(text);
-		defaultText.setVisible(!showChoiceWidgets);
-		defaultTextLabel.setVisible(!showChoiceWidgets);
-		((GridData)defaultText.getLayoutData()).exclude = showChoiceWidgets;
-		((GridData)defaultTextLabel.getLayoutData()).exclude = showChoiceWidgets;
 		
+		defaultValue.setVisible(!showChoiceWidgets);
 		defaultCombo.setVisible(showChoiceWidgets);
 		defaultComboLabel.setVisible(showChoiceWidgets);
 		((GridData)defaultCombo.getLayoutData()).exclude = !showChoiceWidgets;

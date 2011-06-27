@@ -17,16 +17,15 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 	}
 	
 	public Object[] doGetElements(Object input) {
-		IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
-		List all = new ArrayList();
-		all.addAll(descr.getPHPDependencies());
-		all.addAll(descr.getDirectiveDependencies());
-		all.addAll(descr.getExtensionDependencies());
-		all.addAll(descr.getZendFrameworkDependencies());
-		all.addAll(descr.getZendServerDependencies());
-		all.addAll(descr.getZendComponentDependencies());
-		
 		if (input instanceof IDeploymentDescriptor) {
+			IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
+			List all = new ArrayList();
+			all.addAll(descr.getPHPDependencies());
+			all.addAll(descr.getDirectiveDependencies());
+			all.addAll(descr.getExtensionDependencies());
+			all.addAll(descr.getZendFrameworkDependencies());
+			all.addAll(descr.getZendServerDependencies());
+			all.addAll(descr.getZendComponentDependencies());
 			return all.toArray();
 		}
 		
