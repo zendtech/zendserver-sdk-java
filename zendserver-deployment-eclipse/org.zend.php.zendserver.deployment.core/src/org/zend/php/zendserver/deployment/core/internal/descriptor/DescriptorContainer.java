@@ -98,21 +98,6 @@ public class DescriptorContainer implements IDescriptorContainer {
 		}
 	}
 
-	public void fireChange(IModelObject o) {
-		if (listeners == null) {
-			return;
-		}
-
-		for (int i = 0; i < listeners.length; i++) {
-			try {
-				listeners[i].descriptorChanged(o);
-			} catch (Throwable e) {
-				// TODO
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public IResourceMapping getResourceMapping() {
 		if (fResourceMapping == null) {
 			ResourceMappingParser parser = new ResourceMappingParser();

@@ -33,6 +33,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.core.internal.validation.Validator;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -154,7 +155,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 		fModel.addChangeListener(new IDescriptorChangeListener() {
 
-			public void descriptorChanged(IModelObject target) {
+			public void descriptorChanged(IModelObject target, Feature feature) {
 				if (target instanceof IDeploymentDescriptor) {
 					handleModelUpdate((IDeploymentDescriptor)target);
 				}

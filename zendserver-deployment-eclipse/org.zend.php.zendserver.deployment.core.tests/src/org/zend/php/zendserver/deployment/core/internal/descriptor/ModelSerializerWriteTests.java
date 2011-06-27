@@ -75,7 +75,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
-		descr.addParameter(param);
+		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
 		param.setDefaultValue("Jacek");
@@ -102,7 +102,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
 		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
-		descr.addParameter(param);
+		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
 		param.setDefaultValue("Jacek");
@@ -110,7 +110,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		param.setType(IParameter.STRING);
 		
 		param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
-		descr.addParameter(param);
+		descr.getParameters().add(param);
 		param.setId("myNewParam2");
 		param.setDisplay("Host name");
 		param.setDescription("A target host name");
@@ -145,7 +145,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
 		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
-		descr.addParameter(param);
+		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
 		param.setDefaultValue("Jacek");
@@ -153,7 +153,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		param.setType(IParameter.STRING);
 		
 		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
-		descr.addVariable(var);
+		descr.getVariables().add(var);
 		var.setName("variable1");
 		var.setValue("ls -l");
 		
@@ -180,8 +180,8 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		descr.addPersistentResource("/test1.txt");
-		descr.addPersistentResource("file2.txt");
+		descr.getPersistentResources().add("/test1.txt");
+		descr.getPersistentResources().add("file2.txt");
 		
 		lm.serialize(descr);
 		lm.write();
@@ -203,7 +203,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
 		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
-		descr.addPHPDependency(dep);
+		descr.getPHPDependencies().add(dep);
 		dep.setEquals("3.2.1");
 		
 		lm.serialize(descr);
@@ -229,7 +229,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
 		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
-		descr.addPHPDependency(dep);
+		descr.getPHPDependencies().add(dep);
 		dep.setMin("3.2.1");
 		dep.setMax("5.2.5");
 		dep.getExclude().add("1.2.3");
@@ -263,7 +263,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
 		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
-		descr.addPHPDependency(dep);
+		descr.getPHPDependencies().add(dep);
 		dep.setMin("3.2.1");
 		dep.setMax("5.2.5");
 		dep.getExclude().add("1.2.3");
@@ -271,7 +271,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		dep.getExclude().add("4.1.2");
 		
 		IDirectiveDependency dir = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE);
-		descr.addDirectiveDependency(dir);
+		descr.getDirectiveDependencies().add(dir);
 		dir.setName("register_globals");
 		dir.setEquals("off");
 		

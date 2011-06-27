@@ -46,15 +46,6 @@ public interface IDescriptorContainer {
 	 */
 	IFile getFile();
 
-	/**
-	 * Notify container that model has changed and model listeners need to be notified
-	 * Note that, when using IDeploymentDescriptorModifier, changes are generated automatically.
-	 * This is useful to notify changes from underlying document
-	 * 
-	 * @param o changed object
-	 */
-	void fireChange(IModelObject o);
-
 	void save();
 
 	void connect(IDocument document);

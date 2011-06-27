@@ -45,4 +45,14 @@ public abstract class ModelObject implements IModelObject {
 	public void removeListener(IDescriptorChangeListener listener) {
 		listeners.remove(listener);
 	}
+	
+	protected void fireChange(Feature key) {
+		if (listeners == null) {
+			return;
+		}
+		
+		for (IDescriptorChangeListener l : listeners) {
+			l.descriptorChanged(this, key);
+		}
+	}
 }

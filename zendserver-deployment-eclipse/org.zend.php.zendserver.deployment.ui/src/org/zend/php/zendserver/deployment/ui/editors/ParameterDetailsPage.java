@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 
 public class ParameterDetailsPage implements IDetailsPage {
@@ -205,7 +206,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		identical.create(client, toolkit);
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target) {
+			public void descriptorChanged(IModelObject target, Feature feature) {
 				if (target instanceof IParameter) {
 					section.getDisplay().asyncExec(new Runnable() {
 						public void run() {
