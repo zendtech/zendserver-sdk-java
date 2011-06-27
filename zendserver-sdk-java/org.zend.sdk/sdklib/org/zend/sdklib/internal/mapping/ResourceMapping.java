@@ -25,16 +25,31 @@ public class ResourceMapping implements IResourceMapping {
 		this.exclusion = new TreeMap<String, Set<IMapping>>();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IResourceMapping#getExclusion()
+	 */
 	@Override
 	public Map<String, Set<IMapping>> getExclusion() {
 		return exclusion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IResourceMapping#getInclusion()
+	 */
 	@Override
 	public Map<String, Set<IMapping>> getInclusion() {
 		return inclusion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IResourceMapping#getDefaultExclusion()
+	 */
 	@Override
 	public Set<IMapping> getDefaultExclusion() {
 		return defaultExclusion;
