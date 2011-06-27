@@ -32,4 +32,25 @@ public interface IMapping {
 	 */
 	public boolean isGlobal();
 
+	/**
+	 * Set path to the file which should me mapped.
+	 * 
+	 * @param path
+	 */
+	public void setPath(String path);
+
+	/**
+	 * Set to <code>true</code> if mapping concerns only content of the file
+	 * 
+	 * @param value
+	 */
+	public void setContent(boolean value);
+
+	/**
+	 * Set <code>true</code> if mapping should be consider globally
+	 * 
+	 * @param value
+	 */
+	public void setGlobal(boolean value);
+
 }

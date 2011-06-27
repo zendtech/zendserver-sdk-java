@@ -9,6 +9,12 @@ package org.zend.sdklib.internal.mapping;
 
 import org.zend.sdklib.mapping.IMapping;
 
+/**
+ * Basic implementation of {@link IMapping}.
+ * 
+ * @author Wojciech Galanciak, 2011
+ * 
+ */
 public class Mapping implements IMapping {
 
 	private String path;
@@ -22,17 +28,64 @@ public class Mapping implements IMapping {
 		this.isGlobal = isGlobal;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#getPath()
+	 */
+	@Override
 	public String getPath() {
 		return path;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#isContent()
+	 */
+	@Override
 	public boolean isContent() {
 		return isContent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#isGlobal()
+	 */
 	@Override
 	public boolean isGlobal() {
 		return isGlobal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#setPath(java.lang.String)
+	 */
+	@Override
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#setContent(boolean)
+	 */
+	@Override
+	public void setContent(boolean value) {
+		this.isContent = value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMapping#setGlobal(boolean)
+	 */
+	@Override
+	public void setGlobal(boolean value) {
+		this.isGlobal = value;
 	}
 
 }
