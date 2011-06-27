@@ -16,9 +16,8 @@ import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
-import org.zend.php.zendserver.deployment.core.descriptor.IResourceMapping;
-
+import org.zend.sdklib.internal.mapping.ResourceMappingParser;
+import org.zend.sdklib.mapping.IResourceMapping;
 
 public class DescriptorContainer implements IDescriptorContainer {
 
@@ -101,7 +100,13 @@ public class DescriptorContainer implements IDescriptorContainer {
 	public IResourceMapping getResourceMapping() {
 		if (fResourceMapping == null) {
 			ResourceMappingParser parser = new ResourceMappingParser();
-			fResourceMapping = parser.load(fFile);
+			try {
+				fResourceMapping = parser.load(fFile.getParent().getLocation()
+						.toFile());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return fResourceMapping;
 	}

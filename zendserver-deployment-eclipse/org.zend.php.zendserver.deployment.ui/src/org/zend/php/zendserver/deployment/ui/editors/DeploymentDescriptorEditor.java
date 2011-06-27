@@ -38,7 +38,6 @@ import org.zend.php.zendserver.deployment.core.internal.validation.ValidationSta
 import org.zend.php.zendserver.deployment.core.internal.validation.Validator;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
-
 /**
  * An example showing how to create a multi-page editor. This example has 3
  * pages:
@@ -68,6 +67,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", "Variables"));
 			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", "Parameters"));
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", "Dependencies"));
+			addPage(new DeploymentPropertiesPage(fModel, this, "properties", "Properties"));
 			addPage(new PersistentResourcesPage(this));
 			sourcePage = new SourcePage(this);
 			addPage(sourcePage, getEditorInput());
