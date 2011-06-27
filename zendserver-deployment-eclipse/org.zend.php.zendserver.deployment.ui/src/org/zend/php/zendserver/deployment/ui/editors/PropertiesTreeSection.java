@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.IResourceMapping;
+import org.zend.sdklib.mapping.IMappingModel;
 
 public class PropertiesTreeSection implements IResourceChangeListener,
 		IResourceDeltaVisitor {
@@ -45,7 +45,7 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 	protected boolean isChecked;
 	private boolean fDoRefresh = false;
 
-	protected IResourceMapping mappingModel;
+	protected IMappingModel mappingModel;
 	protected IDescriptorContainer model;
 
 	public PropertiesTreeSection(Composite parent, FormToolkit toolkit,
@@ -140,7 +140,7 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 	private Control createClient() {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(new GridLayout(1, true));
-		mappingModel = model.getResourceMapping();
+		mappingModel = model.getMappingModel();
 		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container,
 				SWT.CHECK));
 		fTreeViewer.setContentProvider(new TreeContentProvider());

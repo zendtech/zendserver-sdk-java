@@ -22,7 +22,7 @@ public class ResourceMapper {
 
 	public ResourceMapper(IDescriptorContainer fModel) {
 		this.rootFolder = fModel.getFile().getParent();
-		this.mapping = fModel.getResourceMapping();
+		this.mapping = fModel.getMappingModel().getResourceMapping();
 	}
 
 	public IPath getPath(IPath path) {

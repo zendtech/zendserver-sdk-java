@@ -19,10 +19,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.sdk.SdkApplication;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
@@ -77,7 +78,8 @@ public class ProjectDeploymentWizard extends Wizard {
 					if (monitor.isCanceled()) {
 						return Status.OK_STATUS;
 					}
-					SdkApplication application = new SdkApplication();
+					ZendApplication application = new ZendApplication(
+							new EclipseMappingModelLoader());
 					application.addStatusChangeListener(listener);
 					ApplicationInfo info = application.deploy(path, baseUrl,
 							targetId, userParams, appName, isIgnoreFailures,
@@ -109,7 +111,7 @@ public class ProjectDeploymentWizard extends Wizard {
 	}
 
 	private void monitorApplicationStatus(String targetId, int id,
-			SdkApplication application, IProgressMonitor monitor) {
+			ZendApplication application, IProgressMonitor monitor) {
 		monitor.beginTask("Checking application status...",
 				IProgressMonitor.UNKNOWN);
 		ApplicationStatus result = null;

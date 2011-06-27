@@ -16,14 +16,14 @@ import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.sdklib.internal.mapping.ResourceMappingParser;
-import org.zend.sdklib.mapping.IResourceMapping;
+import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 public class DescriptorContainer implements IDescriptorContainer {
 
 	private IFile fFile;
 	private DeploymentDescriptor fModel;
-	private IResourceMapping fResourceMapping;
+	private IMappingModel fMappingModel;
 	private IDescriptorChangeListener[] listeners;
 	private ModelSerializer lm;
 
@@ -97,18 +97,17 @@ public class DescriptorContainer implements IDescriptorContainer {
 		}
 	}
 
-	public IResourceMapping getResourceMapping() {
-		if (fResourceMapping == null) {
-			ResourceMappingParser parser = new ResourceMappingParser();
+	public IMappingModel getMappingModel() {
+		if (fMappingModel == null) {
 			try {
-				fResourceMapping = parser.load(fFile.getParent().getLocation()
-						.toFile());
+				fMappingModel = MappingModelFactory.createDefaultModel(fFile
+						.getParent().getLocation().toFile());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return fResourceMapping;
+		return fMappingModel;
 	}
 
 	public void save() {

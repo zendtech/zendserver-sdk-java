@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.ResourceMapper;
 
 public class AppTreeSection extends PropertiesTreeSection {
 
@@ -21,10 +20,8 @@ public class AppTreeSection extends PropertiesTreeSection {
 
 	protected void initializeCheckState() {
 		uncheckAll();
-		ResourceMapper mapper = new ResourceMapper(getContainer().getFullPath()
-				.toFile(), mappingModel);
-		Set<IMapping> includes = mapper.getInclusion(APPDIR);
-		Set<IMapping> exculdes = mapper.getExclusion(APPDIR);
+		Set<IMapping> includes = mappingModel.getInclusion(APPDIR);
+		Set<IMapping> exculdes = mappingModel.getExclusion(APPDIR);
 
 		super.initializeCheckState(includes, exculdes);
 	}
