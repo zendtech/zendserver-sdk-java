@@ -27,13 +27,12 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.core.internal.validation.Validator;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -155,9 +154,9 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 		fModel.addChangeListener(new IDescriptorChangeListener() {
 
-			public void descriptorChanged(IModelObject target, Feature feature, int type) {
-				if (target instanceof IDeploymentDescriptor) {
-					handleModelUpdate((IDeploymentDescriptor)target);
+			public void descriptorChanged(ChangeEvent event) {
+				if (event.target instanceof IDeploymentDescriptor) {
+					handleModelUpdate((IDeploymentDescriptor)event.target);
 				}
 			}
 		});
