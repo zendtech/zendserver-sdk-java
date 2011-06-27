@@ -34,11 +34,6 @@ public abstract class AbstractRepository implements IRepository {
 	private final String id;
 
 	/**
-	 * description property of this site
-	 */
-	private String description;
-
-	/**
 	 * An access to artifacts in site. Must be implemented by sub classes
 	 * 
 	 * @param path
@@ -88,13 +83,4 @@ public abstract class AbstractRepository implements IRepository {
 	public String getId() {
 		return this.id;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.zend.sdklib.repository.IRepository#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
-
 }

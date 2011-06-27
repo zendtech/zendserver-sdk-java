@@ -52,6 +52,8 @@ public enum CommandType {
 	
 	LIST_REPOSITORIES("list", "repositories", "Show the list of repositories."),
 	
+	GENERATE_REPOSITORIES("generate", "repository", "genertae a repository for a package"),
+	
 	HELP("help", null, "shows help information.");
 
 	private String verb;

@@ -56,7 +56,7 @@ public class FileBasedRepository extends AbstractRepository {
 			return null;
 		}
 
-		final File file = new File(basedir, path);
+		final File file = new File(getBasedir(), path);
 		if (!file.isFile()) {
 			throw new IllegalArgumentException(
 					"path is not a valid product in site: " + path);
@@ -66,6 +66,13 @@ public class FileBasedRepository extends AbstractRepository {
 
 	@Override
 	public boolean isAccessible() {
-		return basedir != null && basedir.isDirectory();
+		return getBasedir() != null && getBasedir().isDirectory();
+	}
+
+	/**
+	 * @return base dir of this local repository 
+	 */
+	public File getBasedir() {
+		return basedir;
 	}
 }
