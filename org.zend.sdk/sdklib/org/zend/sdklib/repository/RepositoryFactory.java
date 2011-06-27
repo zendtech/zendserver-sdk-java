@@ -87,15 +87,22 @@ public class RepositoryFactory {
 	/**
 	 * Prints the new site according to information provided on the package
 	 * 
-	 * @param newSiteStream print stream of the new site
-	 * @param baseSiteStream basic site, this should include all information except for the URL, Size, version, md5
-	 * @param pkgFile the package file
-	 * @param baseURL base url 
+	 * @param newSiteStream
+	 *            print stream of the new site
+	 * @param baseSiteStream
+	 *            basic site, this should include all information except for the
+	 *            URL, Size, version, md5
+	 * @param pkgFile
+	 *            the package file
+	 * @param baseURL
+	 *            base url
 	 * @throws IOException
 	 * @throws JAXBException
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 */
-	public static void createRepository(PrintStream newSiteStream, InputStream baseSiteStream, File pkgFile, String baseURL) throws IOException, JAXBException, NoSuchAlgorithmException {
+	public static void createRepository(PrintStream newSiteStream,
+			InputStream baseSiteStream, File pkgFile, String baseURL)
+			throws IOException, JAXBException, NoSuchAlgorithmException {
 		final Site baseSite = JaxbHelper.unmarshalSite(baseSiteStream);
 		final List<Application> apps = baseSite.getApplication();
 		final Application a = apps.get(0);
@@ -105,8 +112,7 @@ public class RepositoryFactory {
 		a.setSignature(Md5Util.getMd5(pkgFile));
 		JaxbHelper.marshalSite(newSiteStream, baseSite);
 	}
-	
-	
+
 	/**
 	 * Merge several repositories into one repository
 	 * 
@@ -127,7 +133,7 @@ public class RepositoryFactory {
 		List<Application> apps = new ArrayList<Application>(1);
 		List<ProviderDef> pros = new ArrayList<ProviderDef>(1);
 		List<CategoryDef> cats = new ArrayList<CategoryDef>(1);
-		
+
 		// TODO: filtering and merging
 		for (IRepository r : repositories) {
 			final Site sr = r.getSite();
