@@ -8,13 +8,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -39,17 +35,16 @@ public class ParameterDetailsPage implements IDetailsPage {
 	private TextField id;
 	private TextField display;
 	private TextField defaultValue;
-	private Combo defaultCombo;
+	private ComboField defaultCombo;
 	private Text validationText;
-	private Button requiredCheck;
-	private Button readonlyCheck;
-	private Combo typeCombo;
-	private Combo identical;
+	private CheckboxField required;
+	private CheckboxField readonly;
+	private ComboField type;
+	private ComboField identical;
 	private TextField description;
 
 	private boolean isRefresh;
 
-	private Label defaultComboLabel;
 	private Label validationTextLabel;
 
 	private Section section;
@@ -60,7 +55,21 @@ public class ParameterDetailsPage implements IDetailsPage {
 		id = new TextField(null, IParameter.ID, "Id");
 		display = new TextField(null, IParameter.DISPLAY, "Display text");
 		defaultValue = new TextField(null, IParameter.DEFAULTVALUE, "Default value");
+		defaultCombo = new ComboField(null, IParameter.DEFAULTVALUE, "Default value");
 		description = new TextField(null, IParameter.DESCRIPTION, "Description");
+		type = new ComboField(null, IParameter.TYPE, "Type");
+		type.setItems(new String[] {
+				IParameter.CHOICE,
+				IParameter.STRING,
+				IParameter.PASSWORD,
+				IParameter.EMAIL,
+				IParameter.CHECKBOX,
+				IParameter.NUMBER,
+				IParameter.HOSTNAME
+		});
+		identical = new ComboField(null, IParameter.IDENTICAL, "Identical");
+		required = new CheckboxField(null, IParameter.REQUIRED, "This parameter is required");
+		readonly = new CheckboxField(null, IParameter.READONLY, "This parameter is read only");
 	}
 	
 	public void initialize(IManagedForm form) {
@@ -97,8 +106,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 			id.refresh();
 			display.refresh();
 			defaultValue.refresh();
-			requiredCheck.setSelection(input.isRequired());
-			readonlyCheck.setSelection(input.isReadOnly());
+			defaultCombo.refresh();
+			required.refresh();
+			readonly.refresh();
 			List<String> validValues = input.getValidValues();
 			if (validValues != null) {
 				StringBuilder sb = new StringBuilder();
@@ -109,13 +119,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			} else {
 				validationText.setText("");
 			}
-			String str = input.getType();
-			typeCombo.setText(str == null ? "" : str);
-			str = input.getIdentical();
-			identical.setText(str == null ? "" : str);
+			type.refresh();
+			identical.refresh();
 			description.refresh();
 			refreshParametersList();
-			showChoiceWidgets(input.getType());
+			showChoiceWidgets();
 		} finally {
 			isRefresh = false;
 		}
@@ -159,37 +167,12 @@ public class ParameterDetailsPage implements IDetailsPage {
 		id.create(client, toolkit);
 		((GridData)id.getText().getLayoutData()).widthHint = 100;
 		
-		toolkit.createLabel(client, "Type");
-		typeCombo = new Combo(client, SWT.NONE);
-		typeCombo.add(IParameter.CHOICE);
-		typeCombo.add(IParameter.STRING);
-		typeCombo.add(IParameter.PASSWORD);
-		typeCombo.add(IParameter.EMAIL);
-		typeCombo.add(IParameter.CHECKBOX);
-		typeCombo.add(IParameter.NUMBER);
-		typeCombo.add(IParameter.HOSTNAME);
-		toolkit.adapt(typeCombo, true, true);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		typeCombo.setLayoutData(gd);
-		typeCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				typeChange(((Combo)e.widget).getText());
-			}
-		});
+		type.create(client, toolkit);
+		((GridData)type.getCombo().getLayoutData()).widthHint = 100;
 		
 		toolkit.createLabel(client, "");
 		
-		requiredCheck = toolkit.createButton(client, "This parameter is required", SWT.CHECK);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		requiredCheck.setLayoutData(gd);
-		requiredCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (isRefresh) return;
-				isRequiredChange(((Button)e.widget).getSelection());
-			}
-		});
+		required.create(client, toolkit);
 		
 		display.create(client, toolkit);
 		((GridData)display.getText().getLayoutData()).widthHint = 100;
@@ -197,26 +180,15 @@ public class ParameterDetailsPage implements IDetailsPage {
 		defaultValue.create(client, toolkit);
 		((GridData)defaultValue.getText().getLayoutData()).widthHint = 100;
 		
-		defaultComboLabel = toolkit.createLabel(client, "Default value");
-		defaultComboLabel.setLayoutData(new GridData());
-		defaultCombo = new Combo(client, SWT.NONE);
-		toolkit.adapt(defaultCombo, true, true);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		defaultCombo.setLayoutData(gd);
-		defaultCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				defaultChange(((Combo)e.widget).getText());
-			}
-		});
+		defaultCombo.create(client, toolkit);
 		
 		validationTextLabel = toolkit.createLabel(client, "Valid values");
 		validationTextLabel.setLayoutData(new GridData());
 		validationText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 100;
 		gd.widthHint = 100;
+		gd.horizontalSpan = 2;
 		validationText.setLayoutData(gd);
 		validationText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -227,35 +199,17 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		toolkit.createLabel(client, "");
 		
-		readonlyCheck = toolkit.createButton(client, "This parameter is read only", SWT.CHECK);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		readonlyCheck.setLayoutData(gd);
-		readonlyCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (isRefresh) return;
-				isReadonlyChange(((Button)e.widget).getSelection());
-			}
-		});
+		readonly.create(client, toolkit);
 		
-		toolkit.createLabel(client, "Identical");
-		identical= new Combo(client, SWT.NONE);
-		toolkit.adapt(identical, true, true);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.widthHint = 100;
-		identical.setLayoutData(gd);
-		identical.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				identicalChange(((Combo)e.widget).getText());
-			}
-		});
+		identical.create(client, toolkit);
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(Object target) {
 				if (target instanceof IParameter) {
-					identical.getDisplay().asyncExec(new Runnable() {
+					section.getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							refreshParametersList();
+							showChoiceWidgets();
 						};
 					});
 				}
@@ -270,51 +224,22 @@ public class ParameterDetailsPage implements IDetailsPage {
 	
 	private void refreshParametersList() {
 		List<IParameter> params = editor.getDescriptorContainer().getDescriptorModel().getParameters();
+		
+		String[] items = new String[params.size()];
 		for (int i = 0; i < params.size(); i++) {
 			IParameter param = params.get(i);
 			String paramId = param.getId();
-			
-			if (param.equals(input)) {
-				continue;
-			}
-			
-			if (identical.getItemCount() > i) {
-				if (! paramId.equals(identical.getItem(i))) {
-					identical.setItem(i,  paramId);
-				}
-			} else {
-				identical.add(paramId);
-			}
+			items[i] = paramId;
 		}
 		
-	}
-
-	protected void isRequiredChange(boolean selection) {
-		input.setRequired(selection);
+		identical.setItems(items);
 	}
 	
-	protected void isReadonlyChange(boolean selection) {
-		input.setReadOnly(selection);
-	}
-
-	protected void defaultChange(String text) {
-		input.setDefaultValue(text);
-	}
-
-	protected void typeChange(String text) {
-		input.setType(text);
-		
-		showChoiceWidgets(text);
-	}
-	
-	private void showChoiceWidgets(String text) {
-		boolean showChoiceWidgets = IParameter.CHOICE.equals(text);
+	private void showChoiceWidgets() {
+		boolean showChoiceWidgets = IParameter.CHOICE.equals(input.getType());
 		
 		defaultValue.setVisible(!showChoiceWidgets);
 		defaultCombo.setVisible(showChoiceWidgets);
-		defaultComboLabel.setVisible(showChoiceWidgets);
-		((GridData)defaultCombo.getLayoutData()).exclude = !showChoiceWidgets;
-		((GridData)defaultComboLabel.getLayoutData()).exclude = !showChoiceWidgets;
 		
 		validationText.setVisible(showChoiceWidgets);
 		validationTextLabel.setVisible(showChoiceWidgets);
@@ -326,10 +251,6 @@ public class ParameterDetailsPage implements IDetailsPage {
 		Point newsize = section.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		section.setSize(size.x, newsize.y);
 	}
-
-	protected void identicalChange(String text) {
-		input.setIdentical(text);
-	}
 	
 	protected void validationChange(String text) {
 		String[] newParams = text.split("\n");
@@ -337,14 +258,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		input.getValidValues().clear();
 		input.getValidValues().addAll(Arrays.asList(newParams));
 		
-		String currentDefault = defaultCombo.getText();
 		defaultCombo.setItems(newParams);
-		int newIndex = Arrays.asList(newParams).indexOf(currentDefault);
-		if (newIndex != -1) {
-			defaultCombo.select(newIndex);
-		} else {
-			defaultCombo.setText(currentDefault);
-		}
 	}
 	
 	protected void descriptionChange(String text) {
