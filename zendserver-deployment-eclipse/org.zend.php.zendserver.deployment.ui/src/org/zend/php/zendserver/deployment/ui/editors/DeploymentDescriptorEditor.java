@@ -78,7 +78,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	private IDescriptorContainer fModel;
 	private IDocumentProvider fDocumentProvider;
-	private String iconLocation;
+	private String iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
 
 	private ResourceMapper fResourceMapper;
 
