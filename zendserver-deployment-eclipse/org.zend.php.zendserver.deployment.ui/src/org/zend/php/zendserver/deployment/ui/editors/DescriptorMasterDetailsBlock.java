@@ -22,9 +22,9 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
@@ -129,8 +129,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target, Feature feature, int type) {
-				refreshViewer(target);
+			public void descriptorChanged(ChangeEvent event) {
+				refreshViewer(event.target);
 			}
 		});
 	}

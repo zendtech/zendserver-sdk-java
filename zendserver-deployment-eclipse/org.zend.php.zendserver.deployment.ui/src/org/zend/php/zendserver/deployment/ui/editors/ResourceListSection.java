@@ -32,10 +32,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 
 public abstract class ResourceListSection {
@@ -117,9 +116,9 @@ public abstract class ResourceListSection {
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target, Feature feature, int type) {
-				if (target instanceof IParameter) {
-					refreshViewer((IParameter)target);
+			public void descriptorChanged(ChangeEvent event) {
+				if (event.target instanceof IParameter) {
+					refreshViewer((IParameter)event.target);
 				}
 			}
 		});
