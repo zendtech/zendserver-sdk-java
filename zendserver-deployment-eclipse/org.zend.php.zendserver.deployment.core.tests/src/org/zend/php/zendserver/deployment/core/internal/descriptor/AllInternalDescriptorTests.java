@@ -8,6 +8,7 @@ public class AllInternalDescriptorTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllInternalDescriptorTests.class.getName());
 		//$JUnit-BEGIN$
+		suite.addTestSuite(DescriptorNotificationsTests.class);
 		suite.addTestSuite(ModelSerializerReadTests.class);
 		suite.addTestSuite(ModelSerializerWriteTests.class);
 		//$JUnit-END$

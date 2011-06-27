@@ -35,7 +35,7 @@ public class ObservableList<E> implements List<E> {
 	}
 	
 	public boolean add(E e) {
-		boolean added = add(e);
+		boolean added = list.add(e);
 		if (added) {
 			fireChange(IDescriptorChangeListener.ADD);
 		}
