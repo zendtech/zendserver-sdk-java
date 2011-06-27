@@ -206,7 +206,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		identical.create(client, toolkit);
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target, Feature feature) {
+			public void descriptorChanged(IModelObject target, Feature feature, int type) {
 				if (target instanceof IParameter) {
 					section.getDisplay().asyncExec(new Runnable() {
 						public void run() {

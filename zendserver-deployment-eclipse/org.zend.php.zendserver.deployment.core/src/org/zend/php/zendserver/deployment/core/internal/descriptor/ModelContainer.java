@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
@@ -16,9 +17,14 @@ public abstract class ModelContainer extends ModelObject implements IModelContai
 	public ModelContainer(Feature[] properties, Feature[] children) {
 		super(properties);
 		
+		// make sure that listeners list exists, because ModelObject creates it lazily
+		if (listeners == null) {
+			listeners = new ArrayList<IDescriptorChangeListener>();
+		}
+		
 		mmap = new LinkedHashMap<Feature, List<Object>>();
 		for (Feature s : children) {
-			mmap.put(s, new ArrayList<Object>());
+			mmap.put(s, new ObservableList<Object>(this, s, listeners));
 		}
 	}
 

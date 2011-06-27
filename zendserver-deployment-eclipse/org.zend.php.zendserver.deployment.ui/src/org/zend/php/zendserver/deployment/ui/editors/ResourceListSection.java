@@ -117,7 +117,7 @@ public abstract class ResourceListSection {
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target, Feature feature) {
+			public void descriptorChanged(IModelObject target, Feature feature, int type) {
 				if (target instanceof IParameter) {
 					refreshViewer((IParameter)target);
 				}

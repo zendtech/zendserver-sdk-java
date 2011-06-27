@@ -129,7 +129,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.setInput(editor.getModel());
 		editor.getDescriptorContainer().addChangeListener(new IDescriptorChangeListener() {
 			
-			public void descriptorChanged(IModelObject target, Feature feature) {
+			public void descriptorChanged(IModelObject target, Feature feature, int type) {
 				refreshViewer(target);
 			}
 		});

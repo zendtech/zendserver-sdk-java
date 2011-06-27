@@ -155,7 +155,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 		fModel.addChangeListener(new IDescriptorChangeListener() {
 
-			public void descriptorChanged(IModelObject target, Feature feature) {
+			public void descriptorChanged(IModelObject target, Feature feature, int type) {
 				if (target instanceof IDeploymentDescriptor) {
 					handleModelUpdate((IDeploymentDescriptor)target);
 				}

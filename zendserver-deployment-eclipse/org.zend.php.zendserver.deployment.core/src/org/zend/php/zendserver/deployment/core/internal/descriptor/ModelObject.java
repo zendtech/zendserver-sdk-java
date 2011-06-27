@@ -9,7 +9,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 public abstract class ModelObject implements IModelObject {
 
-	private List<IDescriptorChangeListener> listeners;
+	protected List<IDescriptorChangeListener> listeners;
 	
 	protected List<Feature> properties;
 	
@@ -19,16 +19,15 @@ public abstract class ModelObject implements IModelObject {
 	}
 	
 	public void copy(IModelObject source) {
-		// empty
+		throw new UnsupportedOperationException("Can't copy "+this);
 	}
 
 	public void set(Feature key, boolean value) {
-		// empty
+		throw new IllegalArgumentException("Can't set feature "+key+" to value "+value+" in "+this);
 	}
 
 	public boolean getBoolean(Feature key) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new IllegalArgumentException("Can't get feature "+key+" from "+this);
 	}
 	
 	public Feature[] getPropertyNames() {
@@ -52,7 +51,7 @@ public abstract class ModelObject implements IModelObject {
 		}
 		
 		for (IDescriptorChangeListener l : listeners) {
-			l.descriptorChanged(this, key);
+			l.descriptorChanged(this, key, IDescriptorChangeListener.SET);
 		}
 	}
 }
