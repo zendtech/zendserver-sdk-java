@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.PackageBuilder;
@@ -44,7 +45,13 @@ public class CreatePackageCommand extends TargetAwareCommand {
 					.error("Provided path is not a path to a vaild project.");
 			return false;
 		}
-		PackageBuilder builder = new PackageBuilder(project);
+		PackageBuilder builder = null;
+		try {
+			builder = new PackageBuilder(project);
+		} catch (IOException e) {
+			getLogger().error(e);
+			return false;
+		}
 		File result = null;
 		String destination = getDestination();
 		if (destination == null) {

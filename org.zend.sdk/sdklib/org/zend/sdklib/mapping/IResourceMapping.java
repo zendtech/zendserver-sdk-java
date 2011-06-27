@@ -29,8 +29,7 @@ public interface IResourceMapping {
 	Map<String, Set<IMapping>> getExclusion();
 
 	/**
-	 * @return default exclusion from SDK configuration file
-	 *         (tools/conf/excludes.default)
+	 * @return default exclusion list
 	 */
 	Set<IMapping> getDefaultExclusion();
 

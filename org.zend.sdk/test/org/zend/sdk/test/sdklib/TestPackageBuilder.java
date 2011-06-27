@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,8 @@ public class TestPackageBuilder extends AbstractTest {
 
 	@Test
 	public void testCreatePackagePath() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project1");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project1"));
 		File result = builder.createDeploymentPackage(file.getCanonicalPath());
 		assertNotNull(result);
 		assertTrue(result.exists());
@@ -60,7 +62,8 @@ public class TestPackageBuilder extends AbstractTest {
 
 	@Test
 	public void testCreatePackageFile() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project1");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project1"));
 		File result = builder.createDeploymentPackage(file);
 		assertNotNull(result);
 		assertTrue(result.exists());
@@ -68,35 +71,44 @@ public class TestPackageBuilder extends AbstractTest {
 
 	@Test
 	public void testCreatePackageNoDescriptor() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project2");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project2"));
 		File result = builder.createDeploymentPackage(file);
 		assertNull(result);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testCreatePackageNoVersion() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project3");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project3"));
 		builder.createDeploymentPackage(file);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testCreatePackageInvalidDescriptor() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project4");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project4"));
 		builder.createDeploymentPackage(file);
+	}
+
+	@Test(expected = FileNotFoundException.class)
+	public void testCreatePackageNoMapping() throws IOException {
+		new PackageBuilder(new File(FOLDER + "Project5"));
 	}
 
 	@Test
 	public void testCreatePackageNullLocation() throws IOException {
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project1");
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project1"));
 		File result = builder.createDeploymentPackage((File) null);
 		assertNull(result);
 	}
 
 	@Test
-	public void testCreatePackageNotification() {
+	public void testCreatePackageNotification() throws IOException {
 		TestNotifier notifier = new TestNotifier();
-		PackageBuilder builder = new PackageBuilder(FOLDER + "Project1",
-				notifier);
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project1"), notifier);
 		File result = builder.createDeploymentPackage(file);
 		assertNotNull(result);
 		assertTrue(result.exists());

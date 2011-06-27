@@ -23,13 +23,14 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
-import org.zend.sdklib.internal.mapping.ResourceMappingParser;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.ResourceMapper;
+import org.zend.sdklib.mapping.IMappingLoader;
+import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
  * Provides ability to create zpk application package based on
@@ -44,46 +45,36 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private ZipOutputStream out;
 	private File container;
+	private IMappingModel model;
 
-	private ResourceMapper mapper;
-	private String[] defaultExclusion;
+	// private ResourceMapper mapper;
+	// private String[] defaultExclusion;
 
-	public PackageBuilder(File file, String[] defaultExclusion,
-			IChangeNotifier notifier) {
+	public PackageBuilder(File container, IMappingLoader loader,
+			IChangeNotifier notifier) throws IOException {
 		super(notifier);
-		this.container = file;
-		this.defaultExclusion = defaultExclusion;
+		this.container = container;
+		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
-	public PackageBuilder(File file, String[] defaultExclusion) {
+	public PackageBuilder(File container, IChangeNotifier notifier)
+			throws IOException {
+		super(notifier);
+		this.container = container;
+		this.model = MappingModelFactory.createDefaultModel(container);
+	}
+
+	public PackageBuilder(File container, IMappingLoader loader)
+			throws IOException {
 		super();
-		this.container = file;
-		this.defaultExclusion = defaultExclusion;
+		this.container = container;
+		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
-	public PackageBuilder(File file, IChangeNotifier notifier) {
-		this(file, null, notifier);
-	}
-
-	public PackageBuilder(File file) {
-		this(file, (String[]) null);
-	}
-
-	public PackageBuilder(String path) {
-		this(new File(path));
-	}
-
-	public PackageBuilder(String path, String[] defaultExclusion) {
-		this(new File(path), defaultExclusion);
-	}
-
-	public PackageBuilder(String path, String[] defaultExclusion,
-			IChangeNotifier notifier) {
-		this(new File(path), defaultExclusion, notifier);
-	}
-
-	public PackageBuilder(String path, IChangeNotifier notifier) {
-		this(new File(path), notifier);
+	public PackageBuilder(File container) throws IOException {
+		super();
+		this.container = container;
+		this.model = MappingModelFactory.createDefaultModel(container);
 	}
 
 	/**
@@ -108,14 +99,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File result = new File(location, name + EXTENSION);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
-
-			ResourceMappingParser parser = new ResourceMappingParser();
-			if (defaultExclusion != null) {
-				mapper = new ResourceMapper(container, parser.load(container),
-						parser.getMappings(defaultExclusion));
-			} else {
-				mapper = new ResourceMapper(container, parser.load(container));
-			}
+			/*
+			 * ResourceMappingParser parser = new ResourceMappingParser(); if
+			 * (defaultExclusion != null) { mapper = new
+			 * ResourceMapper(container, parser.load(container),
+			 * parser.getMappings(defaultExclusion)); } else { mapper = new
+			 * ResourceMapper(container, parser.load(container)); }
+			 */
 
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Package creation", "Creating deployment package...",
@@ -174,7 +164,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private void resolveMapping(String tag, String folderName)
 			throws IOException {
-		Set<IMapping> includes = mapper.getInclusion(tag);
+		Set<IMapping> includes = model.getInclusion(tag);
 		for (IMapping mapping : includes) {
 			File resource = new File(
 					new File(container, mapping.getPath()).getCanonicalPath());
@@ -186,7 +176,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private void addFileToZip(File root, String mappingFolder,
 			IMapping mapping, String tag) throws IOException {
-		if (!mapper.isExcluded(root.getCanonicalPath(), tag)) {
+		if (!model.isExcluded(tag, root.getCanonicalPath())) {
 			if (root.isDirectory()) {
 				File[] children = root.listFiles();
 				for (File child : children) {
@@ -297,9 +287,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		// is 1 because of deployment.xml file which is always added to the
 		// package
 		int totalWork = 1;
-		Set<String> folders = mapper.getFolders();
+		Set<String> folders = model.getFolders();
 		for (String folder : folders) {
-			Set<IMapping> includes = mapper.getInclusion(folder);
+			Set<IMapping> includes = model.getInclusion(folder);
 			for (IMapping mapping : includes) {
 				File resource = new File(
 						new File(container, mapping.getPath())
@@ -314,7 +304,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private int countFiles(File file, String folder) throws IOException {
 		int counter = 0;
-		if (!mapper.isExcluded(file.getCanonicalPath(), folder)) {
+		if (!model.isExcluded(folder, file.getCanonicalPath())) {
 			if (file.isDirectory()) {
 				File[] children = file.listFiles();
 				for (File child : children) {
