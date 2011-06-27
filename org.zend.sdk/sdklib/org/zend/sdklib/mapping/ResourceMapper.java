@@ -76,10 +76,12 @@ public class ResourceMapper {
 	 * @return
 	 */
 	public Set<IMapping> getInclusion(String folder) {
-		Map<String, Set<IMapping>> rules = mapping.getInclusion();
-		Set<IMapping> mappings = rules.get(folder);
-		if (mappings != null) {
-			return mappings;
+		if (folder != null) {
+			Map<String, Set<IMapping>> rules = mapping.getInclusion();
+			Set<IMapping> mappings = rules.get(folder);
+			if (mappings != null) {
+				return mappings;
+			}
 		}
 		return Collections.emptySet();
 	}
@@ -91,10 +93,12 @@ public class ResourceMapper {
 	 * @return
 	 */
 	public Set<IMapping> getExclusion(String folder) {
-		Map<String, Set<IMapping>> rules = mapping.getExclusion();
-		Set<IMapping> mappings = rules.get(folder);
-		if (mappings != null) {
-			return mappings;
+		if (folder != null) {
+			Map<String, Set<IMapping>> rules = mapping.getExclusion();
+			Set<IMapping> mappings = rules.get(folder);
+			if (mappings != null) {
+				return mappings;
+			}
 		}
 		return Collections.emptySet();
 	}
