@@ -47,7 +47,13 @@ public class UpdateProjectCommand extends AbstractCommand {
 		ZendProject project = new ZendProject(getDestination());
 
 		try {
-			return project.update(getScripts());
+			final boolean update = project.update(getScripts());
+
+			if (update) {
+				getLogger().info(
+						"Project is updated with deployment descriptor and properties");
+			}
+			return update;
 		} catch (IllegalArgumentException e) {
 			getLogger().error(e.getMessage());
 			return false;

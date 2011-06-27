@@ -72,7 +72,13 @@ public class CreateProjectCommand extends AbstractCommand {
 	@Override
 	public boolean doExecute() {
 		ZendProject project = new ZendProject(getDestination());
-		return project.create(getName(), getTemplate(), getScripts());
+		
+		final boolean create = project.create(getName(), getTemplate(), getScripts());
+		if (create) {
+			getLogger().info("Project resources were created succefully for " + getName());
+		}
+		return create;
+		
 	}
 
 	/**
