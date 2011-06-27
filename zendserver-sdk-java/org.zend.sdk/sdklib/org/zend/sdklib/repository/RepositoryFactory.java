@@ -8,27 +8,27 @@
 package org.zend.sdklib.repository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.repository.AbstractRepository;
 import org.zend.sdklib.internal.repository.http.HttpRepository;
 import org.zend.sdklib.internal.repository.local.FileBasedRepository;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.internal.utils.Md5Util;
 import org.zend.sdklib.internal.utils.VersionsUtils;
 import org.zend.sdklib.repository.site.Application;
-import org.zend.sdklib.repository.site.CategoryDef;
 import org.zend.sdklib.repository.site.ObjectFactory;
-import org.zend.sdklib.repository.site.ProviderDef;
 import org.zend.sdklib.repository.site.Site;
 
 /**
@@ -116,33 +116,40 @@ public class RepositoryFactory {
 	/**
 	 * Merge several repositories into one repository
 	 * 
-	 * @param description
-	 * @param repositories
-	 * @return the merged repository
-	 * 
+	 * @param repository
+	 * @param site
 	 * @throws SdkException
+	 * @throws PropertyException
+	 * @throws JAXBException
+	 * @throws FileNotFoundException 
 	 */
-	public static Site merge(String description, IRepository... repositories)
+	public static void merge(FileBasedRepository repository, Site site)
 			throws SdkException {
+		
 		ObjectFactory f = new ObjectFactory();
 		final Site s = f.createSite();
-		if (description != null) {
-			s.setDescription(description);
+		
+		final Site sr = repository.getSite();
+
+		s.setDescription(sr.getDescription());
+		s.getApplication().addAll(sr.getApplication());
+		s.getProviderDef().addAll(sr.getProviderDef());
+		s.getCategoryDef().addAll(sr.getCategoryDef());
+		
+		s.getApplication().addAll(site.getApplication());
+		s.getProviderDef().addAll(site.getProviderDef());
+		s.getCategoryDef().addAll(site.getCategoryDef());
+		
+		// TODO: filter out duplications
+		
+		final File repoFile = new File(repository.getBasedir(), AbstractRepository.SITE_XML);
+		PrintStream os;
+		try {
+			os = new PrintStream (repoFile);
+			JaxbHelper.marshalSite(os, s);
+		} catch (Exception e) {
+			throw new SdkException(e);
 		}
-
-		List<Application> apps = new ArrayList<Application>(1);
-		List<ProviderDef> pros = new ArrayList<ProviderDef>(1);
-		List<CategoryDef> cats = new ArrayList<CategoryDef>(1);
-
-		// TODO: filtering and merging
-		for (IRepository r : repositories) {
-			final Site sr = r.getSite();
-			apps.addAll(sr.getApplication());
-			pros.addAll(sr.getProviderDef());
-			cats.addAll(sr.getCategoryDef());
-		}
-
-		return s;
 	}
 
 	/**
