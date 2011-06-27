@@ -51,22 +51,27 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 	
 	public void setName(String fName) {
 		this.fName = fName;
+		fireChange(DEPENDENCY_NAME);
 	}
 
 	public void setEquals(String fEquals) {
 		this.fEquals = fEquals;
+		fireChange(DEPENDENCY_EQUALS);
 	}
 
 	public void setMin(String fMin) {
 		this.fMin = fMin;
+		fireChange(DEPENDENCY_MIN);
 	}
 
 	public void setMax(String fMax) {
 		this.fMax = fMax;
+		fireChange(DEPENDENCY_MAX);
 	}
 
 	public void setConflicts(String fConflicts) {
 		this.fConflicts = fConflicts;
+		fireChange(DEPENDENCY_CONFLICTS);
 	}
 	
 	public void copy(IModelObject obj) {
@@ -81,15 +86,15 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 
 	public void set(Feature key, String value) {
 		if (DEPENDENCY_NAME.equals(key)) {
-			this.fName = value;
+			setName(value);
 		} else if (DEPENDENCY_EQUALS.equals(key)) {
-			this.fEquals = value;
+			setEquals(value);
 		} else if (DEPENDENCY_MIN.equals(key)) {
-			this.fMin = value;
+			setMin(value);
 		} else if (DEPENDENCY_MAX.equals(key)) {
-			this.fMax = value;
+			setMax(value);
 		} else if (DEPENDENCY_CONFLICTS.equals(key)) {
-			this.fConflicts = value;
+			setConflicts(value);
 		} else throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
 		
 	}

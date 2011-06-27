@@ -22,6 +22,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setValue(String newValue) {
 		this.value = newValue;
+		fireChange(VALUE);
 	}
 
 	public String getName() {
@@ -30,6 +31,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setName(String name) {
 		this.name = name;
+		fireChange(NAME);
 	}
 	
 	public void copy(IModelObject obj) {
@@ -40,9 +42,9 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void set(Feature key, String value) {
 		if (NAME.equals(key)) {
-			this.name = value;
+			setName(value);
 		} else if (VALUE.equals(key)) {
-			this.value = value;
+			setValue(value);
 		} else {
 			throw new IllegalArgumentException("Unknown Variable property to set: "+key);
 		}

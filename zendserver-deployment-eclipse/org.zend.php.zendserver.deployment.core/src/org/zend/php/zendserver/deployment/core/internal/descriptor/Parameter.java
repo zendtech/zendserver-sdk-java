@@ -66,6 +66,7 @@ public class Parameter  extends ModelContainer implements IParameter {
 
 	public void setReadOnly(boolean value) {
 		this.readOnly = value;
+		fireChange(READONLY);
 	}
 	
 	public String getIdentical() {
@@ -74,30 +75,37 @@ public class Parameter  extends ModelContainer implements IParameter {
 	
 	public void setIdentical(String id) {
 		this.identical = id;
+		fireChange(IDENTICAL);
 	}
 
 	public void setId(String id) {
 		this.id = id;
+		fireChange(ID);
 	}
 
 	public void setType(String type) {
 		this.type = type;
+		fireChange(TYPE);
 	}
 
 	public void setRequired(boolean required) {
 		this.required = required;
+		fireChange(REQUIRED);
 	}
 
 	public void setDisplay(String display) {
 		this.display = display;
+		fireChange(DISPLAY);
 	}
 
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+		fireChange(DEFAULTVALUE);
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+		fireChange(DESCRIPTION);
 	}
 	
 	public void copy(IModelObject obj) {
@@ -146,17 +154,17 @@ public class Parameter  extends ModelContainer implements IParameter {
 	
 	public String get(Feature key) {
 		if (DISPLAY.equals(key)) {
-			return getDisplay();
+			return display;
 		} else if (TYPE.equals(key)) {
-			return getType();
+			return type;
 		} else if (IDENTICAL.equals(key)) {
-			return getIdentical();
+			return identical;
 		} else if (ID.equals(key)) {
-			return getId();
+			return id;
 		} else if (DEFAULTVALUE.equals(key)) {
-			return getDefaultValue();
+			return defaultValue;
 		} else if (DESCRIPTION.equals(key)) {
-			return getDescription();
+			return description;
 		} else return Boolean.toString(getBoolean(key));
 	}
 	
