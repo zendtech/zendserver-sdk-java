@@ -53,7 +53,7 @@ public interface IDescriptorContainer {
 	 * 
 	 * @param o changed object
 	 */
-	void fireChange(Object o);
+	void fireChange(IModelObject o);
 
 	void save();
 

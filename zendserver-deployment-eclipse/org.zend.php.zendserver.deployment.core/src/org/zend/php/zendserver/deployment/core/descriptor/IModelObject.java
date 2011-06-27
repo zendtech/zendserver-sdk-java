@@ -7,6 +7,20 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
  * 
  */
 public interface IModelObject {
+	
+	/**
+	 * Get notified on this object changes
+	 * 
+	 * @param listener to be notified about changes
+	 */
+	void addListener(IDescriptorChangeListener listener);
+	
+	/**
+	 * Remove listener
+	 * 
+	 * @param listener to remove
+	 */
+	void removeListener(IDescriptorChangeListener listener);
 
 	/**
 	 * Sets model property to new value.

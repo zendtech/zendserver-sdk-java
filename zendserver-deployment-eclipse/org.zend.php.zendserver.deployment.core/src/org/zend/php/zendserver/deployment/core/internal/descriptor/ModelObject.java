@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 public abstract class ModelObject implements IModelObject {
 
-	private Node node;
+	private List<IDescriptorChangeListener> listeners;
+	
 	protected List<Feature> properties;
 	
 	public ModelObject(Feature[] properties) {
@@ -22,7 +23,7 @@ public abstract class ModelObject implements IModelObject {
 	}
 
 	public void set(Feature key, boolean value) {
-		
+		// empty
 	}
 
 	public boolean getBoolean(Feature key) {
@@ -34,4 +35,14 @@ public abstract class ModelObject implements IModelObject {
 		return properties.toArray(new Feature[properties.size()]);
 	}
 	
+	public void addListener(IDescriptorChangeListener listener) {
+		if (listeners == null) {
+			listeners = new ArrayList<IDescriptorChangeListener>();
+		}
+		listeners.add(listener);
+	}
+	
+	public void removeListener(IDescriptorChangeListener listener) {
+		listeners.remove(listener);
+	}
 }

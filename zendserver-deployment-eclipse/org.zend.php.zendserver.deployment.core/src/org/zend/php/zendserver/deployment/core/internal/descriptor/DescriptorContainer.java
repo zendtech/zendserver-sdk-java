@@ -16,6 +16,7 @@ import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IResourceMapping;
 
 
@@ -97,7 +98,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 		}
 	}
 
-	public void fireChange(Object o) {
+	public void fireChange(IModelObject o) {
 		if (listeners == null) {
 			return;
 		}
