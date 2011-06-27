@@ -26,11 +26,6 @@ public interface IRepository {
 	 * @return the id of the repository
 	 */
 	public String getId();
-
-	/**
-	 * @return description for this repository
-	 */
-	public String getDescription();
 	
 	/**
 	 * @return true if the repository is currently accessible

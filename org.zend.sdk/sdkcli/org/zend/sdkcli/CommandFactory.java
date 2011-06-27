@@ -9,20 +9,21 @@
 package org.zend.sdkcli;
 
 import org.zend.sdkcli.internal.commands.AddRepositoryCommand;
+import org.zend.sdkcli.internal.commands.AddTargetCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreatePackageCommand;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
-import org.zend.sdkcli.internal.commands.AddTargetCommand;
-import org.zend.sdkcli.internal.commands.RemoveTargetCommand;
 import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
+import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListRepositoriesCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdkcli.internal.commands.RedeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.RemoveApplicationCommand;
 import org.zend.sdkcli.internal.commands.RemoveRepositoryCommand;
+import org.zend.sdkcli.internal.commands.RemoveTargetCommand;
 import org.zend.sdkcli.internal.commands.UpdateApplicationCommand;
 import org.zend.sdkcli.internal.commands.UpdateProjectCommand;
 import org.zend.sdkcli.internal.commands.UpdateTargetCommand;
@@ -104,6 +105,9 @@ public class CommandFactory {
 			break;
 		case LIST_REPOSITORIES:
 			command = new ListRepositoriesCommand();
+			break;
+		case GENERATE_REPOSITORIES:
+			command = new GenerateRepositoryCommand();
 			break;
 		default:
 			command = new UsageCommand();
