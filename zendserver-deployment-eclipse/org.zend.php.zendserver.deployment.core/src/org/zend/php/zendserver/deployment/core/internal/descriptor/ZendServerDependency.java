@@ -51,27 +51,27 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 	
 	public void setName(String fName) {
 		this.fName = fName;
-		fireChange(DEPENDENCY_NAME);
+		fireChange(DEPENDENCY_NAME, fName);
 	}
 
 	public void setEquals(String fEquals) {
 		this.fEquals = fEquals;
-		fireChange(DEPENDENCY_EQUALS);
+		fireChange(DEPENDENCY_EQUALS, fEquals);
 	}
 
 	public void setMin(String fMin) {
 		this.fMin = fMin;
-		fireChange(DEPENDENCY_MIN);
+		fireChange(DEPENDENCY_MIN, fMin);
 	}
 
 	public void setMax(String fMax) {
 		this.fMax = fMax;
-		fireChange(DEPENDENCY_MAX);
+		fireChange(DEPENDENCY_MAX, fMax);
 	}
 
 	public void setConflicts(String fConflicts) {
 		this.fConflicts = fConflicts;
-		fireChange(DEPENDENCY_CONFLICTS);
+		fireChange(DEPENDENCY_CONFLICTS, fConflicts);
 	}
 	
 	public void copy(IModelObject obj) {

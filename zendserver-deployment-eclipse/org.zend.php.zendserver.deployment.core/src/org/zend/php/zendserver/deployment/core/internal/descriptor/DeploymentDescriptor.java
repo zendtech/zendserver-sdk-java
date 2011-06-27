@@ -58,9 +58,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 		return name;
 	}
 	
-	public void setName(String name) {
+	public void setName(String name) { 
 		this.name = name;
-		fireChange(NAME);
+		fireChange(NAME, name);
 	}
 	
 	public String getReleaseVersion() {
@@ -69,7 +69,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setReleaseVersion(String version) {
 		this.releaseVersion = version;
-		fireChange(VERSION_RELEASE);
+		fireChange(VERSION_RELEASE, version);
 	}
 	
 	public String getEulaLocation() {
@@ -78,7 +78,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setEulaLocation(String eulaLocation) {
 		this.eulaLocation = eulaLocation;
-		fireChange(EULA);
+		fireChange(EULA, eulaLocation);
 	}
 	
 	public String getIconLocation() {
@@ -86,7 +86,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	public void setIconLocation(String iconLocation) {
 		this.iconLocation = iconLocation;
-		fireChange(ICON);
+		fireChange(ICON, iconLocation);
 	}
 	
 	public String getDocumentRoot() {
@@ -95,7 +95,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setDocumentRoot(String documentRoot) {
 		this.documentRoot = documentRoot;
-		fireChange(DOCROOT);
+		fireChange(DOCROOT, documentRoot);
 	}
 	
 	public String getScriptsRoot() {
@@ -104,7 +104,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setScriptsRoot(String scriptsRoot) {
 		this.scriptsRoot = scriptsRoot;
-		fireChange(SCRIPTSDIR);
+		fireChange(SCRIPTSDIR, scriptsRoot);
 	}
 	
 	public String getHealthcheck() {
@@ -113,7 +113,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setHealthcheck(String healthcheck) {
 		this.healthcheck = healthcheck;
-		fireChange(HEALTHCHECK);
+		fireChange(HEALTHCHECK, healthcheck);
 	}
 	
 	public String getSummary() {
@@ -125,17 +125,17 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	public void setSummary(String summary) {
 		this.summary = summary;
-		fireChange(SUMMARY);
+		fireChange(SUMMARY, summary);
 	}
 	
 	public void setDescription(String description) {
 		this.description = description;
-		fireChange(DESCRIPTION);
+		fireChange(DESCRIPTION, description);
 	}
 	
 	public void setApiVersion(String value) {
 		this.apiVersion = value;
-		fireChange(VERSION_API);
+		fireChange(VERSION_API, value);
 	}
 	
 	public String getApiVersion() {
@@ -148,7 +148,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setApplicationDir(String appDir) {
 		this.appDir = appDir;
-		fireChange(APPDIR);
+		fireChange(APPDIR, appDir);
 	}
 	
 	public List<IParameter> getParameters() {

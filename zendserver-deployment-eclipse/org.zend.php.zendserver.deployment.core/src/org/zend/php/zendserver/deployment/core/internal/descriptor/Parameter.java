@@ -66,7 +66,7 @@ public class Parameter  extends ModelContainer implements IParameter {
 
 	public void setReadOnly(boolean value) {
 		this.readOnly = value;
-		fireChange(READONLY);
+		fireChange(READONLY, value);
 	}
 	
 	public String getIdentical() {
@@ -75,37 +75,37 @@ public class Parameter  extends ModelContainer implements IParameter {
 	
 	public void setIdentical(String id) {
 		this.identical = id;
-		fireChange(IDENTICAL);
+		fireChange(IDENTICAL, id);
 	}
 
 	public void setId(String id) {
 		this.id = id;
-		fireChange(ID);
+		fireChange(ID, id);
 	}
 
 	public void setType(String type) {
 		this.type = type;
-		fireChange(TYPE);
+		fireChange(TYPE, type);
 	}
 
 	public void setRequired(boolean required) {
 		this.required = required;
-		fireChange(REQUIRED);
+		fireChange(REQUIRED, required);
 	}
 
 	public void setDisplay(String display) {
 		this.display = display;
-		fireChange(DISPLAY);
+		fireChange(DISPLAY, display);
 	}
 
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
-		fireChange(DEFAULTVALUE);
+		fireChange(DEFAULTVALUE, defaultValue);
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
-		fireChange(DESCRIPTION);
+		fireChange(DESCRIPTION, description);
 	}
 	
 	public void copy(IModelObject obj) {

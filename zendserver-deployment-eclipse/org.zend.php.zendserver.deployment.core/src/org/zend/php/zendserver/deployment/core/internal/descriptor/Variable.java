@@ -22,7 +22,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setValue(String newValue) {
 		this.value = newValue;
-		fireChange(VALUE);
+		fireChange(VALUE, newValue);
 	}
 
 	public String getName() {
@@ -31,7 +31,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setName(String name) {
 		this.name = name;
-		fireChange(NAME);
+		fireChange(NAME, name);
 	}
 	
 	public void copy(IModelObject obj) {

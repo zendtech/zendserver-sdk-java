@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 public abstract class ModelObject implements IModelObject {
 
+	private IModelContainer parent;
+	
 	protected List<IDescriptorChangeListener> listeners;
 	
 	protected List<Feature> properties;
@@ -45,13 +49,27 @@ public abstract class ModelObject implements IModelObject {
 		listeners.remove(listener);
 	}
 	
-	protected void fireChange(Feature key) {
-		if (listeners == null) {
-			return;
+	protected void fireChange(ChangeEvent event) {
+		if (listeners != null) {
+			for (IDescriptorChangeListener l : listeners) {
+				l.descriptorChanged(event);
+			}
 		}
 		
-		for (IDescriptorChangeListener l : listeners) {
-			l.descriptorChanged(this, key, IDescriptorChangeListener.SET);
+		if (parent != null) {
+			((ModelObject) parent).fireChange(event);
 		}
+	}
+	
+	protected void fireChange(IModelObject target, Feature key, int type, Object newValue, Object oldValue) {
+		fireChange(new ChangeEvent(target, key, IDescriptorChangeListener.SET, newValue, oldValue));
+	}
+	
+	protected void fireChange(Feature key, Object newValue) {
+		fireChange(this, key, IDescriptorChangeListener.SET, newValue, null); // for basic properties, oldValue is always null
+	}
+	
+	public void setParent(IModelContainer container) {
+		this.parent = container;
 	}
 }

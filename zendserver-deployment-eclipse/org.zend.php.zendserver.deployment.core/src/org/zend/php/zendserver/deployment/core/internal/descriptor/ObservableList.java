@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 
@@ -28,29 +29,32 @@ public class ObservableList<E> implements List<E> {
 		this.container = container;
 	}
 	
-	private void fireChange(int type) {
+	private void fireChange(int type, Object newValue, Object oldValue) {
+		ChangeEvent event = new ChangeEvent(container, feature, type, newValue, oldValue);
 		for (IDescriptorChangeListener l : listeners) {
-			l.descriptorChanged(container, feature, type);
+			l.descriptorChanged(event);
 		}
 	}
 	
 	public boolean add(E e) {
 		boolean added = list.add(e);
 		if (added) {
-			fireChange(IDescriptorChangeListener.ADD);
+			fireChange(IDescriptorChangeListener.ADD, e, null);
 		}
 		return added;
 	}
 
 	public void add(int index, E element) {
 		list.add(index, element);
-		fireChange(IDescriptorChangeListener.ADD);
+		fireChange(IDescriptorChangeListener.ADD, element, null);
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
 		boolean added = list.addAll(c);
 		if (added) {
-			fireChange(IDescriptorChangeListener.ADD);
+			for (E e: c) {
+				fireChange(IDescriptorChangeListener.ADD, e, null);
+			}
 		}
 		return added;
 	}
@@ -58,16 +62,21 @@ public class ObservableList<E> implements List<E> {
 	public boolean addAll(int index, Collection<? extends E> c) {
 		boolean added = list.addAll(index, c);
 		if (added) {
-			fireChange(IDescriptorChangeListener.ADD);
+			for (E e : c) {
+				fireChange(IDescriptorChangeListener.ADD, e, null);
+			}
 		}
 		return added;
 	}
 
 	public void clear() {
 		boolean cleared = list.isEmpty();
+		Object[] toRemove = list.toArray();
 		list.clear();
 		if (cleared) {
-			fireChange(IDescriptorChangeListener.REMOVE);
+			for (Object o : toRemove) {
+				fireChange(IDescriptorChangeListener.REMOVE, null, o);
+			}
 		}
 	}
 
@@ -110,7 +119,7 @@ public class ObservableList<E> implements List<E> {
 	public boolean remove(Object o) {
 		boolean removed = list.remove(o);
 		if (removed) {
-			fireChange(IDescriptorChangeListener.REMOVE);
+			fireChange(IDescriptorChangeListener.REMOVE, null, o);
 		}
 		return removed;
 	}
@@ -118,7 +127,7 @@ public class ObservableList<E> implements List<E> {
 	public E remove(int index) {
 		E removed = list.remove(index);
 		if (removed != null) {
-			fireChange(IDescriptorChangeListener.REMOVE);
+			fireChange(IDescriptorChangeListener.REMOVE, null, removed);
 		}
 		return removed;
 	}
@@ -126,7 +135,9 @@ public class ObservableList<E> implements List<E> {
 	public boolean removeAll(Collection<?> c) {
 		boolean removed = list.removeAll(c);
 		if (removed) {
-			fireChange(IDescriptorChangeListener.REMOVE);
+			for (Object o : c) {
+				fireChange(IDescriptorChangeListener.REMOVE, null, o);
+			}
 		}
 		return removed;
 	}
@@ -134,15 +145,15 @@ public class ObservableList<E> implements List<E> {
 	public boolean retainAll(Collection<?> c) {
 		boolean changed = list.retainAll(c);
 		if (changed) {
-			fireChange(IDescriptorChangeListener.REMOVE);
+			fireChange(IDescriptorChangeListener.REMOVE, null, null); // TODO fix that
 		}
 		return changed;
 	}
 
 	public E set(int index, E element) {
-		E set =list.set(index, element);
-		fireChange(IDescriptorChangeListener.REMOVE);
-		return set;
+		E prev =list.set(index, element);
+		fireChange(IDescriptorChangeListener.SET, element, prev);
+		return prev;
 	}
 
 	public int size() {

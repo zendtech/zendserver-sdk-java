@@ -1,11 +1,11 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -17,10 +17,27 @@ public abstract class ModelContainer extends ModelObject implements IModelContai
 	public ModelContainer(Feature[] properties, Feature[] children) {
 		super(properties);
 		
-		// make sure that listeners list exists, because ModelObject creates it lazily
-		if (listeners == null) {
-			listeners = new ArrayList<IDescriptorChangeListener>();
-		}
+		addListener(new IDescriptorChangeListener() {
+			
+			public void descriptorChanged(ChangeEvent event) {
+				if (event.target != ModelContainer.this) {
+					return;
+				}
+				
+				if (event.feature.type != IModelObject.class) {
+					return;
+				}
+				
+				if (event.newValue != null) {
+					((IModelObject)event.newValue).setParent(ModelContainer.this);
+				} 
+				
+				if (event.oldValue != null) {
+					((IModelObject)event.oldValue).setParent(null);
+				}
+				
+			}
+		});
 		
 		mmap = new LinkedHashMap<Feature, List<Object>>();
 		for (Feature s : children) {

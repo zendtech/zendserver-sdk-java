@@ -55,4 +55,6 @@ public interface IModelObject {
 	boolean getBoolean(Feature key);
 	
 	Feature[] getPropertyNames();
+	
+	public void setParent(IModelContainer parent);
 }
