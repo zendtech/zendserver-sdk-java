@@ -25,7 +25,7 @@ public class CreatePackageCommand extends TargetAwareCommand {
 
 	@Option(opt = PATH, required = false, description = "The project's directory", argName = "path")
 	public File getPath() {
-		final String value = getValue(DESTINATION);
+		final String value = getValue(PATH);
 		return value != null ? new File(value)
 				: new File(getCurrentDirectory());
 	}
