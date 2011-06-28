@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
@@ -13,17 +14,17 @@ public class Validator {
 	public Validator() {
 		testers = new ArrayList<PropertyTester>();
 		testers.add(new FieldNotEmptyTester(new Feature[] {
-				IDeploymentDescriptor.NAME,
-				IDeploymentDescriptor.VERSION_RELEASE,
-				IDeploymentDescriptor.APPDIR,
+				DeploymentDescriptorPackage.PKG_NAME,
+				DeploymentDescriptorPackage.VERSION_RELEASE,
+				DeploymentDescriptorPackage.APPDIR,
 		}));
 		
 		testers.add(new FileExistsTester(new Feature[] {
-			IDeploymentDescriptor.APPDIR,
-			IDeploymentDescriptor.ICON,
-			IDeploymentDescriptor.EULA,
-			IDeploymentDescriptor.SCRIPTSDIR,
-			IDeploymentDescriptor.DOCROOT
+				DeploymentDescriptorPackage.APPDIR,
+				DeploymentDescriptorPackage.ICON,
+				DeploymentDescriptorPackage.EULA,
+				DeploymentDescriptorPackage.SCRIPTSDIR,
+				DeploymentDescriptorPackage.DOCROOT
 		}));
 	}
 	

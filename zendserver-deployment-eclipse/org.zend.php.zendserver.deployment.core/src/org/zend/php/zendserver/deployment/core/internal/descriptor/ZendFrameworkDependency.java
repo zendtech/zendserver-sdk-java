@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 
@@ -16,13 +17,13 @@ public class ZendFrameworkDependency extends ModelContainer implements IZendFram
 
 	public ZendFrameworkDependency() {
 		super(new Feature[] {
-				DEPENDENCY_NAME,
-				DEPENDENCY_EQUALS,
-				DEPENDENCY_MIN,
-				DEPENDENCY_MAX,
-				DEPENDENCY_CONFLICTS
+				DeploymentDescriptorPackage.DEPENDENCY_NAME,
+				DeploymentDescriptorPackage.DEPENDENCY_EQUALS,
+				DeploymentDescriptorPackage.DEPENDENCY_MIN,
+				DeploymentDescriptorPackage.DEPENDENCY_MAX,
+				DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS
 		}, 
-				new Feature[] { DEPENDENCY_EXCLUDE});
+				new Feature[] { DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE});
 	}
 	
 	public String getName() {
@@ -42,7 +43,7 @@ public class ZendFrameworkDependency extends ModelContainer implements IZendFram
 	}
 
 	public List<String> getExclude() {
-		return super.getList(DEPENDENCY_EXCLUDE);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE);
 	}
 
 	public String getConflicts() {
@@ -51,27 +52,27 @@ public class ZendFrameworkDependency extends ModelContainer implements IZendFram
 	
 	public void setName(String fName) {
 		this.fName = fName;
-		fireChange(DEPENDENCY_NAME, fName);
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_NAME, fName);
 	}
 
 	public void setEquals(String fEquals) {
 		this.fEquals = fEquals;
-		fireChange(DEPENDENCY_EQUALS, fEquals);
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_EQUALS, fEquals);
 	}
 
 	public void setMin(String fMin) {
 		this.fMin = fMin;
-		fireChange(DEPENDENCY_MIN, fMin);
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MIN, fMin);
 	}
 
 	public void setMax(String fMax) {
 		this.fMax = fMax;
-		fireChange(DEPENDENCY_MAX, fMax);
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MAX, fMax);
 	}
 
 	public void setConflicts(String fConflicts) {
 		this.fConflicts = fConflicts;
-		fireChange(DEPENDENCY_CONFLICTS, fConflicts);
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, fConflicts);
 	}
 	
 	public void copy(IModelObject obj) {
@@ -85,32 +86,41 @@ public class ZendFrameworkDependency extends ModelContainer implements IZendFram
 	}
 
 	public void set(Feature key, String value) {
-		if (DEPENDENCY_NAME.equals(key)) {
-			setName(value);
-		} else if (DEPENDENCY_EQUALS.equals(key)) {
-			setEquals(value);
-		} else if (DEPENDENCY_MIN.equals(key)) {
-			setMin(value);
-		} else if (DEPENDENCY_MAX.equals(key)) {
-			setMax(value);
-		} else if (DEPENDENCY_CONFLICTS.equals(key)) {
-			setConflicts(value);
-		} else throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
-		
+		switch (key.id) {
+			case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
+				setName(value);
+				break;
+			case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
+				setEquals(value);
+				break;
+			case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
+				setMin(value);
+				break;
+			case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
+				setMax(value);
+				break;
+			case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
+				setConflicts(value);
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+		}
 	}
 
 	public String get(Feature key) {
-		if (DEPENDENCY_NAME.equals(key)) {
+		switch (key.id) {
+		case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
 			return fName;
-		} else if (DEPENDENCY_EQUALS.equals(key)) {
+		case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
 			return fEquals;
-		} else if (DEPENDENCY_MIN.equals(key)) {
+		case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
 			return fMin;
-		} else if (DEPENDENCY_MAX.equals(key)) {
+		case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
 			return fMax;
-		} else if (DEPENDENCY_CONFLICTS.equals(key)) {
+		case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
 			return fConflicts;
-		} else throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
-		
+		default:
+			throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+		}
 	}
 }

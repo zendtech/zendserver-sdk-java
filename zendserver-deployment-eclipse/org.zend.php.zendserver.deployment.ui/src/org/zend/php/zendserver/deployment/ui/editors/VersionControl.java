@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
-import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 
 
 public class VersionControl {
@@ -64,9 +64,9 @@ public class VersionControl {
 		isRefresh = true;
 		try {
 			int versionChoice = EQUALS;
-			if (input.get(IPHPDependency.DEPENDENCY_EQUALS) != null) {
+			if (input.get(DeploymentDescriptorPackage.DEPENDENCY_EQUALS) != null) {
 				versionChoice = CONFLICTS;
-			} else if (input.get(IPHPDependency.DEPENDENCY_MAX) != null || input.get(IPHPDependency.DEPENDENCY_MIN) != null) {
+			} else if (input.get(DeploymentDescriptorPackage.DEPENDENCY_MAX) != null || input.get(DeploymentDescriptorPackage.DEPENDENCY_MIN) != null) {
 				versionChoice = RANGE;
 			}
 			
@@ -93,17 +93,17 @@ public class VersionControl {
 		
 		switch (choice.getSelectionIndex()) {
 		case EQUALS:
-			String str = input.get(IPHPDependency.DEPENDENCY_EQUALS);
+			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_EQUALS);
 			equalsText.setText(str == null ? "" : str);
 			break;
 		case CONFLICTS:
-			str = input.get(IPHPDependency.DEPENDENCY_CONFLICTS);
+			str = input.get(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS);
 			equalsText.setText(str == null ? "" : str);
 			break;
 		case RANGE:
-			str = input.get(IPHPDependency.DEPENDENCY_MIN);
+			str = input.get(DeploymentDescriptorPackage.DEPENDENCY_MIN);
 			minText.setText(str == null ? "" : str);
-			str = input.get(IPHPDependency.DEPENDENCY_MAX);
+			str = input.get(DeploymentDescriptorPackage.DEPENDENCY_MAX);
 			maxText.setText(str == null ? "" : str);
 			break;
 		}
@@ -200,22 +200,22 @@ public class VersionControl {
 	}
 	
 	protected void conflictsChange(String text) {
-		input.set(IPHPDependency.DEPENDENCY_CONFLICTS, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, text);
 	}
 
 	protected void equalsChange(String text) {
-		input.set(IPHPDependency.DEPENDENCY_EQUALS, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_EQUALS, text);
 	}
 
 	protected void maxChange(String text) {
-		input.set(IPHPDependency.DEPENDENCY_MAX, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_MAX, text);
 	}
 
 	protected void minChange(String text) {
-		input.set(IPHPDependency.DEPENDENCY_MIN, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_MIN, text);
 	}
 
 	protected void nameChange(String text) {
-		input.set(IPHPDependency.DEPENDENCY_NAME, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
 	}
 }

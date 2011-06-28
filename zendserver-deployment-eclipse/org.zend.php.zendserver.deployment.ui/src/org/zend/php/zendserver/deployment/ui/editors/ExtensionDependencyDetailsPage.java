@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -18,7 +17,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 
@@ -71,7 +70,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.get(IExtensionDependency.DEPENDENCY_NAME);
+			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -129,6 +128,6 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		input.set(IExtensionDependency.DEPENDENCY_NAME, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
 	}
 }

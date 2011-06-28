@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -57,7 +58,7 @@ public class ModelSerializer {
 	public void load(InputStream src, IModelContainer model) throws XPathExpressionException, CoreException, SAXException, IOException {
 		document = builder.parse(src);
 		
-		Node root = getNode(document, IDeploymentDescriptor.PACKAGE.xpath);
+		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		
 		loadProperties(root, model);
 	}
@@ -67,9 +68,9 @@ public class ModelSerializer {
 			document = DeploymentDescriptorFactory.createEmptyDocument(builder);
 		}
 		
-		Node root = getNode(document, IDeploymentDescriptor.PACKAGE.xpath);
+		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		if (root == null) {
-			root = addNode(document, IDeploymentDescriptor.PACKAGE.xpath);
+			root = addNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		}
 		
 		writeProperties(root, model);
@@ -207,6 +208,7 @@ public class ModelSerializer {
 	}
 	
 	private void writeProperties(Node doc, IModelObject obj) throws XPathExpressionException {
+		long a = System.currentTimeMillis();
 		Feature[] props = obj.getPropertyNames();
 		for (Feature feature : props) {
 			String value = obj.get(feature);
@@ -214,6 +216,8 @@ public class ModelSerializer {
 				setString(doc, feature.xpath, feature.attrName, value);
 			}
 		}
+		long b = System.currentTimeMillis();
+		System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
 		
 		if (obj instanceof IModelContainer) {
 			writeChildren(doc, (IModelContainer) obj);

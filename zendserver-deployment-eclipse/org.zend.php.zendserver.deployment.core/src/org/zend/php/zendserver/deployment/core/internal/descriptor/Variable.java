@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
@@ -11,8 +12,8 @@ public class Variable extends ModelObject implements IVariable {
 	
 	public Variable() {
 		super(new Feature[] {
-				VALUE,
-				NAME
+				DeploymentDescriptorPackage.VALUE,
+				DeploymentDescriptorPackage.VAR_NAME
 		});
 	}
 	
@@ -22,7 +23,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setValue(String newValue) {
 		this.value = newValue;
-		fireChange(VALUE, newValue);
+		fireChange(DeploymentDescriptorPackage.VALUE, newValue);
 	}
 
 	public String getName() {
@@ -31,7 +32,7 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void setName(String name) {
 		this.name = name;
-		fireChange(NAME, name);
+		fireChange(DeploymentDescriptorPackage.VAR_NAME, name);
 	}
 	
 	public void copy(IModelObject obj) {
@@ -41,22 +42,26 @@ public class Variable extends ModelObject implements IVariable {
 	}
 
 	public void set(Feature key, String value) {
-		if (NAME.equals(key)) {
-			setName(value);
-		} else if (VALUE.equals(key)) {
-			setValue(value);
-		} else {
-			throw new IllegalArgumentException("Unknown Variable property to set: "+key);
+		switch (key.id) {
+			case DeploymentDescriptorPackage.VAR_NAME_ID:
+				setName(value);
+				break;
+			case DeploymentDescriptorPackage.VALUE_ID:
+				setValue(value);
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown Variable property to set: "+key);
 		}
 	}
 
 	public String get(Feature key) {
-		if (NAME.equals(key)) {
-			return name;
-		} else if (VALUE.equals(key)) {
-			return value;
-		} else {
-			throw new IllegalArgumentException("Unknown Variable property to get: "+key);
+		switch (key.id) {
+			case DeploymentDescriptorPackage.VAR_NAME_ID:
+				return name;
+			case DeploymentDescriptorPackage.VALUE_ID:
+				return value;
+			default:
+				throw new IllegalArgumentException("Unknown Variable property to get: "+key);
 		}
 	}
 }

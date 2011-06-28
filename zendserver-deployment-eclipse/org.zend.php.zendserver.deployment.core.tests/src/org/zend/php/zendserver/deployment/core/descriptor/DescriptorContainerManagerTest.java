@@ -57,16 +57,16 @@ public class DescriptorContainerManagerTest extends TestCase {
 		
 		IDescriptorContainer descr = service.openDescriptorContainer(nonExistingFile);
 		IDeploymentDescriptor model = descr.getDescriptorModel();
-		assertEquals("", model.getName());
-		assertEquals("", model.getDescription());
-		assertEquals("", model.getSummary());
-		assertEquals("", model.getDocumentRoot());
-		assertEquals("", model.getEulaLocation());
+		assertEquals(null, model.getName());
+		assertEquals(null, model.getDescription());
+		assertEquals(null, model.getSummary());
+		assertEquals(null, model.getDocumentRoot());
+		assertEquals(null, model.getEulaLocation());
 		assertEquals(null, model.getApiVersion());
-		assertEquals("", model.getHealthcheck());
-		assertEquals("", model.getIconLocation());
-		assertEquals("", model.getReleaseVersion());
-		assertEquals("", model.getScriptsRoot());
+		assertEquals(null, model.getHealthcheck());
+		assertEquals(null, model.getIconLocation());
+		assertEquals(null, model.getReleaseVersion());
+		assertEquals(null, model.getScriptsRoot());
 		assertEquals(0, model.getPHPDependencies().size());
 		assertEquals(0, model.getDirectiveDependencies().size());
 		assertEquals(0, model.getExtensionDependencies().size());

@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
@@ -53,12 +54,12 @@ public class ParameterDetailsPage implements IDetailsPage {
 	public ParameterDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
 		
-		id = new TextField(null, IParameter.ID, "Id");
-		display = new TextField(null, IParameter.DISPLAY, "Display text");
-		defaultValue = new TextField(null, IParameter.DEFAULTVALUE, "Default value");
-		defaultCombo = new ComboField(null, IParameter.DEFAULTVALUE, "Default value");
-		description = new TextField(null, IParameter.DESCRIPTION, "Description");
-		type = new ComboField(null, IParameter.TYPE, "Type");
+		id = new TextField(null, DeploymentDescriptorPackage.ID, "Id");
+		display = new TextField(null, DeploymentDescriptorPackage.DISPLAY, "Display text");
+		defaultValue = new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, "Default value");
+		defaultCombo = new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, "Default value");
+		description = new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, "Description");
+		type = new ComboField(null, DeploymentDescriptorPackage.TYPE, "Type");
 		type.setItems(new String[] {
 				IParameter.CHOICE,
 				IParameter.STRING,
@@ -68,9 +69,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 				IParameter.NUMBER,
 				IParameter.HOSTNAME
 		});
-		identical = new ComboField(null, IParameter.IDENTICAL, "Identical");
-		required = new CheckboxField(null, IParameter.REQUIRED, "This parameter is required");
-		readonly = new CheckboxField(null, IParameter.READONLY, "This parameter is read only");
+		identical = new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, "Identical");
+		required = new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, "This parameter is required");
+		readonly = new CheckboxField(null, DeploymentDescriptorPackage.READONLY, "This parameter is read only");
 	}
 	
 	public void initialize(IManagedForm form) {

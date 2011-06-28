@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -74,7 +74,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		lm.setOutput(txt);
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
-		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
 		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
@@ -101,7 +101,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
 		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
@@ -109,7 +109,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		param.setReadOnly(true);
 		param.setType(IParameter.STRING);
 		
-		param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
+		param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
 		descr.getParameters().add(param);
 		param.setId("myNewParam2");
 		param.setDisplay("Host name");
@@ -144,7 +144,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
 		descr.getParameters().add(param);
 		param.setId("myNewParam1");
 		param.setDisplay("What is your name");
@@ -152,7 +152,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		param.setReadOnly(true);
 		param.setType(IParameter.STRING);
 		
-		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.VARIABLES);
 		descr.getVariables().add(var);
 		var.setName("variable1");
 		var.setValue("ls -l");
@@ -202,7 +202,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 		descr.getPHPDependencies().add(dep);
 		dep.setEquals("3.2.1");
 		
@@ -228,7 +228,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 		descr.getPHPDependencies().add(dep);
 		dep.setMin("3.2.1");
 		dep.setMax("5.2.5");
@@ -262,7 +262,7 @@ public class ModelSerializerWriteTests extends TestCase {
 
 		DeploymentDescriptor descr = new DeploymentDescriptor();
 		
-		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 		descr.getPHPDependencies().add(dep);
 		dep.setMin("3.2.1");
 		dep.setMax("5.2.5");
@@ -270,7 +270,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		dep.getExclude().add("2.3.4");
 		dep.getExclude().add("4.1.2");
 		
-		IDirectiveDependency dir = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE);
+		IDirectiveDependency dir = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE);
 		descr.getDirectiveDependencies().add(dir);
 		dir.setName("register_globals");
 		dir.setEquals("off");

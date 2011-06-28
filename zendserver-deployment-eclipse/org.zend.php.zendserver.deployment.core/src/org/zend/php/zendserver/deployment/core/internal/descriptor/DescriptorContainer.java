@@ -58,7 +58,11 @@ public class DescriptorContainer implements IDescriptorContainer {
 		
 		try {
 			isLoading = true;
+			System.out.println("load");
+			long a= System.currentTimeMillis();
 			lm.load(src, fModel);
+			long b = System.currentTimeMillis();
+			System.out.println("load "+(b-a)+"msec");
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,8 +108,14 @@ public class DescriptorContainer implements IDescriptorContainer {
 				}
 				
 				try {
+					System.out.println("serialize");
+					long a = System.currentTimeMillis();
 					lm.serialize(model);
+					long b = System.currentTimeMillis();
+					System.out.println("serialize "+(b-a)+"msec\nwrite");
 					lm.write();
+					long c = System.currentTimeMillis();
+					System.out.println("write "+(c-b)+"msec");
 				} catch (XPathExpressionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

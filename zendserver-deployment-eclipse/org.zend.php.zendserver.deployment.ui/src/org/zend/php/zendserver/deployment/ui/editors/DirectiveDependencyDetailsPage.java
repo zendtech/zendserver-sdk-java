@@ -17,6 +17,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
@@ -68,7 +69,7 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.get(IDirectiveDependency.DEPENDENCY_NAME);
+			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -126,6 +127,6 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		input.set(IDirectiveDependency.DEPENDENCY_NAME, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
 	}
 }

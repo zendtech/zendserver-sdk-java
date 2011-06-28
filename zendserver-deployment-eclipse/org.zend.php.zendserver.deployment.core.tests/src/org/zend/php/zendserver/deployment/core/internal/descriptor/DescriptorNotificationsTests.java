@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
@@ -68,52 +68,52 @@ public class DescriptorNotificationsTests extends TestCase {
 	}
 	
 	public void testDescriptorSet() {
-		events.assertEvent(descr, IDeploymentDescriptor.NAME, IDescriptorChangeListener.SET);
-		events.assertEvent(descr, IDeploymentDescriptor.VERSION_API, IDescriptorChangeListener.SET);
-		events.assertEvent(descr, IDeploymentDescriptor.SUMMARY, IDescriptorChangeListener.SET);
+		events.assertEvent(descr, DeploymentDescriptorPackage.PKG_NAME, IDescriptorChangeListener.SET);
+		events.assertEvent(descr, DeploymentDescriptorPackage.VERSION_API, IDescriptorChangeListener.SET);
+		events.assertEvent(descr, DeploymentDescriptorPackage.SUMMARY, IDescriptorChangeListener.SET);
 		
 		descr.setName("newName");
 		descr.setApiVersion("1.2.0");
-		descr.set(IDeploymentDescriptor.SUMMARY, "new summary");
+		descr.set(DeploymentDescriptorPackage.SUMMARY, "new summary");
 		
 		events.assertEquals();
 	}
 	
 	public void testDescriptorAdd() {
-		events.assertEvent(descr, IDeploymentDescriptor.VARIABLES, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_PHP, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.PARAMETERS, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.PERSISTENT_RESOURCES, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_EXTENSION, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT, IDescriptorChangeListener.ADD);
-		events.assertEvent(descr, IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.VARIABLES, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_PHP, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.PARAMETERS, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.PERSISTENT_RESOURCES, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER, IDescriptorChangeListener.ADD);
 		
-		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.VARIABLES);
 		descr.getVariables().add(var);
 		
-		IPHPDependency php = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_PHP);
+		IPHPDependency php = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 		descr.getPHPDependencies().add(php);
 		
-		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.PARAMETERS);
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
 		descr.getParameters().add(param);
 		
 		descr.getPersistentResources().add("c:\\Program Files");
 		
-		IDirectiveDependency dd = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE);
+		IDirectiveDependency dd = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE);
 		descr.getDirectiveDependencies().add(dd);
 		
-		IExtensionDependency ext = (IExtensionDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_EXTENSION);
+		IExtensionDependency ext = (IExtensionDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION);
 		descr.getExtensionDependencies().add(ext);
 		
-		IZendFrameworkDependency zf = (IZendFrameworkDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK);
+		IZendFrameworkDependency zf = (IZendFrameworkDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK);
 		descr.getZendFrameworkDependencies().add(zf);
 		
-		IZendComponentDependency zc = (IZendComponentDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT);
+		IZendComponentDependency zc = (IZendComponentDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT);
 		descr.getZendComponentDependencies().add(zc);
 		
-		IZendServerDependency zs = (IZendServerDependency) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER);
+		IZendServerDependency zs = (IZendServerDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER);
 		descr.getZendServerDependencies().add(zs);
 		
 		
@@ -121,10 +121,10 @@ public class DescriptorNotificationsTests extends TestCase {
 	}
 	
 	public void testDescriptorEventBubble() {
-		events.assertEvent(descr, IDeploymentDescriptor.VARIABLES, IDescriptorChangeListener.ADD);
+		events.assertEvent(descr, DeploymentDescriptorPackage.VARIABLES, IDescriptorChangeListener.ADD);
 		
-		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(IDeploymentDescriptor.VARIABLES);
-		events.assertEvent(var, IVariable.NAME, IDescriptorChangeListener.SET);
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.VARIABLES);
+		events.assertEvent(var, DeploymentDescriptorPackage.VAR_NAME, IDescriptorChangeListener.SET);
 
 		var.setName("newName"); // no event for that in descr
 		

@@ -11,8 +11,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
-import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 
 
 public class VariableDetailsPage implements IDetailsPage {
@@ -23,8 +23,8 @@ public class VariableDetailsPage implements IDetailsPage {
 	private TextField value;	
 	
 	public VariableDetailsPage(DeploymentDescriptorEditor editor) {
-		name = new TextField(null, IVariable.NAME, "Name");
-		value = new TextField(null, IVariable.VALUE, "Value");
+		name = new TextField(null, DeploymentDescriptorPackage.VAR_NAME, "Name");
+		value = new TextField(null, DeploymentDescriptorPackage.VALUE, "Value");
 	}
 	
 	public void initialize(IManagedForm form) {

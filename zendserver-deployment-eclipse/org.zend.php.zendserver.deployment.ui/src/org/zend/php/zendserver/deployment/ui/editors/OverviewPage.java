@@ -17,6 +17,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
@@ -45,17 +46,17 @@ public class OverviewPage extends DescriptorEditorPage {
 		super(editor, "overview", "Overview");
 		IDeploymentDescriptor descr = editor.getModel();
 		
-		name = addField(new TextField(descr, IDeploymentDescriptor.NAME, "Name"));
-		summary = addField(new TextField(descr, IDeploymentDescriptor.SUMMARY, "Summary"));
-		description = addField(new TextField(descr, IDeploymentDescriptor.DESCRIPTION, "Description"));
-		releaseVersion = addField(new TextField(descr, IDeploymentDescriptor.VERSION_RELEASE, "Release Version"));
-		apiVersion = addField(new TextField(descr, IDeploymentDescriptor.VERSION_API, "API Version"));
+		name = addField(new TextField(descr, DeploymentDescriptorPackage.PKG_NAME, "Name"));
+		summary = addField(new TextField(descr, DeploymentDescriptorPackage.SUMMARY, "Summary"));
+		description = addField(new TextField(descr, DeploymentDescriptorPackage.PKG_DESCRIPTION, "Description"));
+		releaseVersion = addField(new TextField(descr, DeploymentDescriptorPackage.VERSION_RELEASE, "Release Version"));
+		apiVersion = addField(new TextField(descr, DeploymentDescriptorPackage.VERSION_API, "API Version"));
 		 
-		license = addField(new FileField(descr, IDeploymentDescriptor.EULA, "License", editor.getProject()));
-		icon = addField(new FileField(descr, IDeploymentDescriptor.ICON, "Icon", editor.getProject()));
-		docRoot = addField(new FolderField(descr, IDeploymentDescriptor.DOCROOT, "Document root", editor.getProject()));
-		scriptsDir = addField(new FolderField(descr, IDeploymentDescriptor.SCRIPTSDIR, "Scripts directory", editor.getProject()));
-		appDir = addField(new FolderField(descr, IDeploymentDescriptor.APPDIR, "Application dir", editor.getProject()));
+		license = addField(new FileField(descr, DeploymentDescriptorPackage.EULA, "License", editor.getProject()));
+		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON, "Icon", editor.getProject()));
+		docRoot = addField(new FolderField(descr, DeploymentDescriptorPackage.DOCROOT, "Document root", editor.getProject()));
+		scriptsDir = addField(new FolderField(descr, DeploymentDescriptorPackage.SCRIPTSDIR, "Scripts directory", editor.getProject()));
+		appDir = addField(new FolderField(descr, DeploymentDescriptorPackage.APPDIR, "Application dir", editor.getProject()));
 	}
 
 	@Override

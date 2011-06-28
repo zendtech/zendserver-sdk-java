@@ -24,24 +24,25 @@ public class DeploymentDescriptorFactory {
 	}
 
 	public static IModelObject createModelElement(Feature path) {
-		if (IDeploymentDescriptor.PACKAGE.equals(path)) {
-			return new DeploymentDescriptor();
-		} else if (IDeploymentDescriptor.VARIABLES.equals(path)) {
-			return new Variable();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE.equals(path)) {
-			return new DirectiveDependency();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_EXTENSION.equals(path)) {
-			return new ExtensionDependency();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_PHP.equals(path)) {
-			return new PHPDependency();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK.equals(path)) {
-			return new ZendFrameworkDependency();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER.equals(path)) {
-			return new ZendServerDependency();
-		} else if (IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT.equals(path)) {
-			return new ZendComponentDependency();
-		} else if (IDeploymentDescriptor.PARAMETERS.equals(path)) {
-			return new Parameter();
+		switch (path.id) {
+			case DeploymentDescriptorPackage.PACKAGE_ID:
+				return new DeploymentDescriptor();
+			case DeploymentDescriptorPackage.VARIABLES_ID:
+				return new Variable();
+			case DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE_ID:
+				return new DirectiveDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION_ID:
+				return new ExtensionDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_PHP_ID:
+				return new PHPDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK_ID:
+				return new ZendFrameworkDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER_ID:
+				return new ZendServerDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT_ID:
+				return new ZendComponentDependency();
+			case DeploymentDescriptorPackage.PARAMETERS_ID:
+				return new Parameter();
 		}
 		
 		throw new IllegalArgumentException("Unknown model element "+path);
@@ -50,23 +51,23 @@ public class DeploymentDescriptorFactory {
 
 	public static Feature getFeature(Object result) {
 		if (result instanceof IDeploymentDescriptor) {
-			return IDeploymentDescriptor.PACKAGE;
+			return DeploymentDescriptorPackage.PACKAGE;
 		} else if (result instanceof IVariable) {
-			return IDeploymentDescriptor.VARIABLES;
+			return DeploymentDescriptorPackage.VARIABLES;
 		} else if (result instanceof IDirectiveDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_DIRECTIVE;
+			return DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE;
 		} else if (result instanceof IExtensionDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_EXTENSION;
+			return DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION;
 		} else if (result instanceof IPHPDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_PHP;
+			return DeploymentDescriptorPackage.DEPENDENCIES_PHP;
 		} else if (result instanceof IZendFrameworkDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_ZENDFRAMEWORK;
+			return DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK;
 		} else if (result instanceof IZendServerDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_ZENDSERVER;
+			return DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER;
 		} else if (result instanceof IZendComponentDependency) {
-			return IDeploymentDescriptor.DEPENDENCIES_ZSCOMPONENT;
+			return DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT;
 		} else if (result instanceof IParameter) {
-			return IDeploymentDescriptor.PARAMETERS;
+			return DeploymentDescriptorPackage.PARAMETERS;
 		}
 		
 		throw new IllegalArgumentException("Unknown model object "+result);

@@ -7,11 +7,14 @@ public class Feature {
 	public String attrName;
 	
 	public Class type;
+
+	public int id;
 	
-	public Feature(String nodePath, String attrName, Class type) {
+	public Feature(String nodePath, String attrName, Class type, int id) {
 		this.xpath = nodePath;
 		this.attrName = attrName;
 		this.type = type;
+		this.id = id;
 	}
 
 	@Override

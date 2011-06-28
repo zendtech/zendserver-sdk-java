@@ -2,17 +2,8 @@ package org.zend.php.zendserver.deployment.core.descriptor;
 
 import java.util.List;
 
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
-
 
 public interface IExtensionDependency extends IModelContainer {
-	
-	Feature DEPENDENCY_NAME = new Feature("name", null, String.class);
-	Feature DEPENDENCY_EQUALS = new Feature("equals", null, String.class);
-	Feature DEPENDENCY_MIN = new Feature("min", null, String.class);
-	Feature DEPENDENCY_MAX = new Feature("max", null, String.class);
-	Feature DEPENDENCY_EXCLUDE = new Feature("exclude", null, String.class);
-	Feature DEPENDENCY_CONFLICTS = new Feature("conflicts", null, String.class);
 	
 	String getName();
 	

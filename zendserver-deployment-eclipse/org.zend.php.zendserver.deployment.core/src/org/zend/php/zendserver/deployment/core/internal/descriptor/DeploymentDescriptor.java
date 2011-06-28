@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
@@ -29,28 +30,28 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public DeploymentDescriptor() {
 		super(new Feature[] {
-				NAME,
-				SUMMARY, 
-				DESCRIPTION, 
-				VERSION_RELEASE, 
-				VERSION_API, 
-				EULA, 
-				ICON, 
-				DOCROOT, 
-				SCRIPTSDIR, 
-				HEALTHCHECK,
-				APPDIR
+				DeploymentDescriptorPackage.PKG_NAME,
+				DeploymentDescriptorPackage.SUMMARY, 
+				DeploymentDescriptorPackage.PKG_DESCRIPTION, 
+				DeploymentDescriptorPackage.VERSION_RELEASE, 
+				DeploymentDescriptorPackage.VERSION_API, 
+				DeploymentDescriptorPackage.EULA, 
+				DeploymentDescriptorPackage.ICON, 
+				DeploymentDescriptorPackage.DOCROOT, 
+				DeploymentDescriptorPackage.SCRIPTSDIR, 
+				DeploymentDescriptorPackage.HEALTHCHECK,
+				DeploymentDescriptorPackage.APPDIR
 		},
 		new Feature[] {
-			DEPENDENCIES_PHP,
-			DEPENDENCIES_DIRECTIVE,
-			DEPENDENCIES_EXTENSION,
-			DEPENDENCIES_ZENDFRAMEWORK,
-			DEPENDENCIES_ZENDSERVER,
-			DEPENDENCIES_ZSCOMPONENT,
-			PARAMETERS,
-			VARIABLES,
-			PERSISTENT_RESOURCES
+				DeploymentDescriptorPackage.DEPENDENCIES_PHP,
+				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
+				DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT,
+				DeploymentDescriptorPackage.PARAMETERS,
+				DeploymentDescriptorPackage.VARIABLES,
+				DeploymentDescriptorPackage.PERSISTENT_RESOURCES
 		});
 	}
 	
@@ -60,7 +61,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setName(String name) { 
 		this.name = name;
-		fireChange(NAME, name);
+		fireChange(DeploymentDescriptorPackage.PKG_NAME, name);
 	}
 	
 	public String getReleaseVersion() {
@@ -69,7 +70,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setReleaseVersion(String version) {
 		this.releaseVersion = version;
-		fireChange(VERSION_RELEASE, version);
+		fireChange(DeploymentDescriptorPackage.VERSION_RELEASE, version);
 	}
 	
 	public String getEulaLocation() {
@@ -78,7 +79,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setEulaLocation(String eulaLocation) {
 		this.eulaLocation = eulaLocation;
-		fireChange(EULA, eulaLocation);
+		fireChange(DeploymentDescriptorPackage.EULA, eulaLocation);
 	}
 	
 	public String getIconLocation() {
@@ -86,7 +87,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	public void setIconLocation(String iconLocation) {
 		this.iconLocation = iconLocation;
-		fireChange(ICON, iconLocation);
+		fireChange(DeploymentDescriptorPackage.ICON, iconLocation);
 	}
 	
 	public String getDocumentRoot() {
@@ -95,7 +96,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setDocumentRoot(String documentRoot) {
 		this.documentRoot = documentRoot;
-		fireChange(DOCROOT, documentRoot);
+		fireChange(DeploymentDescriptorPackage.DOCROOT, documentRoot);
 	}
 	
 	public String getScriptsRoot() {
@@ -104,7 +105,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setScriptsRoot(String scriptsRoot) {
 		this.scriptsRoot = scriptsRoot;
-		fireChange(SCRIPTSDIR, scriptsRoot);
+		fireChange(DeploymentDescriptorPackage.SCRIPTSDIR, scriptsRoot);
 	}
 	
 	public String getHealthcheck() {
@@ -113,7 +114,7 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setHealthcheck(String healthcheck) {
 		this.healthcheck = healthcheck;
-		fireChange(HEALTHCHECK, healthcheck);
+		fireChange(DeploymentDescriptorPackage.HEALTHCHECK, healthcheck);
 	}
 	
 	public String getSummary() {
@@ -125,17 +126,17 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	public void setSummary(String summary) {
 		this.summary = summary;
-		fireChange(SUMMARY, summary);
+		fireChange(DeploymentDescriptorPackage.SUMMARY, summary);
 	}
 	
 	public void setDescription(String description) {
 		this.description = description;
-		fireChange(DESCRIPTION, description);
+		fireChange(DeploymentDescriptorPackage.PKG_DESCRIPTION, description);
 	}
 	
 	public void setApiVersion(String value) {
 		this.apiVersion = value;
-		fireChange(VERSION_API, value);
+		fireChange(DeploymentDescriptorPackage.VERSION_API, value);
 	}
 	
 	public String getApiVersion() {
@@ -148,97 +149,111 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	
 	public void setApplicationDir(String appDir) {
 		this.appDir = appDir;
-		fireChange(APPDIR, appDir);
+		fireChange(DeploymentDescriptorPackage.APPDIR, appDir);
 	}
 	
 	public List<IParameter> getParameters() {
-		return super.getList(PARAMETERS);
+		return super.getList(DeploymentDescriptorPackage.PARAMETERS);
 	}
 	
 	public List<IVariable> getVariables() {
-		return super.getList(VARIABLES);
+		return super.getList(DeploymentDescriptorPackage.VARIABLES);
 	}
 	
 	public List<IPHPDependency> getPHPDependencies() {
-		return super.getList(DEPENDENCIES_PHP);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 	}
 	
 	public List<IDirectiveDependency> getDirectiveDependencies() {
-		return super.getList(DEPENDENCIES_DIRECTIVE);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE);
 	}
 	
 	public List<IExtensionDependency> getExtensionDependencies() {
-		return super.getList(DEPENDENCIES_EXTENSION);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION);
 	}
 	
 	public List<IZendServerDependency> getZendServerDependencies() {
-		return super.getList(DEPENDENCIES_ZENDSERVER);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER);
 	}
 	
 	public List<IZendComponentDependency> getZendComponentDependencies() {
-		return super.getList(DEPENDENCIES_ZSCOMPONENT);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT);
 	}
 	
 	public List<IZendFrameworkDependency> getZendFrameworkDependencies() {
-		return super.getList(DEPENDENCIES_ZENDFRAMEWORK);
+		return super.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK);
 	}
 	
 	public List<String> getPersistentResources() {
-		return super.getList(PERSISTENT_RESOURCES);
+		return super.getList(DeploymentDescriptorPackage.PERSISTENT_RESOURCES);
 	}
 		
 	public void set(Feature key, String value) {
-		if (NAME.equals(key)) {
+		switch (key.id) {
+		case DeploymentDescriptorPackage.PKG_NAME_ID: 
 			setName(value);
-		} else if (SUMMARY.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.SUMMARY_ID: 
 			setSummary(value);
-		} else if (DESCRIPTION.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.PKG_DESCRIPTION_ID: 
 			setDescription(value);
-		} else if (VERSION_RELEASE.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.VERSION_RELEASE_ID: 
 			setReleaseVersion(value);
-		} else if (VERSION_API.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.VERSION_API_ID: 
 			setApiVersion(value);
-		} else if (EULA.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.EULA_ID: 
 			setEulaLocation(value);
-		} else if (ICON.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.ICON_ID: 
 			setIconLocation(value);
-		} else if (DOCROOT.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.DOCROOT_ID: 
 			setDocumentRoot(value);
-		} else if (SCRIPTSDIR.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.SCRIPTSDIR_ID: 
 			setScriptsRoot(value);
-		} else if (HEALTHCHECK.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.HEALTHCHECK_ID: 
 			setHealthcheck(value);
-		} else if (APPDIR.equals(key)) {
+			break;
+		case DeploymentDescriptorPackage.APPDIR_ID: 
 			setApplicationDir(value);
-		} else {
+			break;
+		default:
 			throw new IllegalArgumentException("Can't set unknown property "+key);
 		}
+		
 	}
 
 	public String get(Feature key) {
-		if (NAME.equals(key)) {
+		switch (key.id) {
+		case DeploymentDescriptorPackage.PKG_NAME_ID:
 			return name;
-		} else if (SUMMARY.equals(key)) {
+		case DeploymentDescriptorPackage.SUMMARY_ID:
 			return summary;
-		} else if (DESCRIPTION.equals(key)) {
+		case DeploymentDescriptorPackage.PKG_DESCRIPTION_ID:
 			return description;
-		} else if (VERSION_RELEASE.equals(key)) {
+		case DeploymentDescriptorPackage.VERSION_RELEASE_ID:
 			return releaseVersion;
-		} else if (VERSION_API.equals(key)) {
+		case DeploymentDescriptorPackage.VERSION_API_ID:
 			return apiVersion;
-		} else if (EULA.equals(key)) {
+		case DeploymentDescriptorPackage.EULA_ID:
 			return eulaLocation;
-		} else if (ICON.equals(key)) {
+		case DeploymentDescriptorPackage.ICON_ID:
 			return iconLocation;
-		} else if (DOCROOT.equals(key)) {
+		case DeploymentDescriptorPackage.DOCROOT_ID:
 			return documentRoot;
-		} else if (SCRIPTSDIR.equals(key)) {
+		case DeploymentDescriptorPackage.SCRIPTSDIR_ID:
 			return scriptsRoot;
-		} else if (HEALTHCHECK.equals(key)) {
+		case DeploymentDescriptorPackage.HEALTHCHECK_ID:
 			return healthcheck;
-		} else if (APPDIR.equals(key)) {
+		case DeploymentDescriptorPackage.APPDIR_ID:
 			return appDir;
-		} else {
+		default:
 			throw new IllegalArgumentException("Can't get unknown property "+key);
 		}
 	}

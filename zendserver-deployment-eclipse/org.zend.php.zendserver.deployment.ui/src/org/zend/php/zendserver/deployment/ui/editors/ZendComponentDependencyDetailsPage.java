@@ -17,8 +17,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
-import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
 
 
 public class ZendComponentDependencyDetailsPage implements IDetailsPage {
@@ -70,7 +70,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	public void refresh() {
 		isRefresh = true;
 		try {
-			String str = input.get(IZendComponentDependency.DEPENDENCY_NAME);
+			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_NAME);
 			nameText.setText(str == null ? "" : str);
 			version.refresh();
 		} finally {
@@ -128,6 +128,6 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	}
 
 	protected void nameChange(String text) {
-		input.set(IZendComponentDependency.DEPENDENCY_NAME, text);
+		input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
 	}
 }
