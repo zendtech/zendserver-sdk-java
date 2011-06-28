@@ -10,7 +10,6 @@ package org.zend.sdklib.internal.mapping;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -275,9 +274,8 @@ public class MappingModel implements IMappingModel {
 	 */
 	@Override
 	public void store() throws IOException {
-		OutputStream stream = loader.store(resourceMapping, new File(container,
+		loader.store(resourceMapping, new File(container,
 				MappingModelFactory.DEPLOYMENT_PROPERTIES));
-		stream.close();
 	}
 
 	/*

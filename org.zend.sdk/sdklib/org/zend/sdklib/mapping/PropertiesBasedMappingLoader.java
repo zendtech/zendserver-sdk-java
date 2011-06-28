@@ -64,8 +64,7 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	 * IResourceMapping, java.io.File)
 	 */
 	@Override
-	public OutputStream store(IResourceMapping mapping, File output)
-			throws IOException {
+	public void store(IResourceMapping mapping, File output) throws IOException {
 		OutputStream stream = new FileOutputStream(output);
 		Map<String, Set<IMapping>> includes = mapping.getInclusion();
 		Set<Entry<String, Set<IMapping>>> entrySet = includes.entrySet();
@@ -80,7 +79,7 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			String line = getEntry(entry.getKey(), entry.getValue(), EXCLUDES);
 			stream.write(line.getBytes());
 		}
-		return stream;
+		stream.close();
 	}
 
 	protected Set<IMapping> getMappings(String[] result) throws IOException {
