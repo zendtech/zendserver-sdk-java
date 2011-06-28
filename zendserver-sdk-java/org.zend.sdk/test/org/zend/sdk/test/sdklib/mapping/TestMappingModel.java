@@ -30,6 +30,15 @@ public class TestMappingModel {
 		assertNotNull(model);
 	}
 
+	//@Test
+	public void testModelStoring() throws IOException {
+		IMappingModel model = MappingModelFactory.createDefaultModel(new File(
+				FOLDER));
+		assertNotNull(model);
+		model.store();
+		assertNotNull(model);
+	}
+
 	@Test
 	public void testModelCreationFileNotExist() throws IOException {
 		IMappingModel model = MappingModelFactory.createDefaultModel(new File(

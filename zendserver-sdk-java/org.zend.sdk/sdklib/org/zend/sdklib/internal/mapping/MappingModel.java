@@ -10,8 +10,9 @@ package org.zend.sdklib.internal.mapping;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,7 @@ import org.zend.sdklib.mapping.IMappingChangeListener;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.IResourceMapping;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
  * Default implementation of {@link IMappingModel}.
@@ -69,8 +71,16 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public boolean addInclude(String folder, IMapping mapping) {
 		Set<IMapping> includes = getInclusion(folder);
-		if (folder != null && mapping != null && includes != null) {
-			includes.add(mapping);
+		if (folder != null && mapping != null) {
+			if (!includes.isEmpty()) {
+				includes.add(mapping);
+			} else {
+				Set<IMapping> value = new LinkedHashSet<IMapping>();
+				value.add(mapping);
+				Map<String, Set<IMapping>> inclusion = resourceMapping
+						.getInclusion();
+				inclusion.put(folder, value);
+			}
 			modelChanged(new MappingChangeEvent(Kind.ADD, mapping, folder));
 			return true;
 		}
@@ -86,8 +96,16 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public boolean addExclude(String folder, IMapping mapping) {
 		Set<IMapping> excludes = getExclusion(folder);
-		if (folder != null && mapping != null && excludes != null) {
-			excludes.add(mapping);
+		if (folder != null && mapping != null) {
+			if (!excludes.isEmpty()) {
+				excludes.add(mapping);
+			} else {
+				Set<IMapping> value = new LinkedHashSet<IMapping>();
+				value.add(mapping);
+				Map<String, Set<IMapping>> exclusion = resourceMapping
+						.getExclusion();
+				exclusion.put(folder, value);
+			}
 			modelChanged(new MappingChangeEvent(Kind.ADD, mapping, folder));
 			return true;
 		}
@@ -136,6 +154,36 @@ public class MappingModel implements IMappingModel {
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.sdklib.mapping.IMappingModel#removeInclude(java.lang.String)
+	 */
+	@Override
+	public boolean removeInclude(String folder) {
+		Map<String, Set<IMapping>> inclusion = resourceMapping.getInclusion();
+		if (inclusion.remove(folder) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.sdklib.mapping.IMappingModel#removeExclude(java.lang.String)
+	 */
+	@Override
+	public boolean removeExclude(String folder) {
+		Map<String, Set<IMapping>> exclusion = resourceMapping.getExclusion();
+		if (exclusion.remove(folder) != null) {
+			return true;
 		}
 		return false;
 	}
@@ -200,7 +248,7 @@ public class MappingModel implements IMappingModel {
 				return mappings;
 			}
 		}
-		return Collections.emptySet();
+		return new LinkedHashSet<IMapping>();
 	}
 
 	/*
@@ -217,7 +265,7 @@ public class MappingModel implements IMappingModel {
 				return mappings;
 			}
 		}
-		return Collections.emptySet();
+		return new LinkedHashSet<IMapping>();
 	}
 
 	/*
@@ -226,13 +274,10 @@ public class MappingModel implements IMappingModel {
 	 * @see org.zend.sdklib.mapping.IMappingModel#persist()
 	 */
 	@Override
-	public void persist() {
-		try {
-			loader.store(resourceMapping, null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void store() throws IOException {
+		OutputStream stream = loader.store(resourceMapping, new File(container,
+				MappingModelFactory.DEPLOYMENT_PROPERTIES));
+		stream.close();
 	}
 
 	/*
