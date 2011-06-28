@@ -90,6 +90,6 @@ public abstract class ModelContainer extends ModelObject implements IModelContai
 	}
 
 	public List<Object> getChildren(Feature key) {
-		return Collections.unmodifiableList(mmap.get(key));
+		return mmap.get(key);
 	}
 }

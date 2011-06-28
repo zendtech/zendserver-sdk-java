@@ -117,18 +117,29 @@ public class ModelSerializer {
 		Feature[] childNames = model.getChildNames();
 		for (Feature c : childNames) {
 			Node[] nodes = getNodes(doc, c.xpath);
+			List<Object> children = model.getChildren(c);
 			
 			if (c.type == IModelObject.class) {
 				for (int i = 0; i < nodes.length; i++) {
 					Node node = nodes[i];
-					IModelObject obj = (IModelObject) model.add(c, DeploymentDescriptorFactory.createModelElement(c));
+					IModelObject obj;
+					if (i < children.size()) {
+						obj = (IModelObject) children.get(i);
+					} else {
+						obj = DeploymentDescriptorFactory.createModelElement(c);
+						children.add(obj);
+					}
 					loadProperties(node, obj);
 				}
 			} else if (c.type == String.class){
 				for (int i = 0; i < nodes.length; i++) {
 					String string = nodes[i].getTextContent();
 					string = stripWhitespaces(string);
-					model.add(c, string);
+					if (i < children.size()) {
+						children.set(i, string);
+					} else {
+						children.add(string);
+					}
 				}
 			} else throw new UnsupportedOperationException("Unsupported collection type "+c.type);
 		}
