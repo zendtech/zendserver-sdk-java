@@ -105,7 +105,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	 * Saves the multi-page editor's document.
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		getEditor(5).doSave(monitor);
+		sourcePage.doSave(monitor);
 	}
 
 	/**
@@ -158,6 +158,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			public void descriptorChanged(ChangeEvent event) {
 				if (event.target instanceof IDeploymentDescriptor) {
 					handleModelUpdate((IDeploymentDescriptor)event.target);
+					
+					
 				}
 			}
 		});

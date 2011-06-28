@@ -37,4 +37,12 @@ public interface IDescriptorContainer {
 
 	void connect(IDocument document);
 
+	/**
+	 * Causes container to (re)read connected document or file and update model accordingly.
+	 * 
+	 * IDescriptorContainer doesn't listen to document changes by itself to avoid
+	 * slowing down modifications.
+	 */
+	void load();
+
 }
