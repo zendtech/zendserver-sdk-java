@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -65,21 +64,18 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	 */
 	@Override
 	public void store(IResourceMapping mapping, File output) throws IOException {
-		OutputStream stream = new FileOutputStream(output);
+		Properties result = new Properties();
 		Map<String, Set<IMapping>> includes = mapping.getInclusion();
 		Set<Entry<String, Set<IMapping>>> entrySet = includes.entrySet();
 		for (Entry<String, Set<IMapping>> entry : entrySet) {
-			String line = getEntry(entry.getKey(), entry.getValue(), INCLUDES);
-			stream.write(line.getBytes());
+			result.put(entry.getKey() + INCLUDES, getValue(entry.getValue()));
 		}
-		stream.write('\n');
 		Map<String, Set<IMapping>> excludes = mapping.getExclusion();
 		entrySet = excludes.entrySet();
 		for (Entry<String, Set<IMapping>> entry : entrySet) {
-			String line = getEntry(entry.getKey(), entry.getValue(), EXCLUDES);
-			stream.write(line.getBytes());
+			result.put(entry.getKey() + EXCLUDES, getValue(entry.getValue()));
 		}
-		stream.close();
+		result.store(new FileOutputStream(output), null);
 	}
 
 	protected Set<IMapping> getMappings(String[] result) throws IOException {
@@ -123,11 +119,8 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		return result;
 	}
 
-	private String getEntry(String key, Set<IMapping> mappings, String suffix) {
+	private String getValue(Set<IMapping> mappings) {
 		StringBuilder result = new StringBuilder();
-		result.append(key);
-		result.append(suffix);
-		result.append(" = ");
 		int size = mappings.size() - 1;
 		for (IMapping entry : mappings) {
 			String file = entry.getPath();
