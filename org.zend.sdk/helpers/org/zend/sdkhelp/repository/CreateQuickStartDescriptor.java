@@ -30,7 +30,8 @@ public class CreateQuickStartDescriptor extends AbstractTest {
 			printStream = new PrintStream(new File(args[0]));
 		}
 
-		DescriptorWriter w = new DescriptorWriter("quickstart", "data", "1.0.0");
+		DescriptorWriter w = new DescriptorWriter("quickstart", "data", null,
+				"1.0.0");
 		w.setDocroot("public");
 		w.setZfMinMax("1.11.0", "1.13.0");
 		w.setSummary("This QuickStart will introduce you to some of Zend Framework's "

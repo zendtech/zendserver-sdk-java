@@ -45,10 +45,12 @@ public class DescriptorWriter {
 	 * @param summary
 	 * @param appVersion
 	 */
-	public DescriptorWriter(String appName, String appDir, String appVersion) {
+	public DescriptorWriter(String appName, String appDir, String scripts,
+			String appVersion) {
 		super();
 		this.appName = appName;
 		this.appDir = appDir;
+		this.scripts = scripts;
 		this.appVersion = appVersion;
 	}
 
