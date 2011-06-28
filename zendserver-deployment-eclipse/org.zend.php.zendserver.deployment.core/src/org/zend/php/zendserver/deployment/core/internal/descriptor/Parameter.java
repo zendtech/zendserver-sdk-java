@@ -66,47 +66,55 @@ public class Parameter  extends ModelContainer implements IParameter {
 	}
 
 	public void setReadOnly(boolean value) {
+		boolean oldValue = this.readOnly;
 		this.readOnly = value;
-		fireChange(DeploymentDescriptorPackage.READONLY, value);
+		fireChange(DeploymentDescriptorPackage.READONLY, value, oldValue);
 	}
 	
 	public String getIdentical() {
 		return identical;
 	}
 	
-	public void setIdentical(String id) {
-		this.identical = id;
-		fireChange(DeploymentDescriptorPackage.IDENTICAL, id);
+	public void setIdentical(String identical) {
+		String oldValue = this.identical;
+		this.identical = identical;
+		fireChange(DeploymentDescriptorPackage.IDENTICAL, identical, oldValue);
 	}
 
 	public void setId(String id) {
+		String oldValue = this.id;
 		this.id = id;
-		fireChange(DeploymentDescriptorPackage.ID, id);
+		fireChange(DeploymentDescriptorPackage.ID, id, oldValue);
 	}
 
 	public void setType(String type) {
+		String oldValue = this.type;
 		this.type = type;
-		fireChange(DeploymentDescriptorPackage.TYPE, type);
+		fireChange(DeploymentDescriptorPackage.TYPE, type, oldValue);
 	}
 
 	public void setRequired(boolean required) {
+		boolean oldValue = this.required;
 		this.required = required;
-		fireChange(DeploymentDescriptorPackage.REQUIRED, required);
+		fireChange(DeploymentDescriptorPackage.REQUIRED, required, oldValue);
 	}
 
 	public void setDisplay(String display) {
+		String oldValue = this.display;
 		this.display = display;
-		fireChange(DeploymentDescriptorPackage.DISPLAY, display);
+		fireChange(DeploymentDescriptorPackage.DISPLAY, display, oldValue);
 	}
 
 	public void setDefaultValue(String defaultValue) {
+		String oldValue = this.defaultValue;
 		this.defaultValue = defaultValue;
-		fireChange(DeploymentDescriptorPackage.DEFAULTVALUE, defaultValue);
+		fireChange(DeploymentDescriptorPackage.DEFAULTVALUE, defaultValue, oldValue);
 	}
 
 	public void setDescription(String description) {
+		String oldValue = this.description;
 		this.description = description;
-		fireChange(DeploymentDescriptorPackage.PARAM_DESCRIPTION, description);
+		fireChange(DeploymentDescriptorPackage.PARAM_DESCRIPTION, description, oldValue);
 	}
 	
 	public void copy(IModelObject obj) {

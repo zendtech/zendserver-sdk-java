@@ -50,29 +50,34 @@ public class DirectiveDependency extends ModelContainer implements IDirectiveDep
 		return fConflicts;
 	}
 	
-	public void setName(String fName) {
-		this.fName = fName;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_NAME, fName);
+	public void setName(String name) {
+		String oldValue = this.fName;
+		this.fName = name;
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_NAME, fName, oldValue);
 	}
 
-	public void setEquals(String fEquals) {
-		this.fEquals = fEquals;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_EQUALS, fEquals);
+	public void setEquals(String equals) {
+		String oldValue = this.fEquals;
+		this.fEquals = equals;
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_EQUALS, fEquals, oldValue);
 	}
 
-	public void setMin(String fMin) {
-		this.fMin = fMin;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MIN, fMin);
+	public void setMin(String min) {
+		String oldValue = this.fMin;
+		this.fMin = min;
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MIN, fMin, oldValue);
 	}
 
-	public void setMax(String fMax) {
-		this.fMax = fMax;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MAX, fMax);
+	public void setMax(String max) {
+		String oldValue = this.fMax;
+		this.fMax = max;
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MAX, fMax, oldValue);
 	}
 
-	public void setConflicts(String fConflicts) {
-		this.fConflicts = fConflicts;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, fConflicts);
+	public void setConflicts(String conflicts) {
+		String oldValue = this.fConflicts;
+		this.fConflicts = conflicts;
+		fireChange(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, fName, oldValue);
 	}
 	
 	public void copy(IModelObject obj) {

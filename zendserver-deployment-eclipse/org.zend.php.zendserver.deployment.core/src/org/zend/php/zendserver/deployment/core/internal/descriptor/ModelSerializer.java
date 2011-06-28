@@ -30,9 +30,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
@@ -40,7 +40,8 @@ public class ModelSerializer {
 
 	private DocumentBuilderFactory fact;
 	private DocumentBuilder builder;
-	private XPathFactory factory;
+	private XPath xpathObj;
+	
 	private Document document;
 	private DocumentStore dest;
 
@@ -52,7 +53,8 @@ public class ModelSerializer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		factory = XPathFactory.newInstance();
+		XPathFactory factory = XPathFactory.newInstance();
+		xpathObj = factory.newXPath();
 	}
 	
 	public void load(InputStream src, IModelContainer model) throws XPathExpressionException, CoreException, SAXException, IOException {
@@ -64,6 +66,10 @@ public class ModelSerializer {
 	}
 	
 	public void serialize(IModelContainer model) throws XPathExpressionException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		serialize(model, null);
+	}
+	
+	public void serialize(IModelContainer model, ChangeEvent event) throws XPathExpressionException, CoreException, TransformerFactoryConfigurationError, TransformerException {
 		if (document == null) {
 			document = DeploymentDescriptorFactory.createEmptyDocument(builder);
 		}
@@ -73,7 +79,7 @@ public class ModelSerializer {
 			root = addNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		}
 		
-		writeProperties(root, model);
+		writeProperties(root, model, event);
 	}
 	
 	public void setOutput(DocumentStore dest) {
@@ -106,6 +112,20 @@ public class ModelSerializer {
 		}
 	}
 	
+	private void loadProperties(Node doc, IModelObject obj) throws XPathExpressionException {
+		Feature[] props = obj.getPropertyNames();
+		for (Feature feature : props) {
+			String value = getString(doc, feature.xpath, feature.attrName);
+			if (value != null) {
+				obj.set(feature, value);
+			}
+		}
+		
+		if (obj instanceof IModelContainer) {
+			loadChildren(doc, (IModelContainer)obj);
+		}
+	}
+	
 	/**
 	 * Loads DOM model to java model adding new elements.
 	 * 
@@ -131,6 +151,10 @@ public class ModelSerializer {
 					}
 					loadProperties(node, obj);
 				}
+				for (int i = nodes.length; i < children.size(); i++) {
+					children.remove(i);
+				}
+				
 			} else if (c.type == String.class){
 				for (int i = 0; i < nodes.length; i++) {
 					String string = nodes[i].getTextContent();
@@ -141,39 +165,87 @@ public class ModelSerializer {
 						children.add(string);
 					}
 				}
+				for (int i = nodes.length; i < children.size(); i++) {
+					children.remove(i);
+				}
+				
 			} else throw new UnsupportedOperationException("Unsupported collection type "+c.type);
 		}
 	}
-
-
-	private void writeChildren(Node doc, IModelContainer model) throws XPathExpressionException {
-		Feature[] features = model.getChildNames();
-		for (Feature c : features) {
-			List<Object> children = model.getChildren(c);
-			Node[] nodes = getNodes(doc, c.xpath);
-			
-			if (c.type == IModelObject.class) {
-				for (int i = 0; i < children.size(); i++) {
-					Node node;
-					if (i < nodes.length) {
-						node = nodes[i];
-					} else {
-						node = addNode(doc, c.xpath);
-					}
-					writeProperties(node, (IModelObject) children.get(i));
+	
+	private void writeProperties(Node doc, IModelObject obj, ChangeEvent event) throws XPathExpressionException {
+		long a = System.currentTimeMillis();
+		
+		if (event == null || event.target == obj) { 
+			Feature[] props = obj.getPropertyNames();
+			for (Feature feature : props) {
+				String value = obj.get(feature);
+				if (value != null) {
+					setString(doc, feature.xpath, feature.attrName, value);
 				}
-			} else if (c.type == String.class) {
-				for (int i = 0; i < children.size(); i++) {
-					Node node;
-					if (i < nodes.length) {
-						node = nodes[i];
-					} else {
-						node = addNode(doc, c.xpath);
-					}
-					node.setTextContent((String)children.get(i));
-				}
-			} else throw new UnsupportedOperationException("Unsupported collection type "+c.type);
+			}
 		}
+		long b = System.currentTimeMillis();
+		System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
+		
+		if (obj instanceof IModelContainer) {
+			writeChildren(doc, (IModelContainer) obj, event);
+		}
+	}
+	
+	private void writeChildren(Node doc, IModelContainer model, ChangeEvent event) throws XPathExpressionException {
+		long a = System.currentTimeMillis();
+		
+		if (event == null || event.target == model) {
+			Feature[] features = model.getChildNames();
+			for (Feature f : features) {
+				List<Object> children = model.getChildren(f);
+				Node[] nodes = getNodes(doc, f.xpath);
+				
+				for (int i = 0; i < children.size(); i++) {
+					Node node = null;
+					if (i < nodes.length) {
+						node = nodes[i];
+					}
+					
+					if (f.type == IModelObject.class) {
+						 if (node == null) {
+							node = addNode(doc, f.xpath);
+						}
+						writeProperties(node, (IModelObject) children.get(i), event);
+					} else if (f.type == String.class) {
+						if (node == null) {
+							node = addNode(doc, f.xpath);
+						}
+						node.setTextContent((String)children.get(i));
+					}  else {
+						throw new UnsupportedOperationException("Unsupported collection type "+f.type);
+					}
+				}
+				for (int i = children.size(); i < nodes.length; i++) {
+					removeNode(nodes[i]);
+				}
+				
+			}
+		} else {
+			Feature[] features = model.getChildNames();
+			for (Feature f : features) {
+				List<Object> children = model.getChildren(f);
+				Node[] nodes = getNodes(doc, f.xpath);
+				
+				for (int i = 0; i < Math.min(children.size(), nodes.length); i++) {
+					if (nodes[i] != null) {
+						Node node = nodes[i];
+						if (f.type == IModelObject.class) {
+							 writeProperties(node, (IModelObject) children.get(i), event);
+						}
+					}
+				}
+			}
+		}
+		
+		long b = System.currentTimeMillis();
+		System.out.println("writeChildren   "+(b-a)+"msec ("+model+")");
 	}
 	
 	
@@ -203,36 +275,10 @@ public class ModelSerializer {
 		
 		return e;
 	}
-
-	private void loadProperties(Node doc, IModelObject obj) throws XPathExpressionException {
-		Feature[] props = obj.getPropertyNames();
-		for (Feature feature : props) {
-			String value = getString(doc, feature.xpath, feature.attrName);
-			if (value != null) {
-				obj.set(feature, value);
-			}
-		}
-		
-		if (obj instanceof IModelContainer) {
-			loadChildren(doc, (IModelContainer)obj);
-		}
-	}
 	
-	private void writeProperties(Node doc, IModelObject obj) throws XPathExpressionException {
-		long a = System.currentTimeMillis();
-		Feature[] props = obj.getPropertyNames();
-		for (Feature feature : props) {
-			String value = obj.get(feature);
-			if (value != null) {
-				setString(doc, feature.xpath, feature.attrName, value);
-			}
-		}
-		long b = System.currentTimeMillis();
-		System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
-		
-		if (obj instanceof IModelContainer) {
-			writeChildren(doc, (IModelContainer) obj);
-		}
+	private void removeNode(Node node) {
+		Node parent = node.getParentNode();
+		parent.removeChild(node);
 	}
 	
 	private void setString(Node node, String xpath, String attrName, String value) throws XPathExpressionException {
@@ -251,19 +297,19 @@ public class ModelSerializer {
 		}
 	}
 	
-	private String getString(Node node, String xpath, String attrName) throws XPathExpressionException {
+	private String getString(Node node, String nodeName, String attrName) throws XPathExpressionException {
 		String s;
 		if (attrName != null) {
-			s = getXpathString(node, getXPath(xpath, attrName));
+			s = getXpathString(node, getXPath(nodeName, attrName));
 		} else {
-			Node n = getNode(node, xpath);
+			Node n = getNode(node, nodeName);
 			s = n == null ? null : n.getTextContent(); 
 		}
 		
 		return stripWhitespaces(s);
 	}
 	
-	private String getXPath(String nodePath, String attrName) {
+	private static String getXPath(String nodePath, String attrName) {
 		if (nodePath != null && attrName == null) {
 			return nodePath;
 		} else if (nodePath == null && attrName != null) {
@@ -274,22 +320,19 @@ public class ModelSerializer {
 	}
 	
 	private String getXpathString(Node node, String xpath) throws XPathExpressionException {
-		XPath obj = factory.newXPath();
-		XPathExpression expr = obj.compile(xpath);
+		XPathExpression expr = xpathObj.compile(xpath);
 		String out = (String) expr.evaluate(node, XPathConstants.STRING);
 		return out;
 	}
 	
 	private Node getNode(Node node, String xpath) throws XPathExpressionException {
-		XPath obj = factory.newXPath();
-		XPathExpression expr = obj.compile(xpath);
+		XPathExpression expr = xpathObj.compile(xpath);
 		Node newnode = (Node) expr.evaluate(node, XPathConstants.NODE);
 		return newnode;
 	}
 	
 	private Node[] getNodes(Node node, String xpath) throws XPathExpressionException {
-		XPath obj = factory.newXPath();
-		XPathExpression expr = obj.compile(xpath);
+		XPathExpression expr = xpathObj.compile(xpath);
 		NodeList list = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
 		Node[] result = new Node[list.getLength()];
 		for (int i = 0; i < list.getLength(); i++) {
@@ -299,7 +342,7 @@ public class ModelSerializer {
 		return result;
 	}
 
-	private String stripWhitespaces(String str) {
+	private static String stripWhitespaces(String str) {
 		if (str == null) {
 			return null;
 		}

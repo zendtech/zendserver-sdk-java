@@ -59,9 +59,10 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 		return name;
 	}
 	
-	public void setName(String name) { 
+	public void setName(String name) {
+		String oldName = this.name;
 		this.name = name;
-		fireChange(DeploymentDescriptorPackage.PKG_NAME, name);
+		fireChange(DeploymentDescriptorPackage.PKG_NAME, name, oldName);
 	}
 	
 	public String getReleaseVersion() {
@@ -69,8 +70,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setReleaseVersion(String version) {
+		String oldValue = this.releaseVersion;
 		this.releaseVersion = version;
-		fireChange(DeploymentDescriptorPackage.VERSION_RELEASE, version);
+		fireChange(DeploymentDescriptorPackage.VERSION_RELEASE, version, oldValue);
 	}
 	
 	public String getEulaLocation() {
@@ -78,16 +80,18 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setEulaLocation(String eulaLocation) {
+		String oldEula = this.eulaLocation;
 		this.eulaLocation = eulaLocation;
-		fireChange(DeploymentDescriptorPackage.EULA, eulaLocation);
+		fireChange(DeploymentDescriptorPackage.EULA, eulaLocation, oldEula);
 	}
 	
 	public String getIconLocation() {
 		return iconLocation;
 	}
 	public void setIconLocation(String iconLocation) {
+		String oldIcon = this.iconLocation;
 		this.iconLocation = iconLocation;
-		fireChange(DeploymentDescriptorPackage.ICON, iconLocation);
+		fireChange(DeploymentDescriptorPackage.ICON, iconLocation, oldIcon);
 	}
 	
 	public String getDocumentRoot() {
@@ -95,8 +99,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setDocumentRoot(String documentRoot) {
+		String oldValue = this.documentRoot;
 		this.documentRoot = documentRoot;
-		fireChange(DeploymentDescriptorPackage.DOCROOT, documentRoot);
+		fireChange(DeploymentDescriptorPackage.DOCROOT, documentRoot, oldValue);
 	}
 	
 	public String getScriptsRoot() {
@@ -104,8 +109,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setScriptsRoot(String scriptsRoot) {
+		String oldValue = this.scriptsRoot;
 		this.scriptsRoot = scriptsRoot;
-		fireChange(DeploymentDescriptorPackage.SCRIPTSDIR, scriptsRoot);
+		fireChange(DeploymentDescriptorPackage.SCRIPTSDIR, scriptsRoot, oldValue);
 	}
 	
 	public String getHealthcheck() {
@@ -113,8 +119,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setHealthcheck(String healthcheck) {
+		String oldValue = this.healthcheck;
 		this.healthcheck = healthcheck;
-		fireChange(DeploymentDescriptorPackage.HEALTHCHECK, healthcheck);
+		fireChange(DeploymentDescriptorPackage.HEALTHCHECK, healthcheck, oldValue);
 	}
 	
 	public String getSummary() {
@@ -125,18 +132,21 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 		return description;
 	}
 	public void setSummary(String summary) {
+		String oldValue = this.summary;
 		this.summary = summary;
-		fireChange(DeploymentDescriptorPackage.SUMMARY, summary);
+		fireChange(DeploymentDescriptorPackage.SUMMARY, summary, oldValue);
 	}
 	
 	public void setDescription(String description) {
+		String oldValue = this.description;
 		this.description = description;
-		fireChange(DeploymentDescriptorPackage.PKG_DESCRIPTION, description);
+		fireChange(DeploymentDescriptorPackage.PKG_DESCRIPTION, description, oldValue);
 	}
 	
 	public void setApiVersion(String value) {
+		String oldValue = this.apiVersion;
 		this.apiVersion = value;
-		fireChange(DeploymentDescriptorPackage.VERSION_API, value);
+		fireChange(DeploymentDescriptorPackage.VERSION_API, value, oldValue);
 	}
 	
 	public String getApiVersion() {
@@ -148,8 +158,9 @@ public class DeploymentDescriptor extends ModelContainer implements IDeploymentD
 	}
 	
 	public void setApplicationDir(String appDir) {
+		String oldValue = this.appDir;
 		this.appDir = appDir;
-		fireChange(DeploymentDescriptorPackage.APPDIR, appDir);
+		fireChange(DeploymentDescriptorPackage.APPDIR, appDir, oldValue);
 	}
 	
 	public List<IParameter> getParameters() {

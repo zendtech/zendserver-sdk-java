@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

@@ -110,7 +110,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 				try {
 					System.out.println("serialize");
 					long a = System.currentTimeMillis();
-					lm.serialize(model);
+					lm.serialize(model, event);
 					long b = System.currentTimeMillis();
 					System.out.println("serialize "+(b-a)+"msec\nwrite");
 					lm.write();
@@ -150,9 +150,4 @@ public class DescriptorContainer implements IDescriptorContainer {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public void reconcile() {
-		load();
-	}
-
 }

@@ -22,8 +22,9 @@ public class Variable extends ModelObject implements IVariable {
 	}
 
 	public void setValue(String newValue) {
+		String oldValue = this.value;
 		this.value = newValue;
-		fireChange(DeploymentDescriptorPackage.VALUE, newValue);
+		fireChange(DeploymentDescriptorPackage.VALUE, newValue, oldValue);
 	}
 
 	public String getName() {
@@ -31,8 +32,9 @@ public class Variable extends ModelObject implements IVariable {
 	}
 
 	public void setName(String name) {
+		String oldValue = this.name;
 		this.name = name;
-		fireChange(DeploymentDescriptorPackage.VAR_NAME, name);
+		fireChange(DeploymentDescriptorPackage.VAR_NAME, name, oldValue);
 	}
 	
 	public void copy(IModelObject obj) {

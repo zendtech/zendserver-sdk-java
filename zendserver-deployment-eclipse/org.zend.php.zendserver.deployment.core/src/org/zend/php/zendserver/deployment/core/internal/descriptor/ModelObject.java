@@ -60,11 +60,15 @@ public abstract class ModelObject implements IModelObject {
 	}
 	
 	protected void fireChange(IModelObject target, Feature key, int type, Object newValue, Object oldValue) {
-		fireChange(new ChangeEvent(target, key, IDescriptorChangeListener.SET, newValue, oldValue));
+		if ((newValue == null && oldValue != null) ||
+			(newValue != null && oldValue == null) ||
+			(newValue != null && !newValue.equals(oldValue))) {
+			fireChange(new ChangeEvent(target, key, IDescriptorChangeListener.SET, newValue, oldValue));
+		}
 	}
 	
-	protected void fireChange(Feature key, Object newValue) {
-		fireChange(this, key, IDescriptorChangeListener.SET, newValue, null); // for basic properties, oldValue is always null
+	protected void fireChange(Feature key, Object newValue, Object oldValue) {
+		fireChange(this, key, IDescriptorChangeListener.SET, newValue, oldValue); // for basic properties, oldValue is always null
 	}
 	
 	public void setParent(IModelContainer container) {
