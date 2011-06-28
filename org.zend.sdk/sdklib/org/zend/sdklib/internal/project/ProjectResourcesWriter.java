@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
+import org.zend.sdklib.descriptor.PackageDescription;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
@@ -41,8 +42,6 @@ public class ProjectResourcesWriter {
 
 	// properties of the subject project
 	private final String name;
-
-	private Package pkg;
 
 	/**
 	 * @param name
@@ -77,7 +76,7 @@ public class ProjectResourcesWriter {
 	 * @throws JAXBException
 	 * @throws PropertyException
 	 */
-	public File writeDescriptor(File destination) throws IOException,
+	public void writeDescriptor(File destination) throws IOException,
 			PropertyException, JAXBException {
 		File descrFile = new File(destination, DESCRIPTOR);
 
@@ -88,8 +87,9 @@ public class ProjectResourcesWriter {
 						+ destination.getAbsolutePath());
 			}
 			writeDescriptor(new FileOutputStream(descrFile));
+		} else {
+			updateDescriptor(descrFile);
 		}
-		return descrFile;
 	}
 
 	/**
@@ -106,9 +106,8 @@ public class ProjectResourcesWriter {
 			throw new IllegalArgumentException(
 					"Failed to create deployment descriptor. Project name is missing");
 		}
-
 		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
-				"1.0");
+				null, "1.0");
 		w.write(outputStream);
 		outputStream.close();
 	}
@@ -122,13 +121,13 @@ public class ProjectResourcesWriter {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	public void writeScriptsByName(File descriptor, String withScripts)
+	public void writeScriptsByName(File container, String withScripts)
 			throws IOException, JAXBException {
 		if (withScripts == null) {
 			return;
 		}
 
-		File destination = getScriptsDirectory(descriptor);
+		File destination = getScriptsDirectory(container);
 		if (destination != null && !destination.isDirectory()) {
 			destination.mkdirs();
 		}
@@ -172,23 +171,49 @@ public class ProjectResourcesWriter {
 		}
 	}
 
-	// TODO: change the way scripts is resolved, should be resolved by
-	// descriptor.properties
-	private File getScriptsDirectory(File descriptor) throws IOException,
-			JAXBException, FileNotFoundException {
-		if (pkg == null) {
-			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(descriptor));
+	private void updateDescriptor(File descrFile) throws IOException,
+			JAXBException {
+		PackageDescription desc = new PackageDescription(new FileInputStream(
+				descrFile));
+		File scriptsDir = findExistingScripts(descrFile.getParentFile());
+		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
+		if (scripts != null) {
+			desc.getPackage().setScriptsdir(scripts);
+			JaxbHelper.marshalPackage(new FileOutputStream(descrFile),
+					desc.getPackage());
 		}
-		String scriptsdir = pkg.getScriptsdir();
-		if (scriptsdir == null) {
-			scriptsdir = "scripts";
+	}
+
+	private File getScriptsDirectory(File container) throws IOException {
+		File result = findExistingScripts(container);
+		if (result == null) {
+			result = new File(container, "scripts");
 		}
-		File destination = new File(descriptor.getParentFile(), scriptsdir);
-		return destination;
+		return result;
+	}
+
+	private File findExistingScripts(File root) throws IOException {
+		if (root.isDirectory()) {
+			File[] files = root.listFiles();
+			for (File file : files) {
+				File result = findExistingScripts(file);
+				if (result != null) {
+					return result;
+				}
+			}
+		} else {
+			DeploymentScriptTypes[] types = DeploymentScriptTypes.values();
+			for (DeploymentScriptTypes type : types) {
+				// TODO refactor to avoid using endWith
+				if (type.getFilename().endsWith(root.getName())) {
+					return root.getParentFile();
+				}
+			}
+		}
+		return null;
 	}
 
 	private static String getProjectName(File descriptor) {
-
 		Package pkg;
 		try {
 			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(descriptor));

@@ -74,10 +74,10 @@ public class ZendProject extends AbstractChangeNotifier {
 		ProjectResourcesWriter tw = new ProjectResourcesWriter(path);
 
 		try {
-			final File d = tw.writeDescriptor(path);
 			if (generateScripts != null) {
-				tw.writeScriptsByName(d, generateScripts);
+				tw.writeScriptsByName(path, generateScripts);
 			}
+			tw.writeDescriptor(path);
 			tw.writeDeploymentProperties(path);
 		} catch (IOException e) {
 			log.error(e);
