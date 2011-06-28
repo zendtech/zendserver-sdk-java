@@ -59,6 +59,24 @@ public interface IMappingModel {
 	boolean removeInclude(String folder, String path);
 
 	/**
+	 * Removes the whole mapping for specified folder
+	 * 
+	 * @param folder
+	 *            for which mapping should be removed
+	 * @return
+	 */
+	boolean removeInclude(String folder);
+
+	/**
+	 * Removes the whole mapping for specified folder
+	 * 
+	 * @param folder
+	 *            for which mapping should be removed
+	 * @return
+	 */
+	boolean removeExclude(String folder);
+
+	/**
 	 * Removes specified exclusion mapping for the folder.
 	 * 
 	 * @param folder
@@ -94,8 +112,10 @@ public interface IMappingModel {
 	/**
 	 * Saves all changes in the resource mapping
 	 * 
+	 * @throws IOException
+	 * 
 	 */
-	void persist();
+	void store() throws IOException;
 
 	/**
 	 * Returns inclusion list for specified folder name

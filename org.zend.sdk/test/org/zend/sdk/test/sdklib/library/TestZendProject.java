@@ -11,6 +11,7 @@ import org.zend.sdk.test.sdkcli.commands.TestCreateProjectCommand;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.application.ZendProject;
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 public class TestZendProject extends AbstractTest {
 
@@ -18,9 +19,9 @@ public class TestZendProject extends AbstractTest {
 	public void testZendProjectCreation1() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
-		assertTrue(project
-				.create("name", TemplateApplications.SIMPLE, "all"));
-
+		assertTrue(project.create("name", TemplateApplications.SIMPLE, "all"));
+		assertTrue(new File(dirName + "/"
+				+ MappingModelFactory.DEPLOYMENT_PROPERTIES).exists());
 		assertTrue(new File(dirName + "/deployment.xml").exists());
 		assertTrue(new File(dirName + "/public/index.html").exists());
 		assertTrue(new File(dirName + "/scripts/post_activate.php").exists());
@@ -37,9 +38,9 @@ public class TestZendProject extends AbstractTest {
 	public void testZendProjectCreation2() throws ParseError, IOException {
 		String dirName = TestCreateProjectCommand.getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
-		assertTrue(project
-				.create("name", TemplateApplications.SIMPLE, "all"));
-
+		assertTrue(project.create("name", TemplateApplications.SIMPLE, "all"));
+		assertTrue(new File(dirName + "/"
+				+ MappingModelFactory.DEPLOYMENT_PROPERTIES).exists());
 		assertTrue(new File(dirName + "/deployment.xml").exists());
 		assertTrue(new File(dirName + "/public/index.html").exists());
 		assertTrue(new File(dirName + "/scripts/post_activate.php").exists());
