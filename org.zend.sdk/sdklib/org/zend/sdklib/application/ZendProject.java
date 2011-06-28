@@ -78,6 +78,7 @@ public class ZendProject extends AbstractChangeNotifier {
 			if (generateScripts != null) {
 				tw.writeScriptsByName(d, generateScripts);
 			}
+			tw.writeDeploymentProperties(path);
 		} catch (IOException e) {
 			log.error(e);
 			return false;

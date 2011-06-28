@@ -8,12 +8,14 @@
 package org.zend.sdklib.mapping;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -30,12 +32,11 @@ import org.zend.sdklib.internal.mapping.ResourceMapping;
  */
 public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 
-	protected static final String EXCLUDES = ".excludes";
-	protected static final String SEPARATOR = ",";
-
-	private static final String INCLUDES = ".includes";
-	private static final String CONTENT = "/*";
-	private static final String GLOBAL = "**/";
+	public static final String EXCLUDES = ".excludes";
+	public static final String SEPARATOR = ",";
+	public static final String INCLUDES = ".includes";
+	public static final String CONTENT = "/*";
+	public static final String GLOBAL = "**/";
 
 	/*
 	 * (non-Javadoc)
@@ -45,11 +46,13 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	@Override
 	public IResourceMapping load(InputStream stream) throws IOException {
 		ResourceMapping mapping = new ResourceMapping();
-		Properties props = loadProperties(stream);
-		mapping.setInclusion(getMapping(props, INCLUDES));
-		mapping.setExclusion(getMapping(props, EXCLUDES));
+		if (stream != null) {
+			Properties props = loadProperties(stream);
+			mapping.setInclusion(getMapping(props, INCLUDES));
+			mapping.setExclusion(getMapping(props, EXCLUDES));
+			stream.close();
+		}
 		mapping.setDefaultExclusion(getDefaultExclusion());
-		stream.close();
 		return mapping;
 	}
 
@@ -63,8 +66,21 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	@Override
 	public OutputStream store(IResourceMapping mapping, File output)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stream = new FileOutputStream(output);
+		Map<String, Set<IMapping>> includes = mapping.getInclusion();
+		Set<Entry<String, Set<IMapping>>> entrySet = includes.entrySet();
+		for (Entry<String, Set<IMapping>> entry : entrySet) {
+			String line = getEntry(entry.getKey(), entry.getValue(), INCLUDES);
+			stream.write(line.getBytes());
+		}
+		stream.write('\n');
+		Map<String, Set<IMapping>> excludes = mapping.getExclusion();
+		entrySet = excludes.entrySet();
+		for (Entry<String, Set<IMapping>> entry : entrySet) {
+			String line = getEntry(entry.getKey(), entry.getValue(), EXCLUDES);
+			stream.write(line.getBytes());
+		}
+		return stream;
 	}
 
 	protected Set<IMapping> getMappings(String[] result) throws IOException {
@@ -106,6 +122,28 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			}
 		}
 		return result;
+	}
+
+	private String getEntry(String key, Set<IMapping> mappings, String suffix) {
+		StringBuilder result = new StringBuilder();
+		result.append(key);
+		result.append(suffix);
+		result.append(" = ");
+		int size = mappings.size() - 1;
+		for (IMapping entry : mappings) {
+			String file = entry.getPath();
+			if (entry.isContent()) {
+				file += CONTENT;
+			}
+			if (entry.isGlobal()) {
+				file = GLOBAL + file;
+			}
+			result.append(file);
+			if (size-- > 0) {
+				result.append(SEPARATOR);
+			}
+		}
+		return result.toString();
 	}
 
 }

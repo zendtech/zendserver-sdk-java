@@ -25,8 +25,11 @@ import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
+import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
  * Project creation and update handling including descriptor, scripts and
@@ -38,6 +41,8 @@ public class ProjectResourcesWriter {
 
 	// properties of the subject project
 	private final String name;
+
+	private Package pkg;
 
 	/**
 	 * @param name
@@ -144,13 +149,36 @@ public class ProjectResourcesWriter {
 		}
 	}
 
+	public void writeDeploymentProperties(File container) throws IOException,
+			JAXBException {
+		IMappingModel model = MappingModelFactory
+				.createEmptyDefaultModel(container);
+		if (container.isDirectory()) {
+			String scriptdir = getScriptsDirectory(container).getName();
+			File[] files = container.listFiles();
+			for (File file : files) {
+				String name = file.getName();
+				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)) {
+					if (scriptdir.equals(name)) {
+						model.addInclude("scriptsdir", new Mapping(name, true,
+								false));
+					} else {
+						model.addInclude("appdir", new Mapping(name, false,
+								false));
+					}
+				}
+			}
+			model.store();
+		}
+	}
+
 	// TODO: change the way scripts is resolved, should be resolved by
 	// descriptor.properties
 	private File getScriptsDirectory(File descriptor) throws IOException,
 			JAXBException, FileNotFoundException {
-		final Package pkg = JaxbHelper.unmarshalPackage(new FileInputStream(
-				descriptor));
-
+		if (pkg == null) {
+			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(descriptor));
+		}
 		String scriptsdir = pkg.getScriptsdir();
 		if (scriptsdir == null) {
 			scriptsdir = "scripts";

@@ -44,6 +44,23 @@ public class MappingModelFactory {
 	}
 
 	/**
+	 * Creates empty mapping model using {@link DefaultMappingLoader} to get
+	 * default exclusion list.
+	 * 
+	 * @param container
+	 *            where properties file is located
+	 * @return mapping model
+	 * @throws IOException
+	 */
+	public static IMappingModel createEmptyDefaultModel(File container)
+			throws IOException {
+		if (container == null || !container.exists()) {
+			return null;
+		}
+		return new MappingModel(null, container);
+	}
+
+	/**
 	 * Creates mapping model using provided mapping loader.
 	 * 
 	 * @param loader
@@ -61,6 +78,25 @@ public class MappingModelFactory {
 		InputStream stream = new FileInputStream(new File(container,
 				DEPLOYMENT_PROPERTIES));
 		return new MappingModel(loader, stream, container);
+	}
+
+	/**
+	 * Creates empty mapping model using provided mapping loader to get default
+	 * exclusion list.
+	 * 
+	 * @param loader
+	 *            instance of {@link IMappingLoader}
+	 * @param container
+	 *            where properties file is located
+	 * @return mapping model
+	 * @throws IOException
+	 */
+	public static IMappingModel createEmptyModel(IMappingLoader loader,
+			File container) throws IOException {
+		if (container == null || !container.exists()) {
+			return null;
+		}
+		return new MappingModel(loader, null, container);
 	}
 
 }
