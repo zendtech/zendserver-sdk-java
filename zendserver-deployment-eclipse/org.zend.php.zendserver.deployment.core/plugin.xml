@@ -7,5 +7,27 @@
             class="org.zend.php.zendserver.deployment.core.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         id="DeploymentNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.zend.php.zendserver.deployment.core.DeploymentNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="DeploymentBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            hasNature="true"
+            isConfigurable="true"
+            supportsConfigurations="true">
+         <run
+               class="org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder">
+         </run>
+      </builder>
+   </extension>
 
 </plugin>
