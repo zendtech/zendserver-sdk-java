@@ -87,9 +87,8 @@ public class ProjectResourcesWriter {
 						+ destination.getAbsolutePath());
 			}
 			writeDescriptor(new FileOutputStream(descrFile));
-		} else {
-			updateDescriptor(descrFile);
 		}
+		updateDescriptor(descrFile);
 	}
 
 	/**
@@ -157,7 +156,8 @@ public class ProjectResourcesWriter {
 			File[] files = container.listFiles();
 			for (File file : files) {
 				String name = file.getName();
-				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)) {
+				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)
+						&& !name.toLowerCase().contains("test")) {
 					if (scriptdir.equals(name)) {
 						model.addInclude("scriptsdir", new Mapping(name, true,
 								false));
@@ -177,8 +177,14 @@ public class ProjectResourcesWriter {
 				descrFile));
 		File scriptsDir = findExistingScripts(descrFile.getParentFile());
 		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
-		if (scripts != null) {
-			desc.getPackage().setScriptsdir(scripts);
+		File docroot = findPublicFolder(descrFile.getParentFile());
+		if (scripts != null || docroot != null) {
+			if (scripts != null) {
+				desc.getPackage().setScriptsdir(scripts);
+			}
+			if (docroot != null) {
+				desc.getPackage().setDocroot("public");
+			}
 			JaxbHelper.marshalPackage(new FileOutputStream(descrFile),
 					desc.getPackage());
 		}
@@ -207,6 +213,18 @@ public class ProjectResourcesWriter {
 				// TODO refactor to avoid using endWith
 				if (type.getFilename().endsWith(root.getName())) {
 					return root.getParentFile();
+				}
+			}
+		}
+		return null;
+	}
+
+	private File findPublicFolder(File root) throws IOException {
+		if (root.isDirectory()) {
+			File[] files = root.listFiles();
+			for (File file : files) {
+				if (file.isDirectory() && file.getName().equals("public")) {
+					return file;
 				}
 			}
 		}
