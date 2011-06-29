@@ -60,6 +60,7 @@ public class CreatePackageCommand extends TargetAwareCommand {
 			result = builder.createDeploymentPackage(destination);
 		}
 		if (result != null) {
+			getLogger().info("Package create successfully: " + result.getAbsolutePath());
 			return true;
 		}
 		return false;
