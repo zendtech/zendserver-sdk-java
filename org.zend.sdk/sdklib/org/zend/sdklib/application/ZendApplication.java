@@ -400,9 +400,6 @@ public class ZendApplication extends AbstractChangeNotifier {
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
 		String hostname = target.getHost().toString();
-		if (target.getHost().getPort() == -1) {
-			hostname += ":10081";
-		}
 		return new WebApiClient(credentials, hostname);
 	}
 
