@@ -877,7 +877,7 @@ public class WebApiClient {
 		IRequest request = RequestFactory.createRequest(methodType,
 				DEFAULT_VERSION, new Date(), this.credentials.getKeyName(),
 				this.clientConfiguration.getUserAgent(),
-				this.clientConfiguration.getHost().toString(),
+				getWebApiAddress(this.clientConfiguration.getHost()),
 				this.credentials.getSecretKey());
 
 		if (initializer != null) {
@@ -890,6 +890,18 @@ public class WebApiClient {
 
 		// return response data to caller
 		return response;
+	}
+
+	private final String getWebApiAddress(URL host) {
+		String hostname = host.toString();
+		if (host.getPort() == -1) {
+			if ("https".equalsIgnoreCase(host.getProtocol())) {
+				hostname += ":10082";
+			} else {
+				hostname += ":10081";
+			}
+		}
+		return hostname;
 	}
 
 }
