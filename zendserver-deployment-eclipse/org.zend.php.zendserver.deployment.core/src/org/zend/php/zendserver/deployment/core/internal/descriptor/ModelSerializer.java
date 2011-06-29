@@ -212,7 +212,7 @@ public class ModelSerializer {
 						 if (node == null) {
 							node = addNode(doc, f.xpath);
 						}
-						writeProperties(node, (IModelObject) children.get(i), event);
+						writeProperties(node, (IModelObject) children.get(i), null); // don't pass event, rewriter all children of modified element
 					} else if (f.type == String.class) {
 						if (node == null) {
 							node = addNode(doc, f.xpath);
