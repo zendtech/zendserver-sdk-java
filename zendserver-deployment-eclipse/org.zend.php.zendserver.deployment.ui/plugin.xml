@@ -51,6 +51,14 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.configureNature"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -59,6 +67,12 @@
             description="Deploy selected Application"
             id="org.zend.php.zendserver.deployment.ui.deploy"
             name="Deploy">
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableDeploymentSupport"
+            description="Enable Zend Deployment support"
+            id="org.zend.php.zendserver.deployment.ui.configureNature"
+            name="Enable Deployment">
       </command>
    </extension>
    <extension
