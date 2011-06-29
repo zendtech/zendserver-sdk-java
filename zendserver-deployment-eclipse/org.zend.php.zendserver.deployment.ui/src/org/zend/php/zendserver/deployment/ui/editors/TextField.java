@@ -85,8 +85,6 @@ public class TextField {
 	protected void createActions() {
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				System.out.println("keydown");
-				long now = System.currentTimeMillis();
 				if (isRefresh) {
 					return;
 				}
@@ -95,8 +93,6 @@ public class TextField {
 				if (target != null) {
 					target.set(key, text);
 				}
-				long after = System.currentTimeMillis();
-				System.out.println("keydown "+(after-now)+"msec");
 			}
 		});
 	}
