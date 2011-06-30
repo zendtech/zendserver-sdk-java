@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.text.MessageFormat;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
@@ -18,7 +20,7 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
  */
 public class RemoveApplicationCommand extends ApplicationAwareCommand {
 
-	private static final String APPID = "id";
+	private static final String APPID = "a";
 	
 	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
 	public String getApplicationId() {
@@ -33,6 +35,11 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 		if (info == null) {
 			return false;
 		}
+		getLogger().info(
+				MessageFormat.format(
+						"Application {0} (id {1}) was removed from {2}",
+						info.getAppName(), info.getId(), info.getBaseUrl()));
+		
 		return true;
 	}
 
