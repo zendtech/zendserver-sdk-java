@@ -36,7 +36,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class ZendDevPaasDetect {
 
 	// devpass baseurl
-	private static final String INTERNAL_DEVPASS_URL = "https://devpaas.zend.com";
+	private static final String INTERNAL_DEVPASS_URL = "https://projectx.zend.com";
 
 	// user login
 	private static final String USER_LOGIN = "/user/login";
