@@ -33,14 +33,17 @@ public class MappingModelFactory {
 	 * @return mapping model
 	 * @throws IOException
 	 */
-	public static IMappingModel createDefaultModel(File container)
-			throws IOException {
+	public static IMappingModel createDefaultModel(File container) {
 		if (container == null || !container.exists()) {
 			return null;
 		}
-		InputStream stream = new FileInputStream(new File(container,
-				DEPLOYMENT_PROPERTIES));
-		return new MappingModel(stream, container);
+		try {
+			InputStream stream = new FileInputStream(new File(container,
+					DEPLOYMENT_PROPERTIES));
+			return new MappingModel(stream, container);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -71,13 +74,17 @@ public class MappingModelFactory {
 	 * @throws IOException
 	 */
 	public static IMappingModel createModel(IMappingLoader loader,
-			File container) throws IOException {
+			File container) {
 		if (container == null || !container.exists()) {
 			return null;
 		}
-		InputStream stream = new FileInputStream(new File(container,
-				DEPLOYMENT_PROPERTIES));
-		return new MappingModel(loader, stream, container);
+		try {
+			InputStream stream = new FileInputStream(new File(container,
+					DEPLOYMENT_PROPERTIES));
+			return new MappingModel(loader, stream, container);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	/**

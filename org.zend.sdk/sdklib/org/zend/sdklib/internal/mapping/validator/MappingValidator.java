@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdklib.internal.mapping.validator;
 
+import static org.zend.sdklib.mapping.IMappingModel.APPDIR;
+import static org.zend.sdklib.mapping.IMappingModel.SCRIPTSDIR;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.CONTENT;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.EXCLUDES;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.GLOBAL;
@@ -35,8 +37,6 @@ import org.zend.sdklib.mapping.validator.MappingParseStatus;
 public class MappingValidator implements IMappingValidator {
 
 	private static final String KEY_SEPARATOR = "\\.";
-	private static final String SCRIPTSDIR = "scriptsdir";
-	private static final String APPDIR = "appdir";
 
 	private File container;
 	private boolean hasAppdir;
