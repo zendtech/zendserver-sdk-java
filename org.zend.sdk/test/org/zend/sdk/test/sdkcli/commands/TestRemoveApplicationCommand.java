@@ -24,7 +24,7 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 public class TestRemoveApplicationCommand extends AbstractWebApiTest {
 
 	private String[] validCommand = new String[] { "remove", "application",
-			"-t", "0", "-id", "1" };
+			"-t", "0", "-a", "1" };
 
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {

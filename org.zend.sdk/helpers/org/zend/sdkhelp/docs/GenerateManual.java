@@ -60,7 +60,8 @@ public class GenerateManual {
 
 		printStream.print("<h3>Repository actions and options</h3>");
 		tableCommands(printStream, CommandType.ADD_REPOSITORY,
-				CommandType.REMOVE_REPOSITORY, CommandType.LIST_REPOSITORIES);
+				CommandType.REMOVE_REPOSITORY, CommandType.LIST_REPOSITORIES,
+				CommandType.GENERATE_REPOSITORIES);
 
 		printStream.close();
 	}
