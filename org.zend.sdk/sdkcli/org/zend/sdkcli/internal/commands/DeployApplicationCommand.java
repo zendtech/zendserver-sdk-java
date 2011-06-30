@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.text.MessageFormat;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
@@ -19,11 +21,11 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 public class DeployApplicationCommand extends ApplicationAwareCommand {
 
 	private static final String PATH = "p";
-	private static final String BASE_URL = "b";
+	private static final String BASE_PATH = "b";
 	private static final String PARAMS = "m";
 	private static final String NAME = "n";
 	private static final String IGNORE_FAILURES = "f";
-	private static final String CREATE_VHOST = "c";
+	private static final String VHOST = "c";
 	private static final String DEFAULT_SERVER = "d";
 
 	@Option(opt = PATH, required = false, description = "Application package location or project's directory, if not provided current directory is considered", argName = "path")
@@ -35,9 +37,9 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return value;
 	}
 
-	@Option(opt = BASE_URL, required = false, description = "Base URL of this application, if not provided project name is considered", argName = "url")
-	public String getBaseUrl() {
-		return getValue(BASE_URL);
+	@Option(opt = BASE_PATH, required = false, description = "Base path of this application (relative to hostname), if not provided project name is considered", argName = "base-path")
+	public String getBasePath() {
+		return getValue(BASE_PATH);
 	}
 
 	@Option(opt = PARAMS, required = false, description = "Properties file path of the parameters given to this application", argName = "parameters")
@@ -65,7 +67,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	@Option(opt = DEFAULT_SERVER, required = false, description = "Use default server for this application")
 	public boolean isDefaultServer() {
 		final boolean defaultServer = hasOption(DEFAULT_SERVER);
-		final boolean vhost = hasOption(CREATE_VHOST);
+		final boolean vhost = isVhost();
 
 		// both turned on -> error
 		if (defaultServer && vhost) {
@@ -86,19 +88,27 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return defaultServer;
 	}
 
-	@Option(opt = CREATE_VHOST, required = false, description = "Create vhost for this application")
-	public boolean isCreateVhost() {
-		return !isDefaultServer();
+	@Option(opt = VHOST, required = false, description = "The name of the vhost to create or use if exists")
+	public String getVhost() {
+		return getValue(VHOST);
+	}
+
+	public boolean isVhost() {
+		return getVhost() != null;
 	}
 
 	@Override
 	public boolean doExecute() {
-		ApplicationInfo info = getApplication().deploy(getPath(), getBaseUrl(),
-				getTargetId(), getParams(), getName(), isIgnoreFailures(),
-				isCreateVhost(), isDefaultServer());
+		ApplicationInfo info = getApplication().deploy(getPath(),
+				getBasePath(), getTargetId(), getParams(), getName(),
+				isIgnoreFailures(), getVhost(), isDefaultServer());
 		if (info == null) {
 			return false;
 		}
+		getLogger()
+				.info(MessageFormat
+						.format("Application {0} is deployed and will be available shortly at {1}",
+								info.getAppName(), info.getBaseUrl()));
 		return true;
 	}
 }

@@ -357,7 +357,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 	/**
 	 * @return the default target id if exists. null if no default is assigned
 	 */
-	public String getDefaultTargetId() {
+	public synchronized String getDefaultTargetId() {
+		if (all.size() == 1) {
+			return all.get(0).getId();
+		}
 		return defaultId;
 	}
 
