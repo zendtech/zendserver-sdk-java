@@ -38,6 +38,12 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String PROPERTIES = "p";
 	private static final String DEVPASS = "d";
 
+
+	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
+	public String getDevPaas() {
+		return getValue(DEVPASS);
+	}
+	
 	@Option(opt = ID, required = false, description = "id of the new target", argName = "id")
 	public String getId() {
 		return getValue(ID);
@@ -77,11 +83,6 @@ public class AddTargetCommand extends TargetAwareCommand {
 		}
 		final File file = new File(filename);
 		return file;
-	}
-
-	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
-	public String getDevPaas() {
-		return getValue(DEVPASS);
 	}
 
 	@Override
