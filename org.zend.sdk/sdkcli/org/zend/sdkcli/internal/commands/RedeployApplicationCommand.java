@@ -22,7 +22,7 @@ public class RedeployApplicationCommand extends ApplicationAwareCommand {
 	private static final String IGNORE_FAILURES = "i";
 	private static final String SERVERS = "s";
 	
-	@Option(opt = APPID, required = true, description = "The application id", argName="app-id")
+	@Option(opt = APPID, required = true, description = "Application id to redeploy", argName="app-id")
 	public String getApplicationId() {
 		return getValue(APPID);
 	}

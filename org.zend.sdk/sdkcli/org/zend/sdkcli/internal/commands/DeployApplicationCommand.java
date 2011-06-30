@@ -105,10 +105,10 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		if (info == null) {
 			return false;
 		}
-		getLogger()
-				.info(MessageFormat
-						.format("Application {0} is deployed and will be available shortly at {1}",
-								info.getAppName(), info.getBaseUrl()));
+		getLogger().info(
+				MessageFormat.format(
+						"Application {0} (id {1}) is deployed to {2}",
+						info.getAppName(), info.getId(), info.getBaseUrl()));
 		return true;
 	}
 }
