@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,8 +107,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 * 
 	 * @param path
 	 *            - path to project location or application package
-	 * @param baseUrl
-	 *            - base URL to deploy the application to. Must be an HTTP URL.
+	 * @param basePath
+	 *            - base path to deploy the application to. relative to the
+	 *            host/vhost
 	 * @param targetId
 	 *            - target id
 	 * @param propertiesFile
@@ -119,9 +121,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param createVhost
-	 *            - create a virtual host based on the base URL if such a
-	 *            virtual host wasn't already created by Zend Server.
+	 * @param vhostName
+	 *            - the name of the vhost to use, if such a virtual host wasn't
+	 *            already created by Zend Server it will be created
 	 * @param defaultServer
 	 *            - deploy the application on the default server; the base URL
 	 *            host provided will be ignored and replaced with
@@ -130,9 +132,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 *         where problems with connections or target with specified id does
 	 *         not exist or there is no package/project in specified path
 	 */
-	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
-			String propertiesFile, String appName, Boolean ignoreFailures,
-			Boolean createVhost, Boolean defaultServer) {
+	public ApplicationInfo deploy(String path, String basePath,
+			String targetId, String propertiesFile, String appName,
+			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
 		Map<String, String> userParams = null;
 		if (propertiesFile != null) {
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
@@ -145,8 +147,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 		}
 		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 				"Deploying", "Reading user parametes is completed."));
-		return deploy(path, baseUrl, targetId, userParams, appName,
-				ignoreFailures, createVhost, defaultServer);
+		return deploy(path, basePath, targetId, userParams, appName,
+				ignoreFailures, vhostName, defaultServer);
 	}
 
 	/**
@@ -154,8 +156,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 * 
 	 * @param path
 	 *            - path to project location or application package
-	 * @param baseUrl
-	 *            - base URL to deploy the application to. Must be an HTTP URL.
+	 * @param basePath
+	 *            - base path to deploy the application to. relative to
+	 *            host/vhost
 	 * @param targetId
 	 *            - target id
 	 * @param userParams
@@ -166,9 +169,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param createVhost
-	 *            - create a virtual host based on the base URL if such a
-	 *            virtual host wasn't already created by Zend Server.
+	 * @param vhostName
+	 *            - The virtual host to use, if such a virtual host wasn't
+	 *            already created by Zend Server - it is created.
 	 * @param defaultServer
 	 *            - deploy the application on the default server; the base URL
 	 *            host provided will be ignored and replaced with
@@ -177,9 +180,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 *         where problems with connections or target with specified id does
 	 *         not exist or there is no package/project in specified path
 	 */
-	public ApplicationInfo deploy(String path, String baseUrl, String targetId,
-			Map<String, String> userParams, String appName,
-			Boolean ignoreFailures, Boolean createVhost, Boolean defaultServer) {
+	public ApplicationInfo deploy(String path, String basePath,
+			String targetId, Map<String, String> userParams, String appName,
+			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
 		File file = new File(path);
 		if (!file.exists()) {
 			log.error("Path does not exist: " + file);
@@ -212,13 +215,15 @@ public class ZendApplication extends AbstractChangeNotifier {
 		}
 		if (zendPackage != null) {
 			try {
+				String baseUrl = resolveBaseUrl(file, basePath, defaultServer,
+						vhostName);
 				WebApiClient client = getClient(targetId);
 				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 						"Deploying", "Deploying application to the target...",
 						-1));
 				ApplicationInfo result = client.applicationDeploy(
 						new NamedInputStream(zendPackage), baseUrl,
-						ignoreFailures, userParams, appName, createVhost,
+						ignoreFailures, userParams, appName, vhostName != null,
 						defaultServer);
 				statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
 						"Application deployed successfully"));
@@ -241,6 +246,23 @@ public class ZendApplication extends AbstractChangeNotifier {
 			tempFile.deleteOnExit();
 		}
 		return null;
+	}
+
+	private String resolveBaseUrl(File path, String basePath,
+			Boolean defaultServer, String vhostName)
+			throws MalformedURLException {
+
+		if (basePath == null) {
+			basePath = path.getName();
+		}
+		if (basePath.startsWith("/")) {
+			basePath = basePath.substring(1);
+		}
+
+		String url = MessageFormat.format("http://{0}/{1}",
+				vhostName == null ? "default-server" : vhostName, basePath);
+		log.debug("resolved url " + url);
+		return url;
 	}
 
 	/**
@@ -394,8 +416,10 @@ public class ZendApplication extends AbstractChangeNotifier {
 	public WebApiClient getClient(String targetId) throws MalformedURLException {
 		IZendTarget target = manager.getTargetById(targetId);
 		if (target == null) {
-			log.info("Target with id '" + targetId + "' does not exist.");
-			return null;
+			final String er = "Target with id '" + targetId
+					+ "' does not exist.";
+			log.error(er);
+			throw new IllegalArgumentException(er);
 		}
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());

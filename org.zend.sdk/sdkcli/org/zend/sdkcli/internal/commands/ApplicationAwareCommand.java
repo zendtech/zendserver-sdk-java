@@ -39,6 +39,7 @@ public abstract class ApplicationAwareCommand extends TargetAwareCommand {
 		String t = getValue(TARGET);
 		if (t == null) {
 			t = getDefaultTargetId();
+			getLogger().debug("Used target ID: " + t);
 		}
 		return t;
 	}
