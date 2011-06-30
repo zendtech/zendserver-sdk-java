@@ -8,7 +8,6 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.PackageBuilder;
@@ -46,12 +45,7 @@ public class CreatePackageCommand extends TargetAwareCommand {
 			return false;
 		}
 		PackageBuilder builder = null;
-		try {
-			builder = new PackageBuilder(project);
-		} catch (IOException e) {
-			getLogger().error(e);
-			return false;
-		}
+		builder = new PackageBuilder(project);
 		File result = null;
 		String destination = getDestination();
 		if (destination == null) {
@@ -60,7 +54,8 @@ public class CreatePackageCommand extends TargetAwareCommand {
 			result = builder.createDeploymentPackage(destination);
 		}
 		if (result != null) {
-			getLogger().info("Package create successfully: " + result.getAbsolutePath());
+			getLogger().info(
+					"Package create successfully: " + result.getAbsolutePath());
 			return true;
 		}
 		return false;

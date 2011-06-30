@@ -20,6 +20,9 @@ import java.util.Set;
  */
 public interface IMappingModel {
 
+	public static final String APPDIR = "appdir";
+	public static final String SCRIPTSDIR = "scriptsdir";
+
 	/**
 	 * @return resource mapping for the model
 	 */

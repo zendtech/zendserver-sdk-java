@@ -26,7 +26,6 @@ import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMappingLoader;
-import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
@@ -197,18 +196,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 					+ new Random().nextInt());
 			tempFile.mkdir();
 			PackageBuilder builder = null;
-			try {
-				builder = mappingLoader == null ? new PackageBuilder(new File(
-						path)) : new PackageBuilder(new File(path),
-						mappingLoader, this);
-			} catch (IOException e) {
-				statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-						"Error during package creation", e));
-				log.error(MappingModelFactory.DEPLOYMENT_PROPERTIES
-						+ " file does not exist");
-				log.error(e);
-				return null;
-			}
+			builder = mappingLoader == null ? new PackageBuilder(new File(path))
+					: new PackageBuilder(new File(path), mappingLoader, this);
 			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;
@@ -367,16 +356,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 					+ new Random().nextInt());
 			tempFile.mkdir();
 			PackageBuilder builder = null;
-			try {
-				builder = mappingLoader == null ? new PackageBuilder(new File(
-						path)) : new PackageBuilder(new File(path),
-						mappingLoader, this);
-			} catch (IOException e) {
-				log.error(MappingModelFactory.DEPLOYMENT_PROPERTIES
-						+ " file does not exist");
-				log.error(e);
-				return null;
-			}
+			builder = mappingLoader == null ? new PackageBuilder(new File(path))
+					: new PackageBuilder(new File(path), mappingLoader, this);
 			zendPackage = builder.createDeploymentPackage(tempFile);
 		} else {
 			zendPackage = file;

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +90,12 @@ public class TestPackageBuilder extends AbstractTest {
 		builder.createDeploymentPackage(file);
 	}
 
-	@Test(expected = FileNotFoundException.class)
+	@Test
 	public void testCreatePackageNoMapping() throws IOException {
-		new PackageBuilder(new File(FOLDER + "Project5"));
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project5"));
+		File result = builder.createDeploymentPackage(file);
+		assertNotNull(result);
 	}
 
 	@Test

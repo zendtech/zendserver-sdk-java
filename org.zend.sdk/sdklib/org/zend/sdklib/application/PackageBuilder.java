@@ -23,6 +23,7 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
+import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
@@ -47,31 +48,26 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private File container;
 	private IMappingModel model;
 
-	// private ResourceMapper mapper;
-	// private String[] defaultExclusion;
-
 	public PackageBuilder(File container, IMappingLoader loader,
-			IChangeNotifier notifier) throws IOException {
+			IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
-	public PackageBuilder(File container, IChangeNotifier notifier)
-			throws IOException {
+	public PackageBuilder(File container, IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
 		this.model = MappingModelFactory.createDefaultModel(container);
 	}
 
-	public PackageBuilder(File container, IMappingLoader loader)
-			throws IOException {
+	public PackageBuilder(File container, IMappingLoader loader) {
 		super();
 		this.container = container;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
-	public PackageBuilder(File container) throws IOException {
+	public PackageBuilder(File container) {
 		super();
 		this.container = container;
 		this.model = MappingModelFactory.createDefaultModel(container);
@@ -99,14 +95,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File result = new File(location, name + EXTENSION);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
-			/*
-			 * ResourceMappingParser parser = new ResourceMappingParser(); if
-			 * (defaultExclusion != null) { mapper = new
-			 * ResourceMapper(container, parser.load(container),
-			 * parser.getMappings(defaultExclusion)); } else { mapper = new
-			 * ResourceMapper(container, parser.load(container)); }
-			 */
-
+			model = model == null ? createDefaultModel() : model;
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Package creation", "Creating deployment package...",
 					calculateTotalWork()));
@@ -155,10 +144,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String appdir = getAppdirName(container);
 		String scriptsdir = getScriptsdirName(container);
 		if (appdir != null) {
-			resolveMapping("appdir", appdir);
+			resolveMapping(IMappingModel.APPDIR, appdir);
 		}
 		if (scriptsdir != null) {
-			resolveMapping("scriptsdir", scriptsdir);
+			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir);
 		}
 	}
 
@@ -281,6 +270,37 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			}
 		}
 		return p;
+	}
+
+	private IMappingModel createDefaultModel() throws IOException {
+		IMappingModel newModel = MappingModelFactory
+				.createEmptyDefaultModel(container);
+		if (container.isDirectory()) {
+			String scriptdir = getScriptsdirName(container);
+			File[] files = container.listFiles();
+			for (File file : files) {
+				String name = file.getName();
+				if (!newModel.isExcluded(null, name)
+						&& !ProjectResourcesWriter.DESCRIPTOR.equals(name)
+						&& !name.toLowerCase().contains("test")) {
+					if (name.equals(scriptdir)) {
+						newModel.addInclude(IMappingModel.SCRIPTSDIR,
+								new Mapping(name, true, false));
+					} else {
+						newModel.addInclude(IMappingModel.APPDIR, new Mapping(
+								name, false, false));
+					}
+				}
+			}
+			if (scriptdir != null
+					&& newModel.getInclusion("scriptsdir").size() == 0) {
+				notifier.statusChanged(new BasicStatus(StatusCode.WARNING,
+						"Package creation",
+						"Scriptsdir declared in descriptor file does not exist in the project"));
+				log.warning("Scriptsdir declared in descriptor file does not exist in the project");
+			}
+		}
+		return newModel;
 	}
 
 	private int calculateTotalWork() throws IOException {
