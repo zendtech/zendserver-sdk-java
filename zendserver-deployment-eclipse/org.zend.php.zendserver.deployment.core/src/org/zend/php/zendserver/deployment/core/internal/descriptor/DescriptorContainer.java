@@ -135,13 +135,8 @@ public class DescriptorContainer implements IDescriptorContainer {
 
 	public IMappingModel getMappingModel() {
 		if (fMappingModel == null) {
-			try {
-				fMappingModel = MappingModelFactory.createDefaultModel(fFile
-						.getParent().getLocation().toFile());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			fMappingModel = MappingModelFactory.createDefaultModel(fFile
+					.getParent().getLocation().toFile());
 		}
 		return fMappingModel;
 	}

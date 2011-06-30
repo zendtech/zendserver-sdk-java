@@ -81,9 +81,16 @@ public class ProjectDeploymentWizard extends Wizard {
 					ZendApplication application = new ZendApplication(
 							new EclipseMappingModelLoader());
 					application.addStatusChangeListener(listener);
-					ApplicationInfo info = application.deploy(path, baseUrl,
-							targetId, userParams, appName, isIgnoreFailures,
-							!defaultServer, defaultServer);
+
+					// TODO adjust to current deploy method
+					ApplicationInfo info = null; /*
+												 * application.deploy(path,
+												 * baseUrl, targetId,
+												 * userParams, appName,
+												 * isIgnoreFailures,
+												 * !defaultServer,
+												 * defaultServer);
+												 */
 					if (monitor.isCanceled()) {
 						return Status.OK_STATUS;
 					}
