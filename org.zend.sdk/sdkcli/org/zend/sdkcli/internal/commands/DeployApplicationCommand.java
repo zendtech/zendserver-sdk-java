@@ -25,7 +25,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	private static final String PARAMS = "m";
 	private static final String NAME = "n";
 	private static final String IGNORE_FAILURES = "f";
-	private static final String VHOST = "c";
+	private static final String VHOST = "h";
 	private static final String DEFAULT_SERVER = "d";
 
 	@Option(opt = PATH, required = false, description = "Application package location or project's directory, if not provided current directory is considered", argName = "path")
