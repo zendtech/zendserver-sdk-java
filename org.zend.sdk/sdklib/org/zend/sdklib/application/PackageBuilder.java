@@ -47,11 +47,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private ZipOutputStream out;
 	private File container;
 	private IMappingModel model;
+	private IMappingLoader loader;
 
 	public PackageBuilder(File container, IMappingLoader loader,
 			IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
+		this.loader = loader;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
@@ -64,6 +66,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	public PackageBuilder(File container, IMappingLoader loader) {
 		super();
 		this.container = container;
+		this.loader = loader;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
@@ -273,8 +276,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private IMappingModel createDefaultModel() throws IOException {
-		IMappingModel newModel = MappingModelFactory
-				.createEmptyDefaultModel(container);
+		IMappingModel newModel = loader == null ? MappingModelFactory
+				.createEmptyDefaultModel(container) : MappingModelFactory
+				.createEmptyModel(loader, container);
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsdirName(container);
 			File[] files = container.listFiles();

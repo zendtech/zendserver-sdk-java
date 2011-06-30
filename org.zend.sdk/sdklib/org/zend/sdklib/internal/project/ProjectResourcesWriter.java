@@ -29,6 +29,7 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
+import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
@@ -147,10 +148,11 @@ public class ProjectResourcesWriter {
 		}
 	}
 
-	public void writeDeploymentProperties(File container) throws IOException,
-			JAXBException {
-		IMappingModel model = MappingModelFactory
-				.createEmptyDefaultModel(container);
+	public void writeDeploymentProperties(File container, IMappingLoader loader)
+			throws IOException, JAXBException {
+		IMappingModel model = loader == null ? MappingModelFactory
+				.createEmptyDefaultModel(container) : MappingModelFactory
+				.createEmptyModel(loader, container);
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			File[] files = container.listFiles();

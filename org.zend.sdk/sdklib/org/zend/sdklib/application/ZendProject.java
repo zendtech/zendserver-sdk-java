@@ -15,6 +15,7 @@ import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
+import org.zend.sdklib.mapping.IMappingLoader;
 
 /**
  * Create a simple project with the tool with all required meta data and scripts
@@ -23,14 +24,23 @@ public class ZendProject extends AbstractChangeNotifier {
 
 	protected String name;
 	protected File path;
+	protected IMappingLoader loader;
 
 	/**
-	 * @param name
-	 * @param scripts
-	 *            list of scripts to generate (all or null are options as well)
 	 * @param path
-	 * @param nest
-	 *            true if the project should be one level under the destination
+	 * @param loader
+	 */
+	public ZendProject(File path, IMappingLoader loader) {
+		if (path == null) {
+			throw new IllegalArgumentException(
+					"can't handle project under given destination");
+		}
+		this.loader = loader;
+		this.path = path;
+	}
+
+	/**
+	 * @param path
 	 * 
 	 */
 	public ZendProject(File path) {
@@ -78,7 +88,7 @@ public class ZendProject extends AbstractChangeNotifier {
 				tw.writeScriptsByName(path, generateScripts);
 			}
 			tw.writeDescriptor(path);
-			tw.writeDeploymentProperties(path);
+			tw.writeDeploymentProperties(path, loader);
 		} catch (IOException e) {
 			log.error(e);
 			return false;
@@ -116,7 +126,7 @@ public class ZendProject extends AbstractChangeNotifier {
 		public String getBasePath() {
 			return basePath;
 		}
-		
+
 		public static TemplateApplications getDefault() {
 			return ZEND;
 		}
