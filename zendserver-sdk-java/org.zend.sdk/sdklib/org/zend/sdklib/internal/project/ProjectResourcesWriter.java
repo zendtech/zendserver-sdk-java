@@ -158,12 +158,12 @@ public class ProjectResourcesWriter {
 				String name = file.getName();
 				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)
 						&& !name.toLowerCase().contains("test")) {
-					if (scriptdir.equals(name)) {
-						model.addInclude("scriptsdir", new Mapping(name, true,
-								false));
+					if (name.equals(scriptdir)) {
+						model.addInclude(IMappingModel.APPDIR, new Mapping(
+								name, true, false));
 					} else {
-						model.addInclude("appdir", new Mapping(name, false,
-								false));
+						model.addInclude(IMappingModel.APPDIR, new Mapping(
+								name, false, false));
 					}
 				}
 			}
@@ -279,13 +279,14 @@ public class ProjectResourcesWriter {
 		}
 	}
 
-	private boolean createFolder(File destination, String path, TemplateApplications app) {
+	private boolean createFolder(File destination, String path,
+			TemplateApplications app) {
 		final File file = new File(destination, relativeToApp(path, app));
 		return file.mkdirs();
 	}
 
-	private void copyFile(File destination, String path, TemplateApplications app) throws IOException,
-			FileNotFoundException {
+	private void copyFile(File destination, String path,
+			TemplateApplications app) throws IOException, FileNotFoundException {
 		if (path.length() == 0) {
 			return;
 		}
@@ -293,7 +294,7 @@ public class ProjectResourcesWriter {
 		if (is == null) {
 			throw new IOException(path + " path is not found");
 		}
-		
+
 		File outputFile = new File(destination, relativeToApp(path, app));
 
 		// create canonical structure
