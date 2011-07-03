@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
@@ -38,12 +39,11 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String PROPERTIES = "p";
 	private static final String DEVPASS = "d";
 
-
 	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
 	public String getDevPaas() {
 		return getValue(DEVPASS);
 	}
-	
+
 	@Option(opt = ID, required = false, description = "id of the new target", argName = "id")
 	public String getId() {
 		return getValue(ID);
@@ -118,6 +118,11 @@ public class AddTargetCommand extends TargetAwareCommand {
 		if (target == null) {
 			return false;
 		}
+
+		getLogger().info(
+				MessageFormat.format(
+						"Target {0} was added successfully, with id {1}", host,
+						target.getId()));
 		return true;
 	}
 
