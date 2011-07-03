@@ -13,8 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.PropertiesBasedMappingLoader;
@@ -29,7 +29,7 @@ public class DefaultMappingLoader extends PropertiesBasedMappingLoader {
 	 * @see org.zend.sdklib.mapping.IMappingLoader#getDefaultExclusion()
 	 */
 	@Override
-	public Set<IMapping> getDefaultExclusion() throws IOException {
+	public List<IMapping> getDefaultExclusion() throws IOException {
 		final InputStream stream = getDefaultExclusionStream();
 		if (stream != null) {
 			Properties props = loadProperties(stream);
@@ -39,7 +39,7 @@ public class DefaultMappingLoader extends PropertiesBasedMappingLoader {
 				return getMappings(result);
 			}
 		}
-		return Collections.emptySet();
+		return Collections.emptyList();
 	}
 
 	private InputStream getDefaultExclusionStream()

@@ -11,18 +11,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingChangeEvent;
 import org.zend.sdklib.mapping.IMappingChangeEvent.Kind;
 import org.zend.sdklib.mapping.IMappingChangeListener;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
-import org.zend.sdklib.mapping.IResourceMapping;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
@@ -33,7 +31,8 @@ import org.zend.sdklib.mapping.MappingModelFactory;
  */
 public class MappingModel implements IMappingModel {
 
-	private IResourceMapping resourceMapping;
+	private List<IMappingEntry> entries;
+	private List<IMapping> defaultExclusion;
 	private List<IMappingChangeListener> listeners;
 	private IMappingLoader loader;
 	private File container;
@@ -43,8 +42,8 @@ public class MappingModel implements IMappingModel {
 		this.loader = loader;
 		this.container = container;
 		this.listeners = new ArrayList<IMappingChangeListener>();
-		this.resourceMapping = loader.load(input);
-
+		this.entries = loader.load(input);
+		this.defaultExclusion = loader.getDefaultExclusion();
 	}
 
 	public MappingModel(InputStream input, File container) throws IOException {
@@ -54,34 +53,33 @@ public class MappingModel implements IMappingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.sdklib.mapping.IMappingModel#getResourceMapping()
+	 * @see
+	 * org.zend.sdklib.mapping.IMappingModel#addEntry(org.zend.sdklib.mapping
+	 * .IMappingEntry)
 	 */
 	@Override
-	public IResourceMapping getResourceMapping() {
-		return resourceMapping;
+	public boolean addEntry(IMappingEntry toAdd) {
+		if (toAdd == null || entries.contains(toAdd)) {
+			return false;
+		}
+		entries.add(toAdd);
+		modelChanged(new MappingChangeEvent(Kind.ADD_ENTRY, toAdd));
+		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.sdklib.mapping.IMappingModel#addInclude(java.lang.String,
-	 * org.zend.sdklib.mapping.IMapping)
+	 * @see org.zend.sdklib.mapping.IMappingModel#removeEntry(java.lang.String)
 	 */
 	@Override
-	public boolean addInclude(String folder, IMapping mapping) {
-		Set<IMapping> includes = getInclusion(folder);
-		if (folder != null && mapping != null) {
-			if (!includes.isEmpty()) {
-				includes.add(mapping);
-			} else {
-				Set<IMapping> value = new LinkedHashSet<IMapping>();
-				value.add(mapping);
-				Map<String, Set<IMapping>> inclusion = resourceMapping
-						.getInclusion();
-				inclusion.put(folder, value);
+	public boolean removeEntry(String folder) {
+		for (IMappingEntry entry : entries) {
+			if (entry.getFolder().equals(folder)) {
+				entries.remove(entry);
+				modelChanged(new MappingChangeEvent(Kind.REMOVE_ENTRY, entry));
+				return true;
 			}
-			modelChanged(new MappingChangeEvent(Kind.ADD, mapping, folder));
-			return true;
 		}
 		return false;
 	}
@@ -89,45 +87,54 @@ public class MappingModel implements IMappingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.sdklib.mapping.IMappingModel#addExclude(java.lang.String,
+	 * @see org.zend.sdklib.mapping.IMappingModel#addMapping(java.lang.String,
 	 * org.zend.sdklib.mapping.IMapping)
 	 */
 	@Override
-	public boolean addExclude(String folder, IMapping mapping) {
-		Set<IMapping> excludes = getExclusion(folder);
-		if (folder != null && mapping != null) {
-			if (!excludes.isEmpty()) {
-				excludes.add(mapping);
-			} else {
-				Set<IMapping> value = new LinkedHashSet<IMapping>();
-				value.add(mapping);
-				Map<String, Set<IMapping>> exclusion = resourceMapping
-						.getExclusion();
-				exclusion.put(folder, value);
-			}
-			modelChanged(new MappingChangeEvent(Kind.ADD, mapping, folder));
-			return true;
+	public boolean addMapping(String folder, Type type, IMapping toAdd) {
+		if (folder == null || toAdd == null) {
+			return false;
 		}
-		return false;
+		for (IMappingEntry entry : entries) {
+			if (entry.getFolder().equals(folder) && entry.getType() == type) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping mapping : mappings) {
+					if (mapping.equals(toAdd)) {
+						return false;
+					}
+				}
+				entry.getMappings().add(toAdd);
+				modelChanged(new MappingChangeEvent(Kind.ADD_MAPPING, entry));
+				return true;
+			}
+		}
+		List<IMapping> mappings = new ArrayList<IMapping>();
+		mappings.add(toAdd);
+		return addEntry(new MappingEntry(folder, mappings, type));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#removeInclude(java.lang.String,
+	 * org.zend.sdklib.mapping.IMappingModel#removeMapping(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean removeInclude(String folder, String path) {
-		Set<IMapping> includes = getInclusion(folder);
-		if (includes != null) {
-			for (IMapping include : includes) {
-				if (include.getPath().equals(path)) {
-					includes.remove(include);
-					modelChanged(new MappingChangeEvent(Kind.REMOVE, include,
-							folder));
-					return true;
+	public boolean removeMapping(String folder, Type type, String path) {
+		if (folder == null || path == null) {
+			return false;
+		}
+		for (IMappingEntry entry : entries) {
+			if (entry.getFolder().equals(folder) && entry.getType() == type) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping mapping : mappings) {
+					if (mapping.getPath().equals(path)) {
+						mappings.remove(mapping);
+						modelChanged(new MappingChangeEvent(
+								Kind.REMOVE_MAPPING, entry));
+						return true;
+					}
 				}
 			}
 		}
@@ -138,72 +145,25 @@ public class MappingModel implements IMappingModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#removeExclude(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public boolean removeExclude(String folder, String path) {
-		Set<IMapping> excludes = getExclusion(folder);
-		if (excludes != null) {
-			for (IMapping exclude : excludes) {
-				if (exclude.getPath().equals(path)) {
-					excludes.remove(exclude);
-					modelChanged(new MappingChangeEvent(Kind.REMOVE, exclude,
-							folder));
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#removeInclude(java.lang.String)
-	 */
-	@Override
-	public boolean removeInclude(String folder) {
-		Map<String, Set<IMapping>> inclusion = resourceMapping.getInclusion();
-		if (inclusion.remove(folder) != null) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#removeExclude(java.lang.String)
-	 */
-	@Override
-	public boolean removeExclude(String folder) {
-		Map<String, Set<IMapping>> exclusion = resourceMapping.getExclusion();
-		if (exclusion.remove(folder) != null) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#modifyInclude(java.lang.String,
+	 * org.zend.sdklib.mapping.IMappingModel#modifyMapping(java.lang.String,
 	 * org.zend.sdklib.mapping.IMapping)
 	 */
 	@Override
-	public boolean modifyInclude(String folder, IMapping mapping) {
-		Set<IMapping> includes = getInclusion(folder);
-		if (mapping != null && includes != null) {
-			for (IMapping include : includes) {
-				if (include.getPath().equals(mapping.getPath())) {
-					include.setContent(mapping.isContent());
-					include.setGlobal(mapping.isGlobal());
-					modelChanged(new MappingChangeEvent(Kind.MODIFY, mapping,
-							folder));
+	public boolean modifyMapping(String folder, Type type, IMapping toModify) {
+		if (folder == null || toModify == null) {
+			return false;
+		}
+		for (IMappingEntry entry : entries) {
+			if (entry.getFolder().equals(folder) && entry.getType() == type) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping mapping : mappings) {
+					if (mapping.getPath().equals(toModify.getPath())) {
+						mapping.setContent(toModify.isContent());
+						mapping.setGlobal(toModify.isGlobal());
+						modelChanged(new MappingChangeEvent(
+								Kind.MODIFY_MAPPING, entry));
+						return true;
+					}
 				}
 			}
 		}
@@ -213,58 +173,27 @@ public class MappingModel implements IMappingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.zend.sdklib.mapping.IMappingModel#modifyExclude(java.lang.String,
-	 * org.zend.sdklib.mapping.IMapping)
+	 * @see org.zend.sdklib.mapping.IMappingModel#getEntry(java.lang.String,
+	 * org.zend.sdklib.mapping.IMappingEntry.Type)
 	 */
 	@Override
-	public boolean modifyExclude(String folder, IMapping mapping) {
-		Set<IMapping> excludes = getExclusion(folder);
-		if (mapping != null && excludes != null) {
-			for (IMapping exclude : excludes) {
-				if (exclude.getPath().equals(mapping.getPath())) {
-					exclude.setContent(mapping.isContent());
-					exclude.setGlobal(mapping.isGlobal());
-					modelChanged(new MappingChangeEvent(Kind.MODIFY, mapping,
-							folder));
-				}
+	public IMappingEntry getEntry(String folder, Type type) {
+		for (IMappingEntry entry : entries) {
+			if (entry.getFolder().equals(folder) && entry.getType() == type) {
+				return entry;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.sdklib.mapping.IMappingModel#getInclusion(java.lang.String)
+	 * @see org.zend.sdklib.mapping.IMappingModel#getEnties()
 	 */
 	@Override
-	public Set<IMapping> getInclusion(String folder) {
-		if (folder != null) {
-			Map<String, Set<IMapping>> rules = resourceMapping.getInclusion();
-			Set<IMapping> mappings = rules.get(folder);
-			if (mappings != null) {
-				return mappings;
-			}
-		}
-		return new LinkedHashSet<IMapping>();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.sdklib.mapping.IMappingModel#getExclusion(java.lang.String)
-	 */
-	@Override
-	public Set<IMapping> getExclusion(String folder) {
-		if (folder != null) {
-			Map<String, Set<IMapping>> rules = resourceMapping.getExclusion();
-			Set<IMapping> mappings = rules.get(folder);
-			if (mappings != null) {
-				return mappings;
-			}
-		}
-		return new LinkedHashSet<IMapping>();
+	public List<IMappingEntry> getEnties() {
+		return entries;
 	}
 
 	/*
@@ -274,8 +203,9 @@ public class MappingModel implements IMappingModel {
 	 */
 	@Override
 	public void store() throws IOException {
-		loader.store(resourceMapping, new File(container,
+		loader.store(this, new File(container,
 				MappingModelFactory.DEPLOYMENT_PROPERTIES));
+		modelChanged(new MappingChangeEvent(Kind.STORE, null));
 	}
 
 	/*
@@ -286,10 +216,16 @@ public class MappingModel implements IMappingModel {
 	 */
 	@Override
 	public boolean isExcluded(String folder, String path) throws IOException {
-		if (isInternalExcluded(path, resourceMapping.getDefaultExclusion())) {
-			return true;
+		if (path != null && folder != null) {
+			if (isInternalExcluded(path, defaultExclusion)) {
+				return true;
+			}
+			IMappingEntry entry = getEntry(folder, Type.EXCLUDE);
+			if (entry != null) {
+				return isInternalExcluded(path, entry.getMappings());
+			}
 		}
-		return isInternalExcluded(path, getExclusion(folder));
+		return false;
 	}
 
 	/*
@@ -298,8 +234,15 @@ public class MappingModel implements IMappingModel {
 	 * @see org.zend.sdklib.mapping.IMappingModel#getFolders()
 	 */
 	@Override
-	public Set<String> getFolders() {
-		return resourceMapping.getInclusion().keySet();
+	public List<String> getFolders() {
+		List<String> result = new ArrayList<String>();
+		for (IMappingEntry entry : entries) {
+			String folder = entry.getFolder();
+			if (!result.contains(folder)) {
+				result.add(entry.getFolder());
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -309,25 +252,27 @@ public class MappingModel implements IMappingModel {
 	 */
 	@Override
 	public String getFolder(String path) throws IOException {
-		Set<String> folders = getFolders();
-		for (String folder : folders) {
-			Set<IMapping> includes = getInclusion(folder);
-			for (IMapping include : includes) {
-				if (include.isGlobal()) {
-					String fileName = path.substring(path
-							.lastIndexOf(File.separator) + 1);
-					if (include.getPath().equals(fileName)) {
-						return folder;
-					}
-				} else if (include.isContent()) {
-					String fullPath = new File(container, include.getPath())
-							.getCanonicalPath();
-					if (path.startsWith(fullPath)) {
-						return folder;
-					}
-				} else {
-					if (include.getPath().equals(path)) {
-						return folder;
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == Type.INCLUDE) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping include : mappings) {
+					if (include.isGlobal()) {
+						String fileName = path.substring(path
+								.lastIndexOf(File.separator) + 1);
+						if (include.getPath().equals(fileName)) {
+							return entry.getFolder();
+						}
+					} else if (include.isContent()) {
+						String fullPath = new File(container, include.getPath())
+								.getCanonicalPath();
+						path = new File(container, path).getCanonicalPath();
+						if (path.startsWith(fullPath)) {
+							return entry.getFolder();
+						}
+					} else {
+						if (include.getPath().equals(path)) {
+							return entry.getFolder();
+						}
 					}
 				}
 			}
@@ -365,17 +310,17 @@ public class MappingModel implements IMappingModel {
 		}
 	}
 
-	private boolean isInternalExcluded(String path, Set<IMapping> excludes)
+	private boolean isInternalExcluded(String path, List<IMapping> mappings)
 			throws IOException {
-		for (IMapping exclude : excludes) {
-			if (exclude.isGlobal()) {
+		for (IMapping mapping : mappings) {
+			if (mapping.isGlobal()) {
 				String fileName = path.substring(path
 						.lastIndexOf(File.separator) + 1);
-				if (exclude.getPath().equals(fileName)) {
+				if (mapping.getPath().equals(fileName)) {
 					return true;
 				}
 			} else {
-				String fullPath = new File(container, exclude.getPath())
+				String fullPath = new File(container, mapping.getPath())
 						.getCanonicalPath();
 				if (fullPath.equals(path)) {
 					return true;
