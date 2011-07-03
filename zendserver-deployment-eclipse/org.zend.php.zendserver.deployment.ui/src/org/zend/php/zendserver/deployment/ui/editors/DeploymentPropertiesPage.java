@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.io.IOException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
@@ -41,9 +44,10 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 	private void createTreeSections(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		appdirSection = new AppTreeSection(form.getBody(), toolkit, model);
-		scriptsdirSection = new ScriptsTreeSection(form.getBody(), toolkit,
-				model);
+		appdirSection = new AppTreeSection(getEditor(), form.getBody(),
+				toolkit, model);
+		scriptsdirSection = new ScriptsTreeSection(getEditor(), form.getBody(),
+				toolkit, model);
 	}
 
 	@Override
@@ -53,9 +57,23 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 	}
 
 	@Override
-	public boolean isDirty() {
+	public void doSave(IProgressMonitor monitor) {
 		// TODO Auto-generated method stub
-		return super.isDirty();
+		super.doSave(monitor);
+		try {
+			model.getMappingModel().store();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean isDirty() {
+		if (appdirSection != null && scriptsdirSection != null) {
+			return appdirSection.isDirty() || scriptsdirSection.isDirty();
+		}
+		return false;
 	}
 
 }

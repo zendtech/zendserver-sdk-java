@@ -1,15 +1,15 @@
 package org.zend.php.zendserver.deployment.core.descriptor;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.IResourceMapping;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
+import org.zend.sdklib.mapping.IMappingModel;
 
 /**
  * Maps paths to resources following IResourceMapping config
@@ -18,21 +18,22 @@ import org.zend.sdklib.mapping.IResourceMapping;
 public class ResourceMapper {
 
 	private IContainer rootFolder;
-	private IResourceMapping mapping;
+	private IMappingModel mapping;
 
 	public ResourceMapper(IDescriptorContainer fModel) {
 		this.rootFolder = fModel.getFile().getParent();
-		this.mapping = fModel.getMappingModel().getResourceMapping();
+		this.mapping = fModel.getMappingModel();
 	}
 
 	public IPath getPath(IPath path) {
-		Map<String, Set<IMapping>> rules = mapping.getInclusion();
-		Set<Entry<String, Set<IMapping>>> entries = rules.entrySet();
-		for (Entry<String, Set<IMapping>> entry : entries) {
-			Set<IMapping> mappings = entry.getValue();
-			for (IMapping mapping : mappings) {
-				if (mapping.getPath().equals(path)) {
-					return new Path(entry.getKey());
+		List<IMappingEntry> entries = mapping.getEnties();
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == Type.INCLUDE) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping mapping : mappings) {
+					if (mapping.getPath().equals(path)) {
+						return new Path(entry.getFolder());
+					}
 				}
 			}
 		}

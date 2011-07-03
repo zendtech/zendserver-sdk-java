@@ -1,7 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -27,15 +27,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.mapping.IMapping;
+import org.zend.sdklib.mapping.IMappingChangeEvent;
+import org.zend.sdklib.mapping.IMappingChangeEvent.Kind;
+import org.zend.sdklib.mapping.IMappingChangeListener;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 
-public class PropertiesTreeSection implements IResourceChangeListener,
-		IResourceDeltaVisitor {
+public abstract class PropertiesTreeSection implements IResourceChangeListener,
+		IResourceDeltaVisitor, IMappingChangeListener {
 
 	private Section section;
 	private FormToolkit toolkit;
@@ -48,13 +55,17 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 	protected IMappingModel mappingModel;
 	protected IDescriptorContainer model;
 
-	public PropertiesTreeSection(Composite parent, FormToolkit toolkit,
-			IDescriptorContainer model) {
+	protected FormEditor editor;
+	protected boolean isDirty;
+
+	public PropertiesTreeSection(FormEditor editor, Composite parent,
+			FormToolkit toolkit, IDescriptorContainer model) {
 		super();
 		this.section = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED);
 		this.model = model;
 		this.toolkit = toolkit;
+		this.editor = editor;
 		initializeSection();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
@@ -177,8 +188,7 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 			fTreeViewer.setUseHashlookup(true);
 			fTreeViewer.setInput(getContainer());
 		}
-		// TODO add model listening
-		// fBuildModel.addModelChangedListener(this);
+		mappingModel.addMappingChangeListener(this);
 	}
 
 	private void asyncRefresh() {
@@ -213,22 +223,14 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 		String resourceName = fParentResource.getProjectRelativePath()
 				.makeRelativeTo(getContainer().getProjectRelativePath())
 				.toPortableString();
-		/*
-		 * IBuild build = fBuildModel.getBuild(); IBuildEntry includes = build
-		 * .getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		 * IBuildEntry excludes = build
-		 * .getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
-		 * 
-		 * resourceName = handleResourceFolder(resource, resourceName);
-		 * 
-		 * if (isChecked) handleCheck(includes, excludes, resourceName,
-		 * resource, wasTopParentChecked,
-		 * IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES); else
-		 * handleUncheck(includes, excludes, resourceName, resource,
-		 * IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
-		 * 
-		 * deleteEmptyEntries();
-		 */
+		if (isChecked) {
+			model.getMappingModel().addMapping(getFolder(), Type.INCLUDE,
+					new Mapping(resourceName, false, false));
+		} else {
+			model.getMappingModel().removeMapping(getFolder(), Type.INCLUDE,
+					resourceName);
+		}
+		// TODO add excluding
 		fParentResource = fOriginalResource = null;
 	}
 
@@ -257,11 +259,24 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 
 	protected void initializeCheckState() {
 		uncheckAll();
+		List<IMapping> includes = new ArrayList<IMapping>();
+		IMappingEntry entry = mappingModel.getEntry(getFolder(), Type.INCLUDE);
+		if (entry != null) {
+			includes.addAll(entry.getMappings());
+		}
+		List<IMapping> excludes = new ArrayList<IMapping>();
+		entry = mappingModel.getEntry(getFolder(), Type.EXCLUDE);
+		if (entry != null) {
+			includes.addAll(entry.getMappings());
+		}
+		initializeCheckState(includes, excludes);
 	}
 
 	protected IContainer getContainer() {
 		return model.getFile().getParent();
 	}
+
+	protected abstract String getFolder();
 
 	public void setText(String label) {
 		section.setText(label);
@@ -309,8 +324,8 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 		return true;
 	}
 
-	public void initializeCheckState(final Set<IMapping> includes,
-			final Set<IMapping> excludes) {
+	public void initializeCheckState(final List<IMapping> includes,
+			final List<IMapping> excludes) {
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 
 			public void run() {
@@ -325,23 +340,7 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 						}
 						for (IMapping include : includes) {
 							if (!include.isGlobal()) {
-								IResource resource = getContainer().findMember(
-										new Path(include.getPath()));
-								if (resource != null) {
-									if (resource instanceof IFolder) {
-										if (include.isContent()) {
-											fTreeViewer.setSubtreeChecked(
-													resource, true);
-											fTreeViewer.setChecked(resource,
-													false);
-										} else {
-											fTreeViewer.setSubtreeChecked(
-													resource, true);
-										}
-									} else {
-										fTreeViewer.setChecked(resource, true);
-									}
-								}
+								checkInclude(include);
 							} else {
 								iterateOverMembers(getContainer(),
 										include.getPath(), true);
@@ -395,8 +394,39 @@ public class PropertiesTreeSection implements IResourceChangeListener,
 		});
 	}
 
+	private void checkInclude(IMapping include) {
+		IResource resource = getContainer().findMember(
+				new Path(include.getPath()));
+		if (resource != null) {
+			if (resource instanceof IFolder) {
+				if (include.isContent()) {
+					fTreeViewer.setSubtreeChecked(resource, true);
+					fTreeViewer.setChecked(resource, false);
+				} else {
+					fTreeViewer.setSubtreeChecked(resource, true);
+				}
+			} else {
+				fTreeViewer.setChecked(resource, true);
+			}
+		}
+	}
+
 	public void refresh() {
 		initializeCheckState();
+	}
+
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public void mappingChanged(IMappingChangeEvent event) {
+		// TODO handle model change in the UI
+		if (event.getChangeKind() == Kind.STORE) {
+			isDirty = false;
+		} else {
+			isDirty = true;
+		}
+		editor.editorDirtyStateChanged();
 	}
 
 }
