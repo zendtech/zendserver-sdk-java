@@ -17,6 +17,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
 import org.restlet.data.Preference;
+import org.restlet.data.Protocol;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.engine.http.header.HeaderConstants;
@@ -107,6 +108,8 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 		Request request = new Request();
 
+		request.setProtocol(getProtocol(webApiRequest.getHost()));
+		
 		// reference
 		final Reference baseRef = new Reference(webApiRequest.getHost());
 		final Reference reference = new Reference(baseRef,
@@ -142,7 +145,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, s);
 
 		// host
-		request.setHostRef(baseRef);
+		request.setHostRef(baseRef.getAuthority());
 
 		// other parameters
 		final List<RequestParameter<?>> parameters = webApiRequest
@@ -152,5 +155,12 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		}
 
 		return request;
+	}
+
+	private Protocol getProtocol(String host) {
+		if (host.startsWith("https")) {
+			return Protocol.HTTPS;
+		}
+		return Protocol.HTTP;
 	}
 }
