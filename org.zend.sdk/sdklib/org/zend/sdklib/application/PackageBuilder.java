@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -29,6 +29,8 @@ import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMapping;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -156,12 +158,18 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private void resolveMapping(String tag, String folderName)
 			throws IOException {
-		Set<IMapping> includes = model.getInclusion(tag);
-		for (IMapping mapping : includes) {
-			File resource = new File(
-					new File(container, mapping.getPath()).getCanonicalPath());
-			if (resource.exists()) {
-				addFileToZip(resource, folderName, mapping, tag);
+		List<IMappingEntry> entries = model.getEnties();
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == Type.INCLUDE
+					&& entry.getFolder().equals(tag)) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping mapping : mappings) {
+					File resource = new File(new File(container,
+							mapping.getPath()).getCanonicalPath());
+					if (resource.exists()) {
+						addFileToZip(resource, folderName, mapping, tag);
+					}
+				}
 			}
 		}
 	}
@@ -189,6 +197,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					} else {
 						position = fullMapping.lastIndexOf(File.separator);
 					}
+					System.out.println();
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
 				}
@@ -288,16 +297,18 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						&& !ProjectResourcesWriter.DESCRIPTOR.equals(name)
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
-						newModel.addInclude(IMappingModel.SCRIPTSDIR,
-								new Mapping(name, true, false));
+						newModel.addMapping(IMappingModel.SCRIPTSDIR,
+								Type.INCLUDE, new Mapping(name, true, false));
 					} else {
-						newModel.addInclude(IMappingModel.APPDIR, new Mapping(
-								name, false, false));
+						newModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+								new Mapping(name, false, false));
 					}
 				}
 			}
 			if (scriptdir != null
-					&& newModel.getInclusion("scriptsdir").size() == 0) {
+					&& newModel
+							.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE)
+							.getMappings().size() == 0) {
 				notifier.statusChanged(new BasicStatus(StatusCode.WARNING,
 						"Package creation",
 						"Scriptsdir declared in descriptor file does not exist in the project"));
@@ -311,15 +322,17 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		// is 1 because of deployment.xml file which is always added to the
 		// package
 		int totalWork = 1;
-		Set<String> folders = model.getFolders();
+		List<String> folders = model.getFolders();
 		for (String folder : folders) {
-			Set<IMapping> includes = model.getInclusion(folder);
-			for (IMapping mapping : includes) {
-				File resource = new File(
-						new File(container, mapping.getPath())
-								.getCanonicalPath());
-				if (resource.exists()) {
-					totalWork += countFiles(resource, folder);
+			IMappingEntry entry = model.getEntry(folder, Type.INCLUDE);
+			if(entry!= null){
+				List<IMapping> includes = entry.getMappings();
+				for (IMapping mapping : includes) {
+					File resource = new File(new File(container,
+							mapping.getPath()).getCanonicalPath());
+					if (resource.exists()) {
+						totalWork += countFiles(resource, folder);
+					}
 				}
 			}
 		}

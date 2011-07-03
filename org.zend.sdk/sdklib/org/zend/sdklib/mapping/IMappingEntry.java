@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Jun 27, 2011 Zend Technologies Ltd. 
+ * Copyright (c) Jul 3, 2011 Zend Technologies Ltd. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,39 +7,37 @@
  *******************************************************************************/
 package org.zend.sdklib.mapping;
 
+import java.util.List;
+
 /**
- * Event which should be fired after any mapping model change.
+ * Represents entry in the resource mapping.
  * 
  * @author Wojciech Galanciak, 2011
  * 
  */
-public interface IMappingChangeEvent {
+public interface IMappingEntry {
 
-	/**
-	 * Defines kind of change for which the event was thrown.
-	 */
-	public enum Kind {
-		ADD_ENTRY,
+	public enum Type {
 
-		REMOVE_ENTRY,
+		INCLUDE,
 
-		ADD_MAPPING,
+		EXCLUDE
 
-		REMOVE_MAPPING,
-
-		MODIFY_MAPPING,
-
-		STORE
 	}
 
 	/**
-	 * @return {@link Kind}
+	 * @return entry folder name
 	 */
-	Kind getChangeKind();
+	String getFolder();
 
 	/**
-	 * @return entry related to the change
+	 * @return list of mappings for the entry
 	 */
-	IMappingEntry getEntry();
+	List<IMapping> getMappings();
+
+	/**
+	 * @return type of the entry
+	 */
+	Type getType();
 
 }

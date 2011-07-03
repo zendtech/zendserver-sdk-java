@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.zend.sdklib.internal.mapping;
 
-import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingChangeEvent;
+import org.zend.sdklib.mapping.IMappingEntry;
 
 /**
  * Basic implementation of {@link IMappingChangeEvent}
@@ -19,14 +19,12 @@ import org.zend.sdklib.mapping.IMappingChangeEvent;
 public class MappingChangeEvent implements IMappingChangeEvent {
 
 	private Kind kind;
-	private IMapping mapping;
-	private String folder;
+	private IMappingEntry entry;
 
-	public MappingChangeEvent(Kind kind, IMapping mapping, String folder) {
+	public MappingChangeEvent(Kind kind, IMappingEntry entry) {
 		super();
 		this.kind = kind;
-		this.mapping = mapping;
-		this.folder = folder;
+		this.entry = entry;
 	}
 
 	/*
@@ -42,21 +40,11 @@ public class MappingChangeEvent implements IMappingChangeEvent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.sdklib.mapping.IMappingChangeEvent#getMapping()
+	 * @see org.zend.sdklib.mapping.IMappingChangeEvent#getEntry()
 	 */
 	@Override
-	public IMapping getMapping() {
-		return mapping;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.sdklib.mapping.IMappingChangeEvent#getFolder()
-	 */
-	@Override
-	public String getFolder() {
-		return folder;
+	public IMappingEntry getEntry() {
+		return entry;
 	}
 
 }

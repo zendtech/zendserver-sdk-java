@@ -29,6 +29,7 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -161,11 +162,11 @@ public class ProjectResourcesWriter {
 				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
-						model.addInclude(IMappingModel.APPDIR, new Mapping(
-								name, true, false));
+						model.addMapping(IMappingModel.SCRIPTSDIR,
+								Type.INCLUDE, new Mapping(name, true, false));
 					} else {
-						model.addInclude(IMappingModel.APPDIR, new Mapping(
-								name, false, false));
+						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+								new Mapping(name, true, false));
 					}
 				}
 			}

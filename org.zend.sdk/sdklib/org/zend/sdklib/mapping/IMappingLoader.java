@@ -10,7 +10,8 @@ package org.zend.sdklib.mapping;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Interface for mapping loaders. Mapping loader is responsible for low level
@@ -29,17 +30,17 @@ public interface IMappingLoader {
 	 * @return parsed mapping from the properties file
 	 * @throws IOException
 	 */
-	IResourceMapping load(InputStream stream) throws IOException;
+	List<IMappingEntry> load(InputStream stream) throws IOException;
 
 	/**
-	 * Stores specified resource mapping in the output file,
+	 * Stores specified resource mapping in the output file.
 	 * 
-	 * @param mapping
+	 * @param model
 	 * @param output
 	 * @return
 	 * @throws IOException
 	 */
-	void store(IResourceMapping mapping, File output) throws IOException;
+	OutputStream store(IMappingModel model, File output) throws IOException;
 
 	/**
 	 * Returns list of default exclusion.
@@ -47,6 +48,6 @@ public interface IMappingLoader {
 	 * @return parsed mapping for default exclusion
 	 * @throws IOException
 	 */
-	Set<IMapping> getDefaultExclusion() throws IOException;
+	List<IMapping> getDefaultExclusion() throws IOException;
 
 }
