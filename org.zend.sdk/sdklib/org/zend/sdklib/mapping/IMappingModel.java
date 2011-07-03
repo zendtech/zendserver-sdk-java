@@ -8,7 +8,9 @@
 package org.zend.sdklib.mapping;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
+
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 
 /**
  * Interface for a mapping model. It provides all necessary operations for
@@ -20,97 +22,72 @@ import java.util.Set;
  */
 public interface IMappingModel {
 
-	public static final String APPDIR = "appdir";
-	public static final String SCRIPTSDIR = "scriptsdir";
+	static final String APPDIR = "appdir";
+	static final String SCRIPTSDIR = "scriptsdir";
 
 	/**
-	 * @return resource mapping for the model
+	 * Adds specified entry to the model.
+	 * 
+	 * @param toAdd
+	 *            entry which should be added to the model
+	 * @return <code>true</code> if entry was added successfully; otherwise
+	 *         return <code>false</code>.
 	 */
-	IResourceMapping getResourceMapping();
+	boolean addEntry(IMappingEntry toAdd);
 
 	/**
-	 * Adds new inclusion mapping for specified folder.
+	 * Removes entry with specified name from the model.
+	 * 
+	 * @param toRemove
+	 * @return <code>true</code> if entry was removed successfully; otherwise
+	 *         return <code>false</code>.
+	 */
+	boolean removeEntry(String toRemove);
+
+	/**
+	 * Adds new mapping for specified folder and entry type.
 	 * 
 	 * @param folder
-	 *            for which mapping should be added
+	 * @param type
 	 * @param mapping
-	 *            new mapping definition
-	 * @return
+	 * @return <code>true</code> if mapping was added successfully; otherwise
+	 *         return <code>false</code>.
 	 */
-	boolean addInclude(String folder, IMapping mapping);
+	boolean addMapping(String folder, Type type, IMapping mapping);
 
 	/**
-	 * Adds new exclusion mapping for specified folder.
+	 * Removes mapping for specified folder and entry type.
 	 * 
 	 * @param folder
-	 *            for which mapping should be added
-	 * @param mapping
-	 *            new mapping definition
-	 * @return
-	 */
-	boolean addExclude(String folder, IMapping mapping);
-
-	/**
-	 * Removes specified inclusion mapping for the folder.
-	 * 
-	 * @param folder
-	 *            for which mapping should be removed
+	 * @param type
 	 * @param path
-	 *            of a mapping which should be removed
-	 * @return
+	 * @return <code>true</code> if mapping was removed successfully; otherwise
+	 *         return <code>false</code>.
 	 */
-	boolean removeInclude(String folder, String path);
+	boolean removeMapping(String folder, Type type, String path);
 
 	/**
-	 * Removes the whole mapping for specified folder
+	 * Modifies mapping for specified folder and entry type.
 	 * 
 	 * @param folder
-	 *            for which mapping should be removed
-	 * @return
-	 */
-	boolean removeInclude(String folder);
-
-	/**
-	 * Removes the whole mapping for specified folder
-	 * 
-	 * @param folder
-	 *            for which mapping should be removed
-	 * @return
-	 */
-	boolean removeExclude(String folder);
-
-	/**
-	 * Removes specified exclusion mapping for the folder.
-	 * 
-	 * @param folder
-	 *            for which mapping should be removed
-	 * @param path
-	 *            of a mapping which should be removed
-	 * @return
-	 */
-	boolean removeExclude(String folder, String path);
-
-	/**
-	 * Modifies specified inclusion mapping for the folder
-	 * 
-	 * @param folder
-	 *            for which mapping should be modified
+	 * @param type
 	 * @param mapping
-	 *            which should be modified
-	 * @return
+	 * @return <code>true</code> if mapping was modified successfully; otherwise
+	 *         return <code>false</code>.
 	 */
-	boolean modifyInclude(String folder, IMapping mapping);
+	boolean modifyMapping(String folder, Type type, IMapping mapping);
 
 	/**
-	 * Modifies specified exclusion mapping for the folder
-	 * 
 	 * @param folder
-	 *            for which mapping should be modified
-	 * @param mapping
-	 *            which should be modified
-	 * @return
+	 * @param type
+	 * @return entry for specified folder and entry type
 	 */
-	boolean modifyExclude(String folder, IMapping mapping);
+	IMappingEntry getEntry(String folder, Type type);
+
+	/**
+	 * @return all entries in the model
+	 */
+	List<IMappingEntry> getEnties();
 
 	/**
 	 * Saves all changes in the resource mapping
@@ -119,22 +96,6 @@ public interface IMappingModel {
 	 * 
 	 */
 	void store() throws IOException;
-
-	/**
-	 * Returns inclusion list for specified folder name
-	 * 
-	 * @param folder
-	 * @return
-	 */
-	public Set<IMapping> getInclusion(String folder);
-
-	/**
-	 * Returns exclusion list for specified folder name
-	 * 
-	 * @param folder
-	 * @return
-	 */
-	public Set<IMapping> getExclusion(String folder);
 
 	/**
 	 * Adds mapping change listener. It is notified about any change in the
@@ -164,7 +125,7 @@ public interface IMappingModel {
 	/**
 	 * @return all folder names specified in the resource mapping
 	 */
-	Set<String> getFolders();
+	List<String> getFolders();
 
 	/**
 	 * Return mapping for specified path.
@@ -173,6 +134,6 @@ public interface IMappingModel {
 	 * @return mapped folder name
 	 * @throws IOException
 	 */
-	public String getFolder(String path) throws IOException;
+	String getFolder(String path) throws IOException;
 
 }

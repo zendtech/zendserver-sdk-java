@@ -11,16 +11,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.zend.sdklib.internal.mapping.Mapping;
-import org.zend.sdklib.internal.mapping.ResourceMapping;
+import org.zend.sdklib.internal.mapping.MappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 
 /**
  * Abstract implementation of {@link IMappingLoader}. It is basic loader for
@@ -43,15 +42,14 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	 * @see org.zend.sdklib.mapping.IMappingLoader#load(java.io.InputStream)
 	 */
 	@Override
-	public IResourceMapping load(InputStream stream) throws IOException {
-		ResourceMapping mapping = new ResourceMapping();
+	public List<IMappingEntry> load(InputStream stream) throws IOException {
+		List<IMappingEntry> mapping = new ArrayList<IMappingEntry>();
 		if (stream != null) {
 			Properties props = loadProperties(stream);
-			mapping.setInclusion(getMapping(props, INCLUDES));
-			mapping.setExclusion(getMapping(props, EXCLUDES));
+			mapping.addAll(getMapping(props, INCLUDES));
+			mapping.addAll(getMapping(props, EXCLUDES));
 			stream.close();
 		}
-		mapping.setDefaultExclusion(getDefaultExclusion());
 		return mapping;
 	}
 
@@ -63,23 +61,26 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	 * IResourceMapping, java.io.File)
 	 */
 	@Override
-	public void store(IResourceMapping mapping, File output) throws IOException {
+	public OutputStream store(IMappingModel model, File output)
+			throws IOException {
 		Properties result = new Properties();
-		Map<String, Set<IMapping>> includes = mapping.getInclusion();
-		Set<Entry<String, Set<IMapping>>> entrySet = includes.entrySet();
-		for (Entry<String, Set<IMapping>> entry : entrySet) {
-			result.put(entry.getKey() + INCLUDES, getValue(entry.getValue()));
+		List<IMappingEntry> entries = model.getEnties();
+		for (IMappingEntry entry : entries) {
+			String key = entry.getFolder();
+			if (entry.getType() == Type.INCLUDE) {
+				key += INCLUDES;
+			} else {
+				key += EXCLUDES;
+			}
+			result.put(key, getValue(entry.getMappings()));
 		}
-		Map<String, Set<IMapping>> excludes = mapping.getExclusion();
-		entrySet = excludes.entrySet();
-		for (Entry<String, Set<IMapping>> entry : entrySet) {
-			result.put(entry.getKey() + EXCLUDES, getValue(entry.getValue()));
-		}
-		result.store(new FileOutputStream(output), null);
+		OutputStream stream = new FileOutputStream(output);
+		result.store(stream, null);
+		return stream;
 	}
 
-	protected Set<IMapping> getMappings(String[] result) throws IOException {
-		Set<IMapping> mappings = new LinkedHashSet<IMapping>();
+	protected List<IMapping> getMappings(String[] result) throws IOException {
+		List<IMapping> mappings = new ArrayList<IMapping>();
 		for (int i = 0; i < result.length; i++) {
 			String file = result[i].trim();
 			boolean isContent = file.endsWith(CONTENT);
@@ -102,24 +103,25 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		return props;
 	}
 
-	private Map<String, Set<IMapping>> getMapping(Properties props, String kind)
+	private List<IMappingEntry> getMapping(Properties props, String kind)
 			throws IOException {
-		Map<String, Set<IMapping>> result = new TreeMap<String, Set<IMapping>>();
+		List<IMappingEntry> result = new ArrayList<IMappingEntry>();
 		Enumeration<?> e = props.propertyNames();
 		while (e.hasMoreElements()) {
 			String folderName = (String) e.nextElement();
 			if (folderName.endsWith(kind)) {
 				String[] files = ((String) props.getProperty(folderName))
 						.split(SEPARATOR);
-				Set<IMapping> mappings = getMappings(files);
+				List<IMapping> mappings = getMappings(files);
 				folderName = folderName.substring(0, folderName.indexOf("."));
-				result.put(folderName, mappings);
+				Type type = INCLUDES.equals(kind) ? Type.INCLUDE : Type.EXCLUDE;
+				result.add(new MappingEntry(folderName, mappings, type));
 			}
 		}
 		return result;
 	}
 
-	private String getValue(Set<IMapping> mappings) {
+	private String getValue(List<IMapping> mappings) {
 		StringBuilder result = new StringBuilder();
 		int size = mappings.size() - 1;
 		for (IMapping entry : mappings) {

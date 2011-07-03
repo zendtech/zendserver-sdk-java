@@ -88,4 +88,19 @@ public class Mapping implements IMapping {
 		this.isGlobal = value;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IMapping) {
+			IMapping objMapping = (IMapping) obj;
+			if (objMapping.getPath().equals(getPath())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
