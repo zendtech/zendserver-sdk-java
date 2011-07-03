@@ -31,10 +31,15 @@ public class DetectOptionUtility {
 
 	public static void addOption(Class subject, Options options,
 			boolean specific) {
-		final Method[] methods = specific ? subject.getDeclaredMethods()
-				: subject.getMethods();
+		final Method[] methods = subject.getMethods();
 
 		for (Method method : methods) {
+
+			// skip general options if specific
+			if (specific && AbstractCommand.class.equals(method.getDeclaringClass())) {
+				break;
+			}
+			
 			if (isString(method) && hasOptionAnnotation(method)) {
 				addString(options, method);
 			} else if (isBoolean(method) && hasOptionAnnotation(method)) {
