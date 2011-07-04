@@ -73,9 +73,9 @@ public class MappingModel implements IMappingModel {
 	 * @see org.zend.sdklib.mapping.IMappingModel#removeEntry(java.lang.String)
 	 */
 	@Override
-	public boolean removeEntry(String folder) {
+	public boolean removeEntry(String folder, Type type) {
 		for (IMappingEntry entry : entries) {
-			if (entry.getFolder().equals(folder)) {
+			if (entry.getFolder().equals(folder) && entry.getType() == type) {
 				entries.remove(entry);
 				modelChanged(new MappingChangeEvent(Kind.REMOVE_ENTRY, entry));
 				return true;
@@ -91,10 +91,12 @@ public class MappingModel implements IMappingModel {
 	 * org.zend.sdklib.mapping.IMapping)
 	 */
 	@Override
-	public boolean addMapping(String folder, Type type, IMapping toAdd) {
-		if (folder == null || toAdd == null) {
+	public boolean addMapping(String folder, Type type, String path,
+			boolean isGlobal, boolean isContent) {
+		if (folder == null || path == null) {
 			return false;
 		}
+		IMapping toAdd = new Mapping(path, isContent, isGlobal);
 		for (IMappingEntry entry : entries) {
 			if (entry.getFolder().equals(folder) && entry.getType() == type) {
 				List<IMapping> mappings = entry.getMappings();
@@ -103,9 +105,12 @@ public class MappingModel implements IMappingModel {
 						return false;
 					}
 				}
-				entry.getMappings().add(toAdd);
-				modelChanged(new MappingChangeEvent(Kind.ADD_MAPPING, entry));
-				return true;
+				if (entry.getMappings().add(toAdd)) {
+					modelChanged(new MappingChangeEvent(Kind.ADD_MAPPING, entry));
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 		List<IMapping> mappings = new ArrayList<IMapping>();
@@ -130,10 +135,16 @@ public class MappingModel implements IMappingModel {
 				List<IMapping> mappings = entry.getMappings();
 				for (IMapping mapping : mappings) {
 					if (mapping.getPath().equals(path)) {
-						mappings.remove(mapping);
-						modelChanged(new MappingChangeEvent(
-								Kind.REMOVE_MAPPING, entry));
-						return true;
+						if (mappings.remove(mapping)) {
+							if (mappings.size() == 0) {
+								return removeEntry(folder, type);
+							} else {
+								modelChanged(new MappingChangeEvent(Kind.REMOVE_MAPPING, entry));
+								return true;
+							}
+						} else {
+							return false;
+						}
 					}
 				}
 			}
@@ -302,6 +313,16 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public void removeMappingChangeListener(IMappingChangeListener listener) {
 		listeners.remove(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMappingModel#getDefaultExclusion()
+	 */
+	@Override
+	public List<IMapping> getDefaultExclusion() {
+		return defaultExclusion;
 	}
 
 	protected void modelChanged(IMappingChangeEvent event) {

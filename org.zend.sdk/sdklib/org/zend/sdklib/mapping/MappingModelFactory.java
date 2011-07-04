@@ -88,6 +88,30 @@ public class MappingModelFactory {
 	}
 
 	/**
+	 * Creates mapping model using provided mapping loader.
+	 * 
+	 * @param loader
+	 *            instance of {@link IMappingLoader}
+	 * @param stream
+	 *            input stream for properties file
+	 * @param container
+	 *            where properties file is located
+	 * @return mapping model
+	 * @throws IOException
+	 */
+	public static IMappingModel createModel(IMappingLoader loader, InputStream stream,
+			File container) {
+		if (container == null || !container.exists()) {
+			return null;
+		}
+		try {
+			return new MappingModel(loader, stream, container);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	/**
 	 * Creates empty mapping model using provided mapping loader to get default
 	 * exclusion list.
 	 * 
