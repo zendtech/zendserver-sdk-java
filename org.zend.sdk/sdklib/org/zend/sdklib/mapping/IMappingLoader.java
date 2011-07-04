@@ -10,7 +10,6 @@ package org.zend.sdklib.mapping;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -37,10 +36,9 @@ public interface IMappingLoader {
 	 * 
 	 * @param model
 	 * @param output
-	 * @return
 	 * @throws IOException
 	 */
-	OutputStream store(IMappingModel model, File output) throws IOException;
+	void store(IMappingModel model, File output) throws IOException;
 
 	/**
 	 * Returns list of default exclusion.

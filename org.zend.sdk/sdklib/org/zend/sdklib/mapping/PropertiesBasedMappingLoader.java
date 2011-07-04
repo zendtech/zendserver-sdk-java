@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.sdklib.mapping;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,22 +62,12 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	 * IResourceMapping, java.io.File)
 	 */
 	@Override
-	public OutputStream store(IMappingModel model, File output)
+	public void store(IMappingModel model, File output)
 			throws IOException {
-		Properties result = new Properties();
-		List<IMappingEntry> entries = model.getEnties();
-		for (IMappingEntry entry : entries) {
-			String key = entry.getFolder();
-			if (entry.getType() == Type.INCLUDE) {
-				key += INCLUDES;
-			} else {
-				key += EXCLUDES;
-			}
-			result.put(key, getValue(entry.getMappings()));
-		}
-		OutputStream stream = new FileOutputStream(output);
-		result.store(stream, null);
-		return stream;
+		byte[] bytes = getByteArray(model);
+		OutputStream out = new FileOutputStream(output);
+		out.write(bytes);
+		out.close();
 	}
 
 	protected List<IMapping> getMappings(String[] result) throws IOException {
@@ -103,6 +94,18 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		return props;
 	}
 
+	protected byte[] getByteArray(IMappingModel model) throws IOException {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		List<IMappingEntry> entries = model.getEnties();
+		for (IMappingEntry entry : entries) {
+			String entryString = getEntry(entry);
+			result.write(entryString.getBytes());
+			result.write('\n');
+		}
+		System.out.println(result.toString());
+		return result.toByteArray();
+	}
+
 	private List<IMappingEntry> getMapping(Properties props, String kind)
 			throws IOException {
 		List<IMappingEntry> result = new ArrayList<IMappingEntry>();
@@ -119,6 +122,15 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			}
 		}
 		return result;
+	}
+
+	private String getEntry(IMappingEntry entry) {
+		StringBuilder result = new StringBuilder();
+		result.append(entry.getFolder());
+		result.append(entry.getType() == Type.INCLUDE ? INCLUDES : EXCLUDES);
+		result.append(" = ");
+		result.append(getValue(entry.getMappings()));
+		return result.toString();
 	}
 
 	private String getValue(List<IMapping> mappings) {
