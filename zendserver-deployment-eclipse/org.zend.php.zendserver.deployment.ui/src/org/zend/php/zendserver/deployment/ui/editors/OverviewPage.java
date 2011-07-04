@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -143,6 +144,12 @@ public class OverviewPage extends DescriptorEditorPage {
 				if (element instanceof ScriptsContentProvider.Script) {
 					ScriptsContentProvider.Script script = (Script) element;
 					IFile file = getScript(script.name);
+					if (! file.exists()) {
+						boolean canCreate = MessageDialog.openQuestion(getSite().getShell(), "Open script", "Selected script doesn't exist. Would you like to create it?");
+						if (!canCreate) {
+							return;
+						}
+					}
 					openScript(file);
 				}
 			}
@@ -157,7 +164,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				try {
 					if (! file.exists()) {
 						createScript(file, monitor);
-						scriptsTree.refresh(); // update created script icon
+						refreshScriptsTree();
 					}
 					openEditor(file);
 				} catch (CoreException e) {
@@ -171,6 +178,15 @@ public class OverviewPage extends DescriptorEditorPage {
 		job.schedule();
 	}
 	
+	protected void refreshScriptsTree() {
+		scriptsTree.getControl().getDisplay().asyncExec(new Runnable() {
+			
+			public void run() {
+				scriptsTree.refresh(); // update created script icon
+			}
+		});
+	}
+
 	private void createScript(IFile file, IProgressMonitor monitor) throws CoreException {
 		// TODO use SDK to create script file?
 		file.create(new ByteArrayInputStream(new byte[0]), true, monitor);
