@@ -20,11 +20,11 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * A successful call to the configurationExport method will result in an HTTP
  * response with the configuration snapshot file in the response body. The
  * content type for the configuration snapshot file is
- * “application/vnd.zend.serverconfig”. In addition, the response will include a
- * “Content-disposition” header specifying a suggested file name for the
+ * application/vnd.zend.serverconfig. In addition, the response will include a
+ * Content-disposition header specifying a suggested file name for the
  * configuration snapshot file. This is different from most Web API calls where
- * the content type is expected to be “application/vnd.zend.serverpi+xml;
- * version=…” and the response body payload is expected to be in XML format. In
+ * the content type is expected to be application/vnd.zend.serverpi+xml;
+ * version= and the response body payload is expected to be in XML format. In
  * case of error, a regular error response will be returned, containing an
  * <errorData> element as defined for other Web API methods.
  * <p>

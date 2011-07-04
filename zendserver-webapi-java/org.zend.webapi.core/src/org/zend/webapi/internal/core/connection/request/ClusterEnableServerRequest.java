@@ -19,7 +19,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * Re-enable a cluster member. This process may be asynchronous if Session
  * Clustering is used – if this is the case, the initial operation will return
  * an HTTP 202 response. This action is idempotent. Running it on an enabled
- * server will result in a “200 OK” response with no consequences. On a ZSCM
+ * server will result in a 200 OK response with no consequences. On a ZSCM
  * with no valid license, this operation will fail.
  * <p>
  * 
