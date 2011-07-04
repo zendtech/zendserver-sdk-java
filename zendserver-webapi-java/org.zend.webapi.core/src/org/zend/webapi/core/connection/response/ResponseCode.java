@@ -40,7 +40,7 @@ public enum ResponseCode {
 	/** NOT_ACCEPTED **/
 	NOT_ACCEPTED(
 			406,
-			"The server does not support any of the content types or API versions specified by the client in the “Accept” header"),
+			"The server does not support any of the content types or API versions specified by the client in the Accept header"),
 
 	/** INTERNAL_SERVER_ERROR **/
 	INTERNAL_SERVER_ERROR(500,

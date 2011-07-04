@@ -32,7 +32,7 @@ public interface IRequest {
 	/**
 	 * @return The current date and time in the GMT time zone, in the format
 	 *         specified by the HTTP RFC for date fields (e.g. “Wed, 07 Jul 2010
-	 *         17:10:55 GMT”). This value will be used to verify the
+	 *         17:10:55 GMT). This value will be used to verify the
 	 *         authenticity of the request, and is expected to be in sync with
 	 *         the server time up to the accuracy of 30 seconds.
 	 */
