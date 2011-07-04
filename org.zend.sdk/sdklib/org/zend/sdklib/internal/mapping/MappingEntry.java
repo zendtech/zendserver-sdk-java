@@ -69,7 +69,9 @@ public class MappingEntry implements IMappingEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMappingEntry) {
-			if (getFolder().equals(((IMappingEntry) obj).getFolder())) {
+			IMappingEntry objMapping = (IMappingEntry) obj;
+			if (getFolder().equals(objMapping.getFolder())
+					&& getType() == objMapping.getType()) {
 				return true;
 			}
 		}
