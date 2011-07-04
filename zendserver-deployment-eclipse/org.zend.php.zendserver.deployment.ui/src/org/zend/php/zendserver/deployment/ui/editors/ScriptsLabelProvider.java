@@ -1,0 +1,49 @@
+package org.zend.php.zendserver.deployment.ui.editors;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
+import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
+
+public class ScriptsLabelProvider extends LabelProvider {
+
+	private OverviewPage page;
+
+	public ScriptsLabelProvider(OverviewPage page) {
+		this.page = page;
+	}
+	
+	@Override
+	public String getText(Object element) {
+		if (element instanceof ScriptsContentProvider.ScriptType) {
+			return ((ScriptsContentProvider.ScriptType) element).name;
+		}
+		
+		if (element instanceof ScriptsContentProvider.Script) {
+			return ((ScriptsContentProvider.Script) element).name;
+		}
+		
+		return super.getText(element);
+	}
+	
+	@Override
+	public Image getImage(Object element) {
+		if (element instanceof ScriptsContentProvider.ScriptType) {
+			return null;//Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_TYPE);
+		
+		} else if (element instanceof ScriptsContentProvider.Script) {
+			ScriptsContentProvider.Script script = (Script) element;
+			IFile file = page.getScript(script.name);
+			if (file.exists()) {
+				return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT);
+			} else {
+				return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_NOTEXISTS);
+			}
+		}
+		
+		return super.getImage(element);
+	}
+}

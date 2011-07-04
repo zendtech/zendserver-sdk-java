@@ -5,17 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 
 public abstract class DescriptorEditorPage extends FormPage {
 
-	Map<Feature, TextField> fields = new HashMap<Feature, TextField>();
+	private Map<Feature, TextField> fields = new HashMap<Feature, TextField>();
 	
-	public DescriptorEditorPage(FormEditor editor, String id, String title) {
+	protected DeploymentDescriptorEditor editor;
+	
+	public DescriptorEditorPage(DeploymentDescriptorEditor editor, String id, String title) {
 		super(editor, id, title);
+		this.editor = editor;
 	}
 
 	@Override

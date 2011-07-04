@@ -70,9 +70,9 @@
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableDeploymentSupport"
-            description="Enable Zend Deployment support"
+            description="Add Application Deployment Support"
             id="org.zend.php.zendserver.deployment.ui.configureNature"
-            name="Enable Deployment">
+            name="Add Application Deployment Support">
       </command>
    </extension>
    <extension

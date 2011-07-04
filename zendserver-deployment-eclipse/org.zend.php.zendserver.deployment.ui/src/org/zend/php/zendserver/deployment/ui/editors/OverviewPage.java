@@ -1,13 +1,29 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.io.ByteArrayInputStream;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -17,12 +33,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
+import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
 
 
 public class OverviewPage extends DescriptorEditorPage {
@@ -41,6 +59,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
 	private ImageHyperlink exportPackageLink;
+	private TreeViewer scriptsTree;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, "overview", "Overview");
@@ -96,7 +115,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		td.grabHorizontal = true;
 		td.grabVertical = true;
 		td.rowspan = 2;
-		td.heightHint = 250;
+		td.heightHint = 350;
 		section.setLayoutData(td);
 		
 		scriptsDir.create(sectionClient, toolkit);
@@ -106,35 +125,80 @@ public class OverviewPage extends DescriptorEditorPage {
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 		
-		Tree tree = toolkit.createTree(sectionClient, SWT.NONE);
+		scriptsTree = new TreeViewer(sectionClient, SWT.BORDER);
+		Tree tree = scriptsTree.getTree();
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 3;
 		tree.setLayoutData(gd);
-		TreeItem tm = new TreeItem(tree, SWT.NONE);
-		tm.setText("Staging");
-		tm.setExpanded(true);
-		TreeItem tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Pre-Staging");
-		tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Post-Staging");
 		
-		tm = new TreeItem(tree, SWT.NONE);
-		tm.setText("Activation");
-		tm.setExpanded(true);
-		tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Pre-Staging");
-		tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Post-Staging");
+		ScriptsContentProvider cp = new ScriptsContentProvider();
+		scriptsTree.setContentProvider(cp);
+		scriptsTree.setLabelProvider(new ScriptsLabelProvider(this));
+		scriptsTree.setInput(cp.model);
+		scriptsTree.expandAll();
+		scriptsTree.addDoubleClickListener(new IDoubleClickListener() {
+			
+			public void doubleClick(DoubleClickEvent event) {
+				Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
+				if (element instanceof ScriptsContentProvider.Script) {
+					ScriptsContentProvider.Script script = (Script) element;
+					IFile file = getScript(script.name);
+					openScript(file);
+				}
+			}
+		});
+	}
+
+	private void openScript(final IFile file) {
+		Job job = new Job("Creating Deployment Script") {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					if (! file.exists()) {
+						createScript(file, monitor);
+						scriptsTree.refresh(); // update created script icon
+					}
+					openEditor(file);
+				} catch (CoreException e) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+				}
+				return Status.OK_STATUS;
+			}
+			
+		};
+		job.setUser(true);
+		job.schedule();
+	}
+	
+	private void createScript(IFile file, IProgressMonitor monitor) throws CoreException {
+		// TODO use SDK to create script file?
+		file.create(new ByteArrayInputStream(new byte[0]), true, monitor);
 		
-		tm = new TreeItem(tree, SWT.NONE);
-		tm.setText("Removal");
-		tm.setExpanded(true);
-		tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Pre-Staging");
-		tm2.setExpanded(true);
-		tm2 = new TreeItem(tm, SWT.NONE);
-		tm2.setText("Post-Staging");
-		tm.setExpanded(true);
+	}
+	
+	protected void openEditor(final IFile file) throws PartInitException {
+		final IWorkbenchPage page = getSite().getPage();
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+
+			public void run() {
+				try {
+					IEditorDescriptor desc = PlatformUI.getWorkbench().
+					        getEditorRegistry().getDefaultEditor(file.getName());
+					page.openEditor(new FileEditorInput(file), desc.getId());
+				} catch (PartInitException e) {
+					// TODO Log exception
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		
+	}
+
+	protected IFile getScript(String scriptName) {
+		// TODO use mapping.getScriptPath(scriptName)
+		return editor.getProject().getFile(scriptName);
 	}
 
 	private void createTestingSection(IManagedForm managedForm) {
