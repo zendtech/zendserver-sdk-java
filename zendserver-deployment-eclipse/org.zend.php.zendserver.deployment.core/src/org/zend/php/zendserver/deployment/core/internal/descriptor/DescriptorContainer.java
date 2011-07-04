@@ -17,6 +17,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
@@ -134,11 +135,15 @@ public class DescriptorContainer implements IDescriptorContainer {
 	}
 
 	public IMappingModel getMappingModel() {
-		if (fMappingModel == null) {
-			fMappingModel = MappingModelFactory.createDefaultModel(fFile
-					.getParent().getLocation().toFile());
-		}
 		return fMappingModel;
+	}
+
+	public void initializeMappingModel(IDocument document) {
+		if (fMappingModel == null) {
+			fMappingModel = MappingModelFactory.createModel(
+					new EclipseMappingModelLoader(document), fFile.getParent()
+							.getLocation().toFile());
+		}
 	}
 
 	public void save() {

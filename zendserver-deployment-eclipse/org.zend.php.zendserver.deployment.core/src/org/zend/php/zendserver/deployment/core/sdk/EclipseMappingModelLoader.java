@@ -1,9 +1,7 @@
 package org.zend.php.zendserver.deployment.core.sdk;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
@@ -37,13 +35,12 @@ public class EclipseMappingModelLoader extends PropertiesBasedMappingLoader {
 	}
 
 	@Override
-	public OutputStream store(IMappingModel model, File output)
+	public void store(IMappingModel model, File output)
 			throws IOException {
-		OutputStream result = super.store(model, output);
+		byte[] result = getByteArray(model);
 		if (document != null) {
-			document.set(((ByteArrayOutputStream) result).toString());
+			document.set(new String(result));
 		}
-		return result;
 	}
 
 }

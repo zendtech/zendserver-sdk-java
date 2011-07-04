@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,6 +189,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			fTreeViewer.setUseHashlookup(true);
 			fTreeViewer.setInput(getContainer());
 		}
+		initializeCheckState();
 		mappingModel.addMappingChangeListener(this);
 	}
 
@@ -421,12 +423,14 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 
 	public void mappingChanged(IMappingChangeEvent event) {
 		// TODO handle model change in the UI
-		if (event.getChangeKind() == Kind.STORE) {
-			isDirty = false;
-		} else {
-			isDirty = true;
+		if (event.getChangeKind() != Kind.STORE) {
+			try {
+				mappingModel.store();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		editor.editorDirtyStateChanged();
 	}
 
 }

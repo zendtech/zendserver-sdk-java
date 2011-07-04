@@ -16,7 +16,14 @@ public interface IDescriptorContainer {
 	 * Descriptor model
 	 */
 	IDeploymentDescriptor getDescriptorModel();
-	
+
+	/**
+	 * Initialize mapping model using specified document
+	 * 
+	 * @param document
+	 */
+	void initializeMappingModel(IDocument document);
+
 	/**
 	 * Mappings specification
 	 */

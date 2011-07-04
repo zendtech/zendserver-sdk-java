@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -32,6 +33,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
  * An example showing how to create a multi-page editor. This example has 3
@@ -48,6 +50,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	public static final String ID = "org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor";
 
 	private SourcePage descriptorSourcePage;
+	private SourcePage propertiesSourcePage;
 	
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
@@ -62,6 +65,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", "Dependencies"));
 			addPage(new DeploymentPropertiesPage(fModel, this, "properties", "Properties"));
 			addPage(new PersistentResourcesPage(this));
+			propertiesSourcePage = new SourcePage(this);
+			addPage(propertiesSourcePage, getPropertiesInput());
 			descriptorSourcePage = new SourcePage(this);
 			addPage(descriptorSourcePage, getEditorInput());
 		} catch (PartInitException e) {
@@ -74,6 +79,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private String iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
 
 	private ResourceMapper fResourceMapper;
+
+	private FileEditorInput propertiesInput;
 
 	/**
 	 * Creates a multi-page editor example.
@@ -99,6 +106,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		descriptorSourcePage.doSave(monitor);
+		propertiesSourcePage.doSave(monitor);
 	}
 
 	/**
@@ -156,6 +164,18 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 				}
 			}
 		});
+
+		IFile propsFile = (IFile) fModel.getFile().getParent()
+				.findMember(MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		propertiesInput = new FileEditorInput(propsFile);
+		try {
+			fDocumentProvider.connect(getPropertiesInput());
+		} catch (CoreException e) {
+			throw new PartInitException(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, e.getMessage(), e));
+		}
+		fModel.initializeMappingModel(fDocumentProvider
+				.getDocument(propertiesInput));
 	}
 
 	protected void handleModelUpdate(final IDeploymentDescriptor descr) {
@@ -273,6 +293,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			fResourceMapper = new ResourceMapper(fModel);
 		}
 		return fResourceMapper;
+	}
+
+	public FileEditorInput getPropertiesInput() {
+		return propertiesInput;
 	}
 
 }

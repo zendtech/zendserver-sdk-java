@@ -14,8 +14,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DeploymentCore.getPreferenceScope();
-		node.put(PreferenceManager.EXCLUDE,
-				"packaging.properties,.project,.settings,.cvs");
+		node.put(PreferenceManager.EXCLUDE, "**/.cvs,**/.svn,**/.git");
 		node.put(SdkManager.SDK_PATH, SdkManager.getDefaultSdkPath());
 		try {
 			node.flush();

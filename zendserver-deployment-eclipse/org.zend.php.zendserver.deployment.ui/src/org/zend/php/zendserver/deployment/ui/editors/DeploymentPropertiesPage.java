@@ -1,8 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.io.IOException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
@@ -54,26 +51,6 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 	public void refresh() {
 		appdirSection.refresh();
 		scriptsdirSection.refresh();
-	}
-
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		super.doSave(monitor);
-		try {
-			model.getMappingModel().store();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public boolean isDirty() {
-		if (appdirSection != null && scriptsdirSection != null) {
-			return appdirSection.isDirty() || scriptsdirSection.isDirty();
-		}
-		return false;
 	}
 
 }
