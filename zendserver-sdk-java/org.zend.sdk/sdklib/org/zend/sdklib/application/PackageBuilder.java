@@ -23,7 +23,6 @@ import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
-import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
@@ -298,10 +297,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
 						newModel.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, new Mapping(name, true, false));
+								Type.INCLUDE, name, true, false);
 					} else {
 						newModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-								new Mapping(name, false, false));
+								name, false, false);
 					}
 				}
 			}

@@ -39,10 +39,11 @@ public interface IMappingModel {
 	 * Removes entry with specified name from the model.
 	 * 
 	 * @param toRemove
+	 * @param type
 	 * @return <code>true</code> if entry was removed successfully; otherwise
 	 *         return <code>false</code>.
 	 */
-	boolean removeEntry(String toRemove);
+	boolean removeEntry(String toRemove, Type type);
 
 	/**
 	 * Adds new mapping for specified folder and entry type.
@@ -53,7 +54,8 @@ public interface IMappingModel {
 	 * @return <code>true</code> if mapping was added successfully; otherwise
 	 *         return <code>false</code>.
 	 */
-	boolean addMapping(String folder, Type type, IMapping mapping);
+	boolean addMapping(String folder, Type type, String path, boolean isGlobal,
+			boolean isContent);
 
 	/**
 	 * Removes mapping for specified folder and entry type.
@@ -135,5 +137,10 @@ public interface IMappingModel {
 	 * @throws IOException
 	 */
 	String getFolder(String path) throws IOException;
+
+	/**
+	 * @return default exclusion list
+	 */
+	List<IMapping> getDefaultExclusion();
 
 }

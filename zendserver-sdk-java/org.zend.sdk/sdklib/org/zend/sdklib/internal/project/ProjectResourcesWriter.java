@@ -26,7 +26,6 @@ import javax.xml.bind.PropertyException;
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.descriptor.PackageDescription;
 import org.zend.sdklib.descriptor.pkg.Package;
-import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
@@ -163,10 +162,10 @@ public class ProjectResourcesWriter {
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
 						model.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, new Mapping(name, true, false));
+								Type.INCLUDE, name, true, false);
 					} else {
 						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-								new Mapping(name, true, false));
+								name, true, false);
 					}
 				}
 			}
