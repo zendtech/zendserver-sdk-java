@@ -49,7 +49,7 @@ public class SystemInfo extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Full version of Zend Server (e.g. “5.0.4”)
+	 * @return Full version of Zend Server
 	 */
 	public String getVersion() {
 		return version;
@@ -64,7 +64,7 @@ public class SystemInfo extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Full PHP version (e.g. “5.3.3”)
+	 * @return Full PHP version 
 	 */
 	public String getPhpVersion() {
 		return phpVersion;
