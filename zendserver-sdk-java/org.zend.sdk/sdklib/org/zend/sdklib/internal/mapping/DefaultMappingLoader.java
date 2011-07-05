@@ -49,15 +49,13 @@ public class DefaultMappingLoader extends PropertiesBasedMappingLoader {
 
 		File zendSDKroot = zendSDKJarFile.getParentFile().getParentFile();
 		File mapping = new File(zendSDKroot, MAPPING_DEFAULT);
-		System.out.println("default stream: " + mapping.exists() + " " + mapping.getAbsolutePath());
+
 		// in development-time scenario, classes are in "sdklib", instead of
 		// "lib/zend_sdk.jar"
 		if (!mapping.exists()) {
 			zendSDKroot = zendSDKJarFile.getParentFile();
 			mapping = new File(zendSDKroot, MAPPING_DEFAULT);
 		}
-		System.out
-				.println("default stream2: " + mapping.exists() + " " + mapping.getAbsolutePath());
 		return mapping.exists() ? new FileInputStream(mapping) : null;
 	}
 
