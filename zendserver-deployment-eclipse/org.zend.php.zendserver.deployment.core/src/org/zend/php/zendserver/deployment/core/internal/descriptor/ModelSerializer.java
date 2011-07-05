@@ -186,7 +186,7 @@ public class ModelSerializer {
 			}
 		}
 		long b = System.currentTimeMillis();
-		System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
+		//System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
 		
 		if (obj instanceof IModelContainer) {
 			writeChildren(doc, (IModelContainer) obj, event);
@@ -245,7 +245,7 @@ public class ModelSerializer {
 		}
 		
 		long b = System.currentTimeMillis();
-		System.out.println("writeChildren   "+(b-a)+"msec ("+model+")");
+		//System.out.println("writeChildren   "+(b-a)+"msec ("+model+")");
 	}
 	
 	
