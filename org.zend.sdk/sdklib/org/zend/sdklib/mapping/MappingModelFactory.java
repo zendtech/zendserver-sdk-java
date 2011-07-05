@@ -8,9 +8,7 @@
 package org.zend.sdklib.mapping;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.zend.sdklib.internal.mapping.DefaultMappingLoader;
 import org.zend.sdklib.internal.mapping.MappingModel;
@@ -38,29 +36,11 @@ public class MappingModelFactory {
 			return null;
 		}
 		try {
-			InputStream stream = new FileInputStream(new File(container,
-					DEPLOYMENT_PROPERTIES));
-			return new MappingModel(stream, container);
+			File mappingFile = new File(container, DEPLOYMENT_PROPERTIES);
+			return new MappingModel(mappingFile);
 		} catch (IOException e) {
 			return null;
 		}
-	}
-
-	/**
-	 * Creates empty mapping model using {@link DefaultMappingLoader} to get
-	 * default exclusion list.
-	 * 
-	 * @param container
-	 *            where properties file is located
-	 * @return mapping model
-	 * @throws IOException
-	 */
-	public static IMappingModel createEmptyDefaultModel(File container)
-			throws IOException {
-		if (container == null || !container.exists()) {
-			return null;
-		}
-		return new MappingModel(null, container);
 	}
 
 	/**
@@ -79,55 +59,11 @@ public class MappingModelFactory {
 			return null;
 		}
 		try {
-			InputStream stream = new FileInputStream(new File(container,
-					DEPLOYMENT_PROPERTIES));
-			return new MappingModel(loader, stream, container);
+			File mappingFile = new File(container, DEPLOYMENT_PROPERTIES);
+			return new MappingModel(loader, mappingFile);
 		} catch (IOException e) {
 			return null;
 		}
-	}
-
-	/**
-	 * Creates mapping model using provided mapping loader.
-	 * 
-	 * @param loader
-	 *            instance of {@link IMappingLoader}
-	 * @param stream
-	 *            input stream for properties file
-	 * @param container
-	 *            where properties file is located
-	 * @return mapping model
-	 * @throws IOException
-	 */
-	public static IMappingModel createModel(IMappingLoader loader, InputStream stream,
-			File container) {
-		if (container == null || !container.exists()) {
-			return null;
-		}
-		try {
-			return new MappingModel(loader, stream, container);
-		} catch (IOException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Creates empty mapping model using provided mapping loader to get default
-	 * exclusion list.
-	 * 
-	 * @param loader
-	 *            instance of {@link IMappingLoader}
-	 * @param container
-	 *            where properties file is located
-	 * @return mapping model
-	 * @throws IOException
-	 */
-	public static IMappingModel createEmptyModel(IMappingLoader loader,
-			File container) throws IOException {
-		if (container == null || !container.exists()) {
-			return null;
-		}
-		return new MappingModel(loader, null, container);
 	}
 
 }
