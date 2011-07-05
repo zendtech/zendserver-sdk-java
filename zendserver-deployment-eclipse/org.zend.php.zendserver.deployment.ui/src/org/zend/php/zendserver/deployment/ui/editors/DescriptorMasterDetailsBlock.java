@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -107,6 +110,15 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				viewer.setSelection(new StructuredSelection(result));
 			}
 		});
+		
+		
+		// Set the default button size
+		addButton.setFont(JFaceResources.getDialogFont());
+		PixelConverter converter = new PixelConverter(addButton);
+		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+
+		
 		Button removeButton = toolkit.createButton(buttons, "Remove", SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		removeButton.setLayoutData(gd);
@@ -116,6 +128,12 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				removeElement(viewer.getSelection());
 			}
 		});
+		
+		// Set the default button size
+		removeButton.setFont(JFaceResources.getDialogFont());
+		converter = new PixelConverter(removeButton);
+		widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		
 		viewer = new TableViewer(table);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {

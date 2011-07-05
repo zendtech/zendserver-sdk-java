@@ -47,6 +47,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_VARIABLE = "icons/sample.gif";
 
+	public static final String IMAGE_SCRIPT = "icons/sample.gif";
+	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/sample.gif";
+
 	// The shared instance
 	private static Activator plugin;
 
