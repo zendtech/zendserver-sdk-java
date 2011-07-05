@@ -54,5 +54,4 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 		scriptsdirSection = new ScriptsTreeSection(getEditor(), form.getBody(),
 				toolkit, model);
 	}
-
 }

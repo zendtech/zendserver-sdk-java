@@ -51,6 +51,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/obj16/script_dis_obj.gif";
 	public static final String IMAGE_SCRIPT_TYPE = "icons/obj16/req_obj.gif";
 
+	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif";
+
 	// The shared instance
 	private static Activator plugin;
 

@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.zend.php.zendserver.deployment.core,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.help
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions

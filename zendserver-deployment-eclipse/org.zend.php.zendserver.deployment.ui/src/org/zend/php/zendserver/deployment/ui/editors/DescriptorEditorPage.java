@@ -13,8 +13,12 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
+import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
+/**
+ * 
+ */
 public abstract class DescriptorEditorPage extends FormPage {
 
 	private Map<Feature, TextField> fields = new HashMap<Feature, TextField>();
@@ -69,7 +73,22 @@ public abstract class DescriptorEditorPage extends FormPage {
 		mgr.add(new RunApplicationAction());
 		mgr.add(new DeployAppInCloudAction());
 		mgr.add(new ExportApplicationAction());
+		
+		final String helpContextID = getHelpResource();
+		if (helpContextID != null) {
+			mgr.add(new HelpAction(helpContextID));
+		}
+
 		mgr.update(true);
+	}
+
+	/**
+	 * Override this method to provide help context
+	 * 
+	 * @return
+	 */
+	protected String getHelpResource() {
+		return "to be assigned";
 	}
 
 	protected TextField addField(TextField field) {
