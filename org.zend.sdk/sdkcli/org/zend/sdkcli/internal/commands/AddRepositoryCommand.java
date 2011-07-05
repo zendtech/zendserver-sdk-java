@@ -22,15 +22,22 @@ public class AddRepositoryCommand extends RepositoryAwareCommand {
 
 	// options
 	private static final String URL = "u";
+	private static final String NAME = "n";
 
-	@Option(opt = URL, required = true, description = "Repository url", argName = "url")
+	@Option(opt = URL, required = true, description = "Url of the repository", argName = "url")
 	public String getUrl() {
 		return getValue(URL);
+	}
+	
+	@Option(opt = NAME, required = false, description = "Name of the repository", argName = "name")
+	public String getName() {
+		return getValue(NAME);
 	}
 
 	@Override
 	public boolean doExecute() {
 		final String url = getUrl();
+		final String name = getName();
 
 		if (url == null || url.length() == 0) {
 			getLogger()
@@ -39,7 +46,7 @@ public class AddRepositoryCommand extends RepositoryAwareCommand {
 		}
 
 		final RepositoryManager repositoryManager = getRepositoryManager();
-		final IRepository r = repositoryManager.createRepository(url);
+		final IRepository r = repositoryManager.createRepository(url, name);
 		if (r == null) {
 			return false;
 		}

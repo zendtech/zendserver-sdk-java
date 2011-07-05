@@ -130,11 +130,12 @@ public class RepositoryManager extends AbstractChangeNotifier {
 	 * Creates and adds new repository based on provided parameters.
 	 * 
 	 * @param url
+	 * @param name 
 	 * @return
 	 */
-	public IRepository createRepository(String url) {
+	public IRepository createRepository(String url, String name) {
 		try {
-			final IRepository r = RepositoryFactory.getRepository(url);
+			final IRepository r = RepositoryFactory.createRepository(url, name);
 			if (r != null) {
 				return r;
 			} else {

@@ -89,7 +89,7 @@ public class GenerateRepositoryCommand extends RepositoryAwareCommand {
 		PrintStream printStream;
 
 		if (getExisting() == null) {
-		
+
 			// if there is not existing repository - just generate the site
 			printStream = new PrintStream(fileStream);
 			try {
@@ -101,25 +101,29 @@ public class GenerateRepositoryCommand extends RepositoryAwareCommand {
 			}
 
 		} else {
-			
+
 			// add the site to the repository
 			final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 			printStream = new PrintStream(bytes);
 			try {
 				RepositoryFactory.createRepository(printStream, template,
 						new File(getPackae()), "apps");
-			
+
 				InputStream is = new ByteArrayInputStream(bytes.toByteArray());
 				final Site addition = JaxbHelper.unmarshalSite(is);
 
-				final IRepository repository = RepositoryFactory.getRepository(getExisting());
+				final IRepository repository = RepositoryFactory
+						.createRepository(getExisting(), "temp");
 				if (repository instanceof FileBasedRepository) {
-					RepositoryFactory.merge((FileBasedRepository) repository, addition);
+					RepositoryFactory.merge((FileBasedRepository) repository,
+							addition);
 				} else {
-					getLogger().error("Error finding local repository in path " + getExisting());
+					getLogger().error(
+							"Error finding local repository in path "
+									+ getExisting());
 					return false;
 				}
-				
+
 			} catch (Exception e) {
 				getLogger().error(e);
 				return false;

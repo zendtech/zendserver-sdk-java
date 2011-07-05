@@ -21,14 +21,14 @@ public class TestRepositoryFactory {
 	@Test
 	public void testFile() throws SdkException {
 		final IRepository createRepository = RepositoryFactory
-				.getRepository("file:/c:\\temp");
+				.createRepository("file:/c:\\temp", "test1");
 		assertTrue(createRepository instanceof FileBasedRepository);
 	}
 
 	@Test
 	public void testHttp() throws SdkException {
 		final IRepository createRepository = RepositoryFactory
-				.getRepository("http://www.cnn.com");
+				.createRepository("http://www.cnn.com", "test2");
 		assertTrue(createRepository instanceof HttpRepository);
 	}
 

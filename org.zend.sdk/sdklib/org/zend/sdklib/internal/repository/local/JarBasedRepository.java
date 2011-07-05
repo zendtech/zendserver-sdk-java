@@ -27,9 +27,16 @@ public class JarBasedRepository extends AbstractRepository {
 	/**
 	 * Base dir for the repository
 	 */
+	public JarBasedRepository(String id, String name, Class class1) {
+		super(id, name);
+		this.class1 = class1;
+	}
 
+	/**
+	 * Base dir for the repository
+	 */
 	public JarBasedRepository(String id, Class class1) {
-		super(id);
+		super(id, "default-jar");
 		this.class1 = class1;
 	}
 
