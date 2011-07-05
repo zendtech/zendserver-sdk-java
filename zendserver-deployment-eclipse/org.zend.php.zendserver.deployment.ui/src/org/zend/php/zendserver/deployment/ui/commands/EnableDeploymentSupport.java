@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.commands;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
+import org.zend.sdklib.application.ZendProject;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
 public class EnableDeploymentSupport extends AbstractHandler {
@@ -85,21 +87,10 @@ public class EnableDeploymentSupport extends AbstractHandler {
 	}
 	
 	private void updateProject(IProject project, IProgressMonitor monitor) throws CoreException {
-		// TODO Use Zend SDK mechanism
-		IFile descriptorFile = project.getFile(DescriptorContainerManager.DESCRIPTOR_PATH);
-		if (! descriptorFile.exists()) {
-		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(descriptorFile);
-			IDeploymentDescriptor descr = container.getDescriptorModel();
-			descr.setName(project.getName());
-			descr.setReleaseVersion("1.0");
-			descr.setApplicationDir("data");
-			container.save();
-		}
-		
-		IFile propertiesFile = project.getFile(MappingModelFactory.DEPLOYMENT_PROPERTIES);
-		if (! propertiesFile.exists()) {
-			propertiesFile.create(new ByteArrayInputStream(new byte[] {}), true, monitor);
-		}
+		File projectLocation = project.getLocation().toFile();
+		ZendProject zp = new ZendProject(projectLocation);
+		zp.update(null);
+		project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
 	}
 	
 	private void openDescriptorEditor(final IProject project) {
