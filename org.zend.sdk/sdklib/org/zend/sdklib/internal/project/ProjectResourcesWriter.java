@@ -162,10 +162,10 @@ public class ProjectResourcesWriter {
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
 						model.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, name, true, false);
+								Type.INCLUDE, name, false, true);
 					} else {
 						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-								name, true, false);
+								name, false, false);
 					}
 				}
 			}
