@@ -18,6 +18,7 @@ public class TextField {
 
 	protected Label label;
 	protected Text text;
+	protected String textValue;
 	protected String labelTxt;
 	protected IModelObject target;
 	protected Feature key;
@@ -50,12 +51,15 @@ public class TextField {
 	}
 	
 	protected void createControls(Composite parent, FormToolkit toolkit) {
-		label = toolkit.createLabel(parent, labelTxt);
-		GridData gd = new GridData();
-		label.setLayoutData(gd);
+		GridData gd;
+		if (labelTxt != null) {
+			label = toolkit.createLabel(parent, labelTxt);
+			gd = new GridData();
+			label.setLayoutData(gd);
+		}
 		text = toolkit.createText(parent, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		text.setLayoutData(gd);
 		controlDecoration = new ControlDecoration(text, SWT.LEFT);		
 	}
@@ -91,7 +95,11 @@ public class TextField {
 				
 				String text = ((Text)e.widget).getText();
 				if (target != null) {
-					target.set(key, text);
+					if (("".equals(text) && (key.flags & Feature.SET_EMPTY_TO_NULL) > 0)) {
+						target.set(key, null);
+					} else {
+						target.set(key, text);
+					}
 				}
 			}
 		});
@@ -114,11 +122,28 @@ public class TextField {
 	}
 
 	public void setVisible(boolean visible) {
-		label.setVisible(visible);
-		text.setVisible(visible);
-		((GridData)text.getLayoutData()).exclude = visible;
-		((GridData)label.getLayoutData()).exclude = visible;
+		if (text.getVisible() == visible) {
+			return;
+		}
 		
+		text.setVisible(visible);
+		((GridData)text.getLayoutData()).exclude = !visible;
+		
+		if (label != null) {
+			label.setVisible(visible);
+			((GridData)label.getLayoutData()).exclude = !visible;
+		}
+		
+		
+		if (visible) {
+			if (textValue != null) {
+				text.setText(textValue);
+				textValue = null;
+			}
+		} else {
+			textValue = text.getText();
+			text.setText("");
+		}
 	}
 
 	public void setText(String string) {
