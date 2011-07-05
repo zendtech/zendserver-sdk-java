@@ -77,7 +77,16 @@ public class VersionControl {
 			versionChoice = RANGE;
 		}
 		
-		choice.select(Arrays.asList(choiceTypes).indexOf(versionChoice));
+		int sel = 0;
+		for (int i = 0; i < choiceTypes.length; i++) {
+			if (choiceTypes[i] == versionChoice) {
+				sel = i;
+			}
+		}
+		
+		sel = Arrays.asList(choice.getItems()).indexOf(choices[sel]);
+		
+		choice.select(sel);
 		
 		if (equals != null) {
 			equals.refresh();
