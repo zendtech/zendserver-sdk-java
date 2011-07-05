@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
@@ -26,7 +27,8 @@ public class FileField extends TextField {
 	@Override
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		// todo add creation 
-		label = toolkit.createLabel(parent, labelTxt);
+		label = toolkit.createLabel(parent, labelTxt + ": ");
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		text.setLayoutData(gd);

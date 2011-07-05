@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
@@ -57,6 +58,7 @@ public class TextField {
 			gd = new GridData();
 			label.setLayoutData(gd);
 		}
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		text = toolkit.createText(parent, "");
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;

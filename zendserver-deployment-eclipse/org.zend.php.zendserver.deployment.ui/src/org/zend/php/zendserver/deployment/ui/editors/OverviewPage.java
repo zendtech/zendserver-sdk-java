@@ -60,7 +60,6 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
-	private FormText exportPackageLink;
 	private TreeViewer scriptsTree;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
@@ -242,8 +241,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		Section section = createStaticSection(toolkit, form.getBody(),
 				Messages.OverviewPage_18);
 		Composite container = createStaticSectionClient(toolkit, section);
-		exportPackageLink = createClient(container, Messages.OverviewPage_20,
-				toolkit, new HyperlinkAdapter() {
+		createClient(container, Messages.OverviewPage_20, toolkit,
+				new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						new ExportApplicationAction().run();
 					}
