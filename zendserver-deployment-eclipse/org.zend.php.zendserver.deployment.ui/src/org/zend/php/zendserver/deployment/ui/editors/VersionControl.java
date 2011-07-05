@@ -1,9 +1,13 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -18,27 +22,32 @@ public class VersionControl {
 	public static final int RANGE = 4;
 	public static final int EXCLUDE = 8;
 	
+	public String[] choices = {"=", "!=", "Range"};
+	public int[] choiceTypes = {EQUALS, CONFLICTS, RANGE};
+	
 	private IModelObject input;
 	
+	private TextField equals;
 	private TextField min;
 	private TextField max;
-	private TextField equals;
 	private TextField conflicts;
 	private ListField exclude;
 	
 	private Combo choice;
 	private DeploymentDescriptorEditor editor;
 	private int modes;
+	private Composite client;
+	private Composite inputsComposite;
 	
 	public VersionControl(int modes) {
 		this.modes = modes;
 		
 		if ((modes & EQUALS) == EQUALS) {
-			equals = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_EQUALS, "Equals");
+			equals = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_EQUALS, null);
 		}
 		
 		if ((modes & CONFLICTS) == CONFLICTS) {
-			conflicts = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, "Conflicts");
+			conflicts = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, null);
 		}
 		
 		if ((modes & RANGE) == RANGE) {
@@ -68,7 +77,7 @@ public class VersionControl {
 			versionChoice = RANGE;
 		}
 		
-		choice.setText(getOper(versionChoice));
+		choice.select(Arrays.asList(choiceTypes).indexOf(versionChoice));
 		
 		if (equals != null) {
 			equals.refresh();
@@ -94,32 +103,31 @@ public class VersionControl {
 	}
 
 	private void updateFieldsVisibility() {
-		boolean showEqualsField = !getOper(RANGE).equals(choice.getText());
+		int selection = Arrays.asList(choices).indexOf(choice.getText());
+		
 		if ((modes & EQUALS) == EQUALS) {
-			equals.setVisible(showEqualsField);
+			equals.setVisible(selection == 0);
 		}
 		
-		if ((modes & RANGE) == RANGE) {
-			min.setVisible(!showEqualsField);
-			max.setVisible(!showEqualsField);
+		if ((modes & CONFLICTS) == CONFLICTS) {
+			conflicts.setVisible(selection == 1);
 		}
 		
 		if ((modes & EXCLUDE) == EXCLUDE) {
-			exclude.setVisible(!showEqualsField);
+			exclude.setVisible(selection == 2);
+		}
+
+		if ((modes & RANGE) == RANGE) {
+			min.setVisible(selection == 2);
+			max.setVisible(selection == 2);
 		}
 		
-		switch (choice.getSelectionIndex()) {
-		case EQUALS:
-			equals.refresh();
-			break;
-		case CONFLICTS:
-			conflicts.refresh();
-			break;
-		case RANGE:
-			min.refresh();
-			max.refresh();
-			break;
-		}
+		// re-layout and make sure all widgets are visible
+		Composite cmp = client.getParent();
+		cmp.layout();
+		Point size = cmp.getSize();
+		Point newsize = cmp.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		cmp.setSize(size.x, newsize.y);
 	}
 	
 	public void setInput(IModelObject input) {
@@ -148,14 +156,15 @@ public class VersionControl {
 	}
 
 	public void createContents(Composite client, FormToolkit toolkit) {
+		this.client = client;
 		
 		choice = new Combo(client, SWT.READ_ONLY);
 		if ((modes & EQUALS) == EQUALS)
-			choice.add(getOper(EQUALS));
+			choice.add(choices[0]);
 		if ((modes & CONFLICTS) == CONFLICTS)
-			choice.add(getOper(CONFLICTS));
+			choice.add(choices[1]);
 		if ((modes & RANGE) == RANGE)
-			choice.add(getOper(RANGE));
+			choice.add(choices[2]);
 		choice.select(0);
 		choice.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -164,25 +173,33 @@ public class VersionControl {
 			}
 		});
 		
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
+		GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		choice.setLayoutData(gd);
 		
-		if ((modes & EQUALS) == EQUALS) {
-			equals.create(client, toolkit);
-		}
+		inputsComposite = new Composite(client, SWT.NONE);
+		GridLayout gl = new GridLayout(3, false);
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		inputsComposite.setLayout(gl);
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalSpan = 2;
+		inputsComposite.setLayoutData(gd);
 		
-		if ((modes & RANGE) == RANGE) {
-			min.create(client, toolkit);
-			max.create(client, toolkit);
+		if ((modes & EQUALS) == EQUALS) {
+			equals.create(inputsComposite, toolkit);
 		}
 		
 		if ((modes & CONFLICTS) == CONFLICTS) {
-			conflicts.create(client, toolkit);
+			conflicts.create(inputsComposite, toolkit);
+		}
+		
+		if ((modes & RANGE) == RANGE) {
+			min.create(inputsComposite, toolkit);
+			max.create(inputsComposite, toolkit);
 		}
 		
 		if ((modes & EXCLUDE) == EXCLUDE) {
-			exclude.create(client, toolkit);
+			exclude.create(inputsComposite, toolkit);
 		}
 			
 			/* TODO add MultiLineField
@@ -197,15 +214,5 @@ public class VersionControl {
 					excludeChange("".equals(txt) ? null : txt);
 				}
 			});*/
-	}
-	
-	private String getOper(int flag) {
-		switch (flag) {
-		case EQUALS: return "=";
-		case CONFLICTS: return "!=";
-		case RANGE : return "range";
-		}
-		
-		return null;
 	}
 }
