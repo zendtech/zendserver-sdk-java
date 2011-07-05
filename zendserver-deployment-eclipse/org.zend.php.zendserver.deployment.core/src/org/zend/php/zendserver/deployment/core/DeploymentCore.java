@@ -30,10 +30,10 @@ public class DeploymentCore implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		DeploymentCore.context = bundleContext;
 
-	//	sdkManager = new SdkManager();
+		sdkManager = new SdkManager();
 
 		// TODO change registered logger
-		//Log.getInstance().registerLogger(new CliLogger());
+		Log.getInstance().registerLogger(new CliLogger());
 	}
 
 	/*
