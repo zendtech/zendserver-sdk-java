@@ -118,12 +118,13 @@ public class DescriptorContainer implements IDescriptorContainer {
 	public IMappingModel getMappingModel() {
 		return fMappingModel;
 	}
-
+	
 	public void initializeMappingModel(IDocument document) {
-		InputStream stream = new ByteArrayInputStream(document.get().getBytes());
-		File container = fFile.getParent().getLocation().toFile();
-		fMappingModel = MappingModelFactory.createModel(new EclipseMappingModelLoader(document),
-				stream, container);
+		if (fMappingModel == null) {
+			File container = fFile.getParent().getLocation().toFile();
+			fMappingModel = MappingModelFactory.createModel(
+					new EclipseMappingModelLoader(document), container);
+		}
 	}
 
 	public void save() {

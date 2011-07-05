@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -161,14 +160,40 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 
 					public void run() {
 						try {
-							if (element instanceof IFile) {
-								IFile file = (IFile) event.getElement();
-								handleFileChecked(file, event.getChecked());
-							} else if (element instanceof IFolder) {
-								IContainer folder = (IContainer) event
-										.getElement();
-								handleFolderChecked(folder, event.getChecked());
+							if (event.getChecked()) {
+								if (element instanceof IFile) {
+									IFile file = (IFile) element;
+									if (file.getParent() == getContainer()) {
+										handleRootFileChecked(file);
+									} else {
+										handleFolderFileChecked(file);
+									}
+								} else if (element instanceof IFolder) {
+									IContainer folder = (IContainer) element;
+									if (folder.getParent() == getContainer()) {
+										handleRootFolderChecked(folder);
+									} else {
+										handleFolderFolderChecked(folder);
+									}
+								}
+							} else {
+								if (element instanceof IFile) {
+									IFile file = (IFile) element;
+									if (file.getParent() == getContainer()) {
+										handleRootFileUnchecked(file);
+									} else {
+										handleFolderFileUnchecked(file);
+									}
+								} else if (element instanceof IFolder) {
+									IContainer folder = (IContainer) element;
+									if (folder.getParent() == getContainer()) {
+										handleRootFolderUnchecked(folder);
+									} else {
+										handleFolderFolderUnchecked(folder);
+									}
+								}
 							}
+							refresh();
 						} catch (CoreException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -185,92 +210,98 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		return container;
 	}
 
-	private void handleFolderChecked(IContainer container, boolean isChecked)
-			throws CoreException {
-		if (isChecked) {
-			List<IResource> checkedMembers = getMembers(container, true);
-			for (IResource member : checkedMembers) {
+	protected void handleRootFileUnchecked(IResource file) {
+		removeIncludeMapping(getName(file));
+	}
+
+	protected void handleRootFolderUnchecked(IContainer folder) throws CoreException {
+		IResource[] members = folder.members();
+		for (IResource member : members) {
+			String name = getName(member);
+			removeIncludeMapping(name);
+			removeExcludeMapping(name);
+		}
+		removeIncludeMapping(getName(folder));
+	}
+
+	protected void handleFolderFileUnchecked(IResource file) throws CoreException {
+		handleRootFileUnchecked(file);
+		handleFileInFolderUnchecked(file);
+	}
+
+	protected void handleFolderFolderUnchecked(IContainer folder) throws CoreException {
+		handleRootFolderUnchecked(folder);
+		handleFileInFolderUnchecked(folder);
+	}
+
+	protected void handleFileInFolderUnchecked(IResource file) throws CoreException {
+		IContainer parent = file.getParent();
+		List<IResource> checkedMembers = getMembers(parent, true);
+		if (parent.members().length > 1 && checkedMembers.size() * 2 < parent.members().length) {
+			for (IResource member : parent.members()) {
+				if (fTreeViewer.getGrayed(member)) {
+					continue;
+				}
 				String name = getName(member);
 				removeIncludeMapping(name);
 				removeExcludeMapping(name);
 			}
-			addIncludeMapping(getName(container), false, false);
-		} else {
-			if (!removeIncludeMapping(getName(container))) {
-				handleFileChecked(container.getParent(), false);
+			removeIncludeMapping(getName(parent));
+			for (IResource checked : checkedMembers) {
+				if (fTreeViewer.getGrayed(checked)) {
+					continue;
+				}
+				addIncludeMapping(getName(checked), false, false);
 			}
+		} else {
+			addExcludeMapping(getName(file), false, false);
 		}
 	}
 
-	private void handleFileChecked(IResource resource, boolean isChecked)
+	protected void handleRootFileChecked(IResource file) {
+		removeExcludeMapping(getName(file));
+		addIncludeMapping(getName(file), false, false);
+	}
+
+	protected void handleRootFolderChecked(IContainer folder)
 			throws CoreException {
-		IContainer parent = resource.getParent();
-		boolean isParentChecked = fTreeViewer.getChecked(parent);
-		boolean isParentGrayed = fTreeViewer.getGrayed(parent);
-		if (isChecked) {
-			doHandleFileChecked(resource, parent, isParentChecked);
-		} else {
-			doHandleFileUnchecked(resource, parent, isParentChecked, isParentGrayed);
-		}
-	}
-
-	private void doHandleFileUnchecked(IResource resource, IContainer parent,
-			boolean isParentChecked, boolean isParentGrayed) throws CoreException {
-		if (isParentChecked || isParentGrayed) {
-			if (parent.getName().equals(getContainer().getName())) {
-				removeIncludeMapping(getName(resource));
-			} else if (parent.members().length <= 1) {
-				handleFolderChecked(parent, false);
-			} else {
-				List<IResource> checkedMembers = getMembers(parent, true);
-				if (checkedMembers.size() * 2 < parent.members().length) {
-					for (IResource member : parent.members()) {
-						String name = getName(member);
-						removeIncludeMapping(name);
-						removeExcludeMapping(name);
-					}
-					// handleFolderChecked(parent, false);
-					if (removeIncludeMapping(getName(parent))) {
-						doHandleFileUnchecked(parent, parent.getParent(),
-								fTreeViewer.getChecked(parent.getParent()),
-								fTreeViewer.getGrayed(parent.getParent()));
-					}
-					for (IResource checked : checkedMembers) {
-						addIncludeMapping(getName(checked), false, false);
-					}
-				} else {
-					addExcludeMapping(getName(resource), false, false);
-				}
+		IResource[] members = folder.members();
+		for (IResource member : members) {
+			String name = getName(member);
+			if (member instanceof IFolder) {
+				handleRootFolderChecked((IFolder) member);
 			}
-		} else {
-			removeIncludeMapping(getName(resource));
+			removeIncludeMapping(name);
+			removeExcludeMapping(name);
 		}
+		addIncludeMapping(getName(folder), false, false);
 	}
 
-	private void doHandleFileChecked(IResource resource, IContainer parent,
-			boolean isParentChecked) throws CoreException {
-		if (isParentChecked) {
-			removeExcludeMapping(getName(resource));
-		} else {
-			List<IResource> uncheckedMembers = getMembers(parent, false);
+	protected void handleFolderFileChecked(IResource file) throws CoreException {
+		handleRootFileChecked(file);
+		handleFileInFolderChecked(file);
+	}
 
-			if (parent.members().length > 1
-					&& uncheckedMembers.size() * 2 < parent.members().length) {
-				for (IResource member : parent.members()) {
-					String name = getName(member);
-					removeIncludeMapping(name);
-					removeExcludeMapping(name);
-				}
-				addIncludeMapping(getName(parent), false, true);
-				for (IResource unchecked : uncheckedMembers) {
-					addExcludeMapping(getName(unchecked), false, false);
-				}
-			} else {
-				String name = getName(resource);
+	protected void handleFileInFolderChecked(IResource file) throws CoreException {
+		IContainer parent = file.getParent();
+		List<IResource> uncheckedMembers = getMembers(parent, false);
+		if (parent.members().length > 1 && uncheckedMembers.size() * 2 < parent.members().length) {
+			for (IResource member : parent.members()) {
+				String name = getName(member);
+				removeIncludeMapping(name);
 				removeExcludeMapping(name);
-				addIncludeMapping(name, false, false);
+			}
+			addIncludeMapping(getName(parent), false, true);
+			for (IResource unchecked : uncheckedMembers) {
+				addExcludeMapping(getName(unchecked), false, false);
 			}
 		}
+	}
+
+	protected void handleFolderFolderChecked(IContainer folder)
+			throws CoreException {
+		handleRootFolderChecked(folder);
+		handleFileInFolderChecked(folder);
 	}
 
 	private boolean addIncludeMapping(String name, boolean isGlobal, boolean isContent) {
@@ -387,6 +418,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 
 	public void uncheckAll() {
 		fTreeViewer.setCheckedElements(new Object[0]);
+		fTreeViewer.setGrayedElements(new Object[0]);
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
@@ -434,91 +466,66 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 						if (fTreeViewer.getTree().isDisposed()) {
 							return;
 						}
-						if (includes.size() == 0) {
-							return;
-						}
-						for (IMapping include : includes) {
-							if (!include.isGlobal()) {
-								checkInclude(include);
-							} else {
-								iterateOverMembers(getContainer(),
-										include.getPath(), true);
-							}
-						}
-						for (IMapping exclude : excludes) {
-							if (!exclude.isGlobal()) {
-								IResource resource = getContainer().findMember(
-										new Path(exclude.getPath()));
-								if (resource != null) {
-									if (resource instanceof IFolder) {
-										fTreeViewer.setSubtreeChecked(resource,
-												false);
-										fTreeViewer.collapseToLevel(resource, 1);
-									} else {
-										fTreeViewer.setChecked(resource, false);
+						List<IMappingEntry> entries = model.getMappingModel().getEnties();
+						for (IMappingEntry entry : entries) {
+							if (entry.getType() == Type.INCLUDE
+									&& entry.getFolder().equals(getFolder())) {
+								List<IMapping> mappings = entry.getMappings();
+								for (IMapping mapping : mappings) {
+									IResource res = getContainer().findMember(mapping.getPath());
+									if (res != null) {
+										try {
+											checkTreeElements(res, mapping);
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (CoreException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									}
 								}
+							}
+						}
+					}
+					
+					private void checkTreeElements(IResource resource, IMapping mapping)
+							throws IOException, CoreException {
+						if (!model.getMappingModel().isExcluded(getFolder(),
+								resource.getLocation().toOSString())) {
+							if (mapping != null) {
+								if (resource instanceof IFolder) {
+									if (mapping.isContent()) {
+										fTreeViewer.setGrayChecked(resource, true);
+										checkAllChildren(resource);
+									} else {
+										fTreeViewer.setChecked(resource, true);
+										if (resource instanceof IFolder) {
+											checkAllChildren(resource);
+										}
+									}
+								} else {
+									fTreeViewer.setChecked(resource, true);
+								}
 							} else {
-								iterateOverMembers(getContainer(),
-										exclude.getPath(), false);
+								fTreeViewer.setChecked(resource, true);
+								if (resource instanceof IFolder) {
+									checkAllChildren(resource);
+								}
 							}
 						}
 					}
 
-					private void iterateOverMembers(IResource resource,
-							String path, boolean state) {
-						if (resource instanceof IContainer) {
-							try {
-								if (resource.getName().equals(path)) {
-									fTreeViewer.setSubtreeChecked(resource,
-											state);
-								} else {
-									IResource[] members = ((IContainer) resource)
-											.members();
-									for (IResource member : members) {
-										iterateOverMembers(member, path, state);
-									}
-								}
-							} catch (CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						} else {
-							if (resource.getName().equals(path)) {
-								fTreeViewer.setChecked(resource, state);
-							}
+					private void checkAllChildren(IResource resource) throws CoreException,
+							IOException {
+						IResource[] members = ((IContainer) resource).members();
+						for (IResource member : members) {
+							checkTreeElements(member, null);
 						}
 					}
 				});
 			}
 		});
-	}
-
-	private void checkInclude(IMapping include) {
-		IResource resource = getContainer().findMember(
-				new Path(include.getPath()));
-		if (resource != null) {
-			if (resource instanceof IFolder) {
-				if (include.isContent()) {
-					fTreeViewer.setSubtreeChecked(resource, true);
-					// fTreeViewer.setGrayChecked(resource, true);
-					fTreeViewer.setChecked(resource, false);
-					fTreeViewer.expandToLevel(resource, 1);
-					expandParents(resource);
-				} else {
-					fTreeViewer.setSubtreeChecked(resource, true);
-				}
-			} else {
-				fTreeViewer.setChecked(resource, true);
-			}
-		}
-	}
-
-	private void expandParents(IResource resource) {
-		if (!resource.getName().equals(getContainer().getName())) {
-			fTreeViewer.expandToLevel(resource, 1);
-			expandParents(resource.getParent());
-		}
 	}
 
 	public void refresh() {
@@ -534,7 +541,6 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 				e.printStackTrace();
 			}
 		}
-		refresh();
 	}
 
 }
