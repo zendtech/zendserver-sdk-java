@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -28,9 +29,9 @@ public class VersionControl {
 	private IModelObject input;
 	
 	private TextField equals;
+	private TextField conflicts;
 	private TextField min;
 	private TextField max;
-	private TextField conflicts;
 	private ListField exclude;
 	
 	private Combo choice;
@@ -92,6 +93,10 @@ public class VersionControl {
 			equals.refresh();
 		}
 		
+		if (conflicts != null) {
+			conflicts.refresh();
+		}
+		
 		if (min != null) {
 			min.refresh();
 		}
@@ -102,10 +107,6 @@ public class VersionControl {
 		
 		if (exclude != null) {
 			exclude.refresh();
-		}
-		
-		if (conflicts != null) {
-			conflicts.refresh();
 		}
 		
 		updateFieldsVisibility();
@@ -122,21 +123,22 @@ public class VersionControl {
 			conflicts.setVisible(selection == 1);
 		}
 		
-		if ((modes & EXCLUDE) == EXCLUDE) {
-			exclude.setVisible(selection == 2);
-		}
-
 		if ((modes & RANGE) == RANGE) {
 			min.setVisible(selection == 2);
 			max.setVisible(selection == 2);
 		}
 		
+		if ((modes & EXCLUDE) == EXCLUDE) {
+			exclude.setVisible(selection == 2);
+		}
+		
 		// re-layout and make sure all widgets are visible
 		Composite cmp = client.getParent();
-		cmp.layout();
+		cmp.layout(true);
 		Point size = cmp.getSize();
 		Point newsize = cmp.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		cmp.setSize(size.x, newsize.y);
+
 	}
 	
 	public void setInput(IModelObject input) {
@@ -146,6 +148,10 @@ public class VersionControl {
 			equals.setInput(input);
 		}
 		
+		if ((modes & CONFLICTS) == CONFLICTS) {
+			conflicts.setInput(input);
+		}
+		
 		if ((modes & RANGE) == RANGE) {
 			min.setInput(input);
 			max.setInput(input);
@@ -153,10 +159,6 @@ public class VersionControl {
 		
 		if ((modes & EXCLUDE) == EXCLUDE) {
 			exclude.setInput(input);
-		}
-		
-		if ((modes & CONFLICTS) == CONFLICTS) {
-			conflicts.setInput(input);
 		}
 	}
 	
@@ -210,6 +212,8 @@ public class VersionControl {
 		if ((modes & EXCLUDE) == EXCLUDE) {
 			exclude.create(inputsComposite, toolkit);
 		}
+		
+		inputsComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			
 			/* TODO add MultiLineField
 			excludeText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
