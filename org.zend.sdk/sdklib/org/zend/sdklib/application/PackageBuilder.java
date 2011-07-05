@@ -283,9 +283,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private IMappingModel createDefaultModel() throws IOException {
-		IMappingModel newModel = loader == null ? MappingModelFactory
-				.createEmptyDefaultModel(container) : MappingModelFactory
-				.createEmptyModel(loader, container);
+		IMappingModel newModel = loader == null ? MappingModelFactory.createDefaultModel(container)
+				: MappingModelFactory.createModel(loader, container);
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsdirName(container);
 			File[] files = container.listFiles();

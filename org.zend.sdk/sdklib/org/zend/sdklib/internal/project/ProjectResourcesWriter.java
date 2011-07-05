@@ -150,9 +150,8 @@ public class ProjectResourcesWriter {
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader)
 			throws IOException, JAXBException {
-		IMappingModel model = loader == null ? MappingModelFactory
-				.createEmptyDefaultModel(container) : MappingModelFactory
-				.createEmptyModel(loader, container);
+		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
+				: MappingModelFactory.createModel(loader, container);
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			File[] files = container.listFiles();

@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.zend.sdklib.mapping;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.zend.sdklib.mapping.IMappingEntry.Type;
@@ -98,6 +100,29 @@ public interface IMappingModel {
 	 * 
 	 */
 	void store() throws IOException;
+
+
+	/**
+	 * Load mapping (overwrite existing one) from the given input stream and set
+	 * new mapping file.
+	 * 
+	 * @param stream
+	 *            input stream
+	 * @param mappingFile
+	 *            mapping file
+	 * @throws IOException
+	 */
+	void load(InputStream stream, File mappingFile) throws IOException;
+
+	/**
+	 * Load mapping (overwrite existing one) from the given input stream for the
+	 * same mapping file.
+	 * 
+	 * @param stream
+	 *            input stream
+	 * @throws IOException
+	 */
+	void load(InputStream stream) throws IOException;
 
 	/**
 	 * Adds mapping change listener. It is notified about any change in the

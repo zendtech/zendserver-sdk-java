@@ -8,6 +8,7 @@
 package org.zend.sdklib.internal.mapping;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,19 +36,20 @@ public class MappingModel implements IMappingModel {
 	private List<IMapping> defaultExclusion;
 	private List<IMappingChangeListener> listeners;
 	private IMappingLoader loader;
-	private File container;
+	private File mappingFile;
 
-	public MappingModel(IMappingLoader loader, InputStream input, File container)
+	public MappingModel(IMappingLoader loader, File mappingFile)
 			throws IOException {
 		this.loader = loader;
-		this.container = container;
+		this.mappingFile = mappingFile;
 		this.listeners = new ArrayList<IMappingChangeListener>();
-		this.entries = loader.load(input);
+		this.entries = mappingFile.exists() ? loader.load(new FileInputStream(mappingFile))
+				: loader.load(null);
 		this.defaultExclusion = loader.getDefaultExclusion();
 	}
 
-	public MappingModel(InputStream input, File container) throws IOException {
-		this(new DefaultMappingLoader(), input, container);
+	public MappingModel(File mappingFile) throws IOException {
+		this(new DefaultMappingLoader(), mappingFile);
 	}
 
 	/*
@@ -214,7 +216,7 @@ public class MappingModel implements IMappingModel {
 	 */
 	@Override
 	public void store() throws IOException {
-		loader.store(this, new File(container,
+		loader.store(this, new File(mappingFile.getParentFile(),
 				MappingModelFactory.DEPLOYMENT_PROPERTIES));
 		modelChanged(new MappingChangeEvent(Kind.STORE, null));
 	}
@@ -237,6 +239,28 @@ public class MappingModel implements IMappingModel {
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMappingModel#load(java.io.InputStream,
+	 * java.io.File)
+	 */
+	@Override
+	public void load(InputStream stream, File mappingFile) throws IOException {
+		this.mappingFile = mappingFile;
+		this.entries = loader.load(stream);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.mapping.IMappingModel#load(java.io.InputStream)
+	 */
+	@Override
+	public void load(InputStream stream) throws IOException {
+		this.entries = loader.load(stream);
 	}
 
 	/*
@@ -274,9 +298,9 @@ public class MappingModel implements IMappingModel {
 							return entry.getFolder();
 						}
 					} else if (include.isContent()) {
-						String fullPath = new File(container, include.getPath())
+						String fullPath = new File(mappingFile.getParentFile(), include.getPath())
 								.getCanonicalPath();
-						path = new File(container, path).getCanonicalPath();
+						path = new File(mappingFile.getParentFile(), path).getCanonicalPath();
 						if (path.startsWith(fullPath)) {
 							return entry.getFolder();
 						}
@@ -344,7 +368,7 @@ public class MappingModel implements IMappingModel {
 					return true;
 				}
 			} else {
-				String fullPath = new File(container, mapping.getPath())
+				String fullPath = new File(mappingFile.getParentFile(), mapping.getPath())
 						.getCanonicalPath();
 				if (fullPath.equals(path)) {
 					return true;
