@@ -58,16 +58,19 @@ public class RepositoryFactory {
 	 * - for remote repository
 	 * 
 	 * @param url
+	 * @param name 
 	 * @return
 	 * @throws SdkException
 	 */
-	final public static IRepository getRepository(String url)
+	final public static IRepository createRepository(String url, String name)
 			throws SdkException {
 
+		IRepository r = null;
+		
 		String path = path(url, false, HTTP, HTTPS);
 		if (null != path) {
 			try {
-				return new HttpRepository(path, new URL(path));
+				r = new HttpRepository(path, name, new URL(path));
 			} catch (MalformedURLException e) {
 				throw new SdkException(e);
 			}
@@ -79,9 +82,10 @@ public class RepositoryFactory {
 		}
 		path = path(url, true, FILE);
 		if (null != path) {
-			return new FileBasedRepository(url, new File(path));
+			r = new FileBasedRepository(url, name, new File(path));
 		}
-		return null;
+		
+		return r;
 	}
 
 	/**

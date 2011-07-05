@@ -40,7 +40,9 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		this.baseDir = baseDir;
 
 		if (!baseDir.exists()) {
-			throw new IllegalStateException("error finding repository directory " + baseDir.getAbsolutePath());
+			throw new IllegalStateException(
+					"error finding repository directory "
+							+ baseDir.getAbsolutePath());
 		}
 	}
 
@@ -143,10 +145,9 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 			final RepositoryDescriptor d = loadRepositoryDescriptor(file
 					.getName());
 			if (d.isValid()) {
-				IRepository createRepository;
 				try {
-					createRepository = RepositoryFactory
-							.getRepository(d.name);
+					IRepository createRepository = RepositoryFactory
+							.createRepository(d.path, d.name);
 					arrayList.add(createRepository);
 				} catch (SdkException e) {
 					// skip loading of this repository
@@ -186,9 +187,9 @@ public class UserBasedRepositoryLoader implements IRepositoryLoader {
 		}
 	}
 
-	private RepositoryDescriptor loadRepositoryDescriptor(String repository) {
+	private RepositoryDescriptor loadRepositoryDescriptor(String id) {
 		try {
-			final File file = getDescriptorFile(repository);
+			final File file = getDescriptorFile(id);
 			if (!file.exists()) {
 				return null;
 			}
