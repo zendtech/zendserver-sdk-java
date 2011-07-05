@@ -20,10 +20,10 @@
          id="DeploymentBuilder"
          point="org.eclipse.core.resources.builders">
       <builder
-            callOnEmptyDelta="true"
-            hasNature="true"
+            callOnEmptyDelta="false"
+            hasNature="false"
             isConfigurable="true"
-            supportsConfigurations="true">
+            supportsConfigurations="false">
          <run
                class="org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder">
          </run>
