@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -119,11 +120,10 @@ public class DescriptorContainer implements IDescriptorContainer {
 	}
 
 	public void initializeMappingModel(IDocument document) {
-		if (fMappingModel == null) {
-			fMappingModel = MappingModelFactory.createModel(
-					new EclipseMappingModelLoader(document), fFile.getParent()
-							.getLocation().toFile());
-		}
+		InputStream stream = new ByteArrayInputStream(document.get().getBytes());
+		File container = fFile.getParent().getLocation().toFile();
+		fMappingModel = MappingModelFactory.createModel(new EclipseMappingModelLoader(document),
+				stream, container);
 	}
 
 	public void save() {

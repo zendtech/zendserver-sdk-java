@@ -33,14 +33,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingChangeEvent;
 import org.zend.sdklib.mapping.IMappingChangeEvent.Kind;
 import org.zend.sdklib.mapping.IMappingChangeListener;
 import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
-import org.zend.sdklib.mapping.IMappingModel;
 
 public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		IResourceDeltaVisitor, IMappingChangeListener {
@@ -53,11 +51,9 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 	protected boolean isChecked;
 	private boolean fDoRefresh = false;
 
-	protected IMappingModel mappingModel;
 	protected IDescriptorContainer model;
 
 	protected FormEditor editor;
-	protected boolean isDirty;
 
 	public PropertiesTreeSection(FormEditor editor, Composite parent,
 			FormToolkit toolkit, IDescriptorContainer model) {
@@ -152,7 +148,6 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 	private Control createClient() {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(new GridLayout(1, true));
-		mappingModel = model.getMappingModel();
 		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container,
 				SWT.CHECK));
 		fTreeViewer.setContentProvider(new TreeContentProvider());
@@ -165,12 +160,18 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
 
 					public void run() {
-						if (element instanceof IFile) {
-							IFile file = (IFile) event.getElement();
-							handleCheckStateChanged(file, event.getChecked());
-						} else if (element instanceof IFolder) {
-							IFolder folder = (IFolder) event.getElement();
-							handleCheckStateChanged(folder, event.getChecked());
+						try {
+							if (element instanceof IFile) {
+								IFile file = (IFile) event.getElement();
+								handleFileChecked(file, event.getChecked());
+							} else if (element instanceof IFolder) {
+								IContainer folder = (IContainer) event
+										.getElement();
+								handleFolderChecked(folder, event.getChecked());
+							}
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				});
@@ -184,13 +185,136 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		return container;
 	}
 
+	private void handleFolderChecked(IContainer container, boolean isChecked)
+			throws CoreException {
+		if (isChecked) {
+			List<IResource> checkedMembers = getMembers(container, true);
+			for (IResource member : checkedMembers) {
+				String name = getName(member);
+				removeIncludeMapping(name);
+				removeExcludeMapping(name);
+			}
+			addIncludeMapping(getName(container), false, false);
+		} else {
+			if (!removeIncludeMapping(getName(container))) {
+				handleFileChecked(container.getParent(), false);
+			}
+		}
+	}
+
+	private void handleFileChecked(IResource resource, boolean isChecked)
+			throws CoreException {
+		IContainer parent = resource.getParent();
+		boolean isParentChecked = fTreeViewer.getChecked(parent);
+		boolean isParentGrayed = fTreeViewer.getGrayed(parent);
+		if (isChecked) {
+			doHandleFileChecked(resource, parent, isParentChecked);
+		} else {
+			doHandleFileUnchecked(resource, parent, isParentChecked, isParentGrayed);
+		}
+	}
+
+	private void doHandleFileUnchecked(IResource resource, IContainer parent,
+			boolean isParentChecked, boolean isParentGrayed) throws CoreException {
+		if (isParentChecked || isParentGrayed) {
+			if (parent.getName().equals(getContainer().getName())) {
+				removeIncludeMapping(getName(resource));
+			} else if (parent.members().length <= 1) {
+				handleFolderChecked(parent, false);
+			} else {
+				List<IResource> checkedMembers = getMembers(parent, true);
+				if (checkedMembers.size() * 2 < parent.members().length) {
+					for (IResource member : parent.members()) {
+						String name = getName(member);
+						removeIncludeMapping(name);
+						removeExcludeMapping(name);
+					}
+					// handleFolderChecked(parent, false);
+					if (removeIncludeMapping(getName(parent))) {
+						doHandleFileUnchecked(parent, parent.getParent(),
+								fTreeViewer.getChecked(parent.getParent()),
+								fTreeViewer.getGrayed(parent.getParent()));
+					}
+					for (IResource checked : checkedMembers) {
+						addIncludeMapping(getName(checked), false, false);
+					}
+				} else {
+					addExcludeMapping(getName(resource), false, false);
+				}
+			}
+		} else {
+			removeIncludeMapping(getName(resource));
+		}
+	}
+
+	private void doHandleFileChecked(IResource resource, IContainer parent,
+			boolean isParentChecked) throws CoreException {
+		if (isParentChecked) {
+			removeExcludeMapping(getName(resource));
+		} else {
+			List<IResource> uncheckedMembers = getMembers(parent, false);
+
+			if (parent.members().length > 1
+					&& uncheckedMembers.size() * 2 < parent.members().length) {
+				for (IResource member : parent.members()) {
+					String name = getName(member);
+					removeIncludeMapping(name);
+					removeExcludeMapping(name);
+				}
+				addIncludeMapping(getName(parent), false, true);
+				for (IResource unchecked : uncheckedMembers) {
+					addExcludeMapping(getName(unchecked), false, false);
+				}
+			} else {
+				String name = getName(resource);
+				removeExcludeMapping(name);
+				addIncludeMapping(name, false, false);
+			}
+		}
+	}
+
+	private boolean addIncludeMapping(String name, boolean isGlobal, boolean isContent) {
+		return model.getMappingModel().addMapping(getFolder(), Type.INCLUDE, name, isGlobal,
+				isContent);
+	}
+
+	private boolean addExcludeMapping(String name, boolean isGlobal, boolean isContent) {
+		return model.getMappingModel().addMapping(getFolder(), Type.EXCLUDE, name, isGlobal,
+				isContent);
+	}
+
+	private boolean removeIncludeMapping(String name) {
+		return model.getMappingModel().removeMapping(getFolder(), Type.INCLUDE, name);
+	}
+
+	private boolean removeExcludeMapping(String name) {
+		return model.getMappingModel().removeMapping(getFolder(), Type.EXCLUDE, name);
+	}
+
+	private List<IResource> getMembers(IContainer container, boolean isChecked)
+			throws CoreException {
+		List<IResource> result = new ArrayList<IResource>();
+		IResource[] members = container.members();
+		for (IResource member : members) {
+			if (fTreeViewer.getChecked(member) == isChecked) {
+				result.add(member);
+			}
+		}
+		return result;
+	}
+
+	private String getName(IResource resource) {
+		return resource.getProjectRelativePath()
+				.makeRelativeTo(getContainer().getProjectRelativePath()).toPortableString();
+	}
+
 	private void initialize() {
 		if (fTreeViewer.getInput() == null) {
 			fTreeViewer.setUseHashlookup(true);
 			fTreeViewer.setInput(getContainer());
 		}
 		initializeCheckState();
-		mappingModel.addMappingChangeListener(this);
+		model.getMappingModel().addMappingChangeListener(this);
 	}
 
 	private void asyncRefresh() {
@@ -206,34 +330,6 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 				}
 			});
 		}
-	}
-
-	protected void handleCheckStateChanged(IResource resource, boolean checked) {
-		fOriginalResource = resource;
-		isChecked = checked;
-		boolean wasTopParentChecked = fTreeViewer.getChecked(fOriginalResource
-				.getParent());
-		if (!isChecked) {
-			resource = handleAllUnselected(resource, resource.getName());
-		}
-		fParentResource = resource;
-		handleBuildCheckStateChange(wasTopParentChecked);
-	}
-
-	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
-		IResource resource = fParentResource;
-		String resourceName = fParentResource.getProjectRelativePath()
-				.makeRelativeTo(getContainer().getProjectRelativePath())
-				.toPortableString();
-		if (isChecked) {
-			model.getMappingModel().addMapping(getFolder(), Type.INCLUDE,
-					new Mapping(resourceName, false, false));
-		} else {
-			model.getMappingModel().removeMapping(getFolder(), Type.INCLUDE,
-					resourceName);
-		}
-		// TODO add excluding
-		fParentResource = fOriginalResource = null;
 	}
 
 	protected IResource handleAllUnselected(IResource resource, String name) {
@@ -262,15 +358,16 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 	protected void initializeCheckState() {
 		uncheckAll();
 		List<IMapping> includes = new ArrayList<IMapping>();
-		IMappingEntry entry = mappingModel.getEntry(getFolder(), Type.INCLUDE);
+		IMappingEntry entry = model.getMappingModel().getEntry(getFolder(), Type.INCLUDE);
 		if (entry != null) {
 			includes.addAll(entry.getMappings());
 		}
 		List<IMapping> excludes = new ArrayList<IMapping>();
-		entry = mappingModel.getEntry(getFolder(), Type.EXCLUDE);
+		entry = model.getMappingModel().getEntry(getFolder(), Type.EXCLUDE);
 		if (entry != null) {
-			includes.addAll(entry.getMappings());
+			excludes.addAll(entry.getMappings());
 		}
+		excludes.addAll(model.getMappingModel().getDefaultExclusion());
 		initializeCheckState(includes, excludes);
 	}
 
@@ -356,6 +453,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 									if (resource instanceof IFolder) {
 										fTreeViewer.setSubtreeChecked(resource,
 												false);
+										fTreeViewer.collapseToLevel(resource, 1);
 									} else {
 										fTreeViewer.setChecked(resource, false);
 									}
@@ -403,7 +501,10 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			if (resource instanceof IFolder) {
 				if (include.isContent()) {
 					fTreeViewer.setSubtreeChecked(resource, true);
+					// fTreeViewer.setGrayChecked(resource, true);
 					fTreeViewer.setChecked(resource, false);
+					fTreeViewer.expandToLevel(resource, 1);
+					expandParents(resource);
 				} else {
 					fTreeViewer.setSubtreeChecked(resource, true);
 				}
@@ -413,24 +514,27 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		}
 	}
 
+	private void expandParents(IResource resource) {
+		if (!resource.getName().equals(getContainer().getName())) {
+			fTreeViewer.expandToLevel(resource, 1);
+			expandParents(resource.getParent());
+		}
+	}
+
 	public void refresh() {
 		initializeCheckState();
 	}
 
-	public boolean isDirty() {
-		return isDirty;
-	}
-
 	public void mappingChanged(IMappingChangeEvent event) {
-		// TODO handle model change in the UI
 		if (event.getChangeKind() != Kind.STORE) {
 			try {
-				mappingModel.store();
+				model.getMappingModel().store();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		refresh();
 	}
 
 }

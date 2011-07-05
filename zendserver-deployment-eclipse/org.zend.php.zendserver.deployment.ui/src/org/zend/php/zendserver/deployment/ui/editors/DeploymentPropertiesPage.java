@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -20,6 +21,23 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 			DeploymentDescriptorEditor editor, String id, String title) {
 		super(editor, id, title);
 		this.model = model;
+	}
+
+	@Override
+	public void refresh() {
+		appdirSection.refresh();
+		scriptsdirSection.refresh();
+	}
+
+	@Override
+	public void setActive(boolean active) {
+		if (active) {
+			DeploymentDescriptorEditor editor = ((DeploymentDescriptorEditor) getEditor());
+			IDocument doc = editor.getDocumentProvider().getDocument(
+					editor.getPropertiesInput());
+			model.initializeMappingModel(doc);
+		}
+		super.setActive(active);
 	}
 
 	@Override
@@ -45,12 +63,6 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 				toolkit, model);
 		scriptsdirSection = new ScriptsTreeSection(getEditor(), form.getBody(),
 				toolkit, model);
-	}
-
-	@Override
-	public void refresh() {
-		appdirSection.refresh();
-		scriptsdirSection.refresh();
 	}
 
 }
