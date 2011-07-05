@@ -21,7 +21,7 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_ZENDCLOUD_APPLICATION = "icons/sample.gif";
 	public static final String IMAGE_EXPORT_APPLICATION = "icons/sample.gif";
 
-	public static final String IMAGE_DESCRIPTOR_OVERVIEW = "icons/sample.gif";
+	public static final String IMAGE_DESCRIPTOR_OVERVIEW = "icons/obj16/overview_obj.gif";
 	public static final String IMAGE_DESCRIPTOR_PARAMETERS = "icons/sample.gif";
 	public static final String IMAGE_DESCRIPTOR_PREREQS = "icons/sample.gif";
 	public static final String IMAGE_DESCRIPTOR_REMOVAL = "icons/sample.gif";
@@ -47,10 +47,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_VARIABLE = "icons/sample.gif";
 
-	public static final String IMAGE_SCRIPT = "icons/sample.gif";
-	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/inactive.gif";
-
-	public static final String IMAGE_SCRIPT_TYPE = "icons/sample.gif";
+	public static final String IMAGE_SCRIPT = "icons/obj16/script_obj.gif";
+	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/obj16/script_dis_obj.gif";
+	public static final String IMAGE_SCRIPT_TYPE = "icons/obj16/req_obj.gif";
 
 	// The shared instance
 	private static Activator plugin;
