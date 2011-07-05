@@ -335,8 +335,11 @@ public class MappingModel implements IMappingModel {
 			throws IOException {
 		for (IMapping mapping : mappings) {
 			if (mapping.isGlobal()) {
-				String fileName = path.substring(path
-						.lastIndexOf(File.separator) + 1);
+				int index = path.lastIndexOf("/");
+				if (index == -1) {
+					index = path.lastIndexOf("\\");
+				}
+				String fileName = path.substring(index + 1);
 				if (mapping.getPath().equals(fileName)) {
 					return true;
 				}
