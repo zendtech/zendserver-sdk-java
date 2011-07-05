@@ -11,8 +11,6 @@ import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
-import org.zend.sdklib.repository.site.CategoryDef;
-import org.zend.sdklib.repository.site.ProviderDef;
 import org.zend.sdklib.repository.site.Site;
 
 /**
@@ -61,17 +59,13 @@ public class DiscoverApplicationCommand extends RepositoryAwareCommand {
 						final Object category = a.getCategory();
 						if (category != null) {
 							commandLine.getLog().info(
-									"\t\tCategory: "
-											+ ((CategoryDef) category)
-													.getLabel());
+									"\t\tCategory: " + category);
 						}
 
 						final Object provider = a.getProvider();
 						if (provider != null) {
-							commandLine.getLog().info(
-									"\tProvider: "
-											+ ((ProviderDef) provider)
-													.getLabel());
+							commandLine.getLog()
+									.info("\tProvider: " + provider);
 						}
 						commandLine.getLog().info(
 								"\tUpdate Range: " + a.getUpdateRange());
