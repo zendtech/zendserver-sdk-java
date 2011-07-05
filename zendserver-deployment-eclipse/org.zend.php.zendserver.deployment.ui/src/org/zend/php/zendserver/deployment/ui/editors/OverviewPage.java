@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +27,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -41,7 +45,6 @@ import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
 
-
 public class OverviewPage extends DescriptorEditorPage {
 
 	private TextField name;
@@ -54,33 +57,47 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField docRoot;
 	private TextField appDir;
 	private TextField scriptsDir;
-	
+
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
-	private ImageHyperlink exportPackageLink;
+	private FormText exportPackageLink;
 	private TreeViewer scriptsTree;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
-		super(editor, "overview", "Overview");
+		super(editor, Messages.OverviewPage_0, Messages.OverviewPage_1);
 		IDeploymentDescriptor descr = editor.getModel();
-		
-		name = addField(new TextField(descr, DeploymentDescriptorPackage.PKG_NAME, "Name"));
-		summary = addField(new TextField(descr, DeploymentDescriptorPackage.SUMMARY, "Summary"));
-		description = addField(new TextField(descr, DeploymentDescriptorPackage.PKG_DESCRIPTION, "Description"));
-		releaseVersion = addField(new TextField(descr, DeploymentDescriptorPackage.VERSION_RELEASE, "Release Version"));
-		apiVersion = addField(new TextField(descr, DeploymentDescriptorPackage.VERSION_API, "API Version"));
-		 
-		license = addField(new FileField(descr, DeploymentDescriptorPackage.EULA, "License", editor.getProject()));
-		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON, "Icon", editor.getProject()));
-		docRoot = addField(new FolderField(descr, DeploymentDescriptorPackage.DOCROOT, "Document root", editor.getProject()));
-		scriptsDir = addField(new TextField(descr, DeploymentDescriptorPackage.SCRIPTSDIR, "Scripts directory"));
-		appDir = addField(new TextField(descr, DeploymentDescriptorPackage.APPDIR, "Application dir"));
+
+		name = addField(new TextField(descr,
+				DeploymentDescriptorPackage.PKG_NAME, Messages.OverviewPage_2));
+		summary = addField(new TextField(descr,
+				DeploymentDescriptorPackage.SUMMARY, Messages.OverviewPage_3));
+		description = addField(new TextField(descr,
+				DeploymentDescriptorPackage.PKG_DESCRIPTION,
+				Messages.OverviewPage_4));
+		releaseVersion = addField(new TextField(descr,
+				DeploymentDescriptorPackage.VERSION_RELEASE, "Release Version")); //$NON-NLS-1$
+		apiVersion = addField(new TextField(descr,
+				DeploymentDescriptorPackage.VERSION_API, "API Version")); //$NON-NLS-1$
+
+		license = addField(new FileField(descr,
+				DeploymentDescriptorPackage.EULA,
+				"License", editor.getProject())); //$NON-NLS-1$
+		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
+				Messages.OverviewPage_8, editor.getProject()));
+		docRoot = addField(new FolderField(descr,
+				DeploymentDescriptorPackage.DOCROOT, Messages.OverviewPage_9,
+				editor.getProject()));
+		scriptsDir = addField(new TextField(descr,
+				DeploymentDescriptorPackage.SCRIPTSDIR,
+				Messages.OverviewPage_10));
+		appDir = addField(new TextField(descr,
+				DeploymentDescriptorPackage.APPDIR, Messages.OverviewPage_11));
 	}
 
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		
+
 		ScrolledForm form = managedForm.getForm();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
@@ -89,56 +106,62 @@ public class OverviewPage extends DescriptorEditorPage {
 		createGeneralInformationSection(managedForm);
 		createDeploymentScriptsSection(managedForm);
 		createTestingSection(managedForm);
+		createExportingSection(managedForm);
 		createActions();
-		
+
 		form.reflow(true);
 	}
-	
+
 	private void createDeploymentScriptsSection(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		
-		Section section = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText("Deployment Scripts");
-		section.setDescription("Scripts to invoke during various phases of deployment.");
+
+		Section section = toolkit.createSection(form.getBody(),
+				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
+		section.setText(Messages.OverviewPage_12);
+		section.setDescription(Messages.OverviewPage_13);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(3, false));
-		
+
 		TableWrapData td = new TableWrapData();
 		td.grabHorizontal = true;
 		td.grabVertical = true;
 		td.rowspan = 2;
 		td.heightHint = 350;
 		section.setLayoutData(td);
-		
+
 		scriptsDir.create(sectionClient, toolkit);
-		
-		Label label = toolkit.createLabel(sectionClient, "Double-click on deployment phase to edit script.");
+
+		Label label = toolkit.createLabel(sectionClient,
+				Messages.OverviewPage_14);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
-		
+
 		scriptsTree = new TreeViewer(sectionClient, SWT.BORDER);
 		Tree tree = scriptsTree.getTree();
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 3;
 		tree.setLayoutData(gd);
-		
+
 		ScriptsContentProvider cp = new ScriptsContentProvider();
 		scriptsTree.setContentProvider(cp);
 		scriptsTree.setLabelProvider(new ScriptsLabelProvider(this));
 		scriptsTree.setInput(cp.model);
 		scriptsTree.expandAll();
 		scriptsTree.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			public void doubleClick(DoubleClickEvent event) {
-				Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
+				Object element = ((IStructuredSelection) event.getSelection())
+						.getFirstElement();
 				if (element instanceof ScriptsContentProvider.Script) {
 					ScriptsContentProvider.Script script = (Script) element;
 					IFile file = getScript(script.name);
-					if (! file.exists()) {
-						boolean canCreate = MessageDialog.openQuestion(getSite().getShell(), "Open script", "Selected script doesn't exist. Would you like to create it?");
+					if (!file.exists()) {
+						boolean canCreate = MessageDialog.openQuestion(
+								getSite().getShell(), Messages.OverviewPage_15,
+								Messages.OverviewPage_16);
 						if (!canCreate) {
 							return;
 						}
@@ -150,59 +173,62 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void openScript(final IFile file) {
-		Job job = new Job("Creating Deployment Script") {
+		Job job = new Job(Messages.OverviewPage_17) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (! file.exists()) {
+					if (!file.exists()) {
 						createScript(file, monitor);
 						refreshScriptsTree();
 					}
 					openEditor(file);
 				} catch (CoreException e) {
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
 				}
 				return Status.OK_STATUS;
 			}
-			
+
 		};
 		job.setUser(true);
 		job.schedule();
 	}
-	
+
 	protected void refreshScriptsTree() {
 		scriptsTree.getControl().getDisplay().asyncExec(new Runnable() {
-			
+
 			public void run() {
 				scriptsTree.refresh(); // update created script icon
 			}
 		});
 	}
 
-	private void createScript(IFile file, IProgressMonitor monitor) throws CoreException {
+	private void createScript(IFile file, IProgressMonitor monitor)
+			throws CoreException {
 		// TODO use SDK to create script file?
 		file.create(new ByteArrayInputStream(new byte[0]), true, monitor);
-		
+
 	}
-	
+
 	protected void openEditor(final IFile file) throws PartInitException {
 		final IWorkbenchPage page = getSite().getPage();
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 
 			public void run() {
 				try {
-					IEditorDescriptor desc = PlatformUI.getWorkbench().
-					        getEditorRegistry().getDefaultEditor(file.getName());
+					IEditorDescriptor desc = PlatformUI.getWorkbench()
+							.getEditorRegistry()
+							.getDefaultEditor(file.getName());
 					page.openEditor(new FileEditorInput(file), desc.getId());
 				} catch (PartInitException e) {
 					// TODO Log exception
 					e.printStackTrace();
 				}
 			}
-			
+
 		});
-		
+
 	}
 
 	protected IFile getScript(String scriptName) {
@@ -210,78 +236,130 @@ public class OverviewPage extends DescriptorEditorPage {
 		return editor.getProject().getFile(scriptName);
 	}
 
+	private void createExportingSection(IManagedForm managedForm) {
+		ScrolledForm form = managedForm.getForm();
+		FormToolkit toolkit = managedForm.getToolkit();
+		Section section = createStaticSection(toolkit, form.getBody(),
+				Messages.OverviewPage_18);
+		Composite container = createStaticSectionClient(toolkit, section);
+		exportPackageLink = createClient(container, Messages.OverviewPage_20,
+				toolkit, new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
+						new ExportApplicationAction().run();
+					}
+				});
+		section.setClient(container);
+	}
+
+	/**
+	 * @param toolkit
+	 * @param parent
+	 * @return
+	 */
+	protected Composite createStaticSectionClient(FormToolkit toolkit,
+			Composite parent) {
+		Composite container = toolkit.createComposite(parent, SWT.NONE);
+		container.setLayout(FormLayoutFactory
+				.createSectionClientTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		container.setLayoutData(data);
+		return container;
+	}
+
+	protected final Section createStaticSection(FormToolkit toolkit,
+			Composite parent, String text) {
+		Section section = toolkit.createSection(parent,
+				ExpandableComposite.TITLE_BAR);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setText(text);
+		section.setLayout(FormLayoutFactory
+				.createClearTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);
+		return section;
+	}
+
+	protected final FormText createClient(Composite section, String content,
+			FormToolkit toolkit, IHyperlinkListener hyperLink) {
+		FormText text = toolkit.createFormText(section, true);
+		try {
+			text.setText(content, true, false);
+		} catch (SWTException e) {
+			text.setText(e.getMessage(), false, false);
+		}
+		text.addHyperlinkListener(hyperLink);
+		return text;
+	}
+
 	private void createTestingSection(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		
-		Section section = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText("Testing");
+
+		Section section = toolkit.createSection(form.getBody(),
+				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
+		section.setText(Messages.OverviewPage_21);
+		section.setDescription(Messages.OverviewPage_22);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
-		
-		runApplicationLink = toolkit.createImageHyperlink(sectionClient, SWT.NONE);
-		runApplicationLink.setText("Run application.");
-		runApplicationLink.setImage(Activator.getImageDescriptor(Activator.IMAGE_RUN_APPLICATION).createImage());
-		
-		runInZendCloudLink = toolkit.createImageHyperlink(sectionClient, SWT.NONE);
-		runInZendCloudLink.setText("Deploy application to Zend Cloud.");
-		runInZendCloudLink.setImage(Activator.getImageDescriptor(Activator.IMAGE_ZENDCLOUD_APPLICATION).createImage());
-		
-		exportPackageLink = toolkit.createImageHyperlink(sectionClient, SWT.NONE);
-		exportPackageLink.setText("Export application package to file system.");
-		exportPackageLink.setImage(Activator.getImageDescriptor(Activator.IMAGE_EXPORT_APPLICATION).createImage());
+
+		runApplicationLink = toolkit.createImageHyperlink(sectionClient,
+				SWT.NONE);
+		runApplicationLink.setText(Messages.OverviewPage_23);
+		runApplicationLink.setImage(Activator.getImageDescriptor(
+				Activator.IMAGE_RUN_APPLICATION).createImage());
+
+		runInZendCloudLink = toolkit.createImageHyperlink(sectionClient,
+				SWT.NONE);
+		runInZendCloudLink.setText(Messages.OverviewPage_24);
+		runInZendCloudLink.setImage(Activator.getImageDescriptor(
+				Activator.IMAGE_ZENDCLOUD_APPLICATION).createImage());
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		
-		Section section = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText("General Information");
-		section.setDescription("Information about the application package.");
+
+		Section section = toolkit.createSection(form.getBody(),
+				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
+		section.setText(Messages.OverviewPage_25);
+		section.setDescription(Messages.OverviewPage_26);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(3, false));
-		
+
 		TableWrapData td = new TableWrapData();
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
-		
+
 		name.create(sectionClient, toolkit);
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
 		releaseVersion.create(sectionClient, toolkit);
-		
+
 		license.create(sectionClient, toolkit);
-		
+
 		icon.create(sectionClient, toolkit);
-		
+
 		docRoot.create(sectionClient, toolkit);
 		appDir.create(sectionClient, toolkit);
 	}
-	
+
 	private void createActions() {
 		runApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				new RunApplicationAction().run();
 			}
 		});
-		
+
 		runInZendCloudLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				new DeployAppInCloudAction().run();
 			}
 		});
-		
-		exportPackageLink.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				new ExportApplicationAction().run();
-			}
-		});
 	}
-	
+
 	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
@@ -289,12 +367,12 @@ public class OverviewPage extends DescriptorEditorPage {
 			refresh();
 		}
 	}
-	
+
 	@Override
 	public void setFocus() {
 		name.setFocus();
 	}
-	
+
 	public void refresh() {
 		name.refresh();
 		summary.refresh();
