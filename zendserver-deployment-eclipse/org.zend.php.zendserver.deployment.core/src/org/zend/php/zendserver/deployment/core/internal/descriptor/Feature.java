@@ -2,6 +2,10 @@ package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
 public class Feature {
 
+	public static final int NONE = 0;
+	
+	public static final int SET_EMPTY_TO_NULL = 1;
+	
 	public String xpath;
 	
 	public String attrName;
@@ -10,11 +14,18 @@ public class Feature {
 
 	public int id;
 	
+	public int flags;
+	
 	public Feature(String nodePath, String attrName, Class type, int id) {
+		this(nodePath, attrName, type, id, NONE);
+	}
+	
+	public Feature(String nodePath, String attrName, Class type, int id, int flags) {
 		this.xpath = nodePath;
 		this.attrName = attrName;
 		this.type = type;
 		this.id = id;
+		this.flags = flags;
 	}
 
 	@Override

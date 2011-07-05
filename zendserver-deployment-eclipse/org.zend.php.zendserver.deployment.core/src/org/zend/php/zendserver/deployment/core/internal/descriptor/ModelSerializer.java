@@ -182,6 +182,8 @@ public class ModelSerializer {
 				String value = obj.get(feature);
 				if (value != null) {
 					setString(doc, feature.xpath, feature.attrName, value);
+				} else {
+					removeString(doc, feature.xpath, feature.attrName);
 				}
 			}
 		}
@@ -279,6 +281,23 @@ public class ModelSerializer {
 	private void removeNode(Node node) {
 		Node parent = node.getParentNode();
 		parent.removeChild(node);
+	}
+	
+	private void removeString(Node node, String xpath, String attrName) throws XPathExpressionException {
+		Node target = node;
+		if (xpath != null) {
+			target = getNode(node, xpath);
+		}
+		
+		if (target == null) { // if node not found, then there's nothing to remove
+			return;
+		}
+		
+		if (attrName == null) {
+			target.getParentNode().removeChild(target);
+		} else {
+			target.getAttributes().removeNamedItem(attrName);
+		}
 	}
 	
 	private void setString(Node node, String xpath, String attrName, String value) throws XPathExpressionException {
