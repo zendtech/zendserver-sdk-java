@@ -295,8 +295,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						&& !ProjectResourcesWriter.DESCRIPTOR.equals(name)
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
-						newModel.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, name, true, false);
+						newModel.addMapping(IMappingModel.SCRIPTSDIR, 
+								Type.INCLUDE, name, false, true);
 					} else {
 						newModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
 								name, false, false);
