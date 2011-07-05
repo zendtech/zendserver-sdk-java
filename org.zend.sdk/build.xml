@@ -206,10 +206,6 @@
         	<arg line="docs/conflicts.xml"/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
-        <java classname="org.zend.sdkhelp.repository.GenerateDrupalSite">
-        	<arg line="docs/site.xml"/>
-        	<classpath refid="org.zend.sdk.classpath" />
-        </java>
     </target>
 
 	<target name="generateBasicRepository" description="basic Zend Framework Repository">
