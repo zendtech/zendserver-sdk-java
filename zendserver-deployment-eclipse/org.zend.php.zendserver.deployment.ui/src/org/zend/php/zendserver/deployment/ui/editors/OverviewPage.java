@@ -6,10 +6,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -81,14 +79,9 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
+		super.createFormContent(managedForm);
+		
 		ScrolledForm form = managedForm.getForm();
-		form.setText(getTitle());
-		IToolBarManager mgr = form.getToolBarManager();
-		mgr.add(new RunApplicationAction());
-		mgr.add(new DeployAppInCloudAction());
-		mgr.add(new ExportApplicationAction());
-		mgr.update(true);
-
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);

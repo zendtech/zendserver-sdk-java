@@ -18,7 +18,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
-import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 

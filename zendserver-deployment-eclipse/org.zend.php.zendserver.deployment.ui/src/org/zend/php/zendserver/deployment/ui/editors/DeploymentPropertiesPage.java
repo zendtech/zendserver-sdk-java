@@ -1,15 +1,11 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
-import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
-import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
 public class DeploymentPropertiesPage extends DescriptorEditorPage {
 
@@ -42,16 +38,10 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
-		ScrolledForm form = managedForm.getForm();
-		form.setText(getTitle());
-		IToolBarManager mgr = form.getToolBarManager();
-		mgr.add(new RunApplicationAction());
-		mgr.add(new DeployAppInCloudAction());
-		mgr.add(new ExportApplicationAction());
-		mgr.update(true);
-
+		super.createFormContent(managedForm);
+		
 		GridLayout layout = new GridLayout(2, true);
-
+		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(layout);
 		createTreeSections(managedForm);
 	}

@@ -3,8 +3,6 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
-import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
 

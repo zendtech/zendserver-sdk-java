@@ -1,8 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;

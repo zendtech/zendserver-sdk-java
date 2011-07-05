@@ -12,16 +12,10 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
-import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
-import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
 
 public class PersistentResourcesPage extends DescriptorEditorPage {
@@ -38,17 +32,11 @@ public class PersistentResourcesPage extends DescriptorEditorPage {
 		this.editor = editor;
 	}
 	protected void createFormContent(IManagedForm managedForm) {
-		ScrolledForm form = managedForm.getForm();
-		form.setText(getTitle());
-		form.setImage(Activator.getDefault().getImage(Activator.IMAGE_DESCRIPTOR_REMOVAL));
-		IToolBarManager mgr = form.getToolBarManager();
-		mgr.add(new RunApplicationAction());
-		mgr.add(new DeployAppInCloudAction());
-		mgr.add(new ExportApplicationAction());
-		mgr.update(true);
-
+		super.createFormContent(managedForm);
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(layout);
 		
 		persistent = new ResourceListSection(editor, managedForm, "Persistent resources", "Persistent resources to be kept during upgrade.") {
