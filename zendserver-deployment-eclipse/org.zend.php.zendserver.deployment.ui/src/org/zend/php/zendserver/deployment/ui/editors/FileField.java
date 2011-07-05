@@ -1,7 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -9,7 +8,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
@@ -25,15 +23,12 @@ public class FileField extends TextField {
 	}
 
 	@Override
-	protected void createControls(Composite parent, FormToolkit toolkit) {
-		// todo add creation 
-		label = toolkit.createLabel(parent, labelTxt + ": ");
-		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "");
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		text.setLayoutData(gd);
+		gd.horizontalSpan = labelTxt != null ? 1 : 2;
 		licenseBrowseButton = toolkit.createButton(parent, "Browse...", SWT.PUSH);
-		controlDecoration = new ControlDecoration(text, SWT.LEFT);
 	}
 	
 	@Override

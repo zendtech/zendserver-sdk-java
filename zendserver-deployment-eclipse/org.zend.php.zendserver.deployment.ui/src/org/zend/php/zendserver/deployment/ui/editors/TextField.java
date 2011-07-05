@@ -10,7 +10,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
@@ -52,20 +51,29 @@ public class TextField {
 	}
 	
 	protected void createControls(Composite parent, FormToolkit toolkit) {
-		GridData gd;
-		if (labelTxt != null) {
-			label = toolkit.createLabel(parent, labelTxt + ": ");
-			gd = new GridData();
-			label.setLayoutData(gd);
-		}
-		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		text = toolkit.createText(parent, "");
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = labelTxt != null ? 2 : 3;
-		text.setLayoutData(gd);
-		controlDecoration = new ControlDecoration(text, SWT.LEFT);		
+		createLabel(parent, toolkit);
+		createTextControl(parent, toolkit);
+		createControlDecoration();		
 	}
 	
+	protected void createControlDecoration() {
+		controlDecoration = new ControlDecoration(text, SWT.LEFT);
+	}
+
+	protected void createLabel(Composite parent, FormToolkit toolkit) {
+		if (labelTxt != null) {
+			label = toolkit.createLabel(parent, labelTxt);
+			label.setLayoutData(new GridData());
+		}
+	}
+	
+	protected void createTextControl(Composite parent, FormToolkit toolkit) {
+		text = toolkit.createText(parent, "");
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalSpan = labelTxt != null ? 2 : 3;
+		text.setLayoutData(gd);
+	}
+
 	public void setErrorMessage(String message) {
 		if (message == null) {
 			controlDecoration.hide();
@@ -127,7 +135,6 @@ public class TextField {
 		if (text.getVisible() == visible) {
 			return;
 		}
-		
 		text.setVisible(visible);
 		((GridData)text.getLayoutData()).exclude = !visible;
 		
