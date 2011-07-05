@@ -60,11 +60,11 @@ public class DescriptorContainer implements IDescriptorContainer {
 		
 		try {
 			isLoading = true;
-			System.out.println("load");
+			//System.out.println("load");
 			long a= System.currentTimeMillis();
 			lm.load(src, fModel);
 			long b = System.currentTimeMillis();
-			System.out.println("load "+(b-a)+"msec");
+			//System.out.println("load "+(b-a)+"msec");
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
