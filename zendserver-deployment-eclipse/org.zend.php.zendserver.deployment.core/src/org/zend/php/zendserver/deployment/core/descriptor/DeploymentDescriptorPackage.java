@@ -92,27 +92,27 @@ public static final int PACKAGE_ID = 0;
 
 	public static final int DEPENDENCY_NAME_ID = 21;
 	
-	public static final Feature DEPENDENCY_NAME = new Feature("name", null, String.class, DEPENDENCY_NAME_ID);
+	public static final Feature DEPENDENCY_NAME = new Feature("name", null, String.class, DEPENDENCY_NAME_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	public static final int DEPENDENCY_EQUALS_ID = 22;	
 	
-	public static final Feature DEPENDENCY_EQUALS = new Feature("equals", null, String.class, DEPENDENCY_EQUALS_ID);
+	public static final Feature DEPENDENCY_EQUALS = new Feature("equals", null, String.class, DEPENDENCY_EQUALS_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	public static final int DEPENDENCY_MIN_ID = 23;
 	
-	public static final Feature DEPENDENCY_MIN = new Feature("min", null, String.class, DEPENDENCY_MIN_ID);
+	public static final Feature DEPENDENCY_MIN = new Feature("min", null, String.class, DEPENDENCY_MIN_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	public static final int DEPENDENCY_MAX_ID = 24;
 	
-	public static final Feature DEPENDENCY_MAX = new Feature("max", null, String.class, DEPENDENCY_MAX_ID);
+	public static final Feature DEPENDENCY_MAX = new Feature("max", null, String.class, DEPENDENCY_MAX_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	public static final int DEPENDENCY_EXCLUDE_ID = 25;
 	
-	public static final Feature DEPENDENCY_EXCLUDE = new Feature("exclude", null, String.class, DEPENDENCY_EXCLUDE_ID);
+	public static final Feature DEPENDENCY_EXCLUDE = new Feature("exclude", null, String.class, DEPENDENCY_EXCLUDE_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	public static final int DEPENDENCY_CONFLICTS_ID = 26;
 	
-	public static final Feature DEPENDENCY_CONFLICTS = new Feature("conflicts", null, String.class, DEPENDENCY_CONFLICTS_ID);
+	public static final Feature DEPENDENCY_CONFLICTS = new Feature("conflicts", null, String.class, DEPENDENCY_CONFLICTS_ID, Feature.SET_EMPTY_TO_NULL);
 	
 	
 	
