@@ -54,6 +54,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	private String title;
 	private String description;
 	private MasterDetailsProvider provider;
+	private Button removeButton;
 
 	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor, MasterDetailsProvider prov, String title, String description) {
 		this.editor = editor;
@@ -110,16 +111,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				viewer.setSelection(new StructuredSelection(result));
 			}
 		});
-		
-		
-		// Set the default button size
-		addButton.setFont(JFaceResources.getDialogFont());
-		PixelConverter converter = new PixelConverter(addButton);
-		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 
-		
-		Button removeButton = toolkit.createButton(buttons, "Remove", SWT.NONE);
+		removeButton = toolkit.createButton(buttons, "Remove", SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		removeButton.setLayoutData(gd);
 		removeButton.addSelectionListener(new SelectionAdapter() {
@@ -129,17 +122,12 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 		
-		// Set the default button size
-		removeButton.setFont(JFaceResources.getDialogFont());
-		converter = new PixelConverter(removeButton);
-		widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		
 		viewer = new TableViewer(table);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 				managedForm.getForm().reflow(true);
+				updateButtonsEnabledState();
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
@@ -151,6 +139,11 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				refreshViewer(event.target);
 			}
 		});
+	}
+	
+	private void updateButtonsEnabledState() {
+		boolean hasSelection = viewer.getSelection().isEmpty();
+		removeButton.setEnabled(hasSelection);
 	}
 
 	protected void refreshViewer(final Object target) {
@@ -165,6 +158,9 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	protected void removeElement(ISelection selection) {
 		IStructuredSelection sel = (IStructuredSelection) selection;
 		Object elem = sel.getFirstElement();
+		if (elem == null) {
+			return;
+		}
 		
 		Feature feature = DeploymentDescriptorFactory.getFeature(elem);
 		editor.getModel().getChildren(feature).remove(elem);
@@ -186,5 +182,6 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	public void refresh() {
 		viewer.refresh();
 		detailsPart.refresh();
+		updateButtonsEnabledState();
 	}
 }
