@@ -102,7 +102,6 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			result.write(entryString.getBytes());
 			result.write('\n');
 		}
-		System.out.println(result.toString());
 		return result.toByteArray();
 	}
 

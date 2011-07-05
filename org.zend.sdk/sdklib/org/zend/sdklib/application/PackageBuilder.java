@@ -196,7 +196,6 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					} else {
 						position = fullMapping.lastIndexOf(File.separator);
 					}
-					System.out.println();
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
 				}
