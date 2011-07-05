@@ -65,7 +65,7 @@ public class ProjectResourcesWriter {
 	/**
 	 * Writing descriptor file to the root project
 	 * 
-	 * @param name
+	 * @param id
 	 *            - name of the project
 	 * @param withContent
 	 *            - whether to write other contents than scripts and descriptor

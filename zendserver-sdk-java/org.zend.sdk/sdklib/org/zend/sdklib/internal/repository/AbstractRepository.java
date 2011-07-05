@@ -27,11 +27,16 @@ import org.zend.sdklib.repository.site.Site;
 public abstract class AbstractRepository implements IRepository {
 
 	public static final String SITE_XML = "site.xml";
-	
+
 	/**
 	 * An id of the repository
 	 */
 	private final String id;
+
+	/**
+	 * Descriptive name of this repository
+	 */
+	private final String name;
 
 	/**
 	 * An access to artifacts in site. Must be implemented by sub classes
@@ -42,8 +47,9 @@ public abstract class AbstractRepository implements IRepository {
 	public abstract InputStream getArtifactStream(String path)
 			throws IOException;
 
-	public AbstractRepository(String id) {
+	public AbstractRepository(String id, String name) {
 		this.id = id;
+		this.name = name;
 	}
 
 	/*
@@ -82,5 +88,9 @@ public abstract class AbstractRepository implements IRepository {
 	@Override
 	public String getId() {
 		return this.id;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

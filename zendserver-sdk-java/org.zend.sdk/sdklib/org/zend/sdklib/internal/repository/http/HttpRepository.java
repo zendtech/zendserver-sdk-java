@@ -28,23 +28,28 @@ public class HttpRepository extends AbstractRepository {
 	/**
 	 * Base URL of this application site
 	 * 
-	 * @param baseURL
+	 * @param id
+	 * @param name
+	 * @param url
 	 */
-	public HttpRepository(String id, URL url) {
-		super(id);
+	public HttpRepository(String id, String name, URL url) {
+		super(id, name);
 		this.baseURL = url;
 	}
 
 	/**
 	 * Base URL of this application site
 	 * 
+	 * @param url
+	 * @param name
+	 * 
 	 * @param baseURL
 	 */
-	public HttpRepository(String id) {
-		this(id, formURL(id));
+	public HttpRepository(String id, String name) {
+		this(id, name, formURL(id));
 	}
 
-	private static URL formURL(String id)  {
+	private static URL formURL(String id) {
 		try {
 			return new URL(id);
 		} catch (MalformedURLException e) {

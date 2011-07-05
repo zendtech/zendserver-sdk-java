@@ -28,6 +28,11 @@ public interface IRepository {
 	public String getId();
 	
 	/**
+	 * @return the name of the repository
+	 */
+	public String getName();
+	
+	/**
 	 * @return true if the repository is currently accessible
 	 */
 	public boolean isAccessible();

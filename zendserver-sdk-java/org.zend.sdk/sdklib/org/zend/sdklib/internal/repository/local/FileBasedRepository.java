@@ -45,9 +45,13 @@ public class FileBasedRepository extends AbstractRepository {
 	 */
 	private final File basedir;
 
-	public FileBasedRepository(String id, File basedir) {
-		super(id);
+	public FileBasedRepository(String id, String name, File basedir) {
+		super(id, name);
 		this.basedir = basedir;
+	}
+
+	public FileBasedRepository(String id, File basedir) {
+		this(id, "default-file", basedir);
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class FileBasedRepository extends AbstractRepository {
 	}
 
 	/**
-	 * @return base dir of this local repository 
+	 * @return base dir of this local repository
 	 */
 	public File getBasedir() {
 		return basedir;
