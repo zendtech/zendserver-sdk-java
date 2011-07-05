@@ -32,6 +32,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 
 	public DescriptorContainer(IFile file) {
 		lm = new ModelSerializer();
+		lm.setOutput(new FileStore(file));
 		fFile = file;
 	}
 
@@ -100,7 +101,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 		this.fDocument = document;
 		lm.setOutput(new JFaceDocumentStore(document));
 		
-		final IDeploymentDescriptor model = getDescriptorModel();
+		IDeploymentDescriptor model = getDescriptorModel();
 		model.addListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(ChangeEvent event) {
@@ -108,28 +109,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 					return;
 				}
 				
-				try {
-					System.out.println("serialize");
-					long a = System.currentTimeMillis();
-					lm.serialize(model, event);
-					long b = System.currentTimeMillis();
-					System.out.println("serialize "+(b-a)+"msec\nwrite");
-					lm.write();
-					long c = System.currentTimeMillis();
-					System.out.println("write "+(c-b)+"msec");
-				} catch (XPathExpressionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (TransformerFactoryConfigurationError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (TransformerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				save(event);
 			}
 		});
 	}
@@ -147,7 +127,32 @@ public class DescriptorContainer implements IDescriptorContainer {
 	}
 
 	public void save() {
-		// TODO Auto-generated method stub
-		
+		save(null);
+	}
+	
+	private void save(ChangeEvent event) {
+		IDeploymentDescriptor model = getDescriptorModel();
+		try {
+			//System.out.println("serialize");
+			long a = System.currentTimeMillis();
+			lm.serialize(model, event);
+			long b = System.currentTimeMillis();
+			//System.out.println("serialize "+(b-a)+"msec\nwrite");
+			lm.write();
+			long c = System.currentTimeMillis();
+			//System.out.println("write "+(c-b)+"msec");
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

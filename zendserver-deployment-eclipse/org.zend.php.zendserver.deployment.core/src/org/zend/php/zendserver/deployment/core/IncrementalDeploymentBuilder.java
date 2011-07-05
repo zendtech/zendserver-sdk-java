@@ -18,7 +18,8 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args,
 			IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
+		//System.out.println("Build "+getProject()+" "+getDelta(getProject()).getResource());
+		
 		return null;
 	}
 

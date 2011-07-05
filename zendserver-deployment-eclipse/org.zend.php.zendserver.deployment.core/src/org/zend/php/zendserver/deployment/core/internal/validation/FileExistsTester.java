@@ -6,8 +6,8 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class FileExistsTester extends PropertyTester {
 
-	public FileExistsTester(Feature[] strings) {
-		super(ValidationStatus.ERROR, strings);
+	public FileExistsTester() {
+		super(ValidationStatus.ERROR);
 	}
 
 	@Override
@@ -16,7 +16,11 @@ public class FileExistsTester extends PropertyTester {
 			return null;
 		}
 		if (value instanceof String) {
-			File f = new File((String) value);
+			String s = (String) value;
+			if ("".equals(s.trim())) {
+				return null;
+			}
+			File f = new File(s);
 			if (f.exists()) {
 				return null;
 			}
