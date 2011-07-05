@@ -32,7 +32,7 @@ public class ScriptsLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ScriptsContentProvider.ScriptType) {
-			return null;//Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_TYPE);
+			return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_TYPE);
 		
 		} else if (element instanceof ScriptsContentProvider.Script) {
 			ScriptsContentProvider.Script script = (Script) element;

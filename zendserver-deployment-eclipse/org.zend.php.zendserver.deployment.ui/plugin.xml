@@ -8,7 +8,7 @@
             class="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"
             contributorClass="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditorContributor"
             filenames="deployment.xml"
-            icon="icons/sample.gif"
+            icon="icons/obj16/application_obj.gif"
             id="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"
             name="Deployment Descriptor">
       </editor>
