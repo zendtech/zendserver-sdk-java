@@ -228,9 +228,6 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public boolean isExcluded(String folder, String path) throws IOException {
 		if (path != null && folder != null) {
-			for (IMapping mapping : defaultExclusion) {
-				System.out.println(mapping.getPath() + " is global: " + mapping.isGlobal());
-			}
 			if (isInternalExcluded(path, defaultExclusion)) {
 				return true;
 			}
@@ -340,7 +337,6 @@ public class MappingModel implements IMappingModel {
 			if (mapping.isGlobal()) {
 				String fileName = path.substring(path
 						.lastIndexOf(File.separator) + 1);
-				System.out.println("filename: " + fileName);
 				if (mapping.getPath().equals(fileName)) {
 					return true;
 				}
