@@ -54,7 +54,7 @@ public class TextField {
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		GridData gd;
 		if (labelTxt != null) {
-			label = toolkit.createLabel(parent, labelTxt);
+			label = toolkit.createLabel(parent, labelTxt + ": ");
 			gd = new GridData();
 			label.setLayoutData(gd);
 		}
