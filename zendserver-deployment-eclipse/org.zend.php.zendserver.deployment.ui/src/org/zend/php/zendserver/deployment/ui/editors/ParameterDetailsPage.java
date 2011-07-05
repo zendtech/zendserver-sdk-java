@@ -141,8 +141,13 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		id.setInput(input);
 		defaultValue.setInput(input);
+		readonly.setInput(input);
+		required.setInput(input);
 		display.setInput(input);
 		description.setInput(input);
+		defaultCombo.setInput(input);
+		type.setInput(input);
+		identical.setInput(input);
 		refresh();
 	}
 

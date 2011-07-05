@@ -120,5 +120,9 @@ public class TextField {
 		((GridData)label.getLayoutData()).exclude = visible;
 		
 	}
+
+	public void setText(String string) {
+		text.setText(string);
+	}
 	
 }

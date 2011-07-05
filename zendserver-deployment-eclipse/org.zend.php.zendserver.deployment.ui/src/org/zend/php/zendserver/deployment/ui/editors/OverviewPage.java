@@ -75,8 +75,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		license = addField(new FileField(descr, DeploymentDescriptorPackage.EULA, "License", editor.getProject()));
 		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON, "Icon", editor.getProject()));
 		docRoot = addField(new FolderField(descr, DeploymentDescriptorPackage.DOCROOT, "Document root", editor.getProject()));
-		scriptsDir = addField(new FolderField(descr, DeploymentDescriptorPackage.SCRIPTSDIR, "Scripts directory", editor.getProject()));
-		appDir = addField(new FolderField(descr, DeploymentDescriptorPackage.APPDIR, "Application dir", editor.getProject()));
+		scriptsDir = addField(new TextField(descr, DeploymentDescriptorPackage.SCRIPTSDIR, "Scripts directory"));
+		appDir = addField(new TextField(descr, DeploymentDescriptorPackage.APPDIR, "Application dir"));
 	}
 
 	@Override
