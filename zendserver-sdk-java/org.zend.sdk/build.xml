@@ -215,28 +215,23 @@
 	<target name="generateBasicRepository" description="basic Zend Framework Repository">
 
 		<mkdir dir="tmp"/>
-		<property name="quickstart.dir" value="tmp/quickstart-1.11"/>
+		<property name="quickstart.dir" value="tmp/zf"/>
 		<property name="repository.dir" value="tmp/repository"/>
 
-		<get dest="tmp/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip"/>		
-		<unzip src="tmp/ZendFrameworkQuickstart.zip" dest="tmp"/>
-		<move todir="${quickstart.dir}" includeemptydirs="true">
-		    <fileset dir="tmp/ZendFrameworkQuickstart-20100208"/>
-		</move>
-
-        <java classname="org.zend.sdkhelp.repository.CreateQuickStartDescriptor">
-        	<arg line="${quickstart.dir}/deployment.xml"/>
+        <java classname="org.zend.sdkcli.Main">
+        	<arg line="create project -n helloworld -d ${quickstart.dir}"/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
 		<mkdir dir="${repository.dir}"/>
-        <java classname="org.zend.sdkhelp.repository.CreateQuickStartPackage">
-        	<arg line="${quickstart.dir}"/>
-        	<arg line="${repository.dir}"/>
+        <java classname="org.zend.sdkcli.Main">
+        	<arg line="create package -p ${quickstart.dir} -d ${repository.dir}"/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
-        <java classname="org.zend.sdkhelp.repository.CreateQuickStartRepository">
-        	<arg line="${repository.dir}/site.xml"/>
-        	<arg line="${repository.dir}/quickstart-1.0.zpk" />
+        <java classname="org.zend.sdkcli.Main">
+        	<arg line="generate repository"/>
+        	<arg line="-t helpers/org/zend/sdkhelp/repository/quickstart.xml"/>
+        	<arg line="-o ${repository.dir}" />
+        	<arg line="-p ${repository.dir}/helloworld-1.0.zpk" />
         	<arg line=""/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
@@ -246,8 +241,7 @@
 		</move>
 		
 		<delete dir="tmp"/> 
-    </target>
-		
+    </target>		
 	
 	<target name="buildSDK">
 		<mkdir dir="${sdk.output.dir}" />
