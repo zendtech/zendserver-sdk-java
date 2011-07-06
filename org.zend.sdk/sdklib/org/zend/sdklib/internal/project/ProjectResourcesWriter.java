@@ -26,8 +26,12 @@ import javax.xml.bind.PropertyException;
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.descriptor.PackageDescription;
 import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
+import org.zend.sdklib.library.IChangeNotifier;
+import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
@@ -37,7 +41,7 @@ import org.zend.sdklib.mapping.MappingModelFactory;
  * Project creation and update handling including descriptor, scripts and
  * application resources
  */
-public class ProjectResourcesWriter {
+public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	public static final String DESCRIPTOR = "deployment.xml";
 
@@ -55,11 +59,21 @@ public class ProjectResourcesWriter {
 	 * @param isZend
 	 */
 	public ProjectResourcesWriter(String name) {
+		super();
+		this.name = name;
+	}
+
+	public ProjectResourcesWriter(String name, IChangeNotifier notifier) {
+		super(notifier);
 		this.name = name;
 	}
 
 	public ProjectResourcesWriter(File projectPath) {
 		this(getProjectName(new File(projectPath, DESCRIPTOR)));
+	}
+
+	public ProjectResourcesWriter(File projectPath, IChangeNotifier notifier) {
+		this(getProjectName(new File(projectPath, DESCRIPTOR)), notifier);
 	}
 
 	/**
@@ -79,6 +93,15 @@ public class ProjectResourcesWriter {
 	 */
 	public void writeDescriptor(File destination) throws IOException,
 			PropertyException, JAXBException {
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+				"Creating deployment descriptor...", -1));
+		
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
@@ -90,6 +113,8 @@ public class ProjectResourcesWriter {
 			writeDescriptor(new FileOutputStream(descrFile));
 		}
 		updateDescriptor(descrFile);
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
+				"Creating deployment descriptor..."));
 	}
 
 	/**
@@ -126,7 +151,15 @@ public class ProjectResourcesWriter {
 		if (withScripts == null) {
 			return;
 		}
-
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+				"Creating deployment scripts...", -1));
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		File destination = getScriptsDirectory(container);
 		if (destination != null && !destination.isDirectory()) {
 			destination.mkdirs();
@@ -146,10 +179,21 @@ public class ProjectResourcesWriter {
 			throw new IllegalArgumentException(MessageFormat.format(
 					"script with name {0} cannot be found", withScripts));
 		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
+				"Creating deployment scripts..."));
 	}
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader)
 			throws IOException, JAXBException {
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+				"Creating default deployment.properites file...", -1));
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
 				: MappingModelFactory.createModel(loader, container);
 		if (container.isDirectory()) {
@@ -170,6 +214,8 @@ public class ProjectResourcesWriter {
 			}
 			model.store();
 		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
+				"Creating default deployment.properites file..."));
 	}
 
 	private void updateDescriptor(File descrFile) throws IOException,
