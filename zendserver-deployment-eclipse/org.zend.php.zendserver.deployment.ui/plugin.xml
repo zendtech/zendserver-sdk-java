@@ -11,6 +11,9 @@
             icon="icons/obj16/application_obj.gif"
             id="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"
             name="Deployment Descriptor">
+         <contentTypeBinding
+               contentTypeId="org.zend.php.zendserver.deployment.ui.deploymentDescriptor">
+         </contentTypeBinding>
       </editor>
    </extension>
    <extension
@@ -105,6 +108,23 @@
             id="org.zend.php.zendserver.deployment.ui.wizard1"
             name="Deployment Package">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-names="deployment.xml"
+            id="org.zend.php.zendserver.deployment.ui.deploymentDescriptor"
+            name="Deployment Descriptor"
+            priority="high">
+         <describer
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter
+                  name="element"
+                  value="package">
+            </parameter>
+         </describer>
+      </content-type>
    </extension>
 
 </plugin>
