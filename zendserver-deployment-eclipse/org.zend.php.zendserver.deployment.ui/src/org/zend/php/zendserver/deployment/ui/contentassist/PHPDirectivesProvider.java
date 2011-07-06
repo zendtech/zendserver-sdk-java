@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * PHP Directives from http://www.php.net/manual/en/ini.list.php
+ *
+ */
 public class PHPDirectivesProvider {
 
 	public static class PHPDirective {
