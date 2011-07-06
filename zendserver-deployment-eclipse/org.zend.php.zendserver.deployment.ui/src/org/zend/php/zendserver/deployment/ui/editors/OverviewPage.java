@@ -49,9 +49,14 @@ import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
 import org.zend.sdklib.application.ZendProject;
+import org.zend.sdklib.mapping.IMappingModel;
 
 public class OverviewPage extends DescriptorEditorPage {
 
+	private static final String LINK_DEBUG_PHP = "debugPHP"; //$NON-NLS-1$
+	private static final String LINK_RUN_PHP = "runPHP"; //$NON-NLS-1$
+	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
+	
 	private TextField name;
 	private TextField summary;
 	private TextField description;
@@ -64,7 +69,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField scriptsDir;
 
 	private ImageHyperlink runApplicationLink;
-	private ImageHyperlink runInZendCloudLink;
+	private ImageHyperlink debugApplicationLink;
 	private TreeViewer scriptsTree;
 	
 	private ResourceListSection persistent;
@@ -288,14 +293,19 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	protected IFile getScript(String scriptName) {
+		IMappingModel mapping = editor.getDescriptorContainer().getMappingModel();
+		if (mapping == null) {
+			return editor.getProject().getFile(scriptName);
+		}
+		
 		try {
-			String folder = editor.getDescriptorContainer().getMappingModel().getFolder(scriptName);
+			String folder = mapping.getPath(scriptName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// TODO use mapping.getScriptPath(scriptName)
-		return editor.getProject().getFile(scriptName);
+		
+		return null;
 	}
 
 	private void createExportingSection(IManagedForm managedForm) {
@@ -307,9 +317,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		createClient(container, Messages.OverviewPage_PackageAndExport, toolkit,
 				new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
-						if ("export".equals(e.data))  {
-							new ExportApplicationAction().run();
-						}
+						handleLinkClick(e.data);
 					}
 				});
 		section.setClient(container);
@@ -372,12 +380,14 @@ public class OverviewPage extends DescriptorEditorPage {
 		runApplicationLink.setText(Messages.OverviewPage_LaunchingPHPApp);
 		runApplicationLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_RUN_APPLICATION).createImage());
+		runApplicationLink.setHref(LINK_RUN_PHP);
 
-		runInZendCloudLink = toolkit.createImageHyperlink(sectionClient,
+		debugApplicationLink = toolkit.createImageHyperlink(sectionClient,
 				SWT.NONE);
-		runInZendCloudLink.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
-		runInZendCloudLink.setImage(Activator.getImageDescriptor(
-				Activator.IMAGE_ZENDCLOUD_APPLICATION).createImage());
+		debugApplicationLink.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
+		debugApplicationLink.setImage(Activator.getImageDescriptor(
+				Activator.IMAGE_DEBUG_APPLICATION).createImage());
+		debugApplicationLink.setHref(LINK_DEBUG_PHP);
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm) {
@@ -413,15 +423,27 @@ public class OverviewPage extends DescriptorEditorPage {
 	private void createActions() {
 		runApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				new RunApplicationAction().run();
+				handleLinkClick(e.getHref());
 			}
 		});
 
-		runInZendCloudLink.addHyperlinkListener(new HyperlinkAdapter() {
+		debugApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				new DeployAppInCloudAction().run();
+				handleLinkClick(e.getHref());
 			}
 		});
+	}
+
+	protected void handleLinkClick(Object href) {
+		if (LINK_DEBUG_PHP.equals(href)) {
+			new DeployAppInCloudAction().run();
+		} else if (LINK_RUN_PHP.equals(href)) {
+			new RunApplicationAction().run();
+		} else if (LINK_EXPORT.equals(href)) {
+			new ExportApplicationAction(editor.getProject()).run();
+		} else if (href instanceof String){
+			editor.setActivePage((String)href);
+		}
 	}
 
 	@Override
