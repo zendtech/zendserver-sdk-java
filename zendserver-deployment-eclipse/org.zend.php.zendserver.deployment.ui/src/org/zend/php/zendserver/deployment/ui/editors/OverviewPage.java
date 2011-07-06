@@ -39,7 +39,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -105,9 +104,9 @@ public class OverviewPage extends DescriptorEditorPage {
 		super.createFormContent(managedForm);
 
 		ScrolledForm form = managedForm.getForm();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 2;
-		form.getBody().setLayout(layout);
+		form.getBody().setLayout(
+				FormLayoutFactory.createFormTableWrapLayout(true, 2));
+
 
 		createGeneralInformationSection(managedForm);
 		createDeploymentScriptsSection(managedForm);
