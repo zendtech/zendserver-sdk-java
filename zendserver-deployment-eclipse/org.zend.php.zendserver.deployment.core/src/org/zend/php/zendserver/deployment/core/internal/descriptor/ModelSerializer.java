@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -296,7 +297,10 @@ public class ModelSerializer {
 		if (attrName == null) {
 			target.getParentNode().removeChild(target);
 		} else {
-			target.getAttributes().removeNamedItem(attrName);
+			NamedNodeMap attrs = target.getAttributes();
+			if (attrs.getNamedItem(attrName) != null) {
+				attrs.removeNamedItem(attrName);
+			}
 		}
 	}
 	
