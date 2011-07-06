@@ -37,12 +37,14 @@ public class MappingModel implements IMappingModel {
 	private List<IMappingChangeListener> listeners;
 	private IMappingLoader loader;
 	private File mappingFile;
+	private boolean isLoaded;
 
 	public MappingModel(IMappingLoader loader, File mappingFile)
 			throws IOException {
 		this.loader = loader;
 		this.mappingFile = mappingFile;
 		this.listeners = new ArrayList<IMappingChangeListener>();
+		this.isLoaded = mappingFile.exists();
 		this.entries = mappingFile.exists() ? loader.load(new FileInputStream(mappingFile))
 				: loader.load(null);
 		this.defaultExclusion = loader.getDefaultExclusion();
@@ -241,6 +243,11 @@ public class MappingModel implements IMappingModel {
 		return false;
 	}
 
+	@Override
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -250,7 +257,9 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public void load(InputStream stream, File mappingFile) throws IOException {
 		this.mappingFile = mappingFile;
-		this.entries = loader.load(stream);
+		this.isLoaded = mappingFile.exists();
+		this.entries = mappingFile.exists() ? loader.load(new FileInputStream(mappingFile))
+				: loader.load(null);
 	}
 
 	/*

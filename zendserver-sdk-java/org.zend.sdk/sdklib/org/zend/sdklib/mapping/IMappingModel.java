@@ -150,6 +150,12 @@ public interface IMappingModel {
 	boolean isExcluded(String folder, String path) throws IOException;
 
 	/**
+	 * @return return <code>true</code> if model was loaded from the provided
+	 *         mapping file; otherwise return <code>false</code>
+	 */
+	boolean isLoaded();
+
+	/**
 	 * @return all folder names specified in the resource mapping
 	 */
 	List<String> getFolders();
