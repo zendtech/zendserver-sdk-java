@@ -11,8 +11,8 @@ public class AppTreeSection extends PropertiesTreeSection {
 	public AppTreeSection(FormEditor editor, Composite parent,
 			FormToolkit toolkit, IDescriptorContainer model) {
 		super(editor, parent, toolkit, model);
-		setText("Appdir mapping");
-		setDescription("Information about appdir folder content in deployment package");
+		setText("Application Directory Content");
+		setDescription("Information about application directory content in deployment package");
 	}
 
 	@Override

@@ -11,8 +11,8 @@ public class ScriptsTreeSection extends PropertiesTreeSection {
 	public ScriptsTreeSection(FormEditor editor, Composite parent,
 			FormToolkit toolkit, IDescriptorContainer model) {
 		super(editor, parent, toolkit, model);
-		setText("Scripts mapping");
-		setDescription("Information about scriptsdir folder content in deployment package");
+		setText("Scripts Directory Content");
+		setDescription("Information about scripts directory content in deployment package");
 	}
 
 	@Override
