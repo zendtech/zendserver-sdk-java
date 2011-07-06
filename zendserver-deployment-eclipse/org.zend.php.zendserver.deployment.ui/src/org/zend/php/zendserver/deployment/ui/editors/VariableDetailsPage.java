@@ -13,6 +13,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public class VariableDetailsPage implements IDetailsPage {
@@ -23,8 +24,8 @@ public class VariableDetailsPage implements IDetailsPage {
 	private TextField value;	
 	
 	public VariableDetailsPage(DeploymentDescriptorEditor editor) {
-		name = new TextField(null, DeploymentDescriptorPackage.VAR_NAME, "Name");
-		value = new TextField(null, DeploymentDescriptorPackage.VALUE, "Value");
+		name = new TextField(null, DeploymentDescriptorPackage.VAR_NAME, Messages.VariableDetailsPage_Name);
+		value = new TextField(null, DeploymentDescriptorPackage.VALUE, Messages.VariableDetailsPage_Value);
 	}
 	
 	public void initialize(IManagedForm form) {
@@ -84,7 +85,7 @@ public class VariableDetailsPage implements IDetailsPage {
 		
 		FormToolkit toolkit = mform.getToolkit();
 		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
-		s1.setText("Variable details");
+		s1.setText(Messages.VariableDetailsPage_Details);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
 		

@@ -3,11 +3,12 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class VariablesMasterDetailsProvider implements MasterDetailsProvider {
 
 	public String getDescription() {
-		return "Variables to pass to application deployment scripts.";
+		return Messages.VariablesMasterDetailsProvider_VariablesDescr;
 	}
 	
 	public Object[] doGetElements(Object input) {
@@ -22,7 +23,7 @@ public class VariablesMasterDetailsProvider implements MasterDetailsProvider {
 		int variablesSize = model.getVariables().size() + 1;
 
 		IVariable param = new Variable();
-		param.setName("variable" + variablesSize);
+		param.setName(Messages.VariablesMasterDetailsProvider_DefaultVariableName + variablesSize);
 		
 		return param;
 	}

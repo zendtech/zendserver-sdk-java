@@ -39,7 +39,7 @@ public class TextField {
 		isRefresh = true;
 		try {
 			String value = target != null ? target.get(key) : null;
-			text.setText(value == null ? "" : value);
+			text.setText(value == null ? "" : value); //$NON-NLS-1$
 		} finally {
 			isRefresh = false;
 		}
@@ -68,7 +68,7 @@ public class TextField {
 	}
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createText(parent, "");
+		text = toolkit.createText(parent, ""); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		text.setLayoutData(gd);
@@ -105,7 +105,7 @@ public class TextField {
 				
 				String text = ((Text)e.widget).getText();
 				if (target != null) {
-					if (("".equals(text) && (key.flags & Feature.SET_EMPTY_TO_NULL) > 0)) {
+					if (("".equals(text) && (key.flags & Feature.SET_EMPTY_TO_NULL) > 0)) { //$NON-NLS-1$
 						target.set(key, null);
 					} else {
 						target.set(key, text);
@@ -151,7 +151,7 @@ public class TextField {
 			}
 		} else {
 			textValue = text.getText();
-			text.setText("");
+			text.setText(""); //$NON-NLS-1$
 		}
 	}
 

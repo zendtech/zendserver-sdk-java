@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public class VersionControl {
@@ -23,7 +24,7 @@ public class VersionControl {
 	public static final int RANGE = 4;
 	public static final int EXCLUDE = 8;
 	
-	public String[] choices = {"=", "!=", "Range"};
+	public String[] choices = {Messages.VersionControl_Equals, Messages.VersionControl_Conflicts, Messages.VersionControl_Range};
 	public int[] choiceTypes = {EQUALS, CONFLICTS, RANGE};
 	
 	private IModelObject input;
@@ -52,12 +53,12 @@ public class VersionControl {
 		}
 		
 		if ((modes & RANGE) == RANGE) {
-			min = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_MIN, "Minimum");
-			max = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_MAX, "Maximum");
+			min = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_MIN, Messages.VersionControl_Minimum);
+			max = new TextField(null, DeploymentDescriptorPackage.DEPENDENCY_MAX, Messages.VersionControl_Maximum);
 		}
 		
 		if ((modes & EXCLUDE) == EXCLUDE) {
-			exclude = new ListField(null, DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE, "Exclude");
+			exclude = new ListField(null, DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE, Messages.VersionControl_Exclude);
 		}
 	}
 
