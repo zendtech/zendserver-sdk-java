@@ -23,9 +23,11 @@ public class DetailsPageProvider implements
 	private IDetailsPage varPage;
 
 	private DeploymentDescriptorEditor editor;
+	private Class type;
 	
-	public DetailsPageProvider(DeploymentDescriptorEditor editor) {
+	public DetailsPageProvider(DeploymentDescriptorEditor editor, Class type) {
 		this.editor = editor;
+		this.type = type;
 	}
 	
 	public Object getPageKey(Object object) {
@@ -34,7 +36,11 @@ public class DetailsPageProvider implements
 
 	public IDetailsPage getPage(Object key) {
 		Class clazz = (Class) key;
-
+		
+		if ((type != null) && (! type.isAssignableFrom(clazz))) {
+			return null;
+		}
+		
 		if (IVariable.class.isAssignableFrom(clazz)) {
 			if (varPage == null) {
 				varPage = new VariableDetailsPage(editor);

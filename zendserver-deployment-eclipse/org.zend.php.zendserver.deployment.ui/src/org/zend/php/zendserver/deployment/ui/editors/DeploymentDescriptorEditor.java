@@ -9,6 +9,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.IDocument;
@@ -61,10 +62,11 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", Messages.DeploymentDescriptorEditor_Variables)); //$NON-NLS-1$
-			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
+			//addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", Messages.DeploymentDescriptorEditor_Variables)); //$NON-NLS-1$
+			//addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
+			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
-			addPage(new DeploymentPropertiesPage(fModel, this, "properties", Messages.DeploymentDescriptorEditor_Package)); //$NON-NLS-1$
+			addPage(new DeploymentPropertiesPage(fModel, this, "package", Messages.DeploymentDescriptorEditor_Package)); //$NON-NLS-1$
 			propertiesSourcePage = new SourcePage(this);
 			addPage(propertiesSourcePage, getPropertiesInput());
 			descriptorSourcePage = new SourcePage(this);
@@ -166,7 +168,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		});
 
 		IFile propsFile = (IFile) fModel.getFile().getParent()
-				.findMember(MappingModelFactory.DEPLOYMENT_PROPERTIES);
+				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
 		propertiesInput = new FileEditorInput(propsFile);
 		try {
 			fDocumentProvider.connect(getPropertiesInput());

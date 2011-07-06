@@ -140,8 +140,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	}
 	
 	private void updateButtonsEnabledState() {
-		boolean hasSelection = viewer.getSelection().isEmpty();
-		removeButton.setEnabled(hasSelection);
+		boolean isEmpty = viewer.getSelection().isEmpty();
+		removeButton.setEnabled(!isEmpty);
 	}
 
 	protected void refreshViewer(final Object target) {
@@ -168,7 +168,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.setPageProvider(new DetailsPageProvider(editor));
+		detailsPart.setPageProvider(new DetailsPageProvider(editor, provider.getType()));
 	}
 
 	@Override

@@ -27,4 +27,8 @@ public class VariablesMasterDetailsProvider implements MasterDetailsProvider {
 		
 		return param;
 	}
+
+	public Class getType() {
+		return IVariable.class;
+	}
 }

@@ -61,4 +61,8 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 		
 		return sd.getResult()[0];
 	}
+
+	public Class getType() {
+		return null;
+	}
 }

@@ -26,4 +26,8 @@ public class ParametersMasterDetailsProvider implements MasterDetailsProvider {
 		param.setType(IParameter.STRING);
 		return param;
 	}
+
+	public Class getType() {
+		return IParameter.class;
+	}
 }

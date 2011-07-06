@@ -9,5 +9,7 @@ public interface MasterDetailsProvider {
 	Object[] doGetElements(Object input);
 	
 	Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block);
+
+	Class getType();
 	
 }
