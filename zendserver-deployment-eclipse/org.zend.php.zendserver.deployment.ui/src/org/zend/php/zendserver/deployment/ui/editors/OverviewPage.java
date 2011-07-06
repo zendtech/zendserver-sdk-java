@@ -43,6 +43,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
@@ -69,16 +70,16 @@ public class OverviewPage extends DescriptorEditorPage {
 	private ResourceListSection persistent;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
-		super(editor, Messages.OverviewPage_0, Messages.OverviewPage_1);
+		super(editor, "overview", Messages.OverviewPage_Overview); //$NON-NLS-1$
 		IDeploymentDescriptor descr = editor.getModel();
 
 		name = addField(new TextField(descr,
-				DeploymentDescriptorPackage.PKG_NAME, Messages.OverviewPage_2));
+				DeploymentDescriptorPackage.PKG_NAME, Messages.OverviewPage_Name));
 		summary = addField(new TextField(descr,
-				DeploymentDescriptorPackage.SUMMARY, Messages.OverviewPage_3));
+				DeploymentDescriptorPackage.SUMMARY, Messages.OverviewPage_Summary));
 		description = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
-				Messages.OverviewPage_4));
+				Messages.OverviewPage_Description));
 		releaseVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_RELEASE, "Release Version")); //$NON-NLS-1$
 		apiVersion = addField(new TextField(descr,
@@ -88,15 +89,15 @@ public class OverviewPage extends DescriptorEditorPage {
 				DeploymentDescriptorPackage.EULA,
 				"License", editor.getProject())); //$NON-NLS-1$
 		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
-				Messages.OverviewPage_8, editor.getProject()));
+				Messages.OverviewPage_Icon, editor.getProject()));
 		docRoot = addField(new FolderField(descr,
-				DeploymentDescriptorPackage.DOCROOT, Messages.OverviewPage_9,
+				DeploymentDescriptorPackage.DOCROOT, Messages.OverviewPage_Docroot,
 				editor.getProject()));
 		scriptsDir = addField(new TextField(descr,
 				DeploymentDescriptorPackage.SCRIPTSDIR,
-				Messages.OverviewPage_10));
+				Messages.OverviewPage_Scriptsdir));
 		appDir = addField(new TextField(descr,
-				DeploymentDescriptorPackage.APPDIR, Messages.OverviewPage_11));
+				DeploymentDescriptorPackage.APPDIR, Messages.OverviewPage_Appdir));
 	}
 
 	@Override
@@ -119,7 +120,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void createPersistentResourcesSection(IManagedForm managedForm) {
-		persistent = new ResourceListSection(editor, managedForm, "Persistent resources", "Persistent resources to be kept during upgrade.") {
+		persistent = new ResourceListSection(editor, managedForm, Messages.OverviewPage_PersistentResources, Messages.OverviewPage_PersistentResourcesDescription) {
 			
 			@Override
 			public Object[] getElements(Object input) {
@@ -131,7 +132,7 @@ public class OverviewPage extends DescriptorEditorPage {
 			protected void addPath() {
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
-				String[] newPaths = OpenFileDialog.openMany(shell, root, "Add path", "Select path:", null);
+				String[] newPaths = OpenFileDialog.openMany(shell, root, Messages.OverviewPage_AddPath, Messages.OverviewPage_SelectPath, null);
 				if (newPaths == null) {
 					return;
 				}
@@ -147,7 +148,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
-				String newPath = OpenFileDialog.open(shell, root, "Change path", "Select path:", currPath.toString());
+				String newPath = OpenFileDialog.open(shell, root, Messages.OverviewPage_ChangePath, Messages.OverviewPage_SelectPath, currPath.toString());
 				if (newPath == null) {
 					return;
 				}
@@ -170,8 +171,8 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText(Messages.OverviewPage_12);
-		section.setDescription(Messages.OverviewPage_13);
+		section.setText(Messages.OverviewPage_DeploymentScripts);
+		section.setDescription(Messages.OverviewPage_ScriptsDescription);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(3, false));
@@ -186,7 +187,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		scriptsDir.create(sectionClient, toolkit);
 
 		Label label = toolkit.createLabel(sectionClient,
-				Messages.OverviewPage_14);
+				Messages.OverviewPage_Doubleclick);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -212,8 +213,8 @@ public class OverviewPage extends DescriptorEditorPage {
 					IFile file = getScript(script.name);
 					if (!file.exists()) {
 						boolean canCreate = MessageDialog.openQuestion(
-								getSite().getShell(), Messages.OverviewPage_15,
-								Messages.OverviewPage_16);
+								getSite().getShell(), Messages.OverviewPage_OpenScript,
+								Messages.OverviewPage_SelectedScriptDoesntExist);
 						if (!canCreate) {
 							return;
 						}
@@ -225,7 +226,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void openScript(final String name) {
-		Job job = new Job(Messages.OverviewPage_17) {
+		Job job = new Job(Messages.OverviewPage_CreatingDeploymentScript) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -301,9 +302,9 @@ public class OverviewPage extends DescriptorEditorPage {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createStaticSection(toolkit, form.getBody(),
-				Messages.OverviewPage_18);
+				Messages.OverviewPage_Exporting);
 		Composite container = createStaticSectionClient(toolkit, section);
-		createClient(container, Messages.OverviewPage_20, toolkit,
+		createClient(container, Messages.OverviewPage_PackageAndExport, toolkit,
 				new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						new ExportApplicationAction().run();
@@ -358,21 +359,21 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText(Messages.OverviewPage_21);
-		section.setDescription(Messages.OverviewPage_22);
+		section.setText(Messages.OverviewPage_Testing);
+		section.setDescription(Messages.OverviewPage_TestingDescr);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
 
 		runApplicationLink = toolkit.createImageHyperlink(sectionClient,
 				SWT.NONE);
-		runApplicationLink.setText(Messages.OverviewPage_23);
+		runApplicationLink.setText(Messages.OverviewPage_LaunchingPHPApp);
 		runApplicationLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_RUN_APPLICATION).createImage());
 
 		runInZendCloudLink = toolkit.createImageHyperlink(sectionClient,
 				SWT.NONE);
-		runInZendCloudLink.setText(Messages.OverviewPage_24);
+		runInZendCloudLink.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
 		runInZendCloudLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_ZENDCLOUD_APPLICATION).createImage());
 	}
@@ -383,8 +384,8 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText(Messages.OverviewPage_25);
-		section.setDescription(Messages.OverviewPage_26);
+		section.setText(Messages.OverviewPage_GeneralInfo);
+		section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(3, false));
