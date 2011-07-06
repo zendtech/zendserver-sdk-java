@@ -327,6 +327,75 @@ public class MappingModel implements IMappingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.zend.sdklib.mapping.IMappingModel#getPath(java.lang.String)
+	 */
+	@Override
+	public String getPath(String name) throws IOException {
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == Type.INCLUDE) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping include : mappings) {
+					File includeFile = new File(mappingFile.getParentFile(), include.getPath());
+					if (includeFile.isDirectory()) {
+						File[] members = includeFile.listFiles();
+						for (File member : members) {
+							String result = findFileInDirectory(member, name, entry.getFolder());
+							if (result != null) {
+								return result;
+							}
+						}
+					} else {
+						if (includeFile.getName().equals(name)) {
+							String result = includeFile.getCanonicalPath();
+							if (!isExcluded(entry.getFolder(), result)) {
+								return result;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.sdklib.mapping.IMappingModel#getPackagePath(java.lang.String)
+	 */
+	@Override
+	public String getPackagePath(String path) throws IOException {
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == Type.INCLUDE) {
+				List<IMapping> mappings = entry.getMappings();
+				for (IMapping include : mappings) {
+					if (isExcluded(entry.getFolder(),
+							new File(mappingFile.getParentFile(), path).getCanonicalPath())) {
+						continue;
+					}
+					String includePath = new File(include.getPath()).getPath();
+					path = new File(path).getPath();
+					if (includePath.equals(path)) {
+						return new File(entry.getFolder(), path).getPath();
+					} else {
+						if (path.startsWith(includePath)) {
+							if (include.isContent()) {
+								int index = includePath.length();
+								path = path.substring(index, path.length());
+							}
+							return new File(entry.getFolder(), path).getPath();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.zend.sdklib.mapping.IMappingModel#addMappingChangeListener(org.zend
 	 * .sdklib.mapping.IMappingChangeListener)
@@ -385,6 +454,26 @@ public class MappingModel implements IMappingModel {
 			}
 		}
 		return false;
+	}
+
+	private String findFileInDirectory(File file, String name, String folder) throws IOException {
+		String result = null;
+		if (!isExcluded(folder, file.getCanonicalPath())) {
+			if (file.isDirectory()) {
+				File[] members = file.listFiles();
+				for (File member : members) {
+					result = findFileInDirectory(member, name, folder);
+					if (result != null) {
+						return result;
+					}
+				}
+			} else {
+				if (file.getName().equals(name)) {
+					result = file.getPath();
+				}
+			}
+		}
+		return result;
 	}
 
 }

@@ -255,6 +255,18 @@ public class TestMappingModel {
 		assertEquals("data", model.getFolder(folder));
 	}
 
+	@Test
+	public void testGetPath() throws IOException {
+		IMappingModel model = MappingModelFactory.createDefaultModel(new File(FOLDER, "Project1"));
+		assertNotNull(model.getPath("inner_public"));
+	}
+
+	@Test
+	public void testGetPackagePath() throws IOException {
+		IMappingModel model = MappingModelFactory.createDefaultModel(new File(FOLDER, "Project1"));
+		assertTrue(model.getPackagePath("public//inner_public").startsWith("appdir"));
+	}
+
 	private int getSize(IMappingModel model, String folder, Type type) {
 		return model.getEntry(folder, type).getMappings().size();
 	}
