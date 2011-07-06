@@ -99,9 +99,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File result = new File(location, name + EXTENSION);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
-			model = model == null ? createDefaultModel() : model;
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-					"Package creation", "Creating deployment package...",
+			if (!model.isLoaded()) {
+				createDefaultModel();
+			}
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Package creation",
+					"Creating " + name + " deployment package...",
 					calculateTotalWork()));
 			File descriptorFile = new File(container,
 					ProjectResourcesWriter.DESCRIPTOR);
@@ -282,28 +284,26 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		return p;
 	}
 
-	private IMappingModel createDefaultModel() throws IOException {
-		IMappingModel newModel = loader == null ? MappingModelFactory.createDefaultModel(container)
-				: MappingModelFactory.createModel(loader, container);
+	private void createDefaultModel() throws IOException {
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsdirName(container);
 			File[] files = container.listFiles();
 			for (File file : files) {
 				String name = file.getName();
-				if (!newModel.isExcluded(null, name)
+				if (!model.isExcluded(null, name)
 						&& !ProjectResourcesWriter.DESCRIPTOR.equals(name)
 						&& !name.toLowerCase().contains("test")) {
 					if (name.equals(scriptdir)) {
-						newModel.addMapping(IMappingModel.SCRIPTSDIR, 
+						model.addMapping(IMappingModel.SCRIPTSDIR,
 								Type.INCLUDE, name, false, true);
 					} else {
-						newModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
 								name, false, false);
 					}
 				}
 			}
 			if (scriptdir != null
-					&& newModel
+					&& model
 							.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE)
 							.getMappings().size() == 0) {
 				notifier.statusChanged(new BasicStatus(StatusCode.WARNING,
@@ -312,7 +312,6 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				log.warning("Scriptsdir declared in descriptor file does not exist in the project");
 			}
 		}
-		return newModel;
 	}
 
 	private int calculateTotalWork() throws IOException {
