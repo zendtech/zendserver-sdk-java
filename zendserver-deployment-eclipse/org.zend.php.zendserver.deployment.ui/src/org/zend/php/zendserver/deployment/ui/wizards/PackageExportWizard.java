@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -19,7 +20,7 @@ import org.zend.sdklib.application.PackageBuilder;
 public class PackageExportWizard extends Wizard implements IExportWizard {
 
 	private PackageExportPage parametersPage;
-
+	
 	public PackageExportWizard() {
 		parametersPage = new PackageExportPage();
 	}
@@ -28,6 +29,10 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		setNeedsProgressMonitor(false);
 		setWindowTitle("Export Deployment Package");
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_DEPLOY_WIZARD));
+	}
+	
+	public void setProject(IProject project) {
+		parametersPage.setSelection(project);
 	}
 
 	@Override

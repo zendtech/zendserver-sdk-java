@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -73,6 +74,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private Combo directoryField;
 	private Button browseButton;
 	private CheckboxTableViewer tableViewer;
+	private IResource initialSelection;
 
 	protected PackageExportPage() {
 		super("Package Export");
@@ -96,6 +98,10 @@ public class PackageExportPage extends WizardPage implements Listener {
 				validatePage();
 			}
 		});
+		if (initialSelection != null) {
+			tableViewer.setSelection(new StructuredSelection(initialSelection));
+			tableViewer.setChecked(initialSelection, true);
+		}
 
 		Label directoryLabel = new Label(container, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -114,6 +120,10 @@ public class PackageExportPage extends WizardPage implements Listener {
 		browseButton.addListener(SWT.Selection, this);
 		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
+		if (initialSelection != null) {
+			directoryField.setFocus();
+		}
+		
 		setControl(container);
 		validatePage();
 	}
@@ -183,6 +193,15 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 		setErrorMessage("Destination does not exist or is not a directory");
 		return false;
+	}
+
+	public void setSelection(IResource object) {
+		if (tableViewer != null) {
+			tableViewer.setSelection(new StructuredSelection(object));
+			tableViewer.setChecked(object, true);
+		} else {
+			initialSelection = object;
+		}
 	}
 
 }
