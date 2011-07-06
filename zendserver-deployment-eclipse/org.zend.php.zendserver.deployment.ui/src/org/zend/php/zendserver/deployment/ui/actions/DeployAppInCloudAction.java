@@ -13,7 +13,7 @@ public class DeployAppInCloudAction extends Action {
 		super();
 		setText("Zend Cloud");
 		setToolTipText("Deploy application to Zend Cloud");
-		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_ZENDCLOUD_APPLICATION));
+		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_DEBUG_APPLICATION));
 	}
 	
 	@Override
