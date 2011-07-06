@@ -170,6 +170,28 @@ public interface IMappingModel {
 	String getFolder(String path) throws IOException;
 
 	/**
+	 * Get project relative path to the given file based on the mapping model.
+	 * 
+	 * @param name
+	 *            - file name
+	 * @return relative path to the file or <code>null</code> if file is not
+	 *         mapped
+	 * @throws IOException
+	 */
+	String getPath(String name) throws IOException;
+
+	/**
+	 * Get package relative path to the given file based on the mapping model
+	 * 
+	 * @param path
+	 *            - project relative path to the file
+	 * @return path in the deployment package or <code>null</code> if file is
+	 *         not mapped
+	 * @throws IOException
+	 */
+	String getPackagePath(String path) throws IOException;
+
+	/**
 	 * @return default exclusion list
 	 */
 	List<IMapping> getDefaultExclusion();
