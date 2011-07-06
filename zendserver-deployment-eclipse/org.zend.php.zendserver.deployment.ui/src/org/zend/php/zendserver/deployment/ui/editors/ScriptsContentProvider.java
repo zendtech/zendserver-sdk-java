@@ -26,10 +26,10 @@ public class ScriptsContentProvider implements ITreeContentProvider {
 	
 	public ScriptsContentProvider() {
 		model = new ScriptType[4];
-		model[0] = new ScriptType("Staging", new Script[] { new Script("pre_stage.php"), new Script("post_stage.php") });
-		model[1] = new ScriptType("Activation", new Script[] { new Script("pre_activate.php"), new Script("post_activate.php") });
-		model[2] = new ScriptType("Deactivation", new Script[] { new Script("pre_deactivate.php"), new Script("post_deactivate.php") });
-		model[3] = new ScriptType("Unstaging", new Script[] { new Script("pre_unstage.php"), new Script("post_unstage.php") });
+		model[0] = new ScriptType("Staging", new Script[] { new Script("preStage"), new Script("postStage") });
+		model[1] = new ScriptType("Activation", new Script[] { new Script("preActivate"), new Script("postActivate") });
+		model[2] = new ScriptType("Deactivation", new Script[] { new Script("preDeactivate"), new Script("postDeactivate") });
+		model[3] = new ScriptType("Unstaging", new Script[] { new Script("preUnstage"), new Script("postUnstage") });
 	}
 	
 	private static Object[] EMPTY = new Object[0];

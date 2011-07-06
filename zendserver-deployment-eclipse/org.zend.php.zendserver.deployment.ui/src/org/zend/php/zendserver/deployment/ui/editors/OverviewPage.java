@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -47,6 +48,7 @@ import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
+import org.zend.sdklib.application.ZendProject;
 
 public class OverviewPage extends DescriptorEditorPage {
 
@@ -217,20 +219,21 @@ public class OverviewPage extends DescriptorEditorPage {
 							return;
 						}
 					}
-					openScript(file);
+					openScript(script.name);
 				}
 			}
 		});
 	}
 
-	private void openScript(final IFile file) {
+	private void openScript(final String name) {
 		Job job = new Job(Messages.OverviewPage_17) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					IFile file = getScript(name);
 					if (!file.exists()) {
-						createScript(file, monitor);
+						createScript(name, monitor);
 						refreshScriptsTree();
 					}
 					openEditor(file);
@@ -255,10 +258,12 @@ public class OverviewPage extends DescriptorEditorPage {
 		});
 	}
 
-	private void createScript(IFile file, IProgressMonitor monitor)
+	private void createScript(String scriptName, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO use SDK to create script file?
-		file.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+		File projLocation = editor.getProject().getLocation().toFile();
+		ZendProject zp = new ZendProject(projLocation);
+		zp.update(scriptName);
+		editor.getProject().refreshLocal(IProject.DEPTH_INFINITE, monitor);
 
 	}
 
@@ -283,6 +288,12 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	protected IFile getScript(String scriptName) {
+		try {
+			String folder = editor.getDescriptorContainer().getMappingModel().getFolder(scriptName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// TODO use mapping.getScriptPath(scriptName)
 		return editor.getProject().getFile(scriptName);
 	}
