@@ -158,7 +158,7 @@ public abstract class ResourceListSection {
 		
 		Section section =
 				toolkit.createSection(
-					form.getBody(), Section.TITLE_BAR|Section.DESCRIPTION);
+					form.getBody(), Section.TITLE_BAR|Section.DESCRIPTION|Section.TWISTIE);
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
@@ -173,9 +173,8 @@ public abstract class ResourceListSection {
 		
 		section.setClient(client);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		section.setLayoutData(gd);
+		//section.setLayoutData(gd);
 		
-		section.setExpanded(true);
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				mForm.getForm().reflow(false);

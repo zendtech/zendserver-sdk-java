@@ -1,8 +1,10 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -19,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -61,6 +64,8 @@ public class OverviewPage extends DescriptorEditorPage {
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink runInZendCloudLink;
 	private TreeViewer scriptsTree;
+	
+	private ResourceListSection persistent;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, Messages.OverviewPage_0, Messages.OverviewPage_1);
@@ -106,9 +111,56 @@ public class OverviewPage extends DescriptorEditorPage {
 		createDeploymentScriptsSection(managedForm);
 		createTestingSection(managedForm);
 		createExportingSection(managedForm);
+		createPersistentResourcesSection(managedForm);
 		createActions();
 
 		form.reflow(true);
+	}
+
+	private void createPersistentResourcesSection(IManagedForm managedForm) {
+		persistent = new ResourceListSection(editor, managedForm, "Persistent resources", "Persistent resources to be kept during upgrade.") {
+			
+			@Override
+			public Object[] getElements(Object input) {
+				List<String> list = editor.getModel().getPersistentResources();
+				return editor.getResourceMapper().getResources(list.toArray(new String[list.size()]));
+			}
+			
+			@Override
+			protected void addPath() {
+				Shell shell = editor.getSite().getShell();
+				IProject root = editor.getProject();
+				String[] newPaths = OpenFileDialog.openMany(shell, root, "Add path", "Select path:", null);
+				if (newPaths == null) {
+					return;
+				}
+				
+				for (int i = 0; i < newPaths.length; i++) {
+					editor.getModel().getPersistentResources().add(newPaths[i]);
+				}
+			}
+			
+			@Override
+			protected void editPath(Object element) {
+				String currPath = (String) element;
+				
+				Shell shell = editor.getSite().getShell();
+				IProject root = editor.getProject();
+				String newPath = OpenFileDialog.open(shell, root, "Change path", "Select path:", currPath.toString());
+				if (newPath == null) {
+					return;
+				}
+				editor.getModel().getPersistentResources().remove(currPath);
+				editor.getModel().getPersistentResources().add(newPath);
+			}
+			
+			@Override
+			protected void removePath(Object element) {
+				String path = (String) element;
+				editor.getModel().getPersistentResources().remove(path);
+			}
+		};
+		
 	}
 
 	private void createDeploymentScriptsSection(IManagedForm managedForm) {
@@ -383,5 +435,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		docRoot.refresh();
 		appDir.refresh();
 		scriptsDir.refresh();
+		persistent.refresh();
 	}
 }

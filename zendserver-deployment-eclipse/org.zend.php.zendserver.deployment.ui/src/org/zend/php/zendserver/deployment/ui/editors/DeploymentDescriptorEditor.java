@@ -64,7 +64,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", "Parameters"));
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", "Dependencies"));
 			addPage(new DeploymentPropertiesPage(fModel, this, "properties", "Properties"));
-			addPage(new PersistentResourcesPage(this));
 			propertiesSourcePage = new SourcePage(this);
 			addPage(propertiesSourcePage, getPropertiesInput());
 			descriptorSourcePage = new SourcePage(this);
