@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -49,10 +48,9 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		
-		GridLayout layout = new GridLayout(2, true);
-		ScrolledForm form = managedForm.getForm();
-		form.getBody().setLayout(layout);
+
+		final ScrolledForm form = managedForm.getForm();
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 		createTreeSections(managedForm);
 	}
 
