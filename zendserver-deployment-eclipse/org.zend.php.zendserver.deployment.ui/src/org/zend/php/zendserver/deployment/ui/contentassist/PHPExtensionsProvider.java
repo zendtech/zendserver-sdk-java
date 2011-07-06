@@ -6,30 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * PHP Directives from http://www.php.net/manual/en/ini.list.php
+ * http://files.zend.com/help/Zend-Server-Community-Edition/zend_server_ce_php_5.3_extensions.htm
  *
  */
-public class PHPDirectivesProvider {
+public class PHPExtensionsProvider {
 
-	public static class PHPDirective {
+	public static class PHPExtension {
 		public String name;
-		public String type;
-		public String phpVersion;
+		public String description;
 		
-		public PHPDirective(String name, String type, String phpVersion) {
+		public PHPExtension(String name, String description) {
 			this.name = name;
-			this.type = type;
-			this.phpVersion = phpVersion;
+			this.description = description;
 		}
 	}
 	
-	private static List<PHPDirective> directives;
+	private static List<PHPExtension> directives;
 	
 	public void init() {
 		if (directives == null) {
-			directives = new ArrayList<PHPDirective>();
+			directives = new ArrayList<PHPExtension>();
 			CSVLoader csvloader = new CSVLoader();
-			InputStream in = getClass().getResourceAsStream("directives.csv");
+			InputStream in = getClass().getResourceAsStream("phpextensions.csv");
 			
 			String[][] csv;
 			try {
@@ -41,8 +39,7 @@ public class PHPDirectivesProvider {
 			}
 			
 			for (int i = 0; i < csv.length; i++) {
-				String since = csv[i].length >= 4 ? csv[i][3] : null;
-				directives.add(new PHPDirective(csv[i][0], null, since));
+				directives.add(new PHPExtension(csv[i][0], csv[i][1]));
 			}
 		}
 	}
@@ -50,11 +47,10 @@ public class PHPDirectivesProvider {
 	public String[] getNames() {
 		String[] names = new String[directives.size()];
 		int i = 0;
-		for (PHPDirective dir : directives) {
+		for (PHPExtension dir : directives) {
 			names[i++] = dir.name;
 		}
 		
 		return names;
 	}
-	
 }

@@ -7,9 +7,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -19,6 +19,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.ui.contentassist.PHPExtensionsProvider;
 
 
 public class ExtensionDependencyDetailsPage implements IDetailsPage {
@@ -29,7 +30,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	private IModelObject input;
 	
 	private boolean isRefresh;
-	private Text nameText;
+	private Combo nameText;
 	private Label nameLabel;
 	private VersionControl version;
 	
@@ -44,8 +45,6 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isDirty() {
@@ -110,14 +109,14 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		
 		nameLabel = toolkit.createLabel(client, "Extension name");
-		nameText = toolkit.createText(client, "");
+		nameText = new Combo(client, SWT.NONE);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
 		nameText.setLayoutData(gd);
 		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (isRefresh) return;
-				String txt = ((Text)e.widget).getText();
+				String txt = ((Combo)e.widget).getText();
 				nameChange("".equals(txt) ? null : txt);
 			}
 		});
@@ -125,9 +124,19 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 		version.createContents(client, toolkit);
 		
 		s1.setClient(client);
+		createContentAssist();
 	}
 
+	private void createContentAssist() {
+		PHPExtensionsProvider provider = new PHPExtensionsProvider();
+		provider.init();
+		nameText.setItems(provider.getNames());
+	}
+
+
 	protected void nameChange(String text) {
-		input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
+		if (input != null) {
+			input.set(DeploymentDescriptorPackage.DEPENDENCY_NAME, text);
+		}
 	}
 }

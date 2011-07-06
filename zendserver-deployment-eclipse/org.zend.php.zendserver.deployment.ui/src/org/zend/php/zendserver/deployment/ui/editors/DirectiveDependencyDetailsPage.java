@@ -128,9 +128,9 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	}
 
 	private void createContentAssist() {
-		PHPDirectivesProvider pdp = new PHPDirectivesProvider();
-		pdp.initDirectives();
-		nameText.setItems(pdp.getDirectiveNames());
+		PHPDirectivesProvider provider = new PHPDirectivesProvider();
+		provider.init();
+		nameText.setItems(provider.getNames());
 	}
 
 	protected void nameChange(String text) {
