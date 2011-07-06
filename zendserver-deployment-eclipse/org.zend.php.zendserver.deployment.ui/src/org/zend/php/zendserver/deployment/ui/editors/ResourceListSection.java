@@ -35,6 +35,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public abstract class ResourceListSection {
@@ -129,15 +130,15 @@ public abstract class ResourceListSection {
 		gd = new GridData(SWT.DEFAULT, SWT.TOP, false, false);
 		buttons.setLayoutData(gd);
 		
-		addButton = toolkit.createButton(buttons, "Add...", SWT.NONE);
+		addButton = toolkit.createButton(buttons, Messages.ResourceListSection_Add, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		addButton.setLayoutData(gd);
 		
-		editButton = toolkit.createButton(buttons, "Edit...", SWT.NONE);
+		editButton = toolkit.createButton(buttons, Messages.ResourceListSection_Edit, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		editButton.setLayoutData(gd);
 		
-		removeButton = toolkit.createButton(buttons, "Remove...", SWT.NONE);
+		removeButton = toolkit.createButton(buttons, Messages.ResourceListSection_Remove, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		removeButton.setLayoutData(gd);
 	}

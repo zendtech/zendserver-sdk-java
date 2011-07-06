@@ -41,7 +41,7 @@ public class ComboField {
 		isRefresh = true;
 		try {
 			String value = target != null ? target.get(key) : null;
-			text.setText(value == null ? "" : value);
+			text.setText(value == null ? "" : value); //$NON-NLS-1$
 		} finally {
 			isRefresh = false;
 		}

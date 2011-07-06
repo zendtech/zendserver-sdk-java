@@ -9,12 +9,13 @@ import org.eclipse.ui.dialogs.ListDialog;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
 	
 	public String getDescription() {
-		return "Following will be required in order to install application.";
+		return Messages.DependenciesMasterDetailsProvider_Description;
 	}
 	
 	public Object[] doGetElements(Object input) {
@@ -51,8 +52,8 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 		sd.setInput(input);
 		sd.setContentProvider((IStructuredContentProvider) block.viewer.getContentProvider());
 		sd.setLabelProvider(new DeploymentDescriptorLabelProvider());
-		sd.setMessage("Dependency Type:");
-		sd.setTitle("Add Dependency");
+		sd.setMessage(Messages.DependenciesMasterDetailsProvider_DependencyType);
+		sd.setTitle(Messages.DependenciesMasterDetailsProvider_Add);
 		
 		if (sd.open() == Window.CANCEL) {
 			return null;

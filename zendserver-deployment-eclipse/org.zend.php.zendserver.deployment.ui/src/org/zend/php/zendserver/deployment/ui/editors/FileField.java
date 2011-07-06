@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class FileField extends TextField {
 
@@ -24,11 +25,11 @@ public class FileField extends TextField {
 
 	@Override
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createText(parent, "");
+		text = toolkit.createText(parent, ""); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		text.setLayoutData(gd);
 		gd.horizontalSpan = labelTxt != null ? 1 : 2;
-		licenseBrowseButton = toolkit.createButton(parent, "Browse...", SWT.PUSH);
+		licenseBrowseButton = toolkit.createButton(parent, Messages.FileField_Browse, SWT.PUSH);
 	}
 	
 	@Override

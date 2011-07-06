@@ -23,7 +23,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 
 public class OpenFileDialog {
 
-	protected static final IStatus OK = new Status(IStatus.OK, Activator.PLUGIN_ID, "");
+	protected static final IStatus OK = new Status(IStatus.OK, Activator.PLUGIN_ID, ""); //$NON-NLS-1$
 
 	private ElementTreeSelectionDialog dialog;
 	

@@ -25,6 +25,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public class ParameterDetailsPage implements IDetailsPage {
@@ -54,12 +55,12 @@ public class ParameterDetailsPage implements IDetailsPage {
 	public ParameterDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
 		
-		id = new TextField(null, DeploymentDescriptorPackage.ID, "Id");
-		display = new TextField(null, DeploymentDescriptorPackage.DISPLAY, "Display text");
-		defaultValue = new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, "Default value");
-		defaultCombo = new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, "Default value");
-		description = new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, "Description");
-		type = new ComboField(null, DeploymentDescriptorPackage.TYPE, "Type");
+		id = new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id);
+		display = new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display);
+		defaultValue = new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue);
+		defaultCombo = new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue);
+		description = new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description);
+		type = new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type);
 		type.setItems(new String[] {
 				IParameter.CHOICE,
 				IParameter.STRING,
@@ -69,9 +70,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 				IParameter.NUMBER,
 				IParameter.HOSTNAME
 		});
-		identical = new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, "Identical");
-		required = new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, "This parameter is required");
-		readonly = new CheckboxField(null, DeploymentDescriptorPackage.READONLY, "This parameter is read only");
+		identical = new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical);
+		required = new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required);
+		readonly = new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly);
 	}
 	
 	public void initialize(IManagedForm form) {
@@ -115,11 +116,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			if (validValues != null) {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < validValues.size(); i++) {
-					sb.append(validValues.get(i)).append("\n");
+					sb.append(validValues.get(i)).append("\n"); //$NON-NLS-1$
 				}
 				validationText.setText(sb.toString());
 			} else {
-				validationText.setText("");
+				validationText.setText(""); //$NON-NLS-1$
 			}
 			type.refresh();
 			identical.refresh();
@@ -162,7 +163,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		FormToolkit toolkit = mform.getToolkit();
 		section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
-		section.setText("Parameter details");
+		section.setText(Messages.ParameterDetailsPage_ParamDetails);
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		
@@ -177,7 +178,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		type.create(client, toolkit);
 		((GridData)type.getCombo().getLayoutData()).widthHint = 100;
 		
-		toolkit.createLabel(client, "");
+		toolkit.createLabel(client, ""); //$NON-NLS-1$
 		
 		required.create(client, toolkit);
 		
@@ -189,9 +190,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		defaultCombo.create(client, toolkit);
 		
-		validationTextLabel = toolkit.createLabel(client, "Valid values");
+		validationTextLabel = toolkit.createLabel(client, Messages.ParameterDetailsPage_ValidValues);
 		validationTextLabel.setLayoutData(new GridData());
-		validationText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
+		validationText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 100;
 		gd.widthHint = 100;
@@ -204,7 +205,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 			}
 		});
 		
-		toolkit.createLabel(client, "");
+		toolkit.createLabel(client, ""); //$NON-NLS-1$
 		
 		readonly.create(client, toolkit);
 		
@@ -260,7 +261,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 	
 	protected void validationChange(String text) {
-		String[] newParams = text.split("\n");
+		String[] newParams = text.split("\n"); //$NON-NLS-1$
 		
 		input.getValidValues().clear();
 		input.getValidValues().addAll(Arrays.asList(newParams));

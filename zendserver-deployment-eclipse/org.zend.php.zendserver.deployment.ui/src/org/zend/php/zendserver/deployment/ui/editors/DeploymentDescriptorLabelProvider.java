@@ -11,6 +11,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependen
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DeploymentDescriptorLabelProvider extends LabelProvider {
 	
@@ -44,24 +45,24 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 		StringBuilder sb = new StringBuilder();
 		
 		String label = param.getDisplay();
-		if (label == null || label.trim().equals("")) {
+		if (label == null || label.trim().equals("")) { //$NON-NLS-1$
 			sb.append(param.getId());
 		} else {
 			sb.append(label);
 		}
 		
 		if (param.isRequired()) {
-			sb.append("*");
+			sb.append(Messages.DeploymentDescriptorLabelProvider_Required);
 		}
 		
 		String defaultVal = param.getDefaultValue();
-		if (defaultVal != null && !defaultVal.trim().equals("")) {
-			sb.append(" = "+defaultVal);
+		if (defaultVal != null && !defaultVal.trim().equals("")) { //$NON-NLS-1$
+			sb.append(Messages.DeploymentDescriptorLabelProvider_Equals+defaultVal);
 		}
 		
 		String type = param.getType();
 		if (type != null) {
-			sb.append(" (").append(type).append(")");
+			sb.append(Messages.DeploymentDescriptorLabelProvider_From).append(type).append(Messages.DeploymentDescriptorLabelProvider_To);
 		}
 		
 		return sb.toString();
@@ -94,42 +95,42 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 		if (element instanceof IPHPDependency) {
 			IPHPDependency dep = (IPHPDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-				return "PHP version";
+				return Messages.DeploymentDescriptorLabelProvider_PHPVersion;
 			}
-			return "PHP "+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
+			return Messages.DeploymentDescriptorLabelProvider_PHP+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IExtensionDependency) {
 			IExtensionDependency dep = (IExtensionDependency) element;
 			if (dep.getName() == null) {
-				return "PHP extension";
+				return Messages.DeploymentDescriptorLabelProvider_PHPExtension;
 			}
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 			
 		} else if (element instanceof IDirectiveDependency) {
 			IDirectiveDependency dep = (IDirectiveDependency) element;
 			if (dep.getName() == null) {
-				return "PHP directive";
+				return Messages.DeploymentDescriptorLabelProvider_PHPDirective;
 			}
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IZendServerDependency) {
 			IZendServerDependency dep = (IZendServerDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-				return "Zend Server version";
+				return Messages.DeploymentDescriptorLabelProvider_ZendServerVersion;
 			}
-			return "Zend Server" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
+			return Messages.DeploymentDescriptorLabelProvider_ZendServer + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IZendFrameworkDependency) {
 			IZendFrameworkDependency dep = (IZendFrameworkDependency) element;
 			if (dep.getEquals() == null && dep.getMax() == null && dep.getMin() == null) {
-				return "Zend Framework version";
+				return Messages.DeploymentDescriptorLabelProvider_ZendFrameworkVersion;
 			}
-			return "Zend Framework" + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
+			return Messages.DeploymentDescriptorLabelProvider_ZendFramework + format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 			
 		} else if (element instanceof IZendComponentDependency) {
 			IZendComponentDependency dep = (IZendComponentDependency) element;
 			if (dep.getName() == null) {
-				return "Zend Server Component";
+				return Messages.DeploymentDescriptorLabelProvider_ZendServerComponent;
 			}
 			return dep.getName() + format(dep.getEquals(), dep.getMin(), dep.getMax(), dep.getConflicts());
 		}
@@ -139,11 +140,11 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 
 	private String format(String equals, String min, String max, String conflicts) {
 		if (conflicts != null) {
-			return " conflicts with " + conflicts;
+			return Messages.DeploymentDescriptorLabelProvider_conflictsWith + conflicts;
 		}
 		
 		if (equals != null) {
-			return " = " + equals;
+			return Messages.DeploymentDescriptorLabelProvider_Equals + equals;
 		}
 		
 		if (min != null && max != null) {
@@ -151,14 +152,14 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 		}
 		
 		if (min != null) {
-			return " >= " + min;
+			return Messages.DeploymentDescriptorLabelProvider_greaterThan + min;
 		}
 		
 		if (max != null) {
-			return " <= " + max;
+			return Messages.DeploymentDescriptorLabelProvider_lessThan + max;
 		}
 		
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public Image getVariableImage(Object element) {

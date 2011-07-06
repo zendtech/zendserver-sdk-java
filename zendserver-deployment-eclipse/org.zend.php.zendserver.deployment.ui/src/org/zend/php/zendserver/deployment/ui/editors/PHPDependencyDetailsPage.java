@@ -12,6 +12,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 
 public class PHPDependencyDetailsPage implements IDetailsPage {
@@ -78,8 +79,8 @@ public class PHPDependencyDetailsPage implements IDetailsPage {
 		
 		FormToolkit toolkit = mform.getToolkit();
 		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
-		s1.setText("PHP Dependency details");
-		s1.setDescription("Specify required PHP version.");
+		s1.setText(Messages.PHPDependencyDetailsPage_PHPDepDetails);
+		s1.setDescription(Messages.PHPDependencyDetailsPage_Version);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
 		

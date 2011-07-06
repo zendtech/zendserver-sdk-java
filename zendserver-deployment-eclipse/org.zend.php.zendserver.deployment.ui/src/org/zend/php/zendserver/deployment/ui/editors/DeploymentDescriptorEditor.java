@@ -33,6 +33,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
 /**
@@ -47,7 +48,7 @@ import org.zend.sdklib.mapping.MappingModelFactory;
 public class DeploymentDescriptorEditor extends FormEditor implements
 		IResourceChangeListener {
 
-	public static final String ID = "org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor";
+	public static final String ID = "org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"; //$NON-NLS-1$
 
 	private SourcePage descriptorSourcePage;
 	private SourcePage propertiesSourcePage;
@@ -60,10 +61,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", "Variables"));
-			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", "Parameters"));
-			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", "Dependencies"));
-			addPage(new DeploymentPropertiesPage(fModel, this, "properties", "Package"));
+			addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", Messages.DeploymentDescriptorEditor_Variables)); //$NON-NLS-1$
+			addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
+			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
+			addPage(new DeploymentPropertiesPage(fModel, this, "properties", Messages.DeploymentDescriptorEditor_Package)); //$NON-NLS-1$
 			propertiesSourcePage = new SourcePage(this);
 			addPage(propertiesSourcePage, getPropertiesInput());
 			descriptorSourcePage = new SourcePage(this);
@@ -136,7 +137,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException(
-					"Invalid Input: Must be IFileEditorInput");
+					"Invalid Input: Must be IFileEditorInput"); //$NON-NLS-1$
 
 		IFileEditorInput fileInput = (IFileEditorInput) editorInput;
 		fModel = DescriptorContainerManager.getService()

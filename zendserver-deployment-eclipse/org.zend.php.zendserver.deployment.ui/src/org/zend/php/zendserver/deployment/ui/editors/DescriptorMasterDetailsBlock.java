@@ -26,6 +26,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
@@ -91,7 +92,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		gd = new GridData(SWT.BEGINNING, SWT.TOP, false, false);
 		buttons.setLayoutData(gd);
 		
-		Button addButton = toolkit.createButton(buttons, "Add", SWT.NONE);
+		Button addButton = toolkit.createButton(buttons, Messages.DescriptorMasterDetailsBlock_Add, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		addButton.setLayoutData(gd);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -109,7 +110,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 
-		removeButton = toolkit.createButton(buttons, "Remove", SWT.NONE);
+		removeButton = toolkit.createButton(buttons, Messages.DescriptorMasterDetailsBlock_Remove, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		removeButton.setLayoutData(gd);
 		removeButton.addSelectionListener(new SelectionAdapter() {

@@ -20,7 +20,7 @@ public class ListField extends TextField {
 	
 	@Override
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createText(parent, "", SWT.MULTI|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+		text = toolkit.createText(parent, "", SWT.MULTI|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		gd.heightHint = 100;
@@ -35,7 +35,7 @@ public class ListField extends TextField {
 				}
 				
 				String text = ((Text)e.widget).getText();
-				String[] items = text.split("\n");
+				String[] items = text.split("\n"); //$NON-NLS-1$
 				if (target != null) {
 					List<Object> list = ((IModelContainer)target).getChildren(key);
 					for (int i = 0; i < Math.min(items.length, list.size()); i++) {
@@ -59,7 +59,7 @@ public class ListField extends TextField {
 			StringBuilder sb = new StringBuilder();
 			if (value != null) {
 				for (Object o : value) {
-					sb.append(o).append("\n");
+					sb.append(o).append("\n"); //$NON-NLS-1$
 				}
 			}
 			text.setText(sb.toString());
