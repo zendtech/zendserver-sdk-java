@@ -18,7 +18,7 @@ public class SdkStatus implements IStatus {
 			this.severity = IStatus.WARNING;
 			break;
 		default:
-			this.severity = IStatus.INFO;
+			this.severity = IStatus.OK;
 			break;
 		}
 	}
