@@ -95,13 +95,6 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			PropertyException, JAXBException {
 		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
 				"Creating deployment descriptor...", -1));
-		
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
@@ -153,13 +146,6 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		}
 		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
 				"Creating deployment scripts...", -1));
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		File destination = getScriptsDirectory(container);
 		if (destination != null && !destination.isDirectory()) {
 			destination.mkdirs();
@@ -187,13 +173,6 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			throws IOException, JAXBException {
 		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
 				"Creating default deployment.properites file...", -1));
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
 				: MappingModelFactory.createModel(loader, container);
 		if (container.isDirectory()) {
