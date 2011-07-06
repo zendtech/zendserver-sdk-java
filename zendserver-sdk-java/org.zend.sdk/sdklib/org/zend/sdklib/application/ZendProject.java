@@ -14,7 +14,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
+import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMappingLoader;
 
 /**
@@ -81,7 +83,7 @@ public class ZendProject extends AbstractChangeNotifier {
 	}
 
 	public boolean update(String generateScripts) {
-		ProjectResourcesWriter tw = new ProjectResourcesWriter(path);
+		ProjectResourcesWriter tw = new ProjectResourcesWriter(path, this);
 
 		try {
 			if (generateScripts != null) {
@@ -90,6 +92,8 @@ public class ZendProject extends AbstractChangeNotifier {
 			tw.writeDescriptor(path);
 			tw.writeDeploymentProperties(path, loader);
 		} catch (IOException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Update",
+					"Error during updating application.", e));
 			log.error(e);
 			return false;
 		} catch (PropertyException e) {
