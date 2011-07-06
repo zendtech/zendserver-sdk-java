@@ -12,6 +12,7 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorEditor_Dependencies;
 	public static String DeploymentDescriptorEditor_Package;
 	public static String DeploymentDescriptorEditor_Parameters;
+	public static String DeploymentDescriptorEditor_Scripts;
 	public static String DeploymentDescriptorEditor_Variables;
 	public static String DeploymentDescriptorLabelProvider_conflictsWith;
 	public static String DeploymentDescriptorLabelProvider_Equals;
