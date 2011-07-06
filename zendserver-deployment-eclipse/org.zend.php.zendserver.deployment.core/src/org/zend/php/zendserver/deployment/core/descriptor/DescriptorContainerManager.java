@@ -12,7 +12,7 @@ public class DescriptorContainerManager {
 
 	private static DescriptorContainerManager service;
 
-	public static final String DESCRIPTOR_PATH = "deployment.xml";
+	public static final String DESCRIPTOR_PATH = "deployment.xml"; //$NON-NLS-1$
 
 	public static DescriptorContainerManager getService() {
 		if (service == null) {
