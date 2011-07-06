@@ -307,7 +307,9 @@ public class OverviewPage extends DescriptorEditorPage {
 		createClient(container, Messages.OverviewPage_PackageAndExport, toolkit,
 				new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
-						new ExportApplicationAction().run();
+						if ("export".equals(e.data))  {
+							new ExportApplicationAction().run();
+						}
 					}
 				});
 		section.setClient(container);
