@@ -53,13 +53,13 @@ public class DetailsPageProvider implements
 			}
 			return phpPage;
 		}
-		if (IDirectiveDependency.class.isAssignableFrom(clazz)) {
+		if (IExtensionDependency.class.isAssignableFrom(clazz)) {
 			if (extensionPage == null) {
 				 extensionPage = new ExtensionDependencyDetailsPage(editor);
 			}
 			return extensionPage;
 		}
-		if (IExtensionDependency.class.isAssignableFrom(clazz)) {
+		if (IDirectiveDependency.class.isAssignableFrom(clazz)) {
 			if (dirPage == null) {
 				dirPage = new DirectiveDependencyDetailsPage(editor);
 			}
