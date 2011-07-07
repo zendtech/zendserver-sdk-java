@@ -31,6 +31,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 import org.zend.php.zendserver.deployment.ui.wizards.StatusChangeListener;
 import org.zend.sdklib.application.ZendProject;
@@ -57,16 +58,22 @@ public class EnableDeploymentSupport extends AbstractHandler {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						addNature(project, DeploymentNature.ID, monitor);
-						updateProject(project, monitor);
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
-					
-					return Status.OK_STATUS;
+					return updateProject(project, monitor);
 				}
 			};
 			job.setUser(true);
 			job.schedule();
+			job.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().getSeverity() == IStatus.OK) {
+						openDescriptorEditor(project);
+					}
+				}
+			});
 		}
 		
 		
@@ -85,38 +92,22 @@ public class EnableDeploymentSupport extends AbstractHandler {
 		project.setDescription(description, monitor);
 	}
 	
-	private void updateProject(final IProject project, IProgressMonitor monitor) {
+	private IStatus updateProject(final IProject project, IProgressMonitor monitor) {
 		final File projectLocation = project.getLocation().toFile();
-		Job createPackageJob = new Job("Adding Application Deployment Support...") {
-			private StatusChangeListener listener;
-
-			public IStatus run(IProgressMonitor monitor) {
-				listener = new StatusChangeListener(monitor);
-				if (monitor.isCanceled()) {
-					return Status.OK_STATUS;
-				}
-				ZendProject zp = new ZendProject(projectLocation);
-				zp.addStatusChangeListener(listener);
-				zp.update(null);
-				try {
-					project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return new SdkStatus(listener.getStatus());
-			}
-		};
-		createPackageJob.setUser(true);
-		createPackageJob.schedule();
-		createPackageJob.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (event.getResult().getSeverity() == IStatus.OK) {
-					openDescriptorEditor(project);
-				}
-			}
-		});
+		StatusChangeListener listener = new StatusChangeListener(monitor);
+		if (monitor.isCanceled()) {
+			return Status.OK_STATUS;
+		}
+		ZendProject zp = new ZendProject(projectLocation);
+		zp.addStatusChangeListener(listener);
+		zp.update(null);
+		try {
+			project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
+		} catch (CoreException e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					"Error during enabling deployment support", e);
+		}
+		return new SdkStatus(listener.getStatus());
 	}
 	
 	private void openDescriptorEditor(final IProject project) {
