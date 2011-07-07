@@ -11,5 +11,7 @@ public interface MasterDetailsProvider {
 	Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block);
 
 	Class getType();
+
+	Object doGetParent(Object element);
 	
 }

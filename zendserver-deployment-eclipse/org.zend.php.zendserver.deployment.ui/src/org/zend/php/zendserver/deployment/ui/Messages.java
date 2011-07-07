@@ -87,6 +87,7 @@ public class Messages extends NLS {
 	public static String ScriptsContentProvider_Deactivation;
 	public static String ScriptsContentProvider_Staging;
 	public static String ScriptsContentProvider_Unstaging;
+	public static String ScriptsPage_VarsAndParams;
 	public static String ScriptsTreeSection_Info;
 	public static String ScriptsTreeSection_ScriptsMapping;
 	public static String VariableDetailsPage_Details;
@@ -94,6 +95,11 @@ public class Messages extends NLS {
 	public static String VariableDetailsPage_Value;
 	public static String VariablesMasterDetailsProvider_DefaultVariableName;
 	public static String VariablesMasterDetailsProvider_VariablesDescr;
+	public static String VarsAndParamsMasterDetailsProvider_1;
+	public static String VarsAndParamsMasterDetailsProvider_2;
+	public static String VarsAndParamsMasterDetailsProvider_AddVariableOrParam;
+	public static String VarsAndParamsMasterDetailsProvider_DefineVarsAndParams;
+	public static String VarsAndParamsMasterDetailsProvider_SelectItemToAdd;
 	public static String VersionControl_Conflicts;
 	public static String VersionControl_Equals;
 	public static String VersionControl_Exclude;

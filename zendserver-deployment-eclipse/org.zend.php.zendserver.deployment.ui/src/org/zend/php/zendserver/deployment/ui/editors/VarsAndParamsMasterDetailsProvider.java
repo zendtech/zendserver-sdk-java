@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ListDialog;
@@ -33,15 +35,29 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 	}
 	
 	public String getDescription() {
-		return Messages.VariablesMasterDetailsProvider_VariablesDescr;
+		return Messages.VarsAndParamsMasterDetailsProvider_DefineVarsAndParams;
 	}
+	
+	private Node[] rootNodes;
 	
 	public Object[] doGetElements(Object input) {
 		if (input instanceof IDeploymentDescriptor) {
-			return new Node[] {
-					new Node("Variables", DeploymentDescriptorPackage.VARIABLES, (IModelContainer)input),
-					new Node("Parameters", DeploymentDescriptorPackage.PARAMETERS, (IModelContainer)input)
-			};
+			IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
+			List<IVariable> vars = descr.getVariables();
+			List<IParameter> params = descr.getParameters();
+			if (vars.size() > 0 && params.size() > 0) {
+				if (rootNodes == null) {
+					rootNodes = new Node[] {
+							new Node(Messages.VarsAndParamsMasterDetailsProvider_1, DeploymentDescriptorPackage.VARIABLES, (IModelContainer)input),
+							new Node(Messages.VarsAndParamsMasterDetailsProvider_2, DeploymentDescriptorPackage.PARAMETERS, (IModelContainer)input)
+					};
+				}
+				return rootNodes;
+			} else if (vars.size() > 0) {
+				return vars.toArray();
+			} else if (params.size() > 0) {
+				return params.toArray();
+			}
 		}
 		
 		if (input instanceof Node) {
@@ -57,13 +73,11 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 	}
 	
 	public Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block) {
-		int variablesSize = model.getVariables().size() + 1;
-
 		IVariable var = new Variable();
-		var.setName(Messages.VariablesMasterDetailsProvider_DefaultVariableName + variablesSize);
+		var.setName(Messages.VariablesMasterDetailsProvider_DefaultVariableName);
 		
 		IParameter param = new Parameter();
-		param.setId(Messages.ParametersMasterDetailsProvider_newParamName+(model.getParameters().size() + 1));
+		param.setId(Messages.ParametersMasterDetailsProvider_newParamName);
 		param.setType(IParameter.STRING);
 		
 		Object[] input = new Object[] { var, param };
@@ -71,8 +85,8 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 		sd.setInput(input);
 		sd.setContentProvider((IStructuredContentProvider) block.viewer.getContentProvider());
 		sd.setLabelProvider(new DeploymentDescriptorLabelProvider());
-		sd.setMessage(Messages.DependenciesMasterDetailsProvider_DependencyType);
-		sd.setTitle(Messages.DependenciesMasterDetailsProvider_Add);
+		sd.setMessage(Messages.VarsAndParamsMasterDetailsProvider_SelectItemToAdd);
+		sd.setTitle(Messages.VarsAndParamsMasterDetailsProvider_AddVariableOrParam);
 			
 		if (sd.open() == Window.CANCEL) {
 			return null;
@@ -82,6 +96,17 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 	}
 
 	public Class getType() {
+		return null;
+	}
+
+	public Object doGetParent(Object element) {
+		if (rootNodes != null) {
+			if (element instanceof IVariable) {
+				return rootNodes[0];
+			} else if (element instanceof IParameter) {
+				return rootNodes[1];
+			}
+		}
 		return null;
 	}
 }

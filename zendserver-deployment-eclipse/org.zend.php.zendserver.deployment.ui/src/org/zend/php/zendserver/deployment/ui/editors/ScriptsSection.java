@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -120,23 +121,19 @@ public class ScriptsSection {
 		scriptsDir.refresh();
 	}
 	
-	public void createDeploymentScriptsSection(IManagedForm managedForm) {
+	public void createDeploymentScriptsSection(IManagedForm managedForm, Composite parent) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 
-		Composite composite = toolkit.createComposite(form.getBody());
-		GridData td = new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false);
-		td.verticalSpan = 2;
-		td.heightHint = 250;
-		composite.setLayoutData(td);
-		composite.setLayout(new GridLayout(1, false));
-		
-		Section section = toolkit.createSection(composite,
+		Section section = toolkit.createSection(parent,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE);
+		section.marginWidth = 5;
+		section.marginHeight = 5;
 		section.setText(Messages.OverviewPage_DeploymentScripts);
 		section.setDescription(Messages.OverviewPage_ScriptsDescription);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.BOTTOM));
 		sectionClient.setLayout(new GridLayout(3, false));
 		
 		scriptsDir.create(sectionClient, toolkit);
@@ -149,7 +146,7 @@ public class ScriptsSection {
 
 		scriptsTree = new TreeViewer(sectionClient, SWT.BORDER);
 		Tree tree = scriptsTree.getTree();
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd = new GridData(SWT.FILL, SWT.DEFAULT, true, true);
 		gd.horizontalSpan = 3;
 		tree.setLayoutData(gd);
 

@@ -30,4 +30,9 @@ public class ParametersMasterDetailsProvider implements MasterDetailsProvider {
 	public Class getType() {
 		return IParameter.class;
 	}
+
+	public Object doGetParent(Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

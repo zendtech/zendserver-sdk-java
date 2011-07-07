@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
@@ -49,7 +50,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		}
 
 		public Object getParent(Object element) {
-			return null;
+			return provider.doGetParent(element);
 		}
 
 		public boolean hasChildren(Object element) {
@@ -78,13 +79,15 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		section.setText(title);
 		section.setDescription(description);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
+		TableWrapData tdd = new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB);
+		section.setLayoutData(tdd);
 		
 		Composite client = toolkit.createComposite(section, SWT.NONE);
 		section.setClient(client);
@@ -93,10 +96,12 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		layout.marginWidth = 2;
 		layout.marginHeight = 2;
 		client.setLayout(layout);
+		client.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		Tree tree = toolkit.createTree(client, SWT.H_SCROLL|SWT.V_SCROLL);
-		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 200;
+		gd.heightHint = 200;
 		tree.setLayoutData(gd);
 		
 		Composite buttons = toolkit.createComposite(client, SWT.NONE);
@@ -118,8 +123,11 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				
 				Feature feature = DeploymentDescriptorFactory.getFeature(result);
 				editor.getModel().add(feature, result);
+				Object[] expanded = viewer.getExpandedElements();
 				viewer.refresh();
+				viewer.setExpandedElements(expanded);
 				viewer.setSelection(new StructuredSelection(result));
+				
 			}
 		});
 

@@ -65,4 +65,9 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 	public Class getType() {
 		return null;
 	}
+
+	public Object doGetParent(Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

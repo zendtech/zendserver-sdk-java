@@ -31,4 +31,9 @@ public class VariablesMasterDetailsProvider implements MasterDetailsProvider {
 	public Class getType() {
 		return IVariable.class;
 	}
+
+	public Object doGetParent(Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
