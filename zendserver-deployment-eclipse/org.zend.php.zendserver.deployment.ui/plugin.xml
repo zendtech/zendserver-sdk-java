@@ -5,6 +5,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+      		default="true"
             class="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"
             contributorClass="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditorContributor"
             filenames="deployment.xml"

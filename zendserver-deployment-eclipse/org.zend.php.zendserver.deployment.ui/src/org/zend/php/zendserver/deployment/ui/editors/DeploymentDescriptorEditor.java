@@ -64,8 +64,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new OverviewPage(this));
 			//addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", Messages.DeploymentDescriptorEditor_Variables)); //$NON-NLS-1$
 			//addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
-			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
+			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addPage(new DeploymentPropertiesPage(fModel, this, "package", Messages.DeploymentDescriptorEditor_Package)); //$NON-NLS-1$
 			propertiesSourcePage = new SourcePage(this);
 			addPage(propertiesSourcePage, getPropertiesInput());
