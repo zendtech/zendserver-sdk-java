@@ -201,7 +201,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
 				}
-				ZipEntry entry = new ZipEntry(path);
+				ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
 				out.putNextEntry(entry);
 				int count;
 				byte data[] = new byte[BUFFER];
