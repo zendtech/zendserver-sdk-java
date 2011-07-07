@@ -2,11 +2,11 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,7 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -30,7 +30,7 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
-	private class MasterContentProvider implements IStructuredContentProvider {
+	private class MasterContentProvider implements ITreeContentProvider {
 
 		public void dispose() {
 			// empty
@@ -43,12 +43,25 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		public Object[] getElements(Object input) {
 			return provider.doGetElements(input);
 		}
+
+		public Object[] getChildren(Object parentElement) {
+			return provider.doGetElements(parentElement);
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			Object[] obj = getChildren(element);
+			return obj != null && obj.length > 0;
+		}
 		
 	}
 	
 
 	protected DeploymentDescriptorEditor editor;
-	protected TableViewer viewer;
+	protected TreeViewer viewer;
 	private String title;
 	private String description;
 	private MasterDetailsProvider provider;
@@ -81,10 +94,10 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		layout.marginHeight = 2;
 		client.setLayout(layout);
 		
-		Table table = toolkit.createTable(client, SWT.H_SCROLL|SWT.V_SCROLL);
+		Tree tree = toolkit.createTree(client, SWT.H_SCROLL|SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gd.widthHint = 200;
-		table.setLayoutData(gd);
+		tree.setLayoutData(gd);
 		
 		Composite buttons = toolkit.createComposite(client, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -120,7 +133,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 		
-		viewer = new TableViewer(table);
+		viewer = new TreeViewer(tree);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());

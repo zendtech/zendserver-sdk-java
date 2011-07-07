@@ -5,17 +5,20 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class ScriptsPage extends DescriptorEditorPage  {
 
+	private ScriptsSection scripts;
 	private DescriptorMasterDetailsBlock variablesBlock;
-	private DescriptorMasterDetailsBlock parametersBlock;
+	//private DescriptorMasterDetailsBlock parametersBlock;
 	
 	public ScriptsPage(DeploymentDescriptorEditor editor, String id, String title) {
 		super(editor, id, title);
 		
-		VariablesMasterDetailsProvider variablesProvider = new VariablesMasterDetailsProvider();
-		variablesBlock = new DescriptorMasterDetailsBlock(editor, variablesProvider, Messages.DeploymentDescriptorEditor_Variables, variablesProvider.getDescription());
 		
-		ParametersMasterDetailsProvider paramsProvider = new ParametersMasterDetailsProvider();
-		parametersBlock = new DescriptorMasterDetailsBlock(editor, paramsProvider, Messages.DeploymentDescriptorEditor_Parameters, paramsProvider.getDescription());
+		VarsAndParamsMasterDetailsProvider variablesProvider = new VarsAndParamsMasterDetailsProvider();
+		variablesBlock = new DescriptorMasterDetailsBlock(editor, variablesProvider, Messages.DeploymentDescriptorEditor_Variables, variablesProvider.getDescription());
+		scripts = new ScriptsSection(editor);
+		
+		//ParametersMasterDetailsProvider paramsProvider = new ParametersMasterDetailsProvider();
+		//parametersBlock = new DescriptorMasterDetailsBlock(editor, paramsProvider, Messages.DeploymentDescriptorEditor_Parameters, paramsProvider.getDescription());
 	}
 	
 
@@ -24,11 +27,13 @@ public class ScriptsPage extends DescriptorEditorPage  {
 		super.createFormContent(managedForm);		
 
 		variablesBlock.createContent(managedForm);
-		parametersBlock.createContent(managedForm);
+		scripts.createDeploymentScriptsSection(managedForm);
+		//parametersBlock.createContent(managedForm);
 	}
 	
 	public void refresh() {
 		variablesBlock.refresh();
-		parametersBlock.refresh();
+		//parametersBlock.refresh();
+		scripts.refresh();
 	}
 }

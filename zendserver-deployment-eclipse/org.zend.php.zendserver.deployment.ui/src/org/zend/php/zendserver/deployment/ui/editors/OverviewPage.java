@@ -1,33 +1,13 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -39,7 +19,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -47,9 +26,6 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
-import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
-import org.zend.sdklib.application.ZendProject;
-import org.zend.sdklib.mapping.IMappingModel;
 
 public class OverviewPage extends DescriptorEditorPage {
 
@@ -66,11 +42,9 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField icon;
 	private TextField docRoot;
 	private TextField appDir;
-	private TextField scriptsDir;
-
+	
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink debugApplicationLink;
-	private TreeViewer scriptsTree;
 	
 	private ResourceListSection persistent;
 
@@ -98,9 +72,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		docRoot = addField(new FolderField(descr,
 				DeploymentDescriptorPackage.DOCROOT, Messages.OverviewPage_Docroot,
 				editor.getProject()));
-		scriptsDir = addField(new TextField(descr,
-				DeploymentDescriptorPackage.SCRIPTSDIR,
-				Messages.OverviewPage_Scriptsdir));
 		appDir = addField(new TextField(descr,
 				DeploymentDescriptorPackage.APPDIR, Messages.OverviewPage_Appdir));
 	}
@@ -115,7 +86,6 @@ public class OverviewPage extends DescriptorEditorPage {
 
 
 		createGeneralInformationSection(managedForm);
-		createDeploymentScriptsSection(managedForm);
 		createTestingSection(managedForm);
 		createExportingSection(managedForm);
 		createPersistentResourcesSection(managedForm);
@@ -170,144 +140,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		
 	}
 
-	private void createDeploymentScriptsSection(IManagedForm managedForm) {
-		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
-
-		Section section = toolkit.createSection(form.getBody(),
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
-		section.setText(Messages.OverviewPage_DeploymentScripts);
-		section.setDescription(Messages.OverviewPage_ScriptsDescription);
-		Composite sectionClient = toolkit.createComposite(section);
-		section.setClient(sectionClient);
-		sectionClient.setLayout(new GridLayout(3, false));
-
-		TableWrapData td = new TableWrapData();
-		td.grabHorizontal = true;
-		td.grabVertical = true;
-		td.rowspan = 2;
-		td.heightHint = 350;
-		section.setLayoutData(td);
-
-		scriptsDir.create(sectionClient, toolkit);
-
-		Label label = toolkit.createLabel(sectionClient,
-				Messages.OverviewPage_Doubleclick);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
-
-		scriptsTree = new TreeViewer(sectionClient, SWT.BORDER);
-		Tree tree = scriptsTree.getTree();
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalSpan = 3;
-		tree.setLayoutData(gd);
-
-		ScriptsContentProvider cp = new ScriptsContentProvider();
-		scriptsTree.setContentProvider(cp);
-		scriptsTree.setLabelProvider(new ScriptsLabelProvider(this));
-		scriptsTree.setInput(cp.model);
-		scriptsTree.expandAll();
-		scriptsTree.addDoubleClickListener(new IDoubleClickListener() {
-
-			public void doubleClick(DoubleClickEvent event) {
-				Object element = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				if (element instanceof ScriptsContentProvider.Script) {
-					ScriptsContentProvider.Script script = (Script) element;
-					IFile file = getScript(script.name);
-					if (!file.exists()) {
-						boolean canCreate = MessageDialog.openQuestion(
-								getSite().getShell(), Messages.OverviewPage_OpenScript,
-								Messages.OverviewPage_SelectedScriptDoesntExist);
-						if (!canCreate) {
-							return;
-						}
-					}
-					openScript(script.name);
-				}
-			}
-		});
-	}
-
-	private void openScript(final String name) {
-		Job job = new Job(Messages.OverviewPage_CreatingDeploymentScript) {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					IFile file = getScript(name);
-					if (!file.exists()) {
-						createScript(name, monitor);
-						refreshScriptsTree();
-					}
-					openEditor(file);
-				} catch (CoreException e) {
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e);
-				}
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.setUser(true);
-		job.schedule();
-	}
-
-	protected void refreshScriptsTree() {
-		scriptsTree.getControl().getDisplay().asyncExec(new Runnable() {
-
-			public void run() {
-				scriptsTree.refresh(); // update created script icon
-			}
-		});
-	}
-
-	private void createScript(String scriptName, IProgressMonitor monitor)
-			throws CoreException {
-		File projLocation = editor.getProject().getLocation().toFile();
-		ZendProject zp = new ZendProject(projLocation);
-		zp.update(scriptName);
-		editor.getProject().refreshLocal(IProject.DEPTH_INFINITE, monitor);
-
-	}
-
-	protected void openEditor(final IFile file) throws PartInitException {
-		final IWorkbenchPage page = getSite().getPage();
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-			public void run() {
-				try {
-					IEditorDescriptor desc = PlatformUI.getWorkbench()
-							.getEditorRegistry()
-							.getDefaultEditor(file.getName());
-					page.openEditor(new FileEditorInput(file), desc.getId());
-				} catch (PartInitException e) {
-					// TODO Log exception
-					e.printStackTrace();
-				}
-			}
-
-		});
-
-	}
-
-	protected IFile getScript(String scriptName) {
-		IMappingModel mapping = editor.getDescriptorContainer().getMappingModel();
-		if (mapping == null) {
-			return editor.getProject().getFile(scriptName);
-		}
-		
-		try {
-			String folder = mapping.getPath(scriptName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-
+	
+	
 	private void createExportingSection(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -404,6 +238,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		TableWrapData td = new TableWrapData();
 		td.grabHorizontal = true;
+		td.rowspan = 2;
 		section.setLayoutData(td);
 
 		name.create(sectionClient, toolkit);
@@ -469,7 +304,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		icon.refresh();
 		docRoot.refresh();
 		appDir.refresh();
-		scriptsDir.refresh();
 		persistent.refresh();
 	}
 }
