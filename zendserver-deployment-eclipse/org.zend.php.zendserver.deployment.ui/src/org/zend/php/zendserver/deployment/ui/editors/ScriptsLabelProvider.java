@@ -13,35 +13,36 @@ public class ScriptsLabelProvider extends LabelProvider {
 	public ScriptsLabelProvider(OverviewPage page) {
 		this.page = page;
 	}
-	
+
 	@Override
 	public String getText(Object element) {
 		if (element instanceof ScriptsContentProvider.ScriptType) {
 			return ((ScriptsContentProvider.ScriptType) element).name;
 		}
-		
+
 		if (element instanceof ScriptsContentProvider.Script) {
 			return ((ScriptsContentProvider.Script) element).name;
 		}
-		
+
 		return super.getText(element);
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ScriptsContentProvider.ScriptType) {
 			return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_TYPE);
-		
+
 		} else if (element instanceof ScriptsContentProvider.Script) {
 			ScriptsContentProvider.Script script = (Script) element;
 			IFile file = page.getScript(script.name);
-			if (file.exists()) {
+			if (file != null && file.exists()) {
 				return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT);
 			} else {
-				return Activator.getDefault().getImage(Activator.IMAGE_SCRIPT_NOTEXISTS);
+				return Activator.getDefault().getImage(
+						Activator.IMAGE_SCRIPT_NOTEXISTS);
 			}
 		}
-		
+
 		return super.getImage(element);
 	}
 }
