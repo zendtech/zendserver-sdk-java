@@ -27,25 +27,25 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_DESCRIPTOR_REMOVAL = "icons/sample.gif";
 	public static final String IMAGE_DESCRIPTOR_VARIABLES = "icons/sample.gif";
 
-	public static final String IMAGE_PHP = "icons/sample.gif";
-	public static final String IMAGE_PHP_EXTENSION = "icons/sample.gif";
-	public static final String IMAGE_PHP_DIRECTIVE = "icons/sample.gif";
-	public static final String IMAGE_ZENDSERVER = "icons/sample.gif";
-	public static final String IMAGE_ZENDFRAMEWORK = "icons/sample.gif";
-	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/sample.gif";
+	public static final String IMAGE_PHP = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_PHP_EXTENSION = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_PHP_DIRECTIVE = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_ZENDSERVER = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_ZENDFRAMEWORK = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/obj16/dependency_obj.gif";
 
-	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_STRING = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_CHOICE = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_CHECKBOX = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_HOSTNAME = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_EMAIL = "icons/sample.gif";
-	public static final String IMAGE_PARAMTYPE_UNKNOWN = "icons/sample.gif";
+	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_STRING = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_CHOICE = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_CHECKBOX = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_HOSTNAME = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_EMAIL = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_UNKNOWN = "icons/obj16/category_obj.gif";
 
 	public static final String IMAGE_DEPLOY_WIZARD = "icons/deploy_wiz.png";
 
-	public static final String IMAGE_VARIABLE = "icons/sample.gif";
+	public static final String IMAGE_VARIABLE = "icons/obj16/category_obj.gif";;
 
 	public static final String IMAGE_SCRIPT = "icons/obj16/script_obj.gif";
 	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/obj16/script_dis_obj.gif";
