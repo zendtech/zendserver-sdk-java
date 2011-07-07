@@ -210,11 +210,11 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		return container;
 	}
 
-	protected void handleRootFileUnchecked(IResource file) {
+	private void handleRootFileUnchecked(IResource file) {
 		removeIncludeMapping(getName(file));
 	}
 
-	protected void handleRootFolderUnchecked(IContainer folder) throws CoreException {
+	private void handleRootFolderUnchecked(IContainer folder) throws CoreException {
 		IResource[] members = folder.members();
 		for (IResource member : members) {
 			String name = getName(member);
@@ -224,17 +224,17 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		removeIncludeMapping(getName(folder));
 	}
 
-	protected void handleFolderFileUnchecked(IResource file) throws CoreException {
+	private void handleFolderFileUnchecked(IResource file) throws CoreException {
 		handleRootFileUnchecked(file);
 		handleFileInFolderUnchecked(file);
 	}
 
-	protected void handleFolderFolderUnchecked(IContainer folder) throws CoreException {
+	private void handleFolderFolderUnchecked(IContainer folder) throws CoreException {
 		handleRootFolderUnchecked(folder);
 		handleFileInFolderUnchecked(folder);
 	}
 
-	protected void handleFileInFolderUnchecked(IResource file) throws CoreException {
+	private void handleFileInFolderUnchecked(IResource file) throws CoreException {
 		IContainer parent = file.getParent();
 		List<IResource> checkedMembers = getMembers(parent, true);
 		if (parent.members().length > 1 && checkedMembers.size() * 2 < parent.members().length) {
@@ -258,12 +258,12 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		}
 	}
 
-	protected void handleRootFileChecked(IResource file) {
+	private void handleRootFileChecked(IResource file) {
 		removeExcludeMapping(getName(file));
 		addIncludeMapping(getName(file), false, false);
 	}
 
-	protected void handleRootFolderChecked(IContainer folder)
+	private void handleRootFolderChecked(IContainer folder)
 			throws CoreException {
 		IResource[] members = folder.members();
 		for (IResource member : members) {
@@ -277,12 +277,12 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		addIncludeMapping(getName(folder), false, false);
 	}
 
-	protected void handleFolderFileChecked(IResource file) throws CoreException {
+	private void handleFolderFileChecked(IResource file) throws CoreException {
 		handleRootFileChecked(file);
 		handleFileInFolderChecked(file);
 	}
 
-	protected void handleFileInFolderChecked(IResource file) throws CoreException {
+	private void handleFileInFolderChecked(IResource file) throws CoreException {
 		IContainer parent = file.getParent();
 		List<IResource> uncheckedMembers = getMembers(parent, false);
 		if (parent.members().length > 1 && uncheckedMembers.size() * 2 < parent.members().length) {
@@ -298,7 +298,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		}
 	}
 
-	protected void handleFolderFolderChecked(IContainer folder)
+	private void handleFolderFolderChecked(IContainer folder)
 			throws CoreException {
 		handleRootFolderChecked(folder);
 		handleFileInFolderChecked(folder);

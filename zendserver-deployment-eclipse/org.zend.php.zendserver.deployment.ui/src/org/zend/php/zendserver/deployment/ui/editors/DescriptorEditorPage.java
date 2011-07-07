@@ -72,7 +72,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new RunApplicationAction());
 		mgr.add(new DeployAppInCloudAction());
-		mgr.add(new ExportApplicationAction());
+		mgr.add(new ExportApplicationAction(editor.getProject()));
 		
 		final String helpContextID = getHelpResource();
 		if (helpContextID != null) {

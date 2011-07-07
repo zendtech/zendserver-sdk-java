@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -66,9 +68,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			//addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
 			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
-			addPage(new DeploymentPropertiesPage(fModel, this, "package", Messages.DeploymentDescriptorEditor_Package)); //$NON-NLS-1$
-			propertiesSourcePage = new SourcePage(this);
-			addPage(propertiesSourcePage, getPropertiesInput());
+			addMappingPages();
 			descriptorSourcePage = new SourcePage(this);
 			addPage(descriptorSourcePage, getEditorInput());
 		} catch (PartInitException e) {
@@ -108,7 +108,9 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		descriptorSourcePage.doSave(monitor);
-		propertiesSourcePage.doSave(monitor);
+		if (isMappingAvailable()) {
+			propertiesSourcePage.doSave(monitor);
+		}
 	}
 
 	/**
@@ -166,18 +168,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 				}
 			}
 		});
-
-		IFile propsFile = (IFile) fModel.getFile().getParent()
-				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
-		propertiesInput = new FileEditorInput(propsFile);
-		try {
-			fDocumentProvider.connect(getPropertiesInput());
-		} catch (CoreException e) {
-			throw new PartInitException(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, e.getMessage(), e));
-		}
-		fModel.initializeMappingModel(fDocumentProvider
-				.getDocument(propertiesInput));
+		
+		initMapping();
 	}
 
 	protected void handleModelUpdate(final IDeploymentDescriptor descr) {
@@ -246,6 +238,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			fpage.getManagedForm().getForm().setImage(img);
 		}
 	}
+	
+	private boolean isMappingAvailable() {
+		return fModel.getMappingModel() != null && fModel.getMappingModel().isLoaded();
+	}
 
 	/*
 	 * (non-Javadoc) Method declared on IEditorPart.
@@ -266,8 +262,77 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		// TODO Auto-generated method stub
+		boolean isAvailable = false;
+		if (fModel.getFile().getParent().findMember(
+				MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
+			isAvailable = true;
+		}
+		if (isAvailable && !isMappingAvailable()) {
+			addMappingPages();
+		} else if (!isAvailable && isMappingAvailable()) {
+			removeMappingPages();
+		}
+	}
 
+	private void removeMappingPages() {
+		getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+			
+			public void run() {
+				removePage(4);
+				removePage(3);
+				try {
+					fModel.getMappingModel().load(null, null);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+	}
+
+	private void addMappingPages() {
+		try {
+			if (!isMappingAvailable()) {
+				initMapping();
+			}
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (isMappingAvailable()) {
+			final DeploymentDescriptorEditor editor = this;
+			getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+
+				public void run() {
+					try {
+						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package",
+								Messages.DeploymentDescriptorEditor_Package));
+						propertiesSourcePage = new PropertiesSourcePage(editor);
+						addPage(4, propertiesSourcePage, getPropertiesInput());
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+	}
+	
+	private void initMapping() throws PartInitException {
+		IFile propsFile = (IFile) fModel.getFile().getParent()
+				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
+		if (propsFile.exists()) {
+			propertiesInput = new FileEditorInput(propsFile);
+			try {
+				fDocumentProvider.connect(getPropertiesInput());
+			} catch (CoreException e) {
+				throw new PartInitException(new Status(IStatus.ERROR,
+						Activator.PLUGIN_ID, e.getMessage(), e));
+			}
+			fModel.initializeMappingModel(fDocumentProvider
+					.getDocument(propertiesInput));
+		}
 	}
 
 	public IDeploymentDescriptor getModel() {
