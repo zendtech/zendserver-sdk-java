@@ -10,7 +10,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -223,8 +222,8 @@ public class VersionControl {
 			exclude.create(inputsComposite, toolkit);
 		}
 
-		inputsComposite.setBackground(Display.getDefault().getSystemColor(
-				SWT.COLOR_RED));
+		// inputsComposite.setBackground(Display.getDefault().getSystemColor(
+		// SWT.COLOR_RED));
 
 		/*
 		 * TODO add MultiLineField excludeText = toolkit.createText(client, "",
