@@ -257,8 +257,8 @@ public class MappingModel implements IMappingModel {
 	@Override
 	public void load(InputStream stream, File mappingFile) throws IOException {
 		this.mappingFile = mappingFile;
-		this.isLoaded = mappingFile.exists();
-		this.entries = mappingFile.exists() ? loader.load(new FileInputStream(mappingFile))
+		this.isLoaded = mappingFile != null && mappingFile.exists();
+		this.entries = isLoaded ? loader.load(new FileInputStream(mappingFile))
 				: loader.load(null);
 	}
 
