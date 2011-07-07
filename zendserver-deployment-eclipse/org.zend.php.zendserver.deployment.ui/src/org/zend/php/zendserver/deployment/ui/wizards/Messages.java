@@ -35,6 +35,19 @@ public class Messages extends NLS {
 	public static String parametersPage_applicationParams;
 	public static String parametersPage_ValidationError_TargetLocation;
 	public static String parametersPage_ValidationError_BaseUrl;
+	public static String exportWizard_Titile;
+	public static String exportWizard_JobTitle;
+	public static String exportPage_Description;
+	public static String exportPage_Title;
+	public static String exportPage_TableLabel;
+	public static String exportPage_DestinationLabel;
+	public static String exportPage_Browse;
+	public static String exportPage_SelectAll;
+	public static String exportPage_DeselectAll;
+	public static String exportPage_DirectoryDialogMessage;
+	public static String exportPage_DirectoryDialogTitle;
+	public static String exportPage_TableError;
+	public static String exportPage_DestinationError;
 
 	static {
 		// initialize resource bundle

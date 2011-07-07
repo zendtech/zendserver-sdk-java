@@ -43,7 +43,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_PARAMTYPE_EMAIL = "icons/obj16/category_obj.gif";
 	public static final String IMAGE_PARAMTYPE_UNKNOWN = "icons/obj16/category_obj.gif";
 
-	public static final String IMAGE_DEPLOY_WIZARD = "icons/deploy_wiz.png";
+	public static final String IMAGE_DEPLOY_WIZARD = "icons/wizban/deploy_wiz.png";
+	public static final String IMAGE_EXPORT_WIZARD = "icons/wizban/export_wiz.png";
 
 	public static final String IMAGE_VARIABLE = "icons/obj16/category_obj.gif";;
 

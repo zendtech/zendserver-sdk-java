@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -25,6 +26,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -74,19 +77,24 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private Combo directoryField;
 	private Button browseButton;
 	private CheckboxTableViewer tableViewer;
-	private IResource initialSelection;
+	private List<IProject> initialSelection;
 
 	protected PackageExportPage() {
-		super("Package Export");
-		setDescription("Create Application Deployment Package");
-		setTitle("Export Deployment Package");
+		super("Package Export"); //$NON-NLS-1$
+		setDescription(Messages.exportPage_Description);
+		setTitle(Messages.exportPage_Title);
 	}
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(2, false));
+		container.setLayout(new GridLayout(3, false));
+		Label tableLabel = new Label(container, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		tableLabel.setLayoutData(gd);
+		tableLabel.setText(Messages.exportPage_TableLabel);
 		tableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		tableViewer.getTable().setLayoutData(gd);
 		tableViewer.setContentProvider(new DeploymentContentProvider());
@@ -100,23 +108,27 @@ public class PackageExportPage extends WizardPage implements Listener {
 		});
 		if (initialSelection != null) {
 			tableViewer.setSelection(new StructuredSelection(initialSelection));
-			tableViewer.setChecked(initialSelection, true);
+			tableViewer.setCheckedElements(initialSelection.toArray(new IResource[0]));
 		}
+		
+		createSelectionButtons(container);
 
 		Label directoryLabel = new Label(container, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		directoryLabel.setLayoutData(gd);
-		directoryLabel.setText("To director&y:");
+		directoryLabel.setText(Messages.exportPage_DestinationLabel);
 
 		directoryField = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		directoryField.addListener(SWT.Modify, this);
 		directoryField.addListener(SWT.Selection, this);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		directoryField.setLayoutData(data);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		directoryField.setLayoutData(gd);
+		setInitialDestination();
 
 		browseButton = new Button(container, SWT.PUSH);
-		browseButton.setText("Browse");
+		browseButton.setText(Messages.exportPage_Browse);
 		browseButton.addListener(SWT.Selection, this);
 		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
@@ -147,12 +159,18 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 		return result;
 	}
+	
+	public void setInitialSelection(List<IProject> initialSelection) {
+		if (initialSelection != null) {
+			this.initialSelection = initialSelection;
+		}
+	}
 
 	protected void handleDestinationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(), SWT.SAVE
 				| SWT.SHEET);
-		dialog.setMessage("Select a directory to export to.");
-		dialog.setText("Export to Directory");
+		dialog.setMessage(Messages.exportPage_DirectoryDialogMessage);
+		dialog.setText(Messages.exportPage_DirectoryDialogTitle);
 		dialog.setFilterPath(getDestinationValue());
 		String selectedDirectory = dialog.open();
 		if (selectedDirectory != null) {
@@ -179,29 +197,61 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private boolean validateSelection() {
 		Object[] checkedElements = tableViewer.getCheckedElements();
 		if (checkedElements.length == 0) {
-			setErrorMessage("Select at least one project to export");
+			setErrorMessage(Messages.exportPage_TableError);
 			return false;
 		}
+		setErrorMessage(null);
 		return true;
 	}
 
 	private boolean validateDirectory() {
 		String destination = getDestinationValue();
-		File destDirectory = new File(destination);
-		if (destDirectory.exists() && destDirectory.isDirectory()) {
-			return true;
+		if (destination.length() != 0) {
+			File destDirectory = new File(destination);
+			if (destDirectory.exists() && destDirectory.isDirectory()) {
+				return true;
+			}
+			setErrorMessage(Messages.exportPage_DestinationError);
 		}
-		setErrorMessage("Destination does not exist or is not a directory");
 		return false;
 	}
 
-	public void setSelection(IResource object) {
-		if (tableViewer != null) {
-			tableViewer.setSelection(new StructuredSelection(object));
-			tableViewer.setChecked(object, true);
-		} else {
-			initialSelection = object;
+	private void setInitialDestination() {
+		File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
+		if (home.exists()) {
+			setDestinationValue(home.getAbsolutePath());
 		}
 	}
+	
+	private void createSelectionButtons(Composite composite) {
+        Composite buttonsComposite = new Composite(composite, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        buttonsComposite.setLayout(layout);
+
+        buttonsComposite.setLayoutData(new GridData(
+                GridData.VERTICAL_ALIGN_BEGINNING));
+
+        Button selectAll = new Button(buttonsComposite, SWT.PUSH);
+        selectAll.setText(Messages.exportPage_SelectAll);
+        selectAll.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                tableViewer.setAllChecked(true);
+                validatePage();
+            }
+        });
+        setButtonLayoutData(selectAll);
+        
+        Button deselectAll = new Button(buttonsComposite, SWT.PUSH);
+        deselectAll.setText(Messages.exportPage_DeselectAll);
+        deselectAll.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                tableViewer.setAllChecked(false);
+                validatePage();
+            }
+        });
+        setButtonLayoutData(deselectAll); 
+    }
 
 }

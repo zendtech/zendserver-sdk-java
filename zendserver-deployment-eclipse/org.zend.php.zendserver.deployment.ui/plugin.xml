@@ -101,13 +101,14 @@
          point="org.eclipse.ui.exportWizards">
       <category
             id="org.zend.php.zendserver.deployment"
-            name="Deployment">
+            name="Zend">
       </category>
       <wizard
             category="org.zend.php.zendserver.deployment"
             class="org.zend.php.zendserver.deployment.ui.wizards.PackageExportWizard"
-            id="org.zend.php.zendserver.deployment.ui.wizard1"
-            name="Deployment Package">
+            icon="icons/obj16/application_obj.gif"
+            id="org.zend.php.zendserver.deployment.ui.packageExportWizard"
+            name="Deployment Package (ZPK)">
       </wizard>
    </extension>
    <extension

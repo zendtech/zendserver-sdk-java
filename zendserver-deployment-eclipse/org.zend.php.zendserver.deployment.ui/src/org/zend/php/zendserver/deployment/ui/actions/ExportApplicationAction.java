@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -33,6 +36,7 @@ public class ExportApplicationAction extends Action {
 	}
 
 	public ExportApplicationAction(IProject project) {
+		this();
 		this.project = project;
 	}
 
@@ -40,9 +44,10 @@ public class ExportApplicationAction extends Action {
 	public void run() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
-
 		PackageExportWizard wizard = new PackageExportWizard();
-		wizard.setProject(project);
+		List<IProject> selection = new ArrayList<IProject>();
+		selection.add(project);
+		wizard.setInitialSelection(selection);
 		wizard.setWindowTitle("Export application");
 		WizardDialog dialog = createDialog(window.getShell(), wizard);
 		dialog.open();
