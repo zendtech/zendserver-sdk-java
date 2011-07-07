@@ -33,6 +33,8 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 			return label;
 		}
 	}
+
+	private static final Object[] EMPTY = new Object[0];
 	
 	public String getDescription() {
 		return Messages.VarsAndParamsMasterDetailsProvider_DefineVarsAndParams;
@@ -69,7 +71,7 @@ public class VarsAndParamsMasterDetailsProvider implements MasterDetailsProvider
 			return (Object[]) input;
 		}
 		
-		return null;
+		return EMPTY;
 	}
 	
 	public Object addElment(IDeploymentDescriptor model, DescriptorMasterDetailsBlock block) {
