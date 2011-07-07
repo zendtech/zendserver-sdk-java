@@ -17,7 +17,7 @@ import org.zend.php.zendserver.deployment.core.DeploymentCore;
 
 public class SdkManager implements IPreferenceChangeListener {
 
-	public static final String SDK_PATH = "sdk_path";
+	public static final String SDK_PATH = "sdk_path"; //$NON-NLS-1$
 
 	private Sdk currentSdk;
 	
