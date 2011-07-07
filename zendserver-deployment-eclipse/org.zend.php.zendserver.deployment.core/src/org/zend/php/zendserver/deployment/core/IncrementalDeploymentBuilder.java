@@ -27,6 +27,10 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args,
 			IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = getDelta(getProject());
+		if (delta == null) {
+			return null;
+		}
+		
 		delta.accept(new IResourceDeltaVisitor() {
 			
 			public boolean visit(IResourceDelta delta) throws CoreException {
@@ -50,8 +54,6 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 	}
 
 	protected void validateDescriptor(IFile file) {
-		System.out.println("validating descriptor");
-		
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer(file);
 		
