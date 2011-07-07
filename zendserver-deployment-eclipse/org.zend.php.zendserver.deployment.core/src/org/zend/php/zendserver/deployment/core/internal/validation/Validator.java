@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class Validator {
@@ -55,25 +55,54 @@ public class Validator {
 		}
 	}
 	
-	public void validate(IDeploymentDescriptor descr, List<ValidationStatus> statuses) {
-		// empty
+	private void validate(IModelObject modelObj, List<ValidationStatus> statuses) {
+		validateProperties(modelObj, statuses);
+		if (modelObj instanceof IModelContainer) {
+			validate((IModelContainer) modelObj, statuses);
+		}
 	}
 	
-	public List<ValidationStatus> validate(IDeploymentDescriptor descr) {
-		List<ValidationStatus> statuses = new ArrayList<ValidationStatus>();
-		
-		for (Entry<Feature, PropertyTester[]> v : testers.entrySet()) {
-			Object value = descr.get(v.getKey());
-			for (PropertyTester pt : v.getValue()) {
-				String message = pt.test(value);
-				
-				if (message != null) {
-					statuses.add(new ValidationStatus(v.getKey(), pt.severity, message));
+	private void validate(IModelContainer modelObj, List<ValidationStatus> statuses) {
+		for (Feature f : modelObj.getChildNames()) {
+			PropertyTester[] featureTests = testers.get(f);
+			if (featureTests != null) {
+				List<Object> children = modelObj.getChildren(f);
+				for (PropertyTester pt : featureTests) {
+					String msg = pt.test(children);
+					if (msg != null) {
+						statuses.add(new ValidationStatus(f, pt.severity, msg));
+					}
+				}
+			}
+			
+			if (f.type == IModelObject.class) {
+				List<Object> children = modelObj.getChildren(f);
+				for (Object child : children) {
+					validate((IModelObject) child, statuses);
 				}
 			}
 		}
-		
-		return statuses;
+	}
+	
+	private void validateProperties(IModelObject obj, List<ValidationStatus> statuses) {
+		for (Feature f : obj.getPropertyNames()) {
+			PropertyTester[] featureTests = testers.get(f);
+			if (featureTests != null) {
+				Object value = obj.get(f);
+				for (PropertyTester pt: featureTests) {
+					String msg = pt.test(value);
+					if (msg != null) {
+						statuses.add(new ValidationStatus(f, pt.severity, msg));
+					}
+				}
+			}
+		}
+	}
+	
+	public ValidationStatus[] validate(IModelObject descr) {
+		List<ValidationStatus> statuses = new ArrayList<ValidationStatus>();
+		validate(descr, statuses);
+		return statuses.toArray(new ValidationStatus[statuses.size()]);
 	}
 	
 }
