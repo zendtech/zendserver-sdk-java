@@ -65,10 +65,10 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
 	protected DeploymentDescriptorEditor editor;
 	protected TreeViewer viewer;
-	private String title;
-	private String description;
-	private MasterDetailsProvider provider;
-	private Button removeButton;
+	protected String title;
+	protected String description;
+	protected MasterDetailsProvider provider;
+	protected Button removeButton;
 
 	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor,
 			MasterDetailsProvider prov, String title, String description) {
@@ -116,6 +116,28 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		gd = new GridData(SWT.BEGINNING, SWT.TOP, false, false);
 		buttons.setLayoutData(gd);
 
+		addButtons(toolkit, buttons);
+
+		viewer = new TreeViewer(tree);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				managedForm.fireSelectionChanged(spart, event.getSelection());
+				managedForm.getForm().reflow(true);
+				updateButtonsEnabledState();
+			}
+		});
+		viewer.setContentProvider(new MasterContentProvider());
+		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
+		viewer.setInput(editor.getModel());
+		editor.getModel().addListener(new IDescriptorChangeListener() {
+
+			public void descriptorChanged(ChangeEvent event) {
+				refreshViewer(event.target);
+			}
+		});
+	}
+
+	protected void addButtons(FormToolkit toolkit, Composite buttons) {
 		Button addButton = createButton(toolkit, buttons,
 				Messages.DescriptorMasterDetailsBlock_Add);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -146,27 +168,9 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				removeElement(viewer.getSelection());
 			}
 		});
-
-		viewer = new TreeViewer(tree);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				managedForm.fireSelectionChanged(spart, event.getSelection());
-				managedForm.getForm().reflow(true);
-				updateButtonsEnabledState();
-			}
-		});
-		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
-		viewer.setInput(editor.getModel());
-		editor.getModel().addListener(new IDescriptorChangeListener() {
-
-			public void descriptorChanged(ChangeEvent event) {
-				refreshViewer(event.target);
-			}
-		});
 	}
 
-	private Button createButton(FormToolkit toolkit, Composite buttons,
+	protected Button createButton(FormToolkit toolkit, Composite buttons,
 			String message) {
 		Button button = toolkit.createButton(buttons, message, SWT.NONE);
 		GridData gd = new GridData(
