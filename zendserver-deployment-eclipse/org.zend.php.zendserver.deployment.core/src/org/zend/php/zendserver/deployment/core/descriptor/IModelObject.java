@@ -57,4 +57,10 @@ public interface IModelObject {
 	Feature[] getPropertyNames();
 	
 	public void setParent(IModelContainer parent);
+
+	int getLine(Feature f);
+
+	int getChar(Feature f);
+
+	int getLength(Feature f);
 }
