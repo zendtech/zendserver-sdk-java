@@ -163,7 +163,7 @@ public class ScriptsSection {
 				if (element instanceof ScriptsContentProvider.Script) {
 					ScriptsContentProvider.Script script = (Script) element;
 					IFile file = getScript(script.name);
-					if (!file.exists()) {
+					if (file == null || !file.exists()) {
 						boolean canCreate = MessageDialog.openQuestion(
 								editor.getSite().getShell(), Messages.OverviewPage_OpenScript,
 								Messages.OverviewPage_SelectedScriptDoesntExist);
