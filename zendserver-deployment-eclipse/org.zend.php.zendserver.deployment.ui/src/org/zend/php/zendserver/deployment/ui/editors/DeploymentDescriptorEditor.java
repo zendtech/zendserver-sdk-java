@@ -110,7 +110,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		descriptorSourcePage.doSave(monitor);
-		if (isMappingAvailable()) {
+		if (isMappingAvailable() && propertiesSourcePage != null) {
 			propertiesSourcePage.doSave(monitor);
 		}
 	}
