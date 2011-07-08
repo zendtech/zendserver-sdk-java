@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,9 +60,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			Object[] obj = getChildren(element);
 			return obj != null && obj.length > 0;
 		}
-		
+
 	}
-	
 
 	protected DeploymentDescriptorEditor editor;
 	protected TreeViewer viewer;
@@ -68,7 +70,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	private MasterDetailsProvider provider;
 	private Button removeButton;
 
-	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor, MasterDetailsProvider prov, String title, String description) {
+	public DescriptorMasterDetailsBlock(DeploymentDescriptorEditor editor,
+			MasterDetailsProvider prov, String title, String description) {
 		this.editor = editor;
 		this.provider = prov;
 		this.title = title;
@@ -76,19 +79,22 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	}
 
 	@Override
-	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
+	protected void createMasterPart(final IManagedForm managedForm,
+			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
-		
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
+
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION
+				| Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		section.setText(title);
 		section.setDescription(description);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
-		TableWrapData tdd = new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB);
+		TableWrapData tdd = new TableWrapData(TableWrapData.FILL_GRAB,
+				TableWrapData.FILL_GRAB);
 		section.setLayoutData(tdd);
-		
+
 		Composite client = toolkit.createComposite(section, SWT.NONE);
 		section.setClient(client);
 		GridLayout layout = new GridLayout();
@@ -97,50 +103,50 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		layout.marginHeight = 2;
 		client.setLayout(layout);
 		client.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		Tree tree = toolkit.createTree(client, SWT.H_SCROLL|SWT.V_SCROLL);
+
+		Tree tree = toolkit.createTree(client, SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 200;
 		gd.heightHint = 200;
 		tree.setLayoutData(gd);
-		
+
 		Composite buttons = toolkit.createComposite(client, SWT.NONE);
 		layout = new GridLayout(1, false);
 		buttons.setLayout(layout);
 		gd = new GridData(SWT.BEGINNING, SWT.TOP, false, false);
 		buttons.setLayoutData(gd);
-		
-		Button addButton = toolkit.createButton(buttons, Messages.DescriptorMasterDetailsBlock_Add, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-		addButton.setLayoutData(gd);
+
+		Button addButton = createButton(toolkit, buttons,
+				Messages.DescriptorMasterDetailsBlock_Add);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Object result = provider.addElment(editor.getModel(), DescriptorMasterDetailsBlock.this);
+				Object result = provider.addElment(editor.getModel(),
+						DescriptorMasterDetailsBlock.this);
 				if (result == null) {
 					return;
 				}
-				
-				Feature feature = DeploymentDescriptorFactory.getFeature(result);
+
+				Feature feature = DeploymentDescriptorFactory
+						.getFeature(result);
 				editor.getModel().add(feature, result);
 				Object[] expanded = viewer.getExpandedElements();
 				viewer.refresh();
 				viewer.setExpandedElements(expanded);
 				viewer.setSelection(new StructuredSelection(result));
-				
+
 			}
 		});
 
-		removeButton = toolkit.createButton(buttons, Messages.DescriptorMasterDetailsBlock_Remove, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-		removeButton.setLayoutData(gd);
+		removeButton = createButton(toolkit, buttons,
+				Messages.DescriptorMasterDetailsBlock_Remove);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeElement(viewer.getSelection());
 			}
 		});
-		
+
 		viewer = new TreeViewer(tree);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -153,13 +159,31 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
-			
+
 			public void descriptorChanged(ChangeEvent event) {
 				refreshViewer(event.target);
 			}
 		});
 	}
-	
+
+	private Button createButton(FormToolkit toolkit, Composite buttons,
+			String message) {
+		Button button = toolkit.createButton(buttons, message, SWT.NONE);
+		GridData gd = new GridData(
+				SWT.FILL | GridData.VERTICAL_ALIGN_BEGINNING, SWT.TOP, true,
+				false);
+		button.setLayoutData(gd);
+
+		// Set the default button size
+		button.setFont(JFaceResources.getDialogFont());
+		PixelConverter converter = new PixelConverter(button);
+		int widthHint = converter
+				.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint,
+				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		return button;
+	}
+
 	private void updateButtonsEnabledState() {
 		boolean isEmpty = viewer.getSelection().isEmpty();
 		removeButton.setEnabled(!isEmpty);
@@ -180,16 +204,16 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		if (elem == null) {
 			return;
 		}
-		
+
 		Feature feature = DeploymentDescriptorFactory.getFeature(elem);
 		editor.getModel().getChildren(feature).remove(elem);
 		viewer.refresh();
 	}
-	
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.setPageProvider(new DetailsPageProvider(editor, provider.getType()));
+		detailsPart.setPageProvider(new DetailsPageProvider(editor, provider
+				.getType()));
 	}
 
 	@Override
