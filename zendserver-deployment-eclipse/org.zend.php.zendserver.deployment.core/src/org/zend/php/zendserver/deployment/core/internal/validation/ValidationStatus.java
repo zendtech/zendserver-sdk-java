@@ -11,9 +11,15 @@ public class ValidationStatus {
 	private Feature property;
 	private int severity;
 	private String message;
+	private int line;
+	private int start;
+	private int end;
 
-	public ValidationStatus(Feature target, int severity, String message) {
+	public ValidationStatus(Feature target, int line, int start, int end, int severity, String message) {
 		this.property = target;
+		this.line = line;
+		this.start = start;
+		this.end = end;
 		this.severity = severity;
 		this.message = message;
 	}
@@ -28,6 +34,18 @@ public class ValidationStatus {
 	
 	public String getMessage() {
 		return message;
+	}
+
+	public int getLine() {
+		return line;
+	}
+
+	public int getStart() {
+		return start;
+	}
+
+	public int getEnd() {
+		return end;
 	}
 	
 }

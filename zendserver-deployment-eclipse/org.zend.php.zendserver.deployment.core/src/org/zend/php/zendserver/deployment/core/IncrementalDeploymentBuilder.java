@@ -19,7 +19,7 @@ import org.zend.php.zendserver.deployment.core.internal.validation.Validator;
 
 public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 
-	private static final String PROBLEM_MARKER = "org.zend.php.zendserver.deployment.core.problemmarker";
+	public static final String PROBLEM_MARKER = "org.zend.php.zendserver.deployment.core.problemmarker"; //$NON-NLS-1$
 	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentBuilder"; //$NON-NLS-1$
 
 	public IncrementalDeploymentBuilder() {
@@ -73,12 +73,12 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 			IMarker marker;
 			try {
 				marker = file.createMarker(PROBLEM_MARKER);
-				marker.setAttribute("lineNumber", 0);
-				marker.setAttribute("charStart", 0);
-				marker.setAttribute("charEnd", 0);
-				marker.setAttribute("message", status.getMessage());
-				marker.setAttribute("priority", 0);
-				marker.setAttribute("severity", status.getSeverity());
+				marker.setAttribute(IMarker.LINE_NUMBER, status.getLine());
+				marker.setAttribute(IMarker.CHAR_START, status.getStart());
+				marker.setAttribute(IMarker.CHAR_END, status.getEnd());
+				marker.setAttribute(IMarker.MESSAGE, status.getMessage());
+				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+				marker.setAttribute(IMarker.SEVERITY, status.getSeverity());
 			} catch (CoreException e) {
 				DeploymentCore.log(e);
 			}

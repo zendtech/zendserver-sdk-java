@@ -74,4 +74,19 @@ public abstract class ModelObject implements IModelObject {
 	public void setParent(IModelContainer container) {
 		this.parent = container;
 	}
+	
+	public int getLine(Feature f) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getChar(Feature f) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getLength(Feature f) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

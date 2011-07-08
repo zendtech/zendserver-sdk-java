@@ -62,21 +62,21 @@ public class Validator {
 		}
 	}
 	
-	private void validate(IModelContainer modelObj, List<ValidationStatus> statuses) {
-		for (Feature f : modelObj.getChildNames()) {
+	private void validate(IModelContainer obj, List<ValidationStatus> statuses) {
+		for (Feature f : obj.getChildNames()) {
 			PropertyTester[] featureTests = testers.get(f);
 			if (featureTests != null) {
-				List<Object> children = modelObj.getChildren(f);
+				List<Object> children = obj.getChildren(f);
 				for (PropertyTester pt : featureTests) {
 					String msg = pt.test(children);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f, pt.severity, msg));
+						statuses.add(new ValidationStatus(f, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}
 			
 			if (f.type == IModelObject.class) {
-				List<Object> children = modelObj.getChildren(f);
+				List<Object> children = obj.getChildren(f);
 				for (Object child : children) {
 					validate((IModelObject) child, statuses);
 				}
@@ -92,7 +92,7 @@ public class Validator {
 				for (PropertyTester pt: featureTests) {
 					String msg = pt.test(value);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f, pt.severity, msg));
+						statuses.add(new ValidationStatus(f, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}
