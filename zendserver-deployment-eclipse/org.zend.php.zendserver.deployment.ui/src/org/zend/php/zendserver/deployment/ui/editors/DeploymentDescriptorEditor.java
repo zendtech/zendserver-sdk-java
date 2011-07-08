@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -29,6 +30,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -147,7 +149,14 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		fModel = DescriptorContainerManager.getService()
 				.openDescriptorContainer(fileInput.getFile());
 		super.init(site, editorInput);
+		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		
+		initDescriptor(editorInput);
+		initMapping();
+	}
 
+	private void initDescriptor(IEditorInput editorInput) throws PartInitException {
 		try {
 			fDocumentProvider.connect(editorInput);
 		} catch (CoreException e) {
@@ -168,8 +177,20 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 				}
 			}
 		});
-		
-		initMapping();
+	}
+	
+	private void initMapping() throws PartInitException {
+		IFile propsFile = (IFile) fModel.getFile().getParent()
+				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
+		propertiesInput = new FileEditorInput(propsFile);
+		try {
+			fDocumentProvider.connect(getPropertiesInput());
+		} catch (CoreException e) {
+			throw new PartInitException(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, e.getMessage(), e));
+		}
+		fModel.initializeMappingModel(fDocumentProvider
+				.getDocument(propertiesInput));
 	}
 
 	protected void handleModelUpdate(final IDeploymentDescriptor descr) {
@@ -178,16 +199,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			public void run() {
 				String newIconLocation = descr.getIconLocation();
 				changeIcon(newIconLocation);
-				
-				validate(descr);
 			}
 		});
 	}
 	
-	private void validate(IDeploymentDescriptor descr) {
-		
-	}
-
 	private void changeIcon(String newIconLocation) {
 		if ((newIconLocation == iconLocation)
 				|| (newIconLocation != null && (newIconLocation
@@ -262,6 +277,11 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
+		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IncrementalDeploymentBuilder.PROBLEM_MARKER, true);
+		for (int i = 0; i < markerDeltas.length; i++) {
+			IMarkerDelta delta = markerDeltas[i];
+		}
+
 		boolean isAvailable = false;
 		if (fModel.getFile().getParent().findMember(
 				MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
@@ -308,8 +328,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					try {
 						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package",
 								Messages.DeploymentDescriptorEditor_Package));
-						propertiesSourcePage = new PropertiesSourcePage(editor);
-						addPage(4, propertiesSourcePage, getPropertiesInput());
+						//propertiesSourcePage = new PropertiesSourcePage(editor);
+						//addPage(4, propertiesSourcePage, getPropertiesInput());
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -319,22 +339,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		}
 	}
 	
-	private void initMapping() throws PartInitException {
-		IFile propsFile = (IFile) fModel.getFile().getParent()
-				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
-		if (propsFile.exists()) {
-			propertiesInput = new FileEditorInput(propsFile);
-			try {
-				fDocumentProvider.connect(getPropertiesInput());
-			} catch (CoreException e) {
-				throw new PartInitException(new Status(IStatus.ERROR,
-						Activator.PLUGIN_ID, e.getMessage(), e));
-			}
-			fModel.initializeMappingModel(fDocumentProvider
-					.getDocument(propertiesInput));
-		}
-	}
-
 	public IDeploymentDescriptor getModel() {
 		return fModel.getDescriptorModel();
 	}
