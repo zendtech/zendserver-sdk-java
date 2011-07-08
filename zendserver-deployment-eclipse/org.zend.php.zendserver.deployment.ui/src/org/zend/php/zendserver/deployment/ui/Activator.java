@@ -19,7 +19,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_RUN_APPLICATION = "icons/obj16/run_exc.gif";
 	public static final String IMAGE_DEBUG_APPLICATION = "icons/obj16/debug_exc.gif";
-	public static final String IMAGE_EXPORT_APPLICATION = "icons/obj16/start_application.gif";
+	public static final String IMAGE_RUN_TEST = "icons/obj16/test_application.gif";
+	public static final String IMAGE_EXPORT_APPLICATION = "icons/obj16/bundle_obj.gif";
 
 	public static final String IMAGE_DESCRIPTOR_OVERVIEW = "icons/obj16/overview_obj.gif";
 	public static final String IMAGE_DESCRIPTOR_PARAMETERS = "icons/sample.gif";

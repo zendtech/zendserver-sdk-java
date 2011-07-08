@@ -31,6 +31,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	private static final String LINK_DEBUG_PHP = "debugPHP"; //$NON-NLS-1$
 	private static final String LINK_RUN_PHP = "runPHP"; //$NON-NLS-1$
+	private static final String LINK_RUN_TEST = "testPHP"; //$NON-NLS-1$
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
 	
 	private TextField name;
@@ -45,6 +46,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink debugApplicationLink;
+	private ImageHyperlink runTestsLink;
 	
 	private ResourceListSection persistent;
 
@@ -222,6 +224,14 @@ public class OverviewPage extends DescriptorEditorPage {
 		debugApplicationLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_DEBUG_APPLICATION).createImage());
 		debugApplicationLink.setHref(LINK_DEBUG_PHP);
+
+		runTestsLink = toolkit.createImageHyperlink(sectionClient,
+				SWT.NONE);
+		runTestsLink.setText(Messages.OverviewPage_LaunchingPHPTest);
+		runTestsLink.setImage(Activator.getImageDescriptor(
+				Activator.IMAGE_RUN_TEST).createImage());
+		runTestsLink.setHref(LINK_RUN_TEST);
+	
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm) {

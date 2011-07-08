@@ -53,6 +53,7 @@ public class Messages extends NLS {
 	public static String OverviewPage_Icon;
 	public static String OverviewPage_LaunchingAndDebuggingPHPApp;
 	public static String OverviewPage_LaunchingPHPApp;
+	public static String OverviewPage_LaunchingPHPTest;
 	public static String OverviewPage_Name;
 	public static String OverviewPage_OpenScript;
 	public static String OverviewPage_Overview;
