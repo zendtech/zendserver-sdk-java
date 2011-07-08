@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.editors;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,9 +41,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
-
 public abstract class ResourceListSection {
-	
+
 	private class MasterContentProvider implements IStructuredContentProvider {
 
 		public void dispose() {
@@ -53,18 +56,18 @@ public abstract class ResourceListSection {
 		public Object[] getElements(Object input) {
 			return ResourceListSection.this.getElements(input);
 		}
-		
+
 	}
-	
+
 	private static class MasterLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			return super.getText(element);
 		}
 	}
-	
+
 	private IManagedForm mForm;
-	
+
 	private Button addButton;
 	private Button editButton;
 	private Button removeButton;
@@ -76,30 +79,30 @@ public abstract class ResourceListSection {
 	private String title;
 
 	private String description;
-	
 
 	/**
 	 * @param id
 	 * @param title
 	 */
-	public ResourceListSection(DeploymentDescriptorEditor editor, IManagedForm mForm, String title, String description) {
+	public ResourceListSection(DeploymentDescriptorEditor editor,
+			IManagedForm mForm, String title, String description) {
 		this.title = title;
 		this.description = description;
 		this.editor = editor;
 		this.mForm = mForm;
-		
+
 		createSection();
 		createActions();
 	}
-	
+
 	private void createSection() {
 		FormToolkit toolkit = mForm.getToolkit();
-		
+
 		Section section = createSection(title, description);
 		Composite client = (Composite) section.getClient();
 		final SectionPart spart = new SectionPart(section);
 		mForm.addPart(spart);
-		
+
 		Table t = toolkit.createTable(client, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
@@ -116,66 +119,80 @@ public abstract class ResourceListSection {
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
-			
+
 			public void descriptorChanged(ChangeEvent event) {
 				if (event.target instanceof IParameter) {
-					refreshViewer((IParameter)event.target);
+					refreshViewer((IParameter) event.target);
 				}
 			}
 		});
-		
+
 		Composite buttons = toolkit.createComposite(client, SWT.WRAP);
 		GridLayout layout = new GridLayout(1, false);
 		buttons.setLayout(layout);
 		gd = new GridData(SWT.DEFAULT, SWT.TOP, false, false);
 		buttons.setLayoutData(gd);
-		
-		addButton = toolkit.createButton(buttons, Messages.ResourceListSection_Add, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-		addButton.setLayoutData(gd);
-		
-		editButton = toolkit.createButton(buttons, Messages.ResourceListSection_Edit, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-		editButton.setLayoutData(gd);
-		
-		removeButton = toolkit.createButton(buttons, Messages.ResourceListSection_Remove, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-		removeButton.setLayoutData(gd);
+
+		addButton = createButton(toolkit, buttons,
+				Messages.ResourceListSection_Add);
+
+		editButton = createButton(toolkit, buttons,
+				Messages.ResourceListSection_Edit);
+
+		removeButton = createButton(toolkit, buttons,
+				Messages.ResourceListSection_Remove);
 	}
-	
+
+	private Button createButton(FormToolkit toolkit, Composite buttons,
+			String message) {
+		Button button = toolkit.createButton(buttons, message, SWT.NONE);
+		GridData gd = new GridData(
+				SWT.FILL | GridData.VERTICAL_ALIGN_BEGINNING, SWT.TOP, true,
+				false);
+		button.setLayoutData(gd);
+
+		// Set the default button size
+		button.setFont(JFaceResources.getDialogFont());
+		PixelConverter converter = new PixelConverter(button);
+		int widthHint = converter
+				.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint,
+				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		return button;
+	}
+
 	protected void refreshViewer(final IParameter target) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			
+
 			public void run() {
 				viewer.refresh(target);
 			}
 		});
-		
+
 	}
 
 	private Section createSection(String title, String description) {
 		ScrolledForm form = mForm.getForm();
 		FormToolkit toolkit = mForm.getToolkit();
-		
-		Section section =
-				toolkit.createSection(
-					form.getBody(), Section.TITLE_BAR|Section.DESCRIPTION|Section.TWISTIE);
-		section.setActiveToggleColor(
-			toolkit.getHyperlinkGroup().getActiveForeground());
-		section.setToggleColor(
-			toolkit.getHyperlinkGroup().getActiveForeground());
-		
+
+		Section section = toolkit.createSection(form.getBody(),
+				Section.TITLE_BAR | Section.DESCRIPTION | Section.TWISTIE);
+		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
+				.getActiveForeground());
+		section.setToggleColor(toolkit.getHyperlinkGroup()
+				.getActiveForeground());
+
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
 		client.setLayout(layout);
 		toolkit.paintBordersFor(client);
-		
+
 		section.setClient(client);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		//section.setLayoutData(gd);
-		
+		// section.setLayoutData(gd);
+
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				mForm.getForm().reflow(false);
@@ -183,10 +200,10 @@ public abstract class ResourceListSection {
 		});
 		section.setText(title);
 		section.setDescription(description);
-		
+
 		return section;
 	}
-	
+
 	private void createActions() {
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -195,11 +212,12 @@ public abstract class ResourceListSection {
 				viewer.refresh();
 			}
 		});
-		
+
 		editButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) viewer
+						.getSelection();
 				if (sel.isEmpty()) {
 					return;
 				}
@@ -207,11 +225,12 @@ public abstract class ResourceListSection {
 				viewer.refresh();
 			}
 		});
-		
+
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) viewer
+						.getSelection();
 				if (sel.isEmpty()) {
 					return;
 				}
@@ -220,11 +239,11 @@ public abstract class ResourceListSection {
 			}
 		});
 	}
-	
+
 	abstract protected void removePath(Object element);
-	
+
 	abstract protected void editPath(Object element);
-	
+
 	abstract protected void addPath();
 
 	public abstract Object[] getElements(Object input);
