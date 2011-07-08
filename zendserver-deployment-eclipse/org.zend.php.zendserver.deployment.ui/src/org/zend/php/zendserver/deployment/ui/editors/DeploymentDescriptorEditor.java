@@ -328,8 +328,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					try {
 						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package",
 								Messages.DeploymentDescriptorEditor_Package));
-						//propertiesSourcePage = new PropertiesSourcePage(editor);
-						//addPage(4, propertiesSourcePage, getPropertiesInput());
+						propertiesSourcePage = new SourcePage(editor);
+						addPage(4, propertiesSourcePage, getPropertiesInput());
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
