@@ -26,7 +26,7 @@ import org.zend.sdklib.application.PackageBuilder;
 public class PackageExportWizard extends Wizard implements IExportWizard {
 
 	private PackageExportPage parametersPage;
-	
+
 	public PackageExportWizard() {
 		parametersPage = new PackageExportPage();
 	}
@@ -34,10 +34,14 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setNeedsProgressMonitor(false);
 		setWindowTitle(Messages.exportWizard_Titile);
-		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_EXPORT_WIZARD));
-		parametersPage.setInitialSelection(getValidSelection(selection));
+		setDefaultPageImageDescriptor(Activator
+				.getImageDescriptor(Activator.IMAGE_EXPORT_WIZARD));
+
+		if (selection != null) {
+			parametersPage.setInitialSelection(getValidSelection(selection));
+		}
 	}
-	
+
 	public void setInitialSelection(List<IProject> resources) {
 		if (resources != null) {
 			parametersPage.setInitialSelection(resources);
@@ -62,7 +66,8 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 					return Status.OK_STATUS;
 				}
 				for (IResource project : projects) {
-					File container = new File(project.getLocation().toOSString());
+					File container = new File(project.getLocation()
+							.toOSString());
 					PackageBuilder builder = new PackageBuilder(container,
 							new EclipseMappingModelLoader());
 					builder.addStatusChangeListener(listener);
@@ -78,32 +83,32 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		createPackageJob.schedule();
 		return true;
 	}
-	
-	protected List<IProject> getValidSelection(IStructuredSelection currentSelection) {
-		if (currentSelection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) currentSelection;
-			List<IProject> selectedElements = new ArrayList<IProject>(structuredSelection.size());
-			Iterator<?> iter = structuredSelection.iterator();
-			while (iter.hasNext()) {
-				Object selectedElement = iter.next();
-				IProject project = null;
-				if (selectedElement instanceof IProject) {
-					project = (IProject) selectedElement;
-				} else if (selectedElement instanceof IContainer) {
-					project = ((IContainer) selectedElement).getProject();
-				} else if (selectedElement instanceof IFile) {
-					project = ((IFile) selectedElement).getProject();
-				}
-				if (project != null) {
-					if (project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH) != null) {
-						selectedElements.add(project);
-					}
+
+	protected List<IProject> getValidSelection(
+			IStructuredSelection currentSelection) {
+		
+		IStructuredSelection structuredSelection = (IStructuredSelection) currentSelection;
+		List<IProject> selectedElements = new ArrayList<IProject>(
+				structuredSelection.size());
+		Iterator<?> iter = structuredSelection.iterator();
+		while (iter.hasNext()) {
+			Object selectedElement = iter.next();
+			IProject project = null;
+			if (selectedElement instanceof IProject) {
+				project = (IProject) selectedElement;
+			} else if (selectedElement instanceof IContainer) {
+				project = ((IContainer) selectedElement).getProject();
+			} else if (selectedElement instanceof IFile) {
+				project = ((IFile) selectedElement).getProject();
+			}
+			if (project != null) {
+				if (project
+						.findMember(DescriptorContainerManager.DESCRIPTOR_PATH) != null) {
+					selectedElements.add(project);
 				}
 			}
-			return selectedElements;
-		} else {
-			return null;
 		}
+		return selectedElements;
 	}
 
 }
