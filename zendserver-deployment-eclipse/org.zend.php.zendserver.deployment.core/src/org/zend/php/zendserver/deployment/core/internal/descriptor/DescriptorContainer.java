@@ -120,7 +120,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 	}
 	
 	public void initializeMappingModel(IDocument document) {
-		if (fMappingModel == null) {
+		if (fMappingModel == null || !fMappingModel.isLoaded()) {
 			File container = fFile.getParent().getLocation().toFile();
 			fMappingModel = MappingModelFactory.createModel(
 					new EclipseMappingModelLoader(document), container);
