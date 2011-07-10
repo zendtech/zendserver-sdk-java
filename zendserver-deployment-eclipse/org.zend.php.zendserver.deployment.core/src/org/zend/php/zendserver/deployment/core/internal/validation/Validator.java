@@ -32,11 +32,8 @@ public class Validator {
 		add(DeploymentDescriptorPackage.VALUE, tester);
 		
 		tester = new FileExistsTester();
-		add(DeploymentDescriptorPackage.APPDIR, tester);
 		add(DeploymentDescriptorPackage.ICON, tester);
 		add(DeploymentDescriptorPackage.EULA, tester);
-		add(DeploymentDescriptorPackage.SCRIPTSDIR, tester);
-		add(DeploymentDescriptorPackage.DOCROOT, tester);
 		
 		tester = new VersionTester();
 		add(DeploymentDescriptorPackage.VERSION_API, tester);
