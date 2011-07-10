@@ -16,7 +16,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -57,13 +56,6 @@ public abstract class ResourceListSection {
 			return ResourceListSection.this.getElements(input);
 		}
 
-	}
-
-	private static class MasterLabelProvider extends LabelProvider {
-		@Override
-		public String getText(Object element) {
-			return super.getText(element);
-		}
 	}
 
 	private IManagedForm mForm;
@@ -190,9 +182,6 @@ public abstract class ResourceListSection {
 		toolkit.paintBordersFor(client);
 
 		section.setClient(client);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		// section.setLayoutData(gd);
-
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				mForm.getForm().reflow(false);

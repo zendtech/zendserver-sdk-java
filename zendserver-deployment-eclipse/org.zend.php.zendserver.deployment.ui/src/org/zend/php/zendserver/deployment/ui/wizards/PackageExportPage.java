@@ -42,7 +42,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 
 public class PackageExportPage extends WizardPage implements Listener {
 
-	private class DeploymentContentProvider implements IStructuredContentProvider {
+	private class DeploymentContentProvider implements
+			IStructuredContentProvider {
 
 		public Object[] getElements(Object input) {
 			List<IResource> result = new ArrayList<IResource>();
@@ -78,6 +79,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private Button browseButton;
 	private CheckboxTableViewer tableViewer;
 	private List<IProject> initialSelection;
+	private Button overwriteButton;
 
 	protected PackageExportPage() {
 		super("Package Export"); //$NON-NLS-1$
@@ -98,7 +100,8 @@ public class PackageExportPage extends WizardPage implements Listener {
 		gd.horizontalSpan = 2;
 		tableViewer.getTable().setLayoutData(gd);
 		tableViewer.setContentProvider(new DeploymentContentProvider());
-		tableViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
+		tableViewer.setLabelProvider(WorkbenchLabelProvider
+				.getDecoratingWorkbenchLabelProvider());
 		tableViewer.setInput(ResourcesPlugin.getWorkspace());
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 
@@ -108,9 +111,10 @@ public class PackageExportPage extends WizardPage implements Listener {
 		});
 		if (initialSelection != null) {
 			tableViewer.setSelection(new StructuredSelection(initialSelection));
-			tableViewer.setCheckedElements(initialSelection.toArray(new IResource[0]));
+			tableViewer.setCheckedElements(initialSelection
+					.toArray(new IResource[0]));
 		}
-		
+
 		createSelectionButtons(container);
 
 		Label directoryLabel = new Label(container, SWT.NONE);
@@ -122,7 +126,8 @@ public class PackageExportPage extends WizardPage implements Listener {
 		directoryField = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		directoryField.addListener(SWT.Modify, this);
 		directoryField.addListener(SWT.Selection, this);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		directoryField.setLayoutData(gd);
 		setInitialDestination();
@@ -130,12 +135,21 @@ public class PackageExportPage extends WizardPage implements Listener {
 		browseButton = new Button(container, SWT.PUSH);
 		browseButton.setText(Messages.exportPage_Browse);
 		browseButton.addListener(SWT.Selection, this);
-		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		browseButton
+				.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 		if (initialSelection != null) {
 			directoryField.setFocus();
 		}
-		
+
+		// Overwrite existing files without warning message
+		overwriteButton = new Button(container, SWT.CHECK);
+		overwriteButton.setText(Messages.PackageExportPage_0);
+		overwriteButton.addListener(SWT.Selection, this);
+		overwriteButton.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL));
+		overwriteButton.setSelection(true);
+
 		setControl(container);
 		validatePage();
 	}
@@ -146,11 +160,11 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 		validatePage();
 	}
-	
+
 	public String getDestinationValue() {
 		return directoryField.getText().trim();
 	}
-	
+
 	public IResource[] getSelectedProjects() {
 		Object[] projects = tableViewer.getCheckedElements();
 		IResource[] result = new IResource[projects.length];
@@ -159,7 +173,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 		return result;
 	}
-	
+
 	public void setInitialSelection(List<IProject> initialSelection) {
 		if (initialSelection != null) {
 			this.initialSelection = initialSelection;
@@ -167,8 +181,8 @@ public class PackageExportPage extends WizardPage implements Listener {
 	}
 
 	protected void handleDestinationBrowseButtonPressed() {
-		DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(), SWT.SAVE
-				| SWT.SHEET);
+		DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(),
+				SWT.SAVE | SWT.SHEET);
 		dialog.setMessage(Messages.exportPage_DirectoryDialogMessage);
 		dialog.setText(Messages.exportPage_DirectoryDialogTitle);
 		dialog.setFilterPath(getDestinationValue());
@@ -222,36 +236,48 @@ public class PackageExportPage extends WizardPage implements Listener {
 			setDestinationValue(home.getAbsolutePath());
 		}
 	}
-	
+
 	private void createSelectionButtons(Composite composite) {
-        Composite buttonsComposite = new Composite(composite, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        buttonsComposite.setLayout(layout);
+		Composite buttonsComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		buttonsComposite.setLayout(layout);
 
-        buttonsComposite.setLayoutData(new GridData(
-                GridData.VERTICAL_ALIGN_BEGINNING));
+		buttonsComposite.setLayoutData(new GridData(
+				GridData.VERTICAL_ALIGN_BEGINNING));
 
-        Button selectAll = new Button(buttonsComposite, SWT.PUSH);
-        selectAll.setText(Messages.exportPage_SelectAll);
-        selectAll.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                tableViewer.setAllChecked(true);
-                validatePage();
-            }
-        });
-        setButtonLayoutData(selectAll);
-        
-        Button deselectAll = new Button(buttonsComposite, SWT.PUSH);
-        deselectAll.setText(Messages.exportPage_DeselectAll);
-        deselectAll.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                tableViewer.setAllChecked(false);
-                validatePage();
-            }
-        });
-        setButtonLayoutData(deselectAll); 
-    }
+		Button selectAll = new Button(buttonsComposite, SWT.PUSH);
+		selectAll.setText(Messages.exportPage_SelectAll);
+		selectAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(true);
+				validatePage();
+			}
+		});
+		setButtonLayoutData(selectAll);
 
+		Button deselectAll = new Button(buttonsComposite, SWT.PUSH);
+		deselectAll.setText(Messages.exportPage_DeselectAll);
+		deselectAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(false);
+				validatePage();
+			}
+		});
+		setButtonLayoutData(deselectAll);
+	}
+
+	@Override
+	public void dispose() {
+		// store the final overwrite user's decision
+		overwrite = overwriteButton != null && overwriteButton.getSelection();
+		super.dispose();
+	}
+
+	boolean overwrite;
+
+	public boolean isOverwriteWithoutWarning() {
+		return overwrite;
+	}
 }

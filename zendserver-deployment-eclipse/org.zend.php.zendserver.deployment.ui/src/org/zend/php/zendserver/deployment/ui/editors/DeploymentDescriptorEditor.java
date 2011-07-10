@@ -66,8 +66,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			//addPage(new DescriptorMasterDetailsPage(this, new VariablesMasterDetailsProvider(), "variables", Messages.DeploymentDescriptorEditor_Variables)); //$NON-NLS-1$
-			//addPage(new DescriptorMasterDetailsPage(this, new ParametersMasterDetailsProvider(), "parameters", Messages.DeploymentDescriptorEditor_Parameters)); //$NON-NLS-1$
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
 			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addMappingPages();
@@ -154,6 +152,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		
 		initDescriptor(editorInput);
 		initMapping();
+		final IFile file = fModel.getFile();
+		if (file != null) {
+			setPartName(file.getProject().getName());
+		}
 	}
 
 	private void initDescriptor(IEditorInput editorInput) throws PartInitException {

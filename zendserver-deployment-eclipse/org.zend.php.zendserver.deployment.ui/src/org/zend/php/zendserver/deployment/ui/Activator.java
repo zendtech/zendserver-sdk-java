@@ -17,43 +17,43 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.ui"; //$NON-NLS-1$
 
-	public static final String IMAGE_RUN_APPLICATION = "icons/obj16/run_exc.gif";
-	public static final String IMAGE_DEBUG_APPLICATION = "icons/obj16/debug_exc.gif";
-	public static final String IMAGE_RUN_TEST = "icons/obj16/test_application.gif";
-	public static final String IMAGE_EXPORT_APPLICATION = "icons/obj16/bundle_obj.gif";
+	public static final String IMAGE_RUN_APPLICATION = "icons/obj16/run_exc.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DEBUG_APPLICATION = "icons/obj16/debug_exc.gif"; //$NON-NLS-1$
+	public static final String IMAGE_RUN_TEST = "icons/obj16/test_application.gif"; //$NON-NLS-1$
+	public static final String IMAGE_EXPORT_APPLICATION = "icons/obj16/bundle_obj.gif"; //$NON-NLS-1$
 
-	public static final String IMAGE_DESCRIPTOR_OVERVIEW = "icons/obj16/overview_obj.gif";
-	public static final String IMAGE_DESCRIPTOR_PARAMETERS = "icons/sample.gif";
-	public static final String IMAGE_DESCRIPTOR_PREREQS = "icons/sample.gif";
-	public static final String IMAGE_DESCRIPTOR_REMOVAL = "icons/sample.gif";
-	public static final String IMAGE_DESCRIPTOR_VARIABLES = "icons/sample.gif";
+	public static final String IMAGE_DESCRIPTOR_OVERVIEW = "icons/obj16/overview_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DESCRIPTOR_PARAMETERS = "icons/sample.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DESCRIPTOR_PREREQS = "icons/sample.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DESCRIPTOR_REMOVAL = "icons/sample.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DESCRIPTOR_VARIABLES = "icons/sample.gif"; //$NON-NLS-1$
 
-	public static final String IMAGE_PHP = "icons/obj16/dependency_obj.gif";
-	public static final String IMAGE_PHP_EXTENSION = "icons/obj16/dependency_obj.gif";
-	public static final String IMAGE_PHP_DIRECTIVE = "icons/obj16/dependency_obj.gif";
-	public static final String IMAGE_ZENDSERVER = "icons/obj16/dependency_obj.gif";
-	public static final String IMAGE_ZENDFRAMEWORK = "icons/obj16/dependency_obj.gif";
-	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/obj16/dependency_obj.gif";
+	public static final String IMAGE_PHP = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PHP_EXTENSION = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PHP_DIRECTIVE = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_ZENDSERVER = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_ZENDFRAMEWORK = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
 
-	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_STRING = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_CHOICE = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_CHECKBOX = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_HOSTNAME = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_EMAIL = "icons/obj16/category_obj.gif";
-	public static final String IMAGE_PARAMTYPE_UNKNOWN = "icons/obj16/category_obj.gif";
+	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_STRING = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_CHOICE = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_CHECKBOX = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_HOSTNAME = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_EMAIL = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_PARAMTYPE_UNKNOWN = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
 
-	public static final String IMAGE_DEPLOY_WIZARD = "icons/wizban/deploy_wiz.png";
-	public static final String IMAGE_EXPORT_WIZARD = "icons/wizban/export_wiz.png";
+	public static final String IMAGE_DEPLOY_WIZARD = "icons/wizban/deploy_wiz.png"; //$NON-NLS-1$
+	public static final String IMAGE_EXPORT_WIZARD = "icons/wizban/export_wiz.png"; //$NON-NLS-1$
 
-	public static final String IMAGE_VARIABLE = "icons/obj16/category_obj.gif";;
+	public static final String IMAGE_VARIABLE = "icons/obj16/category_obj.gif";; //$NON-NLS-1$
 
-	public static final String IMAGE_SCRIPT = "icons/obj16/script_obj.gif";
-	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/obj16/script_dis_obj.gif";
-	public static final String IMAGE_SCRIPT_TYPE = "icons/obj16/req_obj.gif";
+	public static final String IMAGE_SCRIPT = "icons/obj16/script_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SCRIPT_NOTEXISTS = "icons/obj16/script_dis_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SCRIPT_TYPE = "icons/obj16/req_obj.gif"; //$NON-NLS-1$
 
-	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif";
+	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
