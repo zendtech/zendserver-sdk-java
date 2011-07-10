@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
+import org.zend.sdklib.project.DeploymentScriptTypes;
 
 /**
  * Helps wiring stream from one place to another
@@ -35,12 +35,12 @@ public class InputOutputResource {
 	 * @param os
 	 */
 	public InputOutputResource(DeploymentScriptTypes type, OutputStream os) {
-		this(getInputSTream(type), os);
+		this(getInputStream(type), os);
 	}
 
-	private static InputStream getInputSTream(DeploymentScriptTypes type) {
-		final InputStream s = InputOutputResource.class
-				.getResourceAsStream(type.getFilename());
+	private static InputStream getInputStream(DeploymentScriptTypes type) {
+		final InputStream s = InputOutputResource.class.getResourceAsStream("scripts/"
+				+ type.getFilename());
 		if (s == null) {
 			throw new IllegalStateException("Error finding script for " + type.getFilename());
 		}

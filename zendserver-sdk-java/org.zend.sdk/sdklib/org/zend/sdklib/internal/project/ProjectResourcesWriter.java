@@ -28,14 +28,15 @@ import org.zend.sdklib.descriptor.PackageDescription;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
-import org.zend.sdklib.internal.project.ScriptsWriter.DeploymentScriptTypes;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
+import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
+import org.zend.sdklib.project.DeploymentScriptTypes;
 
 /**
  * Project creation and update handling including descriptor, scripts and
@@ -171,10 +172,20 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader)
 			throws IOException, JAXBException {
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
-				"Creating default deployment.properites file...", -1));
 		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
 				: MappingModelFactory.createModel(loader, container);
+		File mappingFile = new File(container, MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		if (mappingFile.exists()) {
+			String scriptdir = getScriptsDirectory(container).getName();
+			if (scriptdir != null) {
+				IMappingEntry scriptsEntry = model.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE);
+				if (scriptsEntry != null) {
+					return;
+				}
+			}
+		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+				"Creating default deployment.properites file...", -1));
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			File[] files = container.listFiles();
@@ -204,15 +215,17 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		File scriptsDir = findExistingScripts(descrFile.getParentFile());
 		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
 		File docroot = findPublicFolder(descrFile.getParentFile());
-		if (scripts != null || docroot != null) {
-			if (scripts != null) {
-				desc.getPackage().setScriptsdir(scripts);
-			}
-			if (docroot != null) {
-				desc.getPackage().setDocroot("public");
-			}
-			JaxbHelper.marshalPackage(new FileOutputStream(descrFile),
-					desc.getPackage());
+		boolean isDirty = false;
+		if (scripts != null && !scripts.equals(desc.getPackage().getScriptsdir())) {
+			desc.getPackage().setScriptsdir(scripts);
+			isDirty = true;
+		}
+		if (docroot != null && !docroot.equals(desc.getPackage().getDocroot())) {
+			desc.getPackage().setDocroot("public");
+			isDirty = true;
+		}
+		if (isDirty) {
+			JaxbHelper.marshalPackage(new FileOutputStream(descrFile), desc.getPackage());
 		}
 	}
 
@@ -236,8 +249,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		} else {
 			DeploymentScriptTypes[] types = DeploymentScriptTypes.values();
 			for (DeploymentScriptTypes type : types) {
-				// TODO refactor to avoid using endWith
-				if (type.getFilename().endsWith(root.getName())) {
+				if (type.getFilename().equals(root.getName())) {
 					return root.getParentFile();
 				}
 			}

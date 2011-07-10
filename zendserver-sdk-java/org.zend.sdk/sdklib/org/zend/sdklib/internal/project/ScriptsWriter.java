@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.zend.sdklib.project.DeploymentScriptTypes;
+
 /**
  * Helps writing scripts folder
  */
@@ -51,7 +53,7 @@ public class ScriptsWriter {
 	private void writeResource(File dest, DeploymentScriptTypes type)
 			throws IOException {
 
-		final File file = new File(dest, type.filename);
+		final File file = new File(dest, type.getFilename());
 		if (!file.getParentFile().isDirectory()) {
 			file.getParentFile().mkdirs();
 		}
@@ -62,55 +64,5 @@ public class ScriptsWriter {
 				os);
 		ior.copy();
 	}
-
-	public enum DeploymentScriptTypes {
-
-		POST_ACTIVATE("postActivate", "post_activate.php"),
-
-		POST_DEACTIVATE("postDeactivate", "post_deactivate.php"),
-
-		POST_STAGE("postStage", "post_stage.php"),
-
-		POST_UNSTAGE("postUnstage", "post_unstage.php"),
-
-		PRE_ACTIVATE("preActivate", "pre_activate.php"),
-
-		PRE_DEACTIVATE("preDeactivate", "pre_deactivate.php"),
-
-		PRE_STAGE("preStage", "pre_stage.php"),
-
-		PRE_UNSTAGE("preUnstage", "pre_unstage.php");
-
-		private final String filename;
-		private final String description;
-
-		private DeploymentScriptTypes(String name, String filename) {
-			this.description = name;
-			this.filename = filename;
-		}
-
-		public String getFilename() {
-			return "scripts/" + filename;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public static DeploymentScriptTypes byName(String name) {
-			if (name == null) {
-				return null;
-			}
-			
-			DeploymentScriptTypes[] values = values();
-			for (DeploymentScriptTypes types : values) {
-				if (name.equals(types.getDescription())) {
-					return types;
-				}
-			}
-			return null;
-		}
-	}
-
 
 }
