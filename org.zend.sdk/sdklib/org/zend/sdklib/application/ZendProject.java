@@ -82,14 +82,16 @@ public class ZendProject extends AbstractChangeNotifier {
 		return update(generateScripts);
 	}
 
-	public boolean update(String generateScripts) {
+	public boolean update(String generateScripts, boolean updateDescriptor) {
 		ProjectResourcesWriter tw = new ProjectResourcesWriter(path, this);
 
 		try {
 			if (generateScripts != null) {
 				tw.writeScriptsByName(path, generateScripts);
 			}
-			tw.writeDescriptor(path);
+			if (updateDescriptor) {
+				tw.writeDescriptor(path);
+			}
 			tw.writeDeploymentProperties(path, loader);
 		} catch (IOException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Update",
@@ -105,6 +107,10 @@ public class ZendProject extends AbstractChangeNotifier {
 		}
 
 		return true;
+	}
+
+	public boolean update(String generateScripts) {
+		return update(generateScripts, true);
 	}
 
 	/**
