@@ -18,13 +18,15 @@ package org.zend.sdklib.mapping.validator;
 public class MappingParseStatus {
 
 	private int line;
-	private int offset;
+	private int start;
+	private int end;
 	private MappingParseMessage message;
 
-	public MappingParseStatus(int line, int offset, MappingParseMessage message) {
+	public MappingParseStatus(int line, int start, int end, MappingParseMessage message) {
 		super();
 		this.line = line;
-		this.offset = offset;
+		this.start = start;
+		this.end = end;
 		this.message = message;
 	}
 
@@ -36,17 +38,24 @@ public class MappingParseStatus {
 	}
 
 	/**
-	 * @return offset in the line where error occurred
+	 * @return char index where error starts
 	 */
-	public int getOffset() {
-		return offset;
+	public int getStart() {
+		return start;
+	}
+
+	/**
+	 * @return char index where error ends
+	 */
+	public int getEnd() {
+		return end;
 	}
 
 	/**
 	 * @return message for the error
 	 */
-	public MappingParseMessage getMessage() {
-		return message;
+	public String getMessage() {
+		return message.getMessage();
 	}
 
 }

@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.zend.sdklib.internal.mapping.validator.MappingValidator;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.mapping.validator.IMappingValidator;
 import org.zend.sdklib.mapping.validator.MappingParseException;
 import org.zend.sdklib.mapping.validator.MappingParseMessage;
 import org.zend.sdklib.mapping.validator.MappingParseStatus;
+import org.zend.sdklib.mapping.validator.MappingValidator;
 
 public class TestMappingValidator {
 
@@ -48,7 +48,7 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(1, e.getErrors().size());
 			MappingParseStatus status = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.NOT_EXIST, status.getMessage());
+			assertEquals(MappingParseMessage.NOT_EXIST.getMessage(), status.getMessage());
 		}
 	}
 
@@ -62,10 +62,10 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(2, e.getErrors().size());
 			MappingParseStatus status1 = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.INVALID_FOLDER,
+			assertEquals(MappingParseMessage.INVALID_FOLDER.getMessage(),
 					status1.getMessage());
 			MappingParseStatus status2 = e.getErrors().get(1);
-			assertEquals(MappingParseMessage.NO_APPDIR, status2.getMessage());
+			assertEquals(MappingParseMessage.NO_APPDIR.getMessage(), status2.getMessage());
 		}
 	}
 
@@ -79,10 +79,10 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(2, e.getErrors().size());
 			MappingParseStatus status1 = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.INVALID_SUFFIX,
+			assertEquals(MappingParseMessage.INVALID_SUFFIX.getMessage(),
 					status1.getMessage());
 			MappingParseStatus status2 = e.getErrors().get(1);
-			assertEquals(MappingParseMessage.NO_APPDIR, status2.getMessage());
+			assertEquals(MappingParseMessage.NO_APPDIR.getMessage(), status2.getMessage());
 		}
 	}
 
@@ -96,7 +96,7 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(1, e.getErrors().size());
 			MappingParseStatus status = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.EMPTY_MAPPING, status.getMessage());
+			assertEquals(MappingParseMessage.EMPTY_MAPPING.getMessage(), status.getMessage());
 		}
 	}
 
@@ -110,7 +110,7 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(1, e.getErrors().size());
 			MappingParseStatus status = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.EMPTY_FILE, status.getMessage());
+			assertEquals(MappingParseMessage.EMPTY_FILE.getMessage(), status.getMessage());
 		}
 	}
 
@@ -124,10 +124,10 @@ public class TestMappingValidator {
 		} catch (MappingParseException e) {
 			assertEquals(2, e.getErrors().size());
 			MappingParseStatus status1 = e.getErrors().get(0);
-			assertEquals(MappingParseMessage.INVALID_FOLDER,
+			assertEquals(MappingParseMessage.INVALID_FOLDER.getMessage(),
 					status1.getMessage());
 			MappingParseStatus status2 = e.getErrors().get(1);
-			assertEquals(MappingParseMessage.NO_APPDIR, status2.getMessage());
+			assertEquals(MappingParseMessage.NO_APPDIR.getMessage(), status2.getMessage());
 		}
 	}
 

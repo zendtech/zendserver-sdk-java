@@ -17,11 +17,15 @@ public enum MappingParseMessage {
 
 	INVALID_KEY("Invalid key syntax"),
 
+	INVALID_LINE("Invalid property syntax"),
+
 	INVALID_FOLDER("Invalid folder name"),
 
 	INVALID_SUFFIX("Invalid suffix"),
 
 	NOT_EXIST("File does not exist"),
+
+	EMPTY_MAPPING_FILE("Empty mapping file entry"),
 
 	EMPTY_MAPPING("Empty mapping value"),
 
