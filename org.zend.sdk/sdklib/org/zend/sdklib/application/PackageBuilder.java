@@ -104,6 +104,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	public File createDeploymentPackage(File directory) {
 		try {
 			File result = getDeploymentPackageFile(directory);
+			if (result == null) {
+				return null;
+			}
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
 			if (!model.isLoaded()) {
