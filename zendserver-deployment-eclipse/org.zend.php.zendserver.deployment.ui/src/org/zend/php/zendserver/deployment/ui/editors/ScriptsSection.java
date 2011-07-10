@@ -1,16 +1,23 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,11 +40,14 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.ScriptsContentProvider.Script;
+import org.zend.php.zendserver.deployment.ui.wizards.StatusChangeListener;
 import org.zend.sdklib.application.ZendProject;
 import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.project.DeploymentScriptTypes;
 
 public class ScriptsSection {
 
@@ -60,14 +70,24 @@ public class ScriptsSection {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				StatusChangeListener listener = new StatusChangeListener(monitor);
 				try {
 					IFile file = getScript(name);
-					if (!file.exists()) {
-						createScript(name, monitor);
+					if (file ==  null || !file.exists()) {
+						createScript(name, monitor, listener);
 						refreshScriptsTree();
 					}
-					openEditor(file);
+					openEditor(getScript(name));
+					scriptsTree.getControl().getDisplay().asyncExec(new Runnable() {
+
+						public void run() {
+							scriptsDir.refresh();
+						}
+					});
 				} catch (CoreException e) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
+				} catch (IOException e) {
 					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e);
 				}
@@ -88,13 +108,28 @@ public class ScriptsSection {
 		});
 	}
 
-	private void createScript(String scriptName, IProgressMonitor monitor)
-			throws CoreException {
+	private void createScript(final String scriptName, IProgressMonitor monitor,
+			StatusChangeListener listener) throws CoreException, IOException {
 		File projLocation = editor.getProject().getLocation().toFile();
-		ZendProject zp = new ZendProject(projLocation);
-		zp.update(scriptName);
+		IDocument document = editor.getDocumentProvider().getDocument(editor.getPropertiesInput());
+		final ZendProject zp = new ZendProject(projLocation,
+				new EclipseMappingModelLoader(document));
+		zp.addStatusChangeListener(listener);
+		editor.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			
+			public void run() {
+				if (zp.update(scriptName, false)) {
+					String currentValue = editor.getModel().get(
+							DeploymentDescriptorPackage.SCRIPTSDIR);
+					if (currentValue == null) {
+						editor.getModel().set(DeploymentDescriptorPackage.SCRIPTSDIR, "scripts"); //$NON-NLS-1$
+					}
+				}
+			}
+		});
+		InputStream stream = new ByteArrayInputStream(document.get().getBytes());
+		editor.getDescriptorContainer().getMappingModel().load(stream);
 		editor.getProject().refreshLocal(IProject.DEPTH_INFINITE, monitor);
-
 	}
 
 	protected void openEditor(final IFile file) throws PartInitException {
@@ -178,18 +213,28 @@ public class ScriptsSection {
 	}
 
 	protected IFile getScript(String scriptName) {
-		IMappingModel mapping = editor.getDescriptorContainer().getMappingModel();
-		if (mapping == null) {
-			return editor.getProject().getFile(scriptName);
+		DeploymentScriptTypes name = DeploymentScriptTypes.byName(scriptName);
+		if (name == null) {
+			return null;
 		}
-		
+		IMappingModel mapping = editor.getDescriptorContainer().getMappingModel();
+		if (mapping == null || !mapping.isLoaded()) {
+			return editor.getProject().getFile(name.getFilename());
+		}
+
 		try {
-			String folder = mapping.getPath(scriptName);
+			String folder = mapping.getPath(name.getFilename());
+			IContainer container = editor.getDescriptorContainer().getFile().getParent();
+			if (folder != null) {
+				IPath path = new Path(folder);
+				IResource resource = container.findMember(path.makeRelativeTo(container
+						.getLocation()));
+				return resource != null ? (IFile) resource : null;
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return null;
 	}
 }
