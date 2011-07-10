@@ -48,13 +48,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private ZipOutputStream out;
 	private File container;
 	private IMappingModel model;
-	private IMappingLoader loader;
 
 	public PackageBuilder(File container, IMappingLoader loader,
 			IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
-		this.loader = loader;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
@@ -67,7 +65,6 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	public PackageBuilder(File container, IMappingLoader loader) {
 		super();
 		this.container = container;
-		this.loader = loader;
 		this.model = MappingModelFactory.createModel(loader, container);
 	}
 
@@ -78,33 +75,43 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	/**
+	 * @param directory
+	 * @return the file name to be created when deployment package file is
+	 *         created
+	 * @throws IOException
+	 */
+	public File getDeploymentPackageFile(File directory) throws IOException {
+		if (directory == null || !directory.isDirectory()) {
+			log.error(new IllegalArgumentException(
+					"Location cannot be null or non-existing directory"));
+			return null;
+		}
+		container = container.getCanonicalFile();
+		String name = getPackageName(container);
+		if (name == null) {
+			return null;
+		}
+		return new File(directory, name + EXTENSION);
+	}
+
+	/**
 	 * Creates compressed package file in the given folder.
 	 * 
 	 * @param path
 	 *            - location where package should be created
 	 * @return
 	 */
-	public File createDeploymentPackage(File location) {
-		if (location == null || !location.isDirectory()) {
-			log.error(new IllegalArgumentException(
-					"Location cannot be null or non-existing directory"));
-			return null;
-		}
+	public File createDeploymentPackage(File directory) {
 		try {
-			container = container.getCanonicalFile();
-			String name = getPackageName(container);
-			if (name == null) {
-				return null;
-			}
-			File result = new File(location, name + EXTENSION);
+			File result = getDeploymentPackageFile(directory);
 			out = new ZipOutputStream(new BufferedOutputStream(
 					new FileOutputStream(result)));
 			if (!model.isLoaded()) {
 				createDefaultModel();
 			}
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Package creation",
-					"Creating " + name + " deployment package...",
-					calculateTotalWork()));
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Package creation", "Creating " + result.getName()
+							+ " deployment package...", calculateTotalWork()));
 			File descriptorFile = new File(container,
 					ProjectResourcesWriter.DESCRIPTOR);
 			addFileToZip(descriptorFile, null, null, null);
@@ -303,8 +310,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				}
 			}
 			if (scriptdir != null
-					&& model
-							.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE)
+					&& model.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE)
 							.getMappings().size() == 0) {
 				notifier.statusChanged(new BasicStatus(StatusCode.WARNING,
 						"Package creation",
@@ -321,7 +327,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		List<String> folders = model.getFolders();
 		for (String folder : folders) {
 			IMappingEntry entry = model.getEntry(folder, Type.INCLUDE);
-			if(entry!= null){
+			if (entry != null) {
 				List<IMapping> includes = entry.getMappings();
 				for (IMapping mapping : includes) {
 					File resource = new File(new File(container,
