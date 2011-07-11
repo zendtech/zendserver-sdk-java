@@ -83,6 +83,7 @@ public class MappingValidator implements IMappingValidator {
 			} else if (!hasAppdir) {
 				result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.NO_APPDIR));
 			}
+			stream.close();
 		} catch (IOException e) {
 			result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.CANNOT_READ));
 		}
