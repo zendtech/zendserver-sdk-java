@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -283,16 +284,20 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		for (int i = 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta = markerDeltas[i];
 		}
-
-		boolean isAvailable = false;
-		if (fModel.getFile().getParent().findMember(
-				MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
-			isAvailable = true;
-		}
-		if (isAvailable && !isMappingAvailable()) {
-			addMappingPages();
-		} else if (!isAvailable && isMappingAvailable()) {
-			removeMappingPages();
+		IResourceDelta[] children = event.getDelta().getAffectedChildren();
+		for (IResourceDelta child : children) {
+			if (child.getResource() == fModel.getFile().getParent()) {
+				boolean isAvailable = false;
+				if (fModel.getFile().getParent().findMember(
+						MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
+					isAvailable = true;
+				}
+				if (isAvailable && !isMappingAvailable()) {
+					addMappingPages();
+				} else if (!isAvailable && isMappingAvailable()) {
+					removeMappingPages();
+				}
+			}
 		}
 	}
 

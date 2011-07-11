@@ -71,8 +71,10 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 		IMappingValidator validator = new MappingValidator(file.getParent().getLocation().toFile());
 		try {
 			try {
-				validator.parse(file.getContents());
-				file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				if (file.exists()) {
+					validator.parse(file.getContents());
+					file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				}
 			} catch (MappingParseException e) {
 				handleMappingValidationErrors(file, e.getErrors());
 			}
