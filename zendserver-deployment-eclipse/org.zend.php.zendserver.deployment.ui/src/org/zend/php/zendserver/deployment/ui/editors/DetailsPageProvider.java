@@ -9,7 +9,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendServerDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
 public class DetailsPageProvider implements
 		IDetailsPageProvider {
@@ -71,13 +71,13 @@ public class DetailsPageProvider implements
 			}
 			return dirPage;
 		}
-		if (IZendFrameworkDependency.class.isAssignableFrom(clazz)) {
+		if (IZendServerDependency.class.isAssignableFrom(clazz)) {
 			if (zsPage == null) {
 				zsPage = new ZendServerDependencyDetailsPage(editor);
 			}
 			return zsPage;
 		}
-		if (ZendServerDependency.class.isAssignableFrom(clazz)) {
+		if (IZendFrameworkDependency.class.isAssignableFrom(clazz)) {
 			if (zfPage == null) {
 				zfPage = new ZendFrameworkDependencyDetailsPage(editor);
 			}
