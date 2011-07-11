@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -149,8 +150,9 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		while (iter.hasNext()) {
 			Object selectedElement = iter.next();
 			IProject project = null;
-			if (selectedElement instanceof IProject) {
-				project = (IProject) selectedElement;
+			Object projectAdapter = ((IAdaptable) selectedElement).getAdapter(IProject.class);
+			if (projectAdapter instanceof IProject) {
+				project = (IProject) projectAdapter;
 			} else if (selectedElement instanceof IContainer) {
 				project = ((IContainer) selectedElement).getProject();
 			} else if (selectedElement instanceof IFile) {
