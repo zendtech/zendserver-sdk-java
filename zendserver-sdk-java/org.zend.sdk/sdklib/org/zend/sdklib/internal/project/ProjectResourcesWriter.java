@@ -31,6 +31,7 @@ import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
+import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
@@ -230,9 +231,23 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 	}
 
 	private File getScriptsDirectory(File container) throws IOException {
-		File result = findExistingScripts(container);
+		IMappingModel model = MappingModelFactory.createDefaultModel(container);
+		File mappingFile = new File(container, MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		File result = null;
+		if (mappingFile.exists()) {
+			IMappingEntry scriptsEntry = model.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE);
+			if (scriptsEntry != null) {
+				List<IMapping> mappings = scriptsEntry.getMappings();
+				for (IMapping mapping : mappings) {
+					result = new File(container, mapping.getPath());
+					if (mapping.isContent() || result.isDirectory()) {
+						return result;
+					}
+				}
+			}
+		}
 		if (result == null) {
-			result = new File(container, "scripts");
+			return new File(container, "scripts");
 		}
 		return result;
 	}
