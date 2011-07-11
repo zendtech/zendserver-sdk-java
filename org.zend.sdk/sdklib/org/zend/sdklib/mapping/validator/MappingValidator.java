@@ -123,9 +123,10 @@ public class MappingValidator implements IMappingValidator {
 			} else {
 				File file = new File(container, entry);
 				if (!file.exists()) {
-					int offset = line.indexOf(entry);
+					String toFind = isContent ? entry + CONTENT : entry;
+					int offset = line.indexOf(toFind);
 					result.add(new MappingParseStatus(lineNo, offset + buffer, offset
-							+ entry.length() + buffer, MappingParseMessage.NOT_EXIST));
+							+ toFind.length() + buffer, MappingParseMessage.NOT_EXIST));
 				}
 
 			}
