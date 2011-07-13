@@ -26,7 +26,6 @@ public class Sdk {
 	private static final SdkBundle[] BUNDLES = {
 		new SdkBundle("org.restlet", "/lib/org.restlet.jar"),
 		new SdkBundle("org.restlet.ext.xml", "/lib/org.restlet.ext.xml.jar"),
-		new SdkBundle("org.apache.log4j", "/lib/log4j-1.2.16.jar"),
 		new SdkBundle("org.apache.commons.cli", "/lib/commons-cli-1.2.jar"),
 		new SdkBundle("org.zend.webapi.core", "/lib/zend-webapi.jar"),
 		new SdkBundle("org.zend.sdk", "/lib/zend-sdk.jar"),
