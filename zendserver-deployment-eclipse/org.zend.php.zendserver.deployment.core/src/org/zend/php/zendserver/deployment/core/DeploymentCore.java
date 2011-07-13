@@ -6,10 +6,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.BundleContext;
-import org.zend.sdklib.logger.ILogger;
-import org.zend.sdklib.logger.Log;
+import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
 
-public class DeploymentCore extends Plugin implements ILogger {
+public class DeploymentCore extends Plugin {
 
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.core"; //$NON-NLS-1$
 
@@ -18,6 +17,8 @@ public class DeploymentCore extends Plugin implements ILogger {
 	private static BundleContext context;
 
 	private static DeploymentCore plugin;
+
+	private SdkManager sdkManager;
 
 	public DeploymentCore() {
 		super();
@@ -38,8 +39,7 @@ public class DeploymentCore extends Plugin implements ILogger {
 	public void start(BundleContext bundleContext) throws Exception {
 		DeploymentCore.context = bundleContext;
 
-		// TODO change registered logger
-		Log.getInstance().registerLogger(this);
+		sdkManager = new SdkManager();
 	}
 
 	/*
@@ -91,9 +91,4 @@ public class DeploymentCore extends Plugin implements ILogger {
 	public void error(Object message) {
 		logErrorMessage(message.toString());
 	}
-
-	public ILogger getLogger(String creatorName, boolean verbose) {
-		return this;
-	}
-
 }
