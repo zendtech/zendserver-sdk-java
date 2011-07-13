@@ -91,4 +91,8 @@ public class DeploymentCore extends Plugin {
 	public void error(Object message) {
 		logErrorMessage(message.toString());
 	}
+
+	public SdkManager getSdk() {
+		return sdkManager;
+	}
 }

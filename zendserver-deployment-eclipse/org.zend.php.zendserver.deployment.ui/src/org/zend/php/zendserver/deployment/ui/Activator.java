@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -76,6 +77,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		DeploymentCore.getDefault().getSdk().isInstalled();
 	}
 
 	/*

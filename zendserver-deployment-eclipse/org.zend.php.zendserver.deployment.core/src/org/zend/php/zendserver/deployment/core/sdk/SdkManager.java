@@ -71,5 +71,9 @@ public class SdkManager implements IPreferenceChangeListener {
 			}
 		}
 		
+	}
+
+	public boolean isInstalled() {
+		return true; // currently always true, because install happens in constructor
 	}	
 }
