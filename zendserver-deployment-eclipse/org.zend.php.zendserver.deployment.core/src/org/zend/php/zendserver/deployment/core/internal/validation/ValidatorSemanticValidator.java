@@ -32,9 +32,7 @@ public class ValidatorSemanticValidator {
 		add(DeploymentDescriptorPackage.VALUE, tester);
 		
 		tester = new FileExistsTester();
-		add(DeploymentDescriptorPackage.APPDIR, tester);
-		add(DeploymentDescriptorPackage.ICON, tester);
-		add(DeploymentDescriptorPackage.EULA, tester);
+		// TODO consider mapping
 		
 		tester = new VersionTester();
 		add(DeploymentDescriptorPackage.VERSION_API, tester);
