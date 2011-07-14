@@ -28,7 +28,7 @@ public class Sdk {
 		new SdkBundle("org.restlet.ext.xml", "/lib/org.restlet.ext.xml.jar"),
 		new SdkBundle("org.apache.commons.cli", "/lib/commons-cli-1.2.jar"),
 		new SdkBundle("org.zend.webapi.core", "/lib/zend-webapi.jar"),
-		new SdkBundle("org.zend.sdk", "/lib/zend-sdk.jar"),
+		new SdkBundle("org.zend.sdk", "/lib/org.zend.sdk.jar"),
 	};
 	
 	private String location;
