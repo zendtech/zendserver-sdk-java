@@ -280,22 +280,29 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IncrementalDeploymentBuilder.PROBLEM_MARKER, true);
+		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
+				IncrementalDeploymentBuilder.PROBLEM_MARKER, true);
 		for (int i = 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta = markerDeltas[i];
 		}
-		IResourceDelta[] children = event.getDelta().getAffectedChildren();
-		for (IResourceDelta child : children) {
-			if (child.getResource() == fModel.getFile().getParent()) {
-				boolean isAvailable = false;
-				if (fModel.getFile().getParent().findMember(
-						MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
-					isAvailable = true;
-				}
-				if (isAvailable && !isMappingAvailable()) {
-					addMappingPages();
-				} else if (!isAvailable && isMappingAvailable()) {
-					removeMappingPages();
+		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
+			return;
+		}
+		IResourceDelta[] children = delta.getAffectedChildren();
+		if (children != null) {
+			for (IResourceDelta child : children) {
+				if (child.getResource() == fModel.getFile().getParent()) {
+					boolean isAvailable = false;
+					if (fModel.getFile().getParent().findMember(
+							MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
+						isAvailable = true;
+					}
+					if (isAvailable && !isMappingAvailable()) {
+						addMappingPages();
+					} else if (!isAvailable && isMappingAvailable()) {
+						removeMappingPages();
+					}
 				}
 			}
 		}
