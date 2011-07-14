@@ -2,8 +2,6 @@ package org.zend.php.zendserver.deployment.core.sdk;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -44,7 +42,7 @@ public class Sdk {
 	public void install() throws BundleException {
 		for (int i = 0; i < BUNDLES.length; i++) {
 			String bundlePath = "file://" + location + BUNDLES[i].sdkLocation; //$NON-NLS-1$
-			DeploymentCore.log(new Status(IStatus.INFO, DeploymentCore.PLUGIN_ID, "Installing "+bundlePath));
+			//DeploymentCore.log(new Status(IStatus.INFO, DeploymentCore.PLUGIN_ID, "Installing "+bundlePath));
 			try {
 				if (!bundleIsInstalled(bundlePath) && !bundleByNameIsInstalled(BUNDLES[i].name)) {
 					Bundle bundle = DeploymentCore.getContext().installBundle(bundlePath);
