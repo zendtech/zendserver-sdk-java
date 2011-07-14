@@ -146,6 +146,7 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			result.append(file);
 			if (size-- > 0) {
 				result.append(SEPARATOR);
+				result.append(" ");
 			}
 		}
 		return result.toString();
