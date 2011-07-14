@@ -95,8 +95,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 	 */
 	public void writeDescriptor(File destination) throws IOException,
 			PropertyException, JAXBException {
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
-				"Creating deployment descriptor...", -1));
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Application Update", "Creating deployment descriptor...", -1));
 		File descrFile = new File(destination, DESCRIPTOR);
 
 		if (!descrFile.exists()) {
@@ -108,8 +108,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			writeDescriptor(new FileOutputStream(descrFile));
 		}
 		updateDescriptor(descrFile);
-		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
-				"Creating deployment descriptor..."));
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Application Update", "Creating deployment descriptor..."));
 	}
 
 	/**
@@ -146,8 +146,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		if (withScripts == null) {
 			return;
 		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
-				"Creating deployment scripts...", -1));
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Application Update", "Creating deployment scripts...", -1));
 		File destination = getScriptsDirectory(container);
 		if (destination != null && !destination.isDirectory()) {
 			destination.mkdirs();
@@ -167,33 +167,36 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			throw new IllegalArgumentException(MessageFormat.format(
 					"script with name {0} cannot be found", withScripts));
 		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
-				"Creating deployment scripts..."));
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Application Update", "Creating deployment scripts..."));
 	}
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader)
 			throws IOException, JAXBException {
-		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
-				: MappingModelFactory.createModel(loader, container);
-		File mappingFile = new File(container, MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		IMappingModel model = loader == null ? MappingModelFactory
+				.createDefaultModel(container) : MappingModelFactory
+				.createModel(loader, container);
+		File mappingFile = new File(container,
+				MappingModelFactory.DEPLOYMENT_PROPERTIES);
 		if (mappingFile.exists()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			if (scriptdir != null) {
-				IMappingEntry scriptsEntry = model.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE);
+				IMappingEntry scriptsEntry = model.getEntry(
+						IMappingModel.SCRIPTSDIR, Type.INCLUDE);
 				if (scriptsEntry != null) {
 					return;
 				}
 			}
 		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Application Update",
 				"Creating default deployment.properites file...", -1));
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			File[] files = container.listFiles();
 			for (File file : files) {
 				String name = file.getName();
-				if (!model.isExcluded(null, name) && !DESCRIPTOR.equals(name)
-						&& !name.toLowerCase().contains("test")) {
+				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
 					if (name.equals(scriptdir)) {
 						model.addMapping(IMappingModel.SCRIPTSDIR,
 								Type.INCLUDE, name, false, true);
@@ -205,8 +208,14 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			}
 			model.store();
 		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Application Update",
 				"Creating default deployment.properites file..."));
+	}
+
+	private boolean shoudBeExcluded(String name) {
+		return ProjectResourcesWriter.DESCRIPTOR.equals(name)
+				|| name.toLowerCase().contains("test") || name.startsWith(".");
 	}
 
 	private void updateDescriptor(File descrFile) throws IOException,
@@ -217,7 +226,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
 		File docroot = findPublicFolder(descrFile.getParentFile());
 		boolean isDirty = false;
-		if (scripts != null && !scripts.equals(desc.getPackage().getScriptsdir())) {
+		if (scripts != null
+				&& !scripts.equals(desc.getPackage().getScriptsdir())) {
 			desc.getPackage().setScriptsdir(scripts);
 			isDirty = true;
 		}
@@ -226,16 +236,19 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			isDirty = true;
 		}
 		if (isDirty) {
-			JaxbHelper.marshalPackage(new FileOutputStream(descrFile), desc.getPackage());
+			JaxbHelper.marshalPackage(new FileOutputStream(descrFile),
+					desc.getPackage());
 		}
 	}
 
 	private File getScriptsDirectory(File container) throws IOException {
 		IMappingModel model = MappingModelFactory.createDefaultModel(container);
-		File mappingFile = new File(container, MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		File mappingFile = new File(container,
+				MappingModelFactory.DEPLOYMENT_PROPERTIES);
 		File result = null;
 		if (mappingFile.exists()) {
-			IMappingEntry scriptsEntry = model.getEntry(IMappingModel.SCRIPTSDIR, Type.INCLUDE);
+			IMappingEntry scriptsEntry = model.getEntry(
+					IMappingModel.SCRIPTSDIR, Type.INCLUDE);
 			if (scriptsEntry != null) {
 				List<IMapping> mappings = scriptsEntry.getMappings();
 				for (IMapping mapping : mappings) {
