@@ -35,8 +35,6 @@ public class ValidatorSemanticValidator {
 		add(DeploymentDescriptorPackage.APPDIR, tester);
 		add(DeploymentDescriptorPackage.ICON, tester);
 		add(DeploymentDescriptorPackage.EULA, tester);
-		add(DeploymentDescriptorPackage.SCRIPTSDIR, tester);
-		add(DeploymentDescriptorPackage.DOCROOT, tester);
 		
 		tester = new VersionTester();
 		add(DeploymentDescriptorPackage.VERSION_API, tester);
