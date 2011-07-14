@@ -300,9 +300,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File[] files = container.listFiles();
 			for (File file : files) {
 				String name = file.getName();
-				if (!model.isExcluded(null, name)
-						&& !ProjectResourcesWriter.DESCRIPTOR.equals(name)
-						&& !name.toLowerCase().contains("test")) {
+				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
 					if (name.equals(scriptdir)) {
 						model.addMapping(IMappingModel.SCRIPTSDIR,
 								Type.INCLUDE, name, false, true);
@@ -321,6 +319,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				log.warning("Scriptsdir declared in descriptor file does not exist in the project");
 			}
 		}
+	}
+
+	private boolean shoudBeExcluded(String name) {
+		return ProjectResourcesWriter.DESCRIPTOR.equals(name)
+				|| name.toLowerCase().contains("test") || name.startsWith(".");
 	}
 
 	private int calculateTotalWork() throws IOException {
