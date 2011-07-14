@@ -142,10 +142,7 @@ public class ZendTargetAutoDetect {
 		ir.close();
 		os.close();
 
-		if (secretKey.startsWith("\"")) {
-			secretKey = secretKey.substring(1, secretKey.length() - 1);
-		}
-		return secretKey;
+		return trimQuotes(secretKey);
 	}
 
 	public static String copyWithEdits(BufferedReader ir, PrintStream os,
@@ -223,11 +220,15 @@ public class ZendTargetAutoDetect {
 		final String hash = p.getProperty(key + ":hash");
 		if (hash != null) {
 			// return secretKey if possible
-			return hash.startsWith("\"") ? hash.substring(1, hash.length() - 1) : hash;
+			return trimQuotes(hash);
 		}
 
 		// key not found
 		return null;
+	}
+
+	protected String trimQuotes(final String hash) {
+		return hash.startsWith("\"") ? hash.substring(1, hash.length() - 1) : hash;
 	}
 
 	/**
