@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.xml.sax.SAXException;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
@@ -46,8 +47,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 			try {
 				src = fFile.getContents();
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				DeploymentCore.log(e);
 			}
 		}
 		
@@ -61,23 +61,14 @@ public class DescriptorContainer implements IDescriptorContainer {
 		
 		try {
 			isLoading = true;
-			//System.out.println("load");
-			long a= System.currentTimeMillis();
 			lm.load(src, fModel);
-			long b = System.currentTimeMillis();
-			//System.out.println("load "+(b-a)+"msec");
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// seems model error, write to log
+			DeploymentCore.log(e);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// should be catched by validator, we can ignore it
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// should be catched by validator, we can ignore it
 		} finally {
 			isLoading = false;
 		}
@@ -134,26 +125,17 @@ public class DescriptorContainer implements IDescriptorContainer {
 	private void save(ChangeEvent event) {
 		IDeploymentDescriptor model = getDescriptorModel();
 		try {
-			//System.out.println("serialize");
-			long a = System.currentTimeMillis();
 			lm.serialize(model, event);
-			long b = System.currentTimeMillis();
-			//System.out.println("serialize "+(b-a)+"msec\nwrite");
 			lm.write();
-			long c = System.currentTimeMillis();
-			//System.out.println("write "+(c-b)+"msec");
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// seems model error, write to log
+			DeploymentCore.log(e);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DeploymentCore.log(e);
 		} catch (TransformerFactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DeploymentCore.log(e);
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DeploymentCore.log(e);
 		}
 	}
 }
