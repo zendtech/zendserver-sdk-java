@@ -58,7 +58,7 @@ public class ModelSerializer {
 		xpathObj = factory.newXPath();
 	}
 	
-	public void load(InputStream src, IModelContainer model) throws XPathExpressionException, CoreException, SAXException, IOException {
+	public void load(InputStream src, IModelContainer model) throws XPathExpressionException, SAXException, IOException {
 		document = builder.parse(src);
 		
 		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
@@ -70,7 +70,7 @@ public class ModelSerializer {
 		serialize(model, null);
 	}
 	
-	public void serialize(IModelContainer model, ChangeEvent event) throws XPathExpressionException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+	public void serialize(IModelContainer model, ChangeEvent event) throws XPathExpressionException, TransformerFactoryConfigurationError, TransformerException {
 		if (document == null) {
 			document = DeploymentDescriptorFactory.createEmptyDocument(builder);
 		}
