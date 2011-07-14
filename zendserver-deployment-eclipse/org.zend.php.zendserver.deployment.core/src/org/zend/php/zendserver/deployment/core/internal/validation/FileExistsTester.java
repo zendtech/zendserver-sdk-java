@@ -2,8 +2,6 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 
 import java.io.File;
 
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
-
 public class FileExistsTester extends PropertyTester {
 
 	public FileExistsTester() {
@@ -17,7 +15,7 @@ public class FileExistsTester extends PropertyTester {
 		}
 		if (value instanceof String) {
 			String s = (String) value;
-			if ("".equals(s.trim())) {
+			if (s.trim().length() == 0) {
 				return null;
 			}
 			File f = new File(s);
