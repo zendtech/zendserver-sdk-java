@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Zend Server Deployment
+Bundle-Name: Zend Application Deployment Core
 Bundle-SymbolicName: org.zend.php.zendserver.deployment.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.zend.php.zendserver.deployment.core.DeploymentCore

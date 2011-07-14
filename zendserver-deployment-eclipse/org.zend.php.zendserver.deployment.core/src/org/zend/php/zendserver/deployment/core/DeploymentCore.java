@@ -36,9 +36,11 @@ public class DeploymentCore extends Plugin {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
-		DeploymentCore.context = bundleContext;
-
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		DeploymentCore.context = context;
+		
+		
 		sdkManager = new SdkManager();
 	}
 
@@ -49,6 +51,7 @@ public class DeploymentCore extends Plugin {
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
+		super.stop(bundleContext);
 		DeploymentCore.context = null;
 	}
 
