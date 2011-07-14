@@ -223,7 +223,7 @@ public class ZendTargetAutoDetect {
 		final String hash = p.getProperty(key + ":hash");
 		if (hash != null) {
 			// return secretKey if possible
-			return hash;
+			return hash.startsWith("\"") ? hash.substring(1, hash.length() - 1) : hash;
 		}
 
 		// key not found
