@@ -76,7 +76,7 @@ public class DeploymentCore extends Plugin {
 	}
 
 	public static IEclipsePreferences getPreferenceScope() {
-		return DefaultScope.INSTANCE.getNode(DeploymentCore.PLUGIN_ID);
+		return (new DefaultScope()).getNode(DeploymentCore.PLUGIN_ID);
 	}
 
 	public void debug(Object message) {
