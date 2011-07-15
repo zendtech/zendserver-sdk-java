@@ -4,6 +4,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.messages"; //$NON-NLS-1$
+	public static String AddTargetAction_AddNewTarget;
+	public static String AddTargetAction_AddTarget;
+	public static String AddTargetAction_AddTargetMessage;
 	public static String AppTreeSection_AppDirMapping;
 	public static String AppTreeSection_InfoAboutAppdirFolder;
 	public static String DependenciesMasterDetailsProvider_Add;
@@ -32,9 +35,12 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_ZendServerVersion;
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
+	public static String DetectTargetAction_DetectTarget;
 	public static String DirectiveDependencyDetailsPage_Directive;
 	public static String DirectiveDependencyDetailsPage_DirectiveDependencyDetails;
 	public static String DirectiveDependencyDetailsPage_SpecifyDirectiveProperties;
+	public static String EditTargetAction_EditTarget;
+	public static String EditTargetAction_EditTargetMessage;
 	public static String ExtensionDependencyDetailsPage_extensionDependencyDetails;
 	public static String ExtensionDependencyDetailsPage_ExtensionName;
 	public static String ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails;
@@ -81,6 +87,8 @@ public class Messages extends NLS {
 	public static String ParametersMasterDetailsProvider_newParamName;
 	public static String PHPDependencyDetailsPage_PHPDepDetails;
 	public static String PHPDependencyDetailsPage_Version;
+	public static String RefreshViewerAction_Refresh;
+	public static String RemoveTargetAction_RemoveTarget;
 	public static String ResourceListSection_Add;
 	public static String ResourceListSection_Edit;
 	public static String ResourceListSection_Remove;
@@ -91,6 +99,15 @@ public class Messages extends NLS {
 	public static String ScriptsPage_VarsAndParams;
 	public static String ScriptsTreeSection_Info;
 	public static String ScriptsTreeSection_ScriptsMapping;
+	public static String TargetDialog_Host;
+	public static String TargetDialog_HostTooltip;
+	public static String TargetDialog_Id;
+	public static String TargetDialog_IdTooltip;
+	public static String TargetDialog_KeyName;
+	public static String TargetDialog_KeySecret;
+	public static String TargetDialog_KeyTooltip;
+	public static String TargetDialog_SecretTooltip;
+	public static String TargetDialog_validate;
 	public static String VariableDetailsPage_Details;
 	public static String VariableDetailsPage_Name;
 	public static String VariableDetailsPage_Value;

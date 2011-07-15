@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -39,10 +37,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -50,6 +49,7 @@ public class ApplicationParametersPage extends WizardPage {
 
 	private IDescriptorContainer model;
 	private Combo deployCombo;
+	private IZendTarget[] deployComboTargets = new IZendTarget[0];
 	private Link targetLocation;
 	private BaseURL baseUrl;
 	private Text userAppName;
@@ -216,7 +216,7 @@ public class ApplicationParametersPage extends WizardPage {
 		super(Messages.parametersPage_Title);
 		this.model = model;
 		this.parameters = new ArrayList<DeploymentParameter>();
-		this.targetsManager = new TargetsManager();
+		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		setDescription(Messages.deployWizardPage_Description);
 		setTitle(Messages.parametersPage_Title);
 	}
@@ -275,7 +275,12 @@ public class ApplicationParametersPage extends WizardPage {
 	}
 
 	public IZendTarget getTarget() {
-		return targetsManager.getTargetById(deployCombo.getText());
+		int idx = deployCombo.getSelectionIndex();
+		if (idx <= -1) {
+			return null;
+		}
+		IZendTarget target = deployComboTargets[idx];
+		return targetsManager.getTargetById(target.getId());
 	}
 
 	public HashMap<String, String> getParameters() {
@@ -385,16 +390,14 @@ public class ApplicationParametersPage extends WizardPage {
 		targetLocation.setText(text);
 		targetLocation.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				IZendTarget prevSelection = getTarget();
-				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
-						event.display.getActiveShell(),
-						"org.eclipse.php.server.internal.ui.PHPServersPreferencePage",
-						null, null);
-				if (dialog.open() == Window.OK) {
-					populateLocationList();
+				AddTargetAction addTarget = new AddTargetAction();
+				addTarget.run();
+				IZendTarget newTarget = addTarget.getTarget();
+				if (newTarget != null) {
+					populateLocationList(); // refresh targets list
 					IZendTarget[] targets = targetsManager.getTargets();
 					for (int i = 0; i < targets.length; i++) {
-						if (targets[i].getId().equals(prevSelection)) {
+						if (targets[i].getId().equals(newTarget)) {
 							deployCombo.select(i);
 						}
 					}
@@ -457,15 +460,23 @@ public class ApplicationParametersPage extends WizardPage {
 	}
 
 	private void populateLocationList() {
-		IZendTarget[] targets = targetsManager.getTargets();
+		deployComboTargets = targetsManager.getTargets();
 		deployCombo.removeAll();
-		if (targets.length != 0) {
-			for (IZendTarget target : targets) {
-				deployCombo.add(target.getId());
+		String defaultId = targetsManager.getDefaultTargetId();
+		int defaultNo = 0;
+		
+		if (deployComboTargets.length != 0) {
+			int i = 0;
+			for (IZendTarget target : deployComboTargets) {
+				if (target.getId().equals(defaultId)) {
+					defaultNo = i;
+				}
+				deployCombo.add(target.getHost() + " (Id: "+target.getId()+")");
+				i++;
 			}
 		}
 		if (deployCombo.getItemCount() > 0) {
-			deployCombo.select(-1);
+			deployCombo.select(defaultNo);
 		}
 	}
 

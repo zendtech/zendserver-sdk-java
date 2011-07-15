@@ -56,6 +56,16 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif"; //$NON-NLS-1$
 
+	public static final String IMAGE_TARGET = "icons/obj16/server.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DETECT_TARGET = "icons/obj16/detect_target.gif"; //$NON-NLS-1$
+	public static final String IMAGE_ADD_TARGET = "icons/obj16/new_target.gif"; //$NON-NLS-1$
+	public static final String IMAGE_EDIT_TARGET = "icons/obj16/edit_target.gif"; //$NON-NLS-1$
+	public static final String IMAGE_REMOVE_TARGET = "icons/elcl16/rem_co.gif"; //$NON-NLS-1$
+
+	public static final String IMAGE_REMOVE_TARGET_DISABLED = "icons/dlcl16/rem_co.gif"; //$NON-NLS-1$
+
+	public static final String IMAGE_REFRESH = "icons/elcl16/refresh.gif"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
 

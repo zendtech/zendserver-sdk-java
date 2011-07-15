@@ -128,5 +128,56 @@
          </describer>
       </content-type>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.zend.php.zendserver.deployment.ui.category"
+            class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
+            icon="icons/eview16/servers_view.gif"
+            id="org.zend.php.zendserver.deployment.ui.targetsview"
+            name="Targets"
+            restorable="true">
+      </view>
+      <category
+            id="org.zend.php.zendserver.deployment.ui.category"
+            name="Zend Application Deployment">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.zend.php.zendserver.deployment.ui.category"
+            class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
+            id="org.zend.php.zendserver.deployment.ui.targetsview"
+            name="Targets"
+            restorable="true">
+      </view>
+      <category
+            id="org.zend.php.zendserver.deployment.ui.category"
+            name="Zend Application Deployment">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
+            id="org.zend.php.zendserver.deployment.ui.targetsview"
+            name="Targets"
+            restorable="true">
+      </view>
+      <category
+            id="org.zend.php.zendserver.deployment.ui.category"
+            name="Zend Application Deployment">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
+            id="org.zend.php.zendserver.deployment.ui.targetsview"
+            name="Targets"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

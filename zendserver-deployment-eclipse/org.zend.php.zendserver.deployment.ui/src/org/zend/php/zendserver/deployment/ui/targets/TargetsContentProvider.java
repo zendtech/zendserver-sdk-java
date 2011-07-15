@@ -1,0 +1,43 @@
+package org.zend.php.zendserver.deployment.ui.targets;
+
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.zend.sdklib.manager.TargetsManager;
+
+public class TargetsContentProvider implements ITreeContentProvider {
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Object[] getElements(Object inputElement) {
+		if (inputElement instanceof TargetsManager) {
+			TargetsManager mgr = (TargetsManager) inputElement;
+			return mgr.getTargets();
+		}
+		
+		return new Object[0];
+	}
+
+	public Object[] getChildren(Object parentElement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getParent(Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasChildren(Object element) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}
