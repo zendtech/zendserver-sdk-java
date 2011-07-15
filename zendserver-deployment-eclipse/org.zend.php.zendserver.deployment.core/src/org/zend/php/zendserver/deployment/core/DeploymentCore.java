@@ -76,6 +76,7 @@ public class DeploymentCore extends Plugin {
 	}
 
 	public static IEclipsePreferences getPreferenceScope() {
+		// not using DefaultScope.INSTANCE for backwards compatibility
 		return (new DefaultScope()).getNode(DeploymentCore.PLUGIN_ID);
 	}
 
