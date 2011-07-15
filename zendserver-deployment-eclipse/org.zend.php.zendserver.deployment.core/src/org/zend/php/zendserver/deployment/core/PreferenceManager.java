@@ -18,8 +18,8 @@ public class PreferenceManager {
 	private static PreferenceManager manager;
 
 	private PreferenceManager(String id) {
-		this.defaultScope = DefaultScope.INSTANCE.getNode(id);
-		this.configurationScope = ConfigurationScope.INSTANCE.getNode(id);
+		this.defaultScope = (new DefaultScope()).getNode(id);
+		this.configurationScope = (new ConfigurationScope()).getNode(id);
 	}
 
 	public static PreferenceManager getInstance() {

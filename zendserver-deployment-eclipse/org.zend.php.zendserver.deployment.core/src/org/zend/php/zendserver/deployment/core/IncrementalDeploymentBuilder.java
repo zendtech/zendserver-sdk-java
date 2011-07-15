@@ -33,7 +33,7 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 	}
 
 	@Override
-	protected IProject[] build(int kind, Map<String, String> args,
+	protected IProject[] build(int kind, Map args,
 			IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = getDelta(getProject());
 		if (delta == null) {

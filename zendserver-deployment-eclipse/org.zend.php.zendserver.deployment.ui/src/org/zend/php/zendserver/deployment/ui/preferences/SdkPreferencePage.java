@@ -15,7 +15,7 @@ public class SdkPreferencePage extends FieldEditorPreferencePage implements IWor
 
 	public SdkPreferencePage() {
 		super("Zend SDK", FLAT);
-		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, DeploymentCore.PLUGIN_ID));
+		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(), DeploymentCore.PLUGIN_ID));
 	}
 	
 	@Override

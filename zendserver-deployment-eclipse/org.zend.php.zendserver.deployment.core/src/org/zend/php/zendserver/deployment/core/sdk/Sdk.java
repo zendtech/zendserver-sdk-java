@@ -66,17 +66,18 @@ public class Sdk {
 
 	private boolean bundleIsInstalled(String bundlePath) {
 		BundleContext ctx = DeploymentCore.getContext();
-		Bundle bundle = ctx.getBundle(bundlePath);
-		return (bundle != null);
+		//Bundle bundle = ctx.getBundle(bundlePath); // commented-out for comatibility with eclipse 3.6
+		//return (bundle != null);
+		return true;
 	}
 
 	public void uninstall() throws BundleException {
-		for (int i = 0; i < BUNDLES.length; i++) {
-			Bundle bundle = DeploymentCore.getContext().getBundle(location + BUNDLES[i]);
-			if (bundle != null) {
-				bundle.uninstall();
-			}
-		}
+		//for (int i = 0; i < BUNDLES.length; i++) {
+		//	Bundle bundle = DeploymentCore.getContext().getBundle(location + BUNDLES[i]); // commented-out for compatibility with eclipse 3.6
+		//	if (bundle != null) {
+		//		bundle.uninstall();
+		//	}
+		//}
 	}
 	
 	public String validate() {
