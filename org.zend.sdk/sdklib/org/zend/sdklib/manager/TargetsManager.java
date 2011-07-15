@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
+import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -102,6 +104,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (this.all.size() == 1) {
 			defaultId = this.all.get(0).getId();
 		}
+		
+		if (added) {
+			statusChanged(new BasicStatus(StatusCode.UNKNOWN, "added target", "added target"));
+		}
 
 		return added ? target : null;
 	}
@@ -124,6 +130,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 			defaultId = null;
 		}
 
+		if (removed) {
+			statusChanged(new BasicStatus(StatusCode.UNKNOWN, "removed target", "removed target"));
+		}
+		
 		return removed ? target : null;
 	}
 
@@ -319,7 +329,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (!target.connect()) {
 				return null;
 			}
-			return loader.update(target);
+			IZendTarget updated = loader.update(target);
+			if (updated != null) {
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "updated target", "updated target"));
+			}
+			return updated;
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (WebApiException e) {
