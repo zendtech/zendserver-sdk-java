@@ -61,28 +61,32 @@ public class ZendTarget implements IZendTarget {
 		validateTarget();
 	}
 
-	private boolean validateTarget() {
+	/**
+	 * 
+	 * @return null or success, or an error message otherwise
+	 */
+	public String validateTarget() {
 		if (id == null || host == null || secretKey == null || key == null
 				|| key.length() == 0) {
-			return false;
+			return "Target id, host, key name and secret must not be null.";
 		}
 		// key validation
 		if (!Character.isJavaIdentifierStart(this.key.charAt(0))) {
-			return false;
+			return "Target id must start with valid identifier: letter, number, $ or _";
 		}
 		for (int i = 1; i < this.key.length(); i++) {
 			char c = this.key.charAt(i);
 			if (!Character.isJavaIdentifierPart(c)) {
-				return false;
+				return "Target id is invalid: "+c;
 			}
 		}
 
 		// host validation - port should not be specified
 		if (this.host.getPort() != -1) {
-			return false;
+			return "Target host port should not be specified";
 		}
 
-		return true;
+		return null;
 	}
 
 	@Override
