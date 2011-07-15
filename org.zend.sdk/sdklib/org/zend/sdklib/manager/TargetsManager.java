@@ -154,8 +154,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 *            target id to use, null if not specified
 	 * @param key
 	 *            key to use, null if not specified
-	 * @return the detected localhost target
-	 * @throws IOException
+	 * @return the detected localhost target, or null if detection failed
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) {
