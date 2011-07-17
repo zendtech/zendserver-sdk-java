@@ -31,6 +31,10 @@ import java.util.List;
  */
 public class MappingValidator implements IMappingValidator {
 
+	private static final String KEY_VALUE_SEPARATOR = "=";
+
+	private static final String LINE_SEPARATOR = "\\";
+
 	private static final String KEY_SEPARATOR = "\\.";
 
 	private File container;
@@ -54,11 +58,12 @@ public class MappingValidator implements IMappingValidator {
 		List<MappingParseStatus> result = new ArrayList<MappingParseStatus>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		String line = null;
+		String previousLastChar = null;
 		int i = 0;
 		try {
 			while ((line = reader.readLine()) != null) {
 				i++;
-				String[] parts = line.split("=");
+				String[] parts = line.split(KEY_VALUE_SEPARATOR);
 				if (parts.length == 2) {
 					MappingParseStatus keyStatus = checkValidKey(parts[0], i, line);
 					if (keyStatus != null) {
@@ -70,13 +75,26 @@ public class MappingValidator implements IMappingValidator {
 					}
 				} else {
 					if (!line.trim().isEmpty()) {
-						int start = buffer + line.indexOf(line.trim());
-						int end = start + line.trim().length();
-						result.add(new MappingParseStatus(i, start, end,
-								MappingParseMessage.INVALID_LINE));
+						if (LINE_SEPARATOR.equals(previousLastChar)) {
+							String entry = line.trim();
+							if (entry.endsWith(LINE_SEPARATOR)) {
+								entry = entry.substring(0, line.trim().length() - 1);
+							}
+							List<MappingParseStatus> valueStatus = checkValidValues(entry, i, line);
+							if (!valueStatus.isEmpty()) {
+								result.addAll(valueStatus);
+							}
+						} else {
+							int start = buffer + line.indexOf(line.trim());
+							int end = start + line.trim().length();
+							result.add(new MappingParseStatus(i, start, end,
+									MappingParseMessage.INVALID_LINE));
+						}
 					}
 				}
 				buffer += line.length() + 1;
+				previousLastChar = line.trim().isEmpty() ? null : line.trim().substring(
+						line.trim().length() - 1);
 			}
 			if (i == 0) {
 				result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.EMPTY_FILE));
@@ -103,7 +121,7 @@ public class MappingValidator implements IMappingValidator {
 					MappingParseMessage.EMPTY_MAPPING));
 			return result;
 		}
-		int lineOffset = line.indexOf("=") + 1;
+		int lineOffset = line.indexOf(KEY_VALUE_SEPARATOR) + 1;
 		for (String entry : values) {
 			entry = entry.trim();
 			if (entry.isEmpty()) {
