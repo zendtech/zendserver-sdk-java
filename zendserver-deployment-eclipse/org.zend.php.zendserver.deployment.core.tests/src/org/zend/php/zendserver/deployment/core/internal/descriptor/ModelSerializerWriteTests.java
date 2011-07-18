@@ -298,4 +298,90 @@ public class ModelSerializerWriteTests extends TestCase {
 "</package>\n", txt.toString());
 	}
 	
+	public void testSerializeRemoveEmptyParents() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
+		descr.getPHPDependencies().add(dep);
+		dep.setMin("3.2.1");
+		
+		lm.serialize(descr);
+		
+		descr.getPHPDependencies().remove(dep);
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\"/>\n", txt.toString());
+	}
+	
+	public void testSerializeRemoveEmptyParents1() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
+		descr.getPHPDependencies().add(dep);
+		dep.setMin("3.2.1");
+		
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.VARIABLES);
+		descr.getVariables().add(var);
+		
+		descr.setName("notemptyname");
+		
+		lm.serialize(descr);
+		
+		descr.setName(null);
+		descr.getVariables().clear();
+		descr.getPHPDependencies().clear();
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\"/>\n", txt.toString());
+	}
+	
+	public void testSerializeRemoveEmptyParents2() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		IPHPDependency dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
+		descr.getPHPDependencies().add(dep);
+		dep.setMin("3.2.1");
+		
+		dep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
+		descr.getPHPDependencies().add(dep);
+		dep.setMin("3.2.1");
+		
+		lm.serialize(descr);
+		
+		descr.getPHPDependencies().remove(dep);
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n"+
+"  <dependencies>\n" +
+"    <required>\n" +
+"      <php>\n" +
+"        <min>3.2.1</min>\n" +
+"      </php>\n" +
+"    </required>\n" +
+"  </dependencies>\n" +
+"</package>\n", txt.toString());
+	}
+	
+	
 }

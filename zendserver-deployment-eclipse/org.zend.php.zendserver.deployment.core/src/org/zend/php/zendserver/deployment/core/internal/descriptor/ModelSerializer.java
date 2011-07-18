@@ -39,6 +39,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 
 public class ModelSerializer {
 
+	private static final String AT = "@"; //$NON-NLS-1$
+	
 	private DocumentBuilderFactory fact;
 	private DocumentBuilder builder;
 	private XPath xpathObj;
@@ -98,8 +100,8 @@ public class ModelSerializer {
 	        Source source = new DOMSource(document);
 	        
 	        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-	        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	        xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+	        xformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+	        xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
             xformer.transform(source, result);
 	        
 			dest.write();
@@ -175,8 +177,6 @@ public class ModelSerializer {
 	}
 	
 	private void writeProperties(Node doc, IModelObject obj, ChangeEvent event) throws XPathExpressionException {
-		long a = System.currentTimeMillis();
-		
 		if (event == null || event.target == obj) { 
 			Feature[] props = obj.getPropertyNames();
 			for (Feature feature : props) {
@@ -188,8 +188,6 @@ public class ModelSerializer {
 				}
 			}
 		}
-		long b = System.currentTimeMillis();
-		//System.out.println("writeProperties "+(b-a)+"msec ("+obj+")");
 		
 		if (obj instanceof IModelContainer) {
 			writeChildren(doc, (IModelContainer) obj, event);
@@ -197,8 +195,6 @@ public class ModelSerializer {
 	}
 	
 	private void writeChildren(Node doc, IModelContainer model, ChangeEvent event) throws XPathExpressionException {
-		long a = System.currentTimeMillis();
-		
 		if (event == null || event.target == model) {
 			Feature[] features = model.getChildNames();
 			for (Feature f : features) {
@@ -226,7 +222,7 @@ public class ModelSerializer {
 					}
 				}
 				for (int i = children.size(); i < nodes.length; i++) {
-					removeNode(nodes[i]);
+					removeNodes(doc, nodes[i]);
 				}
 				
 			}
@@ -246,9 +242,6 @@ public class ModelSerializer {
 				}
 			}
 		}
-		
-		long b = System.currentTimeMillis();
-		//System.out.println("writeChildren   "+(b-a)+"msec ("+model+")");
 	}
 	
 	
@@ -279,9 +272,34 @@ public class ModelSerializer {
 		return e;
 	}
 	
-	private void removeNode(Node node) {
+	/**
+	 * Removes nodes from startnode up the three to parent
+	 * @param parent
+	 * @param node
+	 */
+	private void removeNodes(Node border, Node node) {
 		Node parent = node.getParentNode();
-		parent.removeChild(node);
+		do {
+			parent.removeChild(node);
+			node = parent;
+			parent = parent.getParentNode();
+		} while ((getChildCount(node, Node.ELEMENT_NODE) == 0) && (node != border));
+	}
+	
+	/**
+	 * Get the number of children nodes of given type.
+	 * 
+	 * @param parent node which children should be counted
+	 * @param type type of children to count
+	 * @return number of children of given type in parent
+	 */
+	private int getChildCount(Node parent, short type) {
+		int length = 0;
+		NodeList list = parent.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			length += (list.item(i).getNodeType() ==type) ? 1 : 0;
+		}
+		return length;
 	}
 	
 	private void removeString(Node node, String xpath, String attrName) throws XPathExpressionException {
@@ -336,9 +354,9 @@ public class ModelSerializer {
 		if (nodePath != null && attrName == null) {
 			return nodePath;
 		} else if (nodePath == null && attrName != null) {
-			return "@"+attrName;
+			return AT+attrName;
 		} else {
-			return nodePath + "@"+attrName;
+			return nodePath + AT+attrName;
 		}
 	}
 	
@@ -383,7 +401,7 @@ public class ModelSerializer {
 				}
 				isWhiteSpace = true;
 			} else if (isWhiteSpace) { // not whitespce, after whitespaces
-				sb.replace(i+1, lastWhSpcIdx + 1, " ");
+				sb.replace(i+1, lastWhSpcIdx + 1, " "); //$NON-NLS-1$
 				isWhiteSpace = false;
 			}
 		}
