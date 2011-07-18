@@ -77,8 +77,8 @@ public class CreateProjectCommand extends AbstractCommand {
 				getScripts());
 		if (create) {
 			getLogger().info(
-					"Project resources were created succefully for "
-							+ getName() + "under " + getDestination());
+					"Project resources were created successfully for "
+							+ getName() + " under " + getDestination());
 		}
 		return create;
 
