@@ -74,6 +74,9 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		List<IMapping> mappings = new ArrayList<IMapping>();
 		for (int i = 0; i < result.length; i++) {
 			String file = result[i].trim();
+			if (file.isEmpty()) {
+				continue;
+			}
 			boolean isContent = file.endsWith(CONTENT);
 			if (isContent) {
 				file = file
