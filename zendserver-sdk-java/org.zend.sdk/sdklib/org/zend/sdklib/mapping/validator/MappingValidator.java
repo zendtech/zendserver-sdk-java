@@ -121,14 +121,9 @@ public class MappingValidator implements IMappingValidator {
 					MappingParseMessage.EMPTY_MAPPING));
 			return result;
 		}
-		int lineOffset = line.indexOf(KEY_VALUE_SEPARATOR) + 1;
 		for (String entry : values) {
 			entry = entry.trim();
 			if (entry.isEmpty()) {
-				int start = lineOffset + line.indexOf(entry) + buffer;
-				result.add(new MappingParseStatus(lineNo, start, start + 1,
-						MappingParseMessage.EMPTY_MAPPING_FILE));
-				lineOffset++;
 				continue;
 			}
 			boolean isContent = entry.endsWith(CONTENT);
@@ -148,7 +143,6 @@ public class MappingValidator implements IMappingValidator {
 				}
 
 			}
-			lineOffset = line.indexOf(entry) + entry.length();
 		}
 		return result;
 	}
