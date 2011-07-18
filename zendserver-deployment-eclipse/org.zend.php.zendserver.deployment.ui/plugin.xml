@@ -179,5 +179,11 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.zend.php.zendserver.deployment.ui.DeploymentUIPreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

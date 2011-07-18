@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.text.IColorManager;
-import org.eclipse.jdt.ui.text.IColorManagerExtension;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
@@ -50,7 +47,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 
-	private IColorManager fColorManager;
+	private static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
+	private static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+	private static final String EDITOR_STRIKETHROUGH_SUFFIX= "_strikethrough"; //$NON-NLS-1$
+	private static final String EDITOR_UNDERLINE_SUFFIX= "_underline"; //$NON-NLS-1$
+	
+	private PropertiesColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
 
 	private Map<String, Token> fTokenMap = new HashMap<String, Token>();
@@ -81,7 +83,7 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 	/**
 	 * Creates an abstract Property scanner.
 	 */
-	public AbstractPropertyScanner(IColorManager manager, IPreferenceStore store) {
+	public AbstractPropertyScanner(PropertiesColorManager manager, IPreferenceStore store) {
 		super();
 		fColorManager = manager;
 		fPreferenceStore = store;
@@ -121,19 +123,19 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 	}
 
 	protected String getBoldKey(String colorKey) {
-		return colorKey + PreferenceConstants.EDITOR_BOLD_SUFFIX;
+		return colorKey + EDITOR_BOLD_SUFFIX;
 	}
 
 	protected String getItalicKey(String colorKey) {
-		return colorKey + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
+		return colorKey + EDITOR_ITALIC_SUFFIX;
 	}
 
 	protected String getStrikethroughKey(String colorKey) {
-		return colorKey + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
+		return colorKey + EDITOR_STRIKETHROUGH_SUFFIX;
 	}
 
 	protected String getUnderlineKey(String colorKey) {
-		return colorKey + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
+		return colorKey + EDITOR_UNDERLINE_SUFFIX;
 	}
 
 	protected Token getToken(String key) {
@@ -204,11 +206,8 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 			String strikethroughKey, String underlineKey) {
 		if (fColorManager != null && colorKey != null && fColorManager.getColor(colorKey) == null) {
 			RGB rgb = PreferenceConverter.getColor(fPreferenceStore, colorKey);
-			if (fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext = (IColorManagerExtension) fColorManager;
-				ext.unbindColor(colorKey);
-				ext.bindColor(colorKey, rgb);
-			}
+			fColorManager.unbindColor(colorKey);
+			fColorManager.bindColor(colorKey, rgb);
 		}
 
 		if (!fNeedsLazyColorLoading)
@@ -297,13 +296,9 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 			String property = event.getProperty();
 			Color color = fColorManager.getColor(property);
 
-			if ((color == null || !rgb.equals(color.getRGB()))
-					&& fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext = (IColorManagerExtension) fColorManager;
-
-				ext.unbindColor(property);
-				ext.bindColor(property, rgb);
-
+			if ((color == null || !rgb.equals(color.getRGB()))) {
+				fColorManager.unbindColor(property);
+				fColorManager.bindColor(property, rgb);
 				color = fColorManager.getColor(property);
 			}
 

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jdt.ui.text.IColorManager;
-import org.eclipse.jdt.ui.text.IColorManagerExtension;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -13,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Properties color manager.
  */
-public class PropertiesColorManager implements IColorManager, IColorManagerExtension {
+public class PropertiesColorManager {
 
 	protected Map<String, RGB> fKeyTable = new HashMap<String, RGB>(10);
 	protected Map<Display, Map<RGB, Color>> fDisplayTable = new HashMap<Display, Map<RGB, Color>>(2);

@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
@@ -110,9 +108,8 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 			}
 		}
 
-		private String[] fgTokenProperties = { PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE,
-				PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT,
-				PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT };
+		private String[] fgTokenProperties = { PROPERTIES_FILE_COLORING_VALUE,
+				PROPERTIES_FILE_COLORING_ARGUMENT, PROPERTIES_FILE_COLORING_ASSIGNMENT };
 
 		/**
 		 * Creates a property value code scanner
@@ -138,15 +135,15 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 		 */
 		@Override
 		protected List<IRule> createRules() {
-			setDefaultReturnToken(getToken(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE));
+			setDefaultReturnToken(getToken(PROPERTIES_FILE_COLORING_VALUE));
 			List<IRule> rules = new ArrayList<IRule>();
 
 			// Add rule for arguments.
-			IToken token = getToken(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT);
+			IToken token = getToken(PROPERTIES_FILE_COLORING_ARGUMENT);
 			rules.add(new ArgumentRule(token));
 
 			// Add word rule for assignment operator.
-			token = getToken(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT);
+			token = getToken(PROPERTIES_FILE_COLORING_ASSIGNMENT);
 			WordRule wordRule = new WordRule(new AssignmentDetector(), token);
 			rules.add(wordRule);
 
@@ -162,6 +159,12 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 			return rules;
 		}
 	}
+	
+	public static final String PROPERTIES_FILE_COLORING_KEY= "pf_coloring_key"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_COMMENT= "pf_coloring_comment"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_VALUE= "pf_coloring_value"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_ASSIGNMENT= "pf_coloring_assignment"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_ARGUMENT= "pf_coloring_argument"; //$NON-NLS-1$
 
 	/** Properties file content type */
 	private static final IContentType PROPERTIES_CONTENT_TYPE = Platform.getContentTypeManager()
@@ -182,7 +185,7 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	/**
 	 * The color manager.
 	 */
-	private IColorManager fColorManager;
+	private PropertiesColorManager fColorManager;
 
 	/**
 	 * Creates a new properties file source viewer configuration for viewers in
@@ -198,7 +201,7 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * @param partitioning
 	 *            the document partitioning for this configuration
 	 */
-	public PropertiesFileSourceViewerConfiguration(IColorManager colorManager,
+	public PropertiesFileSourceViewerConfiguration(PropertiesColorManager colorManager,
 			IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		fColorManager = colorManager;
@@ -210,11 +213,9 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		fPropertyKeyScanner = new SingleTokenJavaScanner(
-				PreferenceConstants.PROPERTIES_FILE_COLORING_KEY);
+		fPropertyKeyScanner = new SingleTokenJavaScanner(PROPERTIES_FILE_COLORING_KEY);
 		fPropertyValueScanner = new PropertyValueScanner();
-		fCommentScanner = new SingleTokenJavaScanner(
-				PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
+		fCommentScanner = new SingleTokenJavaScanner(PROPERTIES_FILE_COLORING_COMMENT);
 	}
 
 	/**
@@ -249,7 +250,7 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * 
 	 * @return the color manager
 	 */
-	protected IColorManager getColorManager() {
+	protected PropertiesColorManager getColorManager() {
 		return fColorManager;
 	}
 
