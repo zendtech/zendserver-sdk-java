@@ -103,7 +103,7 @@
 		<get src="http://il-studiosrv1:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/trunk/org.zend.sdk/sdk/sdk.version"
 			dest="${target.folder}/sdk.version" />
 		
-		<propertyfile file="${target.folder}/sdk.version"/>
+		<property file="${target.folder}/sdk.version"/>
 		
 		<property name="zendsdk" value="zend-sdk-${sdk.version}"/>
 		
