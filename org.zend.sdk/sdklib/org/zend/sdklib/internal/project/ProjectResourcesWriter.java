@@ -127,7 +127,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 					"Failed to create deployment descriptor. Project name is missing");
 		}
 		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
-				null, "1.0");
+				null, "1.0.0");
 		w.write(outputStream);
 		outputStream.close();
 	}
