@@ -99,7 +99,13 @@
 		ant script from non PDT/Build infrastructure, e.g. directly from Eclipse->Run->Ant.
 		Following line has no effect if run from PDT/Build -->
 		<property name="target.folder" value="." />
-		<property name="zendsdk" value="zend-sdk-0.0.10"/>
+		
+		<get src="http://il-studiosrv1:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/trunk/org.zend.sdk/sdk/sdk.version"
+			dest="${target.folder}/sdk.version" />
+		
+		<propertyfile file="${target.folder}/sdk.version"/>
+		
+		<property name="zendsdk" value="zend-sdk-${sdk.version}"/>
 		
 		<get src="http://il-studiosrv1:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/trunk/org.zend.sdk/sdk/${zendsdk}.zip"
 			dest="${target.folder}/zend-sdk.zip" />
