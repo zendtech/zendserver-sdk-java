@@ -203,13 +203,14 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 						.equals(iconLocation)))) {
 			return;
 		}
-
-		if (newIconLocation == null) {
-			newIconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
-		}
+		System.out.println(iconLocation+" "+newIconLocation);
 
 		ImageRegistry reg = Activator.getDefault().getImageRegistry();
-		Image img = reg.get(newIconLocation);
+		Image img = null;
+		if (newIconLocation != null) {
+	   	   img = reg.get(newIconLocation);
+		}
+		
 		if (img != null) {
 			iconLocation = newIconLocation;
 		} else {
@@ -229,10 +230,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					// reg.remove(iconLocation); // remove previous image
 					reg.put(iconLocation, img);
 				} else {
-					iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
+					iconLocation = null;
 				}
 			} else {
-				iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
+				iconLocation = null;
 			}
 		}
 
@@ -240,7 +241,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	private void updateImage() {
-		Image img = Activator.getDefault().getImage(iconLocation);
+		String icon = iconLocation != null ? iconLocation : Activator.IMAGE_DESCRIPTOR_OVERVIEW;
+		Image img = Activator.getDefault().getImage(icon);
 		IFormPage page = getActivePageInstance();
 		if ((page != null) && (page instanceof FormPage)) {
 			FormPage fpage = (FormPage) page;
