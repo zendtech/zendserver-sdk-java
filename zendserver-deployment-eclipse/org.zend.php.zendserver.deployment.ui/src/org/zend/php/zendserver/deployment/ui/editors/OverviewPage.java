@@ -52,35 +52,6 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
 		super(editor, "overview", Messages.OverviewPage_Overview); //$NON-NLS-1$
-		IDeploymentDescriptor descr = editor.getModel();
-
-		name = addField(new TextField(descr,
-				DeploymentDescriptorPackage.PKG_NAME,
-				Messages.OverviewPage_Name));
-		summary = addField(new TextField(descr,
-				DeploymentDescriptorPackage.SUMMARY,
-				Messages.OverviewPage_Summary));
-		description = addField(new TextField(descr,
-				DeploymentDescriptorPackage.PKG_DESCRIPTION,
-				Messages.OverviewPage_Description));
-		releaseVersion = addField(new TextField(descr,
-				DeploymentDescriptorPackage.VERSION_RELEASE,
-				Messages.OverviewPage_0));
-		apiVersion = addField(new TextField(descr,
-				DeploymentDescriptorPackage.VERSION_API,
-				Messages.OverviewPage_1));
-
-		license = addField(new FileField(descr,
-				DeploymentDescriptorPackage.EULA,
-				"License", editor.getProject())); //$NON-NLS-1$
-		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
-				Messages.OverviewPage_Icon, editor.getProject()));
-		docRoot = addField(new FolderField(descr,
-				DeploymentDescriptorPackage.DOCROOT,
-				Messages.OverviewPage_Docroot, editor.getProject()));
-		appDir = addField(new TextField(descr,
-				DeploymentDescriptorPackage.APPDIR,
-				Messages.OverviewPage_Appdir));
 	}
 
 	@Override
@@ -244,6 +215,36 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm) {
+		IDeploymentDescriptor descr = editor.getModel();
+
+		name = addField(new TextField(descr,
+				DeploymentDescriptorPackage.PKG_NAME,
+				Messages.OverviewPage_Name));
+		summary = addField(new TextField(descr,
+				DeploymentDescriptorPackage.SUMMARY,
+				Messages.OverviewPage_Summary));
+		description = addField(new TextField(descr,
+				DeploymentDescriptorPackage.PKG_DESCRIPTION,
+				Messages.OverviewPage_Description));
+		releaseVersion = addField(new TextField(descr,
+				DeploymentDescriptorPackage.VERSION_RELEASE,
+				Messages.OverviewPage_0));
+		apiVersion = addField(new TextField(descr,
+				DeploymentDescriptorPackage.VERSION_API,
+				Messages.OverviewPage_1));
+
+		license = addField(new FileField(descr,
+				DeploymentDescriptorPackage.EULA,
+				"License", editor.getProject())); //$NON-NLS-1$
+		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
+				Messages.OverviewPage_Icon, editor.getProject()));
+		docRoot = addField(new FolderField(descr,
+				DeploymentDescriptorPackage.DOCROOT,
+				Messages.OverviewPage_Docroot, editor.getProject()));
+		appDir = addField(new TextField(descr,
+				DeploymentDescriptorPackage.APPDIR,
+				Messages.OverviewPage_Appdir));
+
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 
