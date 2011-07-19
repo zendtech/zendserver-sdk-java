@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -166,5 +168,9 @@ public class Activator extends AbstractUIPlugin {
 		gc.dispose();
 		image.dispose(); // don't forget about me!
 		return scaled;
+	}
+
+	public static void log(Throwable e) {
+		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
 	}
 }
