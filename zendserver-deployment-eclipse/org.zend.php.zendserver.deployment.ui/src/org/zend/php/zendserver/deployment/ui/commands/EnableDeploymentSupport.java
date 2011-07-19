@@ -29,6 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 
 public class EnableDeploymentSupport extends AbstractHandler {
@@ -99,8 +100,7 @@ public class EnableDeploymentSupport extends AbstractHandler {
 					try {
 						window.getActivePage().openEditor(new FileEditorInput(descriptorFile), DeploymentDescriptorEditor.ID);
 					} catch (PartInitException e) {
-						// TODO Log exception
-						e.printStackTrace();
+						Activator.log(e);
 					}
 				}
 			}
