@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.zend.sdklib.application.ZendProject;
 
 public class DeploymentNature implements IProjectNature {
 
@@ -19,6 +21,7 @@ public class DeploymentNature implements IProjectNature {
 	
 	public void configure() throws CoreException {
 		addBuilder(IncrementalDeploymentBuilder.ID);
+		updateProject();
 	}
 
 	public void deconfigure() throws CoreException {
@@ -62,6 +65,13 @@ public class DeploymentNature implements IProjectNature {
 		if (found) {
 			description.setBuildSpec(commands.toArray(new ICommand[commands.size()]));
 		}
+	}
+	
+	public void updateProject() throws CoreException {
+		File projectLocation = project.getLocation().toFile();
+		ZendProject zp = new ZendProject(projectLocation);
+		zp.update(null);
+		project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
 	}
 
 	public IProject getProject() {

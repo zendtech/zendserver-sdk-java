@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.commands;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,11 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
-import org.zend.php.zendserver.deployment.ui.wizards.StatusChangeListener;
-import org.zend.sdklib.application.ZendProject;
 
 public class EnableDeploymentSupport extends AbstractHandler {
 
@@ -61,7 +56,7 @@ public class EnableDeploymentSupport extends AbstractHandler {
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
-					return updateProject(project, monitor);
+					return Status.OK_STATUS;
 				}
 			};
 			job.setUser(true);
@@ -90,24 +85,6 @@ public class EnableDeploymentSupport extends AbstractHandler {
 		natures.add(id);
 		description.setNatureIds(natures.toArray(new String[natures.size()]));
 		project.setDescription(description, monitor);
-	}
-	
-	private IStatus updateProject(final IProject project, IProgressMonitor monitor) {
-		final File projectLocation = project.getLocation().toFile();
-		StatusChangeListener listener = new StatusChangeListener(monitor);
-		if (monitor.isCanceled()) {
-			return Status.OK_STATUS;
-		}
-		ZendProject zp = new ZendProject(projectLocation);
-		zp.addStatusChangeListener(listener);
-		zp.update(null);
-		try {
-			project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
-		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					"Error during enabling deployment support", e);
-		}
-		return new SdkStatus(listener.getStatus());
 	}
 	
 	private void openDescriptorEditor(final IProject project) {
