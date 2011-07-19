@@ -77,20 +77,20 @@ public abstract class ResourceListSection {
 	 * @param title
 	 */
 	public ResourceListSection(DeploymentDescriptorEditor editor,
-			IManagedForm mForm, String title, String description) {
+			IManagedForm mForm, String title, String description, Composite body) {
 		this.title = title;
 		this.description = description;
 		this.editor = editor;
 		this.mForm = mForm;
 
-		createSection();
+		createSection(body);
 		createActions();
 	}
 
-	private void createSection() {
+	private void createSection(Composite body) {
 		FormToolkit toolkit = mForm.getToolkit();
 
-		Section section = createSection(title, description);
+		Section section = createSection(title, description, body);
 		Composite client = (Composite) section.getClient();
 		final SectionPart spart = new SectionPart(section);
 		mForm.addPart(spart);
@@ -163,11 +163,11 @@ public abstract class ResourceListSection {
 
 	}
 
-	private Section createSection(String title, String description) {
+	private Section createSection(String title, String description, Composite body) {
 		ScrolledForm form = mForm.getForm();
 		FormToolkit toolkit = mForm.getToolkit();
 
-		Section section = toolkit.createSection(form.getBody(),
+		Section section = toolkit.createSection(body,
 				Section.TITLE_BAR | Section.DESCRIPTION | Section.TWISTIE);
 		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
 				.getActiveForeground());

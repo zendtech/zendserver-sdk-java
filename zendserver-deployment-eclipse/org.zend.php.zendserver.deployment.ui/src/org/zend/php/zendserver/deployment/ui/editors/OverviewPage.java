@@ -61,20 +61,33 @@ public class OverviewPage extends DescriptorEditorPage {
 		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(
 				FormLayoutFactory.createFormTableWrapLayout(true, 2));
+		
+		final FormToolkit toolkit = managedForm.getToolkit();
+		final Composite body = managedForm.getForm().getBody();
+		
+		Composite left = toolkit.createComposite(body);
+		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
+		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		createGeneralInformationSection(managedForm, left);
+		createPersistentResourcesSection(managedForm, left);
 
-		createGeneralInformationSection(managedForm);
-		createTestingSection(managedForm);
-		createExportingSection(managedForm);
-		createPersistentResourcesSection(managedForm);
+		Composite right = toolkit.createComposite(body);
+		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
+		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		createTestingSection(managedForm, right);
+		createExportingSection(managedForm, right);
+
 		createActions();
 
 		form.reflow(true);
 	}
 
-	private void createPersistentResourcesSection(IManagedForm managedForm) {
+	private void createPersistentResourcesSection(IManagedForm managedForm, Composite left) {
 		persistent = new ResourceListSection(editor, managedForm,
 				Messages.OverviewPage_PersistentResources,
-				Messages.OverviewPage_PersistentResourcesDescription) {
+				Messages.OverviewPage_PersistentResourcesDescription, left) {
 
 			@Override
 			public Object[] getElements(Object input) {
@@ -124,10 +137,10 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	}
 
-	private void createExportingSection(IManagedForm managedForm) {
+	private void createExportingSection(IManagedForm managedForm, Composite body) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		Section section = createStaticSection(toolkit, form.getBody(),
+		Section section = createStaticSection(toolkit, body,
 				Messages.OverviewPage_Exporting);
 		Composite container = createStaticSectionClient(toolkit, section);
 		createClient(container, Messages.OverviewPage_PackageAndExport,
@@ -179,11 +192,11 @@ public class OverviewPage extends DescriptorEditorPage {
 		return text;
 	}
 
-	private void createTestingSection(IManagedForm managedForm) {
+	private void createTestingSection(IManagedForm managedForm, Composite body) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 
-		Section section = toolkit.createSection(form.getBody(),
+		Section section = toolkit.createSection(body,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_Testing);
 		section.setDescription(Messages.OverviewPage_TestingDescr);
@@ -214,7 +227,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	}
 
-	private void createGeneralInformationSection(IManagedForm managedForm) {
+	private void createGeneralInformationSection(IManagedForm managedForm, Composite body) {
 		IDeploymentDescriptor descr = editor.getModel();
 
 		name = addField(new TextField(descr,
@@ -247,8 +260,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-
-		Section section = toolkit.createSection(form.getBody(),
+		Section section = toolkit.createSection(body,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_GeneralInfo);
 		section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
