@@ -31,12 +31,15 @@ import org.zend.sdklib.mapping.IMappingEntry.Type;
  */
 public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 
+	private static final String TAB = "\t";
 	public static final String EXCLUDES = ".excludes";
 	public static final String SEPARATOR = ",";
 	public static final String INCLUDES = ".includes";
 	public static final String CONTENT = "/*";
 	public static final String GLOBAL = "**/";
 
+	final String EOL = System.getProperty("line.separator");
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -103,7 +106,7 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		for (IMappingEntry entry : entries) {
 			String entryString = getEntry(entry);
 			result.write(entryString.getBytes());
-			result.write('\n');
+			result.write(EOL.getBytes());
 		}
 		return result.toByteArray();
 	}
@@ -149,7 +152,10 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			result.append(file);
 			if (size-- > 0) {
 				result.append(SEPARATOR);
-				result.append(" ");
+				result.append("\\");
+				result.append(EOL);
+				result.append(TAB);
+				result.append(TAB);
 			}
 		}
 		return result.toString();
