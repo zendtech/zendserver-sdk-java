@@ -241,6 +241,11 @@
 	
 	<target name="buildSDK">
 		<mkdir dir="${sdk.output.dir}" />
+		
+		<!-- expose build properties, so that automated consumers can figure out the SDK current version -->
+		<echo file="${sdk.output.dir/sdk.version">
+		sdk.version=${sdk.version}</echo>
+		
 		<property name="prefix" value="zend-sdk-${sdk.version}"></property>
 		<zip destfile="${sdk.output.dir}/zend-sdk-${sdk.version}.zip" basedir="." >
 			<exclude name="*/**"/>
