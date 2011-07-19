@@ -8,15 +8,16 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class TextField {
 
-	protected Label label;
+	protected Control label;
 	protected Text text;
 	protected String textValue;
 	protected String labelTxt;
@@ -24,11 +25,19 @@ public class TextField {
 	protected Feature key;
 	protected boolean isRefresh;
 	protected ControlDecoration controlDecoration;
+	protected boolean linkLabel;
+	protected int style;
 	
 	public TextField(IModelObject target,Feature key, String label) {
+		this(target, key, label, SWT.SINGLE, false);
+	}
+	
+	public TextField(IModelObject target,Feature key, String label, int style, boolean linkLabel) {
 		this.target = target;
 		this.key = key;
 		this.labelTxt = label;
+		this.style = style;
+		this.linkLabel = linkLabel;
 	}
 	
 	public Feature getKey() {
@@ -53,7 +62,7 @@ public class TextField {
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		createLabel(parent, toolkit);
 		createTextControl(parent, toolkit);
-		createControlDecoration();		
+		createControlDecoration();	
 	}
 	
 	protected void createControlDecoration() {
@@ -61,19 +70,24 @@ public class TextField {
 	}
 
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
-		if (labelTxt != null) {
-			label = toolkit.createLabel(parent, labelTxt);
-			label.setLayoutData(new GridData());
+		if (linkLabel) {
+			label = toolkit.createHyperlink(parent, labelTxt, SWT.NULL);
+		} else {
+			if (labelTxt != null) {
+				label = toolkit.createLabel(parent, labelTxt);
+				label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+			}
 		}
+		label.setLayoutData(new GridData());
 	}
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createText(parent, ""); //$NON-NLS-1$
+		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
-		text.setLayoutData(gd);
+		text.setLayoutData(gd);		
 	}
-
+	
 	public void setErrorMessage(String message) {
 		if (message == null) {
 			controlDecoration.hide();

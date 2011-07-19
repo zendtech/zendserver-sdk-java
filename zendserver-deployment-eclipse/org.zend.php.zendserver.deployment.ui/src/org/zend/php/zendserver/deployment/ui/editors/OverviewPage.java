@@ -33,7 +33,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	private static final String LINK_RUN_PHP = "runPHP"; //$NON-NLS-1$
 	private static final String LINK_RUN_TEST = "testPHP"; //$NON-NLS-1$
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
-	
+
 	private TextField name;
 	private TextField summary;
 	private TextField description;
@@ -43,11 +43,11 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField icon;
 	private TextField docRoot;
 	private TextField appDir;
-	
+
 	private ImageHyperlink runApplicationLink;
 	private ImageHyperlink debugApplicationLink;
 	private ImageHyperlink runTestsLink;
-	
+
 	private ResourceListSection persistent;
 
 	public OverviewPage(DeploymentDescriptorEditor editor) {
@@ -55,16 +55,20 @@ public class OverviewPage extends DescriptorEditorPage {
 		IDeploymentDescriptor descr = editor.getModel();
 
 		name = addField(new TextField(descr,
-				DeploymentDescriptorPackage.PKG_NAME, Messages.OverviewPage_Name));
+				DeploymentDescriptorPackage.PKG_NAME,
+				Messages.OverviewPage_Name));
 		summary = addField(new TextField(descr,
-				DeploymentDescriptorPackage.SUMMARY, Messages.OverviewPage_Summary));
+				DeploymentDescriptorPackage.SUMMARY,
+				Messages.OverviewPage_Summary));
 		description = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
 				Messages.OverviewPage_Description));
 		releaseVersion = addField(new TextField(descr,
-				DeploymentDescriptorPackage.VERSION_RELEASE, "Release Version")); //$NON-NLS-1$
+				DeploymentDescriptorPackage.VERSION_RELEASE,
+				Messages.OverviewPage_0));
 		apiVersion = addField(new TextField(descr,
-				DeploymentDescriptorPackage.VERSION_API, "API Version")); //$NON-NLS-1$
+				DeploymentDescriptorPackage.VERSION_API,
+				Messages.OverviewPage_1));
 
 		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
@@ -72,10 +76,11 @@ public class OverviewPage extends DescriptorEditorPage {
 		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
 				Messages.OverviewPage_Icon, editor.getProject()));
 		docRoot = addField(new FolderField(descr,
-				DeploymentDescriptorPackage.DOCROOT, Messages.OverviewPage_Docroot,
-				editor.getProject()));
+				DeploymentDescriptorPackage.DOCROOT,
+				Messages.OverviewPage_Docroot, editor.getProject()));
 		appDir = addField(new TextField(descr,
-				DeploymentDescriptorPackage.APPDIR, Messages.OverviewPage_Appdir));
+				DeploymentDescriptorPackage.APPDIR,
+				Messages.OverviewPage_Appdir));
 	}
 
 	@Override
@@ -85,7 +90,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(
 				FormLayoutFactory.createFormTableWrapLayout(true, 2));
-
 
 		createGeneralInformationSection(managedForm);
 		createTestingSection(managedForm);
@@ -97,61 +101,66 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void createPersistentResourcesSection(IManagedForm managedForm) {
-		persistent = new ResourceListSection(editor, managedForm, Messages.OverviewPage_PersistentResources, Messages.OverviewPage_PersistentResourcesDescription) {
-			
+		persistent = new ResourceListSection(editor, managedForm,
+				Messages.OverviewPage_PersistentResources,
+				Messages.OverviewPage_PersistentResourcesDescription) {
+
 			@Override
 			public Object[] getElements(Object input) {
 				List<String> list = editor.getModel().getPersistentResources();
-				return editor.getResourceMapper().getResources(list.toArray(new String[list.size()]));
+				return editor.getResourceMapper().getResources(
+						list.toArray(new String[list.size()]));
 			}
-			
+
 			@Override
 			protected void addPath() {
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
-				String[] newPaths = OpenFileDialog.openMany(shell, root, Messages.OverviewPage_AddPath, Messages.OverviewPage_SelectPath, null);
+				String[] newPaths = OpenFileDialog.openMany(shell, root,
+						Messages.OverviewPage_AddPath,
+						Messages.OverviewPage_SelectPath, null);
 				if (newPaths == null) {
 					return;
 				}
-				
+
 				for (int i = 0; i < newPaths.length; i++) {
 					editor.getModel().getPersistentResources().add(newPaths[i]);
 				}
 			}
-			
+
 			@Override
 			protected void editPath(Object element) {
 				String currPath = (String) element;
-				
+
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
-				String newPath = OpenFileDialog.open(shell, root, Messages.OverviewPage_ChangePath, Messages.OverviewPage_SelectPath, currPath.toString());
+				String newPath = OpenFileDialog.open(shell, root,
+						Messages.OverviewPage_ChangePath,
+						Messages.OverviewPage_SelectPath, currPath.toString());
 				if (newPath == null) {
 					return;
 				}
 				editor.getModel().getPersistentResources().remove(currPath);
 				editor.getModel().getPersistentResources().add(newPath);
 			}
-			
+
 			@Override
 			protected void removePath(Object element) {
 				String path = (String) element;
 				editor.getModel().getPersistentResources().remove(path);
 			}
 		};
-		
+
 	}
 
-	
-	
 	private void createExportingSection(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createStaticSection(toolkit, form.getBody(),
 				Messages.OverviewPage_Exporting);
 		Composite container = createStaticSectionClient(toolkit, section);
-		createClient(container, Messages.OverviewPage_PackageAndExport, toolkit,
-				new HyperlinkAdapter() {
+		createClient(container, Messages.OverviewPage_PackageAndExport,
+				toolkit, new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						handleLinkClick(e.data);
 					}
@@ -220,18 +229,18 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		debugApplicationLink = toolkit.createImageHyperlink(sectionClient,
 				SWT.NONE);
-		debugApplicationLink.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
+		debugApplicationLink
+				.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
 		debugApplicationLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_DEBUG_APPLICATION).createImage());
 		debugApplicationLink.setHref(LINK_DEBUG_PHP);
 
-		runTestsLink = toolkit.createImageHyperlink(sectionClient,
-				SWT.NONE);
+		runTestsLink = toolkit.createImageHyperlink(sectionClient, SWT.NONE);
 		runTestsLink.setText(Messages.OverviewPage_LaunchingPHPTest);
 		runTestsLink.setImage(Activator.getImageDescriptor(
 				Activator.IMAGE_RUN_TEST).createImage());
 		runTestsLink.setHref(LINK_RUN_TEST);
-	
+
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm) {
@@ -254,8 +263,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		name.create(sectionClient, toolkit);
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
-		apiVersion.create(sectionClient, toolkit);
 		releaseVersion.create(sectionClient, toolkit);
+		apiVersion.create(sectionClient, toolkit);
 
 		license.create(sectionClient, toolkit);
 
@@ -286,8 +295,8 @@ public class OverviewPage extends DescriptorEditorPage {
 			new RunApplicationAction().run();
 		} else if (LINK_EXPORT.equals(href)) {
 			new ExportApplicationAction(editor.getProject()).run();
-		} else if (href instanceof String){
-			editor.setActivePage((String)href);
+		} else if (href instanceof String) {
+			editor.setActivePage((String) href);
 		}
 	}
 
