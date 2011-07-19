@@ -79,7 +79,7 @@ public class ModelSerializer {
 		
 		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		if (root == null) {
-			root = addNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
+			root = addNode(document, DeploymentDescriptorPackage.PACKAGE.xpath, null);
 		}
 		
 		writeProperties(root, model, event);
@@ -177,12 +177,13 @@ public class ModelSerializer {
 	}
 	
 	private void writeProperties(Node doc, IModelObject obj, ChangeEvent event) throws XPathExpressionException {
+		Node lastAdded = null;
 		if (event == null || event.target == obj) { 
 			Feature[] props = obj.getPropertyNames();
 			for (Feature feature : props) {
 				String value = obj.get(feature);
 				if (value != null) {
-					setString(doc, feature.xpath, feature.attrName, value);
+					lastAdded = setString(doc, feature.xpath, feature.attrName, value, lastAdded);
 				} else {
 					removeString(doc, feature.xpath, feature.attrName);
 				}
@@ -190,41 +191,51 @@ public class ModelSerializer {
 		}
 		
 		if (obj instanceof IModelContainer) {
-			writeChildren(doc, (IModelContainer) obj, event);
+			writeChildren(doc, (IModelContainer) obj, event, lastAdded);
 		}
 	}
 	
-	private void writeChildren(Node doc, IModelContainer model, ChangeEvent event) throws XPathExpressionException {
+	private void writeChildren(Node doc, IModelContainer model, ChangeEvent event, Node lastAddedNode) throws XPathExpressionException {
 		if (event == null || event.target == model) {
+			
 			Feature[] features = model.getChildNames();
-			for (Feature f : features) {
-				List<Object> children = model.getChildren(f);
-				Node[] nodes = getNodes(doc, f.xpath);
+			Node[][] featuresNodes = new Node[features.length][];
+			for (int i = 0; i < features.length; i++) {
+				featuresNodes[i] = getNodes(doc, features[i].xpath);
+			}
+			
+			for (int i = 0; i < features.length; i++) {
+				Feature f = features[i];
+				Node[] nodes = featuresNodes[i];
 				
-				for (int i = 0; i < children.size(); i++) {
+				List<Object> children = model.getChildren(f);
+				for (int j = 0; j < children.size(); j++) {
 					Node node = null;
-					if (i < nodes.length) {
-						node = nodes[i];
+					if (j < nodes.length) {
+						node = nodes[j];
 					}
 					
 					if (f.type == IModelObject.class) {
 						 if (node == null) {
-							node = addNode(doc, f.xpath);
+							node = addNode(doc, f.xpath, lastAddedNode);
 						}
-						writeProperties(node, (IModelObject) children.get(i), null); // don't pass event, rewriter all children of modified element
+						writeProperties(node, (IModelObject) children.get(j), null); // don't pass event, rewriter all children of modified element
 					} else if (f.type == String.class) {
 						if (node == null) {
-							node = addNode(doc, f.xpath);
+							node = addNode(doc, f.xpath, lastAddedNode);
 						}
-						node.setTextContent((String)children.get(i));
+						node.setTextContent((String)children.get(j));
 					}  else {
 						throw new UnsupportedOperationException("Unsupported collection type "+f.type);
 					}
+					
+					if (node != null) {
+						lastAddedNode = getDirectChild(doc, node);
+					}
 				}
-				for (int i = children.size(); i < nodes.length; i++) {
-					removeNodes(doc, nodes[i]);
+				for (int j = children.size(); j < nodes.length; j++) {
+					removeNodes(doc, nodes[j]);
 				}
-				
 			}
 		} else {
 			Feature[] features = model.getChildNames();
@@ -244,8 +255,17 @@ public class ModelSerializer {
 		}
 	}
 	
+	private Node getDirectChild(Node parent, Node child) {
+		Node p = child.getParentNode();
+		while (p != parent) {
+			child = p;
+			p = child.getParentNode();
+		}
+		
+		return child;
+	}
 	
-	private Node addNode(Node doc, String xpath) throws XPathExpressionException {
+	private Node addNode(Node doc, String xpath, Node after) throws XPathExpressionException {
 		if (xpath == null) {
 			return doc;
 		}
@@ -259,7 +279,7 @@ public class ModelSerializer {
 		
 			parent = getNode(doc, parentXpath);
 			if (parent == null) {
-				parent = addNode(doc, parentXpath);
+				parent = addNode(doc, parentXpath, after);
 			}
 		} else {
 			parent = doc;
@@ -267,7 +287,15 @@ public class ModelSerializer {
 		}
 		
 		Element e = document.createElement(name);
-		parent.appendChild(e);
+		if (after == null) { // by default insert at the beginning
+			parent.insertBefore(e, parent.getFirstChild());
+		} else {
+			if (after.getParentNode() == parent) {
+				parent.insertBefore(e, after.getNextSibling());
+			} else {
+				parent.appendChild(e);
+			}
+		}
 		
 		return e;
 	}
@@ -322,12 +350,12 @@ public class ModelSerializer {
 		}
 	}
 	
-	private void setString(Node node, String xpath, String attrName, String value) throws XPathExpressionException {
+	private Node setString(Node node, String xpath, String attrName, String value, Node after) throws XPathExpressionException {
 		Node target = node;
 		if (xpath != null) {
 			target = getNode(node, xpath);
 			if (target == null) {
-				target = addNode(node, xpath);
+				target = addNode(node, xpath, after);
 			}
 		}
 		
@@ -336,6 +364,8 @@ public class ModelSerializer {
 		} else {
 			target.setTextContent(value);
 		}
+		
+		return target;
 	}
 	
 	private String getString(Node node, String nodeName, String attrName) throws XPathExpressionException {

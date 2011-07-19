@@ -14,9 +14,11 @@ import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
 
 public class ModelSerializerWriteTests extends TestCase {
@@ -382,6 +384,98 @@ public class ModelSerializerWriteTests extends TestCase {
 "  </dependencies>\n" +
 "</package>\n", txt.toString());
 	}
+
+	public void testAddInOrder() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		IVariable var = (IVariable) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.VARIABLES);
+		descr.getVariables().add(var);
+		
+		lm.serialize(descr);
+		
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
+		descr.getParameters().add(param);
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n"+
+"  <parameters>\n" +
+"    <parameter readonly=\"false\" required=\"false\"/>\n" +
+"  </parameters>\n" +
+"  <variables>\n" +
+"    <variable/>\n" +
+"  </variables>\n" +
+"</package>\n", txt.toString());
+	}
 	
+	public void testAddDependenciesInOrder() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), descr);
+		
+		IDirectiveDependency dirdep = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE);
+		dirdep.setName("log_errors");
+		descr.getDirectiveDependencies().add(dirdep);
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), descr);
+		
+		IExtensionDependency extdep = (IExtensionDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION);
+		extdep.setName("ctype");
+		descr.getExtensionDependencies().add(extdep);
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), descr);
+		
+		IPHPDependency phpdep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
+		phpdep.setEquals("1.2.3");
+		descr.getPHPDependencies().add(phpdep);
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), descr);
+		
+		IZendServerDependency zsdep = (IZendServerDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER);
+		zsdep.setEquals("1.2.3");
+		descr.getZendServerDependencies().add(zsdep);
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n"+
+"  <dependencies>\n" +
+"    <required>\n" +
+"      <php>\n" +
+"        <equals>1.2.3</equals>\n" +
+"      </php>\n" +
+"      <directive>\n" +
+"        <name>log_errors</name>\n" +
+"      </directive>\n" +
+"    <extension>\n" +
+"        <name>ctype</name>\n" +
+"      </extension>\n" +
+"    <zendserver>\n" +
+"        <equals>1.2.3</equals>\n" +
+"      </zendserver>\n" +
+"    </required>\n" +
+"  </dependencies>\n" +
+"</package>\n", txt.toString());
+	}
+
 	
 }

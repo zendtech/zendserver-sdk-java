@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.stream.StreamResult;
 
@@ -18,6 +20,10 @@ public class TextOutput implements DocumentStore {
 	public StreamResult getOutput() throws IOException {
 		caw = new CharArrayWriter();
         return new StreamResult(caw);
+	}
+	
+	public InputStream getInputStream() {
+		return new ByteArrayInputStream(caw.toString().getBytes());
 	}
 	
 	public String toString() {

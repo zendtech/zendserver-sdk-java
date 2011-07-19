@@ -171,5 +171,10 @@ public class ObservableList<E> implements List<E> {
 	public <T> T[] toArray(T[] a) {
 		return list.toArray(a);
 	}
+	
+	@Override
+	public String toString() {
+		return list.toString();
+	}
 
 }
