@@ -107,8 +107,9 @@
 		
 		<property name="zendsdk" value="zend-sdk-${sdk.version}"/>
 		
+		
 		<get src="http://il-studiosrv1:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/trunk/org.zend.sdk/sdk/${zendsdk}.zip"
-			dest="${target.folder}/zend-sdk.zip" />
+			dest="${target.folder}/zend-sdk.zip" usetimestamp="yes"/>
 		<unzip src="${target.folder}/zend-sdk.zip" dest="${target.folder}/sdk" />
 		<move todir="${target.folder}/sdk">
 			<fileset dir="${target.folder}/sdk/${zendsdk}" />
