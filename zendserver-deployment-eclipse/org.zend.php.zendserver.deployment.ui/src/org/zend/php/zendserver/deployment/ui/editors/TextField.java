@@ -83,8 +83,10 @@ public class TextField {
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.widthHint = 10;
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
+		gd.grabExcessHorizontalSpace = false;
 		text.setLayoutData(gd);		
 	}
 	
