@@ -809,7 +809,7 @@ public class WebApiClient {
 						if (ignoreFailures != null) {
 							deployRequest.setIgnoreFailures(ignoreFailures);
 						}
-						if (servers.length > 0) {
+						if (servers != null && servers.length > 0) {
 							deployRequest.setServers(servers);
 						}
 					}
