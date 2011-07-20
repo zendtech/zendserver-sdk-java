@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.core.internal.validation;
 
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.eclipse.core.resources.IMarker;
+
 
 public class ValidationStatus {
 
@@ -8,15 +9,20 @@ public class ValidationStatus {
 	public static final int ERROR = 2;
 	public static final int INFO = 4;
 	
-	private Feature property;
+	private int featureId;
 	private int severity;
 	private String message;
 	private int line;
 	private int start;
 	private int end;
+	private IMarker marker;
 
-	public ValidationStatus(Feature target, int line, int start, int end, int severity, String message) {
-		this.property = target;
+	public ValidationStatus(int line, int start, int end, int severity, String message) {
+		this(-1, line, start, end, severity, message);
+	}
+	
+	public ValidationStatus(int featureId, int line, int start, int end, int severity, String message) {
+		this.featureId = featureId;
 		this.line = line;
 		this.start = start;
 		this.end = end;
@@ -24,8 +30,8 @@ public class ValidationStatus {
 		this.message = message;
 	}
 	
-	public Feature getProperty() {
-		return property;
+	public void setMarker(IMarker marker) {
+		this.marker = marker;
 	}
 	
 	public int getSeverity() {
@@ -46,6 +52,62 @@ public class ValidationStatus {
 
 	public int getEnd() {
 		return end;
+	}
+
+	public int getFeatureId() {
+		return featureId;
+	}
+
+	public IMarker getMarker() {
+		return marker;
+	}
+	
+	@Override
+	public String toString() {
+		return "ValidationStatus [featureId=" + featureId + ", severity=" //$NON-NLS-1$ //$NON-NLS-2$
+				+ severity + ", message=" + message + ", line=" + line //$NON-NLS-1$ //$NON-NLS-2$
+				+ ", start=" + start + ", end=" + end + ", marker=" + marker //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ "]"; //$NON-NLS-1$
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + end;
+		result = prime * result + line;
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		result = prime * result + featureId;
+		result = prime * result + severity;
+		result = prime * result + start;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ValidationStatus other = (ValidationStatus) obj;
+		if (end != other.end)
+			return false;
+		if (line != other.line)
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
+			return false;
+		if (featureId != other.featureId)
+			return false;
+		if (severity != other.severity)
+			return false;
+		if (start != other.start)
+			return false;
+		return true;
 	}
 	
 }

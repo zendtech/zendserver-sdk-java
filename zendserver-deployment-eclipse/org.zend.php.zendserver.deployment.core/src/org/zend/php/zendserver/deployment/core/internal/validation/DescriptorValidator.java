@@ -2,6 +2,9 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -10,6 +13,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -87,7 +91,7 @@ public class DescriptorValidator {
         	
         	int severity = ValidationStatus.ERROR; // TODO validation error level should be configurable?
         	String message = ex.getMessage();
-        	reportProblem(file, new ValidationStatus(target, line, start, end, severity, message));
+        	//reportProblem(file, new ValidationStatus(line, start, end, severity, message));
         } catch (IOException e) {
 			DeploymentCore.log(e);
 		}  
@@ -110,16 +114,62 @@ public class DescriptorValidator {
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer(file);
 		
-		ValidatorSemanticValidator validator = new ValidatorSemanticValidator();
+		DescriptorSemanticValidator validator = new DescriptorSemanticValidator();
 		ValidationStatus[] statuses = validator.validate(model.getDescriptorModel());
 		
-		for (ValidationStatus status : statuses) {
-			reportProblem(file, status);
-			
-		}
+		reportProblems(file, statuses);
 	}
 
-	protected void reportProblem(IFile file, ValidationStatus status) {
+	private void reportProblems(IFile file, ValidationStatus[] statuses) {
+		List<ValidationStatus> existing = new ArrayList<ValidationStatus>();
+		IMarker[] markers = null;
+		try {
+			markers = file.findMarkers(IncrementalDeploymentBuilder.PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+			for (IMarker marker : markers) {
+				existing.add(markerToStatus(marker));
+			}
+		} catch (CoreException e) {
+			DeploymentCore.log(e);
+		}
+		//System.out.println("reportProblems: "+Arrays.asList(statuses));
+		//System.out.println("existing: "+existing);
+		
+		// find which errors are new, already exist, or need to be removed 
+		List<ValidationStatus> toReport = new ArrayList<ValidationStatus>(Arrays.asList(statuses));
+		toReport.removeAll(existing); // remove all existing statuses from the new ones list to get a list of those to report
+		existing.removeAll(Arrays.asList(statuses)); // remove all re-reported statuses to get a list of obsolete statuses
+		
+		// add new statuses
+		for (ValidationStatus status : toReport) {
+			//System.out.println("add "+status);
+			reportProblem(file, status);
+		}
+		// remove obsolete statuses
+		for (ValidationStatus status : existing) {
+			try {
+				status.getMarker().delete();
+			} catch (CoreException e) {
+				DeploymentCore.log(e);
+			}
+		}
+	}
+	
+	private ValidationStatus markerToStatus(IMarker marker) {
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
+		int start = marker.getAttribute(IMarker.CHAR_START, 0);
+		int end = marker.getAttribute(IMarker.CHAR_END, 0);
+		String message = marker.getAttribute(IMarker.MESSAGE, null);
+		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
+		int featureId = marker.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
+		
+		ValidationStatus status = new ValidationStatus(featureId, line, start, end, severity, message);
+		status.setMarker(marker);
+		return status;
+	}
+	
+	
+
+	protected IMarker reportProblem(IFile file, ValidationStatus status) {
 		IMarker marker;
 		try {
 			marker = file.createMarker(IncrementalDeploymentBuilder.PROBLEM_MARKER);
@@ -127,11 +177,17 @@ public class DescriptorValidator {
 			marker.setAttribute(IMarker.CHAR_START, status.getStart());
 			marker.setAttribute(IMarker.CHAR_END, status.getEnd());
 			marker.setAttribute(IMarker.MESSAGE, status.getMessage());
-			marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+			//marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 			marker.setAttribute(IMarker.SEVERITY, status.getSeverity());
+			if (status.getFeatureId() != -1) {
+				marker.setAttribute(IncrementalDeploymentBuilder.FEATURE_ID, status.getFeatureId());
+			}
+			return marker;
 		} catch (CoreException e) {
 			DeploymentCore.log(e);
 		}
+		
+		return null;
 	}
 
 }

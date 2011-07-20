@@ -10,11 +10,11 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
-public class ValidatorSemanticValidator {
+public class DescriptorSemanticValidator {
 
 	private Map<Feature, PropertyTester[]> testers;
 	
-	public ValidatorSemanticValidator() {
+	public DescriptorSemanticValidator() {
 		testers = new HashMap<Feature, PropertyTester[]>();
 		
 		PropertyTester tester = new FieldNotEmptyTester();
@@ -66,7 +66,7 @@ public class ValidatorSemanticValidator {
 				for (PropertyTester pt : featureTests) {
 					String msg = pt.test(children);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						statuses.add(new ValidationStatus(f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}
@@ -88,7 +88,7 @@ public class ValidatorSemanticValidator {
 				for (PropertyTester pt: featureTests) {
 					String msg = pt.test(value);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						statuses.add(new ValidationStatus(f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}

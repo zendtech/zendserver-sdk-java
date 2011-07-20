@@ -25,6 +25,7 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 
 	public static final String PROBLEM_MARKER = "org.zend.php.zendserver.deployment.core.problemmarker"; //$NON-NLS-1$
 	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentBuilder"; //$NON-NLS-1$
+	public static final String FEATURE_ID = "feature.id"; //$NON-NLS-1$
 
 	private DescriptorValidator descrValidator = new DescriptorValidator();
 	
@@ -45,12 +46,12 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				IResource resource = delta.getResource();
 				if ((resource instanceof IFile) && (DescriptorContainerManager.DESCRIPTOR_PATH.equals(resource.getName()))) {
-					extracted((IFile) resource);
+					validateDescriptor((IFile) resource);
 				}
 				
 				if ((resource instanceof IFile)
 						&& (MappingModelFactory.DEPLOYMENT_PROPERTIES.equals(resource.getName()))) {
-					validateMapping((IFile) resource);
+				//	validateMapping((IFile) resource);
 				}
 				
 				if (resource instanceof IProject) {
@@ -67,13 +68,7 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 	
-	private void extracted(IFile file) {
-		try {
-			file.deleteMarkers(PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			DeploymentCore.log(e);
-		}
-		
+	private void validateDescriptor(IFile file) {
 		descrValidator.validate(file);
 	}
 

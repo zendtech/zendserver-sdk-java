@@ -199,14 +199,8 @@ public class ModelSerializer {
 		if (event == null || event.target == model) {
 			
 			Feature[] features = model.getChildNames();
-			Node[][] featuresNodes = new Node[features.length][];
-			for (int i = 0; i < features.length; i++) {
-				featuresNodes[i] = getNodes(doc, features[i].xpath);
-			}
-			
-			for (int i = 0; i < features.length; i++) {
-				Feature f = features[i];
-				Node[] nodes = featuresNodes[i];
+			for (Feature f : features) {
+				Node[] nodes = getNodes(doc, f.xpath);
 				
 				List<Object> children = model.getChildren(f);
 				for (int j = 0; j < children.size(); j++) {
