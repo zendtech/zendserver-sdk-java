@@ -3,6 +3,9 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,23 +18,19 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
-import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
 public class OverviewPage extends DescriptorEditorPage {
 
-	private static final String LINK_DEBUG_PHP = "debugPHP"; //$NON-NLS-1$
-	private static final String LINK_RUN_PHP = "runPHP"; //$NON-NLS-1$
-	private static final String LINK_RUN_TEST = "testPHP"; //$NON-NLS-1$
+	private static final String MENU_TESTING = "toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=testing"; //$NON-NLS-1$
+	
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
 
 	private TextField name;
@@ -43,10 +42,6 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField icon;
 	private TextField docRoot;
 	private TextField appDir;
-
-	private ImageHyperlink runApplicationLink;
-	private ImageHyperlink debugApplicationLink;
-	private ImageHyperlink runTestsLink;
 
 	private ResourceListSection persistent;
 
@@ -78,8 +73,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		
 		createTestingSection(managedForm, right);
 		createExportingSection(managedForm, right);
-
-		createActions();
 
 		form.reflow(true);
 		
@@ -202,31 +195,26 @@ public class OverviewPage extends DescriptorEditorPage {
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_Testing);
 		section.setDescription(Messages.OverviewPage_TestingDescr);
-		Composite sectionClient = toolkit.createComposite(section);
+		final Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
 
-		runApplicationLink = toolkit.createImageHyperlink(sectionClient,
-				SWT.NONE);
-		runApplicationLink.setText(Messages.OverviewPage_LaunchingPHPApp);
-		runApplicationLink.setImage(Activator.getImageDescriptor(
-				Activator.IMAGE_RUN_APPLICATION).createImage());
-		runApplicationLink.setHref(LINK_RUN_PHP);
+		ContributionManager contributionManager = new ContributionManager() {
+			
+			public void update(boolean force) {
+				updateTestingActions(sectionClient, getItems());
+			}
+		};
+		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		contributionManager.add(new GroupMarker("testing")); //$NON-NLS-1$
+		service.populateContributionManager(contributionManager, MENU_TESTING);
+		contributionManager.update(false);
+	}
 
-		debugApplicationLink = toolkit.createImageHyperlink(sectionClient,
-				SWT.NONE);
-		debugApplicationLink
-				.setText(Messages.OverviewPage_LaunchingAndDebuggingPHPApp);
-		debugApplicationLink.setImage(Activator.getImageDescriptor(
-				Activator.IMAGE_DEBUG_APPLICATION).createImage());
-		debugApplicationLink.setHref(LINK_DEBUG_PHP);
-
-		runTestsLink = toolkit.createImageHyperlink(sectionClient, SWT.NONE);
-		runTestsLink.setText(Messages.OverviewPage_LaunchingPHPTest);
-		runTestsLink.setImage(Activator.getImageDescriptor(
-				Activator.IMAGE_RUN_TEST).createImage());
-		runTestsLink.setHref(LINK_RUN_TEST);
-
+	protected void updateTestingActions(Composite parent, IContributionItem[] items) {
+		for (IContributionItem item : items) {
+			item.fill(parent);
+		}
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm, Composite body) {
@@ -289,26 +277,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		appDir.create(sectionClient, toolkit);
 	}
 
-	private void createActions() {
-		runApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				handleLinkClick(e.getHref());
-			}
-		});
-
-		debugApplicationLink.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				handleLinkClick(e.getHref());
-			}
-		});
-	}
-
 	protected void handleLinkClick(Object href) {
-		if (LINK_DEBUG_PHP.equals(href)) {
-			new DeployAppInCloudAction().run();
-		} else if (LINK_RUN_PHP.equals(href)) {
-			new RunApplicationAction().run();
-		} else if (LINK_EXPORT.equals(href)) {
+		if (LINK_EXPORT.equals(href)) {
 			new ExportApplicationAction(editor.getProject()).run();
 		} else if (href instanceof String) {
 			editor.setActivePage((String) href);
