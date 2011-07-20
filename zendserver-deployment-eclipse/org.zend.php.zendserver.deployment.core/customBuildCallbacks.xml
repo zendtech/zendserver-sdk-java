@@ -116,6 +116,7 @@
 		</move>
 		<delete file="${target.folder}/zend-sdk.zip" />
 		<delete dir="${target.folder}/sdk/${zendsdk}"/>
+		<delete file="${target.folder}/sdk.version"/>
 	</target>
 		
 	<!-- ===================================================================== -->
