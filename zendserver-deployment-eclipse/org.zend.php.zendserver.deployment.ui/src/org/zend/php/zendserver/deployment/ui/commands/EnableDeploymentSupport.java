@@ -80,12 +80,17 @@ public class EnableDeploymentSupport extends AbstractHandler {
 		IProjectDescription description = project.getDescription();
 		List<String> natures = new ArrayList<String>(Arrays.asList(description.getNatureIds()));
 		if (natures.contains(id)) {
-			return;
+			// de-configure nature
+			natures.remove(id);
+			description.setNatureIds(natures.toArray(new String[natures.size()]));
+			project.setDescription(description, monitor);
 		}
 		
+		// configure project
 		natures.add(id);
 		description.setNatureIds(natures.toArray(new String[natures.size()]));
 		project.setDescription(description, monitor);
+		
 	}
 	
 	private void openDescriptorEditor(final IProject project) {
