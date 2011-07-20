@@ -38,6 +38,8 @@ public class ScriptsPage extends DescriptorEditorPage {
 		super.createFormContent(managedForm);
 
 		variablesBlock.createContent(managedForm);
+		
+		showMarkers();
 	}
 
 	public void refresh() {

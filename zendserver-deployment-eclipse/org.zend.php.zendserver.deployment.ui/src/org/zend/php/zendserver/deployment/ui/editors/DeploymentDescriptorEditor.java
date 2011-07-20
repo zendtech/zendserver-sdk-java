@@ -304,7 +304,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private void refreshProblemMarkers(IMarkerDelta[] markerDeltas) {
 		IFormPage page = getActivePageInstance();
 		if (page instanceof DescriptorEditorPage) {
-			((DescriptorEditorPage) page).showMarkers(markerDeltas);
+			((DescriptorEditorPage) page).updateMarkers(markerDeltas);
 		}
 		
 	}

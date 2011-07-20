@@ -82,6 +82,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		createActions();
 
 		form.reflow(true);
+		
+		showMarkers();
 	}
 
 	private void createPersistentResourcesSection(IManagedForm managedForm, Composite left) {
