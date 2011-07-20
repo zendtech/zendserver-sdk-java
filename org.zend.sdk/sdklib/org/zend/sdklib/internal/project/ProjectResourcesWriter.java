@@ -220,25 +220,29 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	private void updateDescriptor(File descrFile) throws IOException,
 			JAXBException {
-		PackageDescription desc = new PackageDescription(new FileInputStream(
-				descrFile));
-		File scriptsDir = findExistingScripts(descrFile.getParentFile());
-		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
-		File docroot = findPublicFolder(descrFile.getParentFile());
-		boolean isDirty = false;
-		if (scripts != null
-				&& !scripts.equals(desc.getPackage().getScriptsdir())) {
-			desc.getPackage().setScriptsdir(scripts);
-			isDirty = true;
-		}
-		if (docroot != null && !docroot.equals(desc.getPackage().getDocroot())) {
-			desc.getPackage().setDocroot("public");
-			isDirty = true;
-		}
-		if (isDirty) {
-			JaxbHelper.marshalPackage(new FileOutputStream(descrFile),
-					desc.getPackage());
-		}
+		final FileInputStream packageStream = new FileInputStream(descrFile);
+		
+			PackageDescription desc = new PackageDescription(packageStream);
+			File scriptsDir = findExistingScripts(descrFile.getParentFile());
+			String scripts = scriptsDir != null ? scriptsDir.getName() : null;
+			File docroot = findPublicFolder(descrFile.getParentFile());
+			boolean isDirty = false;
+			if (scripts != null
+					&& !scripts.equals(desc.getPackage().getScriptsdir())) {
+				desc.getPackage().setScriptsdir(scripts);
+				isDirty = true;
+			}
+			if (docroot != null && !docroot.equals(desc.getPackage().getDocroot())) {
+				desc.getPackage().setDocroot("public");
+				isDirty = true;
+			}
+			packageStream.close();
+			if (isDirty) {
+				final FileOutputStream printStream = new FileOutputStream(descrFile);
+				JaxbHelper.marshalPackage(printStream,
+						desc.getPackage());
+				printStream.close();
+			}
 	}
 
 	private File getScriptsDirectory(File container) throws IOException {
