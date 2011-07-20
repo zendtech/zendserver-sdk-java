@@ -70,23 +70,23 @@ public class TextField {
 	}
 
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
+		if (labelTxt == null) {
+			return;
+		}
+		
 		if (linkLabel) {
 			label = toolkit.createHyperlink(parent, labelTxt, SWT.NULL);
 		} else {
-			if (labelTxt != null) {
-				label = toolkit.createLabel(parent, labelTxt);
-				label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-			}
+			label = toolkit.createLabel(parent, labelTxt);
+			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		}
-		if (label != null)
-			label.setLayoutData(new GridData());
+		label.setLayoutData(new GridData());	
 	}
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		gd.grabExcessHorizontalSpace = false;
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		text.setLayoutData(gd);		
 	}
 	
