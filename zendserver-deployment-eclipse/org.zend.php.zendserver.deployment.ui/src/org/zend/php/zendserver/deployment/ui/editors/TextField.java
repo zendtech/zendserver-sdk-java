@@ -85,8 +85,8 @@ public class TextField {
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = labelTxt != null ? 2 : 3;
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
+		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);		
 	}
 	
@@ -173,6 +173,13 @@ public class TextField {
 
 	public void setText(String string) {
 		text.setText(string);
+	}
+
+	public void pack() {
+		if (label != null) 
+			label.pack();
+		if (text != null) 
+			text.pack();
 	}
 	
 }

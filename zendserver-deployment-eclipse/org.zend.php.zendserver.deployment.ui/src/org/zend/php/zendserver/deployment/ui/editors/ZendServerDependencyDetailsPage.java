@@ -2,7 +2,6 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -83,11 +82,9 @@ public class ZendServerDependencyDetailsPage implements IDetailsPage {
 		s1.setDescription(Messages.ZendServerDependencyDetailsPage_Version);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
-		
-		Composite client = toolkit.createComposite(s1);
-		client.setLayout(new GridLayout(3, false));
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		
+		Composite client = toolkit.createComposite(s1);
 		version.createContents(client, toolkit);
 		
 		s1.setClient(client);

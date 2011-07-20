@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -104,13 +103,11 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 		s1.setDescription(Messages.ZendComponentDependencyDetailsPage_SpecifyDetails);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
-		
-		Composite client = toolkit.createComposite(s1);
-		client.setLayout(new GridLayout(3, false));
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
-		
-		nameLabel = toolkit.createLabel(client, Messages.ZendComponentDependencyDetailsPage_Name);
-		nameText = new Combo(client, SWT.NONE);
+
+		Composite composite = toolkit.createComposite(s1);
+		nameLabel = toolkit.createLabel(composite, Messages.ZendComponentDependencyDetailsPage_Name);
+		nameText = new Combo(composite, SWT.NONE);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
 		nameText.setLayoutData(gd);
@@ -122,7 +119,9 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 			}
 		});
 
+		Composite client = toolkit.createComposite(s1);
 		version.createContents(client, toolkit);
+
 		
 		s1.setClient(client);
 		createContentAssist();

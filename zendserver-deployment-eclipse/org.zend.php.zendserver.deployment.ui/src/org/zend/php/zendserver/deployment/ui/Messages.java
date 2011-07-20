@@ -120,6 +120,10 @@ public class Messages extends NLS {
 	public static String VarsAndParamsMasterDetailsProvider_AddVariableOrParam;
 	public static String VarsAndParamsMasterDetailsProvider_DefineVarsAndParams;
 	public static String VarsAndParamsMasterDetailsProvider_SelectItemToAdd;
+	public static String VersionControl_0;
+	public static String VersionControl_2;
+	public static String VersionControl_3;
+	public static String VersionControl_4;
 	public static String VersionControl_Conflicts;
 	public static String VersionControl_Equals;
 	public static String VersionControl_Exclude;
