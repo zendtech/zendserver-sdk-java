@@ -112,7 +112,7 @@
 			dest="${target.folder}/zend-sdk.zip" usetimestamp="yes"/>
 		<unzip src="${target.folder}/zend-sdk.zip" dest="${target.folder}/sdk" />
 		<move todir="${target.folder}/sdk">
-			<fileset dir="${target.folder}/sdk/${zendsdk}" />
+			<fileset dir="${target.folder}/sdk/${zendsdk}/lib/org.zend.sdk.jar" />
 		</move>
 		<delete file="${target.folder}/zend-sdk.zip" />
 		<delete dir="${target.folder}/sdk/${zendsdk}"/>
