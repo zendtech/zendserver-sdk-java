@@ -78,14 +78,14 @@ public class TextField {
 				label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			}
 		}
-		label.setLayoutData(new GridData());
+		if (label != null)
+			label.setLayoutData(new GridData());
 	}
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.widthHint = 10;
-		gd.horizontalSpan = labelTxt != null ? 2 : 3;
+		gd.horizontalSpan = 2;
 		gd.grabExcessHorizontalSpace = false;
 		text.setLayoutData(gd);		
 	}
