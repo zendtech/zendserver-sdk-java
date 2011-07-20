@@ -203,7 +203,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 						.equals(iconLocation)))) {
 			return;
 		}
-		System.out.println(iconLocation+" "+newIconLocation);
 
 		ImageRegistry reg = Activator.getDefault().getImageRegistry();
 		Image img = null;
@@ -275,9 +274,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	public void resourceChanged(IResourceChangeEvent event) {
 		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
 				IncrementalDeploymentBuilder.PROBLEM_MARKER, true);
-		for (int i = 0; i < markerDeltas.length; i++) {
-			IMarkerDelta delta = markerDeltas[i];
+		if (markerDeltas.length > 0) {
+			refreshProblemMarkers(markerDeltas);
 		}
+		
 		IResourceDelta delta = event.getDelta();
 		if (delta == null) {
 			return;
@@ -299,6 +299,14 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 				}
 			}
 		}
+	}
+
+	private void refreshProblemMarkers(IMarkerDelta[] markerDeltas) {
+		IFormPage page = getActivePageInstance();
+		if (page instanceof DescriptorEditorPage) {
+			((DescriptorEditorPage) page).showMarkers(markerDeltas);
+		}
+		
 	}
 
 	private void removeMappingPages() {

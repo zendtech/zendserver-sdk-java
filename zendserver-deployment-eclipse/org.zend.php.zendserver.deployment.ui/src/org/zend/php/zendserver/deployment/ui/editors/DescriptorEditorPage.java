@@ -1,14 +1,19 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
@@ -38,28 +43,59 @@ public abstract class DescriptorEditorPage extends FormPage {
 
 	public abstract void refresh();
 
-	public void showStatuses(List<ValidationStatus> statuses) {
-		Set<Feature> keys = fields.keySet();
-
-		Map<Feature, ValidationStatus> toShow = new HashMap<Feature, ValidationStatus>();
-
-		for (ValidationStatus s : statuses) {
-			if (keys.contains(s.getProperty())) {
-				toShow.put(s.getProperty(), s);
-			}
+	public void showMarkers(IMarkerDelta[] markerDeltas) {
+		Set<Feature> keyset = fields.keySet();
+		Map<Integer, Feature> featureIds = new HashMap<Integer, Feature>();
+		for (Feature f : keyset) {
+			featureIds.put(f.id, f);
 		}
 
-		for (TextField f : fields.values()) {
-			Feature key = f.getKey();
-			ValidationStatus status = toShow.get(key);
-			if (status == null) {
-				f.setErrorMessage(null);
-			} else if (status.getSeverity() == ValidationStatus.ERROR) {
-				f.setErrorMessage(status.getMessage());
-			} else if (status.getSeverity() == ValidationStatus.WARNING) {
-				f.setWarningMessage(status.getMessage());
+		final Map<Feature, IMarkerDelta> toShow = new HashMap<Feature, IMarkerDelta>();
+		final List<Feature> toRemove = new ArrayList<Feature>();
+
+		for (IMarkerDelta delta : markerDeltas) {
+			int kind = delta.getKind();
+			int featureId = delta.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
+			if (featureId != -1) { 
+				Feature f = featureIds.get(featureId);
+				if (f != null) {
+					if (kind == IResourceDelta.ADDED) {
+						toShow.put(f, delta);
+					} else if (kind == IResourceDelta.REMOVED) {
+						toRemove.add(f);
+					}
+				}
 			}
 		}
+		
+		toRemove.removeAll(toShow.keySet());
+		
+		if (toShow.size() == 0 && toRemove.size() == 0) {
+			return;
+		}
+		
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				for (Feature feature : toRemove) {
+					TextField field = fields.get(feature);
+					if (field != null) {
+						field.setErrorMessage(null);
+					}
+				}
+				for (Map.Entry<Feature, IMarkerDelta> entry : toShow.entrySet()) {
+					IMarkerDelta status = entry.getValue();
+					TextField field = fields.get(entry.getKey());
+					if (field != null) {
+						int severity = status.getAttribute(IMarker.SEVERITY, 0);
+						if (severity == ValidationStatus.ERROR) {
+							field.setErrorMessage(status.getAttribute(IMarker.MESSAGE, null));
+						} else if (severity == ValidationStatus.WARNING) {
+							field.setWarningMessage(status.getAttribute(IMarker.MESSAGE, null));
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
