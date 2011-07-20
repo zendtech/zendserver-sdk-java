@@ -12,6 +12,9 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
+/**
+ * Sample contribution to Overview/Testing page of descriptor editor
+ */
 public class PHPUnitTestContribution extends WorkbenchWindowControlContribution {
 
 	@Override

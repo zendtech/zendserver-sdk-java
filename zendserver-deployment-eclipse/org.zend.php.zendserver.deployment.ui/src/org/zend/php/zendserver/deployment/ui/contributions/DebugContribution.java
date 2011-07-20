@@ -12,6 +12,9 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 
+/**
+ * Sample contribution to Overview/Testing page of descriptor editor
+ */
 public class DebugContribution extends WorkbenchWindowControlContribution {
 
 	@Override
