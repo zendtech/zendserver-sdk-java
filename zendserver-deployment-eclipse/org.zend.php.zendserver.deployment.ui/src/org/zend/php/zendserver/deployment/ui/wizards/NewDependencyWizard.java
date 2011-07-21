@@ -34,11 +34,10 @@ public class NewDependencyWizard extends Wizard {
 		IWizardPage newDependencyMainPage = new NewDependencyMainPage(element);
 		addPage(newDependencyMainPage);
 	}
-	
+
 	@Override
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

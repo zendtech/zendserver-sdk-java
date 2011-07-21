@@ -11,7 +11,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -32,6 +34,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFa
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.wizards.NewDependencyWizard;
 
 public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
@@ -143,12 +146,24 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				Messages.DescriptorMasterDetailsBlock_Add);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Object result = provider.addElment(editor.getModel(),
+			public void widgetSelected(final SelectionEvent e) {
+				final Object result = provider.addElment(editor.getModel(),
 						DescriptorMasterDetailsBlock.this);
 				if (result == null) {
 					return;
 				}
+
+				BusyIndicator.showWhile(e.display, new Runnable() {
+					public void run() {
+						NewDependencyWizard wizard = new NewDependencyWizard(
+								result);
+						WizardDialog dialog = new WizardDialog(e.display
+								.getActiveShell(), wizard);
+						dialog.create();
+						// SWTUtil.setDialogSize(dialog, 400, 450);
+						dialog.open();
+					}
+				});
 
 				Feature feature = DeploymentDescriptorFactory
 						.getFeature(result);
