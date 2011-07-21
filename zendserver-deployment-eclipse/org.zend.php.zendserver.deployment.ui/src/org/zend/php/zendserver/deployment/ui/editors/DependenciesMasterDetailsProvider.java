@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.ListDialog;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.wizards.NewDependencyWizard;
 
 
 public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
@@ -48,7 +52,8 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 			DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT),
 		};
 		
-		ListDialog sd = new ListDialog(block.viewer.getControl().getShell());
+		final Control control = block.viewer.getControl();
+		final ListDialog sd = new ListDialog(control.getShell());
 		sd.setInput(input);
 		sd.setContentProvider((IStructuredContentProvider) block.viewer.getContentProvider());
 		sd.setLabelProvider(new DeploymentDescriptorLabelProvider());
@@ -58,6 +63,16 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 		if (sd.open() == Window.CANCEL) {
 			return null;
 		}
+		
+		BusyIndicator.showWhile(control.getDisplay() , new Runnable() {
+			public void run() {
+				NewDependencyWizard wizard = new NewDependencyWizard(sd.getResult()[0]);
+				WizardDialog dialog = new WizardDialog(control.getShell(), wizard);
+				dialog.create();
+				// SWTUtil.setDialogSize(dialog, 400, 450);
+				dialog.open();
+			}
+		});
 		
 		return sd.getResult()[0];
 	}

@@ -23,8 +23,6 @@ import org.zend.php.zendserver.deployment.ui.contentassist.PHPExtensionsProvider
 
 public class ExtensionDependencyDetailsPage implements IDetailsPage {
 
-	private DeploymentDescriptorEditor editor;
-
 	private IManagedForm mform;
 	private IModelObject input;
 
@@ -33,11 +31,9 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	private VersionControl version;
 
 	public ExtensionDependencyDetailsPage(DeploymentDescriptorEditor editor) {
-		this.editor = editor;
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.CONFLICTS | VersionControl.EXCLUDE
 				| VersionControl.RANGE);
-		version.setEditor(editor);
 	}
 
 	public void initialize(IManagedForm form) {

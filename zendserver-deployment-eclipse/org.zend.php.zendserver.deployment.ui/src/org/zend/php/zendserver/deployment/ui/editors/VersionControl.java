@@ -260,8 +260,4 @@ public class VersionControl {
 		}
 		return r;
 	}
-
-	public void setEditor(DeploymentDescriptorEditor editor) {
-		// TODO: can be removed?
-	}
 }

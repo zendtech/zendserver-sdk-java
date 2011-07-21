@@ -21,24 +21,21 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.contentassist.ZendComponentsProvider;
 
-
 public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 
-	private DeploymentDescriptorEditor editor;
-	
 	private IManagedForm mform;
 	private IModelObject input;
-	
+
 	private boolean isRefresh;
 	private Combo nameText;
 	private VersionControl version;
-	
+
 	public ZendComponentDependencyDetailsPage(DeploymentDescriptorEditor editor) {
-		this.editor = editor;
-		version = new VersionControl(VersionControl.EQUALS|VersionControl.CONFLICTS|VersionControl.EXCLUDE|VersionControl.RANGE);
-		version.setEditor(editor);
+		version = new VersionControl(VersionControl.EQUALS
+				| VersionControl.CONFLICTS | VersionControl.EXCLUDE
+				| VersionControl.RANGE);
 	}
-	
+
 	public void initialize(IManagedForm form) {
 		this.mform = form;
 	}
@@ -75,13 +72,12 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 			isRefresh = false;
 		}
 	}
-	
+
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection)selection;
-		if (ssel.size()==1) {
-			input = (IModelObject)ssel.getFirstElement();
-		}
-		else
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (ssel.size() == 1) {
+			input = (IModelObject) ssel.getFirstElement();
+		} else
 			input = null;
 		version.setInput(input);
 		refresh();
@@ -95,14 +91,16 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 		layout.bottomMargin = 0;
 		layout.numColumns = 1;
 		parent.setLayout(layout);
-		
+
 		FormToolkit toolkit = mform.getToolkit();
-		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
+		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION
+				| Section.TITLE_BAR);
 		s1.setText(Messages.ZendComponentDependencyDetailsPage_Details);
 		s1.setDescription(Messages.ZendComponentDependencyDetailsPage_SpecifyDetails);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
-		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
+		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+				TableWrapData.FILL_GRAB));
 
 		Composite general = toolkit.createComposite(s1);
 		general.setLayout(new GridLayout(1, true));
@@ -113,16 +111,18 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 		directive.setLayout(new GridLayout(3, false));
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		directive.setLayoutData(gd);
-		
-		toolkit.createLabel(directive, Messages.ZendComponentDependencyDetailsPage_Name);
+
+		toolkit.createLabel(directive,
+				Messages.ZendComponentDependencyDetailsPage_Name);
 		nameText = new Combo(directive, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
 		nameText.setLayoutData(gd);
 		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				String txt = ((Combo)e.widget).getText();
+				if (isRefresh)
+					return;
+				String txt = ((Combo) e.widget).getText();
 				nameChange("".equals(txt) ? null : txt); //$NON-NLS-1$
 			}
 		});
@@ -130,7 +130,6 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 		Composite client = toolkit.createComposite(general);
 		version.createContents(client, toolkit);
 
-		
 		s1.setClient(general);
 		createContentAssist();
 	}
@@ -140,7 +139,6 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 		provider.init();
 		nameText.setItems(provider.getNames());
 	}
-
 
 	protected void nameChange(String text) {
 		if (input != null) {

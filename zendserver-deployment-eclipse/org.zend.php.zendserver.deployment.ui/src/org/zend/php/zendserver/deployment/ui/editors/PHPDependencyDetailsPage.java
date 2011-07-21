@@ -23,7 +23,6 @@ public class PHPDependencyDetailsPage implements IDetailsPage {
 	
 	public PHPDependencyDetailsPage(DeploymentDescriptorEditor editor) {
 		version = new VersionControl(VersionControl.EQUALS|VersionControl.RANGE|VersionControl.EXCLUDE);
-		version.setEditor(editor);
 	}
 	
 	public void initialize(IManagedForm form) {

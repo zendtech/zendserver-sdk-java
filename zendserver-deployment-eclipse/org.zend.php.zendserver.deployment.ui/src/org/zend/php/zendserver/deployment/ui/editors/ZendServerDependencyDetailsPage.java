@@ -23,7 +23,6 @@ public class ZendServerDependencyDetailsPage implements IDetailsPage {
 	public ZendServerDependencyDetailsPage(DeploymentDescriptorEditor editor) {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.RANGE | VersionControl.EXCLUDE);
-		version.setEditor(editor);
 	}
 
 	public void initialize(IManagedForm form) {

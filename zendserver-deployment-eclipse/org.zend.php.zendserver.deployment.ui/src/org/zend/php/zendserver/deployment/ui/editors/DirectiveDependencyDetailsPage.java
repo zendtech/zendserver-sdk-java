@@ -23,8 +23,6 @@ import org.zend.php.zendserver.deployment.ui.contentassist.PHPDirectivesProvider
 
 public class DirectiveDependencyDetailsPage implements IDetailsPage {
 
-	private DeploymentDescriptorEditor editor;
-
 	private IManagedForm mform;
 	private IModelObject input;
 
@@ -33,10 +31,8 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	private VersionControl version;
 
 	public DirectiveDependencyDetailsPage(DeploymentDescriptorEditor editor) {
-		this.editor = editor;
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.RANGE);
-		version.setEditor(editor);
 	}
 
 	public void initialize(IManagedForm form) {
