@@ -21,7 +21,7 @@ public class ListField extends TextField {
 	@Override
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", SWT.MULTI|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP); //$NON-NLS-1$
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		gd.heightHint = 100;
 		text.setLayoutData(gd);

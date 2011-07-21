@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -102,15 +103,23 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 		s1.setDescription(Messages.ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
-
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.FILL_GRAB));
 
-		Composite composite = toolkit.createComposite(s1);
-		toolkit.createLabel(composite,
+		Composite general = toolkit.createComposite(s1);
+		general.setLayout(new GridLayout(1, true));
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		general.setLayoutData(gd);
+
+		Composite ext = toolkit.createComposite(general);
+		ext.setLayout(new GridLayout(3, false));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		ext.setLayoutData(gd);
+		
+		toolkit.createLabel(ext,
 				Messages.ExtensionDependencyDetailsPage_ExtensionName);
-		nameText = new Combo(composite, SWT.NONE);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		nameText = new Combo(ext, SWT.NONE);
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
 		nameText.setLayoutData(gd);
 		nameText.addModifyListener(new ModifyListener() {
@@ -122,10 +131,10 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 			}
 		});
 
-		Composite client = toolkit.createComposite(s1);
+		Composite client = toolkit.createComposite(general);
 		version.createContents(client, toolkit);
 
-		s1.setClient(client);
+		s1.setClient(general);
 		createContentAssist();
 	}
 

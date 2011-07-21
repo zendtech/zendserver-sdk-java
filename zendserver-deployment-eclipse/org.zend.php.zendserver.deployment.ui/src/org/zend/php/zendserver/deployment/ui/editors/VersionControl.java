@@ -136,6 +136,7 @@ public class VersionControl {
 
 	public void createContents(Composite client, FormToolkit toolkit) {
 		client.setLayout(new GridLayout(1, false));
+		client.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite options = new Composite(client, SWT.NULL);
 		final GridLayout layout = new GridLayout(numOfModes(modes), false);

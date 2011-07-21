@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -101,16 +102,23 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 		s1.setDescription(Messages.DirectiveDependencyDetailsPage_SpecifyDirectiveProperties);
 		s1.marginWidth = 5;
 		s1.marginHeight = 5;
-
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.FILL_GRAB));
 
-		Composite directive = toolkit.createComposite(s1);
+		Composite general = toolkit.createComposite(s1);
+		general.setLayout(new GridLayout(1, true));
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		general.setLayoutData(gd);
+
+		Composite directive = toolkit.createComposite(general);
+		directive.setLayout(new GridLayout(3, false));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		directive.setLayoutData(gd);
 
 		toolkit.createLabel(directive,
 				Messages.DirectiveDependencyDetailsPage_Directive);
 		nameText = new Combo(directive, SWT.NONE);
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 2;
 		nameText.setLayoutData(gd);
 		nameText.addModifyListener(new ModifyListener() {
@@ -122,10 +130,10 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 			}
 		});
 
-		Composite client = toolkit.createComposite(s1);
+		Composite client = toolkit.createComposite(general);
 		version.createContents(client, toolkit);
 
-		s1.setClient(client);
+		s1.setClient(general);
 		createContentAssist();
 	}
 
