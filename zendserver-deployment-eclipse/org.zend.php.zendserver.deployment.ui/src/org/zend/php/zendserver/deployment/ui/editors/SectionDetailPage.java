@@ -9,7 +9,6 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -76,8 +75,8 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = mform.getToolkit();
 		Composite s;
+		
 		if (addSection) {
-
 			// create table layout
 			TableWrapLayout layout = new TableWrapLayout();
 			layout.topMargin = 0;
@@ -90,7 +89,6 @@ public abstract class SectionDetailPage implements IDetailsPage {
 			s = addSection(parent, toolkit);
 		} else {
 			s = parent;
-			parent.setLayout(new GridLayout());
 		}
 
 		Composite general;
@@ -101,7 +99,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 			general = s;
 		}
 
-		Composite client = toolkit.createComposite(general);
+		Composite client = addSection ? toolkit.createComposite(general) : parent;
 		version.createContents(client, toolkit);
 
 		if (addSection) {

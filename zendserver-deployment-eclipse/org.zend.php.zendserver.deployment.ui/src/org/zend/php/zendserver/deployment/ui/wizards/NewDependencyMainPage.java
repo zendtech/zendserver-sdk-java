@@ -8,7 +8,6 @@
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -27,16 +26,16 @@ public class NewDependencyMainPage extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		final Composite composite = new Composite(parent, SWT.NULL);
 		final DetailsPageProvider detailsPageProvider = new DetailsPageProvider(
 				null, null);
 		final SectionDetailPage page = (SectionDetailPage) detailsPageProvider
 				.getPage(element.getClass());
-		page.initialize(new ManagedForm(composite));
+		final ManagedForm form = new ManagedForm(parent);
+		page.initialize(form);
 		page.setNoSection();
 
-		page.createContents(composite);
-		setControl(composite);
+		page.createContents(form.getForm().getBody());
+		setControl(parent);
 	}
 
 }
