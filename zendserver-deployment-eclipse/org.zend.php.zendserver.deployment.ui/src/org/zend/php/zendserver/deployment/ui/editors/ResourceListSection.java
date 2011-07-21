@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -32,9 +33,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -108,7 +107,7 @@ public abstract class ResourceListSection {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setLabelProvider(new LabelProvider());
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 
@@ -164,7 +163,6 @@ public abstract class ResourceListSection {
 	}
 
 	private Section createSection(String title, String description, Composite body) {
-		ScrolledForm form = mForm.getForm();
 		FormToolkit toolkit = mForm.getToolkit();
 
 		Section section = toolkit.createSection(body,

@@ -87,17 +87,17 @@ public class OverviewPage extends DescriptorEditorPage {
 			@Override
 			public Object[] getElements(Object input) {
 				List<String> list = editor.getModel().getPersistentResources();
-				return editor.getResourceMapper().getResources(
-						list.toArray(new String[list.size()]));
+				return list.toArray();
 			}
 
 			@Override
 			protected void addPath() {
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
-				String[] newPaths = OpenFileDialog.openMany(shell, root,
+				String[] newPaths = OpenFileDialog.openAny(shell, root,
 						Messages.OverviewPage_AddPath,
-						Messages.OverviewPage_SelectPath, null);
+						Messages.OverviewPage_SelectPath, 
+						Messages.OverviewPage_2, null);
 				if (newPaths == null) {
 					return;
 				}
@@ -133,7 +133,6 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void createExportingSection(IManagedForm managedForm, Composite body) {
-		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createStaticSection(toolkit, body,
 				Messages.OverviewPage_Exporting);
@@ -188,7 +187,6 @@ public class OverviewPage extends DescriptorEditorPage {
 	}
 
 	private void createTestingSection(IManagedForm managedForm, Composite body) {
-		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 
 		Section section = toolkit.createSection(body,
@@ -205,8 +203,8 @@ public class OverviewPage extends DescriptorEditorPage {
 				updateTestingActions(sectionClient, getItems());
 			}
 		};
-		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		contributionManager.add(new GroupMarker("testing")); //$NON-NLS-1$
+		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(contributionManager, MENU_TESTING);
 		contributionManager.update(false);
 	}
@@ -248,7 +246,6 @@ public class OverviewPage extends DescriptorEditorPage {
 				DeploymentDescriptorPackage.APPDIR,
 				Messages.OverviewPage_Appdir));
 
-		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = toolkit.createSection(body,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);

@@ -47,6 +47,7 @@ public class Messages extends NLS {
 	public static String FileField_Browse;
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;
+	public static String OverviewPage_2;
 	public static String OverviewPage_AddPath;
 	public static String OverviewPage_Appdir;
 	public static String OverviewPage_ChangePath;

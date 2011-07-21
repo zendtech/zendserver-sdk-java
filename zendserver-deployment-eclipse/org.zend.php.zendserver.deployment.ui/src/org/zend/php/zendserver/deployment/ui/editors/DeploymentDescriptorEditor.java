@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -222,7 +223,11 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 			if (file != null && file.exists()) {
 				String filePath = file.getLocation().toFile().getAbsolutePath();
+				try {
 				img = Activator.getDefault().createWorkspaceImage(filePath, 16);
+				} catch (SWTException ex) {
+					// ignore, e.g. unsupported file format exception
+				}
 
 				if (img != null) {
 					iconLocation = newIconLocation;

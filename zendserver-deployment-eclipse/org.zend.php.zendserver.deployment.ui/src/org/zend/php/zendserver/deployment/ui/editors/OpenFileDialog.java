@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -26,6 +27,42 @@ public class OpenFileDialog {
 	protected static final IStatus OK = new Status(IStatus.OK, Activator.PLUGIN_ID, ""); //$NON-NLS-1$
 
 	private ElementTreeSelectionDialog dialog;
+	
+	public OpenFileDialog(Shell shell, IContainer root, String title, String description, String newElemntDescription, String initialPath) {
+		ILabelProvider lp = new WorkbenchLabelProvider();
+		ITreeContentProvider cp = new WorkbenchContentProvider();
+		AnyResourceTreeSelectionDialog dialog = new AnyResourceTreeSelectionDialog(shell, lp, cp);
+		this.dialog = dialog;
+		
+		IResource initialElement = null;
+		if (initialPath != null) {
+			initialElement = root.findMember(
+					new Path(initialPath));
+			if (initialElement == null || !initialElement.exists()) {
+				initialElement = null;
+			}
+		}
+
+		dialog.setTitle(title);
+		dialog.setMessage(description);
+		dialog.setTextMessage(newElemntDescription);
+		dialog.setInput(root);
+		
+		ISelectionStatusValidator validator = new ISelectionStatusValidator() {
+
+			public IStatus validate(Object[] selection) {
+				return OK;
+			}
+			
+		};
+		dialog.setValidator(validator);
+		dialog.setInitialSelection(initialElement);
+		
+		dialog.setComparator(new ResourceComparator(
+				ResourceComparator.NAME));
+		dialog.setHelpAvailable(false);
+
+	}
 	
 	public OpenFileDialog(Shell shell, IContainer root, String title, String description, String initialPath) {
 		ILabelProvider lp = new WorkbenchLabelProvider();
@@ -100,6 +137,16 @@ public class OpenFileDialog {
 		return dialog.openMany();
 	}
 	
+	/**
+	 * Dialog to select existing resource or specify custom non-existing path
+	 * 
+	 * @return list of paths
+	 */
+	public static String[] openAny(Shell shell, IContainer root, String title, String description, String newElemLabel, String initialPath) {
+		OpenFileDialog dialog = new OpenFileDialog(shell, root, title, description, newElemLabel, initialPath);
+		return dialog.openMany();
+	}
+	
 	private String[] open(boolean allowMultiple, final Class[] visibleTypes, final Class selectable) {
 
 		ViewerFilter filter = new ViewerFilter() {
@@ -126,8 +173,14 @@ public class OpenFileDialog {
 			}
 			String[] paths = new String[objects.length];
 			for (int i = 0; i < objects.length; i++) {
-				IResource file = (IResource) objects[i];
-				paths[i] = file.getProjectRelativePath().toString();
+				Object obj = objects[i];
+				if (obj instanceof IResource) {
+					IResource file = (IResource) objects[i];
+					paths[i] = file.getProjectRelativePath().toString();
+				} else if (obj instanceof IPath) {
+					paths[i] = ((IPath) obj).toPortableString();
+				}
+				
 			}
 			return paths;
 		}
