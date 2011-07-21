@@ -38,7 +38,7 @@ public class DeploymentDescriptorLabelDecorator implements ILabelDecorator {
 			}
 			
 			if (decorations.size() > 0) {
-				return new ErrorImageComposite(image).createImage();
+				return new ErrorImageComposite(image).createImage(); // TODO leaks?
 			}
 		}
 		
@@ -50,19 +50,15 @@ public class DeploymentDescriptorLabelDecorator implements ILabelDecorator {
 	}
 
 	public void addListener(ILabelProviderListener listener) {
-		System.out.println("addListener");
 	}
 
 	public void dispose() {
-		System.out.println("dispose");
 	}
 
 	public boolean isLabelProperty(Object element, String property) {
-		System.out.println("isLabelProperty");
 		return false;
 	}
 
 	public void removeListener(ILabelProviderListener listener) {
-		System.out.println("removeListener");
 	}
 }
