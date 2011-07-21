@@ -5,6 +5,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
@@ -108,6 +109,11 @@ public class ScriptsPage extends DescriptorEditorPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					removeElement(viewer.getSelection());
+					final TreeItem[] expandedElements = viewer.getTree().getItems();
+					if (expandedElements != null && expandedElements.length > 0) {
+						viewer.getTree().setSelection(expandedElements[0]);
+					}
+
 				}
 			});
 
