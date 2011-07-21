@@ -30,7 +30,7 @@ public class ExtensionDependencyDetailsPage implements IDetailsPage {
 	private Combo nameText;
 	private VersionControl version;
 
-	public ExtensionDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+	public ExtensionDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.CONFLICTS | VersionControl.EXCLUDE
 				| VersionControl.RANGE);

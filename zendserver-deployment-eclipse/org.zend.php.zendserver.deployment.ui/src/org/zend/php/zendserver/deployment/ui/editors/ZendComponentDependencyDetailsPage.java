@@ -30,7 +30,7 @@ public class ZendComponentDependencyDetailsPage implements IDetailsPage {
 	private Combo nameText;
 	private VersionControl version;
 
-	public ZendComponentDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+	public ZendComponentDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.CONFLICTS | VersionControl.EXCLUDE
 				| VersionControl.RANGE);

@@ -30,7 +30,7 @@ public class DirectiveDependencyDetailsPage implements IDetailsPage {
 	private Combo nameText;
 	private VersionControl version;
 
-	public DirectiveDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+	public DirectiveDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.RANGE);
 	}

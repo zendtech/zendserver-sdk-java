@@ -20,7 +20,7 @@ public class ZendFrameworkDependencyDetailsPage implements IDetailsPage {
 
 	private VersionControl version;
 
-	public ZendFrameworkDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+	public ZendFrameworkDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.RANGE | VersionControl.EXCLUDE);
 	}

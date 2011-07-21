@@ -55,37 +55,37 @@ public class DetailsPageProvider implements
 		}
 		if (IPHPDependency.class.isAssignableFrom(clazz)) {
 			if (phpPage == null) {
-				 phpPage = new PHPDependencyDetailsPage(editor);
+				 phpPage = new PHPDependencyDetailsPage();
 			}
 			return phpPage;
 		}
 		if (IExtensionDependency.class.isAssignableFrom(clazz)) {
 			if (extensionPage == null) {
-				 extensionPage = new ExtensionDependencyDetailsPage(editor);
+				 extensionPage = new ExtensionDependencyDetailsPage();
 			}
 			return extensionPage;
 		}
 		if (IDirectiveDependency.class.isAssignableFrom(clazz)) {
 			if (dirPage == null) {
-				dirPage = new DirectiveDependencyDetailsPage(editor);
+				dirPage = new DirectiveDependencyDetailsPage();
 			}
 			return dirPage;
 		}
 		if (IZendServerDependency.class.isAssignableFrom(clazz)) {
 			if (zsPage == null) {
-				zsPage = new ZendServerDependencyDetailsPage(editor);
+				zsPage = new ZendServerDependencyDetailsPage();
 			}
 			return zsPage;
 		}
 		if (IZendFrameworkDependency.class.isAssignableFrom(clazz)) {
 			if (zfPage == null) {
-				zfPage = new ZendFrameworkDependencyDetailsPage(editor);
+				zfPage = new ZendFrameworkDependencyDetailsPage();
 			}
 			return zfPage;
 		}
 		if (IZendComponentDependency.class.isAssignableFrom(clazz)) {
 			if (zscompPage == null) {
-				zscompPage = new ZendComponentDependencyDetailsPage(editor);
+				zscompPage = new ZendComponentDependencyDetailsPage();
 			}
 			return zscompPage;
 		}

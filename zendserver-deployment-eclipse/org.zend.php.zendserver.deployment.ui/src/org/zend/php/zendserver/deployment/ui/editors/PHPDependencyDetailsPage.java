@@ -21,7 +21,7 @@ public class PHPDependencyDetailsPage implements IDetailsPage {
 	
 	private VersionControl version;
 	
-	public PHPDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+	public PHPDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS|VersionControl.RANGE|VersionControl.EXCLUDE);
 	}
 	
