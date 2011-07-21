@@ -11,6 +11,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DetailsPageProvider;
@@ -33,6 +36,14 @@ public class NewDependencyMainPage extends WizardPage {
 				null, null);
 		final SectionDetailPage page = (SectionDetailPage) detailsPageProvider
 				.getPage(element.getClass());
+		element.set(DeploymentDescriptorPackage.DEPENDENCY_MIN, "");
+		element.addListener(new IDescriptorChangeListener() {
+			
+			public void descriptorChanged(ChangeEvent event) {
+				
+				setPageComplete(validate(element));
+			}
+		});
 		
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.setBackground(parent.getBackground());
@@ -43,7 +54,14 @@ public class NewDependencyMainPage extends WizardPage {
 		page.createContents(form.getForm().getBody());
 		page.setFormInput(element);
 		
+		
 		setControl(parent);
 		setPageComplete(false);
 	}
+	
+	protected boolean validate(IModelObject element) {
+		// Validate element here
+		return true;
+	}
+	
 }
