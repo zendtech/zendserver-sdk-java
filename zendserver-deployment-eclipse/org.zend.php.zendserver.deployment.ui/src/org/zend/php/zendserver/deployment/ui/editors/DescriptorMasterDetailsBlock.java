@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -166,6 +167,10 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeElement(viewer.getSelection());
+				final TreeItem[] expandedElements = viewer.getTree().getItems();
+				if (expandedElements != null && expandedElements.length > 0) {
+					viewer.getTree().setSelection(expandedElements[0]);
+				}
 			}
 		});
 	}
