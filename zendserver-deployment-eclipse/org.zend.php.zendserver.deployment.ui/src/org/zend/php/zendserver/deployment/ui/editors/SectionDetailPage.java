@@ -74,7 +74,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = mform.getToolkit();
-		Composite s;
+		Composite s = parent;
 		
 		if (addSection) {
 			// create table layout
@@ -85,21 +85,17 @@ public abstract class SectionDetailPage implements IDetailsPage {
 			layout.bottomMargin = 0;
 			layout.numColumns = 1;
 			parent.setLayout(layout);
-
+			// create form section
 			s = addSection(parent, toolkit);
-		} else {
-			s = parent;
-		}
+		} 
 
-		Composite general;
+		Composite general = s;
 		if (addComponent) {
-			general = toolkit.createComposite(s);
+			general = addSection ? toolkit.createComposite(s) : s;
 			addComponent(toolkit, general);
-		} else {
-			general = s;
-		}
+		} 
 
-		Composite client = addSection ? toolkit.createComposite(general) : parent;
+		Composite client = addSection ? toolkit.createComposite(general) : general;
 		version.createContents(client, toolkit);
 
 		if (addSection) {

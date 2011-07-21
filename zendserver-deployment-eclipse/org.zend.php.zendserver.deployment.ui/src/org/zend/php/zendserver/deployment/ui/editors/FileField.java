@@ -28,6 +28,7 @@ public class FileField extends TextField {
 		text = toolkit.createText(parent, ""); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		text.setLayoutData(gd);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		gd.horizontalSpan = labelTxt != null ? 1 : 2;
 		licenseBrowseButton = toolkit.createButton(parent, Messages.FileField_Browse, SWT.PUSH);
 	}

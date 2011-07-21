@@ -25,6 +25,7 @@ public class ListField extends TextField {
 		gd.horizontalSpan = labelTxt != null ? 2 : 3;
 		gd.heightHint = 100;
 		text.setLayoutData(gd);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void createActions() {

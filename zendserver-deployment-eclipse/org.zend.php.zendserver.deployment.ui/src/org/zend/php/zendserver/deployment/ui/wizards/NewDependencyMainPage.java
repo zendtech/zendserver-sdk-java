@@ -10,6 +10,7 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DetailsPageProvider;
@@ -30,7 +31,12 @@ public class NewDependencyMainPage extends WizardPage {
 				null, null);
 		final SectionDetailPage page = (SectionDetailPage) detailsPageProvider
 				.getPage(element.getClass());
-		final ManagedForm form = new ManagedForm(parent);
+		
+		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		
+		toolkit.setBackground(parent.getBackground());
+		
+		final ManagedForm form = new ManagedForm(toolkit, toolkit.createScrolledForm(parent));
 		page.initialize(form);
 		page.setNoSection();
 

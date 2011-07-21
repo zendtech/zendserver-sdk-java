@@ -87,7 +87,8 @@ public class TextField {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
 		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);		
+		text.setLayoutData(gd);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 	
 	public void setErrorMessage(String message) {
