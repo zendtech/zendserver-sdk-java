@@ -28,7 +28,7 @@ public class EclipseMappingModelLoader extends PropertiesBasedMappingLoader {
 	private static String[] getExclusionsPreference() {
 		String pref = PreferenceManager.getInstance().getString(
 				PreferenceManager.EXCLUDE);
-		if (!"".equals(pref)) {
+		if (!"".equals(pref)) { //$NON-NLS-1$
 			return pref.split(SEPARATOR);
 		}
 		return new String[0];

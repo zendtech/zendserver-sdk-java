@@ -7,6 +7,9 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
+/**
+ * @deprecated This should be replaced with SDK project creation 
+ */
 public class DeploymentUtils {
 
 	public static IDeploymentDescriptor createDescriptor(IProject project,

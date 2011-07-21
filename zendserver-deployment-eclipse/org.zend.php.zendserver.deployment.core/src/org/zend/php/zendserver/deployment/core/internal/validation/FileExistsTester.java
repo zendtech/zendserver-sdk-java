@@ -2,6 +2,9 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 
 import java.io.File;
 
+import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 public class FileExistsTester extends PropertyTester {
 
 	public FileExistsTester() {
@@ -9,7 +12,7 @@ public class FileExistsTester extends PropertyTester {
 	}
 
 	@Override
-	String test(Object value) {
+	public String test(Feature feature, Object value) {
 		if (value == null) {
 			return null;
 		}
@@ -22,9 +25,11 @@ public class FileExistsTester extends PropertyTester {
 			if (f.exists()) {
 				return null;
 			}
+			
+			return Messages.bind(Messages.FileExistsTester_FileNotExists, s);
 		}
 		
-		return "File does not exist.";
+		return null;
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.core.internal.validation;
 
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 
 public abstract class PropertyTester {
 
@@ -9,6 +11,6 @@ public abstract class PropertyTester {
 		this.severity = severity;
 	}
 	
-	abstract String test(Object property);
+	public abstract String test(Feature feature, Object property);
 	
 }

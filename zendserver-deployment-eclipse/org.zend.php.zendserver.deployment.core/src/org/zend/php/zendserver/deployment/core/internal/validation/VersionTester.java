@@ -2,16 +2,19 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 
 import java.util.regex.Pattern;
 
+import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+
 public class VersionTester extends PropertyTester {
 
-	private Pattern pattern = Pattern.compile("[0-9]*(\\.[0-9]+){0,3}");
+	private Pattern pattern = Pattern.compile("[0-9]*(\\.[0-9]+){0,3}"); //$NON-NLS-1$
 	
 	public VersionTester() {
 		super(ValidationStatus.ERROR);
 	}
 
 	@Override
-	String test(Object property) {
+	public String test(Feature feature, Object property) {
 		if (property == null) {
 			return null;
 		}
@@ -22,6 +25,6 @@ public class VersionTester extends PropertyTester {
 			return null;
 		}
 		
-		return "Property is not a valid version number.";
+		return Messages.bind(Messages.VersionTester_IsNotValidVersionNumber, feature.xpath);
 	}	
 }

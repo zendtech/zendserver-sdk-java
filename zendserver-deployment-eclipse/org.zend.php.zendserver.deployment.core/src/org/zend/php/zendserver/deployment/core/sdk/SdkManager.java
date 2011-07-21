@@ -28,7 +28,7 @@ public class SdkManager implements IPreferenceChangeListener {
 	}
 	
 	public static String getDefaultSdkPath() {
-		URL url = FileLocator.find(DeploymentCore.getContext().getBundle(), new Path("/sdk"), null);
+		URL url = FileLocator.find(DeploymentCore.getContext().getBundle(), new Path("/sdk"), null); //$NON-NLS-1$
 		URL fileUrl = null;
 		try {
 			fileUrl = FileLocator.toFileURL(url);

@@ -24,7 +24,6 @@ import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class DescriptorValidator {
 
@@ -71,8 +70,6 @@ public class DescriptorValidator {
             validator.validate(source);
         }
         catch (SAXException ex) {
-        	Feature target = null;
-        	
         	int line = 0;
         	int start = 0;
         	int end = 0;
@@ -91,7 +88,7 @@ public class DescriptorValidator {
         	
         	int severity = ValidationStatus.ERROR; // TODO validation error level should be configurable?
         	String message = ex.getMessage();
-        	//reportProblem(file, new ValidationStatus(line, start, end, severity, message));
+        	reportProblem(file, new ValidationStatus(line, start, end, severity, message));
         } catch (IOException e) {
 			DeploymentCore.log(e);
 		}  

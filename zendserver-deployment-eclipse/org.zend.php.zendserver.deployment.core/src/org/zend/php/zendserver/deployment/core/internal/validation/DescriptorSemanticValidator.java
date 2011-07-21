@@ -64,7 +64,7 @@ public class DescriptorSemanticValidator {
 			if (featureTests != null) {
 				List<Object> children = obj.getChildren(f);
 				for (PropertyTester pt : featureTests) {
-					String msg = pt.test(children);
+					String msg = pt.test(f, children);
 					if (msg != null) {
 						statuses.add(new ValidationStatus(-1, -1, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
@@ -86,7 +86,7 @@ public class DescriptorSemanticValidator {
 			if (featureTests != null) {
 				Object value = obj.get(f);
 				for (PropertyTester pt: featureTests) {
-					String msg = pt.test(value);
+					String msg = pt.test(f, value);
 					if (msg != null) {
 						statuses.add(new ValidationStatus(objId, objNo, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
