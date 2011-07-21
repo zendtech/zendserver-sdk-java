@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -19,7 +16,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
@@ -34,7 +30,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 
 	protected DeploymentDescriptorEditor editor;
 
-	private static class FormDecoration {
+	public static class FormDecoration {
 		public String message;
 		public int severity;
 		public FormDecoration(String message, int severity) {
@@ -57,32 +53,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 	public abstract void refresh();
 
 	public void showMarkers() {
-		IFile file = editor.getDescriptorContainer().getFile();
-		IMarker[] markers;
-		try {
-			markers = file.findMarkers(IncrementalDeploymentBuilder.PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			Activator.log(e);
-			return;
-		}
-		
-		Set<Feature> keyset = fields.keySet();
-		Map<Integer, Feature> featureIds = new HashMap<Integer, Feature>();
-		for (Feature f : keyset) {
-			featureIds.put(f.id, f);
-		}
-		
-		Map<Feature, FormDecoration> toShow = new HashMap<Feature, FormDecoration>(); 
-		for (IMarker marker : markers) {
-			int featureId = marker.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
-			if (featureId != -1) {
-				Feature feature = featureIds.get(featureId);
-				if (feature != null) {
-					toShow.put(feature, markerToDecoration(marker));
-				}
-			}
-		}
-		
+		Map<Feature, FormDecoration>toShow = editor.getDecorationsForFeatures(fields.keySet());
 		refreshMarkers(toShow, null);
 	}
 	
@@ -114,12 +85,6 @@ public abstract class DescriptorEditorPage extends FormPage {
 		toRemove.removeAll(toShow.keySet());
 		
 		refreshMarkers(toShow, toRemove);
-	}
-
-	private FormDecoration markerToDecoration(IMarker marker) {
-		String message = marker.getAttribute(IMarker.MESSAGE, null);
-		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
-		return new FormDecoration(message, severity);
 	}
 	
 	private FormDecoration markerDeltaToDecoration(IMarkerDelta delta) {

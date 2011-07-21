@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -131,7 +132,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new DeploymentDescriptorLabelProvider());
+		DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(new DeploymentDescriptorLabelProvider(), new DeploymentDescriptorLabelDecorator(editor));
+		viewer.setLabelProvider(labelProvider);
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 

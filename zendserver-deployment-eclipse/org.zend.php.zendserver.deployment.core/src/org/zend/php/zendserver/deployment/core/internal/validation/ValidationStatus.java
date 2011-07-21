@@ -16,12 +16,16 @@ public class ValidationStatus {
 	private int start;
 	private int end;
 	private IMarker marker;
+	private int objectId;
+	private int objectNo;
 
 	public ValidationStatus(int line, int start, int end, int severity, String message) {
-		this(-1, line, start, end, severity, message);
+		this(-1, -1, -1, line, start, end, severity, message);
 	}
 	
-	public ValidationStatus(int featureId, int line, int start, int end, int severity, String message) {
+	public ValidationStatus(int objId, int objNo, int featureId, int line, int start, int end, int severity, String message) {
+		this.objectId = objId;
+		this.objectNo = objNo;
 		this.featureId = featureId;
 		this.line = line;
 		this.start = start;
@@ -108,6 +112,14 @@ public class ValidationStatus {
 		if (start != other.start)
 			return false;
 		return true;
+	}
+
+	public int getObjectId() {
+		return objectId;
+	}
+	
+	public int getObjectNo() {
+		return objectNo;
 	}
 	
 }

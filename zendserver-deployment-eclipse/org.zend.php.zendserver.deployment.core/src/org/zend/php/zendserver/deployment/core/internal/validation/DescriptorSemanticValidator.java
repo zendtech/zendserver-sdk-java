@@ -51,8 +51,8 @@ public class DescriptorSemanticValidator {
 		}
 	}
 	
-	private void validate(IModelObject modelObj, List<ValidationStatus> statuses) {
-		validateProperties(modelObj, statuses);
+	private void validate(int objId, int objNo, IModelObject modelObj, List<ValidationStatus> statuses) {
+		validateProperties(objId, objNo, modelObj, statuses);
 		if (modelObj instanceof IModelContainer) {
 			validate((IModelContainer) modelObj, statuses);
 		}
@@ -66,21 +66,21 @@ public class DescriptorSemanticValidator {
 				for (PropertyTester pt : featureTests) {
 					String msg = pt.test(children);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						statuses.add(new ValidationStatus(-1, -1, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}
 			
 			if (f.type == IModelObject.class) {
 				List<Object> children = obj.getChildren(f);
-				for (Object child : children) {
-					validate((IModelObject) child, statuses);
+				for (int i = 0; i < children.size(); i++) {
+					validate(f.id, i, (IModelObject) children.get(i), statuses);
 				}
 			}
 		}
 	}
 	
-	private void validateProperties(IModelObject obj, List<ValidationStatus> statuses) {
+	private void validateProperties(int objId, int objNo, IModelObject obj, List<ValidationStatus> statuses) {
 		for (Feature f : obj.getPropertyNames()) {
 			PropertyTester[] featureTests = testers.get(f);
 			if (featureTests != null) {
@@ -88,7 +88,7 @@ public class DescriptorSemanticValidator {
 				for (PropertyTester pt: featureTests) {
 					String msg = pt.test(value);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						statuses.add(new ValidationStatus(objId, objNo, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
 					}
 				}
 			}
@@ -97,7 +97,7 @@ public class DescriptorSemanticValidator {
 	
 	public ValidationStatus[] validate(IModelObject descr) {
 		List<ValidationStatus> statuses = new ArrayList<ValidationStatus>();
-		validate(descr, statuses);
+		validate(-1, -1, descr, statuses);
 		return statuses.toArray(new ValidationStatus[statuses.size()]);
 	}
 	

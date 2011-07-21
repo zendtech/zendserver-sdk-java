@@ -161,8 +161,10 @@ public class DescriptorValidator {
 		String message = marker.getAttribute(IMarker.MESSAGE, null);
 		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
 		int featureId = marker.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
+		int objectId = marker.getAttribute(IncrementalDeploymentBuilder.OBJECT_ID, -1);
+		int no = marker.getAttribute(IncrementalDeploymentBuilder.OBJECT_NUMBER, -1);
 		
-		ValidationStatus status = new ValidationStatus(featureId, line, start, end, severity, message);
+		ValidationStatus status = new ValidationStatus(objectId, no, featureId, line, start, end, severity, message);
 		status.setMarker(marker);
 		return status;
 	}
@@ -181,6 +183,12 @@ public class DescriptorValidator {
 			marker.setAttribute(IMarker.SEVERITY, status.getSeverity());
 			if (status.getFeatureId() != -1) {
 				marker.setAttribute(IncrementalDeploymentBuilder.FEATURE_ID, status.getFeatureId());
+			}
+			if (status.getObjectNo() != -1) {
+				marker.setAttribute(IncrementalDeploymentBuilder.OBJECT_NUMBER, status.getObjectNo());
+			}
+			if (status.getObjectId() != -1) {
+				marker.setAttribute(IncrementalDeploymentBuilder.OBJECT_ID, status.getObjectId());
 			}
 			return marker;
 		} catch (CoreException e) {

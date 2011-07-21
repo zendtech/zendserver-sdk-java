@@ -1,11 +1,16 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -39,8 +44,10 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 import org.zend.sdklib.mapping.MappingModelFactory;
 
 public class DeploymentDescriptorEditor extends FormEditor implements
@@ -388,6 +395,46 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	public FileEditorInput getPropertiesInput() {
 		return propertiesInput;
+	}
+
+	public Map<Feature, FormDecoration> getDecorationsForFeatures(Collection<Feature> keyset, int index) {
+		IFile file = fModel.getFile();
+		IMarker[] markers;
+		try {
+			markers = file.findMarkers(IncrementalDeploymentBuilder.PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			Activator.log(e);
+			return Collections.emptyMap();
+		}
+		
+		Map<Integer, Feature> featureIds = new HashMap<Integer, Feature>();
+		for (Feature f : keyset) {
+			featureIds.put(f.id, f);
+		}
+		
+		Map<Feature, FormDecoration> toShow = new HashMap<Feature, FormDecoration>(); 
+		for (IMarker marker : markers) {
+			int featureId = marker.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
+			int objNo = marker.getAttribute(IncrementalDeploymentBuilder.OBJECT_NUMBER, -1);
+			if ((featureId != -1) && (objNo == index)) {
+				Feature feature = featureIds.get(featureId);
+				if (feature != null) {
+					toShow.put(feature, markerToDecoration(marker));
+				}
+			}
+		}
+		
+		return toShow;
+	}
+	
+	public Map<Feature, FormDecoration> getDecorationsForFeatures(Collection<Feature> keyset) {
+		return getDecorationsForFeatures(keyset, -1);
+	}
+	
+	private FormDecoration markerToDecoration(IMarker marker) {
+		String message = marker.getAttribute(IMarker.MESSAGE, null);
+		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
+		return new FormDecoration(message, severity);
 	}
 
 }

@@ -26,6 +26,8 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 	public static final String PROBLEM_MARKER = "org.zend.php.zendserver.deployment.core.problemmarker"; //$NON-NLS-1$
 	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentBuilder"; //$NON-NLS-1$
 	public static final String FEATURE_ID = "feature.id"; //$NON-NLS-1$
+	public static final String OBJECT_ID = "object.id"; //$NON-NLS-1$
+	public static final String OBJECT_NUMBER = "object.no"; //$NON-NLS-1$
 
 	private DescriptorValidator descrValidator = new DescriptorValidator();
 	
