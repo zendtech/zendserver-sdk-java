@@ -21,7 +21,7 @@ public class DirectiveDependencyDetailsPage extends SectionDetailPage {
 
 	public DirectiveDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
-				| VersionControl.RANGE);
+				| VersionControl.RANGE, input);
 		addComponent = true;
 	}
 
@@ -48,7 +48,7 @@ public class DirectiveDependencyDetailsPage extends SectionDetailPage {
 				TableWrapData.FILL_GRAB));
 		return s1;
 	}
-	
+
 	@Override
 	protected void addComponent(FormToolkit toolkit, Composite general) {
 		general.setLayout(new GridLayout(1, true));

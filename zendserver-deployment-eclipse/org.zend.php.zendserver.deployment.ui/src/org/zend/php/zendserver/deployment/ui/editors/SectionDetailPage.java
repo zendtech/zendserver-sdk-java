@@ -9,6 +9,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -47,7 +48,8 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	}
 
 	public boolean setFormInput(Object input) {
-		return false;
+		selectionChanged(null, new StructuredSelection(input));
+		return true;
 	}
 
 	public void setFocus() {
@@ -75,7 +77,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = mform.getToolkit();
 		Composite s = parent;
-		
+
 		if (addSection) {
 			// create table layout
 			TableWrapLayout layout = new TableWrapLayout();
@@ -87,15 +89,16 @@ public abstract class SectionDetailPage implements IDetailsPage {
 			parent.setLayout(layout);
 			// create form section
 			s = addSection(parent, toolkit);
-		} 
+		}
 
 		Composite general = s;
 		if (addComponent) {
 			general = addSection ? toolkit.createComposite(s) : s;
 			addComponent(toolkit, general);
-		} 
+		}
 
-		Composite client = addSection ? toolkit.createComposite(general) : general;
+		Composite client = addSection ? toolkit.createComposite(general)
+				: general;
 		version.createContents(client, toolkit);
 
 		if (addSection) {

@@ -42,8 +42,9 @@ public class VersionControl {
 	private Composite conflicts;
 	private Composite range;
 
-	public VersionControl(int modes) {
+	public VersionControl(int modes, IModelObject input) {
 		this.modes = modes;
+		// setInput(input);
 	}
 
 	public void dispose() {
@@ -151,6 +152,8 @@ public class VersionControl {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		versions.setLayoutData(gd);
 		addVersionFields(toolkit, versions);
+		
+		// refresh();
 	}
 
 	protected void addVersionFields(FormToolkit toolkit, Composite versions) {

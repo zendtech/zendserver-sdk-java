@@ -10,7 +10,7 @@ public class ZendServerDependencyDetailsPage extends SectionDetailPage {
 
 	public ZendServerDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
-				| VersionControl.RANGE | VersionControl.EXCLUDE);
+				| VersionControl.RANGE | VersionControl.EXCLUDE, input);
 	}
 
 	@Override

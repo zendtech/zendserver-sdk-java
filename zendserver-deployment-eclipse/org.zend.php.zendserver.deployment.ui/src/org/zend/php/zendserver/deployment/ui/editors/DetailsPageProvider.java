@@ -11,8 +11,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependen
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
-public class DetailsPageProvider implements
-		IDetailsPageProvider {
+public class DetailsPageProvider implements IDetailsPageProvider {
+
 	private IDetailsPage phpPage;
 	private IDetailsPage dirPage;
 	private IDetailsPage extensionPage;
@@ -24,23 +24,23 @@ public class DetailsPageProvider implements
 
 	private DeploymentDescriptorEditor editor;
 	private Class type;
-	
+
 	public DetailsPageProvider(DeploymentDescriptorEditor editor, Class type) {
 		this.editor = editor;
 		this.type = type;
 	}
-	
+
 	public Object getPageKey(Object object) {
 		return object.getClass();
 	}
 
 	public IDetailsPage getPage(Object key) {
 		Class clazz = (Class) key;
-		
-		if ((type != null) && (! type.isAssignableFrom(clazz))) {
+
+		if ((type != null) && (!type.isAssignableFrom(clazz))) {
 			return null;
 		}
-		
+
 		if (IVariable.class.isAssignableFrom(clazz)) {
 			if (varPage == null) {
 				varPage = new VariableDetailsPage(editor);
@@ -55,13 +55,13 @@ public class DetailsPageProvider implements
 		}
 		if (IPHPDependency.class.isAssignableFrom(clazz)) {
 			if (phpPage == null) {
-				 phpPage = new PHPDependencyDetailsPage();
+				phpPage = new PHPDependencyDetailsPage();
 			}
 			return phpPage;
 		}
 		if (IExtensionDependency.class.isAssignableFrom(clazz)) {
 			if (extensionPage == null) {
-				 extensionPage = new ExtensionDependencyDetailsPage();
+				extensionPage = new ExtensionDependencyDetailsPage();
 			}
 			return extensionPage;
 		}

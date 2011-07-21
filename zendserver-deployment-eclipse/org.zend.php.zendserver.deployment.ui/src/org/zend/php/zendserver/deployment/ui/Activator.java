@@ -37,7 +37,9 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_ZENDSERVER = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ZENDFRAMEWORK = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
-
+	public static final String IMAGE_WIZBAN_DEP = "icons/wizban/newdep_wiz.png"; //$NON-NLS-1$
+	
+	
 	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_PARAMTYPE_STRING = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_PARAMTYPE_NUMBER = "icons/obj16/category_obj.gif"; //$NON-NLS-1$

@@ -10,7 +10,7 @@ public class PHPDependencyDetailsPage extends SectionDetailPage {
 
 	public PHPDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
-				| VersionControl.RANGE | VersionControl.EXCLUDE);
+				| VersionControl.RANGE | VersionControl.EXCLUDE, input);
 	}
 
 	@Override

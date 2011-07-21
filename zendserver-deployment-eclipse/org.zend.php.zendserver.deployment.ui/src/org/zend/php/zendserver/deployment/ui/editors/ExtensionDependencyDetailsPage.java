@@ -22,7 +22,7 @@ public class ExtensionDependencyDetailsPage extends SectionDetailPage {
 	public ExtensionDependencyDetailsPage() {
 		version = new VersionControl(VersionControl.EQUALS
 				| VersionControl.CONFLICTS | VersionControl.EXCLUDE
-				| VersionControl.RANGE);
+				| VersionControl.RANGE, input);
 		addComponent = true;
 	}
 

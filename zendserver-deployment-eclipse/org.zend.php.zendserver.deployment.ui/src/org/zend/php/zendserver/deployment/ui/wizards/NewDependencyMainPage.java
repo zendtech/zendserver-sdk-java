@@ -21,8 +21,10 @@ public class NewDependencyMainPage extends WizardPage {
 	private final IModelObject element;
 
 	public NewDependencyMainPage(IModelObject element) {
-		super("Add Dependency", "Add Dependency", Activator
-				.getImageDescriptor(Activator.IMAGE_PHP));
+		super("Title", "Title", Activator
+				.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		setMessage("Instructions");
+
 		this.element = element;
 	}
 
@@ -33,15 +35,15 @@ public class NewDependencyMainPage extends WizardPage {
 				.getPage(element.getClass());
 		
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		
 		toolkit.setBackground(parent.getBackground());
 		
 		final ManagedForm form = new ManagedForm(toolkit, toolkit.createScrolledForm(parent));
 		page.initialize(form);
 		page.setNoSection();
-
 		page.createContents(form.getForm().getBody());
+		page.setFormInput(element);
+		
 		setControl(parent);
+		setPageComplete(false);
 	}
-
 }
