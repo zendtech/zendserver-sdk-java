@@ -15,7 +15,7 @@ import org.zend.sdklib.application.ZendProject;
 
 public class DeploymentNature implements IProjectNature {
 
-	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentNature";
+	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentNature"; //$NON-NLS-1$
 	
 	private IProject project;
 	

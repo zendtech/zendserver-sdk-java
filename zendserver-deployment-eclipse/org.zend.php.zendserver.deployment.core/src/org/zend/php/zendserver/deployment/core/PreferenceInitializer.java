@@ -14,12 +14,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DeploymentCore.getPreferenceScope();
-		node.put(PreferenceManager.EXCLUDE, "**/.cvs,**/.svn,**/.git");
+		node.put(PreferenceManager.EXCLUDE, "**/.cvs,**/.svn,**/.git"); //$NON-NLS-1$
 		node.put(SdkManager.SDK_PATH, SdkManager.getDefaultSdkPath());
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
-			// TODO handle it
+			DeploymentCore.log(e);
 		}
 	}
 }
