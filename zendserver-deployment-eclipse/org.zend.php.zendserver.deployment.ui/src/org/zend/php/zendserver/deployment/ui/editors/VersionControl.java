@@ -13,22 +13,22 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
 /**
- *
+ * Represents the version control composite in the dependency blocks
  */
 public class VersionControl {
+
+	public int[] choiceTypes = { EQUALS, CONFLICTS, RANGE };
 
 	public static final int EQUALS = 1;
 	public static final int CONFLICTS = 2;
 	public static final int RANGE = 4;
 	public static final int EXCLUDE = 8;
 
+	private int modes;
+
 	private Button btnEquals;
 	private Button btnConflict;
 	private Button btnMatches;
-
-	public String[] choices = { Messages.VersionControl_Equals,
-			Messages.VersionControl_Conflicts, Messages.VersionControl_Range };
-	public int[] choiceTypes = { EQUALS, CONFLICTS, RANGE };
 
 	private IModelObject input;
 
@@ -37,8 +37,6 @@ public class VersionControl {
 	private TextField minField;
 	private TextField maxField;
 	private ListField excludeField;
-
-	private int modes;
 	private Composite versions;
 	private Composite equals;
 	private Composite conflicts;
@@ -266,5 +264,4 @@ public class VersionControl {
 	public void setEditor(DeploymentDescriptorEditor editor) {
 		// TODO: can be removed?
 	}
-	
 }
