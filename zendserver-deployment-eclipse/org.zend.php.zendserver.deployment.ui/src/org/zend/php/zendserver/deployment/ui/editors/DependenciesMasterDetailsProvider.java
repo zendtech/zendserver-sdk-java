@@ -10,6 +10,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
@@ -25,7 +26,7 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 	public Object[] doGetElements(Object input) {
 		if (input instanceof IDeploymentDescriptor) {
 			IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
-			List all = new ArrayList();
+			List<IModelObject> all = new ArrayList<IModelObject>();
 			all.addAll(descr.getPHPDependencies());
 			all.addAll(descr.getDirectiveDependencies());
 			all.addAll(descr.getExtensionDependencies());

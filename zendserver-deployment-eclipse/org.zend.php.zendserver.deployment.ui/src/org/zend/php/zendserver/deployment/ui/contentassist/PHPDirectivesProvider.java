@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.ui.Activator;
+
 /**
  * PHP Directives from http://www.php.net/manual/en/ini.list.php
  *
@@ -29,14 +31,13 @@ public class PHPDirectivesProvider {
 		if (directives == null) {
 			directives = new ArrayList<PHPDirective>();
 			CSVLoader csvloader = new CSVLoader();
-			InputStream in = getClass().getResourceAsStream("directives.csv");
+			InputStream in = getClass().getResourceAsStream("directives.csv"); //$NON-NLS-1$
 			
 			String[][] csv;
 			try {
 				csv = csvloader.load(in);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Activator.log(e);
 				return;
 			}
 			

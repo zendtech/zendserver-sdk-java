@@ -6,8 +6,8 @@ import org.zend.php.zendserver.deployment.ui.editors.propertiestext.PropertiesFi
 
 public class PropertiesSourcePage extends SourcePage {
 
-	public PropertiesSourcePage(DeploymentDescriptorEditor editor) {
-		super(editor);
+	public PropertiesSourcePage(String pageId, DeploymentDescriptorEditor editor) {
+		super(pageId, editor);
 		setDocumentProvider(editor.getDocumentProvider());
 		PropertiesFileSourceViewerConfiguration a = new PropertiesFileSourceViewerConfiguration(
 				new PropertiesColorManager(), Activator.getDefault().getPreferenceStore());

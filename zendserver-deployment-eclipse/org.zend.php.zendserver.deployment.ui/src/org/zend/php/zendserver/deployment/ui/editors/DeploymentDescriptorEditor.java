@@ -69,7 +69,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
 			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addMappingPages();
-			descriptorSourcePage = new SourcePage(this);
+			descriptorSourcePage = new SourcePage("source", this); //$NON-NLS-1$
 			addPage(descriptorSourcePage, getEditorInput());
 		} catch (PartInitException e) {
 			//
@@ -353,9 +353,9 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 				public void run() {
 					try {
-						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package",
+						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package", //$NON-NLS-1$
 								Messages.DeploymentDescriptorEditor_Package));
-						propertiesSourcePage = new PropertiesSourcePage(editor);
+						propertiesSourcePage = new PropertiesSourcePage("propertiesSource", editor); //$NON-NLS-1$
 						addPage(4, propertiesSourcePage, getPropertiesInput());
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block

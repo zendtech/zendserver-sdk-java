@@ -148,7 +148,7 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 		}
 		
 		if (min != null && max != null) {
-			return " "+min+" - " + max;
+			return Messages.bind(Messages.DeploymentDescriptorLabelProvider_range,min, max);
 		}
 		
 		if (min != null) {

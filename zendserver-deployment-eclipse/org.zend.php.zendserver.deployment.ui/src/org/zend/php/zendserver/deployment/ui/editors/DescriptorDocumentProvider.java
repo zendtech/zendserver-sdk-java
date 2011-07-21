@@ -20,7 +20,7 @@ public class DescriptorDocumentProvider extends FileDocumentProvider {
 		input.getName();
 		if (document != null) {
 			IDocumentPartitioner partitioner = null;
-			if (input.getName().endsWith("xml")) {
+			if (input.getName().endsWith("xml")) { //$NON-NLS-1$
 				partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] {
 						XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
 				partitioner.connect(document);

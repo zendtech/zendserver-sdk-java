@@ -40,7 +40,8 @@ public class FileField extends TextField {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell shell = e.widget.getDisplay().getActiveShell();
-				OpenFileDialog dialog = new OpenFileDialog(shell, root, labelTxt, "Select file with "+labelTxt+":", text.getText());
+				String msg = Messages.bind(Messages.FileField_SelectFile, labelTxt);
+				OpenFileDialog dialog = new OpenFileDialog(shell, root, labelTxt, msg, text.getText());
 				String newSelection = openDialog(dialog);
 				if (newSelection != null) {
 					text.setText(newSelection);

@@ -27,7 +27,7 @@ public class PHPUnitTestContribution extends WorkbenchWindowControlContribution 
 				Activator.IMAGE_RUN_TEST).createImage());
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				MessageDialog.openInformation(parent.getDisplay().getActiveShell(), "Not ready", "Can you implement it?");
+				MessageDialog.openInformation(parent.getDisplay().getActiveShell(), "Not ready", "Can you implement it?"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 		

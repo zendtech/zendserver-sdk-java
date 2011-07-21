@@ -27,10 +27,10 @@ public class ScriptsContentProvider implements ITreeContentProvider {
 	
 	public ScriptsContentProvider() {
 		model = new ScriptType[4];
-		model[0] = new ScriptType(Messages.ScriptsContentProvider_Staging, new Script[] { new Script("preStage"), new Script("postStage") }); //$NON-NLS-2$ //$NON-NLS-3$
-		model[1] = new ScriptType(Messages.ScriptsContentProvider_Activation, new Script[] { new Script("preActivate"), new Script("postActivate") }); //$NON-NLS-2$ //$NON-NLS-3$
-		model[2] = new ScriptType(Messages.ScriptsContentProvider_Deactivation, new Script[] { new Script("preDeactivate"), new Script("postDeactivate") }); //$NON-NLS-2$ //$NON-NLS-3$
-		model[3] = new ScriptType(Messages.ScriptsContentProvider_Unstaging, new Script[] { new Script("preUnstage"), new Script("postUnstage") }); //$NON-NLS-2$ //$NON-NLS-3$
+		model[0] = new ScriptType(Messages.ScriptsContentProvider_Staging, new Script[] { new Script("preStage"), new Script("postStage") }); //$NON-NLS-1$ //$NON-NLS-2$
+		model[1] = new ScriptType(Messages.ScriptsContentProvider_Activation, new Script[] { new Script("preActivate"), new Script("postActivate") }); //$NON-NLS-1$ //$NON-NLS-2$
+		model[2] = new ScriptType(Messages.ScriptsContentProvider_Deactivation, new Script[] { new Script("preDeactivate"), new Script("postDeactivate") }); //$NON-NLS-1$ //$NON-NLS-2$
+		model[3] = new ScriptType(Messages.ScriptsContentProvider_Unstaging, new Script[] { new Script("preUnstage"), new Script("postUnstage") }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private static Object[] EMPTY = new Object[0];

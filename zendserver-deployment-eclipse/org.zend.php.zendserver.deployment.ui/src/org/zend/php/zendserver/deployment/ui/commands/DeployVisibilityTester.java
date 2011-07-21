@@ -12,7 +12,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 
 public class DeployVisibilityTester extends PropertyTester {
 
-	private static final String PHP_NATURE = "org.eclipse.php.core.PHPNature";
+	private static final String PHP_NATURE = "org.eclipse.php.core.PHPNature"; //$NON-NLS-1$
 
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {

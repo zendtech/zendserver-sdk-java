@@ -15,7 +15,7 @@ public class CSVLoader {
 		List<String[]> result = new ArrayList<String[]>();
 		String line;
 		while ((line = br.readLine()) != null) {
-			result.add(line.split(","));
+			result.add(line.split(",")); //$NON-NLS-1$
 		}
 		
 		return result.toArray(new String[result.size()][]);

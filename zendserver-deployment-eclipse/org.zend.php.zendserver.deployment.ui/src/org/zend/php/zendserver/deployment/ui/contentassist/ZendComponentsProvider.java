@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.ui.Activator;
+
 public class ZendComponentsProvider {
 
 	public static class ZSComponent {
@@ -21,14 +23,13 @@ public class ZendComponentsProvider {
 		if (components == null) {
 			components = new ArrayList<ZSComponent>();
 			CSVLoader csvloader = new CSVLoader();
-			InputStream in = getClass().getResourceAsStream("zscomponents.csv");
+			InputStream in = getClass().getResourceAsStream("zscomponents.csv"); //$NON-NLS-1$
 			
 			String[][] csv;
 			try {
 				csv = csvloader.load(in);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Activator.log(e);
 				return;
 			}
 			

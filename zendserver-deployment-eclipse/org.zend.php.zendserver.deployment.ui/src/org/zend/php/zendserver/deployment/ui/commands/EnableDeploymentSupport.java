@@ -30,6 +30,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 
 public class EnableDeploymentSupport extends AbstractHandler {
@@ -48,7 +49,7 @@ public class EnableDeploymentSupport extends AbstractHandler {
 			IResource res = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
 			final IProject project = res.getProject();
 			
-			Job job = new Job("Enable Deployment Support") {
+			Job job = new Job(Messages.EnableDeploymentSupport_EnableDeploymentSupport) {
 	
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {

@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_PHPDirective;
 	public static String DeploymentDescriptorLabelProvider_PHPExtension;
 	public static String DeploymentDescriptorLabelProvider_PHPVersion;
+	public static String DeploymentDescriptorLabelProvider_range;
 	public static String DeploymentDescriptorLabelProvider_Required;
 	public static String DeploymentDescriptorLabelProvider_To;
 	public static String DeploymentDescriptorLabelProvider_ZendFramework;
@@ -41,10 +42,12 @@ public class Messages extends NLS {
 	public static String DirectiveDependencyDetailsPage_SpecifyDirectiveProperties;
 	public static String EditTargetAction_EditTarget;
 	public static String EditTargetAction_EditTargetMessage;
+	public static String EnableDeploymentSupport_EnableDeploymentSupport;
 	public static String ExtensionDependencyDetailsPage_extensionDependencyDetails;
 	public static String ExtensionDependencyDetailsPage_ExtensionName;
 	public static String ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails;
 	public static String FileField_Browse;
+	public static String FileField_SelectFile;
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;
 	public static String OverviewPage_2;
@@ -99,6 +102,8 @@ public class Messages extends NLS {
 	public static String ScriptsContentProvider_Deactivation;
 	public static String ScriptsContentProvider_Staging;
 	public static String ScriptsContentProvider_Unstaging;
+	public static String ScriptsPage_AddParameter;
+	public static String ScriptsPage_AddVariable;
 	public static String ScriptsPage_VarsAndParams;
 	public static String ScriptsTreeSection_Info;
 	public static String ScriptsTreeSection_ScriptsMapping;

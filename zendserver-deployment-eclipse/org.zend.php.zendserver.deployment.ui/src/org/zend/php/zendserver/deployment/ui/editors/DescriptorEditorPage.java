@@ -156,7 +156,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 	 * @return
 	 */
 	protected String getHelpResource() {
-		return "to be assigned";
+		return null; // TODO to be assigned
 	}
 
 	protected TextField addField(TextField field) {

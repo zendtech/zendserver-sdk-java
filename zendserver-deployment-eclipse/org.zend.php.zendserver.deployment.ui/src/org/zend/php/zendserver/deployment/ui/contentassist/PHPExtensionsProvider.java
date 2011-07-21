@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.ui.Activator;
+
 /**
  * http://files.zend.com/help/Zend-Server-Community-Edition/zend_server_ce_php_5.3_extensions.htm
  *
@@ -27,14 +29,13 @@ public class PHPExtensionsProvider {
 		if (directives == null) {
 			directives = new ArrayList<PHPExtension>();
 			CSVLoader csvloader = new CSVLoader();
-			InputStream in = getClass().getResourceAsStream("phpextensions.csv");
+			InputStream in = getClass().getResourceAsStream("phpextensions.csv"); //$NON-NLS-1$
 			
 			String[][] csv;
 			try {
 				csv = csvloader.load(in);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Activator.log(e);
 				return;
 			}
 			

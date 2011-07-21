@@ -18,13 +18,12 @@ public class SourcePage extends TextEditor implements IFormPage {
 	private Control fControl;
 	private DeploymentDescriptorEditor fEditor;
 	private String fId;
-	private boolean fIsActive;
 	private ColorManager colorManager;
 
-	public SourcePage(DeploymentDescriptorEditor editor) {
+	public SourcePage(String pageId, DeploymentDescriptorEditor editor) {
 		super();
 		fEditor = editor;
-		fId = "source";
+		fId = pageId;
 		colorManager = new ColorManager();
 
 		setDocumentProvider(editor.getDocumentProvider());

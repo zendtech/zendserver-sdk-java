@@ -79,7 +79,7 @@ public class ScriptsPage extends DescriptorEditorPage {
 		
 		@Override
 		protected void addButtons(FormToolkit toolkit, Composite buttons) {
-			Button addButton1 = createButton(toolkit, buttons, "Add Variable");
+			Button addButton1 = createButton(toolkit, buttons, Messages.ScriptsPage_AddVariable);
 			addButton1.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -90,7 +90,7 @@ public class ScriptsPage extends DescriptorEditorPage {
 				}
 			});
 
-			Button addButton2 = createButton(toolkit, buttons, "Add Parameter");
+			Button addButton2 = createButton(toolkit, buttons, Messages.ScriptsPage_AddParameter);
 			addButton2.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
