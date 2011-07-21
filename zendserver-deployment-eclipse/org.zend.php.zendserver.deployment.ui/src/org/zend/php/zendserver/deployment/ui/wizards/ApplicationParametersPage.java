@@ -83,7 +83,6 @@ public class ApplicationParametersPage extends WizardPage {
 				return ((Combo) control).getText();
 			case CHECKBOX:
 				return String.valueOf(((Button) control).getSelection());
-			case UNKNOWN:
 			default:
 				return "";
 			}
@@ -126,7 +125,6 @@ public class ApplicationParametersPage extends WizardPage {
 							.getDefaultValue()));
 				}
 				break;
-			case UNKNOWN:
 			default:
 				break;
 			}
@@ -338,7 +336,7 @@ public class ApplicationParametersPage extends WizardPage {
 			DeploymentParameter parameter = null;
 			ParameterType type = ParameterType.byName(category.getParameter()
 					.getType());
-			if (type != ParameterType.UNKNOWN) {
+			if (type != null) {
 				parameter = new DeploymentParameter(category.getParameter(),
 						category.getName(), type);
 				parameter.createControl(parent);

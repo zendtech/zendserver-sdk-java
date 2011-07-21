@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface IParameter extends IModelContainer {
 
-	String EMAIL = "email";
-	String HOSTNAME = "hostname";
-	String CHECKBOX = "checkbox";
-	String CHOICE = "choice";
-	String NUMBER = "number";
-	String STRING = "string";
-	String PASSWORD = "password";
+	String EMAIL = "email"; //$NON-NLS-1$
+	String HOSTNAME = "hostname"; //$NON-NLS-1$
+	String CHECKBOX = "checkbox"; //$NON-NLS-1$
+	String CHOICE = "choice"; //$NON-NLS-1$
+	String NUMBER = "number"; //$NON-NLS-1$
+	String STRING = "string"; //$NON-NLS-1$
+	String PASSWORD = "password"; //$NON-NLS-1$
 	
 	String getId();
 

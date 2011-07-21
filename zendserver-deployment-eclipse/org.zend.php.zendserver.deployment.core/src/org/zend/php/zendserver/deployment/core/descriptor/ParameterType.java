@@ -8,8 +8,8 @@ package org.zend.php.zendserver.deployment.core.descriptor;
  */
 public enum ParameterType {
 
-	STRING("string"), CHOICE("choice"), CHECKBOX("checkbox"), PASSWORD(
-			"password"), EMAIL("email"), UNKNOWN("unknown");
+	STRING(IParameter.STRING), CHOICE(IParameter.CHOICE), CHECKBOX(IParameter.CHECKBOX), PASSWORD(
+			IParameter.PASSWORD), EMAIL(IParameter.EMAIL), HOSTNAME(IParameter.HOSTNAME);
 
 	private final String name;
 
@@ -23,7 +23,7 @@ public enum ParameterType {
 
 	public static ParameterType byName(String name) {
 		if (name == null) {
-			return UNKNOWN;
+			return null;
 		}
 		ParameterType[] values = values();
 		for (int i = 0; i < values.length; i++) {
@@ -32,6 +32,6 @@ public enum ParameterType {
 				return type;
 			}
 		}
-		return UNKNOWN;
+		return null;
 	}
 }

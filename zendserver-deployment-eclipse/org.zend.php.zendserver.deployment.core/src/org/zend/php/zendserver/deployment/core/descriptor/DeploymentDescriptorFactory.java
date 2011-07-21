@@ -45,7 +45,7 @@ public class DeploymentDescriptorFactory {
 				return new Parameter();
 		}
 		
-		throw new IllegalArgumentException("Unknown model element "+path);
+		throw new IllegalArgumentException("Unknown model element "+path); //$NON-NLS-1$
 	}
 	
 
@@ -70,12 +70,12 @@ public class DeploymentDescriptorFactory {
 			return DeploymentDescriptorPackage.PARAMETERS;
 		}
 		
-		throw new IllegalArgumentException("Unknown model object "+result);
+		throw new IllegalArgumentException("Unknown model object "+result); //$NON-NLS-1$
 	}
 	
 	public static Document createEmptyDocument(DocumentBuilder builder) {
 		Document document = builder.newDocument();
-		Element rootElement = document.createElement("package");
+		Element rootElement = document.createElement(DeploymentDescriptorPackage.PACKAGE.xpath);
 		rootElement.setAttribute("packagerversion", "1.4.11");
 		rootElement.setAttribute("version", "2.0");
 		rootElement.setAttribute("xmlns:xsi",
