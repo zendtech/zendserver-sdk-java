@@ -9,6 +9,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -25,13 +26,13 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	protected VersionControl version;
 
 	protected boolean addSection = true;
-	
+
 	protected boolean addComponent = false;
 
 	public void setNoSection() {
 		addSection = false;
 	}
-	
+
 	public void initialize(IManagedForm form) {
 		this.mform = form;
 	}
@@ -73,28 +74,31 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	}
 
 	public void createContents(Composite parent) {
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.topMargin = 0;
-		layout.leftMargin = 0;
-		layout.rightMargin = 0;
-		layout.bottomMargin = 0;
-		layout.numColumns = 1;
-		parent.setLayout(layout);
-
 		FormToolkit toolkit = mform.getToolkit();
 		Composite s;
 		if (addSection) {
+
+			// create table layout
+			TableWrapLayout layout = new TableWrapLayout();
+			layout.topMargin = 0;
+			layout.leftMargin = 0;
+			layout.rightMargin = 0;
+			layout.bottomMargin = 0;
+			layout.numColumns = 1;
+			parent.setLayout(layout);
+
 			s = addSection(parent, toolkit);
-		} 	else {
-			s = toolkit.createComposite(parent);
+		} else {
+			s = parent;
+			parent.setLayout(new GridLayout());
 		}
-		
+
 		Composite general;
 		if (addComponent) {
 			general = toolkit.createComposite(s);
 			addComponent(toolkit, general);
 		} else {
-			general = s; 
+			general = s;
 		}
 
 		Composite client = toolkit.createComposite(general);
@@ -108,6 +112,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 
 	/**
 	 * Add the section for this page
+	 * 
 	 * @param parent
 	 * @param toolkit
 	 * @return the new section
@@ -115,16 +120,17 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	protected abstract Section addSection(Composite parent, FormToolkit toolkit);
 
 	/**
-	 * Adds a selection component, empty by default 
+	 * Adds a selection component, empty by default
+	 * 
 	 * @param toolkit
 	 * @param general
 	 * @return
 	 */
 	protected void addComponent(FormToolkit toolkit, Composite general) {
 	}
-	
+
 	/**
-	 * Adds content assist support to name, empty by default 
+	 * Adds content assist support to name, empty by default
 	 */
 	protected void createContentAssist() {
 	}
