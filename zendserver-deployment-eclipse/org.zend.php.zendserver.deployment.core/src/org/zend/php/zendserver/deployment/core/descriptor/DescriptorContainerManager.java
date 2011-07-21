@@ -26,12 +26,8 @@ public class DescriptorContainerManager {
 	}
 
 	/**
-	 * Should be removed because descriptor may not neccesairly be in project
-	 * root
-	 * 
 	 * @param project
 	 * @return
-	 * @deprecated
 	 */
 	public IDescriptorContainer openDescriptorContainer(IProject project) {
 		IFile file = project
