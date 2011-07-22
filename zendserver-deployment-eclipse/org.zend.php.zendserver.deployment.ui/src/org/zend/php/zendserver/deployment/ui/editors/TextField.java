@@ -66,7 +66,7 @@ public class TextField {
 	}
 	
 	protected void createControlDecoration() {
-		controlDecoration = new ControlDecoration(text, SWT.LEFT);
+		controlDecoration = new ControlDecoration(text, SWT.LEFT | SWT.TOP);
 	}
 
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
@@ -85,7 +85,7 @@ public class TextField {
 	
 	protected void createTextControl(Composite parent, FormToolkit toolkit) {
 		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
-		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));

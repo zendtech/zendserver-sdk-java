@@ -125,10 +125,4 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	 */
 	protected void addComponent(FormToolkit toolkit, Composite general) {
 	}
-
-	/**
-	 * Adds content assist support to name, empty by default
-	 */
-	protected void createContentAssist() {
-	}
 }

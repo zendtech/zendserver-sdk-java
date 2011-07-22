@@ -1,8 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -12,6 +10,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.contentassist.PHPExtensionsProvider;
 import org.zend.php.zendserver.deployment.ui.contentassist.ZendComponentsProvider;
 
 public class ZendComponentDependencyDetailsPage extends SectionDetailPage {
@@ -30,7 +29,7 @@ public class ZendComponentDependencyDetailsPage extends SectionDetailPage {
 		isRefresh = true;
 		try {
 			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_NAME);
-			nameText.setText(str == null ? "" : str); //$NON-NLS-1$
+			// nameText.setText(str == null ? "" : str); //$NON-NLS-1$
 			version.refresh();
 		} finally {
 			isRefresh = false;
@@ -72,20 +71,14 @@ public class ZendComponentDependencyDetailsPage extends SectionDetailPage {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		directive.setLayoutData(gd);
 
-		toolkit.createLabel(directive,
-				Messages.ZendComponentDependencyDetailsPage_Name);
-		nameText = new Combo(directive, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 2;
-		nameText.setLayoutData(gd);
-		nameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh)
-					return;
-				String txt = ((Combo) e.widget).getText();
-				nameChange("".equals(txt) ? null : txt); //$NON-NLS-1$
-			}
-		});
+		// TODO : zend conponent proposals
+		PHPExtensionsProvider provider = new PHPExtensionsProvider();
+		provider.init();
+		final Composite hint = toolkit.createComposite(directive);		
+		hint.setLayout(new GridLayout(3, false));
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, true);
+		hint.setLayoutData(data);
+		final TextAssistField field = new TextAssistField(null, null, Messages.ZendComponentDependencyDetailsPage_Name, provider.getNames());
+		field.create(hint, toolkit);
 	}
-
 }

@@ -116,6 +116,7 @@ public class Messages extends NLS {
 	public static String TargetDialog_KeyTooltip;
 	public static String TargetDialog_SecretTooltip;
 	public static String TargetDialog_validate;
+	public static String TextHintField_0;
 	public static String VariableDetailsPage_Details;
 	public static String VariableDetailsPage_Name;
 	public static String VariableDetailsPage_Value;

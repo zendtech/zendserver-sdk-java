@@ -40,7 +40,6 @@ public class NewDependencyMainPage extends WizardPage {
 		element.addListener(new IDescriptorChangeListener() {
 			
 			public void descriptorChanged(ChangeEvent event) {
-				
 				setPageComplete(validate(element));
 			}
 		});
@@ -63,5 +62,7 @@ public class NewDependencyMainPage extends WizardPage {
 		// Validate element here
 		return true;
 	}
+
+	
 	
 }

@@ -54,7 +54,7 @@ public class VersionControl {
 	}
 
 	public void refresh() {
-		
+
 		if (equalsField != null) {
 			btnEquals
 					.setSelection(input
@@ -84,24 +84,24 @@ public class VersionControl {
 		if (excludeField != null) {
 			excludeField.refresh();
 		}
-		
+
 		updateFieldsVisibility();
 	}
 
 	private void updateFieldsVisibility() {
 		int selection = getSelected();
-		
+
 		if ((modes & RANGE) == RANGE) {
 			compositeState(range, selection == RANGE);
-		} 
-		
+		}
+
 		if ((modes & EQUALS) == EQUALS) {
 			compositeState(equals, selection == EQUALS);
-		} 
+		}
 
 		if ((modes & CONFLICTS) == CONFLICTS) {
 			compositeState(conflicts, selection == CONFLICTS);
-		} 
+		}
 		// re-layout and make sure all widgets are visible
 		versions.layout(false);
 	}
@@ -133,6 +133,9 @@ public class VersionControl {
 		}
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public void createContents(Composite client, FormToolkit toolkit) {
 		client.setLayout(new GridLayout(1, false));
 		client.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -145,14 +148,14 @@ public class VersionControl {
 		options.setLayoutData(gd);
 
 		// radio buttons
-		addRadioButtons(options);
+		addRadioButtons(toolkit, options);
 
 		versions = toolkit.createComposite(client);
 		versions.setLayout(new GridLayout(1, false));
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		versions.setLayoutData(gd);
 		addVersionFields(toolkit, versions);
-		
+
 		// refresh();
 	}
 
@@ -164,7 +167,7 @@ public class VersionControl {
 			range.setLayout(new GridLayout(3, false));
 			GridData data = new GridData(SWT.FILL, SWT.TOP, true, true);
 			range.setLayoutData(data);
-			
+
 			minField = new TextField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_MIN,
 					Messages.VersionControl_Minimum);
@@ -206,24 +209,24 @@ public class VersionControl {
 		}
 	}
 
-	protected void addRadioButtons(Composite options) {
+	protected void addRadioButtons(FormToolkit toolkit, Composite options) {
 		if ((modes & EQUALS) == EQUALS) {
-			btnEquals = new Button(options, SWT.RADIO);
-			btnEquals.setText(Messages.VersionControl_2);
+			btnEquals = toolkit.createButton(options,
+					Messages.VersionControl_2, SWT.RADIO);
 			btnEquals.setSelection(true);
 			btnEquals.addSelectionListener(new SelectionChanged());
 			btnEquals.setSelection(true);
 		}
 
 		if ((modes & CONFLICTS) == CONFLICTS) {
-			btnConflict = new Button(options, SWT.RADIO);
-			btnConflict.setText(Messages.VersionControl_3);
+			btnConflict = toolkit.createButton(options,
+					Messages.VersionControl_3, SWT.RADIO);
 			btnConflict.addSelectionListener(new SelectionChanged());
 		}
 
 		if ((modes & RANGE) == RANGE) {
-			btnMatches = new Button(options, SWT.RADIO);
-			btnMatches.setText(Messages.VersionControl_4);
+			btnMatches = toolkit.createButton(options,
+					Messages.VersionControl_4, SWT.RADIO);
 			btnMatches.addSelectionListener(new SelectionChanged());
 		}
 	}
@@ -242,11 +245,11 @@ public class VersionControl {
 
 	class SelectionChanged implements SelectionListener {
 		public void widgetSelected(SelectionEvent e) {
-			 updateFieldsVisibility();
+			updateFieldsVisibility();
 		}
 
 		public void widgetDefaultSelected(SelectionEvent e) {
-			 updateFieldsVisibility();
+			updateFieldsVisibility();
 		}
 	}
 

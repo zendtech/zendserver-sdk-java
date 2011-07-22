@@ -12,9 +12,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -155,17 +155,16 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 					return;
 				}
 
-				BusyIndicator.showWhile(e.display, new Runnable() {
-					public void run() {
-						NewDependencyWizard wizard = new NewDependencyWizard(
-								result);
-						WizardDialog dialog = new WizardDialog(e.display
-								.getActiveShell(), wizard);
-						dialog.create();
-						// SWTUtil.setDialogSize(dialog, 400, 450);
-						dialog.open();
-					}
-				});
+				NewDependencyWizard wizard = new NewDependencyWizard(
+						result);
+				WizardDialog dialog = new WizardDialog(e.display
+						.getActiveShell(), wizard);
+				dialog.create();
+				// SWTUtil.setDialogSize(dialog, 400, 450);
+				dialog.open();
+				if (dialog.getReturnCode() == Window.CANCEL) {
+					return;
+				}
 
 				Feature feature = DeploymentDescriptorFactory
 						.getFeature(result);

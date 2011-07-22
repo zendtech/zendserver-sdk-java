@@ -1,8 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -29,7 +27,7 @@ public class DirectiveDependencyDetailsPage extends SectionDetailPage {
 		isRefresh = true;
 		try {
 			String str = input.get(DeploymentDescriptorPackage.DEPENDENCY_NAME);
-			nameText.setText(str == null ? "" : str); //$NON-NLS-1$
+			// nameText.setText(str == null ? "" : str); //$NON-NLS-1$
 			version.refresh();
 		} finally {
 			isRefresh = false;
@@ -60,20 +58,14 @@ public class DirectiveDependencyDetailsPage extends SectionDetailPage {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		directive.setLayoutData(gd);
 
-		toolkit.createLabel(directive,
-				Messages.DirectiveDependencyDetailsPage_Directive);
-		nameText = new Combo(directive, SWT.NONE);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalSpan = 2;
-		nameText.setLayoutData(gd);
-		nameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh)
-					return;
-				String txt = ((Combo) e.widget).getText();
-				nameChange("".equals(txt) ? null : txt); //$NON-NLS-1$
-			}
-		});
+		PHPDirectivesProvider provider = new PHPDirectivesProvider();
+		provider.init();
+		final Composite hint = toolkit.createComposite(directive);		
+		hint.setLayout(new GridLayout(3, false));
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, true);
+		hint.setLayoutData(data);
+		final TextAssistField field = new TextAssistField(null, null, Messages.DirectiveDependencyDetailsPage_Directive, provider.getNames());
+		field.create(hint, toolkit);		
 	}
 
 	protected void createContentAssist() {

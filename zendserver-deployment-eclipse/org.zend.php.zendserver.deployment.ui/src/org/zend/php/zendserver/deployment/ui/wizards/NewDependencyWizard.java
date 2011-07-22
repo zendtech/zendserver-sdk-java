@@ -18,8 +18,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
  */
 public class NewDependencyWizard extends Wizard {
 
-	private final IModelObject element;
-	private NewDependencyMainPage mainPage;
+	private IModelObject element;
 
 	public NewDependencyWizard(Object object) {
 		if (object == null) {
@@ -40,4 +39,14 @@ public class NewDependencyWizard extends Wizard {
 		return true;
 	}
 
+	@Override
+	public boolean performCancel() {
+		// no elements - just quit
+		element = null;
+		return true;
+	}
+
+	public IModelObject getElement() {
+		return element;
+	}
 }
