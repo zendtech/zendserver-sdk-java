@@ -37,7 +37,7 @@ public class DetectOptionUtility {
 
 			// skip general options if specific
 			if (specific && AbstractCommand.class.equals(method.getDeclaringClass())) {
-				break;
+				continue;
 			}
 			
 			if (isString(method) && hasOptionAnnotation(method)) {
