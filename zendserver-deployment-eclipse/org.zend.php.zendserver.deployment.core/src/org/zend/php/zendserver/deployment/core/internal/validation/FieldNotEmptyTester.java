@@ -12,7 +12,8 @@ public class FieldNotEmptyTester extends PropertyTester {
 
 	@Override
 	public String test(Feature f, Object property) {
-		return property == null || "".equals(((String)property).trim())? Messages.bind(Messages.FieldNotEmptyTester_MustNotBeEmpty, f.xpath) : null; //$NON-NLS-1$
+		String fieldName = f.xpath != null ? f.xpath : f.attrName; // TODO need better strategy for getting XML names
+		return property == null || "".equals(((String)property).trim())? Messages.bind(Messages.FieldNotEmptyTester_MustNotBeEmpty, fieldName) : null; //$NON-NLS-1$
 	}
 
 }
