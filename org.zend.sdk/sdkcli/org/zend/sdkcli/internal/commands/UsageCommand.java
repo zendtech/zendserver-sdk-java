@@ -61,7 +61,7 @@ public class UsageCommand implements ICommand {
 		System.out.println("Global options:");
 
 		final Options options = new Options();
-		DetectOptionUtility.addOption(AbstractCommand.class, options, true);
+		DetectOptionUtility.addOption(AbstractCommand.class, options, false);
 
 		for (Object obj : options.getOptions()) {
 			Option o = (Option) obj;

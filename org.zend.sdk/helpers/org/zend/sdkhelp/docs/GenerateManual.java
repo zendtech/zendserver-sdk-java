@@ -72,7 +72,7 @@ public class GenerateManual {
 		Log.getInstance().registerLogger(new CliLogger());
 
 		final Options options = new Options();
-		DetectOptionUtility.addOption(class1, options, true);
+		DetectOptionUtility.addOption(class1, options, false);
 
 		final Collection os = options.getOptions();
 		String[][] blocks = new String[os.size()][];
