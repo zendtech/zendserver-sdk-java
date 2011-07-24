@@ -188,15 +188,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private void addFileToZip(File root, String mappingFolder,
 			IMapping mapping, String tag) throws IOException {
 		if (!model.isExcluded(tag, root.getCanonicalPath())) {
-			if (root.isDirectory()) {
+			if (root.isDirectory() && root.list().length > 0) {
 				File[] children = root.listFiles();
 				for (File child : children) {
 					addFileToZip(child, mappingFolder, mapping, tag);
 				}
 			} else {
 				String location = root.getCanonicalPath();
-				BufferedInputStream in = new BufferedInputStream(
-						new FileInputStream(location), BUFFER);
 				String path = getContainerRelativePath(location);
 				if (mapping != null && mapping.getPath() != null) {
 					path = root.getCanonicalPath();
@@ -211,14 +209,21 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					String destFolder = path.substring(position);
 					path = mappingFolder + destFolder;
 				}
+				if (root.isDirectory()) {
+					path += "/";
+				}
 				ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
 				out.putNextEntry(entry);
-				int count;
-				byte data[] = new byte[BUFFER];
-				while ((count = in.read(data, 0, BUFFER)) != -1) {
-					out.write(data, 0, count);
+				if (!root.isDirectory()) {
+					int count;
+					byte data[] = new byte[BUFFER];
+					BufferedInputStream in = new BufferedInputStream(new FileInputStream(location),
+							BUFFER);
+					while ((count = in.read(data, 0, BUFFER)) != -1) {
+						out.write(data, 0, count);
+					}
+					in.close();
 				}
-				in.close();
 				notifier.statusChanged(new BasicStatus(StatusCode.PROCESSING,
 						"Package creation", "Creating deployment package...", 1));
 			}
