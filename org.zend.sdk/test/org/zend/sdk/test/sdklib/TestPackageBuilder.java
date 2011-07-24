@@ -140,7 +140,7 @@ public class TestPackageBuilder extends AbstractTest {
 		assertEquals(StatusCode.STARTING, statuses.get(0).getCode());
 		assertEquals(StatusCode.STOPPING, statuses.get(statuses.size() - 1)
 				.getCode());
-		assertEquals(2, statuses.size() - 2);
+		assertEquals(3, statuses.size() - 2);
 	}
 
 	public void unzip(File packageFile) {

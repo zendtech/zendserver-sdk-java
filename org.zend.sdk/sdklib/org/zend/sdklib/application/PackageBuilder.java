@@ -188,7 +188,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private void addFileToZip(File root, String mappingFolder,
 			IMapping mapping, String tag) throws IOException {
 		if (!model.isExcluded(tag, root.getCanonicalPath())) {
-			if (root.isDirectory() && root.list().length > 0) {
+			if (root.isDirectory() && !isExcludeAllChildren(tag, root)) {
 				File[] children = root.listFiles();
 				for (File child : children) {
 					addFileToZip(child, mappingFolder, mapping, tag);
@@ -228,6 +228,16 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						"Package creation", "Creating deployment package...", 1));
 			}
 		}
+	}
+
+	private boolean isExcludeAllChildren(String tag, File root) throws IOException {
+		File[] children = root.listFiles();
+		for (File file : children) {
+			if (!model.isExcluded(tag, file.getCanonicalPath())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private String getContainerRelativePath(String path) {
