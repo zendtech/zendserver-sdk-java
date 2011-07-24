@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.ui.wizards;
+package org.zend.php.zendserver.deployment.core.sdk;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.zend.sdklib.event.IStatusChangeEvent;
