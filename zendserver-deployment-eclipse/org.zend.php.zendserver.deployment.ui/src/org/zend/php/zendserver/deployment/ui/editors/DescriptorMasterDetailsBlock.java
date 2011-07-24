@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -17,6 +18,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -132,7 +134,9 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		});
 		viewer.setContentProvider(new MasterContentProvider());
-		DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(new DeploymentDescriptorLabelProvider(), new DeploymentDescriptorLabelDecorator(editor));
+		DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(
+				new DeploymentDescriptorLabelProvider(),
+				new DeploymentDescriptorLabelDecorator(editor));
 		viewer.setLabelProvider(labelProvider);
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
@@ -155,12 +159,11 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 					return;
 				}
 
-				NewDependencyWizard wizard = new NewDependencyWizard(
-						result);
+				NewDependencyWizard wizard = new NewDependencyWizard(result);
 				WizardDialog dialog = new WizardDialog(e.display
 						.getActiveShell(), wizard);
 				dialog.create();
-				// SWTUtil.setDialogSize(dialog, 400, 450);
+				setDialogSize(dialog, 420, 300);
 				dialog.open();
 				if (dialog.getReturnCode() == Window.CANCEL) {
 					return;
@@ -252,4 +255,13 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		detailsPart.refresh();
 		updateButtonsEnabledState();
 	}
+
+	public static void setDialogSize(Dialog dialog, int width, int height) {
+		Point computedSize = dialog.getShell().computeSize(SWT.DEFAULT,
+				SWT.DEFAULT);
+		width = Math.max(computedSize.x, width);
+		height = Math.max(computedSize.y, height);
+		dialog.getShell().setSize(width, height);
+	}
+
 }

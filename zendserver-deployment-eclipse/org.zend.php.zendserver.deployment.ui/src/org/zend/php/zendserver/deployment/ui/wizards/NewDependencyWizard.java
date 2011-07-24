@@ -25,6 +25,7 @@ public class NewDependencyWizard extends Wizard {
 			throw new IllegalArgumentException();
 		}
 		this.element = (IModelObject) object;
+		setWindowTitle(Messages.NewDependencyWizard_0);
 	}
 
 	@Override

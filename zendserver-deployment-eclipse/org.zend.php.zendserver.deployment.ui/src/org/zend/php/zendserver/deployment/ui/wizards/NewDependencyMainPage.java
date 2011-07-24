@@ -16,18 +16,15 @@ import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPa
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.editors.DetailsPageProvider;
 import org.zend.php.zendserver.deployment.ui.editors.DependencyDetailsPage;
+import org.zend.php.zendserver.deployment.ui.editors.DetailsPageProvider;
 
 public class NewDependencyMainPage extends WizardPage {
 
 	private final IModelObject element;
 
 	public NewDependencyMainPage(IModelObject element) {
-		super("Title", "Title", Activator
-				.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-		setMessage("Instructions");
-
+		super("", "", Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP)); //$NON-NLS-1$ //$NON-NLS-2$
 		this.element = element;
 	}
 
@@ -38,7 +35,6 @@ public class NewDependencyMainPage extends WizardPage {
 				.getPage(element.getClass());
 		element.set(DeploymentDescriptorPackage.DEPENDENCY_MIN, ""); //$NON-NLS-1$
 		element.addListener(new IDescriptorChangeListener() {
-
 			public void descriptorChanged(ChangeEvent event) {
 				setPageComplete(validate(element));
 			}
@@ -54,6 +50,8 @@ public class NewDependencyMainPage extends WizardPage {
 		page.createContents(form.getForm().getBody());
 		page.setFormInput(element);
 
+		setTitle(page.sectionTitle);
+		setMessage(page.sectionDescription);
 		setControl(parent);
 		setPageComplete(false);
 	}

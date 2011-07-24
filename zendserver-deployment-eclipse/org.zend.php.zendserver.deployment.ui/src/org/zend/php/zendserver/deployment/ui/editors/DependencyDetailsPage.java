@@ -39,8 +39,8 @@ public abstract class DependencyDetailsPage implements IDetailsPage {
 
 	private String nameLabel;
 
-	private String sectionTitle;
-	private String sectionDescription;
+	public String sectionTitle;
+	public String sectionDescription;
 
 	// provider of proposal list (null if name is not required)
 	private IProposalProvider provider;
