@@ -37,9 +37,11 @@ public class EclipseMappingModelLoader extends PropertiesBasedMappingLoader {
 	@Override
 	public void store(IMappingModel model, File output)
 			throws IOException {
-		byte[] result = getByteArray(model);
 		if (document != null) {
+			byte[] result = getByteArray(model);
 			document.set(new String(result));
+		} else {
+			super.store(model, output);
 		}
 	}
 
