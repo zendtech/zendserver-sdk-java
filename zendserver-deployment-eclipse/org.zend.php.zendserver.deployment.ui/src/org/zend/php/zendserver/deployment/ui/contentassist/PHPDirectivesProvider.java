@@ -11,7 +11,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
  * PHP Directives from http://www.php.net/manual/en/ini.list.php
  *
  */
-public class PHPDirectivesProvider {
+public class PHPDirectivesProvider implements IProposalProvider {
 
 	public static class PHPDirective {
 		public String name;
@@ -27,6 +27,9 @@ public class PHPDirectivesProvider {
 	
 	private static List<PHPDirective> directives;
 	
+	/* (non-Javadoc)
+	 * @see org.zend.php.zendserver.deployment.ui.contentassist.ProposalProvider#init()
+	 */
 	public void init() {
 		if (directives == null) {
 			directives = new ArrayList<PHPDirective>();
@@ -48,6 +51,9 @@ public class PHPDirectivesProvider {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.zend.php.zendserver.deployment.ui.contentassist.ProposalProvider#getNames()
+	 */
 	public String[] getNames() {
 		String[] names = new String[directives.size()];
 		int i = 0;

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.zend.php.zendserver.deployment.ui.Activator;
 
-public class ZendComponentsProvider {
+public class ZendComponentsProvider implements IProposalProvider  {
 
 	public static class ZSComponent {
 		public String name;

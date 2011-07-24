@@ -11,7 +11,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
  * http://files.zend.com/help/Zend-Server-Community-Edition/zend_server_ce_php_5.3_extensions.htm
  *
  */
-public class PHPExtensionsProvider {
+public class PHPExtensionsProvider implements IProposalProvider {
 
 	public static class PHPExtension {
 		public String name;

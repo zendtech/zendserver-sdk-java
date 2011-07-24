@@ -10,27 +10,59 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.ui.contentassist.IProposalProvider;
 
-public abstract class SectionDetailPage implements IDetailsPage {
+public abstract class DependencyDetailsPage implements IDetailsPage {
 
 	protected IManagedForm mform;
-	protected IModelObject input;
+
 	protected VersionControl version;
+	private TextAssistField name;
 
-	protected boolean addSection = true;
+	protected IModelObject input;
 
-	protected boolean addComponent = false;
+	protected boolean isSection = true;
+	protected boolean isNameRequired = false;
 
-	public void setNoSection() {
-		addSection = false;
+	private String nameLabel;
+
+	private String sectionTitle;
+	private String sectionDescription;
+
+	// provider of proposal list (null if name is not required)
+	private IProposalProvider provider;
+
+	public DependencyDetailsPage(String sectionTitle, String sectionDescription) {
+		this.sectionTitle = sectionTitle;
+		this.sectionDescription = sectionDescription;
+	}
+
+	/**
+	 * @return modes this Details page can provide (see {@link VersionControl})
+	 */
+	public abstract int getVersionModes();
+
+	public void setNameRequired(String nameLabel, IProposalProvider provider) {
+		this.isNameRequired = true;
+		this.nameLabel = nameLabel;
+		this.provider = provider;
+	}
+
+	public void setSection(boolean isSection) {
+		this.isSection = isSection;
 	}
 
 	public void initialize(IManagedForm form) {
@@ -49,6 +81,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 
 	public boolean setFormInput(Object input) {
 		selectionChanged(null, new StructuredSelection(input));
+		refresh();
 		return true;
 	}
 
@@ -62,15 +95,20 @@ public abstract class SectionDetailPage implements IDetailsPage {
 
 	public void refresh() {
 		version.refresh();
+		if (name != null)
+			name.refresh();
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
 			input = (IModelObject) ssel.getFirstElement();
-		} else
+		} else {
 			input = null;
+		}
 		version.setInput(input);
+		if (name != null)
+			name.setInput(input);
 		refresh();
 	}
 
@@ -78,7 +116,7 @@ public abstract class SectionDetailPage implements IDetailsPage {
 		FormToolkit toolkit = mform.getToolkit();
 		Composite s = parent;
 
-		if (addSection) {
+		if (isSection) {
 			// create table layout
 			TableWrapLayout layout = new TableWrapLayout();
 			layout.topMargin = 0;
@@ -92,18 +130,19 @@ public abstract class SectionDetailPage implements IDetailsPage {
 		}
 
 		Composite general = s;
-		if (addComponent) {
-			general = addSection ? toolkit.createComposite(s) : s;
+		if (isNameRequired) {
+			general = isSection ? toolkit.createComposite(s) : s;
 			addComponent(toolkit, general);
 		}
 
-		Composite client = addSection ? toolkit.createComposite(general)
+		Composite client = isSection ? toolkit.createComposite(general)
 				: general;
+		version = new VersionControl(getVersionModes(), input);
 		version.createContents(client, toolkit);
 
-		if (addSection) {
+		if (isSection) {
 			// safe to cast into section
-			((Section) s).setClient(addComponent ? general : client);
+			((Section) s).setClient(isNameRequired ? general : client);
 		}
 	}
 
@@ -114,7 +153,17 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	 * @param toolkit
 	 * @return the new section
 	 */
-	protected abstract Section addSection(Composite parent, FormToolkit toolkit);
+	protected Section addSection(Composite parent, FormToolkit toolkit) {
+		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION
+				| Section.TITLE_BAR);
+		s1.setText(sectionTitle);
+		s1.setDescription(sectionDescription);
+		s1.marginWidth = 5;
+		s1.marginHeight = 5;
+		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+				TableWrapData.FILL_GRAB));
+		return s1;
+	}
 
 	/**
 	 * Adds a selection component, empty by default
@@ -124,5 +173,23 @@ public abstract class SectionDetailPage implements IDetailsPage {
 	 * @return
 	 */
 	protected void addComponent(FormToolkit toolkit, Composite general) {
+		general.setLayout(new GridLayout(1, true));
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		general.setLayoutData(gd);
+
+		Composite directive = toolkit.createComposite(general);
+		directive.setLayout(new GridLayout(3, false));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		directive.setLayoutData(gd);
+
+		provider.init();
+		final Composite hint = toolkit.createComposite(directive);
+		hint.setLayout(new GridLayout(3, false));
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, true);
+		hint.setLayoutData(data);
+		name = new TextAssistField(input,
+				DeploymentDescriptorPackage.DEPENDENCY_NAME, nameLabel,
+				provider.getNames());
+		name.create(hint, toolkit);
 	}
 }

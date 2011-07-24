@@ -54,26 +54,17 @@ public class VersionControl {
 	}
 
 	public void refresh() {
+		int s = getInputSelection(input);
 
 		if (equalsField != null) {
-			btnEquals
-					.setSelection(input
-							.get(DeploymentDescriptorPackage.DEPENDENCY_EQUALS) != null);
 			equalsField.refresh();
 		}
 
 		if (conflictsField != null) {
-			btnConflict
-					.setSelection(input
-							.get(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS) != null);
 			conflictsField.refresh();
 		}
 
 		if (minField != null) {
-			btnMatches
-					.setSelection(input
-							.get(DeploymentDescriptorPackage.DEPENDENCY_MAX) != null
-							|| input.get(DeploymentDescriptorPackage.DEPENDENCY_MIN) != null);
 			minField.refresh();
 		}
 
@@ -85,7 +76,31 @@ public class VersionControl {
 			excludeField.refresh();
 		}
 
+		// update ui according to selection
+		updateSelection(s);
+
+		// update other UI components
 		updateFieldsVisibility();
+	}
+
+	private void updateSelection(int s) {
+		if (btnEquals != null)
+			btnEquals.setSelection(s == EQUALS);
+
+		if (btnConflict != null)
+			btnConflict.setSelection(s == CONFLICTS);
+
+		if (btnMatches != null)
+			btnMatches.setSelection(s == RANGE);
+	}
+
+	private int getInputSelection(IModelObject input2) {
+		if (input.get(DeploymentDescriptorPackage.DEPENDENCY_EQUALS) != null) {
+			return EQUALS;
+		} else if (input.get(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS) != null) {
+			return CONFLICTS;
+		}
+		return RANGE;
 	}
 
 	private void updateFieldsVisibility() {

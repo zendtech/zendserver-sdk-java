@@ -17,7 +17,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.editors.DetailsPageProvider;
-import org.zend.php.zendserver.deployment.ui.editors.SectionDetailPage;
+import org.zend.php.zendserver.deployment.ui.editors.DependencyDetailsPage;
 
 public class NewDependencyMainPage extends WizardPage {
 
@@ -34,35 +34,33 @@ public class NewDependencyMainPage extends WizardPage {
 	public void createControl(Composite parent) {
 		final DetailsPageProvider detailsPageProvider = new DetailsPageProvider(
 				null, null);
-		final SectionDetailPage page = (SectionDetailPage) detailsPageProvider
+		final DependencyDetailsPage page = (DependencyDetailsPage) detailsPageProvider
 				.getPage(element.getClass());
-		element.set(DeploymentDescriptorPackage.DEPENDENCY_MIN, "");
+		element.set(DeploymentDescriptorPackage.DEPENDENCY_MIN, ""); //$NON-NLS-1$
 		element.addListener(new IDescriptorChangeListener() {
-			
+
 			public void descriptorChanged(ChangeEvent event) {
 				setPageComplete(validate(element));
 			}
 		});
-		
+
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.setBackground(parent.getBackground());
-		
-		final ManagedForm form = new ManagedForm(toolkit, toolkit.createScrolledForm(parent));
+
+		final ManagedForm form = new ManagedForm(toolkit,
+				toolkit.createScrolledForm(parent));
 		page.initialize(form);
-		page.setNoSection();
+		page.setSection(false);
 		page.createContents(form.getForm().getBody());
 		page.setFormInput(element);
-		
-		
+
 		setControl(parent);
 		setPageComplete(false);
 	}
-	
+
 	protected boolean validate(IModelObject element) {
 		// Validate element here
 		return true;
 	}
 
-	
-	
 }
