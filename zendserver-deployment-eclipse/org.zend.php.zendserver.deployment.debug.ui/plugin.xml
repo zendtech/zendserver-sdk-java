@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=testing">
+         <control
+               class="org.zend.php.zendserver.deployment.debug.ui.contributions.RunApplicationContribution">
+         </control>
+         <control
+               class="org.zend.php.zendserver.deployment.debug.ui.contributions.DebugApplicationContribution">
+         </control>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.LaunchApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+            name="Launch PHP Application">
+      </command>
+   </extension>
+
+</plugin>
