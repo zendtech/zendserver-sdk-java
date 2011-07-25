@@ -70,10 +70,10 @@
                class="org.zend.php.zendserver.deployment.ui.contributions.RunApplicationContribution">
          </control>
          <control
-               class="org.zend.php.zendserver.deployment.ui.contributions.PHPUnitTestContribution">
+               class="org.zend.php.zendserver.deployment.ui.contributions.DebugContribution">
          </control>
          <control
-               class="org.zend.php.zendserver.deployment.ui.contributions.DebugContribution">
+               class="org.zend.php.zendserver.deployment.ui.contributions.PHPUnitTestContribution">
          </control>
       </menuContribution>
    </extension>
