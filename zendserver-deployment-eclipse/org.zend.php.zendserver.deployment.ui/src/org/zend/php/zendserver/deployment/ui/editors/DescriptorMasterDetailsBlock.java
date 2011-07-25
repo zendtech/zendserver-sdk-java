@@ -266,6 +266,9 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
 	public void showMarkers() {
 		viewer.refresh();
-		((DescriptorDetailsPage)detailsPart.getCurrentPage()).showMarkers();
+		DescriptorDetailsPage page = ((DescriptorDetailsPage)detailsPart.getCurrentPage());
+		if (page != null) {
+			page.showMarkers();
+		}
 	}
 }

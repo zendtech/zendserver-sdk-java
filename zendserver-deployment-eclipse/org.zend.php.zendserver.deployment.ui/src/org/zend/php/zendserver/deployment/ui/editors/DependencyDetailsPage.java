@@ -44,7 +44,8 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 	// provider of proposal list (null if name is not required)
 	private IProposalProvider provider;
 
-	public DependencyDetailsPage(String sectionTitle, String sectionDescription) {
+	public DependencyDetailsPage(DeploymentDescriptorEditor editor, String sectionTitle, String sectionDescription) {
+		super(editor);
 		this.sectionTitle = sectionTitle;
 		this.sectionDescription = sectionDescription;
 	}

@@ -2,10 +2,12 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
@@ -15,7 +17,7 @@ import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDe
  */
 public class FieldsContainer {
 
-	private Map<Feature, EditorField> fields = new HashMap<Feature, EditorField>();
+	private Map<Feature, EditorField> fields = new LinkedHashMap<Feature, EditorField>();
 
 	public EditorField add(EditorField field) {
 		fields.put(field.getKey(), field);
@@ -56,6 +58,22 @@ public class FieldsContainer {
 
 	public Collection<Feature> keySet() {
 		return fields.keySet();
+	}
+
+	public void refresh() {
+		for (EditorField e : fields.values()) {
+			e.refresh();
+		}
+	}
+
+	public Collection<EditorField> fields() {
+		return fields.values();
+	}
+
+	public void setInput(IModelObject input) {
+		for (EditorField e : fields.values()) {
+			e.setInput(input);
+		}
 	}
 	
 }

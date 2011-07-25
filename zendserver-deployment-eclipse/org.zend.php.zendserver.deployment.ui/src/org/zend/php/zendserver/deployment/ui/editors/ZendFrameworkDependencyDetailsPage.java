@@ -4,8 +4,8 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class ZendFrameworkDependencyDetailsPage extends DependencyDetailsPage {
 
-	public ZendFrameworkDependencyDetailsPage() {
-		super(Messages.ZendFrameworkDependencyDetailsPage_ZFDepDetails,
+	public ZendFrameworkDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+		super(editor, Messages.ZendFrameworkDependencyDetailsPage_ZFDepDetails,
 				Messages.ZendFrameworkDependencyDetailsPage_ZFDepVersion);
 	}
 

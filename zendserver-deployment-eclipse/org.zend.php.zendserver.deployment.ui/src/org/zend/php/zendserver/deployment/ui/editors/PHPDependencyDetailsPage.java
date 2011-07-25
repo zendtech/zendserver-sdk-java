@@ -4,8 +4,8 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class PHPDependencyDetailsPage extends DependencyDetailsPage {
 
-	public PHPDependencyDetailsPage() {
-		super(Messages.PHPDependencyDetailsPage_PHPDepDetails,
+	public PHPDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+		super(editor, Messages.PHPDependencyDetailsPage_PHPDepDetails,
 				Messages.PHPDependencyDetailsPage_Version);
 	}
 

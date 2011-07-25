@@ -5,8 +5,8 @@ import org.zend.php.zendserver.deployment.ui.contentassist.ZendComponentsProvide
 
 public class ZendComponentDependencyDetailsPage extends DependencyDetailsPage {
 
-	public ZendComponentDependencyDetailsPage() {
-		super(Messages.ZendComponentDependencyDetailsPage_Details,
+	public ZendComponentDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+		super(editor, Messages.ZendComponentDependencyDetailsPage_Details,
 				Messages.ZendComponentDependencyDetailsPage_SpecifyDetails);
 
 		setNameRequired(Messages.ZendComponentDependencyDetailsPage_Name,

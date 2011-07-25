@@ -9,8 +9,8 @@ import org.zend.php.zendserver.deployment.ui.contentassist.PHPDirectivesProvider
 
 public class DirectiveDependencyDetailsPage extends DependencyDetailsPage {
 
-	public DirectiveDependencyDetailsPage() {
-		super(
+	public DirectiveDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+		super(editor, 
 				Messages.DirectiveDependencyDetailsPage_DirectiveDependencyDetails,
 				Messages.DirectiveDependencyDetailsPage_SpecifyDirectiveProperties);
 		setNameRequired(Messages.DirectiveDependencyDetailsPage_Directive,

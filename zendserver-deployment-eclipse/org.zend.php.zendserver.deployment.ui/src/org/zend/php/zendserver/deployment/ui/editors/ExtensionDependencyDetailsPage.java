@@ -5,8 +5,8 @@ import org.zend.php.zendserver.deployment.ui.contentassist.PHPExtensionsProvider
 
 public class ExtensionDependencyDetailsPage extends DependencyDetailsPage {
 
-	public ExtensionDependencyDetailsPage() {
-		super(
+	public ExtensionDependencyDetailsPage(DeploymentDescriptorEditor editor) {
+		super(editor, 
 				Messages.ExtensionDependencyDetailsPage_extensionDependencyDetails,
 				Messages.ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails);
 		

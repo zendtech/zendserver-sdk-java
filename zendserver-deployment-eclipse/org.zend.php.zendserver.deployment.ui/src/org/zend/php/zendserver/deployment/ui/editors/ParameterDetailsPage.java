@@ -1,12 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -16,42 +12,26 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.IDetailsPage;
-import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
-import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
-import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
 
-public class ParameterDetailsPage implements IDetailsPage {
-
-	private DeploymentDescriptorEditor editor;
+public class ParameterDetailsPage extends DescriptorDetailsPage {
 	
 	private IManagedForm mform;
-	private IParameter input;
 	
-	private FieldsContainer fields = new FieldsContainer();
-	private EditorField id;
-	private EditorField display;
 	private EditorField defaultValue;
 	private EditorField defaultCombo;
 	private Text validationText;
-	private CheckboxField required;
-	private CheckboxField readonly;
-	private ComboField type;
 	private ComboField identical;
-	private EditorField description;
 
 	private boolean isRefresh;
 
@@ -60,32 +40,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 	private Section section;
 	
 	public ParameterDetailsPage(DeploymentDescriptorEditor editor) {
-		this.editor = editor;
-		
-		id = addField(new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id));
-		display = addField(new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display));
-		defaultValue = addField(new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
-		defaultCombo = addField(new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
-		description = addField(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
-		type = (ComboField) addField(new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type));
-		type.setItems(new String[] {
-				IParameter.CHOICE,
-				IParameter.STRING,
-				IParameter.PASSWORD,
-				IParameter.EMAIL,
-				IParameter.CHECKBOX,
-				IParameter.NUMBER,
-				IParameter.HOSTNAME
-		});
-		identical = (ComboField) addField(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical));
-		required = (CheckboxField) addField(new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required));
-		readonly = (CheckboxField) addField(new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly));
+		super(editor);
 	}
 	
-	private EditorField addField(EditorField field) {
-		return fields.add(field);
-	}
-
 	public void initialize(IManagedForm form) {
 		this.mform = form;
 	}
@@ -105,24 +62,16 @@ public class ParameterDetailsPage implements IDetailsPage {
 		return false;
 	}
 
-	public void setFocus() {
-		id.setFocus();
-	}
-
 	public boolean isStale() {
 		return false;
 	}
 
 	public void refresh() {
+		super.refresh();
+		
 		isRefresh = true;
 		try {
-			id.refresh();
-			display.refresh();
-			defaultValue.refresh();
-			defaultCombo.refresh();
-			required.refresh();
-			readonly.refresh();
-			List<String> validValues = input.getValidValues();
+			List<String> validValues = ((IParameter)input).getValidValues();
 			if (validValues != null) {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < validValues.size(); i++) {
@@ -132,56 +81,11 @@ public class ParameterDetailsPage implements IDetailsPage {
 			} else {
 				validationText.setText(""); //$NON-NLS-1$
 			}
-			type.refresh();
-			identical.refresh();
-			description.refresh();
 			refreshParametersList();
-			validate();
 			showChoiceWidgets();
 		} finally {
 			isRefresh = false;
 		}
-	}
-
-	private void validate() {
-		IDeploymentDescriptor imc = editor.getModel();
-		int index = -1;
-		if (imc != null) {
-			Feature f = DeploymentDescriptorFactory.getFeature(input);
-			index = imc.getChildren(f).indexOf(input);
-		}
-		
-		List<Feature> properties = Arrays.asList(input.getPropertyNames());
-		Map<Feature, FormDecoration> decorations = null;
-		if (index != -1) {
-			decorations = editor.getDecorationsForFeatures(properties, index);
-		} else {
-			decorations = editor.getDecorationsForFeatures(properties);
-		}
-		
-		List<Feature> toRemove = new ArrayList<Feature>(properties);
-		toRemove.removeAll(decorations.keySet());
-		fields.refreshMarkers(decorations, toRemove);
-	}
-
-	public void selectionChanged(IFormPart part, ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection)selection;
-		if (ssel.size()==1) {
-			input = (IParameter)ssel.getFirstElement();
-		}
-		else
-			input = null;
-		
-		id.setInput(input);
-		defaultValue.setInput(input);
-		readonly.setInput(input);
-		required.setInput(input);
-		display.setInput(input);
-		description.setInput(input);
-		defaultCombo.setInput(input);
-		type.setInput(input);
-		identical.setInput(input);
-		refresh();
 	}
 
 	public void createContents(Composite parent) {
@@ -204,22 +108,37 @@ public class ParameterDetailsPage implements IDetailsPage {
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		section.setClient(client);
 		
+		EditorField id = fields.add(new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id));
 		id.create(client, toolkit);
 		((GridData)id.getText().getLayoutData()).widthHint = 100;
 		
+		ComboField type = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type));
+		type.setItems(new String[] {
+				IParameter.CHOICE,
+				IParameter.STRING,
+				IParameter.PASSWORD,
+				IParameter.EMAIL,
+				IParameter.CHECKBOX,
+				IParameter.NUMBER,
+				IParameter.HOSTNAME
+		});
 		type.create(client, toolkit);
 		((GridData)type.getCombo().getLayoutData()).widthHint = 100;
 		
 		toolkit.createLabel(client, ""); //$NON-NLS-1$
 		
+		EditorField required = (CheckboxField) fields.add(new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required));
 		required.create(client, toolkit);
 		
+		EditorField display = fields.add(new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display));
 		display.create(client, toolkit);
 		((GridData)display.getText().getLayoutData()).widthHint = 100;
 		
+		defaultValue = fields.add(new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
 		defaultValue.create(client, toolkit);
 		((GridData)defaultValue.getText().getLayoutData()).widthHint = 100;
 		
+		defaultCombo = fields.add(new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
 		defaultCombo.create(client, toolkit);
 		
 		validationTextLabel = toolkit.createLabel(client, Messages.ParameterDetailsPage_ValidValues);
@@ -239,8 +158,10 @@ public class ParameterDetailsPage implements IDetailsPage {
 		
 		toolkit.createLabel(client, ""); //$NON-NLS-1$
 		
+		EditorField readonly = (CheckboxField) fields.add(new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly));
 		readonly.create(client, toolkit);
 		
+		identical = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical));
 		identical.create(client, toolkit);
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 			
@@ -256,6 +177,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 			}
 		});
 		
+		EditorField description = fields.add(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
 		description.create(client, toolkit);
 		gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;
@@ -276,7 +198,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 	
 	private void showChoiceWidgets() {
-		boolean showChoiceWidgets = IParameter.CHOICE.equals(input.getType());
+		boolean showChoiceWidgets = IParameter.CHOICE.equals(((IParameter)input).getType());
 		
 		defaultValue.setVisible(!showChoiceWidgets);
 		defaultCombo.setVisible(showChoiceWidgets);
@@ -295,13 +217,9 @@ public class ParameterDetailsPage implements IDetailsPage {
 	protected void validationChange(String text) {
 		String[] newParams = text.split("\n"); //$NON-NLS-1$
 		
-		input.getValidValues().clear();
-		input.getValidValues().addAll(Arrays.asList(newParams));
+		((IParameter)input).getValidValues().clear();
+		((IParameter)input).getValidValues().addAll(Arrays.asList(newParams));
 		
 		((ComboField)defaultCombo).setItems(newParams);
-	}
-	
-	protected void descriptionChange(String text) {
-		input.setDescription(text);
 	}
 }
