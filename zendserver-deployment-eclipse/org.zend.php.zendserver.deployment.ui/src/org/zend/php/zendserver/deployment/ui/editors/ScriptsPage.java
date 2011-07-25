@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,6 +47,15 @@ public class ScriptsPage extends DescriptorEditorPage {
 	public void refresh() {
 		variablesBlock.refresh();
 		scripts.refresh();
+	}
+	
+	@Override
+	public void updateMarkers(IMarkerDelta[] markerDeltas) {
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				variablesBlock.refresh(); // TODO update only markers!
+			}
+		});
 	}
 
 	private final class ParametersVariablesBlock extends

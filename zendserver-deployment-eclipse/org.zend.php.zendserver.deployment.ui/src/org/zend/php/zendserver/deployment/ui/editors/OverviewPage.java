@@ -29,8 +29,6 @@ import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 
 public class OverviewPage extends DescriptorEditorPage {
 
-	private static final String MENU_TESTING = "toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=testing"; //$NON-NLS-1$
-	
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
 
 	private TextField name;
@@ -205,7 +203,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		};
 		contributionManager.add(new GroupMarker("testing")); //$NON-NLS-1$
 		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
-		service.populateContributionManager(contributionManager, MENU_TESTING);
+		service.populateContributionManager(contributionManager, DeploymentDescriptorEditor.TOOLBAR_LOCATION_URI);
 		contributionManager.update(false);
 	}
 

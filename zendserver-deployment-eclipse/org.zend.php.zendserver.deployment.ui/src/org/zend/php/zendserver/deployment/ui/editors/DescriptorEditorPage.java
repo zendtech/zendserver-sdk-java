@@ -9,21 +9,23 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
-import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
-import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
-import org.zend.php.zendserver.deployment.ui.actions.RunApplicationAction;
 
 /**
  * Descriptor editor form page, capable of auto-refreshing it's contents and handling markers.
  */
 public abstract class DescriptorEditorPage extends FormPage {
+
+	private static final String HEAD = "head"; //$NON-NLS-1$
 
 	private Map<Feature, TextField> fields = new HashMap<Feature, TextField>();
 
@@ -130,9 +132,9 @@ public abstract class DescriptorEditorPage extends FormPage {
 		managedForm.getToolkit().decorateFormHeading(form.getForm());
 		form.setText(getTitle());
 		IToolBarManager mgr = form.getToolBarManager();
-		mgr.add(new RunApplicationAction());
-		mgr.add(new DeployAppInCloudAction());
-		mgr.add(new ExportApplicationAction(editor.getProject()));
+		mgr.add(new GroupMarker(HEAD));
+		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager((ContributionManager) mgr, DeploymentDescriptorEditor.TOOLBAR_LOCATION_URI);
 		
 		final String helpContextID = getHelpResource();
 		if (helpContextID != null) {

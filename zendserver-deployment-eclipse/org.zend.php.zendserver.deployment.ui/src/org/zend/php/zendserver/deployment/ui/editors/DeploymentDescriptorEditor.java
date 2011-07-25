@@ -55,6 +55,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	public static final String ID = "org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"; //$NON-NLS-1$
 
+	public static final String TOOLBAR_LOCATION_URI = "toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"; //$NON-NLS-1$
+	
 	private SourcePage descriptorSourcePage;
 	private SourcePage propertiesSourcePage;
 	
@@ -316,7 +318,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		if (page instanceof DescriptorEditorPage) {
 			((DescriptorEditorPage) page).updateMarkers(markerDeltas);
 		}
-		
 	}
 
 	private void removeMappingPages() {
