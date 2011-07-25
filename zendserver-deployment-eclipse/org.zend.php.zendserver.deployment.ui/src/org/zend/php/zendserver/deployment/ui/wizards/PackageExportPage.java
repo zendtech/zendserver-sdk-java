@@ -80,6 +80,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private CheckboxTableViewer tableViewer;
 	private List<IProject> initialSelection;
 	private Button overwriteButton;
+	private boolean overwrite;
 
 	protected PackageExportPage() {
 		super("Package Export"); //$NON-NLS-1$
@@ -149,6 +150,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		overwriteButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL));
 		overwriteButton.setSelection(true);
+		overwrite = true;
 
 		setControl(container);
 		validatePage();
@@ -157,6 +159,9 @@ public class PackageExportPage extends WizardPage implements Listener {
 	public void handleEvent(Event e) {
 		if (e.widget == browseButton) {
 			handleDestinationBrowseButtonPressed();
+		}
+		if (e.widget == overwriteButton) {
+			overwrite = overwriteButton.getSelection();
 		}
 		validatePage();
 	}
@@ -178,6 +183,10 @@ public class PackageExportPage extends WizardPage implements Listener {
 		if (initialSelection != null) {
 			this.initialSelection = initialSelection;
 		}
+	}
+
+	public boolean isOverwriteWithoutWarning() {
+		return overwrite;
 	}
 
 	protected void handleDestinationBrowseButtonPressed() {
@@ -268,16 +277,4 @@ public class PackageExportPage extends WizardPage implements Listener {
 		setButtonLayoutData(deselectAll);
 	}
 
-	@Override
-	public void dispose() {
-		// store the final overwrite user's decision
-		overwrite = overwriteButton != null && overwriteButton.getSelection();
-		super.dispose();
-	}
-
-	boolean overwrite;
-
-	public boolean isOverwriteWithoutWarning() {
-		return overwrite;
-	}
 }
