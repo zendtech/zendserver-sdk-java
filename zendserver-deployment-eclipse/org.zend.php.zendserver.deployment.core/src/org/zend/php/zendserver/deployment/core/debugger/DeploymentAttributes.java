@@ -8,7 +8,7 @@ public enum DeploymentAttributes {
 	
 	PROJECT_NAME("projectName"), //$NON-NLS-1$
 	
-	PARAMETERS_PATH("parametersPath"), //$NON-NLS-1$
+	PARAMETERS("userParams"), //$NON-NLS-1$
 	
 	APPLICATION_NAME("applicationName"), //$NON-NLS-1$
 	
