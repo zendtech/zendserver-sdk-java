@@ -174,8 +174,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			public void descriptorChanged(ChangeEvent event) {
 				if (event.target instanceof IDeploymentDescriptor) {
 					handleModelUpdate((IDeploymentDescriptor)event.target);
-					
-					
 				}
 			}
 		});
