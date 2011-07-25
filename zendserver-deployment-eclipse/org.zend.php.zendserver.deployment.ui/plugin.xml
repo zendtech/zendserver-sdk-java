@@ -21,42 +21,6 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.deploy"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <or>
-                     <iterate>
-                        <adapt
-                              type="org.eclipse.core.resources.IFile">
-                        </adapt>
-                        <test
-                              forcePluginActivation="true"
-                              property="propertyTester.deploy.visible">
-                        </test>
-                     </iterate>
-                     <iterate>
-                        <adapt
-                              type="org.eclipse.dltk.core.IScriptProject">
-                        </adapt>
-                        <test
-                              forcePluginActivation="true"
-                              property="propertyTester.deploy.visible">
-                        </test>
-                     </iterate>
-                  </or>
-               </and>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.configureNature"
