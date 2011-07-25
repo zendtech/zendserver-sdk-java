@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -42,7 +41,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
 	private IParameter input;
 	
-	private List<EditorField> fields = new ArrayList<EditorField>();
+	private FieldsContainer fields = new FieldsContainer();
 	private EditorField id;
 	private EditorField display;
 	private EditorField defaultValue;
@@ -84,8 +83,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 	}
 	
 	private EditorField addField(EditorField field) {
-		fields.add(field);
-		return field;
+		return fields.add(field);
 	}
 
 	public void initialize(IManagedForm form) {
@@ -138,14 +136,14 @@ public class ParameterDetailsPage implements IDetailsPage {
 			identical.refresh();
 			description.refresh();
 			refreshParametersList();
-			refreshDecorations();
+			validate();
 			showChoiceWidgets();
 		} finally {
 			isRefresh = false;
 		}
 	}
 
-	private void refreshDecorations() {
+	private void validate() {
 		IDeploymentDescriptor imc = editor.getModel();
 		int index = -1;
 		if (imc != null) {
@@ -153,21 +151,17 @@ public class ParameterDetailsPage implements IDetailsPage {
 			index = imc.getChildren(f).indexOf(input);
 		}
 		
+		List<Feature> properties = Arrays.asList(input.getPropertyNames());
 		Map<Feature, FormDecoration> decorations = null;
 		if (index != -1) {
-			decorations = editor.getDecorationsForFeatures(Arrays.asList(input.getPropertyNames()), index);
+			decorations = editor.getDecorationsForFeatures(properties, index);
 		} else {
-			decorations = editor.getDecorationsForFeatures(Arrays.asList(input.getPropertyNames()));
+			decorations = editor.getDecorationsForFeatures(properties);
 		}
 		
-		for (Entry<Feature, FormDecoration> e : decorations.entrySet()) {
-			Feature feature = e.getKey();
-			for (EditorField field : fields) {
-				if (field.getKey() == feature) {
-					field.setDecoration(e.getValue());
-				}
-			}
-		}
+		List<Feature> toRemove = new ArrayList<Feature>(properties);
+		toRemove.removeAll(decorations.keySet());
+		fields.refreshMarkers(decorations, toRemove);
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {

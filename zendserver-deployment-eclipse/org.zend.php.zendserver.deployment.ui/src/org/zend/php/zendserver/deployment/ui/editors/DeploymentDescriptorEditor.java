@@ -316,7 +316,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private void refreshProblemMarkers(IMarkerDelta[] markerDeltas) {
 		IFormPage page = getActivePageInstance();
 		if (page instanceof DescriptorEditorPage) {
-			((DescriptorEditorPage) page).updateMarkers(markerDeltas);
+			((DescriptorEditorPage) page).showMarkers();
 		}
 	}
 
@@ -397,6 +397,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 
 	public Map<Feature, FormDecoration> getDecorationsForFeatures(Collection<Feature> keyset, int index) {
+		if (keyset.isEmpty()) {
+			return Collections.emptyMap();
+		}
+		
 		IFile file = fModel.getFile();
 		IMarker[] markers;
 		try {

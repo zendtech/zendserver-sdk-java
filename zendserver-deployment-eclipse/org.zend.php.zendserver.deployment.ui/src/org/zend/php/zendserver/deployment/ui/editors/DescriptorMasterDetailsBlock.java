@@ -264,4 +264,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		dialog.getShell().setSize(width, height);
 	}
 
+	public void showMarkers() {
+		viewer.refresh();
+		((DescriptorDetailsPage)detailsPart.getCurrentPage()).showMarkers();
+	}
 }

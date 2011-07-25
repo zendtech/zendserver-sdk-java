@@ -1,14 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IToolBarManager;
@@ -16,7 +10,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
-import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
 
@@ -27,7 +20,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 
 	private static final String HEAD = "head"; //$NON-NLS-1$
 
-	private Map<Feature, TextField> fields = new HashMap<Feature, TextField>();
+	private FieldsContainer fields = new FieldsContainer();
 
 	protected DeploymentDescriptorEditor editor;
 
@@ -52,48 +45,12 @@ public abstract class DescriptorEditorPage extends FormPage {
 	}
 
 	public abstract void refresh();
-
+	
 	public void showMarkers() {
 		Map<Feature, FormDecoration>toShow = editor.getDecorationsForFeatures(fields.keySet());
 		refreshMarkers(toShow, null);
 	}
 	
-	public void updateMarkers(IMarkerDelta[] markerDeltas) {
-		Set<Feature> keyset = fields.keySet();
-		Map<Integer, Feature> featureIds = new HashMap<Integer, Feature>();
-		for (Feature f : keyset) {
-			featureIds.put(f.id, f);
-		}
-
-		Map<Feature, FormDecoration> toShow = new HashMap<Feature, FormDecoration>();
-		List<Feature> toRemove = new ArrayList<Feature>();
-
-		for (IMarkerDelta delta : markerDeltas) {
-			int kind = delta.getKind();
-			int featureId = delta.getAttribute(IncrementalDeploymentBuilder.FEATURE_ID, -1);
-			if (featureId != -1) { 
-				Feature f = featureIds.get(featureId);
-				if (f != null) {
-					if (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED) {
-						toShow.put(f, markerDeltaToDecoration(delta));
-					} else if (kind == IResourceDelta.REMOVED) {
-						toRemove.add(f);
-					}
-				}
-			}
-		}
-		
-		toRemove.removeAll(toShow.keySet());
-		
-		refreshMarkers(toShow, toRemove);
-	}
-	
-	private FormDecoration markerDeltaToDecoration(IMarkerDelta delta) {
-		String message = delta.getAttribute(IMarker.MESSAGE, null);
-		int severity = delta.getAttribute(IMarker.SEVERITY, 0);
-		return new FormDecoration(message, severity);
-	}
-
 	private void refreshMarkers(final Map<Feature, FormDecoration> toShow,
 			final List<Feature> toRemove) {
 		if ((toShow == null || toShow.size() == 0) && (toRemove == null || toRemove.size() == 0)) {
@@ -102,24 +59,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (toRemove != null) {
-					for (Feature feature : toRemove) {
-						TextField field = fields.get(feature);
-						if (field != null) {
-							field.setDecoration(null);
-						}
-					}
-				}
-				
-				if (toShow != null) {
-					for (Map.Entry<Feature, FormDecoration> entry : toShow.entrySet()) {
-						FormDecoration status = entry.getValue();
-						TextField field = fields.get(entry.getKey());
-						if (field != null) {
-							field.setDecoration(status);
-						}
-					}
-				}
+				fields.refreshMarkers(toShow, toRemove);
 			}
 		});
 	}
@@ -154,7 +94,6 @@ public abstract class DescriptorEditorPage extends FormPage {
 	}
 
 	protected TextField addField(TextField field) {
-		fields.put(field.getKey(), field);
-		return field;
+		return (TextField) fields.add(field);
 	}
 }

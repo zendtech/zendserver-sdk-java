@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -25,7 +24,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPa
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.ui.contentassist.IProposalProvider;
 
-public abstract class DependencyDetailsPage implements IDetailsPage {
+public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 
 	protected IManagedForm mform;
 
@@ -132,7 +131,7 @@ public abstract class DependencyDetailsPage implements IDetailsPage {
 		Composite general = s;
 		if (isNameRequired) {
 			general = isSection ? toolkit.createComposite(s) : s;
-			addComponent(toolkit, general);
+			addName(toolkit, general);
 		}
 
 		Composite client = isSection ? toolkit.createComposite(general)
@@ -172,7 +171,7 @@ public abstract class DependencyDetailsPage implements IDetailsPage {
 	 * @param general
 	 * @return
 	 */
-	protected void addComponent(FormToolkit toolkit, Composite general) {
+	protected void addName(FormToolkit toolkit, Composite general) {
 		general.setLayout(new GridLayout(1, true));
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		general.setLayoutData(gd);

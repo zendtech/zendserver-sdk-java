@@ -10,7 +10,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -26,7 +25,7 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
 
-public class VariableDetailsPage implements IDetailsPage {
+public class VariableDetailsPage extends DescriptorDetailsPage {
 
 	private DeploymentDescriptorEditor editor;
 	
