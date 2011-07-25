@@ -5,6 +5,7 @@ import java.net.URL;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -19,6 +20,8 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -152,6 +155,19 @@ public class LaunchApplicationHandler extends AbstractHandler {
 			IResource resource = root.findMember(projectName);
 			if (resource != null) {
 				return resource.getProject();
+			}
+		}
+		return getProjectFromEditor();
+	}
+
+	private IProject getProjectFromEditor() {
+		IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().getActiveEditor();
+		if (activeEditor != null) {
+			IEditorInput editorInput = activeEditor.getEditorInput();
+			IFile descriptor = (IFile) editorInput.getAdapter(IFile.class);
+			if (descriptor != null) {
+				return descriptor.getProject();
 			}
 		}
 		return null;
