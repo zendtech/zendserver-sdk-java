@@ -224,7 +224,7 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 	}
 
 	/**
-	 * Create a text attribute based on the given color, bold, italic,
+	 * Create a control attribute based on the given color, bold, italic,
 	 * strikethrough and underline preference keys.
 	 * 
 	 * @param colorKey
@@ -237,7 +237,7 @@ public abstract class AbstractPropertyScanner extends BufferedRuleBasedScanner {
 	 *            the strikethrough preference key
 	 * @param underlineKey
 	 *            the italic preference key
-	 * @return the created text attribute
+	 * @return the created control attribute
 	 */
 	private TextAttribute createTextAttribute(String colorKey, String boldKey, String italicKey,
 			String strikethroughKey, String underlineKey) {

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
 /**
- * A class to select workspace elements of out a tree structure or by entering name directly in text field. 
+ * A class to select workspace elements of out a tree structure or by entering name directly in control field. 
  *
  */
 public class AnyResourceTreeSelectionDialog extends

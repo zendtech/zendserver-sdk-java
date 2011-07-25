@@ -9,13 +9,16 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
+import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
-public class CheckboxField {
+public class CheckboxField implements EditorField {
 
-	protected Button text;
+	protected Button control;
 	protected String labelTxt;
 	protected IModelObject target;
 	protected Feature key;
@@ -36,7 +39,7 @@ public class CheckboxField {
 		isRefresh = true;
 		try {
 			String value = target != null ? target.get(key) : null;
-			text.setSelection(value != null && Boolean.parseBoolean(value));
+			control.setSelection(value != null && Boolean.parseBoolean(value));
 		} finally {
 			isRefresh = false;
 		}
@@ -48,11 +51,11 @@ public class CheckboxField {
 	}
 	
 	protected void createControls(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createButton(parent, labelTxt, SWT.CHECK);
+		control = toolkit.createButton(parent, labelTxt, SWT.CHECK);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);
-		controlDecoration = new ControlDecoration(text, SWT.LEFT);		
+		control.setLayoutData(gd);
+		controlDecoration = new ControlDecoration(control, SWT.LEFT);		
 	}
 	
 	public void setErrorMessage(String message) {
@@ -78,7 +81,7 @@ public class CheckboxField {
 	}
 	
 	protected void createActions() {
-		text.addSelectionListener(new SelectionAdapter() {
+		control.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (isRefresh) {
 					return;
@@ -96,7 +99,7 @@ public class CheckboxField {
 	}
 
 	public void setFocus() {
-		text.setFocus();
+		control.setFocus();
 	}
 
 	public void setInput(IModelObject input) {
@@ -104,12 +107,31 @@ public class CheckboxField {
 	}
 	
 	public Button getButton() {
-		return text;
+		return control;
 	}
 
 	public void setVisible(boolean visible) {
-		text.setVisible(visible);
-		((GridData)text.getLayoutData()).exclude = visible;
+		control.setVisible(visible);
+		((GridData)control.getLayoutData()).exclude = visible;
+	}
+
+	public Control getText() {
+		return control;
+	}
+	
+	public void setDecoration(FormDecoration value) {
+		if (value == null) {
+			setErrorMessage(null);
+		} else {
+			switch (value.severity) {
+			case (ValidationStatus.ERROR):
+				setErrorMessage(value.message);
+			break;
+			case (ValidationStatus.WARNING):
+				setWarningMessage(value.message);
+			break;
+			}
+		}
 	}
 	
 }

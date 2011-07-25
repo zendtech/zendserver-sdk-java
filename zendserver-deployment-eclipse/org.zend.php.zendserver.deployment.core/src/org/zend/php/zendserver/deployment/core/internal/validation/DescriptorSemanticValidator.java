@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -13,6 +15,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 public class DescriptorSemanticValidator {
 
 	private Map<Feature, PropertyTester[]> testers;
+	private IDocument document;
 	
 	public DescriptorSemanticValidator() {
 		testers = new HashMap<Feature, PropertyTester[]>();
@@ -66,7 +69,17 @@ public class DescriptorSemanticValidator {
 				for (PropertyTester pt : featureTests) {
 					String msg = pt.test(f, children);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(-1, -1, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						int offset = obj.getOffset(f);
+						
+						int line = 0;
+						try {
+							line = document.getLineOfOffset(offset) + 1;
+						} catch (BadLocationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						statuses.add(new ValidationStatus(-1, -1, f.id, line, offset, offset, pt.severity, msg));
 					}
 				}
 			}
@@ -88,14 +101,25 @@ public class DescriptorSemanticValidator {
 				for (PropertyTester pt: featureTests) {
 					String msg = pt.test(f, value);
 					if (msg != null) {
-						statuses.add(new ValidationStatus(objId, objNo, f.id, obj.getLine(f), obj.getChar(f), obj.getLength(f), pt.severity, msg));
+						int offset = obj.getOffset(f);
+						
+						int line = 0;
+						try {
+							line = document.getLineOfOffset(offset) + 1;
+						} catch (BadLocationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						statuses.add(new ValidationStatus(objId, objNo, f.id, line, offset, offset, pt.severity, msg));
 					}
 				}
 			}
 		}
 	}
 	
-	public ValidationStatus[] validate(IModelObject descr) {
+	public ValidationStatus[] validate(IModelObject descr, IDocument document) {
+		this.document = document;
 		List<ValidationStatus> statuses = new ArrayList<ValidationStatus>();
 		validate(-1, -1, descr, statuses);
 		return statuses.toArray(new ValidationStatus[statuses.size()]);

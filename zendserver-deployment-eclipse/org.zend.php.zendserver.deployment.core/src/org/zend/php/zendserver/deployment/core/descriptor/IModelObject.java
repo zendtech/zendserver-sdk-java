@@ -58,9 +58,7 @@ public interface IModelObject {
 	
 	public void setParent(IModelContainer parent);
 
-	int getLine(Feature f);
+	int getOffset(Feature f);
 
-	int getChar(Feature f);
-
-	int getLength(Feature f);
+	void setOffset(Feature f, int intValue);
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -41,7 +42,8 @@ public class ModelSerializer {
 
 	private static final String AT = "@"; //$NON-NLS-1$
 	
-	private DocumentBuilderFactory fact;
+	private DocumentBuilderFactory domfactory;
+	private SAXParserFactory saxfactory;
 	private DocumentBuilder builder;
 	private XPath xpathObj;
 	
@@ -49,19 +51,25 @@ public class ModelSerializer {
 	private DocumentStore dest;
 
 	public ModelSerializer() {
-		fact = DocumentBuilderFactory.newInstance();
+		saxfactory = SAXParserFactory.newInstance();
+		domfactory = DocumentBuilderFactory.newInstance();
 		try {
-			builder = fact.newDocumentBuilder();
+			builder = domfactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DeploymentCore.log(e);
 		}
 		XPathFactory factory = XPathFactory.newInstance();
 		xpathObj = factory.newXPath();
 	}
 	
-	public void load(InputStream src, IModelContainer model) throws XPathExpressionException, SAXException, IOException {
+	public void load(InputStream src, InputStream src2, IModelContainer model) throws XPathExpressionException, SAXException, IOException {
 		document = builder.parse(src);
+		if (src.markSupported()) {
+			src2 = src;
+			src2.reset();
+		}
+		CalculateOffsets c = new CalculateOffsets(src2);
+		c.traverse(document);
 		
 		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		
@@ -102,7 +110,7 @@ public class ModelSerializer {
 	        Transformer xformer = TransformerFactory.newInstance().newTransformer();
 	        xformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 	        xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
-            xformer.transform(source, result);
+	        xformer.transform(source, result);
 	        
 			dest.write();
 			
@@ -118,7 +126,21 @@ public class ModelSerializer {
 	private void loadProperties(Node doc, IModelObject obj) throws XPathExpressionException {
 		Feature[] props = obj.getPropertyNames();
 		for (Feature feature : props) {
-			String value = getString(doc, feature.xpath, feature.attrName);
+			String s;
+			Node propertyNode = null;
+			if (feature.attrName != null) {
+				s = getXpathString(doc, getXPath(feature.xpath, feature.attrName));
+			} else {
+				propertyNode = getNode(doc, feature.xpath);
+				s = propertyNode == null ? null : propertyNode.getTextContent(); 
+			}
+			
+			Integer nodeOffset = (Integer) (propertyNode != null ? propertyNode.getUserData(CalculateOffsets.NODE_OFFSET) : doc.getUserData(CalculateOffsets.NODE_OFFSET));
+			if (nodeOffset != null) {
+				obj.setOffset(feature, nodeOffset.intValue());
+			}
+			
+			String value = stripWhitespaces(s);
 			if (value != null) {
 				obj.set(feature, value);
 			}
@@ -360,18 +382,6 @@ public class ModelSerializer {
 		}
 		
 		return target;
-	}
-	
-	private String getString(Node node, String nodeName, String attrName) throws XPathExpressionException {
-		String s;
-		if (attrName != null) {
-			s = getXpathString(node, getXPath(nodeName, attrName));
-		} else {
-			Node n = getNode(node, nodeName);
-			s = n == null ? null : n.getTextContent(); 
-		}
-		
-		return stripWhitespaces(s);
 	}
 	
 	private static String getXPath(String nodePath, String attrName) {

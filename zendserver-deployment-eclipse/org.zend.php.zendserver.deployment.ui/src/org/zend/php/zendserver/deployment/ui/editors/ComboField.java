@@ -11,12 +11,15 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
+import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
-public class ComboField {
+public class ComboField implements EditorField {
 
 	protected Label label;
 	protected Combo text;
@@ -142,6 +145,25 @@ public class ComboField {
 			text.select(newIndex);
 		} else {
 			text.setText(currentDefault);
+		}
+	}
+
+	public Control getText() {
+		return text;
+	}
+	
+	public void setDecoration(FormDecoration value) {
+		if (value == null) {
+			setErrorMessage(null);
+		} else {
+			switch (value.severity) {
+			case (ValidationStatus.ERROR):
+				setErrorMessage(value.message);
+			break;
+			case (ValidationStatus.WARNING):
+				setWarningMessage(value.message);
+			break;
+			}
 		}
 	}
 	

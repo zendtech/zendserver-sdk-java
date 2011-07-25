@@ -47,7 +47,7 @@ public class DescriptorValidator {
 			schema = factory.newSchema(schemaSource);
 			
 			validator = schema.newValidator();
-	        
+			
 	        source = new StreamSource(file.getContents());
 		} catch (SAXException e) {
 			DeploymentCore.log(e);
@@ -111,8 +111,16 @@ public class DescriptorValidator {
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer(file);
 		
+		IDocument doc = null;
+		try {
+			doc = getIDocument(file);
+		} catch (Throwable e) {
+			DeploymentCore.log(e);
+			return;
+		}
+		
 		DescriptorSemanticValidator validator = new DescriptorSemanticValidator();
-		ValidationStatus[] statuses = validator.validate(model.getDescriptorModel());
+		ValidationStatus[] statuses = validator.validate(model.getDescriptorModel(), doc);
 		
 		reportProblems(file, statuses);
 	}
@@ -128,8 +136,6 @@ public class DescriptorValidator {
 		} catch (CoreException e) {
 			DeploymentCore.log(e);
 		}
-		//System.out.println("reportProblems: "+Arrays.asList(statuses));
-		//System.out.println("existing: "+existing);
 		
 		// find which errors are new, already exist, or need to be removed 
 		List<ValidationStatus> toReport = new ArrayList<ValidationStatus>(Arrays.asList(statuses));
@@ -138,7 +144,6 @@ public class DescriptorValidator {
 		
 		// add new statuses
 		for (ValidationStatus status : toReport) {
-			//System.out.println("add "+status);
 			reportProblem(file, status);
 		}
 		// remove obsolete statuses

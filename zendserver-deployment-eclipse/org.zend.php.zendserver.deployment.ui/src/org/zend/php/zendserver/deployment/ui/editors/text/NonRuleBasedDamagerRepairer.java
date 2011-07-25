@@ -18,7 +18,7 @@ public class NonRuleBasedDamagerRepairer
 
 	/** The document this object works on */
 	protected IDocument fDocument;
-	/** The default text attribute if non is returned as data by the current token */
+	/** The default control attribute if non is returned as data by the current token */
 	protected TextAttribute fDefaultTextAttribute;
 	
 	/**
@@ -114,9 +114,9 @@ public class NonRuleBasedDamagerRepairer
 	}
 
 	/**
-	 * Adds style information to the given text presentation.
+	 * Adds style information to the given control presentation.
 	 *
-	 * @param presentation the text presentation to be extended
+	 * @param presentation the control presentation to be extended
 	 * @param offset the offset of the range to be styled
 	 * @param length the length of the range to be styled
 	 * @param attr the attribute describing the style of the range to be styled

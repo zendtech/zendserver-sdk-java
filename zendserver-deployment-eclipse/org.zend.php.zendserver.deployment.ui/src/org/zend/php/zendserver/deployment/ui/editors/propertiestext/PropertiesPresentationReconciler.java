@@ -15,7 +15,7 @@ public class PropertiesPresentationReconciler extends PresentationReconciler {
 
 	/**
 	 * Constructs a "repair description" for the given damage and returns this
-	 * description as a text presentation.
+	 * description as a control presentation.
 	 * <p>
 	 * NOTE: Should not be used if this reconciler is installed on a viewer.
 	 * </p>
@@ -24,7 +24,7 @@ public class PropertiesPresentationReconciler extends PresentationReconciler {
 	 *            the damage to be repaired
 	 * @param document
 	 *            the document whose presentation must be repaired
-	 * @return the presentation repair description as text presentation
+	 * @return the presentation repair description as control presentation
 	 */
 	public TextPresentation createRepairDescription(IRegion damage, IDocument document) {
 		if (document != fLastDocument) {

@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
@@ -15,9 +16,11 @@ public abstract class ModelObject implements IModelObject {
 	protected List<IDescriptorChangeListener> listeners;
 	
 	protected Feature[] properties;
+	private int[] offsets;
 	
 	public ModelObject(Feature[] properties) {
 		this.properties = properties;
+		offsets = new int[properties.length];
 	}
 	
 	public void copy(IModelObject source) {
@@ -75,18 +78,12 @@ public abstract class ModelObject implements IModelObject {
 		this.parent = container;
 	}
 	
-	public int getLine(Feature f) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getOffset(Feature f) {
+		return offsets[Arrays.asList(properties).indexOf(f)];
 	}
 	
-	public int getChar(Feature f) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void setOffset(Feature f, int offset) {
+		offsets[Arrays.asList(properties).indexOf(f)] = offset;
 	}
 	
-	public int getLength(Feature f) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

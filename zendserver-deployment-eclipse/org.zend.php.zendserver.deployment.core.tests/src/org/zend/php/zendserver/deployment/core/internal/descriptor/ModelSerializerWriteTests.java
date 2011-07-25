@@ -423,7 +423,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		
 		lm.serialize(descr);
 		lm.write();
-		lm.load(txt.getInputStream(), descr);
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
 		
 		IDirectiveDependency dirdep = (IDirectiveDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE);
 		dirdep.setName("log_errors");
@@ -431,7 +431,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		
 		lm.serialize(descr);
 		lm.write();
-		lm.load(txt.getInputStream(), descr);
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
 		
 		IExtensionDependency extdep = (IExtensionDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION);
 		extdep.setName("ctype");
@@ -439,7 +439,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		
 		lm.serialize(descr);
 		lm.write();
-		lm.load(txt.getInputStream(), descr);
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
 		
 		IPHPDependency phpdep = (IPHPDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP);
 		phpdep.setEquals("1.2.3");
@@ -447,7 +447,7 @@ public class ModelSerializerWriteTests extends TestCase {
 		
 		lm.serialize(descr);
 		lm.write();
-		lm.load(txt.getInputStream(), descr);
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
 		
 		IZendServerDependency zsdep = (IZendServerDependency) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER);
 		zsdep.setEquals("1.2.3");

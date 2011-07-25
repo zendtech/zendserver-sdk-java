@@ -15,7 +15,6 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
-import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.ui.actions.DeployAppInCloudAction;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
@@ -105,7 +104,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 					for (Feature feature : toRemove) {
 						TextField field = fields.get(feature);
 						if (field != null) {
-							field.setErrorMessage(null);
+							field.setDecoration(null);
 						}
 					}
 				}
@@ -115,14 +114,7 @@ public abstract class DescriptorEditorPage extends FormPage {
 						FormDecoration status = entry.getValue();
 						TextField field = fields.get(entry.getKey());
 						if (field != null) {
-							switch (status.severity) {
-							case (ValidationStatus.ERROR):
-								field.setErrorMessage(status.message);
-							break;
-							case (ValidationStatus.WARNING):
-								field.setWarningMessage(status.message);
-							break;
-							}
+							field.setDecoration(status);
 						}
 					}
 				}

@@ -40,12 +40,14 @@ public class DescriptorContainer implements IDescriptorContainer {
 
 	public void load() {
 		InputStream src = null;
+		InputStream src2 = null;
 		
 		if (fDocument != null) {
-			src = new ByteArrayInputStream(fDocument.get().getBytes()); // TODO get fDocument encoding
+			src = new ByteArrayInputStream(fDocument.get().getBytes());
 		} else if (fFile.exists()) {
 			try {
 				src = fFile.getContents();
+				src2 = fFile.getContents();
 			} catch (CoreException e) {
 				DeploymentCore.log(e);
 			}
@@ -61,7 +63,7 @@ public class DescriptorContainer implements IDescriptorContainer {
 		
 		try {
 			isLoading = true;
-			lm.load(src, fModel);
+			lm.load(src, src2, fModel);
 		} catch (XPathExpressionException e) {
 			// seems model error, write to log
 			DeploymentCore.log(e);

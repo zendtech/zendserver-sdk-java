@@ -348,7 +348,7 @@ public class FormLayoutFactory {
 	}
 
 	/**
-	 * For composites set as section clients. For composites containg form text.
+	 * For composites set as section clients. For composites containg form control.
 	 * 
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
@@ -376,7 +376,7 @@ public class FormLayoutFactory {
 	}
 
 	/**
-	 * For composites set as section clients. For composites containg form text.
+	 * For composites set as section clients. For composites containg form control.
 	 * 
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns

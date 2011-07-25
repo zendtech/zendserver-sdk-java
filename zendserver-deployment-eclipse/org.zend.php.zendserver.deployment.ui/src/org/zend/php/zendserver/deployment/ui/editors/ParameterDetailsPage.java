@@ -1,7 +1,10 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,10 +25,14 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
 
 public class ParameterDetailsPage implements IDetailsPage {
@@ -35,16 +42,17 @@ public class ParameterDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
 	private IParameter input;
 	
-	private TextField id;
-	private TextField display;
-	private TextField defaultValue;
-	private ComboField defaultCombo;
+	private List<EditorField> fields = new ArrayList<EditorField>();
+	private EditorField id;
+	private EditorField display;
+	private EditorField defaultValue;
+	private EditorField defaultCombo;
 	private Text validationText;
 	private CheckboxField required;
 	private CheckboxField readonly;
 	private ComboField type;
 	private ComboField identical;
-	private TextField description;
+	private EditorField description;
 
 	private boolean isRefresh;
 
@@ -55,12 +63,12 @@ public class ParameterDetailsPage implements IDetailsPage {
 	public ParameterDetailsPage(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
 		
-		id = new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id);
-		display = new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display);
-		defaultValue = new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue);
-		defaultCombo = new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue);
-		description = new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description);
-		type = new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type);
+		id = addField(new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id));
+		display = addField(new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display));
+		defaultValue = addField(new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
+		defaultCombo = addField(new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
+		description = addField(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
+		type = (ComboField) addField(new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type));
 		type.setItems(new String[] {
 				IParameter.CHOICE,
 				IParameter.STRING,
@@ -70,18 +78,22 @@ public class ParameterDetailsPage implements IDetailsPage {
 				IParameter.NUMBER,
 				IParameter.HOSTNAME
 		});
-		identical = new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical);
-		required = new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required);
-		readonly = new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly);
+		identical = (ComboField) addField(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical));
+		required = (CheckboxField) addField(new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required));
+		readonly = (CheckboxField) addField(new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly));
 	}
 	
+	private EditorField addField(EditorField field) {
+		fields.add(field);
+		return field;
+	}
+
 	public void initialize(IManagedForm form) {
 		this.mform = form;
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		// empty
 	}
 
 	public boolean isDirty() {
@@ -126,9 +138,35 @@ public class ParameterDetailsPage implements IDetailsPage {
 			identical.refresh();
 			description.refresh();
 			refreshParametersList();
+			refreshDecorations();
 			showChoiceWidgets();
 		} finally {
 			isRefresh = false;
+		}
+	}
+
+	private void refreshDecorations() {
+		IDeploymentDescriptor imc = editor.getModel();
+		int index = -1;
+		if (imc != null) {
+			Feature f = DeploymentDescriptorFactory.getFeature(input);
+			index = imc.getChildren(f).indexOf(input);
+		}
+		
+		Map<Feature, FormDecoration> decorations = null;
+		if (index != -1) {
+			decorations = editor.getDecorationsForFeatures(Arrays.asList(input.getPropertyNames()), index);
+		} else {
+			decorations = editor.getDecorationsForFeatures(Arrays.asList(input.getPropertyNames()));
+		}
+		
+		for (Entry<Feature, FormDecoration> e : decorations.entrySet()) {
+			Feature feature = e.getKey();
+			for (EditorField field : fields) {
+				if (field.getKey() == feature) {
+					field.setDecoration(e.getValue());
+				}
+			}
 		}
 	}
 
@@ -266,7 +304,7 @@ public class ParameterDetailsPage implements IDetailsPage {
 		input.getValidValues().clear();
 		input.getValidValues().addAll(Arrays.asList(newParams));
 		
-		defaultCombo.setItems(newParams);
+		((ComboField)defaultCombo).setItems(newParams);
 	}
 	
 	protected void descriptionChange(String text) {

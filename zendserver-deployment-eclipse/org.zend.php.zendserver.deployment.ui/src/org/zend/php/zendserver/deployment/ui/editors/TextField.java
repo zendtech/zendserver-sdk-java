@@ -14,8 +14,10 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
+import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 
-public class TextField {
+public class TextField implements EditorField {
 
 	protected Control label;
 	protected Text text;
@@ -181,6 +183,21 @@ public class TextField {
 			label.pack();
 		if (text != null) 
 			text.pack();
+	}
+
+	public void setDecoration(FormDecoration value) {
+		if (value == null) {
+			setErrorMessage(null);
+		} else {
+			switch (value.severity) {
+			case (ValidationStatus.ERROR):
+				setErrorMessage(value.message);
+			break;
+			case (ValidationStatus.WARNING):
+				setWarningMessage(value.message);
+			break;
+			}
+		}
 	}
 	
 }

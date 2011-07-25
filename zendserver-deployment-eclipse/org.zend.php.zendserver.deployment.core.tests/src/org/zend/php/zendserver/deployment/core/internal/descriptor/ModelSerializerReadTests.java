@@ -30,7 +30,7 @@ public class ModelSerializerReadTests extends TestCase {
 		ModelSerializer lm = new ModelSerializer();
 		
 		descr = new DeploymentDescriptor();
-		lm.load(entry.openStream(), descr);
+		lm.load(entry.openStream(), entry.openStream(), descr);
 	}
 	
 	

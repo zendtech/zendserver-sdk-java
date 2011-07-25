@@ -30,7 +30,7 @@ public class DeploymentDescriptorEditorContributor extends
 	}
 
 	/**
-	 * Returns the action registed with the given text editor.
+	 * Returns the action registed with the given control editor.
 	 * 
 	 * @return IAction or null if editor is null.
 	 */
