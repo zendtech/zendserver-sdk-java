@@ -116,6 +116,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		
 		defaultCombo = fields.add(new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
 		defaultCombo.create(client, toolkit);
+		((GridData)defaultCombo.getText().getLayoutData()).widthHint = 100;
 		
 		validation = (ListField) fields.add(new ListField(null, DeploymentDescriptorPackage.VALIDATION, Messages.ParameterDetailsPage_ValidValues));
 		validation.create(client, toolkit);

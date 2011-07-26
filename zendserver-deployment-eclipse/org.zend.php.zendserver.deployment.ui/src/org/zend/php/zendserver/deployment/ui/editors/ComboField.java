@@ -133,8 +133,8 @@ public class ComboField implements EditorField {
 	public void setVisible(boolean visible) {
 		label.setVisible(visible);
 		text.setVisible(visible);
-		((GridData)text.getLayoutData()).exclude = visible;
-		((GridData)label.getLayoutData()).exclude = visible;
+		((GridData)text.getLayoutData()).exclude = !visible;
+		((GridData)label.getLayoutData()).exclude = !visible;
 		
 	}
 
