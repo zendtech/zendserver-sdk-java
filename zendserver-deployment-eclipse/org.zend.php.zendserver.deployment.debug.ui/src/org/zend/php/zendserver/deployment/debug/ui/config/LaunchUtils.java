@@ -1,10 +1,8 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -35,16 +33,14 @@ import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
-import org.zend.sdklib.target.IZendTarget;
 
+@SuppressWarnings("restriction")
 public class LaunchUtils {
 
 	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
-	public static ILaunchConfiguration createConfiguration(IProject project, URL baseURL,
-			Map<String, String> parameters, IZendTarget target, String appName,
-			boolean defaultServer, boolean ignoreFailures,
-			String vHost) throws CoreException {
+	public static ILaunchConfiguration createConfiguration(IProject project, int appId,
+			DeploymentEntry entry) throws CoreException {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
@@ -63,23 +59,20 @@ public class LaunchUtils {
 		// TODO find real server name
 		wc.setAttribute(Server.NAME, "Zend Server");
 
-		// base URL + index.html, we can find file path based on project
-		// relative path and resource mapping
 		IResource resource = getFile(project);
 		if (resource != null) {
 			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
 			wc.setMappedResources(new IResource[] { resource });
 		}
 
-		// deployment base URL
 		wc.setAttribute(AUTO_GENERATED_URL, false);
-		if (defaultServer) {
+		if (entry.isDefaultServer()) {
 			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
 			if (server != null) {
-				wc.setAttribute(Server.BASE_URL, server.getBaseURL() + baseURL.getPath());
+				wc.setAttribute(Server.BASE_URL, server.getBaseURL() + entry.getBasePath());
 			}
 		} else {
-			wc.setAttribute(Server.BASE_URL, baseURL.toString());
+			wc.setAttribute(Server.BASE_URL, entry.getVirtualHost() + "/" + entry.getBasePath());
 		}
 
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
@@ -88,14 +81,15 @@ public class LaunchUtils {
 		// set true as default
 		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 
-		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), baseURL.getPath());
-		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), appName);
-		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), defaultServer);
-		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), ignoreFailures);
+		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), entry.getBasePath());
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), appId);
+		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), entry.getAppName());
+		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), entry.isDefaultServer());
+		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), entry.isIgnoreFailures());
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
-		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), target.getId());
-		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), vHost);
-		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), parameters);
+		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), entry.getTargetId());
+		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), entry.getVirtualHost());
+		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), entry.getUserParams());
 
 		config = wc.doSave();
 		return config;

@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
-import java.net.URL;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -29,6 +27,7 @@ import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentEntry;
 import org.zend.php.zendserver.deployment.debug.ui.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
 import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
@@ -41,6 +40,8 @@ public class LaunchApplicationHandler extends AbstractHandler {
 
 	private String mode;
 	private ILaunchConfiguration config;
+	private DeploymentEntry entry;
+	private boolean firstTime;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -48,66 +49,72 @@ public class LaunchApplicationHandler extends AbstractHandler {
 		final IProject project = getProject(event
 				.getParameter(ApplicationContribution.PROJECT_NAME));
 		if (project != null) {
-			final String path = project.getLocation().toString();
 			config = LaunchUtils.findLaunchConfiguration(project);
 			if (config == null) {
 				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-
-				final DeploymentLaunchDialog dialog = new DeploymentLaunchDialog(window.getShell(),
+				DeploymentLaunchDialog dialog = new DeploymentLaunchDialog(window.getShell(),
 						project);
-
 				if (dialog.open() != Window.OK) {
 					return null;
 				}
-				Job deployJob = new Job(Messages.deploymentJob_Title) {
-					private StatusChangeListener listener;
+				entry = DeploymentEntry.createEntry(dialog, project.getName());
+				firstTime = true;
+			} else {
+				entry = DeploymentEntry.createEntry(config);
+				firstTime = false;
+			}
+			Job deployJob = new Job(firstTime ? Messages.deploymentJob_Title
+					: Messages.updateJob_Title) {
+				private StatusChangeListener listener;
 
-					public IStatus run(IProgressMonitor monitor) {
-						listener = new StatusChangeListener(monitor);
-						ZendApplication application = new ZendApplication(
-								new EclipseMappingModelLoader());
-						application.addStatusChangeListener(listener);
-
-						URL baseURL = dialog.getBaseUrl();
-						String targetId = dialog.getTarget().getId();
-
-						ApplicationInfo info = application.deploy(path, baseURL.getPath(),
-								targetId, dialog.getParameters(), dialog.getUserAppName(),
-								dialog.isIgnoreFailures(), baseURL.getHost(),
-								dialog.isDefaultServer());
-
-						if (monitor.isCanceled()) {
-							return Status.OK_STATUS;
-						}
-						if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
+				public IStatus run(IProgressMonitor monitor) {
+					listener = new StatusChangeListener(monitor);
+					ZendApplication application = new ZendApplication(
+							new EclipseMappingModelLoader());
+					application.addStatusChangeListener(listener);
+					ApplicationInfo info = null;
+					if (firstTime) {
+						info = application.deploy(project.getLocation().toString(),
+							entry.getBasePath(), entry.getTargetId(), entry.getUserParams(),
+							entry.getAppName(), entry.isIgnoreFailures(), entry.getVirtualHost(),
+							entry.isDefaultServer());
+					} else {
+						String appId = String.valueOf(entry.getAppId());
+						info = application.update(project.getLocation().toString(),
+								entry.getTargetId(), appId, entry.getUserParams(),
+								entry.isIgnoreFailures());
+					}
+					if (monitor.isCanceled()) {
+						return Status.OK_STATUS;
+					}
+					if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
+						if (firstTime) {
 							try {
-								config = LaunchUtils.createConfiguration(project, baseURL,
-										dialog.getParameters(), dialog.getTarget(),
-										dialog.getUserAppName(), dialog.isDefaultServer(),
-										dialog.isIgnoreFailures(), baseURL.getHost());
+								config = LaunchUtils.createConfiguration(project, info.getId(),
+										entry);
 							} catch (CoreException e) {
 								return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 										e.getMessage());
 							}
-							return monitorApplicationStatus(listener, targetId, info.getId(),
-									application, monitor);
 						}
-						return new SdkStatus(listener.getStatus());
+						return monitorApplicationStatus(listener, entry.getTargetId(),
+								info.getId(), application, monitor);
 					}
-				};
-				deployJob.setUser(true);
-				deployJob.addJobChangeListener(new JobChangeAdapter() {
-					@Override
-					public void done(IJobChangeEvent event) {
-						if (event.getResult().getSeverity() == IStatus.OK && config != null) {
-							DebugUITools.launch(config, mode);
-						}
+					return new SdkStatus(listener.getStatus());
+				}
+			};
+			deployJob.setUser(true);
+			deployJob.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().getSeverity() == IStatus.OK && config != null) {
+						DebugUITools.launch(config, mode);
 					}
-				});
-				deployJob.schedule();
-			} else {
-				DebugUITools.launch(config, mode);
-			}
+				}
+			});
+			deployJob.schedule();
+		} else {
+			DebugUITools.launch(config, mode);
 		}
 		return null;
 	}
