@@ -99,7 +99,14 @@ public class ComboField implements EditorField {
 					return;
 				}
 				
-				String text = ((Combo)e.widget).getText();
+				Combo combo = (Combo)e.widget;
+				String text;
+				int idx = combo.getSelectionIndex();
+				if (idx != -1) {
+					text = combo.getItem(idx);
+				} else {
+					text = combo.getText();
+				}
 				if (target != null) {
 					target.set(key, text);
 				}
@@ -137,14 +144,19 @@ public class ComboField implements EditorField {
 			return;
 		}
 		
-		String currentDefault = text.getText();
-		text.setItems(this.items);
-		
-		int newIndex = Arrays.asList(items).indexOf(currentDefault);
-		if (newIndex != -1) {
-			text.select(newIndex);
-		} else {
-			text.setText(currentDefault);
+		isRefresh = true;
+		try {
+			String currentDefault = text.getText();
+			text.setItems(this.items);
+			
+			int newIndex = Arrays.asList(items).indexOf(currentDefault);
+			if (newIndex != -1) {
+				text.select(newIndex);
+			} else {
+				text.setText(currentDefault);
+			}
+		} finally {
+			isRefresh = false;
 		}
 	}
 
