@@ -478,4 +478,41 @@ public class ModelSerializerWriteTests extends TestCase {
 	}
 
 	
+	public void testParamChoices() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
+		
+		IParameter param = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
+		descr.getParameters().add(param);
+		
+		param.getValidValues().add("value1");
+		param.getValidValues().add("value2");
+		param.getValidValues().add("value3");
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n"+
+"  <parameters>\n" +
+"    <parameter readonly=\"false\" required=\"false\">\n" +
+"      <validation>\n" +
+"        <enums>\n" +
+"          <enum>value1</enum>\n" +
+"          <enum>value2</enum>\n" +
+"          <enum>value3</enum>\n" +
+"        </enums>\n" +
+"      </validation>\n" +
+"    </parameter>\n" +
+"  </parameters>\n" +
+"</package>\n", txt.toString());
+	}
+	
 }
