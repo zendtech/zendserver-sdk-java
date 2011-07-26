@@ -71,15 +71,6 @@ public class LaunchApplicationHandler extends AbstractHandler {
 						URL baseURL = dialog.getBaseUrl();
 						String targetId = dialog.getTarget().getId();
 
-						try {
-							config = LaunchUtils.createConfiguration(project, baseURL,
-									dialog.getParameters(), dialog.getTarget(),
-									dialog.getUserAppName(), dialog.isDefaultServer(),
-									dialog.isIgnoreFailures(), baseURL.getHost());
-						} catch (CoreException e) {
-							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage());
-						}
-
 						ApplicationInfo info = application.deploy(path, baseURL.getPath(),
 								targetId, dialog.getParameters(), dialog.getUserAppName(),
 								dialog.isIgnoreFailures(), baseURL.getHost(),
@@ -89,6 +80,15 @@ public class LaunchApplicationHandler extends AbstractHandler {
 							return Status.OK_STATUS;
 						}
 						if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
+							try {
+								config = LaunchUtils.createConfiguration(project, baseURL,
+										dialog.getParameters(), dialog.getTarget(),
+										dialog.getUserAppName(), dialog.isDefaultServer(),
+										dialog.isIgnoreFailures(), baseURL.getHost());
+							} catch (CoreException e) {
+								return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+										e.getMessage());
+							}
 							return monitorApplicationStatus(listener, targetId, info.getId(),
 									application, monitor);
 						}
