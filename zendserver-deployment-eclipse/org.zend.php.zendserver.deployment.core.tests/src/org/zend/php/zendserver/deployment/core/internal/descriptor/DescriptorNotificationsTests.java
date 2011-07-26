@@ -82,6 +82,8 @@ public class DescriptorNotificationsTests extends TestCase {
 		events.assertEvent(descr, DeploymentDescriptorPackage.VARIABLES, IDescriptorChangeListener.ADD, var, null);
 		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_PHP, IDescriptorChangeListener.ADD, php, null);
 		events.assertEvent(descr, DeploymentDescriptorPackage.PARAMETERS, IDescriptorChangeListener.ADD, param, null);
+		events.assertEvent(param, DeploymentDescriptorPackage.VALIDATION, IDescriptorChangeListener.ADD, "value1", null);
+		events.assertEvent(param, DeploymentDescriptorPackage.VALIDATION, IDescriptorChangeListener.ADD, "value2", null);
 		events.assertEvent(descr, DeploymentDescriptorPackage.PERSISTENT_RESOURCES, IDescriptorChangeListener.ADD, "c:\\Program Files", null);
 		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE, IDescriptorChangeListener.ADD, dd, null);
 		events.assertEvent(descr, DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION, IDescriptorChangeListener.ADD, ext, null);
@@ -92,6 +94,8 @@ public class DescriptorNotificationsTests extends TestCase {
 		descr.getVariables().add(var);
 		descr.getPHPDependencies().add(php);
 		descr.getParameters().add(param);
+		param.getValidValues().add("value1");
+		param.getValidValues().add("value2");
 		descr.getPersistentResources().add("c:\\Program Files");
 		descr.getDirectiveDependencies().add(dd);
 		descr.getExtensionDependencies().add(ext);
