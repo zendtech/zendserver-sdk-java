@@ -25,6 +25,7 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNam
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -72,7 +73,14 @@ public class LaunchUtils {
 
 		// deployment base URL
 		wc.setAttribute(AUTO_GENERATED_URL, false);
-		wc.setAttribute(Server.BASE_URL, baseURL.toString());
+		if (defaultServer) {
+			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
+			if (server != null) {
+				wc.setAttribute(Server.BASE_URL, server.getBaseURL() + baseURL.getPath());
+			}
+		} else {
+			wc.setAttribute(Server.BASE_URL, baseURL.toString());
+		}
 
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
 		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
