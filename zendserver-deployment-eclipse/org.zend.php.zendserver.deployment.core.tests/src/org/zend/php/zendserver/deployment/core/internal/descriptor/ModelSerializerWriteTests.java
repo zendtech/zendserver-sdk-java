@@ -441,6 +441,42 @@ public class ModelSerializerWriteTests extends TestCase {
 "</package>\n", txt.toString());
 	}
 	
+	public void testAddInOrder2() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		
+		descr.setDocumentRoot("homeDir");
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
+		
+		IParameter p = (IParameter) DeploymentDescriptorFactory.createModelElement(DeploymentDescriptorPackage.PARAMETERS);
+		descr.getParameters().add(p);
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
+		
+		descr.setDocumentRoot("homeDir");
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
+		
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n"+
+"  <docroot>homeDir</docroot>\n" +
+"  <parameters>\n" +
+"    <parameter readonly=\"false\" required=\"false\"/>\n" +
+"  </parameters>\n" +
+"</package>\n", txt.toString());
+	}
+	
 	public void testAddDependenciesInOrder() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
 		ModelSerializer lm = new ModelSerializer();
 		TextOutput txt = new TextOutput();

@@ -204,10 +204,10 @@ public class ModelSerializer {
 			Feature[] props = obj.getPropertyNames();
 			for (Feature feature : props) {
 				String value = obj.get(feature);
-				if (value != null) {
-					lastAdded = setString(doc, feature.xpath, feature.attrName, value, lastAdded);
-				} else {
+				if ((value == null) || ("".equals(value) && ((feature.flags & Feature.SET_EMPTY_TO_NULL) == Feature.SET_EMPTY_TO_NULL))) { //$NON-NLS-1$
 					removeString(doc, feature.xpath, feature.attrName);
+				} else {
+					lastAdded = setString(doc, feature.xpath, feature.attrName, value, lastAdded);
 				}
 			}
 		}
