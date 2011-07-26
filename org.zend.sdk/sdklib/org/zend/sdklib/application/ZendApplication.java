@@ -214,18 +214,16 @@ public class ZendApplication extends AbstractChangeNotifier {
 						new NamedInputStream(zendPackage), baseUrl,
 						ignoreFailures, userParams, appName, vhostName != null,
 						defaultServer);
-				statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
+				notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
 						"Application deployed successfully"));
 				return result;
 			} catch (MalformedURLException e) {
-				statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-						"Error during deploying application to '" + targetId
-								+ "'", e));
+				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying application to '" + targetId + "'", e));
 				log.error(e);
 			} catch (WebApiException e) {
-				statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-						"Error during deploying application to '" + targetId
-								+ "'", e));
+				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying application to '" + targetId + "'", e));
 				log.error("Error during deploying application to '" + targetId
 						+ "':");
 				log.error("\tpossible error: " + e.getMessage());
@@ -320,7 +318,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Updates/redeploys an existing application.
 	 * 
@@ -342,6 +340,40 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 */
 	public ApplicationInfo update(String path, String targetId, String appId,
 			String propertiesFile, Boolean ignoreFailures) {
+		Map<String, String> userParams = null;
+		if (propertiesFile != null) {
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Updating",
+					"Reading user parameters properites file...", -1));
+			File propsFile = new File(propertiesFile);
+			if (propsFile.exists()) {
+				userParams = getUserParameters(propsFile);
+			}
+		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Updating",
+				"Reading user parametes is completed."));
+		return update(path, targetId, appId, userParams, ignoreFailures);
+	}
+
+	/**
+	 * Updates/redeploys an existing application.
+	 * 
+	 * @param path
+	 *            - path to project location or application package
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @param userParams
+	 *            - map with user parameters (key and value)
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo update(String path, String targetId, String appId,
+			Map<String, String> userParams, Boolean ignoreFailures) {
 		File file = new File(path);
 		if (!file.exists()) {
 			log.error("Path does not exist: " + file);
@@ -365,18 +397,20 @@ public class ZendApplication extends AbstractChangeNotifier {
 		try {
 			int appIdint = Integer.parseInt(appId);
 			WebApiClient client = getClient(targetId);
-			Map<String, String> userParams = null;
-			if (propertiesFile != null) {
-				File propsFile = new File(propertiesFile);
-				if (propsFile.exists()) {
-					userParams = getUserParameters(propsFile);
-				}
-			}
-			return client.applicationUpdate(appIdint, new NamedInputStream(
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Updating",
+					"Updating application on the target...", -1));
+			ApplicationInfo result = client.applicationUpdate(appIdint, new NamedInputStream(
 					zendPackage), ignoreFailures, userParams);
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Updating",
+					"Application updated successfully"));
+			return result;
 		} catch (MalformedURLException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Updating",
+					"Error during updating application on '" + targetId + "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Updating",
+					"Error during updating application on '" + targetId + "'", e));
 			log.error("Error during updating application on '" + targetId
 					+ "':");
 			log.error("\tpossible error: " + e.getMessage());

@@ -24,8 +24,8 @@ import org.zend.sdklib.mapping.IMappingEntry.Type;
  */
 public interface IMappingModel {
 
-	static final String APPDIR = "appdir";
-	static final String SCRIPTSDIR = "scriptsdir";
+	public static final String APPDIR = "appdir";
+	public static final String SCRIPTSDIR = "scriptsdir";
 
 	/**
 	 * Adds specified entry to the model.
