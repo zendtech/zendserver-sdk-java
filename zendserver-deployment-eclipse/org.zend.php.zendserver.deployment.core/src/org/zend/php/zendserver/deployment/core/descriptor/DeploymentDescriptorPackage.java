@@ -119,21 +119,21 @@ public static final int PACKAGE_ID = 0;
 	
 
 	public static final int DISPLAY_ID = 27;
-	public static final Feature DISPLAY = new Feature(null, "display", String.class, DISPLAY_ID); //$NON-NLS-1$
+	public static final Feature DISPLAY = new Feature(null, "display", String.class, DISPLAY_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int REQUIRED_ID = 28;
-	public static final Feature REQUIRED = new Feature(null, "required", Boolean.class, REQUIRED_ID); //$NON-NLS-1$
+	public static final Feature REQUIRED = new Feature(null, "required", Boolean.class, REQUIRED_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int READONLY_ID = 29;
-	public static final Feature READONLY = new Feature(null, "readonly", Boolean.class, READONLY_ID); //$NON-NLS-1$
+	public static final Feature READONLY = new Feature(null, "readonly", Boolean.class, READONLY_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int TYPE_ID = 30;
-	public static final Feature TYPE = new Feature(null, "type", String.class, TYPE_ID); //$NON-NLS-1$
+	public static final Feature TYPE = new Feature(null, "type", String.class, TYPE_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int IDENTICAL_ID = 31;
-	public static final Feature IDENTICAL = new Feature(null, "identical", String.class, IDENTICAL_ID); //$NON-NLS-1$
+	public static final Feature IDENTICAL = new Feature(null, "identical", String.class, IDENTICAL_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int ID_ID = 32;
-	public static final Feature ID = new Feature(null, "id", String.class, ID_ID); //$NON-NLS-1$
+	public static final Feature ID = new Feature(null, "id", String.class, ID_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int DEFAULTVALUE_ID = 33;
-	public static final Feature DEFAULTVALUE = new Feature("defaultvalue", null, String.class, DEFAULTVALUE_ID); //$NON-NLS-1$
+	public static final Feature DEFAULTVALUE = new Feature("defaultvalue", null, String.class, DEFAULTVALUE_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int PARAM_DESCRIPTION_ID = 34;
-	public static final Feature PARAM_DESCRIPTION = new Feature("description", null, String.class, PARAM_DESCRIPTION_ID); //$NON-NLS-1$
+	public static final Feature PARAM_DESCRIPTION = new Feature("description", null, String.class, PARAM_DESCRIPTION_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	public static final int VALIDATION_ID = 35;
 	public static final Feature VALIDATION = new Feature("validation/enums/enum", null, String.class, VALIDATION_ID); //$NON-NLS-1$
 	
