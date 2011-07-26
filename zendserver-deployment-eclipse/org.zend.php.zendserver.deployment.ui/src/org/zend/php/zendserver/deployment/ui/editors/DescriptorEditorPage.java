@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,9 @@ public abstract class DescriptorEditorPage extends FormPage {
 	
 	public void showMarkers() {
 		Map<Feature, FormDecoration>toShow = editor.getDecorationsForFeatures(fields.keySet());
-		refreshMarkers(toShow, null);
+		List<Feature> toRemove = new ArrayList<Feature>(fields.keySet());
+		toRemove.removeAll(toShow.keySet());
+		refreshMarkers(toShow, toRemove);
 	}
 	
 	private void refreshMarkers(final Map<Feature, FormDecoration> toShow,

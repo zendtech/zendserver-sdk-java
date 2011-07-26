@@ -135,10 +135,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		IDE.gotoMarker(getEditor(0), marker);
 	}
 
-	/**
-	 * The <code>MultiPageEditorExample</code> implementation of this method
-	 * checks that the input is an instance of <code>IFileEditorInput</code>.
-	 */
 	public void init(IEditorSite site, IEditorInput editorInput)
 			throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
