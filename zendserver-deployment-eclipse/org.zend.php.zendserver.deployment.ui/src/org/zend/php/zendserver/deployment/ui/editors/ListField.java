@@ -36,7 +36,7 @@ public class ListField extends TextField {
 				}
 				
 				String text = ((Text)e.widget).getText();
-				String[] items = text.split("\n"); //$NON-NLS-1$
+				String[] items = text.trim().length() == 0 ? new String[0] : text.split("\n"); //$NON-NLS-1$
 				if (target != null) {
 					List<Object> list = ((IModelContainer)target).getChildren(key);
 					for (int i = 0; i < Math.min(items.length, list.size()); i++) {
