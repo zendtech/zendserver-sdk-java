@@ -254,6 +254,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.refresh();
 		detailsPart.refresh();
 		updateButtonsEnabledState();
+		showMarkers();
 	}
 
 	public static void setDialogSize(Dialog dialog, int width, int height) {

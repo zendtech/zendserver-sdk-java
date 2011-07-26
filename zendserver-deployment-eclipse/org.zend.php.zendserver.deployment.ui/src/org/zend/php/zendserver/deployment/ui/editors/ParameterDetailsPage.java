@@ -1,17 +1,12 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -30,12 +25,8 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 	
 	private EditorField defaultValue;
 	private EditorField defaultCombo;
-	private Text validationText;
+	private ListField validation;
 	private ComboField identical;
-
-	private boolean isRefresh;
-
-	private Label validationTextLabel;
 
 	private Section section;
 	
@@ -69,23 +60,8 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 	public void refresh() {
 		super.refresh();
 		
-		isRefresh = true;
-		try {
-			List<String> validValues = ((IParameter)input).getValidValues();
-			if (validValues != null) {
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < validValues.size(); i++) {
-					sb.append(validValues.get(i)).append("\n"); //$NON-NLS-1$
-				}
-				validationText.setText(sb.toString());
-			} else {
-				validationText.setText(""); //$NON-NLS-1$
-			}
-			refreshParametersList();
-			showChoiceWidgets();
-		} finally {
-			isRefresh = false;
-		}
+		refreshParametersList();
+		showChoiceWidgets();
 	}
 
 	public void createContents(Composite parent) {
@@ -141,20 +117,10 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		defaultCombo = fields.add(new ComboField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
 		defaultCombo.create(client, toolkit);
 		
-		validationTextLabel = toolkit.createLabel(client, Messages.ParameterDetailsPage_ValidValues);
-		validationTextLabel.setLayoutData(new GridData());
-		validationText = toolkit.createText(client, "", SWT.MULTI|SWT.WRAP|SWT.V_SCROLL); //$NON-NLS-1$
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.heightHint = 100;
-		gd.widthHint = 100;
-		gd.horizontalSpan = 2;
-		validationText.setLayoutData(gd);
-		validationText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (isRefresh) return;
-				validationChange(((Text)e.widget).getText());
-			}
-		});
+		validation = (ListField) fields.add(new ListField(null, DeploymentDescriptorPackage.VALIDATION, Messages.ParameterDetailsPage_ValidValues));
+		validation.create(client, toolkit);
+		((GridData)validation.getText().getLayoutData()).heightHint = 100;
+		((GridData)validation.getText().getLayoutData()).widthHint = 100;
 		
 		toolkit.createLabel(client, ""); //$NON-NLS-1$
 		
@@ -171,6 +137,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 						public void run() {
 							refreshParametersList();
 							showChoiceWidgets();
+							validationChange();
 						};
 					});
 				}
@@ -179,7 +146,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		
 		EditorField description = fields.add(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
 		description.create(client, toolkit);
-		gd = ((GridData)description.getText().getLayoutData());
+		GridData gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;
 		gd.widthHint = 100;
 	}
@@ -202,11 +169,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		
 		defaultValue.setVisible(!showChoiceWidgets);
 		defaultCombo.setVisible(showChoiceWidgets);
-		
-		validationText.setVisible(showChoiceWidgets);
-		validationTextLabel.setVisible(showChoiceWidgets);
-		((GridData)validationText.getLayoutData()).exclude = !showChoiceWidgets;
-		((GridData)validationTextLabel.getLayoutData()).exclude = !showChoiceWidgets;
+		validation.setVisible(showChoiceWidgets);
 		
 		section.layout(true);
 		Point size = section.getSize();
@@ -214,12 +177,10 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		section.setSize(size.x, newsize.y);
 	}
 	
-	protected void validationChange(String text) {
-		String[] newParams = text.split("\n"); //$NON-NLS-1$
+	protected void validationChange() {
+		List<String> vals = ((IParameter)input).getValidValues();
+		String[] strings = vals.toArray(new String[vals.size()]);
 		
-		((IParameter)input).getValidValues().clear();
-		((IParameter)input).getValidValues().addAll(Arrays.asList(newParams));
-		
-		((ComboField)defaultCombo).setItems(newParams);
+		((ComboField)defaultCombo).setItems(strings);
 	}
 }

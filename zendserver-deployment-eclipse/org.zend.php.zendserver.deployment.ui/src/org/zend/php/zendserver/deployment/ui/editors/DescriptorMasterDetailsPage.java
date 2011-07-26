@@ -18,10 +18,15 @@ public class DescriptorMasterDetailsPage extends DescriptorEditorPage  {
 		super.createFormContent(managedForm);		
 
 		block.createContent(managedForm);
-		showMarkers();
 	}
 	
 	public void refresh() {
 		block.refresh();
+	}
+	
+	@Override
+	public void showMarkers() {
+		super.showMarkers();
+		block.showMarkers();
 	}
 }

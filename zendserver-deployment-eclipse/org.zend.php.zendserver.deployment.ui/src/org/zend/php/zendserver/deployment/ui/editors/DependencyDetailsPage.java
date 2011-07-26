@@ -31,8 +31,6 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 	protected VersionControl version;
 	private TextAssistField name;
 
-	protected IModelObject input;
-
 	protected boolean isSection = true;
 	protected boolean isNameRequired = false;
 
@@ -109,7 +107,7 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 		version.setInput(input);
 		if (name != null)
 			name.setInput(input);
-		refresh();
+		super.selectionChanged(part, selection);
 	}
 
 	public void createContents(Composite parent) {
@@ -139,6 +137,10 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 				: general;
 		version = new VersionControl(getVersionModes(), input);
 		version.createContents(client, toolkit);
+		EditorField[] versionFields = version.getFields();
+		for (EditorField ef : versionFields) {
+			fields.add(ef);
+		}
 
 		if (isSection) {
 			// safe to cast into section
@@ -187,9 +189,9 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 		hint.setLayout(new GridLayout(3, false));
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, true);
 		hint.setLayoutData(data);
-		name = new TextAssistField(input,
+		name = (TextAssistField) fields.add(new TextAssistField(input,
 				DeploymentDescriptorPackage.DEPENDENCY_NAME, nameLabel,
-				provider.getNames());
+				provider.getNames()));
 		name.create(hint, toolkit);
 	}
 }

@@ -28,6 +28,10 @@ public abstract class DescriptorDetailsPage implements IDetailsPage {
 	}
 	
 	public void showMarkers() {
+		if (input == null) {
+			return;
+		}
+		
 		IDeploymentDescriptor imc = editor.getModel();
 		int index = -1;
 		if (imc != null) {
