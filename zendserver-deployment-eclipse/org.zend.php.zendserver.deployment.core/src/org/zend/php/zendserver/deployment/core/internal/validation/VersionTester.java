@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 import java.util.regex.Pattern;
 
 import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class VersionTester extends PropertyTester {
@@ -14,7 +15,7 @@ public class VersionTester extends PropertyTester {
 	}
 
 	@Override
-	public String test(Feature feature, Object property) {
+	public String test(Feature feature, Object property, IModelObject object) {
 		if (property == null) {
 			return null;
 		}

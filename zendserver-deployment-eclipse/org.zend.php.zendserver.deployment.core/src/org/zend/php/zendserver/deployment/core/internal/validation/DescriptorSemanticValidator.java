@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -33,6 +34,10 @@ public class DescriptorSemanticValidator {
 		
 		add(DeploymentDescriptorPackage.VAR_NAME, tester);
 		add(DeploymentDescriptorPackage.VALUE, tester);
+		
+		//
+		tester = new ParameterPasswordTester(ValidationStatus.ERROR);
+		add(DeploymentDescriptorPackage.IDENTICAL, tester);
 		
 		tester = new FileExistsTester();
 		// TODO consider mapping
@@ -67,7 +72,7 @@ public class DescriptorSemanticValidator {
 			if (featureTests != null) {
 				List<Object> children = obj.getChildren(f);
 				for (PropertyTester pt : featureTests) {
-					String msg = pt.test(f, children);
+					String msg = pt.test(f, children, obj);
 					if (msg != null) {
 						int offset = obj.getOffset(f);
 						
@@ -99,7 +104,7 @@ public class DescriptorSemanticValidator {
 			if (featureTests != null) {
 				Object value = obj.get(f);
 				for (PropertyTester pt: featureTests) {
-					String msg = pt.test(f, value);
+					String msg = pt.test(f, value, obj);
 					if (msg != null) {
 						int offset = obj.getOffset(f);
 						
@@ -107,8 +112,7 @@ public class DescriptorSemanticValidator {
 						try {
 							line = document.getLineOfOffset(offset) + 1;
 						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							DeploymentCore.log(e);
 						}
 						
 						statuses.add(new ValidationStatus(objId, objNo, f.id, line, offset, offset, pt.severity, msg));

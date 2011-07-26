@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.core.internal.validation;
 import java.io.File;
 
 import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class FileExistsTester extends PropertyTester {
@@ -12,7 +13,7 @@ public class FileExistsTester extends PropertyTester {
 	}
 
 	@Override
-	public String test(Feature feature, Object value) {
+	public String test(Feature feature, Object value, IModelObject object) {
 		if (value == null) {
 			return null;
 		}
