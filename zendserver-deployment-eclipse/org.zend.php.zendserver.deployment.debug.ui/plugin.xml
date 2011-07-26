@@ -13,6 +13,28 @@
                class="org.zend.php.zendserver.deployment.debug.ui.contributions.DebugApplicationContribution">
          </control>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=head">
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/run_exc.gif"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="run">
+            </parameter>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/debug_exc.gif"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="debug">
+            </parameter>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -20,6 +42,11 @@
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.LaunchApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
             name="Launch PHP Application">
+         <commandParameter
+               id="mode"
+               name="mode"
+               optional="false">
+         </commandParameter>
       </command>
    </extension>
 

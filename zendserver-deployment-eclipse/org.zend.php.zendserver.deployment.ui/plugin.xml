@@ -38,16 +38,6 @@
             allPopups="false"
             locationURI="toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=head">
          <command
-               commandId="org.zend.php.zendserver.deployment.ui.deploy"
-               icon="icons/obj16/run_exc.gif"
-               style="push">
-         </command>
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.debug"
-               icon="icons/obj16/debug_exc.gif"
-               style="push">
-         </command>
-         <command
                commandId="org.zend.php.zendserver.deployment.ui.phpunit"
                icon="icons/obj16/test_application.gif"
                style="push">
@@ -56,12 +46,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.ApplicationDeployHandler"
-            description="Deploy selected Application"
-            id="org.zend.php.zendserver.deployment.ui.deploy"
-            name="Deploy">
-      </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableDeploymentSupport"
             description="Add Application Deployment Support"
@@ -72,11 +56,6 @@
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.ApplicationTestHandler"
             id="org.zend.php.zendserver.deployment.ui.phpunit"
             name="Run PHPUnit Test">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.ApplicationDebugHandler"
-            id="org.zend.php.zendserver.deployment.ui.debug"
-            name="Debug PHP Application">
       </command>
    </extension>
    <extension
