@@ -9,27 +9,19 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
 public class ZendServerDependency extends ModelContainer implements IZendServerDependency {
 
-	private String fName;
 	private String fEquals;
 	private String fMin;
 	private String fMax;
-	private String fConflicts;
 
 	public ZendServerDependency() {
 		super(new Feature[] {
-				DeploymentDescriptorPackage.DEPENDENCY_NAME,
 				DeploymentDescriptorPackage.DEPENDENCY_EQUALS,
 				DeploymentDescriptorPackage.DEPENDENCY_MIN,
 				DeploymentDescriptorPackage.DEPENDENCY_MAX,
-				DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS
 		}, 
 				new Feature[] { DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE});
 	}
 	
-	public String getName() {
-		return fName;
-	}
-
 	public String getEquals() {
 		return fEquals;
 	}
@@ -44,16 +36,6 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 
 	public List<String> getExclude() {
 		return super.getList(DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE);
-	}
-
-	public String getConflicts() {
-		return fConflicts;
-	}
-	
-	public void setName(String name) {
-		String oldValue = this.fName;
-		this.fName = name;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_NAME, fName, oldValue);
 	}
 
 	public void setEquals(String equals) {
@@ -73,28 +55,17 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 		this.fMax = max;
 		fireChange(DeploymentDescriptorPackage.DEPENDENCY_MAX, fMax, oldValue);
 	}
-
-	public void setConflicts(String conflicts) {
-		String oldValue = this.fConflicts;
-		this.fConflicts = conflicts;
-		fireChange(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS, fName, oldValue);
-	}
 	
 	public void copy(IModelObject obj) {
 		IZendServerDependency src = (IZendServerDependency) obj; 
-		setConflicts(src.getConflicts());
 		setEquals(src.getEquals());
 		setMax(src.getMax());
 		setMin(src.getMin());
-		setName(src.getName());
 		super.copy(src);
 	}
 
 	public void set(Feature key, String value) {
 		switch (key.id) {
-			case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
-				setName(value);
-				break;
 			case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
 				setEquals(value);
 				break;
@@ -104,9 +75,6 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 			case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
 				setMax(value);
 				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
-				setConflicts(value);
-				break;
 			default:
 				throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
 		}
@@ -115,16 +83,12 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 
 	public String get(Feature key) {
 		switch (key.id) {
-		case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
-			return fName;
 		case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
 			return fEquals;
 		case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
 			return fMin;
 		case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
 			return fMax;
-		case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
-			return fConflicts;
 		default: 
 			throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
 		}

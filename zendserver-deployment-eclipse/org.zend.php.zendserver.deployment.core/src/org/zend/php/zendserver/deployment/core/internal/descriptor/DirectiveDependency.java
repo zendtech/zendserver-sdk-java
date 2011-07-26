@@ -23,7 +23,7 @@ public class DirectiveDependency extends ModelContainer implements IDirectiveDep
 				DeploymentDescriptorPackage.DEPENDENCY_MAX,
 				DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS
 		}, 
-				new Feature[] { DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE});
+				new Feature[] {});
 	}
 	
 	public String getName() {
@@ -82,7 +82,6 @@ public class DirectiveDependency extends ModelContainer implements IDirectiveDep
 	
 	public void copy(IModelObject obj) {
 		IDirectiveDependency src = (IDirectiveDependency) obj; 
-		setConflicts(src.getConflicts());
 		setEquals(src.getEquals());
 		setMax(src.getMax());
 		setMin(src.getMin());
