@@ -66,7 +66,7 @@ public abstract class ModelObject implements IModelObject {
 		if ((newValue == null && oldValue != null) ||
 			(newValue != null && oldValue == null) ||
 			(newValue != null && !newValue.equals(oldValue))) {
-			fireChange(new ChangeEvent(target, key, IDescriptorChangeListener.SET, newValue, oldValue));
+			fireChange(new ChangeEvent(target, key, type, newValue, oldValue));
 		}
 	}
 	

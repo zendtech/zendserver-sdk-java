@@ -40,7 +40,7 @@ public abstract class ModelContainer extends ModelObject implements IModelContai
 		
 		mmap = new LinkedHashMap<Feature, List<Object>>();
 		for (Feature s : children) {
-			mmap.put(s, new ObservableList<Object>(this, s, listeners));
+			mmap.put(s, new ObservableList<Object>(this, s));
 		}
 	}
 

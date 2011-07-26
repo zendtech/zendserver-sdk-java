@@ -6,9 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
-import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 
 /**
  * Wrapper for {@link List} that generates notifications on add/remove/change of any of list elements.
@@ -18,22 +16,17 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 public class ObservableList<E> implements List<E> {
 
 	private List<E> list;
-	private IModelContainer container;
+	private ModelContainer container;
 	private Feature feature;
-	private List<IDescriptorChangeListener> listeners;
 	
-	public ObservableList(IModelContainer container, Feature feature, List<IDescriptorChangeListener> listeners) {
+	public ObservableList(ModelContainer container, Feature feature) {
 		this.list = new ArrayList<E>();
 		this.feature = feature;
-		this.listeners = listeners;
 		this.container = container;
 	}
 	
 	private void fireChange(int type, Object newValue, Object oldValue) {
-		ChangeEvent event = new ChangeEvent(container, feature, type, newValue, oldValue);
-		for (IDescriptorChangeListener l : listeners) {
-			l.descriptorChanged(event);
-		}
+		container.fireChange(container, feature, type, newValue, oldValue);
 	}
 	
 	public boolean add(E e) {

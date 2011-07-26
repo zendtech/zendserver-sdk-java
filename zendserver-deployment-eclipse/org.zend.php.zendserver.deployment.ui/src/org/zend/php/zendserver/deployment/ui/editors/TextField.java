@@ -144,12 +144,18 @@ public class TextField implements EditorField {
 
 	public void setInput(IModelObject input) {
 		target = input;
+		textValue = null;
 	}
 	
 	public Text getText() {
 		return text;
 	}
 
+	/**
+	 * Makes field invisible and removes the value from
+	 * underlying model object. When user enables the field,
+	 * it's data is set back to model.
+	 */
 	public void setVisible(boolean visible) {
 		if (text.getVisible() == visible) {
 			return;
