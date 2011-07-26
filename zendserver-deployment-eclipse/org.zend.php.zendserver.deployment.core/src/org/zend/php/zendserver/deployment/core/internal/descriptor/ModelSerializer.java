@@ -324,7 +324,14 @@ public class ModelSerializer {
 	private void removeNodes(Node border, Node node) {
 		Node parent = node.getParentNode();
 		do {
+			Node sibling = node.getNextSibling();
 			parent.removeChild(node);
+			
+			// remove text node after the deleted node
+			if ((sibling != null) && (sibling.getNodeType() == Node.TEXT_NODE)) {
+				parent.removeChild(sibling);
+			}
+			
 			node = parent;
 			parent = parent.getParentNode();
 		} while ((getChildCount(node, Node.ELEMENT_NODE) == 0) && (node != border));
@@ -356,7 +363,13 @@ public class ModelSerializer {
 			return;
 		}
 		
-		if (attrName == null) {
+		if (attrName == null) {			
+			Node sibling = target.getNextSibling();
+			// remove text node after the deleted node
+			if ((sibling != null) && (sibling.getNodeType() == Node.TEXT_NODE)) {
+				target.getParentNode().removeChild(sibling);
+			}
+			
 			target.getParentNode().removeChild(target);
 		} else {
 			NamedNodeMap attrs = target.getAttributes();
