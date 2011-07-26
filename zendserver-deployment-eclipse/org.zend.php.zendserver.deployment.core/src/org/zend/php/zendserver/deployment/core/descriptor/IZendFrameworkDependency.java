@@ -5,10 +5,6 @@ import java.util.List;
 
 public interface IZendFrameworkDependency extends IModelContainer {
 	
-	String getName();
-	
-	void setName(String name);
-	
 	String getEquals();
 	
 	void setEquals(String equals);
@@ -22,9 +18,4 @@ public interface IZendFrameworkDependency extends IModelContainer {
 	void setMax(String max);
 	
 	List<String> getExclude();
-	
-	String getConflicts();
-	
-	void setConflicts(String conflicts);
-	
 }

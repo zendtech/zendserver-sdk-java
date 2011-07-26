@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.core.descriptor;
 
-import java.util.List;
 
 
 public interface IDirectiveDependency extends IModelContainer {
@@ -20,11 +19,4 @@ public interface IDirectiveDependency extends IModelContainer {
 	String getMax();
 	
 	void setMax(String max);
-	
-	List<String> getExclude();
-	
-	String getConflicts();
-	
-	void setConflicts(String conflicts);
-	
 }
