@@ -1,4 +1,4 @@
- units.1.id=com.zend.php.zendserver.deployment.categoryIU
+ units.1.id=com.zend.php.zendserver.deployment.debug.categoryIU
  units.1.version=$version$
  units.1.provides.1.namespace=org.eclipse.equinox.p2.iu
  units.1.provides.1.name=com.zend.php.zendserver.deployment.debug.categoryIU
