@@ -306,8 +306,9 @@ public class ModelSerializer {
 		if (after == null) { // by default insert at the beginning
 			parent.insertBefore(e, parent.getFirstChild());
 		} else {
-			if (after.getParentNode() == parent) {
-				parent.insertBefore(e, after.getNextSibling());
+			Node sameLevelAfter = getDirectChild(parent, after);
+			if (sameLevelAfter != null) {
+				parent.insertBefore(e, sameLevelAfter.getNextSibling());
 			} else {
 				parent.appendChild(e);
 			}
