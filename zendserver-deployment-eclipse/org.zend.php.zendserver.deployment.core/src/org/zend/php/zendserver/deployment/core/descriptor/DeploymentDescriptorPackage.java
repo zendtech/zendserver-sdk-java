@@ -14,31 +14,31 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final int SUMMARY_ID = 2;
 	
-	public static final Feature SUMMARY = new Feature("summary", null, String.class, SUMMARY_ID); //$NON-NLS-1$
+	public static final Feature SUMMARY = new Feature("summary", null, String.class, SUMMARY_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int PKG_DESCRIPTION_ID = 3;
 	
-	public static final Feature PKG_DESCRIPTION = new Feature("description", null, String.class, PKG_DESCRIPTION_ID); //$NON-NLS-1$
+	public static final Feature PKG_DESCRIPTION = new Feature("description", null, String.class, PKG_DESCRIPTION_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int VERSION_RELEASE_ID = 4;
 	
-	public static final Feature VERSION_RELEASE = new Feature("version/release", null, String.class, VERSION_RELEASE_ID); //$NON-NLS-1$
+	public static final Feature VERSION_RELEASE = new Feature("version/release", null, String.class, VERSION_RELEASE_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int VERSION_API_ID = 5;
 	
-	public static final Feature VERSION_API = new Feature("version/api", null, String.class, VERSION_API_ID); //$NON-NLS-1$
+	public static final Feature VERSION_API = new Feature("version/api", null, String.class, VERSION_API_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int EULA_ID = 6;
 	
-	public static final Feature EULA = new Feature("eula", null, String.class, EULA_ID); //$NON-NLS-1$
+	public static final Feature EULA = new Feature("eula", null, String.class, EULA_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int ICON_ID = 7;
 	
-	public static final Feature ICON = new Feature("icon", null, String.class, ICON_ID); //$NON-NLS-1$
+	public static final Feature ICON = new Feature("icon", null, String.class, ICON_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int DOCROOT_ID = 8;
 	
-	public static final Feature DOCROOT = new Feature("docroot", null, String.class, DOCROOT_ID); //$NON-NLS-1$
+	public static final Feature DOCROOT = new Feature("docroot", null, String.class, DOCROOT_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int SCRIPTSDIR_ID = 9;
 	
@@ -46,7 +46,7 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final int HEALTHCHECK_ID = 10;
 	
-	public static final Feature HEALTHCHECK = new Feature("healthcheck", null, String.class, HEALTHCHECK_ID); //$NON-NLS-1$
+	public static final Feature HEALTHCHECK = new Feature("healthcheck", null, String.class, HEALTHCHECK_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int APPDIR_ID = 11;
 	

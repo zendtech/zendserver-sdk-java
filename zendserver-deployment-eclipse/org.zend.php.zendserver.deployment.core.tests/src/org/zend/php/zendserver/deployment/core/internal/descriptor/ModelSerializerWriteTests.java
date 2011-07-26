@@ -385,6 +385,33 @@ public class ModelSerializerWriteTests extends TestCase {
 "</package>\n", txt.toString());
 	}
 
+	public void testSerializeRemoveEmptyParents3() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
+		ModelSerializer lm = new ModelSerializer();
+		TextOutput txt = new TextOutput();
+		lm.setOutput(txt);
+
+		DeploymentDescriptor descr = new DeploymentDescriptor();
+		descr.setDocumentRoot("newRoot");
+		
+		lm.serialize(descr);
+		lm.write();
+		lm.load(txt.getInputStream(), txt.getInputStream(), descr);
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n" +
+"  <docroot>newRoot</docroot>\n" +
+"</package>\n", txt.toString());
+		
+		descr.setDocumentRoot(null);
+		
+		lm.serialize(descr);
+		lm.write();
+		
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+"<package xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" packagerversion=\"1.4.11\" version=\"2.0\" xsi:schemaLocation=\"http://www.zend.com packageDescriptor.xsd\">\n" +
+"  </package>\n", txt.toString());
+	}
+	
 	public void testAddInOrder() throws SAXException, IOException, XPathExpressionException, ParserConfigurationException, CoreException, TransformerFactoryConfigurationError, TransformerException {
 		ModelSerializer lm = new ModelSerializer();
 		TextOutput txt = new TextOutput();
