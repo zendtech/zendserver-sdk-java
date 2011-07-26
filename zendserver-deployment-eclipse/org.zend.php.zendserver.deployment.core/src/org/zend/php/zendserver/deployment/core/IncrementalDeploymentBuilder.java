@@ -53,7 +53,7 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 				
 				if ((resource instanceof IFile)
 						&& (MappingModelFactory.DEPLOYMENT_PROPERTIES.equals(resource.getName()))) {
-				//	validateMapping((IFile) resource);
+					validateMapping((IFile) resource);
 				}
 				
 				if (resource instanceof IProject) {
