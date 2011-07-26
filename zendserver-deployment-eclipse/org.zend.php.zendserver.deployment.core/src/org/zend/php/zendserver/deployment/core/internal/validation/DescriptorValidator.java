@@ -125,7 +125,7 @@ public class DescriptorValidator {
 		reportProblems(file, statuses);
 	}
 
-	private void reportProblems(IFile file, ValidationStatus[] statuses) {
+	public static void reportProblems(IFile file, ValidationStatus[] statuses) {
 		List<ValidationStatus> existing = new ArrayList<ValidationStatus>();
 		IMarker[] markers = null;
 		try {
@@ -156,7 +156,7 @@ public class DescriptorValidator {
 		}
 	}
 	
-	private ValidationStatus markerToStatus(IMarker marker) {
+	public static ValidationStatus markerToStatus(IMarker marker) {
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
 		int start = marker.getAttribute(IMarker.CHAR_START, 0);
 		int end = marker.getAttribute(IMarker.CHAR_END, 0);
@@ -173,7 +173,7 @@ public class DescriptorValidator {
 	
 	
 
-	protected IMarker reportProblem(IFile file, ValidationStatus status) {
+	public static IMarker reportProblem(IFile file, ValidationStatus status) {
 		IMarker marker;
 		try {
 			marker = file.createMarker(IncrementalDeploymentBuilder.PROBLEM_MARKER);
