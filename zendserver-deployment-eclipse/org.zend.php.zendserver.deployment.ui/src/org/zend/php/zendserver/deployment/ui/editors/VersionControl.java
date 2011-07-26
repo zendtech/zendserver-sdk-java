@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -97,7 +100,7 @@ public class VersionControl {
 	private int getInputSelection(IModelObject input2) {
 		if (input.get(DeploymentDescriptorPackage.DEPENDENCY_EQUALS) != null) {
 			return EQUALS;
-		} else if (input.get(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS) != null) {
+		} else if (((modes & CONFLICTS) == CONFLICTS) && (input.get(DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS) != null)) {
 			return CONFLICTS;
 		}
 		return RANGE;
@@ -280,5 +283,25 @@ public class VersionControl {
 			r++;
 		}
 		return r;
+	}
+
+	public EditorField[] getFields() {
+		List<EditorField> fields = new ArrayList<EditorField>();
+		if (equalsField != null) {
+			fields.add(equalsField);
+		}
+		if (conflictsField != null) {
+			fields.add(conflictsField);
+		}
+		if (minField != null) {
+			fields.add(minField);
+		}
+		if (maxField != null) {
+			fields.add(maxField);
+		}
+		if (excludeField != null) {
+			fields.add(excludeField);
+		}
+		return fields.toArray(new EditorField[fields.size()]);
 	}
 }
