@@ -1,11 +1,14 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -23,7 +26,12 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.sdklib.mapping.IMapping;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.target.IZendTarget;
@@ -56,7 +64,11 @@ public class LaunchUtils {
 
 		// base URL + index.html, we can find file path based on project
 		// relative path and resource mapping
-		wc.setAttribute(Server.FILE_NAME, getFilename(project));
+		IResource resource = getFile(project);
+		if (resource != null) {
+			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
+			wc.setMappedResources(new IResource[] { resource });
+		}
 
 		// deployment base URL
 		wc.setAttribute(AUTO_GENERATED_URL, false);
@@ -107,18 +119,48 @@ public class LaunchUtils {
 		return lm.getLaunchConfigurationType(IPHPDebugConstants.PHPServerLaunchType);
 	}
 
-	private static String getFilename(IProject project) {
-		File container = project.getLocation().toFile();
-		IMappingModel model = MappingModelFactory.createModel(new EclipseMappingModelLoader(),
-				container);
-		String path = null;
-		try {
-			path = model.getPackagePath("index.html");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private static IResource getFile(IProject project) throws CoreException {
+		IDescriptorContainer descriptorContainer = DescriptorContainerManager.getService()
+				.openDescriptorContainer(project);
+		String documentRoot = descriptorContainer.getDescriptorModel().getDocumentRoot();
+		if (documentRoot != null && !documentRoot.isEmpty()) {
+			IResource documentResource = project.findMember(documentRoot);
+			if (documentResource instanceof IContainer) {
+				return getFile(((IContainer) documentResource).members());
+			}
 		}
-		return path != null ? path.substring(path.indexOf(File.separator) + 1) : null;
+		IMappingModel model = MappingModelFactory.createModel(new EclipseMappingModelLoader(),
+				new File(project.getLocation().toString()));
+		IMappingEntry entry = model.getEntry(IMappingModel.APPDIR, Type.INCLUDE);
+		List<IMapping> mappings = entry.getMappings();
+		for (IMapping mapping : mappings) {
+			IResource mappedResource = project.findMember(mapping.getPath());
+			if (mappedResource instanceof IContainer) {
+				return getFile(((IContainer) mappedResource).members());
+			} else {
+				return mappedResource;
+			}
+		}
+		return null;
+	}
+
+	private static IResource getFile(IResource[] members) throws CoreException {
+		List<IResource> toCheck = new ArrayList<IResource>();
+		for (IResource member : members) {
+			if (member instanceof IContainer) {
+				IResource[] children = ((IContainer) member).members();
+				for (IResource child : children) {
+					if (child instanceof IContainer) {
+						toCheck.add(child);
+					} else {
+						return child;
+					}
+				}
+			} else {
+				return member;
+			}
+		}
+		return getFile(toCheck.toArray(new IResource[0]));
 	}
 
 	private static String getNewConfigurationName(String fileName) {
