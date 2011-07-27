@@ -54,7 +54,6 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		this.project = project;
 	}
 
-	@Override
 	public void statusChanged(IStatus status) {
 		if (status.getSeverity() == IStatus.OK) {
 			setMessage(status.getMessage());

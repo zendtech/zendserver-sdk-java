@@ -43,7 +43,6 @@ public class LaunchApplicationHandler extends AbstractHandler {
 	private DeploymentEntry entry;
 	private boolean firstTime;
 
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		mode = event.getParameter(ApplicationContribution.MODE);
 		final IProject project = getProject(event
