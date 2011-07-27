@@ -276,6 +276,9 @@ public class ModelSerializer {
 		while (p != parent) {
 			child = p;
 			p = child.getParentNode();
+			if (p == null) {
+				return null;
+			}
 		}
 		
 		return child;
@@ -307,6 +310,7 @@ public class ModelSerializer {
 			parent.insertBefore(e, parent.getFirstChild());
 		} else {
 			Node sameLevelAfter = getDirectChild(parent, after);
+			
 			if (sameLevelAfter != null) {
 				parent.insertBefore(e, sameLevelAfter.getNextSibling());
 			} else {
