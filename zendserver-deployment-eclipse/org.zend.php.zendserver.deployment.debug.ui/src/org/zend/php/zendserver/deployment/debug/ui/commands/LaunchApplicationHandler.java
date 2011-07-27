@@ -57,8 +57,6 @@ public class LaunchApplicationHandler extends AbstractHandler {
 				}
 			});
 			deployJob.schedule();
-		} else {
-			DebugUITools.launch(config, mode);
 		}
 		return null;
 	}

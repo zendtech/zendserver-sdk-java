@@ -2,7 +2,7 @@ package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.util.Map;
 
-public interface IDeploymentEntry {
+public interface IDeploymentHelper {
 
 	String getBasePath();
 

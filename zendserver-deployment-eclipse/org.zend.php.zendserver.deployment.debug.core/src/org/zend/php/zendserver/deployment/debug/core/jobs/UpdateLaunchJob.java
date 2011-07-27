@@ -4,13 +4,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentEntry;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class UpdateLaunchJob extends AbstractLaunchJob {
 
-	public UpdateLaunchJob(IDeploymentEntry entry, IProject project) {
+	public UpdateLaunchJob(IDeploymentHelper entry, IProject project) {
 		super(Messages.updateJob_Title, entry, project);
 	}
 

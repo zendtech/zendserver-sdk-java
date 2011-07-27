@@ -7,10 +7,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentEntry;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
 
-public class DeploymentHelper implements IDeploymentEntry {
+public class DeploymentHelper implements IDeploymentHelper {
 
 	private static final String EMPTY_STRING = "";
 

@@ -12,7 +12,7 @@ import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentEntry;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -20,11 +20,11 @@ import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 
 public abstract class AbstractLaunchJob extends Job {
 
-	protected IDeploymentEntry entry;
+	protected IDeploymentHelper entry;
 	protected IProject project;
 	private ILaunchConfiguration config;
 
-	protected AbstractLaunchJob(String name, IDeploymentEntry entry, IProject project) {
+	protected AbstractLaunchJob(String name, IDeploymentHelper entry, IProject project) {
 		super(name);
 		this.entry = entry;
 		this.project = project;

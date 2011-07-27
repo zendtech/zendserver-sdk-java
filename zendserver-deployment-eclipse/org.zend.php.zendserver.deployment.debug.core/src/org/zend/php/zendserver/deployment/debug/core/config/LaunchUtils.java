@@ -40,7 +40,7 @@ public class LaunchUtils {
 	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
 	public static ILaunchConfiguration createConfiguration(IProject project, int appId,
-			IDeploymentEntry entry) throws CoreException {
+			IDeploymentHelper entry) throws CoreException {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
