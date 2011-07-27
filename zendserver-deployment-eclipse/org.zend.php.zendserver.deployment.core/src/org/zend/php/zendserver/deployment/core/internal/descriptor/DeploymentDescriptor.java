@@ -34,12 +34,12 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
 				DeploymentDescriptorPackage.VERSION_RELEASE,
 				DeploymentDescriptorPackage.VERSION_API,
-				DeploymentDescriptorPackage.EULA,
 				DeploymentDescriptorPackage.ICON,
+				DeploymentDescriptorPackage.EULA,
+				DeploymentDescriptorPackage.APPDIR, 
 				DeploymentDescriptorPackage.DOCROOT,
 				DeploymentDescriptorPackage.SCRIPTSDIR,
-				DeploymentDescriptorPackage.HEALTHCHECK,
-				DeploymentDescriptorPackage.APPDIR }, new Feature[] {
+				DeploymentDescriptorPackage.HEALTHCHECK}, new Feature[] {
 				DeploymentDescriptorPackage.DEPENDENCIES_PHP,
 				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
 				DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION,
