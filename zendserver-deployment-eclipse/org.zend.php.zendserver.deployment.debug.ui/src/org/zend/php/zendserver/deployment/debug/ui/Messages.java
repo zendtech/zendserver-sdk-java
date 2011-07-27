@@ -15,9 +15,6 @@ public class Messages extends NLS {
 
 	public static String deploymentDialog_Title;
 	public static String deploymentDialog_Message;
-	public static String deploymentJob_Title;
-	public static String deploymentStatusJob_Title;
-	public static String updateJob_Title;
 
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;

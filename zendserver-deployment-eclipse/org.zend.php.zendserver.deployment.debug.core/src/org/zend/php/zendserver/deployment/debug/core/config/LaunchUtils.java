@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.debug.ui.config;
+package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class LaunchUtils {
 	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
 	public static ILaunchConfiguration createConfiguration(IProject project, int appId,
-			DeploymentEntry entry) throws CoreException {
+			IDeploymentEntry entry) throws CoreException {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
@@ -96,7 +96,6 @@ public class LaunchUtils {
 	}
 
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
-		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager()
 					.getLaunchConfigurations(getConfigurationType());
@@ -106,14 +105,13 @@ public class LaunchUtils {
 				String projectName = configs[i].getAttribute(
 						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 				if (project.getName().equals(projectName)) {
-					config = configs[i].getWorkingCopy();
-					break;
+					return configs[i].getWorkingCopy();
 				}
 			}
 		} catch (CoreException ce) {
-			// TODO log
+			return null;
 		}
-		return config;
+		return null;
 	}
 
 	public static ILaunchConfigurationType getConfigurationType() {
@@ -178,7 +176,7 @@ public class LaunchUtils {
 				configurationName = lastSegment;
 			}
 		} catch (Exception e) {
-			// TODO log
+			// ignore and use default configurationName value
 		}
 		return DebugPlugin.getDefault().getLaunchManager()
 				.generateLaunchConfigurationName(configurationName);
