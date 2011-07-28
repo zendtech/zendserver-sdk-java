@@ -71,8 +71,9 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		setTitle(Messages.deploymentDialog_Title);
 		setMessage(Messages.deploymentDialog_Message);
 		setTitleImage(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP).createImage());
-		block = new DeploymentConfigurationBlock(project, this);
+		block = new DeploymentConfigurationBlock(this);
 		Control container = block.createContents(dialogArea);
+		block.createParametersGroup(project);
 		return container;
 	}
 

@@ -19,6 +19,8 @@ public class Messages extends NLS {
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;
 
+	public static String deploymentTab_Title;
+
 	public static String parametersPage_Title;
 	public static String parametersPage_TargetLocation;
 	public static String parametersPage_DeployTo;

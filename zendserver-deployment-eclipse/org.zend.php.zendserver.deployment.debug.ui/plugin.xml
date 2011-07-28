@@ -71,5 +71,14 @@
          </commandParameter>
       </command>
    </extension>
+   <extension
+         point="org.eclipse.php.debug.ui.launchConfigurationTabs">
+      <launchConfigurationTab
+            class="org.zend.php.zendserver.deployment.debug.ui.config.DeploymentLaunchConfigurationTab"
+            id="org.zend.php.zendserver.deployment.debug.ui.deploymentTab"
+            launchConfigurationTabGroupId="org.eclipse.php.server.ui.launchConfigurationTabGroup"
+            modes="run,debug">
+      </launchConfigurationTab>
+   </extension>
 
 </plugin>

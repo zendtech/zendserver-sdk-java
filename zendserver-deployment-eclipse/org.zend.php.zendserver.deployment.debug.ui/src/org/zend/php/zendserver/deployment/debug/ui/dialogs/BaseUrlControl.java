@@ -69,11 +69,21 @@ public class BaseUrlControl {
 		return result;
 	}
 
+	public void setURL(String vHost, String basePath) {
+		host.setText(vHost);
+		path.setText(basePath);
+	}
+
 	public boolean isValid() {
 		if (getURL() != null && !host.getText().isEmpty()) {
 			return true;
 		}
 		return false;
+	}
+
+	public void setEnabled(boolean value) {
+		host.setEnabled(value);
+		path.setEnabled(value);
 	}
 
 	public void addKeyListener(KeyListener listener) {

@@ -27,6 +27,22 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private DeploymentHelper() {
 	}
 
+	// TODO consider to remove this constructor
+	public DeploymentHelper(String basePath, String targetId, int appId, String projectName,
+			Map<String, String> userParams, String appName, boolean ignoreFailures,
+			boolean defaultServer, String virtualHost) {
+		super();
+		this.basePath = basePath;
+		this.targetId = targetId;
+		this.appId = appId;
+		this.projectName = projectName;
+		this.userParams = userParams;
+		this.appName = appName;
+		this.ignoreFailures = ignoreFailures;
+		this.defaultServer = defaultServer;
+		this.virtualHost = virtualHost;
+	}
+
 	public static DeploymentHelper create(DeploymentLaunchDialog dialog, String projectName) {
 		DeploymentHelper entry = new DeploymentHelper();
 		URL baseURL = dialog.getBaseUrl();

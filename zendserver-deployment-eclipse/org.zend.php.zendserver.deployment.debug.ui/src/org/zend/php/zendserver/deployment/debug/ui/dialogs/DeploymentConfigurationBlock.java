@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,6 +39,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.sdklib.manager.TargetsManager;
@@ -70,6 +72,23 @@ public class DeploymentConfigurationBlock {
 				return String.valueOf(((Button) control).getSelection());
 			default:
 				return "";
+			}
+		}
+
+		public void setValue(Object value) {
+			switch (type) {
+			case STRING:
+			case EMAIL:
+			case PASSWORD:
+				((Text) control).setText(String.valueOf(value));
+				break;
+			case CHOICE:
+				((Combo) control).setText(String.valueOf(value));
+				break;
+			case CHECKBOX:
+				((Button) control).setSelection(Boolean.valueOf(String.valueOf(value)));
+				break;
+			default:
 			}
 		}
 
@@ -124,6 +143,8 @@ public class DeploymentConfigurationBlock {
 	private Text userAppName;
 	private Button defaultServer;
 	private Button ignoreFailures;
+	private Composite container;
+	private Group parametersGroup;
 
 	private List<DeploymentParameter> parameters;
 	private TargetsManager targetsManager;
@@ -132,10 +153,7 @@ public class DeploymentConfigurationBlock {
 
 	private IStatusChangeListener context;
 
-	public DeploymentConfigurationBlock(IProject project, IStatusChangeListener context) {
-		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
-		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
-				(IFile) descriptor);
+	public DeploymentConfigurationBlock(IStatusChangeListener context) {
 		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		this.parameters = new ArrayList<DeploymentParameter>();
 		this.context = context;
@@ -143,7 +161,7 @@ public class DeploymentConfigurationBlock {
 	}
 
 	public Control createContents(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+		container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout(2, false);
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -154,8 +172,37 @@ public class DeploymentConfigurationBlock {
 		createBaseUrl(container);
 		ignoreFailures = createLabelWithCheckbox(Messages.parametersPage_ignoreFailures,
 				Messages.parametersPage_ignoreFailuresTooltip, container);
-		createParameterGroups(container);
 		return container;
+	}
+
+	public void createParametersGroup(IProject project) {
+		if (parametersGroup != null) {
+			parametersGroup.dispose();
+			parameters.clear();
+		}
+		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
+				(IFile) descriptor);
+		createParameterGroups(container);
+	}
+
+	public void initializeFields(IDeploymentHelper helper) {
+		if (helper.getBasePath().length() > 0) {
+			baseUrl.setURL(helper.getVirtualHost(), helper.getBasePath().substring(1));
+		}
+		baseUrl.setDefaultServer(helper.isDefaultServer());
+		defaultServer.setSelection(helper.isDefaultServer());
+		ignoreFailures.setSelection(helper.isIgnoreFailures());
+		for (int i = 0; i < deployComboTargets.length; i++) {
+			if (deployComboTargets[i].getId() == helper.getTargetId()) {
+				deployCombo.select(i);
+			}
+		}
+		userAppName.setText(helper.getAppName());
+		Map<String, String> params = helper.getUserParams();
+		for (DeploymentParameter parameter : parameters) {
+			parameter.setValue(params.get(parameter.getParameter().getId()));
+		}
 	}
 
 	public HashMap<String, String> getParameters() {
@@ -192,6 +239,27 @@ public class DeploymentConfigurationBlock {
 		return targetsManager.getTargetById(target.getId());
 	}
 
+	public void setBaseURLEnabled(boolean value) {
+		baseUrl.setEnabled(value);
+	}
+
+	public void setDeployComboEnabled(boolean value) {
+		deployCombo.setEnabled(value);
+		targetLocation.setEnabled(value);
+	}
+
+	public void setUserAppName(boolean value) {
+		userAppName.setEnabled(value);
+	}
+
+	public void setDefaultServer(boolean value) {
+		defaultServer.setEnabled(value);
+	}
+
+	public void setIgnoreFailures(boolean value) {
+		ignoreFailures.setEnabled(value);
+	}
+
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
@@ -219,14 +287,14 @@ public class DeploymentConfigurationBlock {
 	}
 
 	private void createParameterGroups(Composite container) {
-		Group paramsGroup = new Group(container, SWT.NULL);
-		paramsGroup.setText(Messages.parametersPage_applicationParams);
+		parametersGroup = new Group(container, SWT.NULL);
+		parametersGroup.setText(Messages.parametersPage_applicationParams);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 2;
-		paramsGroup.setLayoutData(gd);
-		paramsGroup.setLayout(new FillLayout(SWT.FILL));
+		parametersGroup.setLayoutData(gd);
+		parametersGroup.setLayout(new FillLayout(SWT.FILL));
 		if (model.getDescriptorModel() != null) {
-			final ScrolledComposite scrollComposite = new ScrolledComposite(paramsGroup,
+			final ScrolledComposite scrollComposite = new ScrolledComposite(parametersGroup,
 					SWT.V_SCROLL);
 			scrollComposite.setLayout(new FillLayout());
 			final Composite parent = new Composite(scrollComposite, SWT.NONE);

@@ -57,32 +57,40 @@ public class LaunchUtils {
 				debuggerConfiguration.getWebLaunchDelegateClass());
 
 		// TODO find real server name
-		wc.setAttribute(Server.NAME, "Zend Server");
+		wc.setAttribute(Server.NAME, "Local Zend Server");
+		wc.setAttribute(AUTO_GENERATED_URL, false);
+		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
+		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
+		// set true as default
+		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 
+		updateLaunchConfiguration(project, entry, wc);
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), appId);
+
+		config = wc.doSave();
+		return config;
+	}
+
+	public static void updateLaunchConfiguration(IProject project,
+			IDeploymentHelper entry, ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		IResource resource = getFile(project);
 		if (resource != null) {
 			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
 			wc.setMappedResources(new IResource[] { resource });
 		}
-
-		wc.setAttribute(AUTO_GENERATED_URL, false);
+		String host = null;
 		if (entry.isDefaultServer()) {
 			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
 			if (server != null) {
-				wc.setAttribute(Server.BASE_URL, server.getBaseURL() + entry.getBasePath());
+				host = server.getBaseURL();
 			}
 		} else {
-			wc.setAttribute(Server.BASE_URL, entry.getVirtualHost() + "/" + entry.getBasePath());
+			host = entry.getVirtualHost();
 		}
-
-		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
-		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
-
-		// set true as default
-		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
-
+		if (host != null) {
+			wc.setAttribute(Server.BASE_URL, host + "/" + entry.getBasePath().substring(1));
+		}
 		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), entry.getBasePath());
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), appId);
 		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), entry.getAppName());
 		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), entry.isDefaultServer());
 		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), entry.isIgnoreFailures());
@@ -90,9 +98,6 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), entry.getTargetId());
 		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), entry.getVirtualHost());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), entry.getUserParams());
-
-		config = wc.doSave();
-		return config;
 	}
 
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
