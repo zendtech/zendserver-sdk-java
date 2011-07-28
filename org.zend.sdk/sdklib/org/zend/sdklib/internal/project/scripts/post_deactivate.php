@@ -24,4 +24,6 @@
  *   being updated, if any. If this is a new installation, this variable will be
  *   empty. This is useful to detect update scenarios and handle upgrades / downgrades
  *   in hook scripts
+ * - ZS_<PARAMNAME> - will contain value of parameter defined in deployment.xml, as specified by
+ *   user during deployment.
  */  
