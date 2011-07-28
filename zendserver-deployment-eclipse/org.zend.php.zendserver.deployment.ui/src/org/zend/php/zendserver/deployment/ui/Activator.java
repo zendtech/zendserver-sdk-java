@@ -70,6 +70,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_REFRESH = "icons/elcl16/refresh.gif"; //$NON-NLS-1$
 
+	public static final String IMAGE_APPLICATION = "icons/obj16/application.gif"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
 

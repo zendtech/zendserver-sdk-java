@@ -6,15 +6,22 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
 import org.zend.sdklib.event.IStatusChangeEvent;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.manager.TargetsManager;
 
+/**
+ * TreeViewer that shows targets configured in ZendSDK and
+ * launch configurations assigned to them.
+ */
 public class TargetsViewer {
 
 	private TreeViewer viewer;
@@ -38,6 +45,11 @@ public class TargetsViewer {
 			}
 		};
 		tm.addStatusChangeListener(listener);
+		
+		// configure drag and drop
+		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transfers = new Transfer[] { ResourceTransfer.getInstance()};
+		viewer.addDropSupport(ops, transfers, new DropTransferListener(viewer));
 		
 		Control control = viewer.getControl();
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
