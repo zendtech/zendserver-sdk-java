@@ -35,6 +35,28 @@
             </parameter>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.zend.php.zendserver.deployment.ui.targets.TargetsViewer?after=dropMenu">
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/run_exc.gif"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="run">
+            </parameter>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/debug_exc.gif"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="debug">
+            </parameter>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
