@@ -16,7 +16,6 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.TargetDialog;
-import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -61,7 +60,7 @@ public class EditTargetAction extends Action implements ISelectionChangedListene
 			return; // canceled by user
 		}
 		
-		ZendTarget newTarget = dialog.getTarget();
+		IZendTarget newTarget = dialog.getTarget();
 		
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		try {
