@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -57,6 +60,21 @@ public class TargetsViewer {
 			
 			public void doubleClick(DoubleClickEvent event) {
 				new EditTargetAction(viewer).run();
+			}
+		});
+		
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchListener() {
+			
+			public void launchRemoved(ILaunch launch) {
+				viewer.refresh();
+			}
+			
+			public void launchChanged(ILaunch launch) {
+				viewer.refresh();
+			}
+			
+			public void launchAdded(ILaunch launch) {
+				viewer.refresh();
 			}
 		});
 	}
