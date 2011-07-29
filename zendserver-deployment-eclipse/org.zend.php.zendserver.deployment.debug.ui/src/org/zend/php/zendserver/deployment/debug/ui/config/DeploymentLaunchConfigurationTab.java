@@ -33,9 +33,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		block = new DeploymentConfigurationBlock(this);
 		block.createContents(composite);
 		block.setDeployComboEnabled(false);
-		block.setDefaultServer(false);
+		block.setDefaultServerEnabled(false);
 		block.setBaseURLEnabled(false);
-		block.setUserAppName(false);
+		block.setUserAppNameEnabled(false);
 		setControl(composite);
 	}
 
@@ -60,9 +60,15 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
 		URL baseURL = block.getBaseURL();
-		IDeploymentHelper helper = new DeploymentHelper(baseURL.getPath(), block.getTarget()
-				.getId(), -1, project.getName(), block.getParameters(), block.getUserAppName(),
-				block.isIgnoreFailures(), block.isDefaultServer(), baseURL.getHost());
+		IDeploymentHelper helper = new DeploymentHelper();
+		helper.setBasePath(baseURL.getPath());
+		helper.setTargetId(block.getTarget().getId());
+		helper.setProjectName(project.getName());
+		helper.setUserParams(block.getParameters());
+		helper.setAppName(block.getUserAppName());
+		helper.setIgnoreFailures(block.isIgnoreFailures());
+		helper.setDefaultServer(block.isDefaultServer());
+		helper.setVirtualHost(baseURL.getHost());
 		try {
 			LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 		} catch (CoreException e) {

@@ -22,4 +22,22 @@ public interface IDeploymentHelper {
 
 	String getVirtualHost();
 
+	void setBasePath(String basePath);
+
+	void setTargetId(String targetId);
+
+	void setAppId(int appId);
+
+	void setProjectName(String projectName);
+
+	void setUserParams(Map<String, String> userParams);
+
+	void setAppName(String appName);
+
+	void setIgnoreFailures(boolean ignoreFailures);
+
+	void setDefaultServer(boolean defaultServer);
+
+	void setVirtualHost(String virtualHost);
+
 }

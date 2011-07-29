@@ -248,15 +248,15 @@ public class DeploymentConfigurationBlock {
 		targetLocation.setEnabled(value);
 	}
 
-	public void setUserAppName(boolean value) {
+	public void setUserAppNameEnabled(boolean value) {
 		userAppName.setEnabled(value);
 	}
 
-	public void setDefaultServer(boolean value) {
+	public void setDefaultServerEnabled(boolean value) {
 		defaultServer.setEnabled(value);
 	}
 
-	public void setIgnoreFailures(boolean value) {
+	public void setIgnoreFailuresEnabled(boolean value) {
 		ignoreFailures.setEnabled(value);
 	}
 

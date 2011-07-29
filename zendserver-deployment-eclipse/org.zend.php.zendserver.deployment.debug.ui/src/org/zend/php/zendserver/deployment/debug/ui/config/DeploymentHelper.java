@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.debug.ui.config;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,23 +25,16 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private boolean defaultServer;
 	private String virtualHost;
 
-	private DeploymentHelper() {
-	}
-
-	// TODO consider to remove this constructor
-	public DeploymentHelper(String basePath, String targetId, int appId, String projectName,
-			Map<String, String> userParams, String appName, boolean ignoreFailures,
-			boolean defaultServer, String virtualHost) {
-		super();
-		this.basePath = basePath;
-		this.targetId = targetId;
-		this.appId = appId;
-		this.projectName = projectName;
-		this.userParams = userParams;
-		this.appName = appName;
-		this.ignoreFailures = ignoreFailures;
-		this.defaultServer = defaultServer;
-		this.virtualHost = virtualHost;
+	public DeploymentHelper() {
+		this.basePath = EMPTY_STRING;
+		this.targetId = EMPTY_STRING;
+		this.appId = -1;
+		this.projectName = EMPTY_STRING;
+		this.userParams = new HashMap<String, String>();
+		this.appName = EMPTY_STRING;
+		this.ignoreFailures = false;
+		this.defaultServer = false;
+		this.virtualHost = EMPTY_STRING;
 	}
 
 	public static DeploymentHelper create(DeploymentLaunchDialog dialog, String projectName) {
@@ -122,39 +116,39 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return virtualHost;
 	}
 
-	protected void setBasePath(String basePath) {
+	public void setBasePath(String basePath) {
 		this.basePath = basePath;
 	}
 
-	protected void setTargetId(String targetId) {
+	public void setTargetId(String targetId) {
 		this.targetId = targetId;
 	}
 
-	protected void setAppId(int appId) {
+	public void setAppId(int appId) {
 		this.appId = appId;
 	}
 
-	protected void setProjectName(String projectName) {
+	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
 
-	protected void setUserParams(Map<String, String> userParams) {
+	public void setUserParams(Map<String, String> userParams) {
 		this.userParams = userParams;
 	}
 
-	protected void setAppName(String appName) {
+	public void setAppName(String appName) {
 		this.appName = appName;
 	}
 
-	protected void setIgnoreFailures(boolean ignoreFailures) {
+	public void setIgnoreFailures(boolean ignoreFailures) {
 		this.ignoreFailures = ignoreFailures;
 	}
 
-	protected void setDefaultServer(boolean defaultServer) {
+	public void setDefaultServer(boolean defaultServer) {
 		this.defaultServer = defaultServer;
 	}
 
-	protected void setVirtualHost(String virtualHost) {
+	public void setVirtualHost(String virtualHost) {
 		this.virtualHost = virtualHost;
 	}
 

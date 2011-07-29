@@ -10,8 +10,10 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHelper;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusChangeListener {
@@ -19,7 +21,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	private URL baseURL;
 	private String userAppName;
 	private boolean isDefaultServer;
-	private boolean isIgnoreDefaults;
+	private boolean isIgnoreFailures;
 	private IZendTarget selectedTarget;
 	private Map<String, String> parameters;
 	private IProject project;
@@ -38,7 +40,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	}
 
 	public boolean isIgnoreFailures() {
-		return isIgnoreDefaults;
+		return isIgnoreFailures;
 	}
 
 	public IZendTarget getTarget() {
@@ -47,6 +49,26 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 
 	public Map<String, String> getParameters() {
 		return parameters;
+	}
+
+	public void setBaseURL(URL baseURL) {
+		this.baseURL = baseURL;
+	}
+
+	public void setUserAppName(String userAppName) {
+		this.userAppName = userAppName;
+	}
+
+	public void setDefaultServer(boolean value) {
+		this.isDefaultServer = value;
+	}
+
+	public void setIgnoreFailures(boolean value) {
+		this.isIgnoreFailures = value;
+	}
+
+	public void setTarget(IZendTarget target) {
+		this.selectedTarget = target;
 	}
 
 	public DeploymentLaunchDialog(Shell parentShell, IProject project) {
@@ -74,6 +96,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		block = new DeploymentConfigurationBlock(this);
 		Control container = block.createContents(dialogArea);
 		block.createParametersGroup(project);
+		setInitialValues();
 		return container;
 	}
 
@@ -97,10 +120,33 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		baseURL = block.getBaseURL();
 		userAppName = block.getUserAppName();
 		isDefaultServer = block.isDefaultServer();
-		isIgnoreDefaults = block.isIgnoreFailures();
+		isIgnoreFailures = block.isIgnoreFailures();
 		selectedTarget = block.getTarget();
 		parameters = block.getParameters();
 		super.okPressed();
+	}
+
+	private void setInitialValues() {
+		IDeploymentHelper helper = new DeploymentHelper();
+		if (baseURL != null) {
+			helper.setBasePath(baseURL.getPath());
+			helper.setVirtualHost(baseURL.getHost());
+		}
+		if (selectedTarget != null) {
+			helper.setTargetId(selectedTarget.getId());
+		}
+		if (project != null) {
+			helper.setProjectName(project.getName());
+		}
+		if (parameters != null) {
+			helper.setUserParams(parameters);
+		}
+		if (userAppName != null) {
+			helper.setAppName(userAppName);
+		}
+		helper.setIgnoreFailures(isIgnoreFailures);
+		helper.setDefaultServer(isDefaultServer);
+		block.initializeFields(helper);
 	}
 
 }
