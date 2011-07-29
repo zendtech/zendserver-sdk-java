@@ -1,25 +1,18 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiException;
 
 /**
  * Dialog to edit deployment target details.
@@ -28,17 +21,17 @@ public class TargetDialog extends Dialog {
 
 	private static final int DEFAULT_WIDTH = 300;
 	
-	private ZendTarget target;
-	private Text idText;
-	private Text hostText;
-	private Text keyText;
-	private Text secretText;
-	private IZendTarget defaultTarget;
 	private String message;
 
+	private ZendTargetDetailsComposite target = new ZendTargetDetailsComposite();
+	
 	private Label errorLabel;
 
 	private String title;
+
+	private IZendTarget defaultTarget;
+
+	private IZendTarget createdTarget;
 
 	public TargetDialog(Shell parentShell) {
 		super(parentShell);
@@ -94,85 +87,35 @@ public class TargetDialog extends Dialog {
 			label.setLayoutData(gd);
 		}
 		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.TargetDialog_Id);
-		idText = new Text(composite, SWT.BORDER);
-		idText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-		idText.setToolTipText(Messages.TargetDialog_IdTooltip);
-		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.TargetDialog_Host);
-		hostText = new Text(composite, SWT.BORDER);
-		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-		hostText.setToolTipText(Messages.TargetDialog_HostTooltip);
-		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.TargetDialog_KeyName);
-		keyText = new Text(composite, SWT.BORDER);
-		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-		keyText.setToolTipText(Messages.TargetDialog_KeyTooltip);
-		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.TargetDialog_KeySecret);
-		secretText = new Text(composite, SWT.BORDER);
-		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-		secretText.setToolTipText(Messages.TargetDialog_SecretTooltip);
-		
-		Button validateButton = new Button(composite, SWT.NONE);
-		validateButton.setText(Messages.TargetDialog_validate);
-		validateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				createTarget();
-				String message = target.validateTarget();
-				if (message != null) {
-					setErrorMessage(message);
-					return;
-				}
+		target.create(composite);
+		target.addPropertyChangeListener(ZendTargetDetailsComposite.PROP_ERROR_MESSAGE, new PropertyChangeListener() {
+			
+			public void propertyChange(PropertyChangeEvent evt) {
+				final Object newVal = evt.getNewValue();
+				errorLabel.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						errorLabel.setText((String)newVal);
+					}
+				});
 				
-				try {
-					target.connect();
-					
-					setErrorMessage(null); // all is fine
-				} catch (WebApiException ex) {
-					setErrorMessage(ex.getMessage());
-				}
 			}
 		});
-		errorLabel = new Label(composite, SWT.NONE);
 		
+		errorLabel = new Label(composite, SWT.NONE);
+		errorLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		applyDialogFont(composite);
 		
 		if (defaultTarget != null) {
-			copyDefaultTargetDetails();
+			target.setDefaultTargetSettings(defaultTarget);
 		}
 		
 		return composite;
 	}
 	
-	private void setErrorMessage(String message) {
-		errorLabel.setText(message == null ? "" : message); //$NON-NLS-1$
-	}
-	
 	@Override
 	protected void okPressed() {
-		createTarget();
+		this.createdTarget = target.getTarget();
 		super.okPressed();
-	}
-	
-	/**
-	 * Creates target details provided in the dialog controls.
-	 * Target is automatically validated based on the logic in ZendTarget constructor.
-	 */
-	protected void createTarget() {
-		URL host = null;
-		try {
-			host = new URL(hostText.getText());
-		} catch (MalformedURLException e) {
-			// should be checked earlier
-		}
-		
-		target = new ZendTarget(idText.getText(), host, keyText.getText(), secretText.getText());
 	}
 	
 	/**
@@ -180,11 +123,8 @@ public class TargetDialog extends Dialog {
 	 * 
 	 * @return
 	 */
-	public ZendTarget getTarget() {
-		if (target == null) {
-			createTarget();
-		}
-		return target;
+	public IZendTarget getTarget() {
+		return createdTarget;
 	}
 
 	/**
@@ -196,23 +136,7 @@ public class TargetDialog extends Dialog {
 	public void setDefaultTarget(IZendTarget target) {
 		this.defaultTarget = target;
 		if (target != null) {
-			copyDefaultTargetDetails();
-		}
-	}
-
-	private void copyDefaultTargetDetails() {
-		if (idText != null) {
-			idText.setText(defaultTarget.getId());
-			idText.setEnabled(false);
-		}
-		if (hostText != null) {
-			hostText.setText(defaultTarget.getHost().toString());
-		}
-		if (keyText != null) {
-		keyText.setText(defaultTarget.getKey());
-		}
-		if (secretText != null) {
-			secretText.setText(defaultTarget.getSecretKey());
+			this.target.setDefaultTargetSettings(target);
 		}
 	}
 
