@@ -20,10 +20,12 @@ public enum DeploymentAttributes {
 	
 	VIRTUAL_HOST("virtualHost"); //$NON-NLS-1$
 	
+	private static final String PREFIX = "org.zend.php.zendserver.deployment."; //$NON-NLS-1$
+	
 	private String name;
 	
 	private DeploymentAttributes(String name) {
-		this.name = name;
+		this.name = PREFIX + name;
 	}
 	
 	public String getName() {

@@ -32,10 +32,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		composite.setLayout(new GridLayout(2, false));
 		block = new DeploymentConfigurationBlock(this);
 		block.createContents(composite);
-		block.setDeployComboEnabled(false);
-		block.setDefaultServerEnabled(false);
-		block.setBaseURLEnabled(false);
-		block.setUserAppNameEnabled(false);
+		setDeploymentPageEnablement(false);
 		setControl(composite);
 	}
 
@@ -44,8 +41,11 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			project = getProject(configuration.getAttribute(
-					DeploymentAttributes.PROJECT_NAME.getName(), ""));
+			project = getProject(configuration);
+			if (project == null) {
+				project = LaunchUtils.getProjectFromFilename(configuration);
+				setDeploymentPageEnablement(true);
+			}
 			if (project != null) {
 				block.createParametersGroup(project);
 			}
@@ -59,23 +59,26 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
-		URL baseURL = block.getBaseURL();
-		IDeploymentHelper helper = new DeploymentHelper();
-		helper.setBasePath(baseURL.getPath());
-		helper.setTargetId(block.getTarget().getId());
-		helper.setProjectName(project.getName());
-		helper.setUserParams(block.getParameters());
-		helper.setAppName(block.getUserAppName());
-		helper.setIgnoreFailures(block.isIgnoreFailures());
-		helper.setDefaultServer(block.isDefaultServer());
-		helper.setVirtualHost(baseURL.getHost());
-		try {
-			LaunchUtils.updateLaunchConfiguration(project, helper, wc);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (project != null) {
+			URL baseURL = block.getBaseURL();
+			IDeploymentHelper helper = new DeploymentHelper();
+			helper.setBasePath(baseURL.getPath());
+			helper.setTargetId(block.getTarget().getId());
+			helper.setProjectName(project.getName());
+			helper.setUserParams(block.getParameters());
+			helper.setAppName(block.getUserAppName());
+			helper.setIgnoreFailures(block.isIgnoreFailures());
+			helper.setDefaultServer(block.isDefaultServer());
+			helper.setVirtualHost(baseURL.getHost());
+			try {
+				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
+
 
 	public String getName() {
 		return Messages.deploymentTab_Title;
@@ -85,7 +88,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		setMessages(status);
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		IStatus status = block.validatePage();
@@ -113,8 +116,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
-	private IProject getProject(String projectName) {
-		if (projectName != null) {
+	private IProject getProject(ILaunchConfiguration config) throws CoreException {
+		String projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), "");
+		if (!projectName.isEmpty()) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IResource resource = root.findMember(projectName);
 			if (resource != null) {
@@ -122,6 +126,13 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 		}
 		return null;
+	}
+
+	private void setDeploymentPageEnablement(boolean value) {
+		block.setDeployComboEnabled(value);
+		block.setDefaultServerEnabled(value);
+		block.setBaseURLEnabled(value);
+		block.setUserAppNameEnabled(value);
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -58,7 +59,6 @@ public class LaunchUtils {
 
 		// TODO find real server name
 		wc.setAttribute(Server.NAME, "Local Zend Server");
-		wc.setAttribute(AUTO_GENERATED_URL, false);
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
 		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
 		// set true as default
@@ -79,6 +79,8 @@ public class LaunchUtils {
 			wc.setMappedResources(new IResource[] { resource });
 		}
 		String host = null;
+		// always use non-generated url
+		wc.setAttribute(AUTO_GENERATED_URL, false);
 		if (entry.isDefaultServer()) {
 			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
 			if (server != null) {
@@ -131,6 +133,20 @@ public class LaunchUtils {
 	public static ILaunchConfigurationType getConfigurationType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		return lm.getLaunchConfigurationType(IPHPDebugConstants.PHPServerLaunchType);
+	}
+
+	public static IProject getProjectFromFilename(ILaunchConfiguration config) throws CoreException {
+		String fileName = config.getAttribute(Server.FILE_NAME, (String) null);
+		if (fileName == null) {
+			return null;
+		}
+		IPath filePath = new Path(fileName);
+		IProject project = null;
+		try {
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(filePath.segment(0));
+		} catch (Throwable t) {
+		}
+		return project;
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
