@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
 
 public class DeploymentHelper implements IDeploymentHelper {
 
@@ -35,22 +33,6 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.ignoreFailures = false;
 		this.defaultServer = false;
 		this.virtualHost = EMPTY_STRING;
-	}
-
-	public static DeploymentHelper create(DeploymentLaunchDialog dialog, String projectName) {
-		DeploymentHelper entry = new DeploymentHelper();
-		URL baseURL = dialog.getBaseUrl();
-		String targetId = dialog.getTarget().getId();
-		entry.setBasePath(baseURL.getPath());
-		entry.setProjectName(projectName);
-		entry.setTargetId(targetId);
-		entry.setAppId(-1);
-		entry.setUserParams(dialog.getParameters());
-		entry.setAppName(dialog.getUserAppName());
-		entry.setIgnoreFailures(dialog.isIgnoreFailures());
-		entry.setDefaultServer(dialog.isDefaultServer());
-		entry.setVirtualHost(baseURL.getHost());
-		return entry;
 	}
 
 	@SuppressWarnings("unchecked")

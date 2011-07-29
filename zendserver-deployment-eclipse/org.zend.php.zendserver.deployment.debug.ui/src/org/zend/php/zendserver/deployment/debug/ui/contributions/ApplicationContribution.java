@@ -26,6 +26,7 @@ public class ApplicationContribution extends WorkbenchWindowControlContribution 
 
 	public static final String PROJECT_NAME = "projectName";
 	public static final String MODE = "mode";
+	public static final String TARGET_ID = "targetId";
 
 	private String mode;
 	private String message;

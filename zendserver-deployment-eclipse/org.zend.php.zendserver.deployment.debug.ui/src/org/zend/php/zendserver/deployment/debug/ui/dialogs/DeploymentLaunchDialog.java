@@ -148,5 +148,21 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		helper.setDefaultServer(isDefaultServer);
 		block.initializeFields(helper);
 	}
+	
+	public DeploymentHelper getEntry() {
+		DeploymentHelper entry = new DeploymentHelper();
+		URL baseURL = getBaseUrl();
+		String targetId = getTarget().getId();
+		entry.setBasePath(baseURL.getPath());
+		entry.setProjectName(project.getName());
+		entry.setTargetId(targetId);
+		entry.setAppId(-1);
+		entry.setUserParams(getParameters());
+		entry.setAppName(getUserAppName());
+		entry.setIgnoreFailures(isIgnoreFailures());
+		entry.setDefaultServer(isDefaultServer());
+		entry.setVirtualHost(baseURL.getHost());
+		return entry;
+	}
 
 }

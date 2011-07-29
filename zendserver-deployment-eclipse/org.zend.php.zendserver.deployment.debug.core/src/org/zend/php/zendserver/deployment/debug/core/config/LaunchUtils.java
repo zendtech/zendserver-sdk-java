@@ -100,7 +100,12 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), entry.getUserParams());
 	}
 
+	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
+		return findLaunchConfiguration(project, null);
+	}
+	
+	public static ILaunchConfiguration findLaunchConfiguration(IProject project, String targetId) {
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager()
 					.getLaunchConfigurations(getConfigurationType());
@@ -109,7 +114,11 @@ public class LaunchUtils {
 			for (int i = 0; i < numConfigs; i++) {
 				String projectName = configs[i].getAttribute(
 						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
-				if (project.getName().equals(projectName)) {
+				
+				String configTargetId = configs[i].getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String)null);
+				boolean targetIdMatches = (targetId == null) || (targetId.equals(configTargetId)); 
+						
+				if (project.getName().equals(projectName) && targetIdMatches) {
 					return configs[i].getWorkingCopy();
 				}
 			}

@@ -1,11 +1,14 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -28,50 +31,71 @@ import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialo
 
 public class LaunchApplicationHandler extends AbstractHandler {
 
-	private ILaunchConfiguration config;
-	private AbstractLaunchJob deployJob;
-
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final String mode = event.getParameter(ApplicationContribution.MODE);
-		final IProject project = getProject(event
-				.getParameter(ApplicationContribution.PROJECT_NAME));
-		if (project != null) {
-			config = LaunchUtils.findLaunchConfiguration(project);
-			DeploymentHelper entry = null;
-			if (config == null) {
-				DeploymentLaunchDialog dialog = openDeploymentDialog(project);
-				if (dialog == null) {
-					return null;
-				}
-				entry = DeploymentHelper.create(dialog, project.getName());
-				deployJob = new DeployLaunchJob(entry, project);
-			} else {
-				entry = DeploymentHelper.create(config);
-				deployJob = new UpdateLaunchJob(entry, project);
-			}
-			deployJob.setUser(true);
-			deployJob.addJobChangeListener(new JobChangeAdapter() {
-				@Override
-				public void done(IJobChangeEvent event) {
-					launchApplication(event.getResult().getSeverity(), mode);
-				}
-			});
-			deployJob.schedule();
+		String mode = event.getParameter(ApplicationContribution.MODE);
+		
+		Object obj = event.getApplicationContext();
+		IEvaluationContext ctx = null;
+		if (obj instanceof IEvaluationContext) {
+			ctx = (IEvaluationContext) obj;
 		}
+		
+		IProject[] projects = null;
+		String targetId = null;
+		
+		if (ctx != null) {
+			projects = getProjects(ctx.getVariable(ApplicationContribution.PROJECT_NAME));
+			targetId = (String) ctx.getVariable(ApplicationContribution.TARGET_ID);
+		}
+		if (projects == null) {
+			projects = getProjects(event.getParameter(ApplicationContribution.PROJECT_NAME));
+		}
+		if (projects == null) {
+			projects = new IProject[] { getProjectFromEditor() };
+		}
+		
+		for (IProject project : projects) {
+			execute(mode, project, targetId);
+		}
+		
 		return null;
 	}
 
-	private void launchApplication(int status, String mode) {
-		ILaunchConfiguration newConfig = deployJob.getConfig();
-		if (newConfig != null) {
-			config = newConfig;
+	private void execute(final String mode, IProject project, String targetId) {
+		final ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
+		AbstractLaunchJob deployJob;
+		
+		if (config == null) {
+			DeploymentLaunchDialog dialog = openDeploymentDialog(project, targetId);
+			if (dialog == null) {
+				return;
+			}
+			deployJob = new DeployLaunchJob(dialog.getEntry(), project);
+		} else {
+			DeploymentHelper entry = DeploymentHelper.create(config);
+			deployJob = new UpdateLaunchJob(entry, project);
 		}
-		if (status == IStatus.OK && config != null) {
+		
+		deployJob.setUser(true);
+		deployJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				launchApplication(config, (AbstractLaunchJob) event.getJob(), event.getResult().getSeverity(), mode);
+			}
+		});
+		deployJob.schedule();
+		
+	}
+
+	private void launchApplication(ILaunchConfiguration origConfig, AbstractLaunchJob deployJob, int status, String mode) {
+		if (status == IStatus.OK) {
+			ILaunchConfiguration config = origConfig == null ? deployJob.getConfig() : origConfig;
 			DebugUITools.launch(config, mode);
 		}
 	}
 
-	private DeploymentLaunchDialog openDeploymentDialog(final IProject project) {
+	private DeploymentLaunchDialog openDeploymentDialog(final IProject project, final String targetId) {
+		// TODO pass targetId to the DeploymentLaunchDialog
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		DeploymentLaunchDialog dialog = new DeploymentLaunchDialog(window.getShell(), project);
 		if (dialog.open() != Window.OK) {
@@ -80,15 +104,32 @@ public class LaunchApplicationHandler extends AbstractHandler {
 		return dialog;
 	}
 
-	private IProject getProject(String projectName) {
-		if (projectName != null) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IResource resource = root.findMember(projectName);
-			if (resource != null) {
-				return resource.getProject();
+	private IProject[] getProjects(Object projectName) {
+		if (projectName == null) {
+			return null;
+		}
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+		if (projectName instanceof String) {
+			IProject project = root.getProject((String)projectName);
+			if (project.exists()) {
+				return new IProject[] { project };
 			}
 		}
-		return getProjectFromEditor();
+		
+		if (projectName instanceof String[]) {
+			List<IProject> projects = new ArrayList<IProject>();
+			for (String pName : (String[])projectName) {
+				IProject project = root.getProject((String)projectName);
+				if (project.exists() && (projects.contains(project))) {
+					projects.add(project);
+				}
+			}
+			return projects.toArray(new IProject[projects.size()]);
+		}
+		
+		return null;
 	}
 
 	private IProject getProjectFromEditor() {
