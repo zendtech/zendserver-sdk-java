@@ -70,8 +70,9 @@ public class ZendTarget implements IZendTarget {
 				|| key.length() == 0) {
 			return "Target id, host, key name and secret must not be null.";
 		}
-		// key validation
-		if (!Character.isJavaIdentifierStart(this.key.charAt(0))) {
+		// id validation
+		final char f = this.id.charAt(0);
+		if (!Character.isJavaIdentifierStart(f) && !Character.isDigit(f)) {
 			return "Target id must start with valid identifier: letter, number, $ or _";
 		}
 		for (int i = 1; i < this.id.length(); i++) {
