@@ -74,8 +74,8 @@ public class ZendTarget implements IZendTarget {
 		if (!Character.isJavaIdentifierStart(this.key.charAt(0))) {
 			return "Target id must start with valid identifier: letter, number, $ or _";
 		}
-		for (int i = 1; i < this.key.length(); i++) {
-			char c = this.key.charAt(i);
+		for (int i = 1; i < this.id.length(); i++) {
+			char c = this.id.charAt(i);
 			if (!Character.isJavaIdentifierPart(c)) {
 				return "Target id is invalid: "+c;
 			}
