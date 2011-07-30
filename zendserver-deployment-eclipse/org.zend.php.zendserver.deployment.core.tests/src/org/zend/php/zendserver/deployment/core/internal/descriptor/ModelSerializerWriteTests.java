@@ -64,9 +64,9 @@ public class ModelSerializerWriteTests extends TestCase {
 "    <release>3.2.1</release>\n" +
 "    <api>1.0.0</api>\n" +
 "  </version>\n" +
+"  <appdir>public</appdir>\n" +
 "  <docroot>/usr/local/htdocs</docroot>\n" +
 "  <scriptsdir>scripts</scriptsdir>\n" +
-"  <appdir>public</appdir>\n" +
 "</package>\n", txt.toString());
 	}
 
