@@ -21,7 +21,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.zend.php.zendserver.deployment.core"
+         id="org.zend.php.zendserver.deployment.debug.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
