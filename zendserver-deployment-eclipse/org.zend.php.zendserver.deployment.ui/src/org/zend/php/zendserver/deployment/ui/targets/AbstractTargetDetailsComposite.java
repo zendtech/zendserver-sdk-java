@@ -94,7 +94,7 @@ public abstract class AbstractTargetDetailsComposite {
 	abstract protected String[] getData();
 	
 	/**
-	 * Creates target based, based on data gathered in UI. Can be time consuming operation.
+	 * Creates target based on data gathered in UI. Can be time consuming operation.
 	 * May be called from non-UI thread, so should avoid accessing GUI elements.
 	 * 
 	 * @param data data from getData()

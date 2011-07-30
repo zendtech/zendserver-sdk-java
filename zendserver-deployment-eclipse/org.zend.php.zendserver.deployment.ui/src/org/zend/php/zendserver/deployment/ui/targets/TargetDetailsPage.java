@@ -50,6 +50,9 @@ public class TargetDetailsPage extends WizardPage {
 
 	public void setType(String name) {
 		composite.setType(name);
+		setErrorMessage(null);
+		target = null;
+		setPageComplete(false);
 	}
 	
 	public IZendTarget getTarget() {
