@@ -15,7 +15,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.targets.TargetDialog;
+import org.zend.php.zendserver.deployment.ui.targets.TargetDetailsDialog;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -51,7 +51,7 @@ public class EditTargetAction extends Action implements ISelectionChangedListene
 		
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		
-		TargetDialog dialog = new TargetDialog(window.getShell());
+		TargetDetailsDialog dialog = new TargetDetailsDialog(window.getShell());
 		dialog.setMessage(Messages.EditTargetAction_EditTargetMessage);
 		dialog.setTitle(Messages.EditTargetAction_EditTarget);
 		dialog.setDefaultTarget(toEdit);

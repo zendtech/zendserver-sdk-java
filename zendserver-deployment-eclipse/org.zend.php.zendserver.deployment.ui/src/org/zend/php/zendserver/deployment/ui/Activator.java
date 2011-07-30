@@ -72,6 +72,10 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_APPLICATION = "icons/obj16/application.gif"; //$NON-NLS-1$
 
+	public static final String IMAGE_ZEND = "icons/obj64/zend.gif"; //$NON-NLS-1$
+
+	public static final String IMAGE_CLOUD = "icons/obj64/cloud.gif"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
 

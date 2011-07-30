@@ -6,24 +6,28 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
- * Dialog to edit deployment target details.
+ * Dialog to edit deployment targetComposite details.
  */
-public class TargetDialog extends Dialog {
+public class TargetDetailsDialog extends Dialog {
 
 	private static final int DEFAULT_WIDTH = 300;
 	
 	private String message;
 
-	private ZendTargetDetailsComposite target = new ZendTargetDetailsComposite();
+	private AbstractTargetDetailsComposite targetComposite = new ZendTargetDetailsComposite();
 	
 	private Label errorLabel;
 
@@ -33,7 +37,7 @@ public class TargetDialog extends Dialog {
 
 	private IZendTarget createdTarget;
 
-	public TargetDialog(Shell parentShell) {
+	public TargetDetailsDialog(Shell parentShell) {
 		super(parentShell);
 	}
 	
@@ -87,8 +91,8 @@ public class TargetDialog extends Dialog {
 			label.setLayoutData(gd);
 		}
 		
-		target.create(composite);
-		target.addPropertyChangeListener(ZendTargetDetailsComposite.PROP_ERROR_MESSAGE, new PropertyChangeListener() {
+		targetComposite.create(composite);
+		targetComposite.addPropertyChangeListener(ZendTargetDetailsComposite.PROP_ERROR_MESSAGE, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
 				final Object newVal = evt.getNewValue();
@@ -101,12 +105,22 @@ public class TargetDialog extends Dialog {
 			}
 		});
 		
+		Button validateButton = new Button(composite, SWT.NONE);
+		validateButton.setText(Messages.TargetDialog_validate);
+		validateButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				targetComposite.validate();
+			}
+		});
+		
+		
 		errorLabel = new Label(composite, SWT.NONE);
 		errorLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		applyDialogFont(composite);
 		
 		if (defaultTarget != null) {
-			target.setDefaultTargetSettings(defaultTarget);
+			targetComposite.setDefaultTargetSettings(defaultTarget);
 		}
 		
 		return composite;
@@ -114,12 +128,15 @@ public class TargetDialog extends Dialog {
 	
 	@Override
 	protected void okPressed() {
-		this.createdTarget = target.getTarget();
+		targetComposite.validate();
+		
 		super.okPressed();
 	}
 	
+	
+	
 	/**
-	 * Returns target specified by the user
+	 * Returns targetComposite specified by the user
 	 * 
 	 * @return
 	 */
@@ -131,12 +148,12 @@ public class TargetDialog extends Dialog {
 	 * Sets default values for the fields.
 	 * It also disables idField, because usually we don't want to change id.
 	 * 
-	 * @param target
+	 * @param targetComposite
 	 */
 	public void setDefaultTarget(IZendTarget target) {
 		this.defaultTarget = target;
-		if (target != null) {
-			this.target.setDefaultTargetSettings(target);
+		if (targetComposite != null) {
+			targetComposite.setDefaultTargetSettings(target);
 		}
 	}
 

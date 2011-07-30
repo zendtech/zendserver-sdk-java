@@ -1,17 +1,11 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -19,40 +13,21 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
 
-public class ZendTargetDetailsComposite {
-
-	public static final String PROP_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
+/**
+ * Basic zend target details composite, consisting of Host, Key and Key secret.
+ */
+public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	
 	private Text idText;
 	private Text hostText;
 	private Text keyText;
 	private Text secretText;
 	
-	private String errorMessage;
-	
-	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-	
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(propertyName, listener);
-	}
-	
-	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(propertyName, listener);
-	}
-	
-	public void setErrorMessage(String errorMessage) {
-		String oldMessage = this.errorMessage;
-		this.errorMessage = errorMessage;
-		changeSupport.firePropertyChange(PROP_ERROR_MESSAGE, oldMessage, errorMessage);
-	}
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	
-	public void create(Composite composite) {
+	public Composite create(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayout(new GridLayout(2, false));
+		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_Id);
 		idText = new Text(composite, SWT.BORDER);
@@ -77,30 +52,9 @@ public class ZendTargetDetailsComposite {
 		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
 		secretText.setToolTipText(Messages.TargetDialog_SecretTooltip);
 		
-		Button validateButton = new Button(composite, SWT.NONE);
-		validateButton.setText(Messages.TargetDialog_validate);
-		validateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				scheduleValidationJob();
-			}
-		});
-		
+		return composite;
 	}
 	
-	private void scheduleValidationJob() {
-		ValidateTargetJob job = new ValidateTargetJob(getTarget());
-		job.setUser(true);
-		job.schedule();
-		job.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				String message = event.getJob().getResult().getMessage();
-				setErrorMessage(message);
-			}
-		});
-	}
-
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {
 		if (idText != null) {
 			idText.setText(defaultTarget.getId());
@@ -117,18 +71,22 @@ public class ZendTargetDetailsComposite {
 		}
 	}
 
+	public String[] getData() {
+		return new String[] {idText.getText(), hostText.getText(), keyText.getText(), secretText.getText(), };
+	}
+	
 	/**
 	 * Creates target details provided in the dialog controls.
 	 * Target is automatically validated based on the logic in ZendTarget constructor.
 	 */
-	public IZendTarget getTarget() {
+	public IZendTarget createTarget(String[] data) {
 		URL host = null;
 		try {
-			host = new URL(hostText.getText());
+			host = new URL(data[1]);
 		} catch (MalformedURLException e) {
 			// should be checked earlier
 		}
 		
-		return new ZendTarget(idText.getText(), host, keyText.getText(), secretText.getText());
+		return new ZendTarget(data[0], host, data[2], data[3]);
 	}
 }

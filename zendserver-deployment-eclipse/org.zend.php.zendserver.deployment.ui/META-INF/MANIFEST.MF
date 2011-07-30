@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.core.expressions,
  org.eclipse.help,
- org.eclipse.debug.core
+ org.eclipse.debug.core,
+ org.eclipse.nebula.widgets.gallery
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions

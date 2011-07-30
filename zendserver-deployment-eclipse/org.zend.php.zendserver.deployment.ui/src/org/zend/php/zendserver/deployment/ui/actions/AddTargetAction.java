@@ -4,19 +4,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.targets.TargetDialog;
+import org.zend.php.zendserver.deployment.ui.targets.CreateTargetWizard;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
 /**
- * Adds new Deployment Target via TargetDialog.
+ * Adds new Deployment Target via TargetDetailsDialog.
  *
  */
 public class AddTargetAction extends Action {
@@ -33,15 +34,14 @@ public class AddTargetAction extends Action {
 	public void run() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		
-		TargetDialog dialog = new TargetDialog(window.getShell());
-		dialog.setMessage(Messages.AddTargetAction_AddTargetMessage);
-		dialog.setTitle(Messages.AddTargetAction_AddTarget);
+		CreateTargetWizard wizard = new CreateTargetWizard();
+		WizardDialog dialog = wizard.createDialog(window.getShell());
 		
 		if (dialog.open() != Window.OK) {
 			return; // canceled by user
 		}
 		
-		IZendTarget newTarget = dialog.getTarget();
+		IZendTarget newTarget = wizard.getTarget();
 		
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		try {

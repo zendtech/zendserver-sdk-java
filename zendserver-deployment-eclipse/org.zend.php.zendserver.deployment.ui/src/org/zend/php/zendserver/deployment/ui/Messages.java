@@ -37,6 +37,10 @@ public class Messages extends NLS {
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
 	public static String DetectTargetAction_DetectTarget;
+	public static String DevCloudDetailsComposite_Password;
+	public static String DevCloudDetailsComposite_PasswordTooltip;
+	public static String DevCloudDetailsComposite_Username;
+	public static String DevCloudDetailsComposite_UsernameTooltip;
 	public static String DirectiveDependencyDetailsPage_Directive;
 	public static String DirectiveDependencyDetailsPage_DirectiveDependencyDetails;
 	public static String DirectiveDependencyDetailsPage_SpecifyDirectiveProperties;
@@ -107,6 +111,14 @@ public class Messages extends NLS {
 	public static String ScriptsPage_VarsAndParams;
 	public static String ScriptsTreeSection_Info;
 	public static String ScriptsTreeSection_ScriptsMapping;
+	public static String SelectTargetTypePage_AddTarget;
+	public static String SelectTargetTypePage_DevCloud;
+	public static String SelectTargetTypePage_SelectTargetFromList;
+	public static String SelectTargetTypePage_SelectTargetType;
+	public static String SelectTargetTypePage_ZendServer;
+	public static String TargetDetailsPage_AddTarget;
+	public static String TargetDetailsPage_SpecifyTargetDetails;
+	public static String TargetDetailsPage_TargetDetails;
 	public static String TargetDialog_Host;
 	public static String TargetDialog_HostTooltip;
 	public static String TargetDialog_Id;
@@ -118,6 +130,7 @@ public class Messages extends NLS {
 	public static String TargetDialog_validate;
 	public static String TargetsLabelProvider_TargetLabel;
 	public static String TextHintField_0;
+	public static String ValidateTargetJob_ValidatingTarget;
 	public static String VariableDetailsPage_Details;
 	public static String VariableDetailsPage_Name;
 	public static String VariableDetailsPage_Value;
