@@ -21,11 +21,12 @@ public class ValidateTargetJob extends Job {
 	private AbstractTargetDetailsComposite composite;
 	private String[] data;
 	private IZendTarget validatedTarget;
-	
-	public ValidateTargetJob(AbstractTargetDetailsComposite abstractTargetDetailsComposite) {
+
+	public ValidateTargetJob(
+			AbstractTargetDetailsComposite abstractTargetDetailsComposite) {
 		super(Messages.ValidateTargetJob_ValidatingTarget);
 		this.composite = abstractTargetDetailsComposite;
-		
+
 		// get data in GUI thread
 		data = composite.getData();
 	}
@@ -36,22 +37,25 @@ public class ValidateTargetJob extends Job {
 		try {
 			target = (ZendTarget) composite.createTarget(data);
 		} catch (SdkException e) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
 		} catch (IOException e) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
 		}
-		
-		String message =target.validateTarget();
+
+		String message = target.validateTarget();
 		if (message != null) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
 		}
-		
+
 		try {
 			target.connect();
 		} catch (WebApiException ex) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex);
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					ex.getMessage(), ex);
 		}
-		
+
 		validatedTarget = target;
 		return Status.OK_STATUS;
 	}
