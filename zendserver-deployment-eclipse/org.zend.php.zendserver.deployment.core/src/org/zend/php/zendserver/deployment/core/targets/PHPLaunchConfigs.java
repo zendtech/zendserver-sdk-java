@@ -32,7 +32,7 @@ public class PHPLaunchConfigs {
 		List<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
 		for (ILaunchConfiguration config : launchConfigs) {
 			try {
-				String targetId = config.getAttribute("targetId", (String)null); //$NON-NLS-1$
+				String targetId = config.getAttribute("org.zend.php.zendserver.deployment.targetId", (String)null); //$NON-NLS-1$
 				if (id.equals(targetId)) {
 					result.add(config);
 				}
