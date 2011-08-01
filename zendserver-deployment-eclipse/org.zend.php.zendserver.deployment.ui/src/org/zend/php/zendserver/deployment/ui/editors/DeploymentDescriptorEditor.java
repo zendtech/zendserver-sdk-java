@@ -202,26 +202,31 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 	
 	private void changeIcon(String newIconLocation) {
+		// if nothing has changed then keep as is
 		if ((newIconLocation == iconLocation)
 				|| (newIconLocation != null && (newIconLocation
 						.equals(iconLocation)))) {
 			return;
 		}
 
+		// new icon location - check if we have it in image registry
 		ImageRegistry reg = Activator.getDefault().getImageRegistry();
 		Image img = null;
 		if (newIconLocation != null) {
 	   	   img = reg.get(newIconLocation);
 		}
 		
+		// image is in registry, let's use new location as is
 		if (img != null) {
 			iconLocation = newIconLocation;
 		} else {
 			IFile file = null;
-			try {
-				file = fModel.getProject().getFile(newIconLocation);
-			} catch (RuntimeException e) {
-				// ignore
+			if (newIconLocation != null) {
+				try {
+					file = fModel.getProject().getFile(newIconLocation);
+				} catch (RuntimeException e) {
+					// ignore
+				}
 			}
 
 			if (file != null && file.exists()) {
