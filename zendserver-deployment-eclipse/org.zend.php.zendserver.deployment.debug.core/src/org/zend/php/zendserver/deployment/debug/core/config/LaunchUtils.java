@@ -26,6 +26,7 @@ import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -131,7 +132,7 @@ public class LaunchUtils {
 
 	public static ILaunchConfigurationType getConfigurationType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(IPHPDebugConstants.PHPServerLaunchType);
+		return lm.getLaunchConfigurationType(PHPLaunchConfigs.LAUNCH_CONFIG_TYPE);
 	}
 
 	public static IProject getProjectFromFilename(ILaunchConfiguration config) throws CoreException {

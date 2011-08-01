@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.core.targets;
+package org.zend.php.zendserver.deployment.core.debugger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.zend.sdklib.target.IZendTarget;
 
 public class PHPLaunchConfigs {
 
-	private static final String LAUNCH_CONFIG_TYPE = "org.eclipse.php.debug.core.launching.webPageLaunch"; //$NON-NLS-1$
+	public static final String LAUNCH_CONFIG_TYPE = "org.eclipse.php.debug.core.launching.webPageLaunch"; //$NON-NLS-1$
 
 	public ILaunchConfiguration[] getLaunches(IZendTarget target) {
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
