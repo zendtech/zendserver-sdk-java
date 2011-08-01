@@ -41,7 +41,7 @@ public class LaunchUtils {
 	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
 	public static ILaunchConfiguration createConfiguration(IProject project, int appId,
-			IDeploymentHelper entry) throws CoreException {
+			IDeploymentHelper helper) throws CoreException {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
@@ -64,7 +64,7 @@ public class LaunchUtils {
 		// set true as default
 		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 
-		updateLaunchConfiguration(project, entry, wc);
+		updateLaunchConfiguration(project, helper, wc);
 		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), appId);
 
 		config = wc.doSave();
@@ -72,7 +72,7 @@ public class LaunchUtils {
 	}
 
 	public static void updateLaunchConfiguration(IProject project,
-			IDeploymentHelper entry, ILaunchConfigurationWorkingCopy wc) throws CoreException {
+			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		IResource resource = getFile(project);
 		if (resource != null) {
 			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
@@ -81,27 +81,26 @@ public class LaunchUtils {
 		String host = null;
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
-		if (entry.isDefaultServer()) {
+		if (helper.isDefaultServer()) {
 			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
 			if (server != null) {
 				host = server.getBaseURL();
 			}
 		} else {
-			host = entry.getVirtualHost();
+			host = helper.getVirtualHost();
 		}
 		if (host != null) {
-			wc.setAttribute(Server.BASE_URL, host + "/" + entry.getBasePath().substring(1));
+			wc.setAttribute(Server.BASE_URL, host + "/" + helper.getBasePath().substring(1));
 		}
-		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), entry.getBasePath());
-		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), entry.getAppName());
-		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), entry.isDefaultServer());
-		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), entry.isIgnoreFailures());
+		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), helper.getBasePath());
+		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());
+		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());
+		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
-		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), entry.getTargetId());
-		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), entry.getVirtualHost());
-		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), entry.getUserParams());
+		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
+		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), helper.getVirtualHost());
+		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
 	}
-
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
 		return findLaunchConfiguration(project, null);

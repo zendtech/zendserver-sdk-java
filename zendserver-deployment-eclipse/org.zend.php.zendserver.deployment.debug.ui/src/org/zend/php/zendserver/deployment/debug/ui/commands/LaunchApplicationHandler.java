@@ -11,9 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.window.Window;
@@ -22,10 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
-import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
-import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
-import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
-import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
 import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
 
@@ -62,35 +57,17 @@ public class LaunchApplicationHandler extends AbstractHandler {
 	}
 
 	private void execute(final String mode, IProject project, String targetId) {
-		final ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
-		AbstractLaunchJob deployJob;
-		
+		ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
 		if (config == null) {
 			DeploymentLaunchDialog dialog = openDeploymentDialog(project, targetId);
-			if (dialog == null) {
-				return;
+			if (dialog != null) {
+				try {
+					config = LaunchUtils.createConfiguration(project, -1, dialog.getHelper());
+					DebugUITools.launch(config, mode);
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
 			}
-			deployJob = new DeployLaunchJob(dialog.getEntry(), project);
-		} else {
-			DeploymentHelper entry = DeploymentHelper.create(config);
-			deployJob = new UpdateLaunchJob(entry, project);
-		}
-		
-		deployJob.setUser(true);
-		deployJob.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				launchApplication(config, (AbstractLaunchJob) event.getJob(), event.getResult().getSeverity(), mode);
-			}
-		});
-		deployJob.schedule();
-		
-	}
-
-	private void launchApplication(ILaunchConfiguration origConfig, AbstractLaunchJob deployJob, int status, String mode) {
-		if (status == IStatus.OK) {
-			ILaunchConfiguration config = origConfig == null ? deployJob.getConfig() : origConfig;
-			DebugUITools.launch(config, mode);
 		}
 	}
 

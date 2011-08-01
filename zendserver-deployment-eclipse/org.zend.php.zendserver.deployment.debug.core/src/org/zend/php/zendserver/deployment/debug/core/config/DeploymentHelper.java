@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.debug.ui.config;
+package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,7 +7,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 
 public class DeploymentHelper implements IDeploymentHelper {
 
@@ -37,29 +36,29 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	@SuppressWarnings("unchecked")
 	public static DeploymentHelper create(ILaunchConfiguration config) {
-		DeploymentHelper entry = new DeploymentHelper();
+		DeploymentHelper helper = new DeploymentHelper();
 		try {
-			entry.setBasePath(config.getAttribute(DeploymentAttributes.BASE_PATH.getName(),
+			helper.setBasePath(config.getAttribute(DeploymentAttributes.BASE_PATH.getName(),
 					EMPTY_STRING));
-			entry.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
+			helper.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
 					EMPTY_STRING));
-			entry.setAppId(config.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
-			entry.setProjectName(config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
+			helper.setAppId(config.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
+			helper.setProjectName(config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
 					EMPTY_STRING));
-			entry.setUserParams(config.getAttribute(DeploymentAttributes.PARAMETERS.getName(),
+			helper.setUserParams(config.getAttribute(DeploymentAttributes.PARAMETERS.getName(),
 					Collections.emptyMap()));
-			entry.setAppName(config.getAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
+			helper.setAppName(config.getAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
 					EMPTY_STRING));
-			entry.setIgnoreFailures(config.getAttribute(
+			helper.setIgnoreFailures(config.getAttribute(
 					DeploymentAttributes.IGNORE_FAILURES.getName(), true));
-			entry.setDefaultServer(config.getAttribute(
+			helper.setDefaultServer(config.getAttribute(
 					DeploymentAttributes.DEFAULT_SERVER.getName(), true));
-			entry.setVirtualHost(config.getAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(),
+			helper.setVirtualHost(config.getAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(),
 					EMPTY_STRING));
 		} catch (CoreException e) {
 			return null;
 		}
-		return entry;
+		return helper;
 	}
 
 	public String getBasePath() {

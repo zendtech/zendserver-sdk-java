@@ -15,8 +15,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
+import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentConfigurationBlock;
 import org.zend.php.zendserver.deployment.debug.ui.dialogs.IStatusChangeListener;
@@ -48,14 +50,12 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 			if (project != null) {
 				block.createParametersGroup(project);
+				IDeploymentHelper helper = DeploymentHelper.create(configuration);
+				block.initializeFields(helper);
 			}
-
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Activator.log(e);
 		}
-		IDeploymentHelper helper = DeploymentHelper.create(configuration);
-		block.initializeFields(helper);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
@@ -73,12 +73,10 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			try {
 				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Activator.log(e);
 			}
 		}
 	}
-
 
 	public String getName() {
 		return Messages.deploymentTab_Title;

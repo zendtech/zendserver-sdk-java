@@ -1,12 +1,10 @@
 package org.zend.php.zendserver.deployment.debug.core.jobs;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
@@ -20,13 +18,12 @@ import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 
 public abstract class AbstractLaunchJob extends Job {
 
-	protected IDeploymentHelper entry;
+	protected IDeploymentHelper helper;
 	protected IProject project;
-	private ILaunchConfiguration config;
 
-	protected AbstractLaunchJob(String name, IDeploymentHelper entry, IProject project) {
+	protected AbstractLaunchJob(String name, IDeploymentHelper helper, IProject project) {
 		super(name);
-		this.entry = entry;
+		this.helper = helper;
 		this.project = project;
 	}
 
@@ -40,27 +37,16 @@ public abstract class AbstractLaunchJob extends Job {
 			return Status.OK_STATUS;
 		}
 		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
-			ILaunchConfiguration newConfig = null;
-			try {
-				newConfig = createLaunchConfiguration(info.getId());
-			} catch (CoreException e) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage());
-			}
-			if (newConfig != null) {
-				config = newConfig;
-			}
-			return monitorApplicationStatus(listener, entry.getTargetId(), info.getId(),
+			helper.setAppId(info.getId());
+			return monitorApplicationStatus(listener, helper.getTargetId(), info.getId(),
 					app, monitor);
 		}
 		return new SdkStatus(listener.getStatus());
 	}
 
-	public ILaunchConfiguration getConfig() {
-		return config;
+	public IDeploymentHelper getHelper() {
+		return helper;
 	}
-
-	protected abstract ILaunchConfiguration createLaunchConfiguration(int appId)
-			throws CoreException;
 
 	protected abstract ApplicationInfo performOperation(ZendApplication app, String projectPath);
 

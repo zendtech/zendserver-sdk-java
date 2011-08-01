@@ -10,10 +10,10 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHelper;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusChangeListener {
@@ -27,28 +27,9 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	private IProject project;
 	private DeploymentConfigurationBlock block;
 
-	public URL getBaseUrl() {
-		return baseURL;
-	}
-
-	public String getUserAppName() {
-		return userAppName;
-	}
-
-	public boolean isDefaultServer() {
-		return isDefaultServer;
-	}
-
-	public boolean isIgnoreFailures() {
-		return isIgnoreFailures;
-	}
-
-	public IZendTarget getTarget() {
-		return selectedTarget;
-	}
-
-	public Map<String, String> getParameters() {
-		return parameters;
+	public DeploymentLaunchDialog(Shell parentShell, IProject project) {
+		super(parentShell);
+		this.project = project;
 	}
 
 	public void setBaseURL(URL baseURL) {
@@ -71,9 +52,18 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		this.selectedTarget = target;
 	}
 
-	public DeploymentLaunchDialog(Shell parentShell, IProject project) {
-		super(parentShell);
-		this.project = project;
+	public DeploymentHelper getHelper() {
+		DeploymentHelper helper = new DeploymentHelper();
+		helper.setBasePath(baseURL.getPath());
+		helper.setProjectName(project.getName());
+		helper.setTargetId(selectedTarget.getId());
+		helper.setAppId(-1);
+		helper.setUserParams(parameters);
+		helper.setAppName(userAppName);
+		helper.setIgnoreFailures(isIgnoreFailures);
+		helper.setDefaultServer(isDefaultServer);
+		helper.setVirtualHost(baseURL.getHost());
+		return helper;
 	}
 
 	public void statusChanged(IStatus status) {
@@ -147,22 +137,6 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		helper.setIgnoreFailures(isIgnoreFailures);
 		helper.setDefaultServer(isDefaultServer);
 		block.initializeFields(helper);
-	}
-	
-	public DeploymentHelper getEntry() {
-		DeploymentHelper entry = new DeploymentHelper();
-		URL baseURL = getBaseUrl();
-		String targetId = getTarget().getId();
-		entry.setBasePath(baseURL.getPath());
-		entry.setProjectName(project.getName());
-		entry.setTargetId(targetId);
-		entry.setAppId(-1);
-		entry.setUserParams(getParameters());
-		entry.setAppName(getUserAppName());
-		entry.setIgnoreFailures(isIgnoreFailures());
-		entry.setDefaultServer(isDefaultServer());
-		entry.setVirtualHost(baseURL.getHost());
-		return entry;
 	}
 
 }
