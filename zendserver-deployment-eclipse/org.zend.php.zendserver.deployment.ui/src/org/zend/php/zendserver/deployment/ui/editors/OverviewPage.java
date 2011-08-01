@@ -8,6 +8,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -224,7 +225,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				Messages.OverviewPage_Summary));
 		description = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
-				Messages.OverviewPage_Description));
+				Messages.OverviewPage_Description, SWT.MULTI|SWT.WRAP|SWT.V_SCROLL|SWT.RESIZE, false));
 		releaseVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_RELEASE,
 				Messages.OverviewPage_0));
@@ -261,6 +262,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		name.create(sectionClient, toolkit);
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
+		((GridData)description.getText().getLayoutData()).heightHint = 50;
+		
 		releaseVersion.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
 
