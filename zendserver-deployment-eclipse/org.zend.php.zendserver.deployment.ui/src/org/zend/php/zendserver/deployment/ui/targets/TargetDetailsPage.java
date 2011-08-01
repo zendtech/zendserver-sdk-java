@@ -11,6 +11,11 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
+/**
+ * Wizard page for editing IZendTarget details. 
+ * Allows for TargetDetails/DevCloud account data editing via TargetDetailsComposite.
+ *
+ */
 public class TargetDetailsPage extends WizardPage {
 
 	private TargetDetailsComposite composite = new TargetDetailsComposite();

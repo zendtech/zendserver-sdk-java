@@ -12,6 +12,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
+/**
+ * Single area that contains all different composites for editing target details.
+ * Shows one composite at a time. It can be switched using setType().
+ * Call validate() to validate data provided by user.
+ * 
+ * Listen on AbstractTargetDetailsComposite.PROP_ERROR_MESSAGE for validation results. 
+ *
+ */
 public class TargetDetailsComposite {
 
 	private AbstractTargetDetailsComposite[] targetComposites;
@@ -29,6 +37,12 @@ public class TargetDetailsComposite {
 		};
 	}
 	
+	/**
+	 * Add property change listener to composites.
+	 * 
+	 * @param propertyName property name
+	 * @param listener change listener
+	 */
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		for (int i = 0; i < targetComposites.length; i++) {
@@ -36,6 +50,12 @@ public class TargetDetailsComposite {
 		}
 	}
 	
+	/**
+	 * Remove property change listener to composites.
+	 * 
+	 * @param propertyName property name
+	 * @param listener change listener
+	 */
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		for (int i = 0; i < targetComposites.length; i++) {
@@ -43,6 +63,13 @@ public class TargetDetailsComposite {
 		}
 	}
 	
+	/**
+	 * Create composite area.
+	 * 
+	 * @param parent Parent composite to lay widgets on top of.
+	 * 
+	 * @return created control.
+	 */
 	public Composite create(Composite parent) {
 		clientArea = new Composite(parent, SWT.NONE);
 		clientArea.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -67,6 +94,10 @@ public class TargetDetailsComposite {
 		return clientArea;
 	}
 	
+	/**
+	 * Specify composite type to show up, e.g. ZendTargetDetailsComposite.getClass().getName() or some other class name.
+	 * @param name
+	 */
 	public void setType(String name) {
 		int idx = -1;
 		for (int i = 0; idx == -1 && i < targetComposites.length; i++) {
@@ -85,6 +116,13 @@ public class TargetDetailsComposite {
 		clientArea.layout();
 	}
 
+	/**
+	 * Validate data entered by user.
+	 * Returns job (already scheduled), that performs validation. One may want to listen on the job change
+	 * to update the GUI accordingly.
+	 * 
+	 * @return Job that performs validation.
+	 */
 	public Job validate() {
 		return targetComposites[currentComposite].validate();
 	}
