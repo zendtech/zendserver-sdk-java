@@ -13,8 +13,8 @@ public class Messages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.debug.ui.messages"; //$NON-NLS-1$
 
-	public static String deploymentDialog_Title;
-	public static String deploymentDialog_Message;
+	public static String deploymentWizard_Title;
+	public static String deploymentWizard_Message;
 
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;
@@ -22,7 +22,7 @@ public class Messages extends NLS {
 	public static String deploymentTab_Title;
 
 	public static String parametersPage_Title;
-	public static String parametersPage_TargetLocation;
+	public static String parametersPage_AddTarget;
 	public static String parametersPage_DeployTo;
 	public static String parametersPage_baseURL;
 	public static String parametersPage_appUserName;

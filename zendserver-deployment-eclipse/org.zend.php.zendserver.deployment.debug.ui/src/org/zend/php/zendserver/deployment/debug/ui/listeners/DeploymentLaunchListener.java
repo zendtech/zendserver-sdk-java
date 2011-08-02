@@ -10,8 +10,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
@@ -21,7 +22,7 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
-import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 
 public class DeploymentLaunchListener implements ILaunchListener {
 
@@ -41,7 +42,7 @@ public class DeploymentLaunchListener implements ILaunchListener {
 					if (!helper.getTargetId().isEmpty()) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
-						openDeploymentDialog(project, "");
+						openDeploymentWizard(project, "");
 						if (dialogHelper == null) {
 							return;
 						}
@@ -85,18 +86,21 @@ public class DeploymentLaunchListener implements ILaunchListener {
 		}
 	}
 
-	private void openDeploymentDialog(final IProject project, final String targetId) {
-		// TODO pass targetId to the DeploymentLaunchDialog
+	private void openDeploymentWizard(final IProject project, final String targetId) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				DeploymentLaunchDialog dialog = new DeploymentLaunchDialog(window.getShell(),
-						project);
+				IDeploymentHelper targetHelper = new DeploymentHelper();
+				targetHelper.setTargetId(targetId);
+				DeploymentWizard wizard = new DeploymentWizard(project,
+						targetHelper);
+				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+				WizardDialog dialog = new WizardDialog(shell, wizard);
+				dialog.create();
 				if (dialog.open() != Window.OK) {
 					dialogHelper = null;
 				} else {
-					dialogHelper = dialog.getHelper();
+					dialogHelper = wizard.getHelper();
 				}
 			}
 		});

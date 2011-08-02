@@ -14,6 +14,8 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.IStatusChangeListener;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusChangeListener {
@@ -25,7 +27,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	private IZendTarget selectedTarget;
 	private Map<String, String> parameters;
 	private IProject project;
-	private DeploymentConfigurationBlock block;
+	private ConfigurationBlock block;
 
 	public DeploymentLaunchDialog(Shell parentShell, IProject project) {
 		super(parentShell);
@@ -80,12 +82,12 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		setTitle(Messages.deploymentDialog_Title);
-		setMessage(Messages.deploymentDialog_Message);
+		setTitle(Messages.deploymentWizard_Title);
+		setMessage(Messages.deploymentWizard_Message);
 		setTitleImage(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP).createImage());
-		block = new DeploymentConfigurationBlock(this);
+		block = new ConfigurationBlock(this);
 		Control container = block.createContents(dialogArea);
-		block.createParametersGroup(project);
+		// block.createParametersGroup(project);
 		setInitialValues();
 		return container;
 	}
@@ -112,7 +114,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		isDefaultServer = block.isDefaultServer();
 		isIgnoreFailures = block.isIgnoreFailures();
 		selectedTarget = block.getTarget();
-		parameters = block.getParameters();
+		// parameters = block.getParameters();
 		super.okPressed();
 	}
 

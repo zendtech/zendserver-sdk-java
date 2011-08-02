@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.debug.ui.dialogs;
+package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.List;

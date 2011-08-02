@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.debug.ui.dialogs;
+package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import org.eclipse.core.runtime.IStatus;
 

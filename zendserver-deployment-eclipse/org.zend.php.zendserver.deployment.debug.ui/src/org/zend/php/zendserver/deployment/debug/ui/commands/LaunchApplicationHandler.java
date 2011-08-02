@@ -15,29 +15,32 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
-import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentLaunchDialog;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 
 public class LaunchApplicationHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String mode = event.getParameter(ApplicationContribution.MODE);
-		
+
 		Object obj = event.getApplicationContext();
 		IEvaluationContext ctx = null;
 		if (obj instanceof IEvaluationContext) {
 			ctx = (IEvaluationContext) obj;
 		}
-		
+
 		IProject[] projects = null;
 		String targetId = null;
-		
+
 		if (ctx != null) {
 			projects = getProjects(ctx.getVariable(ApplicationContribution.PROJECT_NAME));
 			targetId = (String) ctx.getVariable(ApplicationContribution.TARGET_ID);
@@ -48,64 +51,61 @@ public class LaunchApplicationHandler extends AbstractHandler {
 		if (projects == null) {
 			projects = new IProject[] { getProjectFromEditor() };
 		}
-		
+
 		for (IProject project : projects) {
 			execute(mode, project, targetId);
 		}
-		
+
 		return null;
 	}
 
 	private void execute(final String mode, IProject project, String targetId) {
 		ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
 		if (config == null) {
-			DeploymentLaunchDialog dialog = openDeploymentDialog(project, targetId);
-			if (dialog != null) {
+			IDeploymentHelper targetHelper = new DeploymentHelper();
+			targetHelper.setTargetId(targetId);
+			DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
+			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+			WizardDialog dialog = new WizardDialog(shell, wizard);
+			dialog.create();
+			if (dialog.open() == Window.OK) {
 				try {
-					config = LaunchUtils.createConfiguration(project, -1, dialog.getHelper());
-					DebugUITools.launch(config, mode);
+					config = LaunchUtils.createConfiguration(project, -1, wizard.getHelper());
 				} catch (CoreException e) {
 					Activator.log(e);
 				}
 			}
 		}
-	}
-
-	private DeploymentLaunchDialog openDeploymentDialog(final IProject project, final String targetId) {
-		// TODO pass targetId to the DeploymentLaunchDialog
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		DeploymentLaunchDialog dialog = new DeploymentLaunchDialog(window.getShell(), project);
-		if (dialog.open() != Window.OK) {
-			return null;
+		if (config != null) {
+			DebugUITools.launch(config, mode);
 		}
-		return dialog;
 	}
 
 	private IProject[] getProjects(Object projectName) {
 		if (projectName == null) {
 			return null;
 		}
-		
+
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		if (projectName instanceof String) {
-			IProject project = root.getProject((String)projectName);
+			IProject project = root.getProject((String) projectName);
 			if (project.exists()) {
 				return new IProject[] { project };
 			}
 		}
-		
+
 		if (projectName instanceof String[]) {
 			List<IProject> projects = new ArrayList<IProject>();
-			for (String pName : (String[])projectName) {
-				IProject project = root.getProject((String)projectName);
+			for (String pName : (String[]) projectName) {
+				IProject project = root.getProject((String) projectName);
 				if (project.exists() && (projects.contains(project))) {
 					projects.add(project);
 				}
 			}
 			return projects.toArray(new IProject[projects.size()]);
 		}
-		
+
 		return null;
 	}
 

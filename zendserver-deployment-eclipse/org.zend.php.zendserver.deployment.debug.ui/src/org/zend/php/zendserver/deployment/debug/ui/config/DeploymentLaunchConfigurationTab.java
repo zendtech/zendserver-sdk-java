@@ -20,20 +20,24 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentConfigurationBlock;
-import org.zend.php.zendserver.deployment.debug.ui.dialogs.IStatusChangeListener;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ParametersBlock;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.IStatusChangeListener;
 
 public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements
 		IStatusChangeListener {
 
-	private DeploymentConfigurationBlock block;
+	private ConfigurationBlock configBlock;
+	private ParametersBlock parametersBlock;
 	private IProject project;
 
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		block = new DeploymentConfigurationBlock(this);
-		block.createContents(composite);
+		composite.setLayout(new GridLayout(1, false));
+		configBlock = new ConfigurationBlock(this);
+		configBlock.createContents(composite);
+		parametersBlock = new ParametersBlock(this);
+		parametersBlock.createContents(composite);
 		setDeploymentPageEnablement(false);
 		setControl(composite);
 	}
@@ -49,9 +53,10 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				setDeploymentPageEnablement(true);
 			}
 			if (project != null) {
-				block.createParametersGroup(project);
+				parametersBlock.createParametersGroup(project);
 				IDeploymentHelper helper = DeploymentHelper.create(configuration);
-				block.initializeFields(helper);
+				configBlock.initializeFields(helper);
+				parametersBlock.initializeFields(helper);
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -60,15 +65,15 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
 		if (project != null) {
-			URL baseURL = block.getBaseURL();
+			URL baseURL = configBlock.getBaseURL();
 			IDeploymentHelper helper = new DeploymentHelper();
 			helper.setBasePath(baseURL.getPath());
-			helper.setTargetId(block.getTarget().getId());
+			helper.setTargetId(configBlock.getTarget().getId());
 			helper.setProjectName(project.getName());
-			helper.setUserParams(block.getParameters());
-			helper.setAppName(block.getUserAppName());
-			helper.setIgnoreFailures(block.isIgnoreFailures());
-			helper.setDefaultServer(block.isDefaultServer());
+			helper.setUserParams(parametersBlock.getParameters());
+			helper.setAppName(configBlock.getUserAppName());
+			helper.setIgnoreFailures(configBlock.isIgnoreFailures());
+			helper.setDefaultServer(configBlock.isDefaultServer());
 			helper.setVirtualHost(baseURL.getHost());
 			try {
 				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
@@ -89,10 +94,16 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		IStatus status = block.validatePage();
+		IStatus status = configBlock.validatePage();
 		setMessages(status);
 		if (status.getSeverity() == IStatus.OK) {
-			return super.isValid(launchConfig);
+			status = parametersBlock.validatePage();
+			setMessages(status);
+			if (status.getSeverity() == IStatus.OK) {
+				return super.isValid(launchConfig);
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -127,10 +138,10 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	private void setDeploymentPageEnablement(boolean value) {
-		block.setDeployComboEnabled(value);
-		block.setDefaultServerEnabled(value);
-		block.setBaseURLEnabled(value);
-		block.setUserAppNameEnabled(value);
+		configBlock.setDeployComboEnabled(value);
+		configBlock.setDefaultServerEnabled(value);
+		configBlock.setBaseURLEnabled(value);
+		configBlock.setUserAppNameEnabled(value);
 	}
 
 }
