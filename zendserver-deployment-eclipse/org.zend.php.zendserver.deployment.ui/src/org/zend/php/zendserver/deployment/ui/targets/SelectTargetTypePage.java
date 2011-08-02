@@ -36,21 +36,8 @@ public class SelectTargetTypePage extends WizardPage {
 
 	private Gallery gallery;
 
-	private static class Contribution {
-		
-		String name;
-		
-		String image;
-		
-		String wizardPageClassName;
-		
-		public Contribution(String name, String image, String wizardPageClassName) {
-			this.name = name;
-			this.image = image;
-			this.wizardPageClassName = wizardPageClassName;
-		}
-	}
-	
+	private Contribution[] elements;
+
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(propertyName, listener);
@@ -70,11 +57,13 @@ public class SelectTargetTypePage extends WizardPage {
 		return type;
 	}
 	
-	protected SelectTargetTypePage() {
+	protected SelectTargetTypePage(Contribution[] elements) {
 		super(Messages.SelectTargetTypePage_SelectTargetType);
 		setTitle(Messages.SelectTargetTypePage_AddTarget);
 		setDescription(Messages.SelectTargetTypePage_SelectTargetType);
 		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		
+		this.elements = elements;
 	}
 
 	public void createControl(Composite parent) {
@@ -113,24 +102,15 @@ public class SelectTargetTypePage extends WizardPage {
 		top.setExpanded(true);
 		gallery.setGroupRenderer(new NoGroupRenderer());
 		
-		Contribution[] elements = getElements();
-		
 		for (int i = 0; i < elements.length; i++) {
 			GalleryItem item1 = new GalleryItem(top, SWT.NONE);
 			item1.setText(elements[i].name);
 			item1.setImage(Activator.getDefault().getImage(elements[i].image));
-			item1.setData(DATA_CLASSNAME, elements[i].wizardPageClassName);
+			item1.setData(DATA_CLASSNAME, elements[i].control.getName());
 			
 		}
 		
 		setControl(composite);
 		setPageComplete(gallery.getSelectionCount() > 0);
-	}
-
-	private Contribution[] getElements() {
-		return new Contribution[] {
-				new Contribution(Messages.SelectTargetTypePage_ZendServer, Activator.IMAGE_ZEND, ZendTargetDetailsComposite.class.getName()),
-				new Contribution(Messages.SelectTargetTypePage_DevCloud, Activator.IMAGE_CLOUD, DevCloudDetailsComposite.class.getName()),
-		};
 	}
 }

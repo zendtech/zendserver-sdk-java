@@ -1,6 +1,18 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -71,4 +83,85 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		String uniqueId = tm.createUniqueId(null);
 		return tm.createTarget(uniqueId, target[0].getHost().toString(), target[0].getKey(), target[0].getSecretKey());
 	}
-	}
+	
+
+	private void keyStoreMagic (String keyfile, String certfile) {
+        
+        // change this if you want another password by default
+        String keypass = "importkey";
+        
+        // change this if you want another alias by default
+        String defaultalias = "importkey";
+
+        // change this if you want another keystorefile by default
+        String keystorename = System.getProperty("keystore");
+
+        if (keystorename == null)
+            keystorename = System.getProperty("user.home")+
+                System.getProperty("file.separator")+
+                "keystore.ImportKey"; // especially this ;-)
+
+        try {
+        	
+            // initializing and clearing keystore 
+            KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+            ks.load( null , keypass.toCharArray());
+            System.out.println("Using keystore-file : "+keystorename);
+            ks.store(new FileOutputStream ( keystorename  ),
+                    keypass.toCharArray());
+            ks.load(new FileInputStream ( keystorename ),
+                    keypass.toCharArray());
+
+            // loading Key
+            InputStream fl = fullStream (keyfile);
+            byte[] key = new byte[fl.available()];
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            fl.read ( key, 0, fl.available() );
+            fl.close();
+            PKCS8EncodedKeySpec keysp = new PKCS8EncodedKeySpec ( key );
+            PrivateKey ff = kf.generatePrivate (keysp);
+
+            // loading CertificateChain
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            InputStream certstream = fullStream (certfile);
+
+            Collection<? extends Certificate> c = cf.generateCertificates(certstream) ;
+            Certificate[] certs = new Certificate[c.toArray().length];
+
+            if (c.size() == 1) {
+                certstream = fullStream (certfile);
+                System.out.println("One certificate, no chain.");
+                Certificate cert = cf.generateCertificate(certstream) ;
+                certs[0] = cert;
+            } else {
+                System.out.println("Certificate chain length: "+c.size());
+                certs = (Certificate[])c.toArray();
+            }
+
+            // storing keystore
+            ks.setKeyEntry(defaultalias, ff, 
+                           keypass.toCharArray(),
+                           certs );
+            System.out.println ("Key and certificate stored.");
+            System.out.println ("Alias:"+defaultalias+"  Password:"+keypass);
+            ks.store(new FileOutputStream ( keystorename ),
+                     keypass.toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+	
+	  /* @param fname The filename
+	     * @return The filled InputStream
+	     * @exception IOException, if the Streams couldn't be created.
+	     **/
+	    private static InputStream fullStream ( String fname ) throws IOException {
+	        FileInputStream fis = new FileInputStream(fname);
+	        DataInputStream dis = new DataInputStream(fis);
+	        byte[] bytes = new byte[dis.available()];
+	        dis.readFully(bytes);
+	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+	        return bais;
+	    }
+
+}

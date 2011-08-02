@@ -18,15 +18,17 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class TargetDetailsPage extends WizardPage {
 
-	private TargetDetailsComposite composite = new TargetDetailsComposite();
+	private TargetDetailsComposite composite;
 	
 	private IZendTarget target;
 	
-	protected TargetDetailsPage() {
+	protected TargetDetailsPage(AbstractTargetDetailsComposite[] pages) {
 		super(Messages.TargetDetailsPage_TargetDetails);
 		setTitle(Messages.TargetDetailsPage_AddTarget);
 		setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
 		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		
+		composite = new TargetDetailsComposite(pages);
 	}
 
 	public void createControl(Composite parent) {
@@ -39,7 +41,7 @@ public class TargetDetailsPage extends WizardPage {
 				target = src.getTarget();
 				final String errorMessage = (String) evt.getNewValue();
 				
-				Display.getDefault().asyncExec(new Runnable() {
+				Display.getDefault().syncExec(new Runnable() {
 					
 					public void run() {
 						setErrorMessage(errorMessage);
@@ -57,7 +59,7 @@ public class TargetDetailsPage extends WizardPage {
 		composite.setType(name);
 		setErrorMessage(null);
 		target = null;
-		setPageComplete(false);
+		setPageComplete(!composite.hasPage(name));
 	}
 	
 	public IZendTarget getTarget() {

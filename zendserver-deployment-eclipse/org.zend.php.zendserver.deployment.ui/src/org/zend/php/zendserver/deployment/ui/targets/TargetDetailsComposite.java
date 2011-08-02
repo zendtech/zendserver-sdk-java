@@ -30,11 +30,8 @@ public class TargetDetailsComposite {
 	
 	private int currentComposite;
 	
-	public TargetDetailsComposite() {
-		targetComposites = new AbstractTargetDetailsComposite[] {
-			new ZendTargetDetailsComposite(),
-			new DevCloudDetailsComposite()
-		};
+	public TargetDetailsComposite(AbstractTargetDetailsComposite[] pages) {
+		targetComposites = pages;
 	}
 	
 	/**
@@ -78,8 +75,10 @@ public class TargetDetailsComposite {
 		composites = new Composite[targetComposites.length];
 		for (int i = 0; i < targetComposites.length; i++) {
 			composites[i] = targetComposites[i].create(clientArea);
-			composites[i].setVisible(currentComposite == i);
-			((GridData)composites[i].getLayoutData()).exclude = !(currentComposite == i);
+			if (composites[i] != null) {
+				composites[i].setVisible(currentComposite == i);
+				((GridData)composites[i].getLayoutData()).exclude = !(currentComposite == i);
+			}
 		}
 		
 		Button validateButton = new Button(clientArea, SWT.NONE);
@@ -106,14 +105,29 @@ public class TargetDetailsComposite {
 			}
 		}
 		
-		composites[currentComposite].setVisible(false);
-		((GridData)composites[currentComposite].getLayoutData()).exclude = true;
+		if (composites[currentComposite] != null) {
+			composites[currentComposite].setVisible(false);
+			((GridData)composites[currentComposite].getLayoutData()).exclude = true;
+		}
 		currentComposite = idx;
 		
-		composites[currentComposite].setVisible(true);
-		((GridData)composites[currentComposite].getLayoutData()).exclude = false;
+		if (composites[currentComposite] != null) {
+			composites[currentComposite].setVisible(true);
+			((GridData)composites[currentComposite].getLayoutData()).exclude = false;
+		}
 		
 		clientArea.layout();
+	}
+	
+	public boolean hasPage(String name) {
+		int idx = -1;
+		for (int i = 0; idx == -1 && i < targetComposites.length; i++) {
+			if (name.equals(targetComposites[i].getClass().getName())) {
+				idx = i;
+			}
+		}
+		
+		return (idx >= 0) && (idx < composites.length) && (composites[idx] != null);
 	}
 
 	/**

@@ -4,10 +4,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -15,21 +17,57 @@ public class CreateTargetWizard extends Wizard {
 
 	private SelectTargetTypePage typePage;
 	private TargetDetailsPage detailsPage;
-	private WizardDialog dialog;
+	private NewTargetWizardDialog dialog;
+	
+	private static class NewTargetWizardDialog extends WizardDialog {
+
+		public NewTargetWizardDialog(Shell parentShell, IWizard newWizard) {
+			super(parentShell, newWizard);
+		}
+		
+		/* 
+		 * make this method public, so that we can close wizard when user double-clicks target that doesn't require
+		 * configuration.
+		 */
+		@Override
+		public void finishPressed() {
+			super.finishPressed();
+		}
+	}
 	
 	public CreateTargetWizard() {
-		typePage = new SelectTargetTypePage();
-		detailsPage = new TargetDetailsPage();
+		setWindowTitle(Messages.AddTargetAction_AddTarget);
+		
+		Contribution[] elements = NewTargetContributionsFactory.getElements();
+		AbstractTargetDetailsComposite[] composites = new AbstractTargetDetailsComposite[elements.length];
+		for (int i = 0; i < elements.length; i++) {
+			try {
+				composites[i] = (AbstractTargetDetailsComposite) elements[i].control.newInstance();
+			} catch (InstantiationException e) {
+				Activator.log(e);
+			} catch (IllegalAccessException e) {
+				Activator.log(e);
+			}
+		}
+		
+		typePage = new SelectTargetTypePage(elements);
+		detailsPage = new TargetDetailsPage(composites);
+		
 		typePage.addPropertyChangeListener(SelectTargetTypePage.PROP_TYPE, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
 				detailsPage.setType(typePage.getType());
+				dialog.updateButtons();
 			}
 		});
 		typePage.addPropertyChangeListener(SelectTargetTypePage.PROP_DOUBLECLICK, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
-				dialog.showPage(detailsPage);
+				if (detailsPage.isPageComplete()) {
+					dialog.finishPressed();
+				} else {
+					dialog.showPage(detailsPage);
+				}
 			}
 		});
 		addPage(typePage);
@@ -58,7 +96,7 @@ public class CreateTargetWizard extends Wizard {
 	}
 	
 	public WizardDialog createDialog(Shell parentShell) {
-		dialog = new WizardDialog(parentShell, this);
+		dialog = new NewTargetWizardDialog(parentShell, this);
 		dialog.setTitle(Messages.AddTargetAction_AddTarget);
 		
 		return dialog;
