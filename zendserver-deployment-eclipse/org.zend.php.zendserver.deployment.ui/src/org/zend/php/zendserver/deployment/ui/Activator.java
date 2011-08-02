@@ -76,6 +76,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMAGE_CLOUD = "icons/obj64/cloud.gif"; //$NON-NLS-1$
 
+	public static final String IMAGE_DETECT = "icons/obj64/detect.gif"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
 
