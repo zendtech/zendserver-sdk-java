@@ -10,10 +10,13 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ExpandBar;
+import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
@@ -49,11 +52,24 @@ public class ConfigurationBlock extends AbstractBlock {
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
+		ExpandBar advancedBar = new ExpandBar(getContainer(), SWT.NONE);
+		advancedBar.setSpacing(0);
+		advancedBar.setBackground(getContainer().getBackground());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalSpan = 2;
+		advancedBar.setLayoutData(gd);
+		Composite advancedSection = new Composite(advancedBar, SWT.NONE);
+		advancedSection.setLayout(new GridLayout(2, false));
 		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
-				Messages.parametersPage_appUserNameTooltip, getContainer());
-		createBaseUrl(getContainer());
+				Messages.parametersPage_appUserNameTooltip, advancedSection);
+		createBaseUrl(advancedSection);
 		ignoreFailures = createLabelWithCheckbox(Messages.parametersPage_ignoreFailures,
-				Messages.parametersPage_ignoreFailuresTooltip, getContainer());
+				Messages.parametersPage_ignoreFailuresTooltip, advancedSection);
+		ExpandItem advancedItem = new ExpandItem(advancedBar, SWT.NONE, 0);
+		advancedItem.setControl(advancedSection);
+		advancedItem.setText("Advanced Settings");
+		advancedItem.setHeight(advancedSection.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		advancedItem.setExpanded(false);
 		return getContainer();
 	}
 
