@@ -327,7 +327,7 @@ public class ModelSerializer {
 	}
 
 	/**
-	 * Set's indent to same as in previous element
+	 * Sets indent to same as in previous element
 	 * 
 	 * @param parent parent node
 	 * @param e node to indent
