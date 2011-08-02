@@ -44,7 +44,11 @@ public class TargetsViewer {
 		listener = new IStatusChangeListener() {
 			
 			public void statusChanged(IStatusChangeEvent event) {
-				viewer.refresh();
+				viewer.getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						viewer.refresh();
+					}
+				});
 			}
 		};
 		tm.addStatusChangeListener(listener);
