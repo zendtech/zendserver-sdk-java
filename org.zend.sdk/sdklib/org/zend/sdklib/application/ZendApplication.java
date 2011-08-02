@@ -84,17 +84,22 @@ public class ZendApplication extends AbstractChangeNotifier {
 			WebApiClient client = getClient(targetId);
 			applicationIds = applicationIds == null ? new String[0]
 					: applicationIds;
-			return client.applicationGetStatus(applicationIds);
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Status",
+					"Retrieving Application status(es) from selected target...", -1));
+			ApplicationsList result = client.applicationGetStatus(applicationIds);
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Status",
+					"Application status(es) retrievied successfully. "));
+			return result;
 		} catch (MalformedURLException e) {
-			statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-					"Error duirng getting application status from '" + targetId
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
+					"Error duirng retrieving application status from '" + targetId
 							+ "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
-			statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-					"Error duirng getting application status from '" + targetId
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
+					"Error duirng retrieving application status from '" + targetId
 							+ "'", e));
-			log.error("Error duirng getting application status from '"
+			log.error("Error duirng retrieving application status from '"
 					+ targetId + "'.");
 			log.error("\tpossible error: " + e.getMessage());
 		}
