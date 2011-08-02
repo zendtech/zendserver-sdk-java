@@ -69,7 +69,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		try {
 			addPage(new OverviewPage(this));
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
-			addPage(new ScriptsPage(this, "scripts", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
+			addPage(new AutomationPage(this, "automation", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addMappingPages();
 			descriptorSourcePage = new SourcePage("source", this); //$NON-NLS-1$
 			addPage(descriptorSourcePage, getEditorInput());

@@ -159,7 +159,7 @@ public class ScriptsSection {
 		FormToolkit toolkit = managedForm.getToolkit();
 
 		Section section = toolkit.createSection(parent,
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE);
+				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		section.setText(Messages.OverviewPage_DeploymentScripts);
@@ -181,6 +181,7 @@ public class ScriptsSection {
 		Tree tree = scriptsTree.getTree();
 		gd = new GridData(SWT.FILL, SWT.DEFAULT, true, true);
 		gd.horizontalSpan = 3;
+		gd.heightHint = 100;
 		tree.setLayoutData(gd);
 
 		ScriptsContentProvider cp = new ScriptsContentProvider();

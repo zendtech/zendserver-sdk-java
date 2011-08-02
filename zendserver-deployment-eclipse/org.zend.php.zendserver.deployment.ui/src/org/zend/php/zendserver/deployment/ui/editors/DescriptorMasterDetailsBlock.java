@@ -92,8 +92,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
-		section.marginWidth = 5;
-		section.marginHeight = 5;
+		section.marginWidth = 0;
+		section.marginHeight = 0;
 		section.setText(title);
 		section.setDescription(description);
 		final SectionPart spart = new SectionPart(section);
@@ -114,7 +114,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		Tree tree = toolkit.createTree(client, SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 200;
-		gd.heightHint = 200;
+		gd.heightHint = 400;
 		tree.setLayoutData(gd);
 
 		Composite buttons = toolkit.createComposite(client, SWT.NONE);
