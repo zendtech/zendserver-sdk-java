@@ -8,9 +8,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendDevPaasDetect;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -58,14 +60,15 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		ZendDevPaasDetect detect = new ZendDevPaasDetect();
 		String username = data[0];
 		String password = data[1];
-
+		
 		IZendTarget[] target = detect.detectTarget(username, password);
 		if (target == null || target.length == 0) {
 			return null;
 		}
 
-		final IZendTarget first = target[0];
-		return createTarget(first.getHost(), first.getKey(),
-				first.getSecretKey());
+		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		
+		String uniqueId = tm.createUniqueId(null);
+		return tm.createTarget(uniqueId, target[0].getHost().toString(), target[0].getKey(), target[0].getSecretKey());
 	}
-}
+	}
