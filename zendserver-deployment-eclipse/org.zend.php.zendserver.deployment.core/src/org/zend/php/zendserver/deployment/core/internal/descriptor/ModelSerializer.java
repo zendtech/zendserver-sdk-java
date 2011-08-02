@@ -289,6 +289,7 @@ public class ModelSerializer {
 			return doc;
 		}
 		
+		// recursively add parent nodes
 		int idx = xpath.lastIndexOf('/');
 		String name;
 		Node parent = null;
@@ -305,20 +306,74 @@ public class ModelSerializer {
 			name = xpath;
 		}
 		
-		Element e = document.createElement(name);
+		// handle node order
+		Node before = null;
 		if (after == null) { // by default insert at the beginning
-			parent.insertBefore(e, parent.getFirstChild());
-		} else {
+			before = parent.getFirstChild();
+		} else { // otherwise add after provided 'after' node
 			Node sameLevelAfter = getDirectChild(parent, after);
 			
 			if (sameLevelAfter != null) {
-				parent.insertBefore(e, sameLevelAfter.getNextSibling());
-			} else {
-				parent.appendChild(e);
+				before = sameLevelAfter.getNextSibling();
 			}
 		}
 		
+		Element e = document.createElement(name);
+		parent.insertBefore(e, before);
+		
+		fixIndent(parent, e);
+		
 		return e;
+	}
+
+	/**
+	 * Set's indent to same as in previous element
+	 * 
+	 * @param parent parent node
+	 * @param e node to indent
+	 */
+	private void fixIndent(Node parent, Element e) {
+		Node prevElem = getPrevSibling(e, Node.ELEMENT_NODE);
+		if (prevElem != null) { // there's previous element, which indent we should follow
+			Node prevText = prevElem.getPreviousSibling();
+			if ((prevText != null) && (prevText.getNodeType() == Node.TEXT_NODE)) { // the previous element has some indent
+				
+				// figure out current indent of previous sibling
+				String prevWhitespace = prevText.getTextContent();
+				int indentIdx = prevWhitespace.lastIndexOf('\n');
+				if (indentIdx != -1) {
+					String indent = prevWhitespace.substring(indentIdx);
+					
+					// try to apply previous sibling indent to current node
+					Node prev = e.getPreviousSibling();
+					if (prev.getNodeType() == Node.TEXT_NODE) { // text node already exist, fix it with proper indent
+						String whitespace = prev.getTextContent();
+						indentIdx = whitespace.lastIndexOf('\n');
+						if (indentIdx != -1) {
+							String currIndent = whitespace.substring(indentIdx);
+							if (currIndent.trim().length() == 0) { // if can replace
+								prev.setTextContent(whitespace.substring(0, indentIdx) + indent);
+							}
+						} else {
+							prev.setTextContent(whitespace + indent);
+						}
+						
+					} else { // indent node not exists, manually create it with proper indent
+						Node indentNode = document.createTextNode(indent);
+						parent.insertBefore(indentNode, e);
+					}
+				}
+			}
+		}
+	}
+	
+	private Node getPrevSibling(Node node, int type) {
+		Node prevElem = node.getPreviousSibling();
+		while (prevElem != null && prevElem.getNodeType() != type) {
+			prevElem = prevElem.getPreviousSibling();
+		}
+		
+		return prevElem;
 	}
 	
 	/**
