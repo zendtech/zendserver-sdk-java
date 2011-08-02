@@ -22,6 +22,8 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class DeploymentWizard extends Wizard {
 
@@ -30,6 +32,7 @@ public class DeploymentWizard extends Wizard {
 	private IDescriptorContainer model;
 	private IProject project;
 	private DeploymentHelper helper;
+	private OperationType operationType;
 
 	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
@@ -37,8 +40,8 @@ public class DeploymentWizard extends Wizard {
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
 				(IFile) descriptor);
 		this.parametersPage = new ParametersPage(project, helper);
-		this.configPage = new ConfigurationPage(helper);
-		setNeedsProgressMonitor(false);
+		this.configPage = new ConfigurationPage(helper, this);
+		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 	}
@@ -56,6 +59,7 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		helper = createHelper();
+		operationType = configPage.getOperationType();
 		return true;
 	}
 
@@ -68,13 +72,22 @@ public class DeploymentWizard extends Wizard {
 		return helper;
 	}
 
+	public OperationType getOperationType() {
+		return operationType;
+	}
+
 	private DeploymentHelper createHelper() {
 		DeploymentHelper helper = new DeploymentHelper();
 		URL url = configPage.getBaseUrl();
 		helper.setBasePath(url.getPath());
 		helper.setProjectName(project.getName());
 		helper.setTargetId(configPage.getTarget().getId());
-		helper.setAppId(-1);
+		if (configPage.getOperationType() == OperationType.UPDATE) {
+			ApplicationInfo info = configPage.getApplicationToUpdate();
+			if (info != null) {
+				helper.setAppId(info.getId());
+			}
+		}
 		helper.setUserParams(parametersPage.getParameters());
 		helper.setAppName(configPage.getUserAppName());
 		helper.setIgnoreFailures(configPage.isIgnoreFailures());

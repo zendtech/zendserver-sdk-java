@@ -9,21 +9,24 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import java.net.URL;
 
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class ConfigurationPage extends DeploymentWizardPage {
 
-	protected ConfigurationPage(IDeploymentHelper helper) {
+	protected ConfigurationPage(IDeploymentHelper helper, IWizard wizard) {
 		super("Deployment Page", helper);
 		setDescription("Overall Deployment Settings");
 		setTitle("PHP Application Deployment");
-		this.block = new ConfigurationBlock(this);
+		this.block = new ConfigurationBlock(this, wizard);
 	}
 
 	protected ConfigurationPage() {
-		this(null);
+		this(null, null);
 	}
 
 	private ConfigurationBlock block;
@@ -56,6 +59,14 @@ public class ConfigurationPage extends DeploymentWizardPage {
 
 	public IZendTarget getTarget() {
 		return block.getTarget();
+	}
+
+	public OperationType getOperationType() {
+		return block.getOperationType();
+	}
+
+	public ApplicationInfo getApplicationToUpdate() {
+		return block.getApplicationToUpdate();
 	}
 
 }

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class BaseUrlControl {
 
-	private static final String DEFAULT_HOST = "<DEFAULT_SERVER>";
+	public static final String DEFAULT_HOST = "<default-server>";
 
 	private Label protocol;
 	private Label pathSeparator;

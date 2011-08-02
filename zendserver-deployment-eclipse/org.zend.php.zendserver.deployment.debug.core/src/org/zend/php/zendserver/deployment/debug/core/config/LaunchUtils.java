@@ -41,7 +41,7 @@ public class LaunchUtils {
 
 	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
-	public static ILaunchConfiguration createConfiguration(IProject project, int appId,
+	public static ILaunchConfiguration createConfiguration(IProject project,
 			IDeploymentHelper helper) throws CoreException {
 		ILaunchConfiguration config = null;
 
@@ -66,7 +66,6 @@ public class LaunchUtils {
 		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 
 		updateLaunchConfiguration(project, helper, wc);
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), appId);
 
 		config = wc.doSave();
 		return config;
@@ -101,6 +100,7 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
 		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), helper.getVirtualHost());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {

@@ -70,7 +70,7 @@ public class LaunchApplicationHandler extends AbstractHandler {
 			dialog.create();
 			if (dialog.open() == Window.OK) {
 				try {
-					config = LaunchUtils.createConfiguration(project, -1, wizard.getHelper());
+					config = LaunchUtils.createConfiguration(project, wizard.getHelper());
 				} catch (CoreException e) {
 					Activator.log(e);
 				}

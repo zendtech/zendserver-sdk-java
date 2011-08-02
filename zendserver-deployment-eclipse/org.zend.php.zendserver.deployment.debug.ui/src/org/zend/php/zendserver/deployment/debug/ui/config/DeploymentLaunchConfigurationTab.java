@@ -21,8 +21,8 @@ import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ParametersBlock;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.IStatusChangeListener;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.ParametersBlock;
 
 public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements
 		IStatusChangeListener {
