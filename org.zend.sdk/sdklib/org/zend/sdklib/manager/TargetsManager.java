@@ -170,8 +170,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 			String key) {
 
 		// resolve target id and key
-		targetId = targetId != null ? targetId : Integer
-				.toString(getTargets().length);
+		targetId = createUniqueId(null);
 		key = key != null ? key : DEFAULT_KEY + "." + System.getProperty("user.name");
 
 		final IZendTarget existing = getExistingLocalhost();
@@ -375,6 +374,27 @@ public class TargetsManager extends AbstractChangeNotifier {
 			return all.get(0).getId();
 		}
 		return defaultId;
+	}
+	
+	/**
+	 * Creates new target id unique in target manager.
+	 * 
+	 * @param prefix Optional prefix for generated id. Might be null.
+	 * 
+	 * @return unique id.
+	 */
+	public String createUniqueId(String prefix) {
+		if (prefix == null) {
+			prefix = "";
+		}
+		
+		int idgenerator = getTargets().length;
+		String id;
+		do {
+			id = prefix + Integer.toString(idgenerator++);
+		} while (getTargetById(id) != null);
+		
+		return id;
 	}
 
 }
