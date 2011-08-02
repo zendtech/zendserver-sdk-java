@@ -90,7 +90,8 @@ public class LaunchUtils {
 			host = helper.getVirtualHost();
 		}
 		if (host != null) {
-			wc.setAttribute(Server.BASE_URL, host + "/" + helper.getBasePath().substring(1));
+			wc.setAttribute(Server.BASE_URL, "http://" + host + "/"
+					+ helper.getBasePath().substring(1));
 		}
 		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), helper.getBasePath());
 		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());

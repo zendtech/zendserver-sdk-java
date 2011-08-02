@@ -67,14 +67,16 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		if (project != null) {
 			URL baseURL = configBlock.getBaseURL();
 			IDeploymentHelper helper = new DeploymentHelper();
-			helper.setBasePath(baseURL.getPath());
+			if (baseURL != null) {
+				helper.setBasePath(baseURL.getPath());
+				helper.setVirtualHost(baseURL.getHost());
+			}
 			helper.setTargetId(configBlock.getTarget().getId());
 			helper.setProjectName(project.getName());
 			helper.setUserParams(parametersBlock.getParameters());
 			helper.setAppName(configBlock.getUserAppName());
 			helper.setIgnoreFailures(configBlock.isIgnoreFailures());
 			helper.setDefaultServer(configBlock.isDefaultServer());
-			helper.setVirtualHost(baseURL.getHost());
 			try {
 				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			} catch (CoreException e) {
