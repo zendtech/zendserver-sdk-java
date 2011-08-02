@@ -11,12 +11,14 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DropTransferListener extends ViewerDropAdapter {
@@ -75,21 +77,26 @@ public class DropTransferListener extends ViewerDropAdapter {
 		
         menu.setLocation(getCurrentEvent().x, getCurrentEvent().y);
         menu.setVisible(true);
-        while (!menu.isDisposed() && menu.isVisible()) {
-          if (!display.readAndDispatch())
-            display.sleep();
-        }
-        menu.dispose();
-		
-		return true;
+        try {
+	        while (!menu.isDisposed() && menu.isVisible()) {
+	          if (!display.readAndDispatch())
+	            display.sleep();
+	        }
+        } catch (RuntimeException e) {
+        	// eat any exceptions to make sure that SWT event loop won't break the drop handler.  
+        	Activator.log(e);
+        } finally {
+	        menu.dispose();
+		}
+        return true;
 	}
-
+	
 	@Override
 	public boolean validateDrop(Object target, int operation,
 			TransferData type) {
 		boolean isSupported = ResourceTransfer.getInstance().isSupportedType(type);
 		boolean isZendTarget = target instanceof IZendTarget;
-		
+		overrideOperation(DND.DROP_COPY);
 		return isSupported && isZendTarget;
 	}
 
