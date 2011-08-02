@@ -3,17 +3,13 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
-import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -111,24 +107,6 @@ public abstract class AbstractTargetDetailsComposite {
 		});
 
 		return job;
-	}
-
-	/**
-	 * Helps generating new target
-	 * 
-	 * @param host
-	 * @param key
-	 * @param sk
-	 * @return
-	 */
-	protected IZendTarget createTarget(URL host, String key, String sk) {
-		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		int idgenerator = tm.getTargets().length;
-		String id;
-		do {
-			id = Integer.toString(idgenerator++);
-		} while (tm.getTargetById(id) != null);
-		return new ZendTarget(id, host, key, sk);
 	}
 
 	public IZendTarget getTarget() {

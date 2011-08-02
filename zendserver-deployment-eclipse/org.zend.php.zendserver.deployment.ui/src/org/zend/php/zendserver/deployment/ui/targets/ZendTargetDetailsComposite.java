@@ -9,7 +9,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -73,7 +76,9 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 			// should be checked earlier
 		}
 
-		return createTarget(host, data[1], data[2]);
+		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		String id = tm.createUniqueId(null);
+		return new ZendTarget(id, host, data[1], data[2]);
 	}
 
 }
