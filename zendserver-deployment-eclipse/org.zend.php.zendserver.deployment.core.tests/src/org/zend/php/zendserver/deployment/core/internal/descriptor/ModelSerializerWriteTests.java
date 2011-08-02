@@ -529,10 +529,10 @@ public class ModelSerializerWriteTests extends TestCase {
 "      <directive>\n" +
 "        <name>log_errors</name>\n" +
 "      </directive>\n" +
-"    <extension>\n" +
+"      <extension>\n" +
 "        <name>ctype</name>\n" +
 "      </extension>\n" +
-"    <zendserver>\n" +
+"      <zendserver>\n" +
 "        <equals>1.2.3</equals>\n" +
 "      </zendserver>\n" +
 "    </required>\n" +
