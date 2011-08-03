@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -23,7 +24,6 @@ import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 
 public class DescriptorSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
-	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner scanner;
 	private ColorManager colorManager;
@@ -39,9 +39,7 @@ public class DescriptorSourceViewerConfiguration extends TextSourceViewerConfigu
 	}
 
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		if (doubleClickStrategy == null)
-			doubleClickStrategy = new XMLDoubleClickStrategy();
-		return doubleClickStrategy;
+		return super.getDoubleClickStrategy(sourceViewer, contentType);
 	}
 
 	protected XMLScanner getXMLScanner() {
@@ -58,6 +56,11 @@ public class DescriptorSourceViewerConfiguration extends TextSourceViewerConfigu
 			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager.getColor(IXMLColorConstants.TAG))));
 		}
 		return tagScanner;
+	}
+	
+	@Override
+	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
+		return new XMLContentFormatter();
 	}
 
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {

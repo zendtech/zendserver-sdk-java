@@ -1,6 +1,9 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -8,12 +11,16 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.TextOperationAction;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.text.ColorManager;
 import org.zend.php.zendserver.deployment.ui.editors.text.DescriptorSourceViewerConfiguration;
 
 
 public class SourcePage extends TextEditor implements IFormPage {
 
+	private static final String FORMAT_ACTION = "org.zend.php.zendserver.deployment.ui.editors.format"; //$NON-NLS-1$
 	private int fIndex;
 	private Control fControl;
 	private DeploymentDescriptorEditor fEditor;
@@ -43,6 +50,20 @@ public class SourcePage extends TextEditor implements IFormPage {
 		fControl = children[children.length - 1];
 
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, IHelpContextIds.MANIFEST_SOURCE_PAGE);
+		
+		installFormatAction();
+	}
+	
+	@Override
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, FORMAT_ACTION);
+	}
+	
+	private void installFormatAction() {
+		Action action = new TextOperationAction(Messages.getResourceBundle(),
+				"Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		setAction(FORMAT_ACTION, action);
 	}
 
 	public void initialize(FormEditor editor) {

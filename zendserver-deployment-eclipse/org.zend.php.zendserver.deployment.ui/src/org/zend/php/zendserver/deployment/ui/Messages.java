@@ -1,9 +1,15 @@
 package org.zend.php.zendserver.deployment.ui;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
+	
+	private static final String CONSTRUCTED_MESSAGES_BUNDLE_ID = "org.zend.php.zendserver.deployment.ui.ConstructedMessages"; //$NON-NLS-1$
+	
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.messages"; //$NON-NLS-1$
+	
 	public static String AddTargetAction_AddNewTarget;
 	public static String AddTargetAction_AddTarget;
 	public static String AddTargetAction_AddTargetMessage;
@@ -162,7 +168,13 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+	
+	private static ResourceBundle constructedMessagesBundle = ResourceBundle.getBundle(CONSTRUCTED_MESSAGES_BUNDLE_ID);
 
 	private Messages() {
+	}
+
+	public static ResourceBundle getResourceBundle() {
+		return constructedMessagesBundle;
 	}
 }
