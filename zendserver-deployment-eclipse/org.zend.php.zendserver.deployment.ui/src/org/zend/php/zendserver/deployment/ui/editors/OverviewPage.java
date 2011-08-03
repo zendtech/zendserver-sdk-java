@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 
@@ -44,8 +45,11 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	private ResourceListSection persistent;
 
-	public OverviewPage(DeploymentDescriptorEditor editor) {
+	private IDescriptorContainer fModel;
+
+	public OverviewPage(DeploymentDescriptorEditor editor, IDescriptorContainer model) {
 		super(editor, "overview", Messages.OverviewPage_Overview); //$NON-NLS-1$
+		this.fModel = model;
 	}
 
 	@Override
@@ -232,13 +236,12 @@ public class OverviewPage extends DescriptorEditorPage {
 		apiVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_API,
 				Messages.OverviewPage_1));
-
-		license = addField(new FileField(descr,
+		license = addField(new FileField(fModel,
 				DeploymentDescriptorPackage.EULA,
 				"License", editor.getProject())); //$NON-NLS-1$
-		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
+		icon = addField(new FileField(fModel, DeploymentDescriptorPackage.ICON,
 				Messages.OverviewPage_Icon, editor.getProject()));
-		docRoot = addField(new FolderField(descr,
+		docRoot = addField(new FolderField(fModel,
 				DeploymentDescriptorPackage.DOCROOT,
 				Messages.OverviewPage_Docroot, editor.getProject()));
 		appDir = addField(new TextField(descr,

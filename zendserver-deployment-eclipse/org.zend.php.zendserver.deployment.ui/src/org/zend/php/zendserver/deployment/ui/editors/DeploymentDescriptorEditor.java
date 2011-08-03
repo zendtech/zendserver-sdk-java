@@ -67,7 +67,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	protected void addPages() {
 		try {
-			addPage(new OverviewPage(this));
+			addPage(new OverviewPage(this, fModel));
 			addPage(new DescriptorMasterDetailsPage(this, new DependenciesMasterDetailsProvider(), "dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
 			addPage(new AutomationPage(this, "automation", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addMappingPages();
