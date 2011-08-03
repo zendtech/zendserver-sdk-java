@@ -353,14 +353,13 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			e.printStackTrace();
 		}
 		if (isMappingAvailable()) {
-			final DeploymentDescriptorEditor editor = this;
 			getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
 
 				public void run() {
 					try {
-						addPage(3, new DeploymentPropertiesPage(fModel, editor, "package", //$NON-NLS-1$
+						addPage(3, new DeploymentPropertiesPage(fModel, DeploymentDescriptorEditor.this, "package", //$NON-NLS-1$
 								Messages.DeploymentDescriptorEditor_Package));
-						propertiesSourcePage = new PropertiesSourcePage("propertiesSource", editor); //$NON-NLS-1$
+						propertiesSourcePage = new PropertiesSourcePage("propertiesSource", DeploymentDescriptorEditor.this); //$NON-NLS-1$
 						addPage(4, propertiesSourcePage, getPropertiesInput());
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block
