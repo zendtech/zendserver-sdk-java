@@ -65,15 +65,17 @@ public class ConfigurationBlock extends AbstractBlock {
 	private IWizard wizard;
 	private Combo applicationSelectionCombo;
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
+	private OperationType defaultOperation;
 
 	public ConfigurationBlock(IStatusChangeListener context) {
-		this(context, null);
+		this(context, OperationType.DEPLOY, null);
 	}
 
-	public ConfigurationBlock(IStatusChangeListener context, IWizard wizard) {
+	public ConfigurationBlock(IStatusChangeListener context, OperationType defaultOp, IWizard wizard) {
 		super(context);
 		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		this.wizard = wizard;
+		this.defaultOperation = defaultOp;
 	}
 
 	@Override
@@ -90,9 +92,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		expComposite.setLayoutData(gd);
 		Composite advancedSection = new Composite(expComposite, SWT.NONE);
 		advancedSection.setLayout(new GridLayout(2, false));
-		if (wizard != null) {
-			createOperationsSection(advancedSection);
-		}
+		createOperationsSection(advancedSection);
 		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
 				Messages.parametersPage_appUserNameTooltip, advancedSection);
 		createBaseUrl(advancedSection);
@@ -122,6 +122,23 @@ public class ConfigurationBlock extends AbstractBlock {
 		userAppName.setText(helper.getAppName());
 	}
 
+	public void initDefaultOperation() {
+		switch (defaultOperation) {
+		case DEPLOY:
+			deployButton.setSelection(true);
+			break;
+		case UPDATE:
+			updateButton.setSelection(true);
+			enableApplicationSelectionSection(true);
+			break;
+		case AUTO_DEPLOY:
+			syncButton.setSelection(true);
+			break;
+		default:
+			break;
+		}
+	}
+
 	@Override
 	public IStatus validatePage() {
 		if (getTarget() == null) {
@@ -134,7 +151,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.deploymentWizard_Message);
 	}
-	
+
 	public OperationType getOperationType() {
 		if (deployButton.getSelection()) {
 			return OperationType.DEPLOY;
@@ -263,7 +280,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		operationLabel.setLayoutData(gd);
 
 		deployButton = createRadioButton(container, "Deploy");
-		deployButton.setSelection(true);
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -402,8 +418,23 @@ public class ConfigurationBlock extends AbstractBlock {
 					}
 				}
 				if (applicationSelectionCombo.getItemCount() > 0) {
-					applicationSelectionCombo.select(0);
-					fillFieldsByAppInfo();
+					if (defaultOperation == OperationType.UPDATE) {
+						URL url = baseUrl.getURL();
+						String stringUrl = url.toString();
+						if (isDefaultServer()) {
+							stringUrl = stringUrl.replaceFirst("default",
+									BaseUrlControl.DEFAULT_HOST);
+						}
+						for (int i = 0; i < applicationInfos.length; i++) {
+
+							if (applicationInfos[i].getBaseUrl().equals(stringUrl)) {
+								applicationSelectionCombo.select(i);
+							}
+						}
+					} else {
+						applicationSelectionCombo.select(0);
+						fillFieldsByAppInfo();
+					}
 				}
 			}
 		});

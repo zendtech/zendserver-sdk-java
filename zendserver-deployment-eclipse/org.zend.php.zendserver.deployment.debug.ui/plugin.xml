@@ -12,6 +12,9 @@
          <control
                class="org.zend.php.zendserver.deployment.debug.ui.contributions.DebugApplicationContribution">
          </control>
+         <control
+               class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployApplicationContribution">
+         </control>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -69,6 +72,11 @@
                name="mode"
                optional="false">
          </commandParameter>
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
+            name="Deploy PHP Application">
       </command>
    </extension>
    <extension

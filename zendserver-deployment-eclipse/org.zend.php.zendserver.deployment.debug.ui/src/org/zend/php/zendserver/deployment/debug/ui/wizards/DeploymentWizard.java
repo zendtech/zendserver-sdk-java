@@ -34,7 +34,7 @@ public class DeploymentWizard extends Wizard {
 	private DeploymentHelper helper;
 	private OperationType operationType;
 
-	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
+	public DeploymentWizard(IProject project, IDeploymentHelper helper, OperationType defaultOp) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
@@ -43,7 +43,7 @@ public class DeploymentWizard extends Wizard {
 		if (helper == null || helper.getProjectName().isEmpty()) {
 			helper = createDefaultHelper(project);
 		}
-		this.configPage = new ConfigurationPage(helper, this);
+		this.configPage = new ConfigurationPage(helper, defaultOp, this);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));

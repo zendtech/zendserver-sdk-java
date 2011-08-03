@@ -18,15 +18,15 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class ConfigurationPage extends DeploymentWizardPage {
 
-	protected ConfigurationPage(IDeploymentHelper helper, IWizard wizard) {
+	protected ConfigurationPage(IDeploymentHelper helper, OperationType defaultOp, IWizard wizard) {
 		super("Deployment Page", helper);
 		setDescription("Overall Deployment Settings");
 		setTitle("PHP Application Deployment");
-		this.block = new ConfigurationBlock(this, wizard);
+		this.block = new ConfigurationBlock(this, defaultOp, wizard);
 	}
 
 	protected ConfigurationPage() {
-		this(null, null);
+		this(null, OperationType.DEPLOY, null);
 	}
 
 	private ConfigurationBlock block;
@@ -37,6 +37,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 		if (getHelper() != null) {
 			block.initializeFields(getHelper());
 		}
+		block.initDefaultOperation();
 		setPageComplete(false);
 		statusChanged(block.validatePage());
 	}
