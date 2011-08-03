@@ -365,9 +365,9 @@ public class MappingModel implements IMappingModel {
 	 * org.zend.sdklib.mapping.IMappingModel#getPackagePath(java.lang.String)
 	 */
 	@Override
-	public String getPackagePath(String path) throws IOException {
+	public String getPackagePath(String folder, String path) throws IOException {
 		for (IMappingEntry entry : entries) {
-			if (entry.getType() == Type.INCLUDE) {
+			if (entry.getFolder().equals(folder) && entry.getType() == Type.INCLUDE) {
 				List<IMapping> mappings = entry.getMappings();
 				for (IMapping include : mappings) {
 					if (isExcluded(entry.getFolder(),

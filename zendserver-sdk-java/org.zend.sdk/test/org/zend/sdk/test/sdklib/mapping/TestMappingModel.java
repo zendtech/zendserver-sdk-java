@@ -264,7 +264,8 @@ public class TestMappingModel {
 	@Test
 	public void testGetPackagePath() throws IOException {
 		IMappingModel model = MappingModelFactory.createDefaultModel(new File(FOLDER, "Project1"));
-		assertTrue(model.getPackagePath("public//inner_public").startsWith("appdir"));
+		assertTrue(model.getPackagePath(IMappingModel.APPDIR, "public//inner_public").startsWith(
+				"appdir"));
 	}
 
 	private int getSize(IMappingModel model, String folder, Type type) {
