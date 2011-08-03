@@ -40,10 +40,21 @@ public class DeploymentWizard extends Wizard {
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
 				(IFile) descriptor);
 		this.parametersPage = new ParametersPage(project, helper);
+		if (helper == null || helper.getProjectName().isEmpty()) {
+			helper = createDefaultHelper(project);
+		}
 		this.configPage = new ConfigurationPage(helper, this);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+	}
+
+	private IDeploymentHelper createDefaultHelper(IProject project) {
+		IDeploymentHelper helper = new DeploymentHelper();
+		helper.setAppName(project.getName());
+		helper.setBasePath("/" + project.getName());
+		helper.setDefaultServer(true);
+		return helper;
 	}
 
 	@Override
