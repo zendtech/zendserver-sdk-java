@@ -183,13 +183,15 @@ public interface IMappingModel {
 	/**
 	 * Get package relative path to the given file based on the mapping model
 	 * 
+	 * @param folder
+	 *            - folder name
 	 * @param path
 	 *            - project relative path to the file
 	 * @return path in the deployment package or <code>null</code> if file is
 	 *         not mapped
 	 * @throws IOException
 	 */
-	String getPackagePath(String path) throws IOException;
+	String getPackagePath(String folder, String path) throws IOException;
 
 	/**
 	 * @return default exclusion list
