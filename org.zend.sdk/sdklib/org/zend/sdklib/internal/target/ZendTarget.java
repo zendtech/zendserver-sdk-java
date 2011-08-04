@@ -216,7 +216,7 @@ public class ZendTarget implements IZendTarget {
 				getSecretKey());
 		try {
 			String hostname = getHost().toString();
-			WebApiClient client = new WebApiClient(credentials, hostname);
+			WebApiClient client = new WebApiClient(credentials, hostname, SSLContextInitializer.instance.getRestletContext());
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
 			addProperty("operatingSystem", info.getEdition().name());
