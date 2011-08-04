@@ -115,7 +115,7 @@ public class TestMappingModel {
 		IMappingModel model = getModel();
 		String folder = "data";
 		int size = getSize(model, folder, Type.INCLUDE);
-		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", true, false));
+		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", false));
 		assertEquals(size + 1, getSize(model, folder, Type.INCLUDE));
 	}
 
@@ -124,8 +124,7 @@ public class TestMappingModel {
 		IMappingModel model = getModel();
 		String folder = "data";
 		int size = getSize(model, folder, Type.INCLUDE);
-		assertFalse(model.addMapping(folder, Type.INCLUDE, "public", true,
-				false));
+		assertFalse(model.addMapping(folder, Type.INCLUDE, "public", false));
 		assertEquals(size, getSize(model, folder, Type.INCLUDE));
 	}
 
@@ -134,20 +133,20 @@ public class TestMappingModel {
 		IMappingModel model = getModel();
 		String folder = "test";
 		assertTrue(model
-				.addMapping(folder, Type.INCLUDE, "public", true, false));
+.addMapping(folder, Type.INCLUDE, "public", false));
 		assertEquals(1, getSize(model, folder, Type.INCLUDE));
 	}
 
 	@Test
 	public void testAddMappingNullFolder() throws IOException {
 		IMappingModel model = getModel();
-		assertFalse(model.addMapping(null, Type.INCLUDE, "test1", true, false));
+		assertFalse(model.addMapping(null, Type.INCLUDE, "test1", false));
 	}
 
 	@Test
 	public void testAddMappingNullMapping() throws IOException {
 		IMappingModel model = getModel();
-		assertFalse(model.addMapping(null, Type.INCLUDE, null, true, true));
+		assertFalse(model.addMapping(null, Type.INCLUDE, null, true));
 	}
 
 	@Test
@@ -155,7 +154,7 @@ public class TestMappingModel {
 		IMappingModel model = getModel();
 		String folder = "data";
 		int size = getSize(model, folder, Type.INCLUDE);
-		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", true, false));
+		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", false));
 		assertEquals(size + 1, getSize(model, folder, Type.INCLUDE));
 		assertTrue(model.removeMapping(folder, Type.INCLUDE, "test1"));
 		assertEquals(size, getSize(model, folder, Type.INCLUDE));
@@ -186,15 +185,13 @@ public class TestMappingModel {
 		IMappingModel model = getModel();
 		String folder = "data";
 		int size = getSize(model, folder, Type.INCLUDE);
-		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", true, false));
+		assertTrue(model.addMapping(folder, Type.INCLUDE, "test1", false));
 		assertEquals(size + 1, getSize(model, folder, Type.INCLUDE));
-		assertTrue(model.modifyMapping(folder, Type.INCLUDE, new Mapping(
-				"test1", false, false)));
-		List<IMapping> includes = model.getEntry(folder, Type.INCLUDE)
-				.getMappings();
+		assertTrue(model.modifyMapping(folder, Type.INCLUDE, new Mapping("test1", false)));
+		List<IMapping> includes = model.getEntry(folder, Type.INCLUDE).getMappings();
 		for (IMapping mapping : includes) {
 			if (mapping.getPath().equals("test1")) {
-				assertFalse(mapping.isContent());
+				assertFalse(mapping.isGlobal());
 			}
 		}
 	}
@@ -203,15 +200,13 @@ public class TestMappingModel {
 	public void testModifyMappingNoMapping() throws IOException {
 		IMappingModel model = getModel();
 		String folder = "data";
-		assertFalse(model.modifyMapping(folder, Type.INCLUDE, new Mapping(
-				"aaa", true, true)));
+		assertFalse(model.modifyMapping(folder, Type.INCLUDE, new Mapping("aaa", true)));
 	}
 
 	@Test
 	public void testModifyMappingNullFolder() throws IOException {
 		IMappingModel model = getModel();
-		assertFalse(model.modifyMapping(null, Type.INCLUDE, new Mapping(
-				"test1", true, false)));
+		assertFalse(model.modifyMapping(null, Type.INCLUDE, new Mapping("test1", false)));
 	}
 
 	@Test

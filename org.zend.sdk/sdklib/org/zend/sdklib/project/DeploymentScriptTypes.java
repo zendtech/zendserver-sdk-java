@@ -56,4 +56,18 @@ public enum DeploymentScriptTypes {
 		return null;
 	}
 
+	public static DeploymentScriptTypes byFilename(String name) {
+		if (name == null) {
+			return null;
+		}
+
+		DeploymentScriptTypes[] values = values();
+		for (DeploymentScriptTypes types : values) {
+			if (name.equals(types.getFilename())) {
+				return types;
+			}
+		}
+		return null;
+	}
+
 }

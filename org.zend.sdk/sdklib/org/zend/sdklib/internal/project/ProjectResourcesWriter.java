@@ -171,7 +171,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 				"Application Update", "Creating deployment scripts..."));
 	}
 
-	public void writeDeploymentProperties(File container, IMappingLoader loader)
+	public void writeDeploymentProperties(File container, IMappingLoader loader, boolean isUpdate)
 			throws IOException, JAXBException {
 		IMappingModel model = loader == null ? MappingModelFactory
 				.createDefaultModel(container) : MappingModelFactory
@@ -179,38 +179,35 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		File mappingFile = new File(container,
 				MappingModelFactory.DEPLOYMENT_PROPERTIES);
 		if (mappingFile.exists()) {
-			String scriptdir = getScriptsDirectory(container).getName();
-			if (scriptdir != null) {
-				IMappingEntry scriptsEntry = model.getEntry(
-						IMappingModel.SCRIPTSDIR, Type.INCLUDE);
-				if (scriptsEntry != null) {
-					return;
-				}
-			}
-		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-				"Application Update",
-				"Creating default deployment.properites file...", -1));
-		if (container.isDirectory()) {
-			String scriptdir = getScriptsDirectory(container).getName();
-			File[] files = container.listFiles();
-			for (File file : files) {
-				String name = file.getName();
-				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
-					if (name.equals(scriptdir)) {
-						model.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, name, false, true);
-					} else {
-						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-								name, false, false);
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+					"Creating default deployment.properites file...", -1));
+			if (container.isDirectory()) {
+				String scriptdir = getScriptsDirectory(container).getName();
+				File[] files = container.listFiles();
+				for (File file : files) {
+					String name = file.getName();
+					if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
+						if (name.equals(scriptdir) && file.isDirectory()) {
+							String[] scripts = file.list();
+							for (String script : scripts) {
+								if (DeploymentScriptTypes.byFilename(script) != null) {
+									String path = name + "/" + script;
+									model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
+											false);
+								}
+							}
+						} else {
+							if (isUpdate == false) {
+								model.addMapping(IMappingModel.APPDIR, Type.INCLUDE, name, false);
+							}
+						}
 					}
 				}
+				model.store();
 			}
-			model.store();
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
+					"Creating default deployment.properites file..."));
 		}
-		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
-				"Application Update",
-				"Creating default deployment.properites file..."));
 	}
 
 	private boolean shoudBeExcluded(String name) {
@@ -218,31 +215,28 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 				|| name.toLowerCase().contains("test") || name.startsWith(".");
 	}
 
-	private void updateDescriptor(File descrFile) throws IOException,
-			JAXBException {
+	private void updateDescriptor(File descrFile) throws IOException, JAXBException {
 		final FileInputStream packageStream = new FileInputStream(descrFile);
-		
-			PackageDescription desc = new PackageDescription(packageStream);
-			File scriptsDir = findExistingScripts(descrFile.getParentFile());
-			String scripts = scriptsDir != null ? scriptsDir.getName() : null;
-			File docroot = findPublicFolder(descrFile.getParentFile());
-			boolean isDirty = false;
-			if (scripts != null
-					&& !scripts.equals(desc.getPackage().getScriptsdir())) {
-				desc.getPackage().setScriptsdir(scripts);
-				isDirty = true;
-			}
-			if (docroot != null && !docroot.equals(desc.getPackage().getDocroot())) {
-				desc.getPackage().setDocroot("public");
-				isDirty = true;
-			}
-			packageStream.close();
-			if (isDirty) {
-				final FileOutputStream printStream = new FileOutputStream(descrFile);
-				JaxbHelper.marshalPackage(printStream,
-						desc.getPackage());
-				printStream.close();
-			}
+
+		PackageDescription desc = new PackageDescription(packageStream);
+		File scriptsDir = findExistingScripts(descrFile.getParentFile());
+		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
+		File docroot = findPublicFolder(descrFile.getParentFile());
+		boolean isDirty = false;
+		if (scripts != null && !scripts.equals(desc.getPackage().getScriptsdir())) {
+			desc.getPackage().setScriptsdir(scripts);
+			isDirty = true;
+		}
+		if (docroot != null && !docroot.getName().equals(desc.getPackage().getDocroot())) {
+			desc.getPackage().setDocroot("public");
+			isDirty = true;
+		}
+		packageStream.close();
+		if (isDirty) {
+			final FileOutputStream printStream = new FileOutputStream(descrFile);
+			JaxbHelper.marshalPackage(printStream, desc.getPackage());
+			printStream.close();
+		}
 	}
 
 	private File getScriptsDirectory(File container) throws IOException {
@@ -256,8 +250,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			if (scriptsEntry != null) {
 				List<IMapping> mappings = scriptsEntry.getMappings();
 				for (IMapping mapping : mappings) {
-					result = new File(container, mapping.getPath());
-					if (mapping.isContent() || result.isDirectory()) {
+					result = new File(container, mapping.getPath()).getParentFile();
+					if (result.isDirectory()) {
 						return result;
 					}
 				}

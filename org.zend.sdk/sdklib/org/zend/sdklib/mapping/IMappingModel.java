@@ -56,8 +56,7 @@ public interface IMappingModel {
 	 * @return <code>true</code> if mapping was added successfully; otherwise
 	 *         return <code>false</code>.
 	 */
-	boolean addMapping(String folder, Type type, String path, boolean isGlobal,
-			boolean isContent);
+	boolean addMapping(String folder, Type type, String path, boolean isGlobal);
 
 	/**
 	 * Removes mapping for specified folder and entry type.
