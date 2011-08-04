@@ -95,12 +95,11 @@ public class MappingModel implements IMappingModel {
 	 * org.zend.sdklib.mapping.IMapping)
 	 */
 	@Override
-	public boolean addMapping(String folder, Type type, String path,
-			boolean isGlobal, boolean isContent) {
+	public boolean addMapping(String folder, Type type, String path, boolean isGlobal) {
 		if (folder == null || path == null) {
 			return false;
 		}
-		IMapping toAdd = new Mapping(path, isContent, isGlobal);
+		IMapping toAdd = new Mapping(path, isGlobal);
 		for (IMappingEntry entry : entries) {
 			if (entry.getFolder().equals(folder) && entry.getType() == type) {
 				List<IMapping> mappings = entry.getMappings();
@@ -173,7 +172,6 @@ public class MappingModel implements IMappingModel {
 				List<IMapping> mappings = entry.getMappings();
 				for (IMapping mapping : mappings) {
 					if (mapping.getPath().equals(toModify.getPath())) {
-						mapping.setContent(toModify.isContent());
 						mapping.setGlobal(toModify.isGlobal());
 						modelChanged(new MappingChangeEvent(
 								Kind.MODIFY_MAPPING, entry));
@@ -306,16 +304,14 @@ public class MappingModel implements IMappingModel {
 						if (include.getPath().equals(fileName)) {
 							return entry.getFolder();
 						}
-					} else if (include.isContent()) {
-						String fullPath = new File(mappingFile.getParentFile(), include.getPath())
-								.getCanonicalPath();
-						path = new File(mappingFile.getParentFile(), path).getCanonicalPath();
-						if (path.startsWith(fullPath)) {
-							return entry.getFolder();
-						}
 					} else {
 						if (include.getPath().equals(path)) {
 							return entry.getFolder();
+						} else {
+							String fileName = path.substring(0, path.lastIndexOf(File.separator));
+							if (include.getPath().equals(fileName)) {
+								return entry.getFolder();
+							}
 						}
 					}
 				}
@@ -379,11 +375,8 @@ public class MappingModel implements IMappingModel {
 					if (includePath.equals(path)) {
 						return new File(entry.getFolder(), path).getPath();
 					} else {
-						if (path.startsWith(includePath)) {
-							if (include.isContent()) {
-								int index = includePath.length();
-								path = path.substring(index, path.length());
-							}
+						String fileName = path.substring(0, path.lastIndexOf(File.separator));
+						if (includePath.equals(fileName)) {
 							return new File(entry.getFolder(), path).getPath();
 						}
 					}

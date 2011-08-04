@@ -35,7 +35,6 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 	public static final String EXCLUDES = ".excludes";
 	public static final String SEPARATOR = ",";
 	public static final String INCLUDES = ".includes";
-	public static final String CONTENT = "/*";
 	public static final String GLOBAL = "**/";
 
 	final String EOL = System.getProperty("line.separator");
@@ -80,16 +79,11 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 			if (file.isEmpty()) {
 				continue;
 			}
-			boolean isContent = file.endsWith(CONTENT);
-			if (isContent) {
-				file = file
-						.substring(0, file.length() - SEPARATOR.length() - 1);
-			}
 			boolean isGlobal = file.startsWith(GLOBAL);
 			if (isGlobal) {
 				file = file.substring(GLOBAL.length());
 			}
-			mappings.add(new Mapping(file, isContent, isGlobal));
+			mappings.add(new Mapping(file, isGlobal));
 		}
 		return mappings;
 	}
@@ -143,9 +137,6 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		int size = mappings.size() - 1;
 		for (IMapping entry : mappings) {
 			String file = entry.getPath();
-			if (entry.isContent()) {
-				file += CONTENT;
-			}
 			if (entry.isGlobal()) {
 				file = GLOBAL + file;
 			}
