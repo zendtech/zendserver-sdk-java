@@ -29,30 +29,36 @@
 	<property name="sdklib.dir" value="${basedir}/sdklib/" />
 	<property name="class.dir" value="${basedir}/bin/" />
 	<property name="instrumented.dir" value="${basedir}/inst/" />
-	<path id="emma.lib">
-		<fileset dir="${emma.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
 
-	<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+	<condition property="isEmmaAvailable">
+		<available file="${emma.dir}" />
+	</condition>
 
-	<path id="emma.classpath">
-		<path refid="emma.lib" />
-		<pathelement location="${basedir}/inst" />
-		<pathelement location="bin" />
-		<pathelement location="lib/commons-cli-1.2.jar" />
-		<pathelement location="lib/log4j-1.2.16.jar" />
-		<pathelement location="lib/jul-to-slf4j-1.6.1.jar" />
-		<pathelement location="lib/slf4j-api-1.6.1.jar" />
-		<pathelement location="lib/slf4j-log4j12-1.6.1.jar" />
-		<pathelement location="lib/org.restlet.ext.xml.jar" />
-		<pathelement location="lib/org.restlet.jar" />
-		<pathelement location="lib/zend-webapi.jar" />
-		<pathelement location="lib/registry.jar" />
-		<pathelement location="lib-test/junit-4.8.2.jar" />
-		<pathelement location="lib-test/mockito-all-1.8.5.jar" />
-	</path>
+	<target name="setEmmaProps" if="isEmmaAvailable">
+		<path id="emma.lib">
+			<fileset dir="${emma.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<path id="emma.classpath">
+			<path refid="emma.lib" />
+			<pathelement location="${basedir}/inst" />
+			<pathelement location="bin" />
+			<pathelement location="lib/commons-cli-1.2.jar" />
+			<pathelement location="lib/log4j-1.2.16.jar" />
+			<pathelement location="lib/jul-to-slf4j-1.6.1.jar" />
+			<pathelement location="lib/slf4j-api-1.6.1.jar" />
+			<pathelement location="lib/slf4j-log4j12-1.6.1.jar" />
+			<pathelement location="lib/org.restlet.ext.xml.jar" />
+			<pathelement location="lib/org.restlet.jar" />
+			<pathelement location="lib/zend-webapi.jar" />
+			<pathelement location="lib/registry.jar" />
+			<pathelement location="lib-test/junit-4.8.2.jar" />
+			<pathelement location="lib-test/mockito-all-1.8.5.jar" />
+		</path>
+		<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+	</target>
+
 
 	<target name="init">
 		<delete dir="bin" failonerror="false">
@@ -105,9 +111,9 @@
 		<delete file="lib/zend-sdk.jar" />
 		<delete file="lib/zend-test-sdk.jar" />
 	</target>
-	
-	<target depends="clean,build-subprojects,build-project,AllTests,junitreport,javadoc,validation,generateBasicRepository,buildSDK" name="build" />
-	
+
+	<target depends="setEmmaProps,clean,build-subprojects,build-project,AllTests,junitreport,javadoc,validation,generateBasicRepository,buildSDK" name="build" />
+
 	<target name="build-subprojects" />
 	
 	<target depends="init" name="build-project">
@@ -146,19 +152,18 @@
 		<jar destfile="lib/zend-test-sdk.jar" basedir="bin">
 			<include name="**/test/**/*.*" />
 		</jar>
-	
+		<mkdir dir="${junit.output.dir}" />
 	</target>
 	
-	<target name="instrEmma">
+	<target name="instrEmma" if="isEmmaAvailable">
 		<emma enabled="true">
 			<instr instrpath="${class.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true">
 				<filter excludes="org.zend.sdk.test.*" />
 			</instr>
 		</emma>
 	</target>
-	
-	<target name="AllTests" depends="instrEmma">
-		<mkdir dir="${junit.output.dir}" />
+
+	<target name="AllTests" depends="instrEmma" if="isEmmaAvailable">
 		<junit fork="yes" printsummary="withOutAndErr">
 			<classpath refid="emma.classpath" />
 			<formatter type="xml" />
@@ -184,8 +189,8 @@
 			</report>
 		</emma>
 	</target>
-	
-	<target name="junitreport">
+
+	<target name="junitreport" if="isEmmaAvailable">
 		<junitreport todir="${junit.output.dir}">
 			<fileset dir="${junit.output.dir}">
 				<include name="TEST-*.xml" />
@@ -227,7 +232,7 @@
         	<arg line="generate repository"/>
         	<arg line="-t helpers/org/zend/sdkhelp/repository/quickstart.xml"/>
         	<arg line="-o ${repository.dir}" />
-        	<arg line="-p ${repository.dir}/helloworld-1.0.zpk" />
+        	<arg line="-p ${repository.dir}/helloworld-1.0.0.zpk" />
         	<arg line=""/>
         	<classpath refid="org.zend.sdk.classpath" />
         </java>
