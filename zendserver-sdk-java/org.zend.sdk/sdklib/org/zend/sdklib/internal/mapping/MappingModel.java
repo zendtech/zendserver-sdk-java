@@ -297,6 +297,7 @@ public class MappingModel implements IMappingModel {
 		for (IMappingEntry entry : entries) {
 			if (entry.getType() == Type.INCLUDE) {
 				List<IMapping> mappings = entry.getMappings();
+				path = new File(path).toString();
 				for (IMapping include : mappings) {
 					if (include.isGlobal()) {
 						String fileName = path.substring(path
