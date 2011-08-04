@@ -10,8 +10,11 @@ package org.zend.webapi.internal.core.connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.Restlet;
+import org.restlet.Uniform;
 import org.restlet.data.ClientInfo;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -46,6 +49,16 @@ import org.zend.webapi.internal.core.connection.request.HeaderParameters;
  */
 public class ServiceDispatcher implements IServiceDispatcher {
 
+	private Context context;
+
+	public ServiceDispatcher() {
+		this(null);
+	}
+	
+	public ServiceDispatcher(Context context) {
+		this.context = context;
+	}
+
 	public IResponse dispatch(IRequest request) throws WebApiException {
 
 		if (request == null) {
@@ -57,7 +70,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 			// processing the request
 			ClientResource resource = getResource(request);
-
+			
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
 			if (handle == null) {
@@ -94,6 +107,14 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		final ClientResource clientResource = new ClientResource(request,
 				new Response(null));
 
+		if (context != null) {
+			Uniform uniform = clientResource.getNext();
+			if (uniform instanceof Restlet) {
+				Restlet restlet = (Restlet) uniform;
+				restlet.setContext(context);
+			}
+		}
+		
 		return clientResource;
 	}
 

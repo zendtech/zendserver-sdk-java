@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
+import org.restlet.Context;
 import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
@@ -73,6 +74,11 @@ public class WebApiClient {
 	 * Client configuration of this instance
 	 */
 	private final ClientConfiguration clientConfiguration;
+	
+	/**
+	 * Restlet connection context
+	 */
+	private final Context context;
 
 	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
@@ -82,9 +88,10 @@ public class WebApiClient {
 	 * @param userAgent
 	 */
 	public WebApiClient(WebApiCredentials credentials,
-			ClientConfiguration clientConfiguration) {
+			ClientConfiguration clientConfiguration, Context ctx) {
 		this.credentials = credentials;
 		this.clientConfiguration = clientConfiguration;
+		this.context = ctx;
 	}
 
 	/**
@@ -97,7 +104,21 @@ public class WebApiClient {
 	 */
 	public WebApiClient(WebApiCredentials credentials, String host)
 			throws MalformedURLException {
-		this(credentials, new ClientConfiguration(new URL(host)));
+		this(credentials, new ClientConfiguration(new URL(host)), null);
+	}
+	
+	/**
+	 * Constructs a new client to invoke service methods on Zend Server API
+	 * using the the specified host and credentials.
+	 * 
+	 * @param credentials
+	 * @param userAgent
+	 * @param context
+	 * @throws MalformedURLException
+	 */
+	public WebApiClient(WebApiCredentials credentials, String host, Context context)
+			throws MalformedURLException {
+		this(credentials, new ClientConfiguration(new URL(host)), context);
 	}
 
 	/**
@@ -885,7 +906,7 @@ public class WebApiClient {
 		}
 
 		// apply request
-		IServiceDispatcher dispatcher = new ServiceDispatcher();
+		IServiceDispatcher dispatcher = new ServiceDispatcher(context);
 		IResponse response = dispatcher.dispatch(request);
 
 		// return response data to caller
