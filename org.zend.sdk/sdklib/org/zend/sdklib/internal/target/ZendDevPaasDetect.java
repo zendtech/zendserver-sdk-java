@@ -72,6 +72,7 @@ public class ZendDevPaasDetect {
 			throws SdkException, IOException {
 
 		final boolean orginal = setFollowRedirect();
+		SSLContextInitializer.instance.setDefaultSSLFactory();
 
 		try {
 			// authenticate
@@ -85,6 +86,7 @@ public class ZendDevPaasDetect {
 
 		} finally {
 			HttpURLConnection.setFollowRedirects(orginal);
+			SSLContextInitializer.instance.restoreDefaultSSLFactory();
 		}
 	}
 
