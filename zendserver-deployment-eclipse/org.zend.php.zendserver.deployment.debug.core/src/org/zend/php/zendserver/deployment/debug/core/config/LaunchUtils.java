@@ -100,7 +100,6 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
 		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), helper.getVirtualHost());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
