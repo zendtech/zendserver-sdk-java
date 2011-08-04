@@ -68,8 +68,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			URL baseURL = configBlock.getBaseURL();
 			IDeploymentHelper helper = new DeploymentHelper();
 			if (baseURL != null) {
-				helper.setBasePath(baseURL.getPath());
-				helper.setVirtualHost(baseURL.getHost());
+				helper.setBaseURL(baseURL.toString());
 			}
 			helper.setTargetId(configBlock.getTarget().getId());
 			helper.setProjectName(project.getName());
@@ -141,7 +140,6 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	private void setDeploymentPageEnablement(boolean value) {
 		configBlock.setDeployComboEnabled(value);
-		configBlock.setDefaultServerEnabled(value);
 		configBlock.setBaseURLEnabled(value);
 		configBlock.setUserAppNameEnabled(value);
 	}

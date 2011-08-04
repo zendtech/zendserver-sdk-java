@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNam
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -81,24 +81,16 @@ public class LaunchUtils {
 		String host = null;
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
-		if (helper.isDefaultServer()) {
-			Server server = ServersManager.getServer(wc.getAttribute(Server.NAME, ""));
-			if (server != null) {
-				host = server.getBaseURL();
-			}
-		} else {
-			host = helper.getVirtualHost();
+		URL baseURL = helper.getBaseURL();
+		if (baseURL != null) {
+			wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
 		}
-		if (host != null) {
-			wc.setAttribute(Server.BASE_URL, host + helper.getBasePath());
-		}
-		wc.setAttribute(DeploymentAttributes.BASE_PATH.getName(), helper.getBasePath());
+		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper.getBaseURL().toString());
 		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());
 		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());
 		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
-		wc.setAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(), helper.getVirtualHost());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
 	}
 	

@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +14,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	private static final String EMPTY_STRING = "";
 
-	private String basePath;
+	private URL baseURL;
 	private String targetId;
 	private int appId;
 	private String projectName;
@@ -23,7 +25,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private String virtualHost;
 
 	public DeploymentHelper() {
-		this.basePath = EMPTY_STRING;
+		this.baseURL = null;
 		this.targetId = EMPTY_STRING;
 		this.appId = -1;
 		this.projectName = EMPTY_STRING;
@@ -38,7 +40,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public static DeploymentHelper create(ILaunchConfiguration config) {
 		DeploymentHelper helper = new DeploymentHelper();
 		try {
-			helper.setBasePath(config.getAttribute(DeploymentAttributes.BASE_PATH.getName(),
+			helper.setBaseURL(config.getAttribute(DeploymentAttributes.BASE_URL.getName(),
 					EMPTY_STRING));
 			helper.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
 					EMPTY_STRING));
@@ -53,16 +55,14 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.IGNORE_FAILURES.getName(), true));
 			helper.setDefaultServer(config.getAttribute(
 					DeploymentAttributes.DEFAULT_SERVER.getName(), true));
-			helper.setVirtualHost(config.getAttribute(DeploymentAttributes.VIRTUAL_HOST.getName(),
-					EMPTY_STRING));
 		} catch (CoreException e) {
 			return null;
 		}
 		return helper;
 	}
 
-	public String getBasePath() {
-		return basePath;
+	public URL getBaseURL() {
+		return baseURL;
 	}
 
 	public String getTargetId() {
@@ -97,8 +97,12 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return virtualHost;
 	}
 
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
+	public void setBaseURL(String baseURL) {
+		try {
+			this.baseURL = new URL(baseURL);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Invalid base URL: " + baseURL);
+		}
 	}
 
 	public void setTargetId(String targetId) {
@@ -127,10 +131,6 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setDefaultServer(boolean defaultServer) {
 		this.defaultServer = defaultServer;
-	}
-
-	public void setVirtualHost(String virtualHost) {
-		this.virtualHost = virtualHost;
 	}
 
 }

@@ -56,7 +56,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 
 	public DeploymentHelper getHelper() {
 		DeploymentHelper helper = new DeploymentHelper();
-		helper.setBasePath(baseURL.getPath());
+		helper.setBaseURL(baseURL.toString());
 		helper.setProjectName(project.getName());
 		helper.setTargetId(selectedTarget.getId());
 		helper.setAppId(-1);
@@ -64,7 +64,6 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 		helper.setAppName(userAppName);
 		helper.setIgnoreFailures(isIgnoreFailures);
 		helper.setDefaultServer(isDefaultServer);
-		helper.setVirtualHost(baseURL.getHost());
 		return helper;
 	}
 
@@ -121,8 +120,7 @@ public class DeploymentLaunchDialog extends TitleAreaDialog implements IStatusCh
 	private void setInitialValues() {
 		IDeploymentHelper helper = new DeploymentHelper();
 		if (baseURL != null) {
-			helper.setBasePath(baseURL.getPath());
-			helper.setVirtualHost(baseURL.getHost());
+			helper.setBaseURL(baseURL.toString());
 		}
 		if (selectedTarget != null) {
 			helper.setTargetId(selectedTarget.getId());

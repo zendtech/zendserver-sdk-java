@@ -10,8 +10,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -53,9 +51,8 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Combo deployCombo;
 	private IZendTarget[] deployComboTargets = new IZendTarget[0];
 	private Link targetLink;
-	private BaseUrlControl baseUrl;
+	private Text baseUrl;
 	private Text userAppName;
-	private Button defaultServer;
 	private Button ignoreFailures;
 	private Button deployButton;
 	private Button updateButton;
@@ -84,6 +81,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
+		baseUrl = createLabelWithText(Messages.parametersPage_baseURL, "", getContainer());
 		ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
 		expComposite.setText("Advanced Settings");
@@ -95,7 +93,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		createOperationsSection(advancedSection);
 		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
 				Messages.parametersPage_appUserNameTooltip, advancedSection);
-		createBaseUrl(advancedSection);
 		ignoreFailures = createLabelWithCheckbox(Messages.parametersPage_ignoreFailures,
 				Messages.parametersPage_ignoreFailuresTooltip, advancedSection);
 		;
@@ -106,19 +103,27 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	@Override
 	public void initializeFields(IDeploymentHelper helper) {
-		baseUrl.setDefaultServer(helper.isDefaultServer());
-		defaultServer.setSelection(helper.isDefaultServer());
-		if (helper.getBasePath().length() > 0) {
-			String host = helper.isDefaultServer() ? BaseUrlControl.DEFAULT_HOST : helper
-					.getVirtualHost();
-			baseUrl.setURL(host, helper.getBasePath().substring(1));
-		}
-		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		for (int i = 0; i < deployComboTargets.length; i++) {
-			if (deployComboTargets[i].getId() == helper.getTargetId()) {
+			if (deployComboTargets[i].getId().equals(helper.getTargetId())) {
 				deployCombo.select(i);
 			}
 		}
+		URL newBaseURL = helper.getBaseURL();
+		if (newBaseURL != null) {
+			if (helper.isDefaultServer()) {
+				String targetHost = getTarget().getHost().getHost();
+				try {
+					URL url = new URL(newBaseURL.getProtocol(), targetHost, newBaseURL.getPort(),
+							newBaseURL.getPath());
+					baseUrl.setText(url.toString());
+				} catch (MalformedURLException e) {
+					Activator.log(e);
+				}
+			} else {
+				baseUrl.setText(newBaseURL.toString());
+			}
+		}
+		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		userAppName.setText(helper.getAppName());
 	}
 
@@ -145,7 +150,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.parametersPage_ValidationError_TargetLocation);
 		}
-		if (!baseUrl.isValid()) {
+		if (getBaseURL() == null) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.parametersPage_ValidationError_BaseUrl);
 		}
@@ -174,8 +179,12 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	public URL getBaseURL() {
-		URL result = baseUrl.getURL();
-		return result != null ? result : null;
+		try {
+			URL result = new URL(baseUrl.getText());
+			return result;
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
 	public String getUserAppName() {
@@ -183,7 +192,12 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	public boolean isDefaultServer() {
-		return defaultServer.getSelection();
+		URL baseUrl = getBaseURL();
+		URL targetUrl = getTarget().getHost();
+		if (baseUrl.getHost().equals(targetUrl.getHost())) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isIgnoreFailures() {
@@ -212,34 +226,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		userAppName.setEnabled(value);
 	}
 
-	public void setDefaultServerEnabled(boolean value) {
-		defaultServer.setEnabled(value);
-	}
-
 	public void setIgnoreFailuresEnabled(boolean value) {
 		ignoreFailures.setEnabled(value);
-	}
-
-	private void createBaseUrl(Composite container) {
-		Label label = new Label(container, SWT.NULL);
-		label.setText(Messages.parametersPage_baseURL);
-		baseUrl = new BaseUrlControl();
-		baseUrl.createControl(container);
-		baseUrl.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				getContext().statusChanged(validatePage());
-			}
-		});
-		baseUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		defaultServer = createLabelWithCheckbox(Messages.parametersPage_defaultServer,
-				Messages.parametersPage_defaultServerTooltip, container);
-		defaultServer.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				baseUrl.setDefaultServer(defaultServer.getSelection());
-				getContext().statusChanged(validatePage());
-			}
-		});
 	}
 
 	private void createLocationLink(Composite container) {
@@ -258,7 +246,14 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void createDeployCombo(Composite container) {
 		deployCombo = createLabelWithCombo(Messages.parametersPage_DeployTo, "", container);
-		populateLocationList();
+		deployCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IZendTarget selectedTarget = deployComboTargets[deployCombo.getSelectionIndex()];
+				changeHost(selectedTarget);
+			}
+		});
+		populateTargetsList();
 	}
 
 	private void createOperationsSection(Composite parent) {
@@ -333,13 +328,15 @@ public class ConfigurationBlock extends AbstractBlock {
 				helper.setAppId(info.getId());
 				helper.setAppName(info.getUserAppName());
 				URL baseURL = new URL(info.getBaseUrl());
-
-				helper.setBasePath(baseURL.getPath());
 				if (baseURL.getHost().equals(BaseUrlControl.DEFAULT_HOST)) {
 					helper.setDefaultServer(true);
+					IZendTarget target = getTarget();
+					URL updatedURL = new URL(baseURL.getProtocol(), target.getHost().getHost(),
+							baseURL.getPath());
+					helper.setBaseURL(updatedURL.toString());
 				} else {
 					helper.setDefaultServer(false);
-					helper.setVirtualHost(baseURL.getHost());
+					helper.setBaseURL(baseURL.toString());
 				}
 				initializeFields(helper);
 				setBaseURLEnabled(false);
@@ -365,7 +362,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		} else {
 			initializeFields(new DeploymentHelper());
 		}
-		setDefaultServerEnabled(!value);
 		setBaseURLEnabled(!value);
 		setUserAppNameEnabled(!value);
 	}
@@ -419,7 +415,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				}
 				if (applicationSelectionCombo.getItemCount() > 0) {
 					if (defaultOperation == OperationType.UPDATE) {
-						URL url = baseUrl.getURL();
+						URL url = getBaseURL();
 						String stringUrl = url.toString();
 						if (isDefaultServer()) {
 							stringUrl = stringUrl.replaceFirst("default",
@@ -440,7 +436,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 	}
 
-	private void populateLocationList() {
+	private void populateTargetsList() {
 		deployComboTargets = targetsManager.getTargets();
 		deployCombo.removeAll();
 		String defaultId = targetsManager.getDefaultTargetId();
@@ -458,6 +454,18 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 		if (deployCombo.getItemCount() > 0) {
 			deployCombo.select(defaultNo);
+		}
+	}
+
+	private void changeHost(IZendTarget target) {
+		URL targetHost = target.getHost();
+		URL oldUrl = getBaseURL();
+		try {
+			URL updatedUrl = new URL(targetHost.getProtocol(), targetHost.getHost(),
+					targetHost.getPort(), oldUrl.getFile());
+			baseUrl.setText(updatedUrl.toString());
+		} catch (MalformedURLException e) {
+			Activator.log(e);
 		}
 	}
 

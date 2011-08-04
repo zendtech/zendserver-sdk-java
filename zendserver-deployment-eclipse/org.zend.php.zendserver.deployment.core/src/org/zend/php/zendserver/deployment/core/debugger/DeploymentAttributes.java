@@ -2,7 +2,7 @@ package org.zend.php.zendserver.deployment.core.debugger;
 
 public enum DeploymentAttributes {
 
-	BASE_PATH("basePath"), //$NON-NLS-1$
+	BASE_URL("baseURL"), //$NON-NLS-1$
 	
 	TARGET_ID("targetId"), //$NON-NLS-1$
 	
@@ -16,9 +16,7 @@ public enum DeploymentAttributes {
 	
 	IGNORE_FAILURES("ignoreFailures"), //$NON-NLS-1$
 	
-	DEFAULT_SERVER("defaultServer"), //$NON-NLS-1$
-	
-	VIRTUAL_HOST("virtualHost"); //$NON-NLS-1$
+	DEFAULT_SERVER("defaultServer"); //$NON-NLS-1$
 	
 	private static final String PREFIX = "org.zend.php.zendserver.deployment."; //$NON-NLS-1$
 	

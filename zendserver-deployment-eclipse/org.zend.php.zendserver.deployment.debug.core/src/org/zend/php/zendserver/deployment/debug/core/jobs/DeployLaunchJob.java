@@ -14,9 +14,11 @@ public class DeployLaunchJob extends AbstractLaunchJob {
 
 	@Override
 	protected ApplicationInfo performOperation(ZendApplication app, String projectPath) {
-		return app.deploy(project.getLocation().toString(), helper.getBasePath(),
-				helper.getTargetId(), helper.getUserParams(), helper.getAppName(),
-				helper.isIgnoreFailures(), helper.getVirtualHost(), helper.isDefaultServer());
+		String vHost = helper.getBaseURL().getHost();
+		String basePath = helper.getBaseURL().getPath();
+		return app.deploy(project.getLocation().toString(), basePath, helper.getTargetId(),
+				helper.getUserParams(), helper.getAppName(), helper.isIgnoreFailures(), vHost,
+				helper.isDefaultServer());
 	}
 
 }

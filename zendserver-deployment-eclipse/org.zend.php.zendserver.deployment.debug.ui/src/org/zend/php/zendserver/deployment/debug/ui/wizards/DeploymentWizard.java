@@ -52,7 +52,7 @@ public class DeploymentWizard extends Wizard {
 	private IDeploymentHelper createDefaultHelper(IProject project) {
 		IDeploymentHelper helper = new DeploymentHelper();
 		helper.setAppName(project.getName());
-		helper.setBasePath("/" + project.getName());
+		helper.setBaseURL("http://default/" + project.getName());
 		helper.setDefaultServer(true);
 		return helper;
 	}
@@ -90,7 +90,7 @@ public class DeploymentWizard extends Wizard {
 	private DeploymentHelper createHelper() {
 		DeploymentHelper helper = new DeploymentHelper();
 		URL url = configPage.getBaseUrl();
-		helper.setBasePath(url.getPath());
+		helper.setBaseURL(url.toString());
 		helper.setProjectName(project.getName());
 		helper.setTargetId(configPage.getTarget().getId());
 		if (configPage.getOperationType() == OperationType.UPDATE) {
@@ -103,7 +103,6 @@ public class DeploymentWizard extends Wizard {
 		helper.setAppName(configPage.getUserAppName());
 		helper.setIgnoreFailures(configPage.isIgnoreFailures());
 		helper.setDefaultServer(configPage.isDefaultServer());
-		helper.setVirtualHost(url.getHost());
 		return helper;
 	}
 

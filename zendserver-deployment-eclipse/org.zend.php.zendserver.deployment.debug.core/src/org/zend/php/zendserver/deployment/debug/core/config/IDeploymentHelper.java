@@ -1,10 +1,11 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
+import java.net.URL;
 import java.util.Map;
 
 public interface IDeploymentHelper {
 
-	String getBasePath();
+	URL getBaseURL();
 
 	String getTargetId();
 
@@ -20,9 +21,7 @@ public interface IDeploymentHelper {
 
 	boolean isDefaultServer();
 
-	String getVirtualHost();
-
-	void setBasePath(String basePath);
+	void setBaseURL(String baseURL);
 
 	void setTargetId(String targetId);
 
@@ -37,7 +36,5 @@ public interface IDeploymentHelper {
 	void setIgnoreFailures(boolean ignoreFailures);
 
 	void setDefaultServer(boolean defaultServer);
-
-	void setVirtualHost(String virtualHost);
 
 }
