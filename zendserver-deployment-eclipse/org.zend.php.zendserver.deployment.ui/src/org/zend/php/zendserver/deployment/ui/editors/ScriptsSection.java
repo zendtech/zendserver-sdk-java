@@ -117,10 +117,10 @@ public class ScriptsSection {
 		editor.getSite().getShell().getDisplay().syncExec(new Runnable() {
 			
 			public void run() {
-				if (zp.update(scriptName, false)) {
+				if (zp.update(scriptName, false, true)) {
 					String currentValue = editor.getModel().get(
 							DeploymentDescriptorPackage.SCRIPTSDIR);
-					if (currentValue == null) {
+					if (currentValue == null || currentValue.isEmpty()) {
 						editor.getModel().set(DeploymentDescriptorPackage.SCRIPTSDIR, "scripts"); //$NON-NLS-1$
 					}
 				}

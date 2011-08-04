@@ -59,7 +59,7 @@ public class FileField extends TextField {
 								newSelection);
 						if (mappedPath == null) {
 							mappingModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-									newSelection, false, false);
+									newSelection, false);
 							mappedPath = mappingModel.getPackagePath(IMappingModel.APPDIR,
 									newSelection);
 							mappingModel.store();

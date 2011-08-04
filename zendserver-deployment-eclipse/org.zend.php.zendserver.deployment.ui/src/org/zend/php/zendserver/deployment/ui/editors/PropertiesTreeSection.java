@@ -248,19 +248,16 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			}
 			removeIncludeMapping(getName(parent));
 			for (IResource checked : checkedMembers) {
-				if (fTreeViewer.getGrayed(checked)) {
-					continue;
-				}
-				addIncludeMapping(getName(checked), false, false);
+				addIncludeMapping(getName(checked), false);
 			}
 		} else {
-			addExcludeMapping(getName(file), false, false);
+			addExcludeMapping(getName(file), false);
 		}
 	}
 
 	private void handleRootFileChecked(IResource file) {
 		removeExcludeMapping(getName(file));
-		addIncludeMapping(getName(file), false, false);
+		addIncludeMapping(getName(file), false);
 	}
 
 	private void handleRootFolderChecked(IContainer folder)
@@ -274,7 +271,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			removeIncludeMapping(name);
 			removeExcludeMapping(name);
 		}
-		addIncludeMapping(getName(folder), false, false);
+		addIncludeMapping(getName(folder), false);
 	}
 
 	private void handleFolderFileChecked(IResource file) throws CoreException {
@@ -291,9 +288,9 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 				removeIncludeMapping(name);
 				removeExcludeMapping(name);
 			}
-			addIncludeMapping(getName(parent), false, true);
+			addIncludeMapping(getName(parent), false);
 			for (IResource unchecked : uncheckedMembers) {
-				addExcludeMapping(getName(unchecked), false, false);
+				addExcludeMapping(getName(unchecked), false);
 			}
 		}
 	}
@@ -304,14 +301,12 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		handleFileInFolderChecked(folder);
 	}
 
-	private boolean addIncludeMapping(String name, boolean isGlobal, boolean isContent) {
-		return model.getMappingModel().addMapping(getFolder(), Type.INCLUDE, name, isGlobal,
-				isContent);
+	private boolean addIncludeMapping(String name, boolean isGlobal) {
+		return model.getMappingModel().addMapping(getFolder(), Type.INCLUDE, name, isGlobal);
 	}
 
-	private boolean addExcludeMapping(String name, boolean isGlobal, boolean isContent) {
-		return model.getMappingModel().addMapping(getFolder(), Type.EXCLUDE, name, isGlobal,
-				isContent);
+	private boolean addExcludeMapping(String name, boolean isGlobal) {
+		return model.getMappingModel().addMapping(getFolder(), Type.EXCLUDE, name, isGlobal);
 	}
 
 	private boolean removeIncludeMapping(String name) {
@@ -495,14 +490,9 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 								resource.getLocation().toOSString())) {
 							if (mapping != null) {
 								if (resource instanceof IFolder) {
-									if (mapping.isContent()) {
-										fTreeViewer.setGrayChecked(resource, true);
+									fTreeViewer.setChecked(resource, true);
+									if (resource instanceof IFolder) {
 										checkAllChildren(resource);
-									} else {
-										fTreeViewer.setChecked(resource, true);
-										if (resource instanceof IFolder) {
-											checkAllChildren(resource);
-										}
 									}
 								} else {
 									fTreeViewer.setChecked(resource, true);
