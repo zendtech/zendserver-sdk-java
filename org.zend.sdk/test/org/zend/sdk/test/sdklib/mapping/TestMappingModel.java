@@ -246,7 +246,7 @@ public class TestMappingModel {
 	@Test
 	public void testGetFolderIsContent() throws IOException {
 		IMappingModel model = getModel();
-		String folder = "public\\abc";
+		String folder = "public/abc";
 		assertEquals("data", model.getFolder(folder));
 	}
 
