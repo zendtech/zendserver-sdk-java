@@ -173,38 +173,33 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader, boolean isUpdate)
 			throws IOException, JAXBException {
-		IMappingModel model = loader == null ? MappingModelFactory
-				.createDefaultModel(container) : MappingModelFactory
-				.createModel(loader, container);
-		File mappingFile = new File(container,
-				MappingModelFactory.DEPLOYMENT_PROPERTIES);
-		if (mappingFile.exists()) {
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
-					"Creating default deployment.properites file...", -1));
-			if (container.isDirectory()) {
-				String scriptdir = getScriptsDirectory(container).getName();
-				File[] files = container.listFiles();
-				for (File file : files) {
-					String name = file.getName();
-					if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
-						if (name.equals(scriptdir) && file.isDirectory()) {
-							String[] scripts = file.list();
-							for (String script : scripts) {
-								if (DeploymentScriptTypes.byFilename(script) != null) {
-									String path = name + "/" + script;
-									model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
-											false);
-								}
+		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
+				: MappingModelFactory.createModel(loader, container);
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
+				"Creating default deployment.properites file...", -1));
+		if (container.isDirectory()) {
+			String scriptdir = getScriptsDirectory(container).getName();
+			File[] files = container.listFiles();
+			for (File file : files) {
+				String name = file.getName();
+				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
+					if (name.equals(scriptdir) && file.isDirectory()) {
+						String[] scripts = file.list();
+						for (String script : scripts) {
+							if (DeploymentScriptTypes.byFilename(script) != null) {
+								String path = name + "/" + script;
+								model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
+										false);
 							}
-						} else {
-							if (isUpdate == false) {
-								model.addMapping(IMappingModel.APPDIR, Type.INCLUDE, name, false);
-							}
+						}
+					} else {
+						if (isUpdate == false) {
+							model.addMapping(IMappingModel.APPDIR, Type.INCLUDE, name, false);
 						}
 					}
 				}
-				model.store();
 			}
+			model.store();
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Update",
 					"Creating default deployment.properites file..."));
 		}
