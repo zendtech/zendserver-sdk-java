@@ -22,6 +22,7 @@ import java.util.Random;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
+import org.zend.sdklib.internal.target.SSLContextInitializer;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.manager.TargetsManager;
@@ -444,7 +445,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
 		String hostname = target.getHost().toString();
-		return new WebApiClient(credentials, hostname);
+		return new WebApiClient(credentials, hostname, SSLContextInitializer.instance.getRestletContext());
 	}
 
 	private Map<String, String> getUserParameters(File propsFile) {
