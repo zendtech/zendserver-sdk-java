@@ -18,13 +18,11 @@ import org.zend.sdklib.mapping.IMapping;
 public class Mapping implements IMapping {
 
 	private String path;
-	private boolean isContent;
 	private boolean isGlobal;
 
-	public Mapping(String path, boolean isContent, boolean isGlobal) {
+	public Mapping(String path, boolean isGlobal) {
 		super();
 		this.path = path;
-		this.isContent = isContent;
 		this.isGlobal = isGlobal;
 	}
 
@@ -36,16 +34,6 @@ public class Mapping implements IMapping {
 	@Override
 	public String getPath() {
 		return path;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.sdklib.mapping.IMapping#isContent()
-	 */
-	@Override
-	public boolean isContent() {
-		return isContent;
 	}
 
 	/*
@@ -66,16 +54,6 @@ public class Mapping implements IMapping {
 	@Override
 	public void setPath(String path) {
 		this.path = path;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.sdklib.mapping.IMapping#setContent(boolean)
-	 */
-	@Override
-	public void setContent(boolean value) {
-		this.isContent = value;
 	}
 
 	/*

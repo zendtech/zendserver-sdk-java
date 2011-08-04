@@ -33,6 +33,7 @@ import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
+import org.zend.sdklib.project.DeploymentScriptTypes;
 
 /**
  * Provides ability to create zpk application package based on
@@ -200,13 +201,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					path = root.getCanonicalPath();
 					String fullMapping = new File(container, mapping.getPath())
 							.getCanonicalPath();
-					int position = 0;
-					if (mapping.isContent()) {
-						position = fullMapping.length();
-					} else {
-						position = fullMapping.lastIndexOf(File.separator);
-					}
-					String destFolder = path.substring(position);
+					String destFolder = path.substring(fullMapping.lastIndexOf(File.separator));
 					path = mappingFolder + destFolder;
 				}
 				if (root.isDirectory()) {
@@ -316,12 +311,17 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			for (File file : files) {
 				String name = file.getName();
 				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
-					if (name.equals(scriptdir)) {
-						model.addMapping(IMappingModel.SCRIPTSDIR,
-								Type.INCLUDE, name, false, true);
+					if (name.equals(scriptdir) && file.isDirectory()) {
+						String[] scripts = file.list();
+						for (String script : scripts) {
+							if (DeploymentScriptTypes.byName(script) != null) {
+								String path = name + "/" + script;
+								model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
+										false);
+							}
+						}
 					} else {
-						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-								name, false, false);
+						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE, name, false);
 					}
 				}
 			}

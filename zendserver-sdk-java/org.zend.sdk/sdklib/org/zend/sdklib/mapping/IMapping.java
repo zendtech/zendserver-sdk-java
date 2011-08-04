@@ -21,12 +21,6 @@ public interface IMapping {
 	public String getPath();
 
 	/**
-	 * @return if it maps content of the file (by using /* suffix) then returns
-	 *         <code>true</code>; otherwise returns <code>false</code>
-	 */
-	public boolean isContent();
-
-	/**
 	 * @return if the mapping should be applied globally - for each folder then
 	 *         returns <code>true</code>; otherwise returns <code>false</code>
 	 */
@@ -38,13 +32,6 @@ public interface IMapping {
 	 * @param path
 	 */
 	public void setPath(String path);
-
-	/**
-	 * Set to <code>true</code> if mapping concerns only content of the file
-	 * 
-	 * @param value
-	 */
-	public void setContent(boolean value);
 
 	/**
 	 * Set <code>true</code> if mapping should be consider globally

@@ -9,7 +9,6 @@ package org.zend.sdklib.mapping.validator;
 
 import static org.zend.sdklib.mapping.IMappingModel.APPDIR;
 import static org.zend.sdklib.mapping.IMappingModel.SCRIPTSDIR;
-import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.CONTENT;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.EXCLUDES;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.GLOBAL;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.INCLUDES;
@@ -126,20 +125,15 @@ public class MappingValidator implements IMappingValidator {
 			if (entry.isEmpty()) {
 				continue;
 			}
-			boolean isContent = entry.endsWith(CONTENT);
-			if (isContent) {
-				entry = entry.substring(0, entry.length() - SEPARATOR.length() - 1);
-			}
 			boolean isGlobal = entry.startsWith(GLOBAL);
 			if (isGlobal) {
 				entry = entry.substring(GLOBAL.length());
 			} else {
 				File file = new File(container, entry);
 				if (!file.exists()) {
-					String toFind = isContent ? entry + CONTENT : entry;
-					int offset = line.indexOf(toFind);
+					int offset = line.indexOf(entry);
 					result.add(new MappingParseStatus(lineNo, offset + buffer, offset
-							+ toFind.length() + buffer, MappingParseMessage.NOT_EXIST));
+							+ entry.length() + buffer, MappingParseMessage.NOT_EXIST));
 				}
 
 			}
