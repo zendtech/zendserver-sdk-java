@@ -44,11 +44,7 @@ public class TargetsViewer {
 		listener = new IStatusChangeListener() {
 			
 			public void statusChanged(IStatusChangeEvent event) {
-				viewer.getControl().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						viewer.refresh();
-					}
-				});
+				refreshViewer();
 			}
 		};
 		tm.addStatusChangeListener(listener);
@@ -70,19 +66,27 @@ public class TargetsViewer {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchListener() {
 			
 			public void launchRemoved(ILaunch launch) {
-				viewer.refresh();
+				refreshViewer();
 			}
 			
 			public void launchChanged(ILaunch launch) {
-				viewer.refresh();
+				refreshViewer();
 			}
 			
 			public void launchAdded(ILaunch launch) {
-				viewer.refresh();
+				refreshViewer();
 			}
 		});
 	}
 	
+	protected void refreshViewer() {
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				viewer.refresh();
+			}
+		});
+	}
+
 	public void dispose() {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		tm.removeStatusChangeListener(listener);
