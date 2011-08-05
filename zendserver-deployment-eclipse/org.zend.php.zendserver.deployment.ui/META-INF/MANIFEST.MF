@@ -23,3 +23,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions
 Export-Package: org.zend.php.zendserver.deployment.ui.actions
+Bundle-ClassPath: swt.elevate.jar,
+ .

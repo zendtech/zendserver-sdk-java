@@ -3,9 +3,8 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.IOException;
 
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.ui.actions.DetectTargetAction;
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DetectLocal extends AbstractTargetDetailsComposite {
@@ -28,8 +27,10 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	@Override
 	protected IZendTarget createTarget(String[] data) throws SdkException,
 			IOException {
-		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		return tm.detectLocalhostTarget(null, null);
+		
+		DetectTargetAction detectTargetAction = new DetectTargetAction();
+		detectTargetAction.run();
+		return detectTargetAction.getDetectedTarget();
 	}
 
 }
