@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNam
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -58,8 +60,6 @@ public class LaunchUtils {
 		wc.setAttribute(PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
 				debuggerConfiguration.getWebLaunchDelegateClass());
 
-		// TODO find real server name
-		wc.setAttribute(Server.NAME, "Local Zend Server");
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
 		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
 		// set true as default
@@ -78,7 +78,13 @@ public class LaunchUtils {
 			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
 			wc.setMappedResources(new IResource[] { resource });
 		}
-		String host = null;
+
+		Server server = findExistingServer(helper.getBaseURL());
+		if (server == null) {
+			server = createPHPServer(helper.getBaseURL(), helper.getTargetId());
+		}
+		wc.setAttribute(Server.NAME, server.getName());
+
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
 		URL baseURL = helper.getBaseURL();
@@ -201,6 +207,37 @@ public class LaunchUtils {
 		}
 		return DebugPlugin.getDefault().getLaunchManager()
 				.generateLaunchConfigurationName(configurationName);
+	}
+	
+	private static Server createPHPServer(URL baseURL, String targetId) {
+		try {
+			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), "");
+			String urlString = url.toString();
+			Server server = new Server("Zend Target (id: " + targetId + " host: " + url.getHost()
+					+ ")", urlString, urlString, "");
+			ServersManager.addServer(server);
+			ServersManager.save();
+			return server;
+		} catch (MalformedURLException e) {
+			// ignore, verified earlier
+		}
+		return null;
+	}
+
+	private static Server findExistingServer(URL baseURL) {
+		Server[] servers = ServersManager.getServers();
+		for (Server server : servers) {
+			try {
+				URL serverBaseURL = new URL(server.getBaseURL());
+				if (serverBaseURL.getHost().equals(baseURL.getHost())
+						&& serverBaseURL.getPort() == baseURL.getPort()) {
+					return server;
+				}
+			} catch (MalformedURLException e) {
+				// ignore and continue searching
+			}
+		}
+		return null;
 	}
 
 }

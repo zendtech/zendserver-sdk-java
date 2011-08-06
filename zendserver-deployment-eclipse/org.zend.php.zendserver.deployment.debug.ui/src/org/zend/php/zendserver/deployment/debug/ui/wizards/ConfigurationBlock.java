@@ -410,14 +410,17 @@ public class ConfigurationBlock extends AbstractBlock {
 				if (applicationSelectionCombo.getItemCount() > 0) {
 					if (defaultOperation == OperationType.UPDATE) {
 						URL url = getBaseURL();
-						String stringUrl = url.toString();
 						if (isDefaultServer()) {
-							stringUrl = stringUrl.replaceFirst("default",
-									BaseUrlControl.DEFAULT_HOST);
+							try {
+								url = new URL(url.getProtocol(), BaseUrlControl.DEFAULT_HOST, url
+										.getFile());
+							} catch (MalformedURLException e) {
+								// ignore
+							}
 						}
+						String urlString = url.toString();
 						for (int i = 0; i < applicationInfos.length; i++) {
-
-							if (applicationInfos[i].getBaseUrl().equals(stringUrl)) {
+							if (applicationInfos[i].getBaseUrl().equals(urlString)) {
 								applicationSelectionCombo.select(i);
 							}
 						}
