@@ -111,14 +111,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		URL newBaseURL = helper.getBaseURL();
 		if (newBaseURL != null) {
 			if (helper.isDefaultServer()) {
-				String targetHost = getTarget().getHost().getHost();
-				try {
-					URL url = new URL(newBaseURL.getProtocol(), targetHost, newBaseURL.getPort(),
-							newBaseURL.getPath());
-					baseUrl.setText(url.toString());
-				} catch (MalformedURLException e) {
-					Activator.log(e);
-				}
+				String targetHost = getTarget().getDefaultServerURL().toString();
+				baseUrl.setText(targetHost + newBaseURL.getPath());
 			} else {
 				baseUrl.setText(newBaseURL.toString());
 			}

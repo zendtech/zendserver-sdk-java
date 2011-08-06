@@ -126,6 +126,8 @@ public class Messages extends NLS {
 	public static String TargetDetailsPage_SpecifyTargetDetails;
 	public static String TargetDetailsPage_TargetDetails;
 	public static String TargetDialog_Host;
+	public static String TargetDialog_DefaultServerURL;
+	public static String TargetDialog_DefaultServerURLTooltip;
 	public static String TargetDialog_HostTooltip;
 	public static String TargetDialog_Id;
 	public static String TargetDialog_IdTooltip;

@@ -21,6 +21,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 
 	private Text hostText;
+	private Text defaultServerText;
 	private Text keyText;
 	private Text secretText;
 
@@ -34,6 +35,12 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		hostText = new Text(composite, SWT.BORDER);
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
 		hostText.setToolTipText(Messages.TargetDialog_HostTooltip);
+		
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.TargetDialog_DefaultServerURL);
+		defaultServerText = new Text(composite, SWT.BORDER);
+		defaultServerText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+		defaultServerText.setToolTipText(Messages.TargetDialog_DefaultServerURLTooltip);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_KeyName);
@@ -55,6 +62,9 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		if (hostText != null) {
 			hostText.setText(defaultTarget.getHost().toString());
 		}
+		if (defaultServerText != null) {
+			defaultServerText.setText(defaultTarget.getDefaultServerURL().toString());
+		}
 		if (keyText != null) {
 			keyText.setText(defaultTarget.getKey());
 		}
@@ -64,21 +74,23 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public String[] getData() {
-		return new String[] { hostText.getText(), keyText.getText(),
+		return new String[] { hostText.getText(), defaultServerText.getText(), keyText.getText(),
 				secretText.getText(), };
 	}
 
 	public IZendTarget createTarget(String[] data) {
 		URL host = null;
+		URL defaultServer = null;
 		try {
 			host = new URL(data[0]);
+			defaultServer = new URL(data[1]);
 		} catch (MalformedURLException e) {
 			// should be checked earlier
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		String id = tm.createUniqueId(null);
-		return new ZendTarget(id, host, data[1], data[2]);
+		return new ZendTarget(id, host, defaultServer, data[2], data[3]);
 	}
 
 }

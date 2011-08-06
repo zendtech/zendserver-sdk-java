@@ -67,8 +67,8 @@ public class EditTargetAction extends Action implements
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		try {
-			tm.updateTarget(toEdit.getId(), newTarget.getHost().toString(),
-					newTarget.getKey(), newTarget.getSecretKey());
+			tm.updateTarget(toEdit.getId(), newTarget.getHost().toString(), newTarget
+					.getDefaultServerURL().toString(), newTarget.getKey(), newTarget.getSecretKey());
 			tm.add(newTarget);
 		} catch (WebApiException e) {
 			StatusManager.getManager().handle(
