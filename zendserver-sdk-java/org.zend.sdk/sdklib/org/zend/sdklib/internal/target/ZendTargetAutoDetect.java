@@ -45,10 +45,11 @@ public class ZendTargetAutoDetect {
 			+ "please refer to http://www.zend.com/server";
 
 	// linux key
-	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc";
+	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb";
+	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm";
 	private static final String ZCE_PREFIX = "ZCE_PREFIX";
+	private static final String APACHE_PORT = "APACHE_PORT";
 
 	// Registry
 	private static final String NODE_64 = "WOW6432node";
@@ -257,8 +258,12 @@ public class ZendTargetAutoDetect {
 	}
 
 	private String getLocalZendServerFromFile() {
+		Properties props = getLocalZendServerProperties();
+		return props != null ? props.getProperty(ZCE_PREFIX) : null;
+	}
+	
+	private Properties getLocalZendServerProperties() {
 		Properties props = null;
-
 		// Try to find the zend.rc-deb file.
 		try {
 			FileInputStream fileStream = new FileInputStream(
@@ -268,7 +273,6 @@ public class ZendTargetAutoDetect {
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		}
-
 		// If not found, find the zend.rc-rpm file.
 		if (props == null) {
 			try {
@@ -280,7 +284,6 @@ public class ZendTargetAutoDetect {
 			} catch (IOException e) {
 			}
 		}
-
 		// if not found, find the zend.rc file.
 		if (props == null) {
 			try {
@@ -292,8 +295,7 @@ public class ZendTargetAutoDetect {
 			} catch (IOException e) {
 			}
 		}
-
-		return props != null ? props.getProperty(ZCE_PREFIX) : null;
+		return props;
 	}
 
 	private String getLocalZendServerFromRegistry() throws IOException {
@@ -407,7 +409,10 @@ public class ZendTargetAutoDetect {
 		int port = -1;
 		try {
 			if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
-				// TODO add linux support
+				Properties props = getLocalZendServerProperties();
+				if (props != null) {
+					port = Integer.valueOf(props.getProperty(APACHE_PORT, "-1"));
+				}
 			} else {
 				// (EnvironmentUtils.isUnderWindows())
 				RegistryKey zendServerKey = getZendServerRegistryKey();
