@@ -14,7 +14,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.zend.sdk/lib/x86"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/zend-webapi.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/zend-webapi.jar" sourcepath="/org.zend.webapi"/>
 	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="lib-test/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/jul-to-slf4j-1.6.1.jar"/>
