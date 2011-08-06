@@ -308,7 +308,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	public IZendTarget updateTarget(String targetId, String host, String key,
+	public IZendTarget updateTarget(String targetId, String host, String defaultServer, String key,
 			String secretKey) {
 		ZendTarget target = (ZendTarget) getTargetById(targetId);
 		if (target == null) {
@@ -318,6 +318,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 		try {
 			if (host != null) {
 				target.setHost(new URL(host));
+			}
+			if (defaultServer != null) {
+				target.setDefaultServerURL(new URL(defaultServer));
 			}
 			if (key != null) {
 				target.setKey(key);
