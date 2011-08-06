@@ -220,7 +220,7 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTarget() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new",
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
 				"00112233"));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
@@ -232,7 +232,7 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTarget2() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", "new",
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
 				null));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
@@ -244,7 +244,7 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTarget3() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNotNull(manager.updateTarget("dev4", "http://test1test", null,
+		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, null,
 				null));
 		IZendTarget actual = manager.getTargetById("dev4");
 		assertEquals("http://test1test", actual.getHost().toString());
@@ -256,14 +256,14 @@ public class TestTargetsManager extends AbstractTest {
 	public void testUpdateTargetNullId() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNull(manager.updateTarget(null, null, null, null));
+		assertNull(manager.updateTarget(null, null, null, null, null));
 	}
 
 	@Test
 	public void testUpdateTargetInvalidUrl() throws WebApiException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
-		assertNull(manager.updateTarget("dev4", "a111://qwerty", null, null));
+		assertNull(manager.updateTarget("dev4", "a111://qwerty", null, null, null));
 	}
 
 	private IZendTarget getTarget() throws WebApiException {

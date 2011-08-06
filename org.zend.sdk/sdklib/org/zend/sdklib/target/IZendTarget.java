@@ -25,41 +25,46 @@ public interface IZendTarget {
 	/**
 	 * @return String secret key for this target
 	 */
-	public abstract String getSecretKey();
+	String getSecretKey();
 
 	/**
 	 * @return String the key of this target
 	 */
-	public abstract String getKey();
+	String getKey();
 
 	/**
 	 * @return URL the url of this target
 	 */
-	public abstract URL getHost();
+	URL getHost();
+
+	/**
+	 * @return default server URL
+	 */
+	URL getDefaultServerURL();
 
 	/**
 	 * @return the identifier of this target
 	 */
-	public abstract String getId();
+	String getId();
 
 	/**
 	 * @return the value of the given extra property key
 	 */
-	public abstract String getProperty(String key);
+	String getProperty(String key);
 
 	/**
 	 * @return the value of the given extra property key
 	 */
-	public abstract void load(InputStream is) throws IOException;
+	void load(InputStream is) throws IOException;
 
 	/**
 	 * @return the value of the given extra property key
 	 */
-	public abstract void store(OutputStream os) throws IOException;
+	void store(OutputStream os) throws IOException;
 
 	/**
 	 * @return true if connection success
 	 * @throws WebApiException
 	 */
-	public abstract boolean connect() throws WebApiException ;
+	boolean connect() throws WebApiException;
 }

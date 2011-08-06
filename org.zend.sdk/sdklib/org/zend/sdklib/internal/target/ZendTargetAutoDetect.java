@@ -25,9 +25,11 @@ import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.target.IZendTarget;
 
 import com.ice.jni.registry.NoSuchKeyException;
+import com.ice.jni.registry.NoSuchValueException;
 import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
+import com.ice.jni.registry.RegistryValue;
 
 /**
  * Auto detect local server
@@ -49,8 +51,9 @@ public class ZendTargetAutoDetect {
 	private static final String ZCE_PREFIX = "ZCE_PREFIX";
 
 	// Registry
-	private static final String NODE_64 = "WOW6432node";;
+	private static final String NODE_64 = "WOW6432node";
 	private static final String ZEND_SERVER = "ZendServer";
+	private static final String APACHE_APP_PORT = "ApacheAppPort";
 	private static final String ZEND_TECHNOLOGIES = "Zend Technologies";
 
 	public static URL localhost = null;
@@ -84,7 +87,7 @@ public class ZendTargetAutoDetect {
 		}
 
 		// create the target
-		return new ZendTarget(targetId, localhost, key, secretKey);
+		return new ZendTarget(targetId, localhost, getDefaultServerURL(), key, secretKey);
 	}
 
 	/**
@@ -100,7 +103,7 @@ public class ZendTargetAutoDetect {
 	public IZendTarget createTemporaryLocalhost(String targetId, String key) {
 		final String sk = generateSecretKey();
 
-		return new ZendTarget(targetId, localhost, key, sk);
+		return new ZendTarget(targetId, localhost, getDefaultServerURL(), key, sk);
 	}
 
 	/**
@@ -294,11 +297,25 @@ public class ZendTargetAutoDetect {
 	}
 
 	private String getLocalZendServerFromRegistry() throws IOException {
+		try {
+			RegistryKey zendServerKey = getZendServerRegistryKey();
+			if (zendServerKey != null) {
+				return zendServerKey.getStringValue(INSTALL_LOCATION);
+			}
+		} catch (NoSuchValueException e) {
+			return null;
+		} catch (RegistryException e) {
+			return null;
+		}
+		return null;
+	}
+
+	private RegistryKey getZendServerRegistryKey() throws RegistryException {
 		RegistryKey zendServerKey = null;
 		try {
 			zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey("SOFTWARE")
 					.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
-			return zendServerKey.getStringValue(INSTALL_LOCATION);
+			return zendServerKey;
 		} catch (NoSuchKeyException e1) {
 			// try the 64 bit
 
@@ -306,13 +323,11 @@ public class ZendTargetAutoDetect {
 				zendServerKey = Registry.HKEY_LOCAL_MACHINE
 						.openSubKey("SOFTWARE").openSubKey(NODE_64)
 						.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
-				return zendServerKey.getStringValue(INSTALL_LOCATION);
+				return zendServerKey;
 			} catch (NoSuchKeyException e) {
-			} catch (RegistryException e) {
+				return null;
 			}
-		} catch (RegistryException e1) {
 		}
-		return null;
 	}
 
 	private static void writeApiKeyBlock(String key, PrintStream os,
@@ -386,6 +401,38 @@ public class ZendTargetAutoDetect {
 			builder.append("0");
 		}
 		return builder.toString();
+	}
+
+	private URL getDefaultServerURL() {
+		int port = -1;
+		try {
+			if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
+				// TODO add linux support
+			} else {
+				// (EnvironmentUtils.isUnderWindows())
+				RegistryKey zendServerKey = getZendServerRegistryKey();
+				if (zendServerKey != null) {
+					RegistryValue portValue = zendServerKey.getValue(APACHE_APP_PORT);
+					if (portValue != null) {
+						port = converByteArrayToInt(portValue.getByteData());
+					}
+				}
+			}
+			if (port != -1) {
+				return new URL(localhost.toString() + ":" + port);
+			}
+		} catch (Exception e) {
+			// if any exception occurs ignore it and return localhost
+		}
+		return localhost;
+	}
+
+	private int converByteArrayToInt(byte[] byteData) {
+		int result = 0;
+		for (int i = 0; i < byteData.length; i++) {
+			result += (int) (byteData[i] & 0xFF) << (8 * (byteData.length - i - 1));
+		}
+		return result != 0 ? result : -1;
 	}
 
 }

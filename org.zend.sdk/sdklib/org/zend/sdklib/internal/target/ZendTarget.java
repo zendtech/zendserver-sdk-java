@@ -32,6 +32,7 @@ public class ZendTarget implements IZendTarget {
 	private static final String EXTRA = "extra.";
 	private String id;
 	private URL host;
+	private URL defaultServerURL;
 	private String key;
 	private String secretKey;
 	private Properties properties;
@@ -51,9 +52,21 @@ public class ZendTarget implements IZendTarget {
 	 * @param secretKey
 	 */
 	public ZendTarget(String id, URL host, String key, String secretKey) {
+		this(id, host, host, key, secretKey);
+	}
+
+	/**
+	 * @param id
+	 * @param host
+	 * @param defaultServerURL
+	 * @param key
+	 * @param secretKey
+	 */
+	public ZendTarget(String id, URL host, URL defaultServerURL, String key, String secretKey) {
 		super();
 		this.id = id;
 		this.host = host;
+		this.defaultServerURL = defaultServerURL;
 		this.key = key;
 		this.secretKey = secretKey;
 		this.properties = new Properties();
@@ -108,6 +121,16 @@ public class ZendTarget implements IZendTarget {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.zend.sdklib.target.IZendTarget#getAppHost()
+	 */
+	@Override
+	public URL getDefaultServerURL() {
+		return defaultServerURL;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.zend.sdklib.target.IZendTarget#getKey()
 	 */
 	@Override
@@ -132,6 +155,15 @@ public class ZendTarget implements IZendTarget {
 	 */
 	public void setHost(URL host) {
 		this.host = host;
+	}
+
+	/**
+	 * Set default server URL
+	 * 
+	 * @param defaultServerURL
+	 */
+	public void setDefaultServerURL(URL defaultServerURL) {
+		this.defaultServerURL = defaultServerURL;
 	}
 
 	/**
@@ -185,6 +217,7 @@ public class ZendTarget implements IZendTarget {
 		this.key = properties.getProperty("_key");
 		this.secretKey = properties.getProperty("_secretKey");
 		this.host = new URL(properties.getProperty("_host"));
+		this.defaultServerURL = new URL(properties.getProperty("_defaultServerURL"));
 		final Set<String> stringPropertyNames = properties
 				.stringPropertyNames();
 		for (String keyName : stringPropertyNames) {
@@ -206,6 +239,7 @@ public class ZendTarget implements IZendTarget {
 		properties.put("_key", getKey());
 		properties.put("_secretKey", getSecretKey());
 		properties.put("_host", getHost().toString());
+		properties.put("_defaultServerURL", getDefaultServerURL().toString());
 		properties.putAll(properties);
 		properties.store(os, "target properties for " + getId());
 	}

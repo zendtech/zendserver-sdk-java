@@ -33,6 +33,7 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 	private static final String KEY = "k";
 	private static final String SECRETKEY = "s";
 	private static final String HOST = "h";
+	private static final String DEFAULT_SERVER = "d";
 	private static final String PROPERTIES = "p";
 
 	@Option(opt = ID, required = true, description = "Target id", argName = "id")
@@ -60,6 +61,11 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 		return getValue(SECRETKEY);
 	}
 
+	@Option(opt = DEFAULT_SERVER, required = false, description = "Default Server URL", argName = "defaultServer")
+	public String getDefaultServerURL() {
+		return getValue(DEFAULT_SERVER);
+	}
+
 	@Option(opt = HOST, required = false, description = "Target host URL", argName = "host")
 	public String getHost() {
 		return getValue(HOST);
@@ -78,13 +84,14 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 
 	@Override
 	public boolean doExecute() {
-		if (getHost() == null && getKey() == null && getSecretKey() == null) {
+		if (getHost() == null && getKey() == null && getSecretKey() == null
+				&& getDefaultServerURL() == null) {
 			getLogger()
 					.info("To update a target at least one of the following options is required: h, k, s, p.");
 			return true;
 		}
-		IZendTarget result = getTargetManager().updateTarget(getId(),
-				getHost(), getKey(), getSecretKey());
+		IZendTarget result = getTargetManager().updateTarget(getId(), getHost(),
+				getDefaultServerURL(), getKey(), getSecretKey());
 		if (result == null) {
 			return false;
 		}
