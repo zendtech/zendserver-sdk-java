@@ -16,7 +16,6 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 
 public class LaunchApplicationHandler extends AbstractDeploymentHandler {
@@ -56,8 +55,7 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		if (config == null) {
 			IDeploymentHelper targetHelper = new DeploymentHelper();
 			targetHelper.setTargetId(targetId);
-			DeploymentWizard wizard = new DeploymentWizard(project, targetHelper,
-					OperationType.DEPLOY);
+			DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			dialog.create();

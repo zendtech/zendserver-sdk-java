@@ -23,6 +23,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private boolean ignoreFailures;
 	private boolean defaultServer;
 	private String virtualHost;
+	private int operationType;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -34,6 +35,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.ignoreFailures = false;
 		this.defaultServer = false;
 		this.virtualHost = EMPTY_STRING;
+		this.operationType = IDeploymentHelper.DEPLOY;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,6 +57,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.IGNORE_FAILURES.getName(), true));
 			helper.setDefaultServer(config.getAttribute(
 					DeploymentAttributes.DEFAULT_SERVER.getName(), true));
+			helper.setOperationType(config.getAttribute(
+					DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.DEPLOY));
 		} catch (CoreException e) {
 			return null;
 		}
@@ -97,6 +101,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return virtualHost;
 	}
 
+	public int getOperationType() {
+		return operationType;
+	}
+
 	public void setBaseURL(String baseURL) {
 		try {
 			this.baseURL = new URL(baseURL);
@@ -131,6 +139,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setDefaultServer(boolean defaultServer) {
 		this.defaultServer = defaultServer;
+	}
+
+	public void setOperationType(int type) {
+		this.operationType = type;
 	}
 
 }

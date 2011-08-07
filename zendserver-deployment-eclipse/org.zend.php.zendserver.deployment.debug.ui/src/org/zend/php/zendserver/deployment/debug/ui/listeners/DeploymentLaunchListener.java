@@ -22,7 +22,6 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 
 public class DeploymentLaunchListener implements ILaunchListener {
@@ -81,6 +80,10 @@ public class DeploymentLaunchListener implements ILaunchListener {
 			IDeploymentHelper helper = job.getHelper();
 			LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
+			if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
+				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
+						IDeploymentHelper.UPDATE);
+			}
 			wc.doSave();
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -93,8 +96,7 @@ public class DeploymentLaunchListener implements ILaunchListener {
 			public void run() {
 				IDeploymentHelper targetHelper = new DeploymentHelper();
 				targetHelper.setTargetId(targetId);
-				DeploymentWizard wizard = new DeploymentWizard(project, targetHelper,
-						OperationType.DEPLOY);
+				DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
 				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();

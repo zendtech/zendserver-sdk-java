@@ -98,6 +98,7 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
+		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {

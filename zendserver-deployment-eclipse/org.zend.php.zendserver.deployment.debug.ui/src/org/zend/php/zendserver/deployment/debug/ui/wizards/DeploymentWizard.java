@@ -22,7 +22,6 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class DeploymentWizard extends Wizard {
@@ -32,9 +31,8 @@ public class DeploymentWizard extends Wizard {
 	private IDescriptorContainer model;
 	private IProject project;
 	private DeploymentHelper helper;
-	private OperationType operationType;
 
-	public DeploymentWizard(IProject project, IDeploymentHelper helper, OperationType defaultOp) {
+	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
@@ -43,7 +41,7 @@ public class DeploymentWizard extends Wizard {
 		if (helper == null || helper.getProjectName().isEmpty()) {
 			helper = createDefaultHelper(project);
 		}
-		this.configPage = new ConfigurationPage(helper, defaultOp, this);
+		this.configPage = new ConfigurationPage(helper, this);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
@@ -70,7 +68,6 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		helper = createHelper();
-		operationType = configPage.getOperationType();
 		return true;
 	}
 
@@ -83,17 +80,13 @@ public class DeploymentWizard extends Wizard {
 		return helper;
 	}
 
-	public OperationType getOperationType() {
-		return operationType;
-	}
-
 	private DeploymentHelper createHelper() {
 		DeploymentHelper helper = new DeploymentHelper();
 		URL url = configPage.getBaseUrl();
 		helper.setBaseURL(url.toString());
 		helper.setProjectName(project.getName());
 		helper.setTargetId(configPage.getTarget().getId());
-		if (configPage.getOperationType() == OperationType.UPDATE) {
+		if (configPage.getOperationType() == IDeploymentHelper.UPDATE) {
 			ApplicationInfo info = configPage.getApplicationToUpdate();
 			if (info != null) {
 				helper.setAppId(info.getId());
@@ -103,6 +96,7 @@ public class DeploymentWizard extends Wizard {
 		helper.setAppName(configPage.getUserAppName());
 		helper.setIgnoreFailures(configPage.isIgnoreFailures());
 		helper.setDefaultServer(configPage.isDefaultServer());
+		helper.setOperationType(configPage.getOperationType());
 		return helper;
 	}
 

@@ -16,7 +16,6 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock.OperationType;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 
 public class DeployApplicationHandler extends AbstractDeploymentHandler {
@@ -56,25 +55,24 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 	private void execute(final String mode, IProject project, String targetId) {
 		ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
 		DeploymentHelper helper = null;
-		OperationType operation = OperationType.DEPLOY;
 		if (config != null) {
-			operation = OperationType.UPDATE;
 			helper = DeploymentHelper.create(config);
 		} else {
 			helper = new DeploymentHelper();
 			helper.setTargetId(targetId);
+			helper.setOperationType(IDeploymentHelper.DEPLOY);
 		}
-		final DeploymentWizard wizard = new DeploymentWizard(project, helper, operation);
+		final DeploymentWizard wizard = new DeploymentWizard(project, helper);
 		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			IDeploymentHelper updatedHelper = wizard.getHelper();
-			switch (wizard.getOperationType()) {
-			case DEPLOY:
+			switch (helper.getOperationType()) {
+			case IDeploymentHelper.DEPLOY:
 				job = new DeployLaunchJob(updatedHelper, project);
 				break;
-			case UPDATE:
+			case IDeploymentHelper.UPDATE:
 				job = new UpdateLaunchJob(updatedHelper, project);
 				break;
 			default:

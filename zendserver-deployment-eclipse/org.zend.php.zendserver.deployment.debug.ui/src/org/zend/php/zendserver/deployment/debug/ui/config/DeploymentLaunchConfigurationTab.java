@@ -76,6 +76,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			helper.setAppName(configBlock.getUserAppName());
 			helper.setIgnoreFailures(configBlock.isIgnoreFailures());
 			helper.setDefaultServer(configBlock.isDefaultServer());
+			helper.setOperationType(configBlock.getOperationType());
 			try {
 				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			} catch (CoreException e) {

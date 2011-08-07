@@ -16,7 +16,9 @@ public enum DeploymentAttributes {
 	
 	IGNORE_FAILURES("ignoreFailures"), //$NON-NLS-1$
 	
-	DEFAULT_SERVER("defaultServer"); //$NON-NLS-1$
+	DEFAULT_SERVER("defaultServer"), //$NON-NLS-1$
+	
+	OPERATION_TYPE("operationType"); //$NON-NLS-1$
 	
 	private static final String PREFIX = "org.zend.php.zendserver.deployment."; //$NON-NLS-1$
 	

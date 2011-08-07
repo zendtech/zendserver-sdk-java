@@ -44,10 +44,6 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class ConfigurationBlock extends AbstractBlock {
 
-	public enum OperationType {
-		DEPLOY, UPDATE, AUTO_DEPLOY
-	}
-
 	private Combo deployCombo;
 	private IZendTarget[] deployComboTargets = new IZendTarget[0];
 	private Link targetLink;
@@ -62,17 +58,15 @@ public class ConfigurationBlock extends AbstractBlock {
 	private IWizard wizard;
 	private Combo applicationSelectionCombo;
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
-	private OperationType defaultOperation;
 
 	public ConfigurationBlock(IStatusChangeListener context) {
-		this(context, OperationType.DEPLOY, null);
+		this(context, null);
 	}
 
-	public ConfigurationBlock(IStatusChangeListener context, OperationType defaultOp, IWizard wizard) {
+	public ConfigurationBlock(IStatusChangeListener context, IWizard wizard) {
 		super(context);
 		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		this.wizard = wizard;
-		this.defaultOperation = defaultOp;
 	}
 
 	@Override
@@ -119,18 +113,19 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		userAppName.setText(helper.getAppName());
+		initDefaultOperation(helper.getOperationType());
 	}
 
-	public void initDefaultOperation() {
-		switch (defaultOperation) {
-		case DEPLOY:
+	public void initDefaultOperation(int operationType) {
+		switch (operationType) {
+		case IDeploymentHelper.DEPLOY:
 			deployButton.setSelection(true);
 			break;
-		case UPDATE:
+		case IDeploymentHelper.UPDATE:
 			updateButton.setSelection(true);
 			enableApplicationSelectionSection(true);
 			break;
-		case AUTO_DEPLOY:
+		case IDeploymentHelper.AUTO_DEPLOY:
 			syncButton.setSelection(true);
 			break;
 		default:
@@ -151,14 +146,14 @@ public class ConfigurationBlock extends AbstractBlock {
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.deploymentWizard_Message);
 	}
 
-	public OperationType getOperationType() {
+	public int getOperationType() {
 		if (deployButton.getSelection()) {
-			return OperationType.DEPLOY;
+			return IDeploymentHelper.DEPLOY;
 		}
 		if (updateButton.getSelection()) {
-			return OperationType.UPDATE;
+			return IDeploymentHelper.UPDATE;
 		}
-		return OperationType.AUTO_DEPLOY;
+		return IDeploymentHelper.AUTO_DEPLOY;
 	}
 
 	public ApplicationInfo getApplicationToUpdate() {
@@ -362,7 +357,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void getApplicationsInfo() {
 		final IZendTarget selectedTarget = getTarget();
-		if (selectedTarget != null) {
+		if (selectedTarget != null && wizard != null) {
 			try {
 				wizard.getContainer().run(true, false, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
@@ -408,7 +403,7 @@ public class ConfigurationBlock extends AbstractBlock {
 					}
 				}
 				if (applicationSelectionCombo.getItemCount() > 0) {
-					if (defaultOperation == OperationType.UPDATE) {
+					if (getOperationType() == IDeploymentHelper.UPDATE) {
 						URL url = getBaseURL();
 						if (isDefaultServer()) {
 							try {

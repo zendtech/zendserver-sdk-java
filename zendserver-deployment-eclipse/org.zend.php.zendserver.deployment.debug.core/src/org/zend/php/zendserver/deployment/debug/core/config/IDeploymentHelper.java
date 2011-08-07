@@ -5,6 +5,10 @@ import java.util.Map;
 
 public interface IDeploymentHelper {
 
+	public static final int DEPLOY = 0;
+	public static final int UPDATE = 1;
+	public static final int AUTO_DEPLOY = 2;
+
 	URL getBaseURL();
 
 	String getTargetId();
@@ -21,6 +25,8 @@ public interface IDeploymentHelper {
 
 	boolean isDefaultServer();
 
+	int getOperationType();
+
 	void setBaseURL(String baseURL);
 
 	void setTargetId(String targetId);
@@ -36,5 +42,7 @@ public interface IDeploymentHelper {
 	void setIgnoreFailures(boolean ignoreFailures);
 
 	void setDefaultServer(boolean defaultServer);
+
+	void setOperationType(int type);
 
 }
