@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -157,7 +158,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testDetectLocalhost() throws WebApiException, IOException {
+	public void testDetectLocalhost() throws WebApiException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -167,7 +168,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testDetectLocalhostNoId() throws WebApiException, IOException {
+	public void testDetectLocalhostNoId() throws WebApiException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
