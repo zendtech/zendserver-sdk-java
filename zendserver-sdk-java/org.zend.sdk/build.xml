@@ -147,6 +147,8 @@
 				<include name="lib/org.restlet.jar"/>
 				<include name="lib/registry.jar"/>
 				<include name="lib/zend-webapi.jar"/>
+				<include name="lib/x86/ICE_JNIRegistry.jar"/>
+				<include name="lib/x86_64/ICE_JNIRegistry.jar"/>
 			</fileset>
 		</jar>
 		<jar destfile="lib/zend-test-sdk.jar" basedir="bin">
