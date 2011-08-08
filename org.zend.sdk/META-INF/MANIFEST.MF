@@ -56,3 +56,5 @@ Bundle-ClassPath: lib/commons-cli-1.2.jar,
  lib/registry.jar,
  lib/zend-webapi.jar,
  .
+Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
+    lib/x86/ICE_JNIRegistry.dll; processor=x86_64; osname=win32
