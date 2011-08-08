@@ -269,7 +269,19 @@ public class ConfigurationBlock extends AbstractBlock {
 		newTargetLink.setText(text);
 		newTargetLink.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				new AddTargetAction().run();
+				AddTargetAction addTarget = new AddTargetAction();
+				addTarget.run();
+				IZendTarget newTarget = addTarget.getTarget();
+				if (newTarget != null) {
+					populateTargetsList();
+					IZendTarget[] targets = targetsManager.getTargets();
+					for (int i = 0; i < targets.length; i++) {
+						if (targets[i].getId().equals(newTarget)) {
+							targetsCombo.select(i);
+						}
+					}
+					validatePage();
+				}
 			}
 		});
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
