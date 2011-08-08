@@ -32,10 +32,12 @@ public class SdkManager implements IPreferenceChangeListener {
 	public static String getDefaultSdkPath() {
 		URL url = FileLocator.find(DeploymentCore.getContext().getBundle(), new Path("/sdk"), null); //$NON-NLS-1$
 		URL fileUrl = null;
-		try {
-			fileUrl = FileLocator.toFileURL(url);
-		} catch (IOException e) {
-			DeploymentCore.log(e);
+		if (url != null) {
+			try {
+				fileUrl = FileLocator.toFileURL(url);
+			} catch (IOException e) {
+				DeploymentCore.log(e);
+			}
 		}
 		
 		return fileUrl == null ? null : fileUrl.getPath();
