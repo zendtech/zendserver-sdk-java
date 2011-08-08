@@ -10,6 +10,9 @@ package org.zend.sdkcli.internal.commands;
 import java.io.IOException;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.manager.DetectionException;
+import org.zend.sdklib.manager.PrivilegesException;
+import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -54,8 +57,29 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	}
 
 	private boolean detectLocalhostTarget(String targetId, String key) {
-		final IZendTarget target = getTargetManager().detectLocalhostTarget(
-				targetId, key);
+		IZendTarget target = null;
+		try {
+			target = getTargetManager().detectLocalhostTarget(
+					targetId, key);
+		} catch (ServerVersionException e2) {
+			getLogger().error("Coudn't connect to localhost server, please make "
+					+ "sure your server is up and running. This tool works with "
+					+ "version 5.5 and up.");
+			getLogger().error("More information provided by localhost server:");
+			if (e2.getResponseCode() != -1) {
+				getLogger().error("\tError code: " + e2.getResponseCode());
+			}
+			if (e2.getMessage() != null) {
+				getLogger().error("\tError message: " + e2.getMessage());
+			}
+		} catch (PrivilegesException e3) {
+			getLogger().error("Use administrator account with elevated privileges");
+			getLogger().error("Please consider using:");
+			getLogger().error("\t> elevate detect target");
+		} catch (DetectionException e4) {
+			// not handled
+		}
+		
 		if (target == null) {
 			return false;
 		}

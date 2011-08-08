@@ -165,9 +165,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param key
 	 *            key to use, null if not specified
 	 * @return the detected localhost target, or null if detection failed
+	 * @throws DetectionException 
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key) {
+			String key) throws DetectionException {
 
 		// resolve target id and key
 		targetId = createUniqueId(null);
@@ -182,9 +183,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		try {
 			detection = new ZendTargetAutoDetect();
 		} catch (IOException e) {
-			// missing zend server
-			log.error(e);
-			return null;
+			throw new MissingZendServerException(e);
 		}
 		
 		try {
@@ -219,26 +218,16 @@ public class TargetsManager extends AbstractChangeNotifier {
 						local.getKey(), local.getSecretKey()));
 				return local;
 			} else {
-				log.error("Use administrator account with elevated privileges");
-				log.error("Please consider using:");
-				log.error("\t> elevate detect target");
+				throw new PrivilegesException();
 			}
 
 		} catch (WebApiException e) {
-			log.error("Coudn't connect to localhost server, please make "
-					+ "sure your server is up and running. This tool works with "
-					+ "version 5.5 and up.");
-			log.error("More information provided by localhost server:");
 			final ResponseCode responseCode = e.getResponseCode();
-			if (responseCode != null) {
-				log.error("\tError code: " + responseCode);
-			}
+			int code = (responseCode != null) ? responseCode.getCode() : -1;
 			final String message = e.getMessage();
-			if (message != null) {
-				log.error("\tError message: " + message);
-			}
+			
+			throw new ServerVersionException(code, message);
 		}
-		return null;
 	}
 
 	public synchronized String applyKeyToLocalhost(String key, String secretKey)
