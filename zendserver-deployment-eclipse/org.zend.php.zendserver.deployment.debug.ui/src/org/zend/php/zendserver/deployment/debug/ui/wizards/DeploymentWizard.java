@@ -8,7 +8,6 @@
 
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -22,7 +21,6 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class DeploymentWizard extends Wizard {
 
@@ -30,7 +28,7 @@ public class DeploymentWizard extends Wizard {
 	private ParametersPage parametersPage;
 	private IDescriptorContainer model;
 	private IProject project;
-	private DeploymentHelper helper;
+	private IDeploymentHelper helper;
 
 	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
@@ -76,34 +74,14 @@ public class DeploymentWizard extends Wizard {
 		return true;
 	}
 
-	public DeploymentHelper getHelper() {
+	public IDeploymentHelper getHelper() {
 		return helper;
 	}
 
-	private DeploymentHelper createHelper() {
-		DeploymentHelper helper = new DeploymentHelper();
-		URL url = configPage.getBaseUrl();
-		helper.setBaseURL(url.toString());
+	private IDeploymentHelper createHelper() {
+		IDeploymentHelper helper = configPage.getHelper();
 		helper.setProjectName(project.getName());
-		helper.setTargetId(configPage.getTarget().getId());
-		if (configPage.getOperationType() == IDeploymentHelper.UPDATE) {
-			ApplicationInfo info = configPage.getUpdateSelection();
-			if (info != null) {
-				helper.setAppId(info.getId());
-			}
-		}
-		if (configPage.getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
-			ApplicationInfo info = configPage.getAutoDeploySelection();
-			if (info != null) {
-				helper.setAppId(info.getId());
-			}
-		}
-		helper.setUserParams(parametersPage.getParameters());
-		helper.setAppName(configPage.getUserAppName());
-		helper.setIgnoreFailures(configPage.isIgnoreFailures());
-		helper.setDefaultServer(configPage.isDefaultServer());
-		helper.setOperationType(configPage.getOperationType());
-		helper.setInstalledLocation(configPage.getInstalledLocation());
+		helper.setUserParams(parametersPage.getHelper().getUserParams());
 		return helper;
 	}
 

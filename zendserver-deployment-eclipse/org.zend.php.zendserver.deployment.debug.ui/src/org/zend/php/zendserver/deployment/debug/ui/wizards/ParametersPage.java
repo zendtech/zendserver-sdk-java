@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
@@ -31,15 +29,16 @@ public class ParametersPage extends DeploymentWizardPage {
 		Composite container = block.createContents(parent);
 		block.createParametersGroup(project);
 		setControl(container);
-		if (getHelper() != null) {
-			block.initializeFields(getHelper());
+		if (helper != null) {
+			block.initializeFields(helper);
 		}
 		setPageComplete(false);
 		statusChanged(block.validatePage());
 	}
 
-	public Map<String, String> getParameters() {
-		return block.getParameters();
+	@Override
+	public IDeploymentHelper getHelper() {
+		return block.getHelper();
 	}
 
 }

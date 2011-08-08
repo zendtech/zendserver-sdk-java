@@ -29,6 +29,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
+import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
@@ -142,12 +143,15 @@ public class ParametersBlock extends AbstractBlock {
 		createParameterGroups(getContainer());
 	}
 
-	public HashMap<String, String> getParameters() {
+	@Override
+	public IDeploymentHelper getHelper() {
 		HashMap<String, String> result = new HashMap<String, String>();
 		for (DeploymentParameter param : parameters) {
 			result.put(param.getId(), param.getValue());
 		}
-		return result;
+		DeploymentHelper helper = new DeploymentHelper();
+		helper.setUserParams(result);
+		return helper;
 	}
 
 	@Override

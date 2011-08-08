@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
-import java.net.URL;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -65,18 +63,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
 		if (project != null) {
-			URL baseURL = configBlock.getBaseURL();
-			IDeploymentHelper helper = new DeploymentHelper();
-			if (baseURL != null) {
-				helper.setBaseURL(baseURL.toString());
-			}
-			helper.setTargetId(configBlock.getTarget().getId());
+			IDeploymentHelper helper = configBlock.getHelper();
 			helper.setProjectName(project.getName());
-			helper.setUserParams(parametersBlock.getParameters());
-			helper.setAppName(configBlock.getUserAppName());
-			helper.setIgnoreFailures(configBlock.isIgnoreFailures());
-			helper.setDefaultServer(configBlock.isDefaultServer());
-			helper.setOperationType(configBlock.getOperationType());
+			helper.setUserParams(parametersBlock.getHelper().getUserParams());
 			try {
 				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			} catch (CoreException e) {

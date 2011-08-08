@@ -48,6 +48,8 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class ConfigurationBlock extends AbstractBlock {
 
+	private static final String DEFAULT_HOST = "<default-server>";
+
 	private Combo targetsCombo;
 	private Link newTargetLink;
 	private Text baseUrl;
@@ -163,87 +165,32 @@ public class ConfigurationBlock extends AbstractBlock {
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.deploymentWizard_Message);
 	}
 
-	public int getOperationType() {
-		if (deployButton.getSelection()) {
-			return IDeploymentHelper.DEPLOY;
+	@Override
+	public IDeploymentHelper getHelper() {
+		DeploymentHelper helper = new DeploymentHelper();
+		URL url = getBaseURL();
+		if (url != null) {
+			helper.setBaseURL(url.toString());
 		}
-		if (updateButton.getSelection()) {
-			return IDeploymentHelper.UPDATE;
-		}
-		return IDeploymentHelper.AUTO_DEPLOY;
-	}
-
-	public ApplicationInfo getUpdateSelection() {
-		if (wizard != null) {
-			int idx = applicationSelectionCombo.getSelectionIndex();
-			if (idx <= -1) {
-				return null;
-			}
-			return applicationInfos[idx];
-		}
-		return null;
-	}
-
-	public ApplicationInfo getAutoDeploySelection() {
-		if (wizard != null) {
-			int idx = autoDeployCombo.getSelectionIndex();
-			if (idx <= -1) {
-				return null;
-			}
-			return applicationInfos[idx];
-		}
-		return null;
-	}
-
-	public URL getBaseURL() {
-		try {
-			URL result = new URL(baseUrl.getText());
-			return result;
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
-
-	public String getUserAppName() {
-		return userAppName.getText();
-	}
-
-	public boolean isDefaultServer() {
-		URL baseUrl = getBaseURL();
-		URL targetUrl = getTarget().getHost();
-		if (baseUrl.getHost().equals(targetUrl.getHost())) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isIgnoreFailures() {
-		return ignoreFailures.getSelection();
-	}
-
-	public IZendTarget getTarget() {
-		int idx = targetsCombo.getSelectionIndex();
-		if (idx <= -1) {
-			return null;
-		}
-		IZendTarget target = targetsList[idx];
-		return targetsManager.getTargetById(target.getId());
-	}
-
-	public String getInstalledLocation() {
-		if (autoDeploy && getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
-			int index = autoDeployCombo.getSelectionIndex();
-			if (index != -1) {
-				return applicationInfos[index].getInstalledLocation();
-			}
-		}
+		helper.setTargetId(getTarget().getId());
 		if (getOperationType() == IDeploymentHelper.UPDATE) {
-			int index = applicationSelectionCombo.getSelectionIndex();
-			if (index != -1) {
-				return applicationInfos[index].getInstalledLocation();
+			ApplicationInfo info = getUpdateSelection();
+			if (info != null) {
+				helper.setAppId(info.getId());
 			}
 		}
-		return null;
+		if (getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
+			ApplicationInfo info = getAutoDeploySelection();
+			if (info != null) {
+				helper.setAppId(info.getId());
+			}
+		}
+		helper.setAppName(userAppName.getText());
+		helper.setIgnoreFailures(ignoreFailures.getSelection());
+		helper.setDefaultServer(isDefaultServer());
+		helper.setOperationType(getOperationType());
+		helper.setInstalledLocation(getInstalledLocation());
+		return helper;
 	}
 
 	public void setBaseURLEnabled(boolean value) {
@@ -261,6 +208,81 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	public void setIgnoreFailuresEnabled(boolean value) {
 		ignoreFailures.setEnabled(value);
+	}
+
+	private int getOperationType() {
+		if (deployButton.getSelection()) {
+			return IDeploymentHelper.DEPLOY;
+		}
+		if (updateButton.getSelection()) {
+			return IDeploymentHelper.UPDATE;
+		}
+		return IDeploymentHelper.AUTO_DEPLOY;
+	}
+
+	private ApplicationInfo getUpdateSelection() {
+		if (wizard != null) {
+			int idx = applicationSelectionCombo.getSelectionIndex();
+			if (idx <= -1) {
+				return null;
+			}
+			return applicationInfos[idx];
+		}
+		return null;
+	}
+
+	private ApplicationInfo getAutoDeploySelection() {
+		if (wizard != null) {
+			int idx = autoDeployCombo.getSelectionIndex();
+			if (idx <= -1) {
+				return null;
+			}
+			return applicationInfos[idx];
+		}
+		return null;
+	}
+
+	private URL getBaseURL() {
+		try {
+			URL result = new URL(baseUrl.getText());
+			return result;
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+
+	private boolean isDefaultServer() {
+		URL baseUrl = getBaseURL();
+		URL targetUrl = getTarget().getHost();
+		if (baseUrl.getHost().equals(targetUrl.getHost())) {
+			return true;
+		}
+		return false;
+	}
+
+	private IZendTarget getTarget() {
+		int idx = targetsCombo.getSelectionIndex();
+		if (idx <= -1) {
+			return null;
+		}
+		IZendTarget target = targetsList[idx];
+		return targetsManager.getTargetById(target.getId());
+	}
+
+	private String getInstalledLocation() {
+		if (autoDeploy && getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
+			int index = autoDeployCombo.getSelectionIndex();
+			if (index != -1) {
+				return applicationInfos[index].getInstalledLocation();
+			}
+		}
+		if (getOperationType() == IDeploymentHelper.UPDATE) {
+			int index = applicationSelectionCombo.getSelectionIndex();
+			if (index != -1) {
+				return applicationInfos[index].getInstalledLocation();
+			}
+		}
+		return null;
 	}
 
 	private void createLocationLink(Composite container) {
@@ -395,7 +417,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				helper.setAppId(info.getId());
 				helper.setAppName(info.getUserAppName());
 				URL baseURL = new URL(info.getBaseUrl());
-				if (baseURL.getHost().equals(BaseUrlControl.DEFAULT_HOST)) {
+				if (baseURL.getHost().equals(DEFAULT_HOST)) {
 					helper.setDefaultServer(true);
 					IZendTarget target = getTarget();
 					URL updatedURL = new URL(baseURL.getProtocol(), target.getHost().getHost(),
@@ -504,7 +526,7 @@ public class ConfigurationBlock extends AbstractBlock {
 						URL url = getBaseURL();
 						if (isDefaultServer()) {
 							try {
-								url = new URL(url.getProtocol(), BaseUrlControl.DEFAULT_HOST, url
+								url = new URL(url.getProtocol(), DEFAULT_HOST, url
 										.getFile());
 							} catch (MalformedURLException e) {
 								// ignore

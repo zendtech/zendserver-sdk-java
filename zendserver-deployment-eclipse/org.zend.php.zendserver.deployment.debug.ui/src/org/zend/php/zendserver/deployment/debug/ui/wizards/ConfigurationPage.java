@@ -7,13 +7,9 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
-import java.net.URL;
-
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
-import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 public class ConfigurationPage extends DeploymentWizardPage {
 
@@ -33,47 +29,16 @@ public class ConfigurationPage extends DeploymentWizardPage {
 	public void createControl(Composite parent) {
 		Composite container = block.createContents(parent);
 		setControl(container);
-		if (getHelper() != null) {
-			block.initializeFields(getHelper());
+		if (helper != null) {
+			block.initializeFields(helper);
 		}
 		setPageComplete(false);
 		statusChanged(block.validatePage());
 	}
 
-	public URL getBaseUrl() {
-		return block.getBaseURL();
-	}
-
-	public String getUserAppName() {
-		return block.getUserAppName();
-	}
-
-	public boolean isDefaultServer() {
-		return block.isDefaultServer();
-	}
-
-	public boolean isIgnoreFailures() {
-		return block.isIgnoreFailures();
-	}
-
-	public IZendTarget getTarget() {
-		return block.getTarget();
-	}
-
-	public int getOperationType() {
-		return block.getOperationType();
-	}
-
-	public ApplicationInfo getUpdateSelection() {
-		return block.getUpdateSelection();
-	}
-
-	public ApplicationInfo getAutoDeploySelection() {
-		return block.getAutoDeploySelection();
-	}
-
-	public String getInstalledLocation() {
-		return block.getInstalledLocation();
+	@Override
+	public IDeploymentHelper getHelper() {
+		return block.getHelper();
 	}
 
 }

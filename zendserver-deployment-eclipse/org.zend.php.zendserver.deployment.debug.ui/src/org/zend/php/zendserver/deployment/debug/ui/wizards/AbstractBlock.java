@@ -29,6 +29,8 @@ public abstract class AbstractBlock {
 
 	public abstract void initializeFields(IDeploymentHelper helper);
 
+	public abstract IDeploymentHelper getHelper();
+
 	public Composite createContents(Composite parent) {
 		container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout(2, false);

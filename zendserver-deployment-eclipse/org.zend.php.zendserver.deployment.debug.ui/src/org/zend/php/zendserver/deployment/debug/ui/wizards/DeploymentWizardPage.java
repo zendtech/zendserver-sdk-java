@@ -6,7 +6,7 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 
 public abstract class DeploymentWizardPage extends WizardPage implements IStatusChangeListener {
 
-	private IDeploymentHelper helper;
+	protected IDeploymentHelper helper;
 
 	protected DeploymentWizardPage(String pageName, IDeploymentHelper helper) {
 		super(pageName);
@@ -24,8 +24,6 @@ public abstract class DeploymentWizardPage extends WizardPage implements IStatus
 		}
 	}
 
-	protected IDeploymentHelper getHelper() {
-		return helper;
-	}
+	public abstract IDeploymentHelper getHelper();
 
 }
