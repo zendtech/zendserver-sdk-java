@@ -2,7 +2,9 @@ package org.zend.php.zendserver.deployment.debug.ui.listeners;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunch;
@@ -38,7 +40,8 @@ public class DeploymentLaunchListener implements ILaunchListener {
 				final ILaunchConfiguration config = launch.getLaunchConfiguration();
 				IDeploymentHelper helper = DeploymentHelper.create(config);
 				final IProject project = LaunchUtils.getProjectFromFilename(config);
-				if (helper.getAppId() == -1) {
+				switch (helper.getOperationType()) {
+				case IDeploymentHelper.DEPLOY:
 					if (!helper.getTargetId().isEmpty()) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
@@ -48,8 +51,20 @@ public class DeploymentLaunchListener implements ILaunchListener {
 						}
 						job = new DeployLaunchJob(dialogHelper, project);
 					}
-				} else {
+					break;
+				case IDeploymentHelper.UPDATE:
 					job = new UpdateLaunchJob(helper, project);
+					break;
+				case IDeploymentHelper.AUTO_DEPLOY:
+					job = getAutoDeployJob();
+					if (job == null) {
+						break;
+					}
+					job.setHelper(helper);
+					job.setProject(project);
+					break;
+				default:
+					return;
 				}
 				job.setUser(true);
 				job.addJobChangeListener(new JobChangeAdapter() {
@@ -107,6 +122,24 @@ public class DeploymentLaunchListener implements ILaunchListener {
 				}
 			}
 		});
+	}
+
+	private AbstractLaunchJob getAutoDeployJob() {
+		IConfigurationElement[] config = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(Activator.AUTO_DEPLOY_EXTENSION_ID);
+		try {
+			for (IConfigurationElement e : config) {
+
+				final Object o = e.createExecutableExtension("class");
+				if (o instanceof AbstractLaunchJob) {
+					return (AbstractLaunchJob) o;
+				}
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+			return null;
+		}
+		return null;
 	}
 
 }

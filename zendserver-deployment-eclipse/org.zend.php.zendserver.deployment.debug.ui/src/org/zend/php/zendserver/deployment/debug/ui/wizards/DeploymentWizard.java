@@ -87,7 +87,13 @@ public class DeploymentWizard extends Wizard {
 		helper.setProjectName(project.getName());
 		helper.setTargetId(configPage.getTarget().getId());
 		if (configPage.getOperationType() == IDeploymentHelper.UPDATE) {
-			ApplicationInfo info = configPage.getApplicationToUpdate();
+			ApplicationInfo info = configPage.getUpdateSelection();
+			if (info != null) {
+				helper.setAppId(info.getId());
+			}
+		}
+		if (configPage.getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
+			ApplicationInfo info = configPage.getAutoDeploySelection();
 			if (info != null) {
 				helper.setAppId(info.getId());
 			}
@@ -97,6 +103,7 @@ public class DeploymentWizard extends Wizard {
 		helper.setIgnoreFailures(configPage.isIgnoreFailures());
 		helper.setDefaultServer(configPage.isDefaultServer());
 		helper.setOperationType(configPage.getOperationType());
+		helper.setInstalledLocation(configPage.getInstalledLocation());
 		return helper;
 	}
 

@@ -64,8 +64,16 @@ public class ConfigurationPage extends DeploymentWizardPage {
 		return block.getOperationType();
 	}
 
-	public ApplicationInfo getApplicationToUpdate() {
-		return block.getApplicationToUpdate();
+	public ApplicationInfo getUpdateSelection() {
+		return block.getUpdateSelection();
+	}
+
+	public ApplicationInfo getAutoDeploySelection() {
+		return block.getAutoDeploySelection();
+	}
+
+	public String getInstalledLocation() {
+		return block.getInstalledLocation();
 	}
 
 }

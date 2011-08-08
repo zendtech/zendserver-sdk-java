@@ -6,7 +6,7 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
-public class DeployLaunchJob extends AbstractLaunchJob {
+public class DeployLaunchJob extends DeploymentLaunchJob {
 
 	public DeployLaunchJob(IDeploymentHelper helper, IProject project) {
 		super(Messages.deploymentJob_Title, helper, project);

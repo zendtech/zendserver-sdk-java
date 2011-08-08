@@ -21,6 +21,8 @@ public interface IDeploymentHelper {
 
 	String getAppName();
 
+	String getInstalledLocation();
+
 	boolean isIgnoreFailures();
 
 	boolean isDefaultServer();
@@ -44,5 +46,7 @@ public interface IDeploymentHelper {
 	void setDefaultServer(boolean defaultServer);
 
 	void setOperationType(int type);
+
+	void setInstalledLocation(String location);
 
 }

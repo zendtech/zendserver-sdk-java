@@ -17,6 +17,8 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.debug.ui"; //$NON-NLS-1$
 
+	public static final String AUTO_DEPLOY_EXTENSION_ID = "org.zend.php.zendserver.deployment.autoDeploy"; //$NON-NLS-1$
+
 	public static final String IMAGE_RUN_APPLICATION = "icons/obj16/run_exc.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DEBUG_APPLICATION = "icons/obj16/debug_exc.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DEPLOY_APPLICATION = "icons/obj16/debug_exc.gif"; //$NON-NLS-1$

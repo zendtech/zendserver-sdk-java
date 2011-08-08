@@ -24,6 +24,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private boolean defaultServer;
 	private String virtualHost;
 	private int operationType;
+	private String installedLocation;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -59,6 +60,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.DEFAULT_SERVER.getName(), true));
 			helper.setOperationType(config.getAttribute(
 					DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.DEPLOY));
+			helper.setInstalledLocation(config.getAttribute(
+					DeploymentAttributes.INSTALLED_LOCATION.getName(), EMPTY_STRING));
 		} catch (CoreException e) {
 			return null;
 		}
@@ -105,6 +108,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return operationType;
 	}
 
+	public String getInstalledLocation() {
+		return installedLocation;
+	}
+
 	public void setBaseURL(String baseURL) {
 		try {
 			this.baseURL = new URL(baseURL);
@@ -143,6 +150,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setOperationType(int type) {
 		this.operationType = type;
+	}
+
+	public void setInstalledLocation(String location) {
+		this.installedLocation = location;
 	}
 
 }

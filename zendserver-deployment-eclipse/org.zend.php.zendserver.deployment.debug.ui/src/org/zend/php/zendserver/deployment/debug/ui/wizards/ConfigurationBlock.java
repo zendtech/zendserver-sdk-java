@@ -4,8 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
@@ -32,6 +35,7 @@ import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
@@ -44,20 +48,25 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class ConfigurationBlock extends AbstractBlock {
 
-	private Combo deployCombo;
-	private IZendTarget[] deployComboTargets = new IZendTarget[0];
-	private Link targetLink;
+	private Combo targetsCombo;
+	private Link newTargetLink;
 	private Text baseUrl;
 	private Text userAppName;
 	private Button ignoreFailures;
 	private Button deployButton;
 	private Button updateButton;
-	private Button syncButton;
+	private Button autoDeployButton;
 
-	private TargetsManager targetsManager;
 	private IWizard wizard;
 	private Combo applicationSelectionCombo;
+	private Combo autoDeployCombo;
+
+	private TargetsManager targetsManager;
+	private IZendTarget[] targetsList = new IZendTarget[0];
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
+
+	boolean autoDeploy;
+
 
 	public ConfigurationBlock(IStatusChangeListener context) {
 		this(context, null);
@@ -67,6 +76,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		super(context);
 		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		this.wizard = wizard;
+		this.autoDeploy = isAutoDeployAvailable();
 	}
 
 	@Override
@@ -97,9 +107,9 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	@Override
 	public void initializeFields(IDeploymentHelper helper) {
-		for (int i = 0; i < deployComboTargets.length; i++) {
-			if (deployComboTargets[i].getId().equals(helper.getTargetId())) {
-				deployCombo.select(i);
+		for (int i = 0; i < targetsList.length; i++) {
+			if (targetsList[i].getId().equals(helper.getTargetId())) {
+				targetsCombo.select(i);
 			}
 		}
 		URL newBaseURL = helper.getBaseURL();
@@ -122,11 +132,18 @@ public class ConfigurationBlock extends AbstractBlock {
 			deployButton.setSelection(true);
 			break;
 		case IDeploymentHelper.UPDATE:
-			updateButton.setSelection(true);
-			enableApplicationSelectionSection(true);
+			if (!updateButton.getSelection()) {
+				updateButton.setSelection(true);
+				enableAutoDeploySection(false);
+				enableApplicationSelectionSection(true);
+			}
 			break;
 		case IDeploymentHelper.AUTO_DEPLOY:
-			syncButton.setSelection(true);
+			if (autoDeploy && !autoDeployButton.getSelection()) {
+				autoDeployButton.setSelection(true);
+				enableApplicationSelectionSection(false);
+				enableAutoDeploySection(true);
+			}
 			break;
 		default:
 			break;
@@ -156,9 +173,20 @@ public class ConfigurationBlock extends AbstractBlock {
 		return IDeploymentHelper.AUTO_DEPLOY;
 	}
 
-	public ApplicationInfo getApplicationToUpdate() {
+	public ApplicationInfo getUpdateSelection() {
 		if (wizard != null) {
 			int idx = applicationSelectionCombo.getSelectionIndex();
+			if (idx <= -1) {
+				return null;
+			}
+			return applicationInfos[idx];
+		}
+		return null;
+	}
+
+	public ApplicationInfo getAutoDeploySelection() {
+		if (wizard != null) {
+			int idx = autoDeployCombo.getSelectionIndex();
 			if (idx <= -1) {
 				return null;
 			}
@@ -194,12 +222,28 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	public IZendTarget getTarget() {
-		int idx = deployCombo.getSelectionIndex();
+		int idx = targetsCombo.getSelectionIndex();
 		if (idx <= -1) {
 			return null;
 		}
-		IZendTarget target = deployComboTargets[idx];
+		IZendTarget target = targetsList[idx];
 		return targetsManager.getTargetById(target.getId());
+	}
+
+	public String getInstalledLocation() {
+		if (autoDeploy && getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
+			int index = autoDeployCombo.getSelectionIndex();
+			if (index != -1) {
+				return applicationInfos[index].getInstalledLocation();
+			}
+		}
+		if (getOperationType() == IDeploymentHelper.UPDATE) {
+			int index = applicationSelectionCombo.getSelectionIndex();
+			if (index != -1) {
+				return applicationInfos[index].getInstalledLocation();
+			}
+		}
+		return null;
 	}
 
 	public void setBaseURLEnabled(boolean value) {
@@ -207,8 +251,8 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	public void setDeployComboEnabled(boolean value) {
-		deployCombo.setEnabled(value);
-		targetLink.setEnabled(value);
+		targetsCombo.setEnabled(value);
+		newTargetLink.setEnabled(value);
 	}
 
 	public void setUserAppNameEnabled(boolean value) {
@@ -220,25 +264,25 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void createLocationLink(Composite container) {
-		targetLink = new Link(container, SWT.NONE);
+		newTargetLink = new Link(container, SWT.NONE);
 		String text = "<a>" + Messages.parametersPage_AddTarget + "</a>";
-		targetLink.setText(text);
-		targetLink.addListener(SWT.Selection, new Listener() {
+		newTargetLink.setText(text);
+		newTargetLink.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				new AddTargetAction().run();
 			}
 		});
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
-		targetLink.setLayoutData(gd);
+		newTargetLink.setLayoutData(gd);
 	}
 
 	private void createDeployCombo(Composite container) {
-		deployCombo = createLabelWithCombo(Messages.parametersPage_DeployTo, "", container);
-		deployCombo.addSelectionListener(new SelectionAdapter() {
+		targetsCombo = createLabelWithCombo(Messages.parametersPage_DeployTo, "", container);
+		targetsCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IZendTarget selectedTarget = deployComboTargets[deployCombo.getSelectionIndex()];
+				IZendTarget selectedTarget = targetsList[targetsCombo.getSelectionIndex()];
 				changeHost(selectedTarget);
 			}
 		});
@@ -267,6 +311,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				enableAutoDeploySection(false);
 				enableApplicationSelectionSection(false);
 			}
 		});
@@ -276,15 +321,19 @@ public class ConfigurationBlock extends AbstractBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
+					enableAutoDeploySection(false);
 					enableApplicationSelectionSection(true);
 				}
 			}
 		});
-		deployCombo.addSelectionListener(new SelectionAdapter() {
+		targetsCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
-					getApplicationsInfo();
+					getApplicationsInfo(applicationSelectionCombo);
+				}
+				if (autoDeploy && autoDeployButton.getSelection()) {
+					getApplicationsInfo(autoDeployCombo);
 				}
 			}
 		});
@@ -295,25 +344,42 @@ public class ConfigurationBlock extends AbstractBlock {
 		applicationSelectionCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillFieldsByAppInfo();
+				fillFieldsByAppInfo(applicationSelectionCombo);
 			}
 		});
 
-		syncButton = createRadioButton(container, "Automatic Deploy");
-		syncButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enableApplicationSelectionSection(false);
-			}
-		});
+		if (autoDeploy) {
+			autoDeployButton = createRadioButton(container, "Automatic Deploy");
+			autoDeployButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (autoDeployButton.getSelection()) {
+						enableApplicationSelectionSection(false);
+						enableAutoDeploySection(true);
+					}
+				}
+			});
+
+			autoDeployCombo = createLabelWithCombo("Choose application for automatic deployment:",
+					"", container);
+			autoDeployCombo.setEnabled(false);
+			autoDeployCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					fillFieldsByAppInfo(autoDeployCombo);
+				}
+			});
+		}
 	}
 
-	private void fillFieldsByAppInfo() {
-		int index = applicationSelectionCombo.getSelectionIndex();
+	private void fillFieldsByAppInfo(Combo combo) {
+		int index = combo.getSelectionIndex();
 		if (index != -1) {
 			ApplicationInfo info = applicationInfos[index];
 			IDeploymentHelper helper = new DeploymentHelper();
 			try {
+				helper.setInstalledLocation(info.getInstalledLocation());
+				helper.setOperationType(getOperationType());
 				helper.setAppId(info.getId());
 				helper.setAppName(info.getUserAppName());
 				URL baseURL = new URL(info.getBaseUrl());
@@ -346,16 +412,35 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void enableApplicationSelectionSection(boolean value) {
 		if (value) {
+			getApplicationsInfo(applicationSelectionCombo);
 			applicationSelectionCombo.setEnabled(true);
-			getApplicationsInfo();
 		} else {
-			initializeFields(new DeploymentHelper());
+			applicationSelectionCombo.setEnabled(false);
+			IDeploymentHelper helper = new DeploymentHelper();
+			helper.setOperationType(getOperationType());
+			initializeFields(helper);
 		}
 		setBaseURLEnabled(!value);
 		setUserAppNameEnabled(!value);
 	}
 
-	private void getApplicationsInfo() {
+	private void enableAutoDeploySection(boolean value) {
+		if (autoDeploy) {
+			if (value) {
+				getApplicationsInfo(autoDeployCombo);
+				autoDeployCombo.setEnabled(true);
+			} else {
+				autoDeployCombo.setEnabled(false);
+				IDeploymentHelper helper = new DeploymentHelper();
+				helper.setOperationType(getOperationType());
+				initializeFields(helper);
+			}
+			setBaseURLEnabled(!value);
+			setUserAppNameEnabled(!value);
+		}
+	}
+
+	private void getApplicationsInfo(Combo combo) {
 		final IZendTarget selectedTarget = getTarget();
 		if (selectedTarget != null && wizard != null) {
 			try {
@@ -376,7 +461,7 @@ public class ConfigurationBlock extends AbstractBlock {
 						}
 					}
 				});
-				populateApplicationsList();
+				populateApplicationsList(combo);
 			} catch (InvocationTargetException e) {
 				Activator.log(e);
 			} catch (InterruptedException e) {
@@ -391,19 +476,19 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 	}
 
-	private void populateApplicationsList() {
+	private void populateApplicationsList(final Combo combo) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				applicationSelectionCombo.removeAll();
+				combo.removeAll();
 				if (applicationInfos.length != 0) {
 					for (ApplicationInfo info : applicationInfos) {
-						applicationSelectionCombo.add(info.getAppName() + " (name: "
-								+ info.getUserAppName() + ")");
+						combo.add(info.getAppName() + " (name: " + info.getUserAppName() + ")");
 					}
 				}
-				if (applicationSelectionCombo.getItemCount() > 0) {
-					if (getOperationType() == IDeploymentHelper.UPDATE) {
+				if (combo.getItemCount() > 0) {
+					if (getOperationType() == IDeploymentHelper.UPDATE
+							|| getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
 						URL url = getBaseURL();
 						if (isDefaultServer()) {
 							try {
@@ -416,12 +501,13 @@ public class ConfigurationBlock extends AbstractBlock {
 						String urlString = url.toString();
 						for (int i = 0; i < applicationInfos.length; i++) {
 							if (applicationInfos[i].getBaseUrl().equals(urlString)) {
-								applicationSelectionCombo.select(i);
+								combo.select(i);
+								fillFieldsByAppInfo(combo);
 							}
 						}
 					} else {
-						applicationSelectionCombo.select(0);
-						fillFieldsByAppInfo();
+						combo.select(0);
+						fillFieldsByAppInfo(combo);
 					}
 				}
 			}
@@ -429,23 +515,23 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void populateTargetsList() {
-		deployComboTargets = targetsManager.getTargets();
-		deployCombo.removeAll();
+		targetsList = targetsManager.getTargets();
+		targetsCombo.removeAll();
 		String defaultId = targetsManager.getDefaultTargetId();
 		int defaultNo = 0;
 
-		if (deployComboTargets.length != 0) {
+		if (targetsList.length != 0) {
 			int i = 0;
-			for (IZendTarget target : deployComboTargets) {
+			for (IZendTarget target : targetsList) {
 				if (target.getId().equals(defaultId)) {
 					defaultNo = i;
 				}
-				deployCombo.add(target.getHost() + " (Id: " + target.getId() + ")");
+				targetsCombo.add(target.getHost() + " (Id: " + target.getId() + ")");
 				i++;
 			}
 		}
-		if (deployCombo.getItemCount() > 0) {
-			deployCombo.select(defaultNo);
+		if (targetsCombo.getItemCount() > 0) {
+			targetsCombo.select(defaultNo);
 		}
 	}
 
@@ -459,6 +545,24 @@ public class ConfigurationBlock extends AbstractBlock {
 		} catch (MalformedURLException e) {
 			Activator.log(e);
 		}
+	}
+
+	private boolean isAutoDeployAvailable() {
+		IConfigurationElement[] config = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(Activator.AUTO_DEPLOY_EXTENSION_ID);
+		try {
+			for (IConfigurationElement e : config) {
+
+				final Object o = e.createExecutableExtension("class");
+				if (o instanceof AbstractLaunchJob) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+			return false;
+		}
+		return false;
 	}
 
 }

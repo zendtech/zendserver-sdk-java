@@ -99,6 +99,11 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
 		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
+		String location = helper.getInstalledLocation();
+		if (location != null && !location.isEmpty()) {
+		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
+				helper.getInstalledLocation());
+		}
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
