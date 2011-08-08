@@ -9,6 +9,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.sdklib.event.IStatusChangeEvent;
+import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -21,6 +23,26 @@ import swt.elevate.ElevatedProgramFactory;
  */
 public class DetectTargetAction extends Action {
 	
+	private static class StatusKeywordsChecker implements
+			IStatusChangeListener {
+		
+		private String keyword;
+		private boolean keywordFound;
+
+		public StatusKeywordsChecker(String keyword) {
+			this.keyword = keyword;
+		}
+		
+		public void statusChanged(IStatusChangeEvent event) {
+			boolean messageContainsKeyword = event.getStatus().getMessage().contains(keyword);
+			keywordFound = keywordFound ||  messageContainsKeyword ;
+		}
+
+		public boolean found() {
+			return keywordFound;
+		}
+	}
+
 	private IZendTarget target;
 
 	public DetectTargetAction() {
@@ -29,14 +51,23 @@ public class DetectTargetAction extends Action {
 
 	@Override
 	public void run() {
-		
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		StatusKeywordsChecker problemWithElevate = new StatusKeywordsChecker("elevate");
+		tm.addStatusChangeListener(problemWithElevate);
+		target = tm.detectLocalhostTarget(null, null);
 		
-		String id = tm.createUniqueId("local"); //$NON-NLS-1$
-		ZendCmdLine zcmd = new ZendCmdLine();
-		
+		if ((target == null) && (problemWithElevate.found())) {
+			runElevated();
+		}
+	}
+
+	private void runElevated() {
+		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
 		if (prog != null) {
+			String id = tm.createUniqueId("local"); //$NON-NLS-1$
+			ZendCmdLine zcmd = new ZendCmdLine();
+			
 			try {
 				if (! zcmd.runElevated("detect target -t "+id)) { //$NON-NLS-1$
 					return;
@@ -46,16 +77,13 @@ public class DetectTargetAction extends Action {
 				return;
 			}
 			
-			// use new TargetManager to force re-load targets and check if new target was added
-			TargetsManager newTm = new TargetsManager(); 
-			IZendTarget newTarget = newTm.getTargetById(id);
-			if (newTarget != null) {
-				newTm.remove(newTarget); // remove temporary target.
-			}
+			/* 
+			 * Elevated target detection may add new target to elevated user targets list, but
+			 * all operations that required extra privileges should be done now, so let's try
+			 * again to detect target.
+			 */ 
 			
-			this.target = newTarget;
-		} else {
-			tm.detectLocalhostTarget(null, null);
+			target = tm.detectLocalhostTarget(id, null);
 		}
 	}
 
