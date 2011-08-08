@@ -9,8 +9,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.event.IStatusChangeListener;
+import org.zend.sdklib.manager.DetectionException;
+import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -23,26 +23,6 @@ import swt.elevate.ElevatedProgramFactory;
  */
 public class DetectTargetAction extends Action {
 	
-	private static class StatusKeywordsChecker implements
-			IStatusChangeListener {
-		
-		private String keyword;
-		private boolean keywordFound;
-
-		public StatusKeywordsChecker(String keyword) {
-			this.keyword = keyword;
-		}
-		
-		public void statusChanged(IStatusChangeEvent event) {
-			boolean messageContainsKeyword = event.getStatus().getMessage().contains(keyword);
-			keywordFound = keywordFound ||  messageContainsKeyword ;
-		}
-
-		public boolean found() {
-			return keywordFound;
-		}
-	}
-
 	private IZendTarget target;
 
 	public DetectTargetAction() {
@@ -52,12 +32,13 @@ public class DetectTargetAction extends Action {
 	@Override
 	public void run() {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		StatusKeywordsChecker problemWithElevate = new StatusKeywordsChecker("elevate");
-		tm.addStatusChangeListener(problemWithElevate);
-		target = tm.detectLocalhostTarget(null, null);
 		
-		if ((target == null) && (problemWithElevate.found())) {
+		try {
+			target = tm.detectLocalhostTarget(null, null);
+		} catch (PrivilegesException e1) {
 			runElevated();
+		} catch (DetectionException e) {
+			// do nothing
 		}
 	}
 
@@ -83,7 +64,11 @@ public class DetectTargetAction extends Action {
 			 * again to detect target.
 			 */ 
 			
-			target = tm.detectLocalhostTarget(id, null);
+			try {
+				target = tm.detectLocalhostTarget(id, null);
+			} catch (DetectionException e) {
+				// ignore
+			}
 		}
 	}
 
