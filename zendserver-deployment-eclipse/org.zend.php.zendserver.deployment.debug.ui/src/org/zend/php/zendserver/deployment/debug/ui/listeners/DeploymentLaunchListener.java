@@ -51,9 +51,11 @@ public class DeploymentLaunchListener implements ILaunchListener {
 						}
 						job = new DeployLaunchJob(dialogHelper, project);
 					}
+					addJobListener(launch, project);
 					break;
 				case IDeploymentHelper.UPDATE:
 					job = new UpdateLaunchJob(helper, project);
+					addJobListener(launch, project);
 					break;
 				case IDeploymentHelper.AUTO_DEPLOY:
 					job = getAutoDeployJob();
@@ -83,6 +85,17 @@ public class DeploymentLaunchListener implements ILaunchListener {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
+	}
+
+	private void addJobListener(final ILaunch launch, final IProject project) {
+		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().getSeverity() == IStatus.OK) {
+					updateLaunchConfiguration(launch, project);
+				}
+			}
+		});
 	}
 
 	public void launchChanged(ILaunch launch) {
