@@ -32,16 +32,15 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
+import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.library.StatusCode;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -50,7 +49,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private static final String DEFAULT_HOST = "<default-server>";
 
-	private Combo targetsCombo;
+	private TargetsCombo targetsCombo = new TargetsCombo();
 	private Link newTargetLink;
 	private Text baseUrl;
 	private Text userAppName;
@@ -63,8 +62,6 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Combo applicationSelectionCombo;
 	private Combo autoDeployCombo;
 
-	private TargetsManager targetsManager;
-	private IZendTarget[] targetsList = new IZendTarget[0];
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
 	private boolean autoDeploy;
@@ -76,7 +73,6 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	public ConfigurationBlock(IStatusChangeListener listener, IRunnableContext context) {
 		super(listener);
-		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 		this.context = context;
 		this.autoDeploy = isAutoDeployAvailable();
 	}
@@ -109,11 +105,8 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	@Override
 	public void initializeFields(IDeploymentHelper helper) {
-		for (int i = 0; i < targetsList.length; i++) {
-			if (targetsList[i].getId().equals(helper.getTargetId())) {
-				targetsCombo.select(i);
-			}
-		}
+		targetsCombo.select(helper.getTargetId());
+		
 		URL newBaseURL = helper.getBaseURL();
 		if (newBaseURL != null) {
 			if (helper.isDefaultServer()) {
@@ -262,12 +255,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private IZendTarget getTarget() {
-		int idx = targetsCombo.getSelectionIndex();
-		if (idx <= -1) {
-			return null;
-		}
-		IZendTarget target = targetsList[idx];
-		return targetsManager.getTargetById(target.getId());
+		return targetsCombo.getSelected();
 	}
 
 	private String getInstalledLocation() {
@@ -296,13 +284,8 @@ public class ConfigurationBlock extends AbstractBlock {
 				addTarget.run();
 				IZendTarget newTarget = addTarget.getTarget();
 				if (newTarget != null) {
-					populateTargetsList();
-					IZendTarget[] targets = targetsManager.getTargets();
-					for (int i = 0; i < targets.length; i++) {
-						if (targets[i].getId().equals(newTarget)) {
-							targetsCombo.select(i);
-						}
-					}
+					targetsCombo.updateItems();
+					targetsCombo.select(newTarget.getId());
 					validatePage();
 				}
 			}
@@ -313,15 +296,15 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void createDeployCombo(Composite container) {
-		targetsCombo = createLabelWithCombo(Messages.parametersPage_DeployTo, "", container);
-		targetsCombo.addSelectionListener(new SelectionAdapter() {
+		targetsCombo.setLabel(Messages.parametersPage_DeployTo);
+		targetsCombo.createControl(container);
+		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IZendTarget selectedTarget = targetsList[targetsCombo.getSelectionIndex()];
-				changeHost(selectedTarget);
+				changeHost(targetsCombo.getSelected());
+				listener.statusChanged(validatePage());
 			}
 		});
-		populateTargetsList();
 	}
 
 	private void createOperationsSection(Composite parent) {
@@ -361,7 +344,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				}
 			}
 		});
-		targetsCombo.addSelectionListener(new SelectionAdapter() {
+		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
@@ -549,27 +532,6 @@ public class ConfigurationBlock extends AbstractBlock {
 				}
 			}
 		});
-	}
-
-	private void populateTargetsList() {
-		targetsList = targetsManager.getTargets();
-		targetsCombo.removeAll();
-		String defaultId = targetsManager.getDefaultTargetId();
-		int defaultNo = 0;
-
-		if (targetsList.length != 0) {
-			int i = 0;
-			for (IZendTarget target : targetsList) {
-				if (target.getId().equals(defaultId)) {
-					defaultNo = i;
-				}
-				targetsCombo.add(target.getHost() + " (Id: " + target.getId() + ")");
-				i++;
-			}
-		}
-		if (targetsCombo.getItemCount() > 0) {
-			targetsCombo.select(defaultNo);
-		}
 	}
 
 	private void changeHost(IZendTarget target) {

@@ -19,7 +19,8 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 public abstract class AbstractBlock {
 
 	private Composite container;
-	private IStatusChangeListener listener;
+
+	protected IStatusChangeListener listener;
 
 	public AbstractBlock(IStatusChangeListener listener) {
 		this.listener = listener;
