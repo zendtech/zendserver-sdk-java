@@ -30,8 +30,9 @@ public abstract class AbstractDeploymentHandler extends AbstractHandler {
 
 		if (projectName instanceof String[]) {
 			List<IProject> projects = new ArrayList<IProject>();
-			for (String pName : (String[]) projectName) {
-				IProject project = root.getProject((String) projectName);
+			String[] projectNames = (String[]) projectName;
+			for (String pName : projectNames) {
+				IProject project = root.getProject(pName);
 				if (project.exists() && (projects.contains(project))) {
 					projects.add(project);
 				}
