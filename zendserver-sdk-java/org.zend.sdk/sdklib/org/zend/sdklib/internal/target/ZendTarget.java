@@ -217,7 +217,10 @@ public class ZendTarget implements IZendTarget {
 		this.key = properties.getProperty("_key");
 		this.secretKey = properties.getProperty("_secretKey");
 		this.host = new URL(properties.getProperty("_host"));
-		this.defaultServerURL = new URL(properties.getProperty("_defaultServerURL"));
+		String url = properties.getProperty("_defaultServerURL");
+		if (url != null) {
+			this.defaultServerURL = new URL(url);
+		}
 		final Set<String> stringPropertyNames = properties
 				.stringPropertyNames();
 		for (String keyName : stringPropertyNames) {
