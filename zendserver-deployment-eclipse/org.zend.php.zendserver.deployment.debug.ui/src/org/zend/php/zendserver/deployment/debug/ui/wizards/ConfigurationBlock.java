@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -59,7 +59,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Button updateButton;
 	private Button autoDeployButton;
 
-	private IWizard wizard;
+	private IRunnableContext context;
 	private Combo applicationSelectionCombo;
 	private Combo autoDeployCombo;
 
@@ -67,17 +67,17 @@ public class ConfigurationBlock extends AbstractBlock {
 	private IZendTarget[] targetsList = new IZendTarget[0];
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
-	boolean autoDeploy;
+	private boolean autoDeploy;
+	private int currentAppId;
 
-
-	public ConfigurationBlock(IStatusChangeListener context) {
-		this(context, null);
+	public ConfigurationBlock(IStatusChangeListener listener) {
+		this(listener, null);
 	}
 
-	public ConfigurationBlock(IStatusChangeListener context, IWizard wizard) {
-		super(context);
+	public ConfigurationBlock(IStatusChangeListener listener, IRunnableContext context) {
+		super(listener);
 		this.targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
-		this.wizard = wizard;
+		this.context = context;
 		this.autoDeploy = isAutoDeployAvailable();
 	}
 
@@ -125,6 +125,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		userAppName.setText(helper.getAppName());
+		currentAppId = helper.getAppId();
 		initDefaultOperation(helper.getOperationType());
 	}
 
@@ -221,7 +222,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private ApplicationInfo getUpdateSelection() {
-		if (wizard != null) {
+		if (context != null) {
 			int idx = applicationSelectionCombo.getSelectionIndex();
 			if (idx <= -1) {
 				return null;
@@ -232,7 +233,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private ApplicationInfo getAutoDeploySelection() {
-		if (wizard != null) {
+		if (context != null) {
 			int idx = autoDeployCombo.getSelectionIndex();
 			if (idx <= -1) {
 				return null;
@@ -427,7 +428,9 @@ public class ConfigurationBlock extends AbstractBlock {
 					helper.setDefaultServer(false);
 					helper.setBaseURL(baseURL.toString());
 				}
-				initializeFields(helper);
+				if (currentAppId != helper.getAppId()) {
+					initializeFields(helper);
+				}
 				setBaseURLEnabled(false);
 			} catch (MalformedURLException e) {
 				Activator.log(e);
@@ -476,9 +479,9 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void getApplicationsInfo(Combo combo) {
 		final IZendTarget selectedTarget = getTarget();
-		if (selectedTarget != null && wizard != null) {
+		if (selectedTarget != null && context != null) {
 			try {
-				wizard.getContainer().run(true, false, new IRunnableWithProgress() {
+				context.run(true, false, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						StatusChangeListener listener = new StatusChangeListener(monitor);
 						ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());

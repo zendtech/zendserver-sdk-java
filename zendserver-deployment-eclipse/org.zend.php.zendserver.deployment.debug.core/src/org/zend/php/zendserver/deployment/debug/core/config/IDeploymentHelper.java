@@ -23,6 +23,8 @@ public interface IDeploymentHelper {
 
 	String getInstalledLocation();
 
+	String getVirtualHost();
+
 	boolean isIgnoreFailures();
 
 	boolean isDefaultServer();

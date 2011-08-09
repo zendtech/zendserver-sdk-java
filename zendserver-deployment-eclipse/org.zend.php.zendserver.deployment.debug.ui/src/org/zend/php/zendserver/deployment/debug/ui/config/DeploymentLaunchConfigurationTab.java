@@ -32,7 +32,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
-		configBlock = new ConfigurationBlock(this);
+		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
 		configBlock.createContents(composite);
 		parametersBlock = new ParametersBlock(this);
 		parametersBlock.createContents(composite);

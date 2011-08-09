@@ -156,4 +156,37 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.installedLocation = location;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IDeploymentHelper) {
+			IDeploymentHelper helper = (IDeploymentHelper) obj;
+			if (getAppId() != helper.getAppId()) {
+				return false;
+			}
+			if (!getAppName().equals(helper.getAppName())) {
+				return false;
+			}
+			if (!getBaseURL().toString().equals(helper.getBaseURL().toString())) {
+				return false;
+			}
+			if (!getInstalledLocation().equals(helper.getInstalledLocation())) {
+				return false;
+			}
+			if (getOperationType() != helper.getOperationType()) {
+				return false;
+			}
+			if (!getProjectName().equals(helper.getProjectName())) {
+				return false;
+			}
+			if (!getTargetId().equals(helper.getTargetId())) {
+				return false;
+			}
+			if (!getVirtualHost().equals(helper.getVirtualHost())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
 }

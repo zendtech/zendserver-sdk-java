@@ -7,17 +7,17 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
-import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 
 public class ConfigurationPage extends DeploymentWizardPage {
 
-	protected ConfigurationPage(IDeploymentHelper helper, IWizard wizard) {
+	protected ConfigurationPage(IDeploymentHelper helper, IRunnableContext context) {
 		super("Deployment Page", helper);
 		setDescription("Overall Deployment Settings");
 		setTitle("PHP Application Deployment");
-		this.block = new ConfigurationBlock(this, wizard);
+		this.block = new ConfigurationBlock(this, context);
 	}
 
 	protected ConfigurationPage() {

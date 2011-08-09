@@ -19,10 +19,10 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 public abstract class AbstractBlock {
 
 	private Composite container;
-	private IStatusChangeListener context;
+	private IStatusChangeListener listener;
 
-	public AbstractBlock(IStatusChangeListener context) {
-		this.context = context;
+	public AbstractBlock(IStatusChangeListener listener) {
+		this.listener = listener;
 	}
 
 	public abstract IStatus validatePage();
@@ -43,7 +43,7 @@ public abstract class AbstractBlock {
 	}
 
 	protected IStatusChangeListener getContext() {
-		return context;
+		return listener;
 	}
 
 	protected Combo createLabelWithCombo(String labelText, String tooltip, Composite container) {
@@ -53,7 +53,7 @@ public abstract class AbstractBlock {
 		combo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				context.statusChanged(validatePage());
+				listener.statusChanged(validatePage());
 			}
 		});
 		combo.setToolTipText(tooltip);
@@ -67,7 +67,7 @@ public abstract class AbstractBlock {
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				context.statusChanged(validatePage());
+				listener.statusChanged(validatePage());
 			}
 		});
 		text.setToolTipText(tooltip);

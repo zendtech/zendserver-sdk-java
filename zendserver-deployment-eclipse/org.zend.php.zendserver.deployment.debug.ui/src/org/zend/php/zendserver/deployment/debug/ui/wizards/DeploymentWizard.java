@@ -37,9 +37,10 @@ public class DeploymentWizard extends Wizard {
 				(IFile) descriptor);
 		this.parametersPage = new ParametersPage(project, helper);
 		if (helper == null || helper.getProjectName().isEmpty()) {
-			helper = createDefaultHelper(project);
+			this.helper = createDefaultHelper(project);
+		} else {
+			this.helper = helper;
 		}
-		this.configPage = new ConfigurationPage(helper, this);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
@@ -56,6 +57,7 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public void addPages() {
 		super.addPages();
+		this.configPage = new ConfigurationPage(helper, getContainer());
 		addPage(configPage);
 		List<IParameter> parameters = model.getDescriptorModel().getParameters();
 		if (parameters != null && parameters.size() > 0) {
