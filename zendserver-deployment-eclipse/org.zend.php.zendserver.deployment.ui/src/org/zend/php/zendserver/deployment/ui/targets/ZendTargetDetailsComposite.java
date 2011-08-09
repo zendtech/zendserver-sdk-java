@@ -93,4 +93,9 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		return new ZendTarget(id, host, defaultServer, data[2], data[3]);
 	}
 
+	@Override
+	public boolean hasPage() {
+		return true;
+	}
+
 }
