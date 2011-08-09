@@ -22,13 +22,13 @@ public class TargetDetailsPage extends WizardPage {
 	
 	private IZendTarget target;
 	
-	protected TargetDetailsPage(AbstractTargetDetailsComposite[] pages) {
+	public TargetDetailsPage(Contribution[] elements) {
 		super(Messages.TargetDetailsPage_TargetDetails);
 		setTitle(Messages.TargetDetailsPage_AddTarget);
 		setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
 		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 		
-		composite = new TargetDetailsComposite(pages);
+		composite = new TargetDetailsComposite(elements);
 	}
 
 	public void createControl(Composite parent) {

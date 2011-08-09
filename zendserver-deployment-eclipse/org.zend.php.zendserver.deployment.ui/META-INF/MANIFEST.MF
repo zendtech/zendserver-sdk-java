@@ -22,6 +22,17 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions
-Export-Package: org.zend.php.zendserver.deployment.ui.actions
+Export-Package: org.zend.php.zendserver.deployment.ui,
+ org.zend.php.zendserver.deployment.ui.actions,
+ org.zend.php.zendserver.deployment.ui.commands,
+ org.zend.php.zendserver.deployment.ui.contentassist,
+ org.zend.php.zendserver.deployment.ui.contributions,
+ org.zend.php.zendserver.deployment.ui.editors,
+ org.zend.php.zendserver.deployment.ui.editors.propertiestext,
+ org.zend.php.zendserver.deployment.ui.editors.text,
+ org.zend.php.zendserver.deployment.ui.preferences,
+ org.zend.php.zendserver.deployment.ui.targets,
+ org.zend.php.zendserver.deployment.ui.views,
+ org.zend.php.zendserver.deployment.ui.wizards
 Bundle-ClassPath: swt.elevate.jar,
  .

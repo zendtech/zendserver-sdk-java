@@ -44,6 +44,10 @@ public class ValidateTargetJob extends Job {
 					e.getMessage(), e);
 		}
 
+		if (target == null) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Target was not created.");
+		}
+		
 		String message = target.validateTarget();
 		if (message != null) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);

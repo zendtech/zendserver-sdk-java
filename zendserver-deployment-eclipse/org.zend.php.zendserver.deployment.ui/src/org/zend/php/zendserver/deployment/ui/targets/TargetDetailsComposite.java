@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
 /**
@@ -30,8 +31,19 @@ public class TargetDetailsComposite {
 	
 	private int currentComposite;
 	
-	public TargetDetailsComposite(AbstractTargetDetailsComposite[] pages) {
-		targetComposites = pages;
+	public TargetDetailsComposite(Contribution[] elements) {
+		AbstractTargetDetailsComposite[] composites = new AbstractTargetDetailsComposite[elements.length];
+		for (int i = 0; i < elements.length; i++) {
+			try {
+				composites[i] = (AbstractTargetDetailsComposite) elements[i].control.newInstance();
+			} catch (InstantiationException e) {
+				Activator.log(e);
+			} catch (IllegalAccessException e) {
+				Activator.log(e);
+			}
+		}
+		
+		targetComposites = composites;
 	}
 	
 	/**
@@ -99,21 +111,27 @@ public class TargetDetailsComposite {
 	 */
 	public void setType(String name) {
 		int idx = -1;
-		for (int i = 0; idx == -1 && i < targetComposites.length; i++) {
-			if (name.equals(targetComposites[i].getClass().getName())) {
-				idx = i;
+		if (name != null) {
+			for (int i = 0; idx == -1 && i < targetComposites.length; i++) {
+				if (name.equals(targetComposites[i].getClass().getName())) {
+					idx = i;
+				}
 			}
 		}
 		
-		if (composites[currentComposite] != null) {
-			composites[currentComposite].setVisible(false);
-			((GridData)composites[currentComposite].getLayoutData()).exclude = true;
+		if (currentComposite != -1) {
+			if (composites[currentComposite] != null) {
+				composites[currentComposite].setVisible(false);
+				((GridData)composites[currentComposite].getLayoutData()).exclude = true;
+			}
 		}
 		currentComposite = idx;
 		
-		if (composites[currentComposite] != null) {
-			composites[currentComposite].setVisible(true);
-			((GridData)composites[currentComposite].getLayoutData()).exclude = false;
+		if (currentComposite != -1) {
+			if (composites[currentComposite] != null) {
+				composites[currentComposite].setVisible(true);
+				((GridData)composites[currentComposite].getLayoutData()).exclude = false;
+			}
 		}
 		
 		clientArea.layout();

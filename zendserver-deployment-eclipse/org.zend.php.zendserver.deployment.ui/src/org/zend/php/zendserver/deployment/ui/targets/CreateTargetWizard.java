@@ -9,7 +9,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -39,28 +38,18 @@ public class CreateTargetWizard extends Wizard {
 		setWindowTitle(Messages.AddTargetAction_AddTarget);
 		
 		Contribution[] elements = NewTargetContributionsFactory.getElements();
-		AbstractTargetDetailsComposite[] composites = new AbstractTargetDetailsComposite[elements.length];
-		for (int i = 0; i < elements.length; i++) {
-			try {
-				composites[i] = (AbstractTargetDetailsComposite) elements[i].control.newInstance();
-			} catch (InstantiationException e) {
-				Activator.log(e);
-			} catch (IllegalAccessException e) {
-				Activator.log(e);
-			}
-		}
 		
 		typePage = new SelectTargetTypePage(elements);
-		detailsPage = new TargetDetailsPage(composites);
+		detailsPage = new TargetDetailsPage(elements);
 		
-		typePage.addPropertyChangeListener(SelectTargetTypePage.PROP_TYPE, new PropertyChangeListener() {
+		typePage.getSelectTargetType().addPropertyChangeListener(SelectTargetType.PROP_TYPE, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
-				detailsPage.setType(typePage.getType());
+				detailsPage.setType(typePage.getSelectTargetType().getType());
 				dialog.updateButtons();
 			}
 		});
-		typePage.addPropertyChangeListener(SelectTargetTypePage.PROP_DOUBLECLICK, new PropertyChangeListener() {
+		typePage.getSelectTargetType().addPropertyChangeListener(SelectTargetType.PROP_DOUBLECLICK, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (detailsPage.isPageComplete()) {
