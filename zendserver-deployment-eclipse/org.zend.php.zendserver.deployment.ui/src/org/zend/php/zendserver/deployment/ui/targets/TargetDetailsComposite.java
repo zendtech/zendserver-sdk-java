@@ -119,7 +119,7 @@ public class TargetDetailsComposite {
 			}
 		}
 		
-		if (currentComposite != -1) {
+		if ((currentComposite != -1) && (composites != null)) {
 			if (composites[currentComposite] != null) {
 				composites[currentComposite].setVisible(false);
 				((GridData)composites[currentComposite].getLayoutData()).exclude = true;
@@ -127,14 +127,16 @@ public class TargetDetailsComposite {
 		}
 		currentComposite = idx;
 		
-		if (currentComposite != -1) {
+		if ((currentComposite != -1) && (composites != null)) {
 			if (composites[currentComposite] != null) {
 				composites[currentComposite].setVisible(true);
 				((GridData)composites[currentComposite].getLayoutData()).exclude = false;
 			}
 		}
 		
-		clientArea.layout();
+		if (clientArea != null) {
+			clientArea.layout();
+		}
 	}
 	
 	public boolean hasPage(String name) {
@@ -145,7 +147,7 @@ public class TargetDetailsComposite {
 			}
 		}
 		
-		return (idx >= 0) && (idx < composites.length) && (composites[idx] != null);
+		return (idx != -1) && targetComposites[idx].hasPage();
 	}
 
 	/**

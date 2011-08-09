@@ -112,4 +112,10 @@ public abstract class AbstractTargetDetailsComposite {
 	public IZendTarget getTarget() {
 		return result;
 	}
+
+	/**
+	 * Early checking if create() returns any GUI, or not. Some target types don't need GUI - e.g. local target detection.
+	 * @return
+	 */
+	abstract public boolean hasPage();
 }

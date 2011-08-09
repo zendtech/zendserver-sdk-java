@@ -164,4 +164,9 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	        return bais;
 	    }
 
+		@Override
+		public boolean hasPage() {
+			return true;
+		}
+
 }

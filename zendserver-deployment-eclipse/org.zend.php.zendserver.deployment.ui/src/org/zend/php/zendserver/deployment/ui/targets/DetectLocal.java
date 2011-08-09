@@ -33,4 +33,9 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 		return detectTargetAction.getDetectedTarget();
 	}
 
+	@Override
+	public boolean hasPage() {
+		return false;
+	}
+
 }
