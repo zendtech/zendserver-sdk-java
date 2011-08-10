@@ -120,7 +120,7 @@ public class TargetDetailsComposite {
 		}
 		
 		if ((currentComposite != -1) && (composites != null)) {
-			if (composites[currentComposite] != null) {
+			if ((composites[currentComposite] != null) && (!composites[currentComposite].isDisposed())) {
 				composites[currentComposite].setVisible(false);
 				((GridData)composites[currentComposite].getLayoutData()).exclude = true;
 			}
@@ -128,13 +128,13 @@ public class TargetDetailsComposite {
 		currentComposite = idx;
 		
 		if ((currentComposite != -1) && (composites != null)) {
-			if (composites[currentComposite] != null) {
+			if ((composites[currentComposite] != null) && (!composites[currentComposite].isDisposed())) {
 				composites[currentComposite].setVisible(true);
 				((GridData)composites[currentComposite].getLayoutData()).exclude = false;
 			}
 		}
 		
-		if (clientArea != null) {
+		if ((clientArea != null) && (! clientArea.isDisposed())) {
 			clientArea.layout();
 		}
 	}

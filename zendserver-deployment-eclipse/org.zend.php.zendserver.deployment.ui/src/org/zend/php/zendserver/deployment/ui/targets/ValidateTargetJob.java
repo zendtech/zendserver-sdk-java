@@ -53,11 +53,15 @@ public class ValidateTargetJob extends Job {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
 		}
 
-		try {
-			target.connect();
-		} catch (WebApiException ex) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					ex.getMessage(), ex);
+		if (target.isTemporary()) {
+			validatedTarget = target;
+		} else {
+			try {
+				target.connect();
+			} catch (WebApiException ex) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						ex.getMessage(), ex);
+			}
 		}
 
 		validatedTarget = target;
