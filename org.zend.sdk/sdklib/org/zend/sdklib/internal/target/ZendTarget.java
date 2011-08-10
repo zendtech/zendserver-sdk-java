@@ -36,6 +36,7 @@ public class ZendTarget implements IZendTarget {
 	private String key;
 	private String secretKey;
 	private Properties properties;
+	private boolean isTemporary;
 
 	/**
 	 * Mainly used for loading
@@ -73,7 +74,16 @@ public class ZendTarget implements IZendTarget {
 
 		validateTarget();
 	}
+	
+	public ZendTarget(String id, URL host, URL defaultServerURL, String key, String secretKey, boolean temporary) {
+		this(id, host, defaultServerURL, key, secretKey);
+		this.isTemporary = temporary;
+	}
 
+	public boolean isTemporary() {
+		return isTemporary;
+	}
+	
 	/**
 	 * 
 	 * @return null or success, or an error message otherwise
