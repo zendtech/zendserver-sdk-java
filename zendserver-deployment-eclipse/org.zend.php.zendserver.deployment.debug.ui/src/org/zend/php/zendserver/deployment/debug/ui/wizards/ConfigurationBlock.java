@@ -59,7 +59,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Button autoDeployButton;
 
 	private IRunnableContext context;
-	private Combo applicationSelectionCombo;
+	private Combo updateCombo;
 	private Combo autoDeployCombo;
 
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
@@ -119,26 +119,27 @@ public class ConfigurationBlock extends AbstractBlock {
 		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		userAppName.setText(helper.getAppName());
 		currentAppId = helper.getAppId();
-		initDefaultOperation(helper.getOperationType());
+		initDefaultOperation(helper);
 	}
 
-	public void initDefaultOperation(int operationType) {
-		switch (operationType) {
+	public void initDefaultOperation(IDeploymentHelper helper) {
+		switch (helper.getOperationType()) {
 		case IDeploymentHelper.DEPLOY:
-			deployButton.setSelection(true);
+			if (!deployButton.getSelection()) {
+				deployButton.setSelection(true);
+				enableDeploySection();
+			}
 			break;
 		case IDeploymentHelper.UPDATE:
 			if (!updateButton.getSelection()) {
 				updateButton.setSelection(true);
-				enableAutoDeploySection(false);
-				enableApplicationSelectionSection(true);
+				enableUpdateSection();
 			}
 			break;
 		case IDeploymentHelper.AUTO_DEPLOY:
 			if (autoDeploy && !autoDeployButton.getSelection()) {
 				autoDeployButton.setSelection(true);
-				enableApplicationSelectionSection(false);
-				enableAutoDeploySection(true);
+				enableAutoDeploySection();
 			}
 			break;
 		default:
@@ -216,7 +217,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private ApplicationInfo getUpdateSelection() {
 		if (context != null) {
-			int idx = applicationSelectionCombo.getSelectionIndex();
+			int idx = updateCombo.getSelectionIndex();
 			if (idx <= -1) {
 				return null;
 			}
@@ -266,7 +267,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		}
 		if (getOperationType() == IDeploymentHelper.UPDATE) {
-			int index = applicationSelectionCombo.getSelectionIndex();
+			int index = updateCombo.getSelectionIndex();
 			if (index != -1) {
 				return applicationInfos[index].getInstalledLocation();
 			}
@@ -329,8 +330,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableAutoDeploySection(false);
-				enableApplicationSelectionSection(false);
+				enableDeploySection();
 			}
 		});
 
@@ -339,8 +339,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
-					enableAutoDeploySection(false);
-					enableApplicationSelectionSection(true);
+					enableUpdateSection();
 				}
 			}
 		});
@@ -348,7 +347,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
-					getApplicationsInfo(applicationSelectionCombo);
+					getApplicationsInfo(updateCombo);
 				}
 				if (autoDeploy && autoDeployButton.getSelection()) {
 					getApplicationsInfo(autoDeployCombo);
@@ -356,13 +355,13 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		});
 
-		applicationSelectionCombo = createLabelWithCombo("Choose application to update:", "",
+		updateCombo = createLabelWithCombo("Choose application to update:", "",
 				container);
-		applicationSelectionCombo.setEnabled(false);
-		applicationSelectionCombo.addSelectionListener(new SelectionAdapter() {
+		updateCombo.setEnabled(false);
+		updateCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillFieldsByAppInfo(applicationSelectionCombo);
+				fillFieldsByAppInfo(updateCombo);
 			}
 		});
 
@@ -372,8 +371,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (autoDeployButton.getSelection()) {
-						enableApplicationSelectionSection(false);
-						enableAutoDeploySection(true);
+						enableAutoDeploySection();
 					}
 				}
 			});
@@ -430,34 +428,29 @@ public class ConfigurationBlock extends AbstractBlock {
 		return button;
 	}
 
-	private void enableApplicationSelectionSection(boolean value) {
-		if (value) {
-			getApplicationsInfo(applicationSelectionCombo);
-			applicationSelectionCombo.setEnabled(true);
-		} else {
-			applicationSelectionCombo.setEnabled(false);
-			IDeploymentHelper helper = new DeploymentHelper();
-			helper.setOperationType(getOperationType());
-			initializeFields(helper);
-		}
-		setBaseURLEnabled(!value);
-		setUserAppNameEnabled(!value);
+	private void enableDeploySection() {
+		updateCombo.setEnabled(false);
+		IDeploymentHelper helper = new DeploymentHelper();
+		helper.setOperationType(getOperationType());
+		initializeFields(helper);
+		setBaseURLEnabled(true);
+		setUserAppNameEnabled(true);
 	}
 
-	private void enableAutoDeploySection(boolean value) {
-		if (autoDeploy) {
-			if (value) {
-				getApplicationsInfo(autoDeployCombo);
-				autoDeployCombo.setEnabled(true);
-			} else {
-				autoDeployCombo.setEnabled(false);
-				IDeploymentHelper helper = new DeploymentHelper();
-				helper.setOperationType(getOperationType());
-				initializeFields(helper);
-			}
-			setBaseURLEnabled(!value);
-			setUserAppNameEnabled(!value);
-		}
+	private void enableUpdateSection() {
+		getApplicationsInfo(updateCombo);
+		updateCombo.setEnabled(true);
+		autoDeployCombo.setEnabled(false);
+		setBaseURLEnabled(false);
+		setUserAppNameEnabled(false);
+	}
+
+	private void enableAutoDeploySection() {
+		getApplicationsInfo(autoDeployCombo);
+		updateCombo.setEnabled(false);
+		autoDeployCombo.setEnabled(true);
+		setBaseURLEnabled(false);
+		setUserAppNameEnabled(false);
 	}
 
 	private void getApplicationsInfo(Combo combo) {
