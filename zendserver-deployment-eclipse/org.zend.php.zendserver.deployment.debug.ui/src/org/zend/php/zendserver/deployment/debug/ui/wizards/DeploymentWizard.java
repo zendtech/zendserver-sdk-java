@@ -37,16 +37,24 @@ public class DeploymentWizard extends Wizard {
 				(IFile) descriptor);
 		this.parametersPage = new ParametersPage(project, helper);
 		if (helper == null || helper.getProjectName().isEmpty()) {
-			this.helper = createDefaultHelper(project);
+			this.helper = createDefaultHelper();
 		} else {
-			this.helper = helper;
+			this.helper = updateHelper(helper);
 		}
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.deploymentWizard_Title);
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 	}
 
-	private IDeploymentHelper createDefaultHelper(IProject project) {
+	private IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
+		if (toUpdate.getBaseURL() == null) {
+			toUpdate.setBaseURL("http://default/" + project.getName());
+			toUpdate.setDefaultServer(true);
+		}
+		return toUpdate;
+	}
+
+	private IDeploymentHelper createDefaultHelper() {
 		IDeploymentHelper helper = new DeploymentHelper();
 		helper.setBaseURL("http://default/" + project.getName());
 		helper.setDefaultServer(true);

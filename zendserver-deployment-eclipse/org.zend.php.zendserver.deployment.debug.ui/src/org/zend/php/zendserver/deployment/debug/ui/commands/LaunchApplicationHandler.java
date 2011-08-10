@@ -55,6 +55,7 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		if (config == null) {
 			IDeploymentHelper targetHelper = new DeploymentHelper();
 			targetHelper.setTargetId(targetId);
+			targetHelper.setProjectName(project.getName());
 			DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			WizardDialog dialog = new WizardDialog(shell, wizard);
