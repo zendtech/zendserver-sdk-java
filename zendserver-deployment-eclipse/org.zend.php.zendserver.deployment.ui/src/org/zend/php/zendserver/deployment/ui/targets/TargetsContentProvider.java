@@ -2,7 +2,9 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 
 public class TargetsContentProvider implements ITreeContentProvider {
 
@@ -24,6 +26,10 @@ public class TargetsContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof IZendTarget) {
+			PHPLaunchConfigs cfgs = new PHPLaunchConfigs();
+			return cfgs.getLaunches((IZendTarget) parentElement);
+		}
 		return null;
 	}
 
