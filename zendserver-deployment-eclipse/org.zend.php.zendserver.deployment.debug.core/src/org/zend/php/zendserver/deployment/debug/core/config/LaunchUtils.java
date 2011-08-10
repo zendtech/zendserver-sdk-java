@@ -91,6 +91,7 @@ public class LaunchUtils {
 		if (baseURL != null) {
 			wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
 		}
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
 		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper.getBaseURL().toString());
 		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());
 		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());

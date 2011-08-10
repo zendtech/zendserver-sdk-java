@@ -69,14 +69,6 @@ public class DeploymentLaunchListener implements ILaunchListener {
 					return;
 				}
 				job.setUser(true);
-				job.addJobChangeListener(new JobChangeAdapter() {
-					@Override
-					public void done(IJobChangeEvent event) {
-						if (event.getResult().getSeverity() == IStatus.OK) {
-							updateLaunchConfiguration(launch, project);
-						}
-					}
-				});
 				job.schedule();
 				job.join();
 			}
@@ -85,6 +77,9 @@ public class DeploymentLaunchListener implements ILaunchListener {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
+	}
+
+	public void launchChanged(ILaunch launch) {
 	}
 
 	private void addJobListener(final ILaunch launch, final IProject project) {
@@ -98,16 +93,12 @@ public class DeploymentLaunchListener implements ILaunchListener {
 		});
 	}
 
-	public void launchChanged(ILaunch launch) {
-	}
-
 	private void updateLaunchConfiguration(final ILaunch launch, final IProject project) {
 		ILaunchConfigurationWorkingCopy wc;
 		try {
 			wc = launch.getLaunchConfiguration().getWorkingCopy();
 			IDeploymentHelper helper = job.getHelper();
 			LaunchUtils.updateLaunchConfiguration(project, helper, wc);
-			wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
 			if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
 				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
 						IDeploymentHelper.UPDATE);

@@ -68,7 +68,7 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			IDeploymentHelper updatedHelper = wizard.getHelper();
-			switch (helper.getOperationType()) {
+			switch (updatedHelper.getOperationType()) {
 			case IDeploymentHelper.DEPLOY:
 				job = new DeployLaunchJob(updatedHelper, project);
 				break;
