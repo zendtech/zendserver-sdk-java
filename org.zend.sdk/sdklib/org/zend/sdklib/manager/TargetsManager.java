@@ -158,7 +158,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 	}
 
 	/**
-	 * Returns a target that represents the localhost zend server
+	 * Returns a target that represents the localhost zend server.
+	 * Returned target may be not fully initialized, requiring some extra commands.
+	 * Clients should use {@link IZendTarget#isTemporary()} to test whether they can connect safely.
 	 * 
 	 * @param targetId
 	 *            target id to use, null if not specified
@@ -211,11 +213,6 @@ public class TargetsManager extends AbstractChangeNotifier {
 					// will be a failure here
 				}
 
-				log.error("Localhost target was detected, to apply the secret key please "
-						+ "consider running: ");
-				log.error(MessageFormat.format(
-						"\t> sudo ./zend detect target -k {0} -s {1}",
-						local.getKey(), local.getSecretKey()));
 				return local;
 			} else {
 				throw new PrivilegesException();
