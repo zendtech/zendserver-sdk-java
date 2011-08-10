@@ -2,6 +2,8 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -60,6 +62,19 @@ public class TargetsViewer {
 			
 			public void doubleClick(DoubleClickEvent event) {
 				new EditTargetAction(viewer).run();
+			}
+		});
+		
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
+			
+			public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+				refreshViewer();
+			}
+			
+			public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+			}
+			
+			public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 			}
 		});
 		
