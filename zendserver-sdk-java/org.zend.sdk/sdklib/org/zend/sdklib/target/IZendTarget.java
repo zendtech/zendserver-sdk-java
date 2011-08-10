@@ -67,4 +67,10 @@ public interface IZendTarget {
 	 * @throws WebApiException
 	 */
 	boolean connect() throws WebApiException;
+
+	/**
+	 * @return true if target was not fully initialized and e.g. requires some additional
+	 * operations before connecting to. False otherwise
+	 */
+	boolean isTemporary();
 }

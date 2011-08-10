@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.manager.DetectionException;
@@ -82,6 +83,14 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		
 		if (target == null) {
 			return false;
+		}
+		
+		if (target.isTemporary()) {
+			getLogger().error("Localhost target was detected, to apply the secret key please "
+					+ "consider running: ");
+			getLogger().error(MessageFormat.format(
+					"\t> sudo ./zend detect target -k {0} -s {1}",
+					target.getKey(), target.getSecretKey()));			
 		}
 
 		// announce target created

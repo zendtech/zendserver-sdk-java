@@ -104,7 +104,7 @@ public class ZendTargetAutoDetect {
 	public IZendTarget createTemporaryLocalhost(String targetId, String key) {
 		final String sk = generateSecretKey();
 
-		return new ZendTarget(targetId, localhost, getDefaultServerURL(), key, sk);
+		return new ZendTarget(targetId, localhost, getDefaultServerURL(), key, sk, true);
 	}
 
 	/**
