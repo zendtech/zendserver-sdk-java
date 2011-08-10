@@ -13,6 +13,8 @@ public interface IDeploymentHelper {
 
 	String getTargetId();
 
+	String getTargetHost();
+
 	int getAppId();
 
 	String getProjectName();
@@ -34,6 +36,8 @@ public interface IDeploymentHelper {
 	void setBaseURL(String baseURL);
 
 	void setTargetId(String targetId);
+
+	void setTargetHost(String targetHost);
 
 	void setAppId(int appId);
 

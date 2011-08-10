@@ -6,6 +6,8 @@ public enum DeploymentAttributes {
 	
 	TARGET_ID("targetId"), //$NON-NLS-1$
 	
+	TARGET_HOST("targetHost"),  //$NON-NLS-1$
+	
 	APP_ID("appId"), //$NON-NLS-1$
 	
 	PROJECT_NAME("projectName"), //$NON-NLS-1$

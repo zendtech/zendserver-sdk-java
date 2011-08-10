@@ -168,6 +168,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			helper.setBaseURL(url.toString());
 		}
 		helper.setTargetId(getTarget().getId());
+		helper.setTargetHost(getTarget().getHost().getHost());
 		if (getOperationType() == IDeploymentHelper.UPDATE) {
 			ApplicationInfo info = getUpdateSelection();
 			if (info != null) {
@@ -438,19 +439,19 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void enableUpdateSection() {
-		getApplicationsInfo(updateCombo);
-		updateCombo.setEnabled(true);
-		autoDeployCombo.setEnabled(false);
 		setBaseURLEnabled(false);
 		setUserAppNameEnabled(false);
+		autoDeployCombo.setEnabled(false);
+		getApplicationsInfo(updateCombo);
+		updateCombo.setEnabled(true);
 	}
 
 	private void enableAutoDeploySection() {
-		getApplicationsInfo(autoDeployCombo);
-		updateCombo.setEnabled(false);
-		autoDeployCombo.setEnabled(true);
 		setBaseURLEnabled(false);
 		setUserAppNameEnabled(false);
+		updateCombo.setEnabled(false);
+		getApplicationsInfo(autoDeployCombo);
+		autoDeployCombo.setEnabled(true);
 	}
 
 	private void getApplicationsInfo(Combo combo) {

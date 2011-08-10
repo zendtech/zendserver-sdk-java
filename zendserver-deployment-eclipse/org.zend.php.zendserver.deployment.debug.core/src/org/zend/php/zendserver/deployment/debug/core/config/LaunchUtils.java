@@ -48,7 +48,7 @@ public class LaunchUtils {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
-				getNewConfigurationName(project.getName()));
+				getNewConfigurationName(project.getName(), helper.getTargetHost()));
 
 		// Set the debugger ID and the configuration delegate for this launch
 		// configuration
@@ -98,6 +98,7 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
 		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
+		wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), helper.getTargetHost());
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
 		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
 		String location = helper.getInstalledLocation();
@@ -197,7 +198,7 @@ public class LaunchUtils {
 		return getFile(toCheck.toArray(new IResource[0]));
 	}
 
-	private static String getNewConfigurationName(String fileName) {
+	private static String getNewConfigurationName(String fileName, String targetHost) {
 		String configurationName = "New_configuration";
 		try {
 			IPath path = Path.fromOSString(fileName);
@@ -213,7 +214,8 @@ public class LaunchUtils {
 			// ignore and use default configurationName value
 		}
 		return DebugPlugin.getDefault().getLaunchManager()
-				.generateLaunchConfigurationName(configurationName);
+				.generateLaunchConfigurationName(configurationName)
+				+ "_" + targetHost;
 	}
 	
 	private static Server createPHPServer(URL baseURL, String targetId) {

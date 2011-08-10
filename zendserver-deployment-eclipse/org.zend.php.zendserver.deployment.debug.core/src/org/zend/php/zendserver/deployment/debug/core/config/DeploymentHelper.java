@@ -16,6 +16,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	private URL baseURL;
 	private String targetId;
+	private String targetHost;
 	private int appId;
 	private String projectName;
 	private Map<String, String> userParams;
@@ -47,6 +48,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 					EMPTY_STRING));
 			helper.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
 					EMPTY_STRING));
+			helper.setTargetHost(config.getAttribute(DeploymentAttributes.TARGET_HOST.getName(),
+					EMPTY_STRING));
 			helper.setAppId(config.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
 			helper.setProjectName(config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
 					EMPTY_STRING));
@@ -74,6 +77,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public String getTargetId() {
 		return targetId;
+	}
+
+	public String getTargetHost() {
+		return targetHost;
 	}
 
 	public int getAppId() {
@@ -122,6 +129,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
+	}
+
+	public void setTargetHost(String targetHost) {
+		this.targetHost = targetHost;
 	}
 
 	public void setAppId(int appId) {

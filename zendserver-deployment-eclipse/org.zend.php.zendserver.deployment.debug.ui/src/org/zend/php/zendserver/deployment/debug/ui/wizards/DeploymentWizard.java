@@ -48,7 +48,6 @@ public class DeploymentWizard extends Wizard {
 
 	private IDeploymentHelper createDefaultHelper(IProject project) {
 		IDeploymentHelper helper = new DeploymentHelper();
-		helper.setAppName(project.getName());
 		helper.setBaseURL("http://default/" + project.getName());
 		helper.setDefaultServer(true);
 		return helper;
