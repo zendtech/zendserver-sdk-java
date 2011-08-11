@@ -9,7 +9,6 @@ import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
@@ -25,34 +24,31 @@ public class TestWebApiExceptions {
 	public void testUnexpectedResponseCode() throws WebApiException,
 			IOException {
 
-		ServiceResponse response = ResponseFactory.createErrorResponse(
-				"testException", ErrorCode.notImplementedByEdition);
+		ServiceResponse response = ResponseFactory.createErrorResponse("testException",
+				ResponseCode.NOT_IMPLEMENTED_BY_EDITION);
 		Representation representation = new DomRepresentation(
 				MediaType.APPLICATION_XML,
 				((ServiceResponse) response).getData());
 		UnexpectedResponseCode exception = new UnexpectedResponseCode(response
 				.getStatus().getCode(), representation);
-		Assert.assertEquals(ResponseCode.METHOD_NOT_ALLOWED,
+		Assert.assertEquals(ResponseCode.NOT_IMPLEMENTED_BY_EDITION,
 				exception.getResponseCode());
-		Assert.assertTrue(ResponseCode.METHOD_NOT_ALLOWED.getDescription()
-				.equals(exception.getMessage()));
+		Assert.assertEquals(ResponseCode.NOT_IMPLEMENTED_BY_EDITION.getDescription(),
+				exception.getMessage());
 	}
 
 	@Test
-	public void testEmptyUnexpectedResponseCode() throws WebApiException,
-			IOException {
+	public void testEmptyUnexpectedResponseCode() throws WebApiException, IOException {
 		// Get response without errorMessage node
-		ServiceResponse response = ResponseFactory.createResponse(
-				"getSystemInfo", ResponseCode.METHOD_NOT_ALLOWED);
-		Representation representation = new DomRepresentation(
-				MediaType.APPLICATION_XML,
+		ServiceResponse response = ResponseFactory.createResponse("getSystemInfo",
+				ResponseCode.NOT_IMPLEMENTED_BY_EDITION);
+		Representation representation = new DomRepresentation(MediaType.APPLICATION_XML,
 				((ServiceResponse) response).getData());
-		UnexpectedResponseCode exception = new UnexpectedResponseCode(response
-				.getStatus().getCode(), representation);
-		Assert.assertEquals(ResponseCode.METHOD_NOT_ALLOWED,
-				exception.getResponseCode());
-		Assert.assertTrue(ResponseCode.METHOD_NOT_ALLOWED.getDescription()
-				.equals(exception.getMessage()));
+		UnexpectedResponseCode exception = new UnexpectedResponseCode(response.getStatus()
+				.getCode(), representation);
+		Assert.assertNotSame(ResponseCode.NOT_IMPLEMENTED_BY_EDITION, exception.getResponseCode());
+		Assert.assertNotSame(ResponseCode.NOT_IMPLEMENTED_BY_EDITION.getDescription(),
+				exception.getMessage());
 	}
 
 	@Test

@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.mockito.Mockito;
 import org.restlet.data.Protocol;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.server.RequestHandler;
@@ -86,12 +85,10 @@ public abstract class AbstractTestServer {
 		}
 	}
 
-	protected void initErrorMock(ServerResponse toMock, String operation,
-			ErrorCode code) {
+	protected void initErrorMock(ServerResponse toMock, String operation, ResponseCode code) {
 		if (Configuration.getType() == ServerType.EMBEDDED) {
 			try {
-				when(toMock).thenReturn(
-						ResponseFactory.createErrorResponse(operation, code));
+				when(toMock).thenReturn(ResponseFactory.createErrorResponse(operation, code));
 			} catch (IOException e) {
 				Assert.fail(e.getMessage());
 			}

@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.restlet.ext.xml.DomRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.Configuration;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
@@ -43,7 +42,8 @@ public class ResponseFactory {
 	}
 
 	public static ServiceResponse createErrorResponse(String requestName,
-			ErrorCode code) throws IOException {
+ ResponseCode code)
+			throws IOException {
 		String file = ServerUtils.createXMLFileName("errorBody");
 		DomRepresentation dom = ServerUtils.readDomRepresentation(file);
 		setRequestData(requestName, dom);

@@ -28,7 +28,7 @@ public class Response implements IResponse {
 	protected final IResponseData data;
 
 	public Response(IRequest request, int responseCode, IResponseData info) {
-		this.code = ResponseCode.byCode(responseCode);
+		this.code = ResponseCode.byHttpCode(responseCode);
 		this.request = request;
 		this.data = info;
 		this.version = request.getVersion();

@@ -59,12 +59,11 @@ public class TestResponse {
 	@Test
 	public void testResponseCode() {
 		ResponseCode code = ResponseCode.OK;
-		Assert.assertEquals(ResponseCode.OK,
-				ResponseCode.byCode(code.getCode()));
-		Assert.assertEquals(ResponseCode.OK.getDescription(), ResponseCode
-				.byCode(code.getCode()).getDescription());
+		Assert.assertEquals(ResponseCode.OK, ResponseCode.byHttpCode(code.getCode()));
+		Assert.assertEquals(ResponseCode.OK.getDescription(),
+				ResponseCode.byHttpCode(code.getCode()).getDescription());
 		Assert.assertEquals(ResponseCode.UNKNOWN,
-				ResponseCode.byCode((int) (Math.random() * 100000)));
+				ResponseCode.byHttpCode((int) (Math.random() * 100000)));
 	}
 
 	@Test

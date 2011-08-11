@@ -23,16 +23,20 @@ public class UnexpectedResponseCode extends WebApiException {
 
 	private static final long serialVersionUID = -2095471259882902506L;
 
-	final private int code;
+	final private int httpCode;
 	final private String message;
+	private String errorCode;
 
-	public UnexpectedResponseCode(int responseCode, Representation handle) {
-		this.code = responseCode;
+
+	public UnexpectedResponseCode(int httpCode, Representation handle) {
+		this.httpCode = httpCode;
 		final DomRepresentation domRepresentation = new DomRepresentation(
 				handle);
-		final Node node = domRepresentation
+		Node node = domRepresentation
 				.getNode("/zendServerAPIResponse/errorData/errorMessage");
 		this.message = node == null ? null : node.getTextContent().trim();
+		node = domRepresentation.getNode("/zendServerAPIResponse/errorData/errorCode");
+		this.errorCode = node == null ? null : node.getTextContent().trim();
 	}
 
 	@Override
@@ -42,6 +46,12 @@ public class UnexpectedResponseCode extends WebApiException {
 
 	@Override
 	public ResponseCode getResponseCode() {
-		return ResponseCode.byCode(code);
+		if (httpCode == 200) {
+			return ResponseCode.OK;
+		}
+		if (httpCode == 202) {
+			return ResponseCode.ACCEPTED;
+		}
+		return ResponseCode.byErrorCode(errorCode);
 	}
 }

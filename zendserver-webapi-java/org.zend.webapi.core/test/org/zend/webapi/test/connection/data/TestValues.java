@@ -4,7 +4,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
-import org.zend.webapi.core.connection.data.values.ErrorCode;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
@@ -70,13 +69,6 @@ public class TestValues {
 				version.getFullName());
 		Assert.assertEquals(WebApiVersion.UNKNOWN, WebApiVersion
 				.byFullName(String.valueOf(Math.random() * 100000)));
-	}
-
-	@Test
-	public void testErrorCode() {
-		ErrorCode error = ErrorCode.notImplementedByEdition;
-		Assert.assertEquals(405, error.getCode());
-		Assert.assertNotNull(error.getMessage());
 	}
 
 	@Test
