@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -11,14 +9,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.TargetDetailsDialog;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiException;
 
 /**
  * Opens editing dialog and updates the Target accordingly to user changes.
@@ -63,18 +59,18 @@ public class EditTargetAction extends Action implements
 			return; // canceled by user
 		}
 
+		
 		IZendTarget newTarget = dialog.getTarget();
+		if (newTarget == null) {
+			return; // validation error while editing target
+		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		try {
-			tm.updateTarget(toEdit.getId(), newTarget.getHost().toString(), newTarget
-					.getDefaultServerURL().toString(), newTarget.getKey(), newTarget.getSecretKey());
-			tm.add(newTarget);
-		} catch (WebApiException e) {
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e), StatusManager.SHOW);
-		}
+		
+		String defaultServer = newTarget.getDefaultServerURL() != null ? newTarget.getDefaultServerURL().toString() : null;
+		String host = newTarget.getHost() != null ? newTarget.getHost().toString() : null;
+
+		tm.updateTarget(toEdit.getId(), host, defaultServer , newTarget.getKey(), newTarget.getSecretKey());
 	}
 
 	@Override
