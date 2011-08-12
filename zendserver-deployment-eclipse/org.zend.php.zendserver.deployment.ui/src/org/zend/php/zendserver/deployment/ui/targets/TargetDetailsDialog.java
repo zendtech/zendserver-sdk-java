@@ -36,8 +36,6 @@ public class TargetDetailsDialog extends Dialog {
 
 	private IZendTarget defaultTarget;
 
-	private IZendTarget createdTarget;
-
 	public TargetDetailsDialog(Shell parentShell) {
 		super(parentShell);
 	}
