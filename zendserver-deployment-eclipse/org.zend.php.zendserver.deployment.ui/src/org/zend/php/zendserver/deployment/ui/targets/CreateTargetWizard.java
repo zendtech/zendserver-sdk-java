@@ -2,12 +2,14 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
@@ -70,16 +72,28 @@ public class CreateTargetWizard extends Wizard {
 			return true;
 		}
 		
-		// otherwise, run validate
-		Job job = detailsPage.validate();
-		
-		Display display = Display.getDefault();
-		while (job.getResult() == null) {
-			if (! display.readAndDispatch()) {
-				display.sleep();
-			}
+		try {
+			getContainer().run(true, true, new IRunnableWithProgress() {
+				
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					Job job = detailsPage.validate();
+					monitor.beginTask(job.getName(), IProgressMonitor.UNKNOWN);
+					while (job.getResult() == null) {
+						Thread.sleep(500);
+						if (monitor.isCanceled()) {
+							job.getThread().interrupt();
+						}
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 		
 		return detailsPage.getTarget() != null;
 	}

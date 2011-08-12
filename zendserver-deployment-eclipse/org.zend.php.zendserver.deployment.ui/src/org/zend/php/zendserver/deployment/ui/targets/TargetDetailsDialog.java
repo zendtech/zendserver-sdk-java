@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -96,6 +97,10 @@ public class TargetDetailsDialog extends Dialog {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
 				final Object newVal = evt.getNewValue();
+				if ((errorLabel == null) || (errorLabel.isDisposed())) {
+					return;
+				}
+				
 				errorLabel.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						errorLabel.setText((String)newVal);
@@ -128,8 +133,13 @@ public class TargetDetailsDialog extends Dialog {
 	
 	@Override
 	protected void okPressed() {
-		targetComposite.validate();
-		
+		Job job = targetComposite.validate();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		super.okPressed();
 	}
 	
@@ -141,7 +151,7 @@ public class TargetDetailsDialog extends Dialog {
 	 * @return
 	 */
 	public IZendTarget getTarget() {
-		return createdTarget;
+		return targetComposite.getTarget();
 	}
 
 	/**
