@@ -199,14 +199,14 @@ public class LaunchUtils {
 	}
 
 	private static String getNewConfigurationName(String fileName, String targetHost) {
-		String configurationName = "New_configuration";
+		String configurationName = "New_configuration"; //$NON-NLS-1$
 		try {
 			IPath path = Path.fromOSString(fileName);
 			String fileExtention = path.getFileExtension();
 			String lastSegment = path.lastSegment();
 			if (lastSegment != null) {
 				if (fileExtention != null) {
-					lastSegment = lastSegment.replaceFirst("." + fileExtention, "");
+					lastSegment = lastSegment.replaceFirst("." + fileExtention, ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				configurationName = lastSegment;
 			}
@@ -215,15 +215,15 @@ public class LaunchUtils {
 		}
 		return DebugPlugin.getDefault().getLaunchManager()
 				.generateLaunchConfigurationName(configurationName)
-				+ "_" + targetHost;
+				+ "_" + targetHost; //$NON-NLS-1$
 	}
 	
 	private static Server createPHPServer(URL baseURL, String targetId) {
 		try {
-			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), "");
+			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), ""); //$NON-NLS-1$
 			String urlString = url.toString();
-			Server server = new Server("Zend Target (id: " + targetId + " host: " + url.getHost()
-					+ ")", urlString, urlString, "");
+			Server server = new Server("Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
+					+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			ServersManager.addServer(server);
 			ServersManager.save();
 			return server;

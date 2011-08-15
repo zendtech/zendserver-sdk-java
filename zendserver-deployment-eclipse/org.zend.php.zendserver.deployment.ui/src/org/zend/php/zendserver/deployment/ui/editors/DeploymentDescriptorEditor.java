@@ -43,7 +43,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.descriptor.ResourceMapper;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
@@ -81,8 +80,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private IDescriptorContainer fModel;
 	private IDocumentProvider fDocumentProvider;
 	private String iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
-
-	private ResourceMapper fResourceMapper;
 
 	private FileEditorInput propertiesInput;
 
@@ -388,13 +385,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	public IDocumentProvider getDocumentProvider() {
 		return fDocumentProvider;
-	}
-
-	public ResourceMapper getResourceMapper() {
-		if (fResourceMapper == null) {
-			fResourceMapper = new ResourceMapper(fModel);
-		}
-		return fResourceMapper;
 	}
 
 	public FileEditorInput getPropertiesInput() {

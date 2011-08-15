@@ -55,7 +55,7 @@ public class TargetsCombo {
 				if (target.getId().equals(defaultId)) {
 					defaultNo = i;
 				}
-				targetsCombo.add(target.getHost() + " (Id: " + target.getId() + ")");
+				targetsCombo.add(target.getHost() + " (Id: " + target.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				i++;
 			}
 		}
@@ -79,5 +79,9 @@ public class TargetsCombo {
 
 	public void setLabel(String text) {
 		this.labelText = text;
+	}
+	
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
 	}
 }

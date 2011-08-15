@@ -14,10 +14,12 @@ public class ParameterPasswordTester extends PropertyTester {
 
 	@Override
 	public String test(Feature feature, Object property, IModelObject object) {
-		boolean isPassword = IParameter.PASSWORD.equals(object.get(DeploymentDescriptorPackage.TYPE));
+		boolean isPassword = IParameter.PASSWORD.equals(object
+				.get(DeploymentDescriptorPackage.TYPE));
 		boolean notNull = (property != null);
-		boolean notEmpty = ((String)property).trim().length() > 0;
-		return (!isPassword) || (isPassword && notNull && notEmpty) ? null : Messages.ParameterPasswordTester_IdenticalIsRequired;
+		boolean notEmpty = notNull ? ((String) property).trim().length() > 0 : false;
+		return (!isPassword) || (isPassword && notNull && notEmpty) ? null
+				: Messages.ParameterPasswordTester_IdenticalIsRequired;
 	}
 
 }

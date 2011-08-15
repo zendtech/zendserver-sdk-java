@@ -157,10 +157,10 @@ public class Activator extends AbstractUIPlugin {
 	public Image createWorkspaceImage(String path, int height) {
 		Image image = null;
 		ImageDescriptor id = ImageDescriptor.createFromFile(null, path);
-		int origH = id.getImageData().height;
-		int origW = id.getImageData().width;
-		int width = origW * height / origH;
 		if (id != null) {
+			int origH = id.getImageData().height;
+			int origW = id.getImageData().width;
+			int width = origW * height / origH;
 			Image tmpImage = id.createImage();
 			image = resize(tmpImage, width, height);
 		}

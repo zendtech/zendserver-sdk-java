@@ -10,13 +10,14 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.ui.Messages;
 
 public class ConfigurationPage extends DeploymentWizardPage {
 
 	protected ConfigurationPage(IDeploymentHelper helper, IRunnableContext context) {
-		super("Deployment Page", helper);
-		setDescription("Overall Deployment Settings");
-		setTitle("PHP Application Deployment");
+		super(Messages.configurationPage_Name, helper);
+		setDescription(Messages.configurationPage_Description);
+		setTitle(Messages.configurationPage_Title);
 		this.block = new ConfigurationBlock(this, context);
 	}
 

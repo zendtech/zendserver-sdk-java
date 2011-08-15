@@ -48,7 +48,7 @@ public class DeploymentWizard extends Wizard {
 
 	private IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
 		if (toUpdate.getBaseURL() == null) {
-			toUpdate.setBaseURL("http://default/" + project.getName());
+			toUpdate.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 			toUpdate.setDefaultServer(true);
 		}
 		return toUpdate;
@@ -56,7 +56,7 @@ public class DeploymentWizard extends Wizard {
 
 	private IDeploymentHelper createDefaultHelper() {
 		IDeploymentHelper helper = new DeploymentHelper();
-		helper.setBaseURL("http://default/" + project.getName());
+		helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 		helper.setDefaultServer(true);
 		return helper;
 	}

@@ -7,7 +7,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 
 public class ParametersCategory {
 
-	public static final String SEPARATOR = "\\.";
+	public static final String SEPARATOR = "\\."; //$NON-NLS-1$
 
 	private IParameter parameter;
 	private String name;

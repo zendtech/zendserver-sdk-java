@@ -117,7 +117,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	private IProject getProject(ILaunchConfiguration config) throws CoreException {
-		String projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), "");
+		String projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), ""); //$NON-NLS-1$
 		if (!projectName.isEmpty()) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IResource resource = root.findMember(projectName);

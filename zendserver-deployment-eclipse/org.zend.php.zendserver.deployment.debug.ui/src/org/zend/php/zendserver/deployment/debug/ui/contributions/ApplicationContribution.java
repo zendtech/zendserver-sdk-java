@@ -24,9 +24,9 @@ import org.zend.php.zendserver.deployment.debug.ui.Activator;
 
 public class ApplicationContribution extends WorkbenchWindowControlContribution {
 
-	public static final String PROJECT_NAME = "projectName";
-	public static final String MODE = "mode";
-	public static final String TARGET_ID = "targetId";
+	public static final String PROJECT_NAME = "projectName"; //$NON-NLS-1$
+	public static final String MODE = "mode"; //$NON-NLS-1$
+	public static final String TARGET_ID = "targetId"; //$NON-NLS-1$
 
 	private String mode;
 	private String message;

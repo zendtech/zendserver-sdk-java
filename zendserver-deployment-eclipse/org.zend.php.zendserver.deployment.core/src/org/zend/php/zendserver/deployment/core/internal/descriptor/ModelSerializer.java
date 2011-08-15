@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -43,7 +42,6 @@ public class ModelSerializer {
 	private static final String AT = "@"; //$NON-NLS-1$
 	
 	private DocumentBuilderFactory domfactory;
-	private SAXParserFactory saxfactory;
 	private DocumentBuilder builder;
 	private XPath xpathObj;
 	
@@ -51,7 +49,6 @@ public class ModelSerializer {
 	private DocumentStore dest;
 
 	public ModelSerializer() {
-		saxfactory = SAXParserFactory.newInstance();
 		domfactory = DocumentBuilderFactory.newInstance();
 		try {
 			builder = domfactory.newDocumentBuilder();
@@ -194,7 +191,7 @@ public class ModelSerializer {
 					children.remove(i);
 				}
 				
-			} else throw new UnsupportedOperationException("Unsupported collection type "+c.type);
+			} else throw new UnsupportedOperationException("Unsupported collection type "+c.type); //$NON-NLS-1$
 		}
 	}
 	
@@ -242,7 +239,7 @@ public class ModelSerializer {
 						}
 						node.setTextContent((String)children.get(j));
 					}  else {
-						throw new UnsupportedOperationException("Unsupported collection type "+f.type);
+						throw new UnsupportedOperationException("Unsupported collection type "+f.type); //$NON-NLS-1$
 					}
 					
 					if (node != null) {

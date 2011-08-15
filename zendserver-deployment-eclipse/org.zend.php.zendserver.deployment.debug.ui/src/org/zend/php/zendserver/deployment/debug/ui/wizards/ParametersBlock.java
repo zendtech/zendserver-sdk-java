@@ -60,7 +60,7 @@ public class ParametersBlock extends AbstractBlock {
 			case CHECKBOX:
 				return String.valueOf(((Button) control).getSelection());
 			default:
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 
@@ -177,10 +177,10 @@ public class ParametersBlock extends AbstractBlock {
 		for (DeploymentParameter param : parameters) {
 			if (param.getParameter().isRequired() && param.getValue().isEmpty()) {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, param.getParameter()
-						.getDisplay() + " is required.");
+						.getDisplay() + Messages.parametersPage_ValidationError_ParamRequired);
 			}
 		}
-		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.deploymentWizard_Message);
+		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.parametersPage_Description);
 	}
 
 	private void createParameterGroups(Composite container) {

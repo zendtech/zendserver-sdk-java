@@ -12,7 +12,7 @@ import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 
 public class DeploymentHelper implements IDeploymentHelper {
 
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private URL baseURL;
 	private String targetId;
@@ -126,7 +126,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 		try {
 			this.baseURL = new URL(baseURL);
 		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException("Invalid base URL: " + baseURL);
+			throw new IllegalArgumentException("Invalid base URL: " + baseURL); //$NON-NLS-1$
 		}
 	}
 
@@ -168,39 +168,6 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setInstalledLocation(String location) {
 		this.installedLocation = location;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof IDeploymentHelper) {
-			IDeploymentHelper helper = (IDeploymentHelper) obj;
-			if (getAppId() != helper.getAppId()) {
-				return false;
-			}
-			if (!getAppName().equals(helper.getAppName())) {
-				return false;
-			}
-			if (!getBaseURL().toString().equals(helper.getBaseURL().toString())) {
-				return false;
-			}
-			if (!getInstalledLocation().equals(helper.getInstalledLocation())) {
-				return false;
-			}
-			if (getOperationType() != helper.getOperationType()) {
-				return false;
-			}
-			if (!getProjectName().equals(helper.getProjectName())) {
-				return false;
-			}
-			if (!getTargetId().equals(helper.getTargetId())) {
-				return false;
-			}
-			if (!getVirtualHost().equals(helper.getVirtualHost())) {
-				return false;
-			}
-			return true;
-		}
-		return false;
 	}
 
 }

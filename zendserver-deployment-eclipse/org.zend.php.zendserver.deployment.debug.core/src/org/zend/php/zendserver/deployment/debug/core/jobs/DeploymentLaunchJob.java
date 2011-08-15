@@ -71,11 +71,11 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 						.getInstalledLocation());
 				if (isErrorStatus(result)) {
 					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Error on the Zend Server during application deployment: "
+							"Error on the Zend Server during application deployment: " //$NON-NLS-1$
 									+ result.getName()
-									+ "\nTo get more details, see Zend Server log file.");
+									+ "\nTo get more details, see Zend Server log file."); //$NON-NLS-1$
 				}
-				monitor.subTask("Current status is: " + result.getName());
+				monitor.subTask("Current status is: " + result.getName()); //$NON-NLS-1$
 			}
 		}
 		monitor.done();

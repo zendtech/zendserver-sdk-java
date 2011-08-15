@@ -28,6 +28,7 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.NoIdUpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
+import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -53,7 +54,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 					if (!helper.getTargetId().isEmpty()) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
-						openDeploymentWizard(project, "");
+						openDeploymentWizard(project, ""); //$NON-NLS-1$
 						if (dialogHelper == null) {
 							return CANCEL;
 						}
@@ -115,7 +116,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 					ILaunchConfigurationWorkingCopy wc;
 					try {
 						wc = config.getWorkingCopy();
-						wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), "");
+						wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
 						wc.doSave();
 					} catch (CoreException e) {
 						Activator.log(e);
@@ -203,7 +204,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 		try {
 			for (IConfigurationElement e : config) {
 
-				final Object o = e.createExecutableExtension("class");
+				final Object o = e.createExecutableExtension("class"); //$NON-NLS-1$
 				if (o instanceof AbstractLaunchJob) {
 					return (AbstractLaunchJob) o;
 				}
@@ -217,12 +218,10 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 
 	private MessageDialog getUpdateExistingApplicationDialog() {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return new MessageDialog(
-				shell,
-				"Application Base URL Conflict",
-				null,
-				"Provided base URL is already in use. Do you want to update already deployed application?",
-				MessageDialog.QUESTION, new String[] { "Yes", "No" }, 1);
+		return new MessageDialog(shell, Messages.updateExistingApplicationDialog_Title, null,
+				Messages.updateExistingApplicationDialog_Message, MessageDialog.QUESTION,
+				new String[] { Messages.updateExistingApplicationDialog_yesButton,
+						Messages.updateExistingApplicationDialog_noButton }, 1);
 	}
 
 }

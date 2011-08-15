@@ -14,26 +14,48 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.debug.ui.messages"; //$NON-NLS-1$
 
 	public static String deploymentWizard_Title;
-	public static String deploymentWizard_Message;
+	// public static String deploymentWizard_Message;
 
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;
+	public static String deployContribution_DeployPHPApp;
 
 	public static String deploymentTab_Title;
 
+	public static String configurationPage_Description;
+	public static String configurationPage_Name;
+	public static String configurationPage_Title;
+	public static String configurationPage_AddTarget;
+	public static String configurationPage_DeployTo;
+	public static String configurationPage_DeployToTooltip;
+	public static String configurationPage_baseURL;
+	public static String configurationPage_appUserName;
+	public static String configurationPage_appUserNameTooltip;
+	public static String configurationPage_ignoreFailures;
+	public static String configurationPage_ignoreFailuresTooltip;
+	public static String configurationPage_ValidationError_TargetLocation;
+	public static String configurationPage_ValidationError_BaseUrl;
+
+	public static String parametersPage_Description;
+	public static String parametersPage_Name;
 	public static String parametersPage_Title;
-	public static String parametersPage_AddTarget;
-	public static String parametersPage_DeployTo;
-	public static String parametersPage_baseURL;
-	public static String parametersPage_appUserName;
-	public static String parametersPage_appUserNameTooltip;
-	public static String parametersPage_defaultServer;
-	public static String parametersPage_defaultServerTooltip;
-	public static String parametersPage_ignoreFailures;
-	public static String parametersPage_ignoreFailuresTooltip;
 	public static String parametersPage_applicationParams;
-	public static String parametersPage_ValidationError_TargetLocation;
-	public static String parametersPage_ValidationError_BaseUrl;
+	public static String parametersPage_ValidationError_ParamRequired;
+
+	public static String updateExistingApplicationDialog_Title;
+	public static String updateExistingApplicationDialog_Message;
+	public static String updateExistingApplicationDialog_yesButton;
+	public static String updateExistingApplicationDialog_noButton;
+
+	public static String advancedSection_Label;
+	public static String advancedSection_Deploy;
+	public static String advancedSection_Update;
+	public static String advancedSection_AutoDeploy;
+	public static String advancedSection_autoDeployComboLabel;
+	public static String advancedSection_autoDeployComboTooltip;
+	public static String advancedSection_Title;
+	public static String advancedSection_updateComboLabel;
+	public static String advancedSection_updateComboTooltip;
 
 	static {
 		// initialize resource bundle

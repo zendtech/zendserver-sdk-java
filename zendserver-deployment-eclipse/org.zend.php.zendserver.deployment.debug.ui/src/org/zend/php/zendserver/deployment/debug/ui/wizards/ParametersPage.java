@@ -10,15 +10,16 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.ui.Messages;
 
 public class ParametersPage extends DeploymentWizardPage {
 
 	private IProject project;
 
 	protected ParametersPage(IProject project, IDeploymentHelper helper) {
-		super("Deployment Parameters Page", helper);
-		setDescription("Set Deployment Parameters");
-		setTitle("PHP Application Deployment");
+		super(Messages.parametersPage_Name, helper);
+		setDescription(Messages.parametersPage_Description);
+		setTitle(Messages.parametersPage_Title);
 		this.project = project;
 		this.block = new ParametersBlock(this);
 	}

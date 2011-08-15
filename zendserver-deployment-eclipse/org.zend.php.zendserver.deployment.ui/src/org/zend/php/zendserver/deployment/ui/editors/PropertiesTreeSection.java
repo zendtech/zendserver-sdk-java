@@ -491,9 +491,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 							if (mapping != null) {
 								if (resource instanceof IFolder) {
 									fTreeViewer.setChecked(resource, true);
-									if (resource instanceof IFolder) {
-										checkAllChildren(resource);
-									}
+									checkAllChildren(resource);
 								} else {
 									fTreeViewer.setChecked(resource, true);
 								}

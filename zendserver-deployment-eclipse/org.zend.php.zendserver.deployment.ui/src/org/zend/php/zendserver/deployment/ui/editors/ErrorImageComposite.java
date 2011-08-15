@@ -27,7 +27,7 @@ public class ErrorImageComposite extends CompositeImageDescriptor {
         drawImage(baseData, 0, 0);
 
         ImageData overlayData = mErrorImageDescriptor.getImageData();
-        if (overlayData.width == baseData.width && baseData.height == baseData.height) {
+        if (overlayData.width == baseData.width && overlayData.height == baseData.height) {
             overlayData = overlayData.scaledTo(14, 14);
             drawImage(overlayData, -3, mSize.y - overlayData.height + 3);
         } else {

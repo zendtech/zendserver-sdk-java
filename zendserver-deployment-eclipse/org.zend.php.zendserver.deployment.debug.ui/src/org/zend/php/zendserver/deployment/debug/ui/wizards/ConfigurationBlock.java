@@ -46,8 +46,6 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class ConfigurationBlock extends AbstractBlock {
 
-	private static final String DEFAULT_HOST = "<default-server>";
-
 	private TargetsCombo targetsCombo = new TargetsCombo();
 	private Link newTargetLink;
 	private Text baseUrl;
@@ -82,20 +80,20 @@ public class ConfigurationBlock extends AbstractBlock {
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
-		baseUrl = createLabelWithText(Messages.parametersPage_baseURL, "", getContainer());
+		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer()); //$NON-NLS-1$
 		ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
-		expComposite.setText("Advanced Settings");
+		expComposite.setText(Messages.advancedSection_Title);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 2;
 		expComposite.setLayoutData(gd);
 		Composite advancedSection = new Composite(expComposite, SWT.NONE);
 		advancedSection.setLayout(new GridLayout(2, false));
 		createOperationsSection(advancedSection);
-		userAppName = createLabelWithText(Messages.parametersPage_appUserName,
-				Messages.parametersPage_appUserNameTooltip, advancedSection);
-		ignoreFailures = createLabelWithCheckbox(Messages.parametersPage_ignoreFailures,
-				Messages.parametersPage_ignoreFailuresTooltip, advancedSection);
+		userAppName = createLabelWithText(Messages.configurationPage_appUserName,
+				Messages.configurationPage_appUserNameTooltip, advancedSection);
+		ignoreFailures = createLabelWithCheckbox(Messages.configurationPage_ignoreFailures,
+				Messages.configurationPage_ignoreFailuresTooltip, advancedSection);
 		;
 		expComposite.setClient(advancedSection);
 		expComposite.setExpanded(true);
@@ -150,13 +148,13 @@ public class ConfigurationBlock extends AbstractBlock {
 	public IStatus validatePage() {
 		if (getTarget() == null) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					Messages.parametersPage_ValidationError_TargetLocation);
+					Messages.configurationPage_ValidationError_TargetLocation);
 		}
 		if (getBaseURL() == null) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					Messages.parametersPage_ValidationError_BaseUrl);
+					Messages.configurationPage_ValidationError_BaseUrl);
 		}
-		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.deploymentWizard_Message);
+		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.configurationPage_Description);
 	}
 
 	@Override
@@ -277,7 +275,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void createLocationLink(Composite container) {
 		newTargetLink = new Link(container, SWT.NONE);
-		String text = "<a>" + Messages.parametersPage_AddTarget + "</a>";
+		String text = "<a>" + Messages.configurationPage_AddTarget + "</a>"; //$NON-NLS-1$//$NON-NLS-2$
 		newTargetLink.setText(text);
 		newTargetLink.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -297,8 +295,8 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void createDeployCombo(Composite container) {
-		targetsCombo.setLabel(Messages.parametersPage_DeployTo);
-		targetsCombo.setTooltip(Messages.parametersPage_DeployToTooltip);
+		targetsCombo.setLabel(Messages.configurationPage_DeployTo);
+		targetsCombo.setTooltip(Messages.configurationPage_DeployToTooltip);
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -311,12 +309,12 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void createOperationsSection(Composite parent) {
 		Label operationLabel = new Label(parent, SWT.NONE);
-		operationLabel.setText("Choose operation which should be performed:");
+		operationLabel.setText(Messages.advancedSection_Label);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		operationLabel.setLayoutData(gd);
 
-		deployButton = createRadioButton(parent, "Deploy");
+		deployButton = createRadioButton(parent, Messages.advancedSection_Deploy);
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -324,7 +322,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		});
 
-		updateButton = createRadioButton(parent, "Update");
+		updateButton = createRadioButton(parent, Messages.advancedSection_Update);
 		updateButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -351,7 +349,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 10;
 		updateComboComposite.setLayoutData(gd);
-		updateCombo = createLabelWithCombo("Choose application to update:", "",
+		updateCombo = createLabelWithCombo(Messages.advancedSection_updateComboLabel,
+				Messages.advancedSection_updateComboTooltip,
 				updateComboComposite);
 		updateCombo.setEnabled(false);
 		updateCombo.addSelectionListener(new SelectionAdapter() {
@@ -362,7 +361,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 
 		if (autoDeploy) {
-			autoDeployButton = createRadioButton(parent, "Automatic Deploy");
+			autoDeployButton = createRadioButton(parent, Messages.advancedSection_AutoDeploy);
 			autoDeployButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -378,8 +377,8 @@ public class ConfigurationBlock extends AbstractBlock {
 			gd.horizontalSpan = 2;
 			gd.horizontalIndent = 10;
 			autoDeployComboComposite.setLayoutData(gd);
-			autoDeployCombo = createLabelWithCombo("Choose application for automatic deployment:",
-					"", autoDeployComboComposite);
+			autoDeployCombo = createLabelWithCombo(Messages.advancedSection_autoDeployComboLabel,
+					Messages.advancedSection_autoDeployComboTooltip, autoDeployComboComposite);
 			autoDeployCombo.setEnabled(false);
 			autoDeployCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -401,7 +400,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				helper.setAppId(info.getId());
 				helper.setAppName(info.getUserAppName());
 				URL baseURL = new URL(info.getBaseUrl());
-				if (baseURL.getHost().equals(DEFAULT_HOST)) {
+				if (baseURL.getHost().equals(IDeploymentHelper.DEFAULT_SERVER)) {
 					helper.setDefaultServer(true);
 					IZendTarget target = getTarget();
 					URL updatedURL = new URL(baseURL.getProtocol(), target.getHost().getHost(),
@@ -499,7 +498,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				combo.removeAll();
 				if (applicationInfos.length != 0) {
 					for (ApplicationInfo info : applicationInfos) {
-						combo.add(info.getAppName() + " (name: " + info.getUserAppName() + ")");
+						combo.add(info.getAppName() + " (name: " + info.getUserAppName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				if (currentAppId != -1 && combo.getItemCount() > 0) {
@@ -538,7 +537,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		try {
 			for (IConfigurationElement e : config) {
 
-				final Object o = e.createExecutableExtension("class");
+				final Object o = e.createExecutableExtension("class"); //$NON-NLS-1$
 				if (o instanceof AbstractLaunchJob) {
 					return true;
 				}
