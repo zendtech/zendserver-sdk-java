@@ -43,8 +43,12 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		if (exception instanceof UnexpectedResponseCode) {
 			UnexpectedResponseCode codeException = (UnexpectedResponseCode) exception;
 			responseCode = codeException.getResponseCode();
-			if (responseCode == ResponseCode.BASE_URL_CONFLICT) {
+			switch (responseCode) {
+			case BASE_URL_CONFLICT:
+			case APPLICATION_CONFLICT:
 				return Status.OK_STATUS;
+			default:
+				break;
 			}
 		}
 		return new SdkStatus(listener.getStatus());

@@ -38,13 +38,13 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 	private static final int CANCEL = -1;
 
 	private AbstractLaunchJob job;
-	private IDeploymentHelper dialogHelper;
 
-	private boolean updateExistingApplication = false;
+	private boolean dialogResult = false;
 	private boolean cancelled = false;
 
 	public int preLaunch(ILaunchConfiguration configuration, String mode, ILaunch launch,
 			IProgressMonitor monitor) {
+		job = null;
 		try {
 			if (LaunchUtils.getConfigurationType() == configuration.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(configuration);
@@ -54,11 +54,10 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 					if (!helper.getTargetId().isEmpty()) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
-						openDeploymentWizard(project, ""); //$NON-NLS-1$
-						if (dialogHelper == null) {
+						openDeploymentWizard(configuration, helper, project);
+						if (job == null) {
 							return CANCEL;
 						}
-						job = new DeployLaunchJob(dialogHelper, project);
 					}
 					addJobListener(configuration, project);
 					break;
@@ -69,7 +68,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 				case IDeploymentHelper.AUTO_DEPLOY:
 					job = getAutoDeployJob();
 					if (job == null) {
-						break;
+						return CANCEL;
 					}
 					job.setHelper(helper);
 					job.setProject(project);
@@ -95,49 +94,88 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 	}
 
 	private int verifyJobResult(ILaunchConfiguration config, IDeploymentHelper helper,
-			IProject project) {
+			IProject project) throws InterruptedException {
 		if (cancelled) {
 			return CANCEL;
 		}
 		if (job instanceof DeploymentLaunchJob) {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
-			// handle base URL conflict
-			if (deploymentJob.getResponseCode() == ResponseCode.BASE_URL_CONFLICT) {
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-					public void run() {
-						MessageDialog dialog = getUpdateExistingApplicationDialog();
-						if (dialog.open() == 0) {
-							updateExistingApplication = true;
-						}
-					}
-				});
-				if (!updateExistingApplication) {
-					ILaunchConfigurationWorkingCopy wc;
-					try {
-						wc = config.getWorkingCopy();
-						wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
-						wc.doSave();
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-					return preLaunch(config);
-				} else {
-					updateExistingApplication = false;
-					job = new NoIdUpdateLaunchJob(helper, project);
-					addJobListener(config, project);
-					job.setUser(true);
-					job.schedule();
-					try {
-						job.join();
-					} catch (InterruptedException e) {
-						Activator.log(e);
-					}
-					return OK;
-				}
+			ResponseCode code = deploymentJob.getResponseCode();
+			if (code == null) {
+				return OK;
+			}
+			switch (deploymentJob.getResponseCode()) {
+			case BASE_URL_CONFLICT:
+				return handleBaseUrlConflict(config, helper, project);
+			case APPLICATION_CONFLICT:
+				return handleApplicationConflict(config, helper, project);
+			default:
+				break;
 			}
 		}
 		return OK;
+	}
+	
+	private int handleApplicationConflict(ILaunchConfiguration config, IDeploymentHelper helper,
+			IProject project) throws InterruptedException {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			public void run() {
+				MessageDialog dialog = getApplicationConflictDialog();
+				if (dialog.open() != 0) {
+					dialogResult = true;
+				}
+			}
+		});
+		if (!dialogResult) {
+			openDeploymentWizard(config, helper, project);
+			if (job == null) {
+				return CANCEL;
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(config, job.getHelper(), project);
+		} else {
+			dialogResult = false;
+			return CANCEL;
+		}
+	}
+
+	private int handleBaseUrlConflict(ILaunchConfiguration config, IDeploymentHelper helper,
+			IProject project) {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			public void run() {
+				MessageDialog dialog = getUpdateExistingApplicationDialog();
+				if (dialog.open() == 0) {
+					dialogResult = true;
+				}
+			}
+		});
+		if (!dialogResult) {
+			ILaunchConfigurationWorkingCopy wc;
+			try {
+				wc = config.getWorkingCopy();
+				wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
+				wc.doSave();
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+			return preLaunch(config);
+		} else {
+			dialogResult = false;
+			job = new NoIdUpdateLaunchJob(helper, project);
+			addJobListener(config, project);
+			job.setUser(true);
+			job.schedule();
+			try {
+				job.join();
+			} catch (InterruptedException e) {
+				Activator.log(e);
+			}
+			return OK;
+		}
 	}
 
 	private void addJobListener(final ILaunchConfiguration config, final IProject project) {
@@ -164,9 +202,20 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 	}
 
 	private void updateLaunchConfiguration(final ILaunchConfiguration config, final IProject project) {
-		ILaunchConfigurationWorkingCopy wc;
+		if (job instanceof DeploymentLaunchJob) {
+			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
+			ResponseCode code = deploymentJob.getResponseCode();
+			if (code != null) {
+				return;
+			}
+		}
 		try {
-			wc = config.getWorkingCopy();
+			ILaunchConfigurationWorkingCopy wc = null;
+			if (config instanceof ILaunchConfigurationWorkingCopy) {
+				wc = (ILaunchConfigurationWorkingCopy) config;
+			} else {
+				wc = config.getWorkingCopy();
+			}
 			IDeploymentHelper helper = job.getHelper();
 			LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 			if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
@@ -179,20 +228,39 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 		}
 	}
 
-	private void openDeploymentWizard(final IProject project, final String targetId) {
+	private void openDeploymentWizard(final ILaunchConfiguration configuration,
+			final IDeploymentHelper helper, final IProject project) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				IDeploymentHelper targetHelper = new DeploymentHelper();
-				targetHelper.setTargetId(targetId);
-				DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
+				DeploymentWizard wizard = new DeploymentWizard(project, helper);
 				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();
-				if (dialog.open() != Window.OK) {
-					dialogHelper = null;
+				if (dialog.open() == Window.OK) {
+					IDeploymentHelper updatedHelper = wizard.getHelper();
+					switch (updatedHelper.getOperationType()) {
+					case IDeploymentHelper.DEPLOY:
+						job = new DeployLaunchJob(updatedHelper, project);
+						addJobListener(configuration, project);
+						break;
+					case IDeploymentHelper.UPDATE:
+						job = new UpdateLaunchJob(updatedHelper, project);
+						addJobListener(configuration, project);
+						break;
+					case IDeploymentHelper.AUTO_DEPLOY:
+						job = getAutoDeployJob();
+						if (job == null) {
+							break;
+						}
+						job.setHelper(helper);
+						job.setProject(project);
+						break;
+					default:
+						return;
+					}
 				} else {
-					dialogHelper = wizard.getHelper();
+					job = null;
 				}
 			}
 		});
@@ -222,6 +290,18 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 				Messages.updateExistingApplicationDialog_Message, MessageDialog.QUESTION,
 				new String[] { Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 1);
+	}
+
+	private MessageDialog getApplicationConflictDialog() {
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		return new MessageDialog(
+				shell,
+				"Application Conflict",
+				null,
+				"An update can only be executed for the same application. Do you want to change the application to update?",
+				MessageDialog.QUESTION, new String[] {
+						Messages.updateExistingApplicationDialog_yesButton,
+						Messages.updateExistingApplicationDialog_noButton }, 0);
 	}
 
 }
