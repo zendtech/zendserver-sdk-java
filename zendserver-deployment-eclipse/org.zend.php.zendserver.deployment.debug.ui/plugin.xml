@@ -61,6 +61,18 @@
             </parameter>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.zend.php.zendserver.deployment.debug.ui.toolbars.sampleToolbar">
+            <command
+                  commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
+                  icon="icons/sample.gif"
+                  id="org.zend.php.zendserver.deployment.debug.ui.toolbars.sampleCommand"
+                  tooltip="Open SSH Tunnel to Zend DevCloud">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -79,6 +91,15 @@
             id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
             name="Deploy PHP Application">
       </command>
+      <category
+            id="org.zend.php.zendserver.deployment.debug.ui.commands.category"
+            name="Sample Category">
+      </category>
+      <command
+            categoryId="org.zend.php.zendserver.deployment.debug.ui.commands.category"
+            id="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
+            name="Sample Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
@@ -88,6 +109,22 @@
             launchConfigurationTabGroupId="org.eclipse.php.server.ui.launchConfigurationTabGroup"
             modes="run,debug">
       </launchConfigurationTab>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.zend.php.zendserver.deployment.debug.ui.handlers.DevCloudTunnelHandler"
+            commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
    </extension>
    <extension
          point="org.eclipse.php.debug.core.phpLaunchDelegateListener">

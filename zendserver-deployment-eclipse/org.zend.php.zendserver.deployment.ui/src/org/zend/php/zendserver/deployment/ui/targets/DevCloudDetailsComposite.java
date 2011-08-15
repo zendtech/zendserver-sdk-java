@@ -1,29 +1,24 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyFactory;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Collection;
+import java.util.Properties;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendDevPaasDetect;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -34,28 +29,65 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 
 	private Text usernameText;
 	private Text passwordText;
+	private Text privateKeyText;
 
 	public Composite create(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_Username);
 		usernameText = new Text(composite, SWT.BORDER);
-		usernameText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false));
+		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		layoutData.horizontalSpan = 3;
+		usernameText.setLayoutData(layoutData);
 		usernameText
 				.setToolTipText(Messages.DevCloudDetailsComposite_UsernameTooltip);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_Password);
 		passwordText = new Text(composite, SWT.BORDER | SWT.PASSWORD);
-		passwordText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false));
+		passwordText.setLayoutData(layoutData);
 		passwordText
 				.setToolTipText(Messages.DevCloudDetailsComposite_PasswordTooltip);
 
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.DevCloudDetailsComposite_0);
+		privateKeyText = new Text(composite, SWT.BORDER);
+		privateKeyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+				false));
+		privateKeyText
+				.setToolTipText(Messages.DevCloudDetailsComposite_1);
+		Button btnBrowse = new Button(composite, SWT.PUSH);
+		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
+		Button btnGenerate = new Button(composite, SWT.PUSH);
+		btnGenerate.setText(Messages.DevCloudDetailsComposite_3);
+		btnBrowse.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				final FileDialog d = new FileDialog(e.display.getActiveShell(),
+						SWT.OPEN);
+				final String file = d.open();
+				if (file != null) {
+					privateKeyText.setText(file);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		label = new Label(composite, SWT.WRAP);
+		label = new Label(composite, SWT.WRAP);
+		label.setText(Messages.DevCloudDetailsComposite_4
+				+ Messages.DevCloudDetailsComposite_5 +
+				Messages.DevCloudDetailsComposite_6);
+		layoutData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 3;
+		layoutData.verticalSpan = 2;
+		label.setLayoutData(layoutData);
+				
 		return composite;
 	}
 
@@ -64,109 +96,54 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public String[] getData() {
-		return new String[] { usernameText.getText(), passwordText.getText() };
+		return new String[] { usernameText.getText(), passwordText.getText(), privateKeyText.getText() };
 	}
 
 	public IZendTarget createTarget(String[] data) throws SdkException,
 			IOException {
-		ZendDevPaasDetect detect = new ZendDevPaasDetect();
+		ZendDevCloud detect = new ZendDevCloud();
 		String username = data[0];
 		String password = data[1];
-		
+		String sshkeyfile = data[2];
+
 		IZendTarget[] target = detect.detectTarget(username, password);
 		if (target == null || target.length == 0) {
 			return null;
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		
+
 		String uniqueId = tm.createUniqueId(null);
-		return tm.createTarget(uniqueId, target[0].getHost().toString(), target[0].getKey(), target[0].getSecretKey());
-	}
-	
-
-	private void keyStoreMagic (String keyfile, String certfile) {
-        
-        // change this if you want another password by default
-        String keypass = "importkey";
-        
-        // change this if you want another alias by default
-        String defaultalias = "importkey";
-
-        // change this if you want another keystorefile by default
-        String keystorename = System.getProperty("keystore");
-
-        if (keystorename == null)
-            keystorename = System.getProperty("user.home")+
-                System.getProperty("file.separator")+
-                "keystore.ImportKey"; // especially this ;-)
-
-        try {
-        	
-            // initializing and clearing keystore 
-            KeyStore ks = KeyStore.getInstance("JKS", "SUN");
-            ks.load( null , keypass.toCharArray());
-            System.out.println("Using keystore-file : "+keystorename);
-            ks.store(new FileOutputStream ( keystorename  ),
-                    keypass.toCharArray());
-            ks.load(new FileInputStream ( keystorename ),
-                    keypass.toCharArray());
-
-            // loading Key
-            InputStream fl = fullStream (keyfile);
-            byte[] key = new byte[fl.available()];
-            KeyFactory kf = KeyFactory.getInstance("RSA");
-            fl.read ( key, 0, fl.available() );
-            fl.close();
-            PKCS8EncodedKeySpec keysp = new PKCS8EncodedKeySpec ( key );
-            PrivateKey ff = kf.generatePrivate (keysp);
-
-            // loading CertificateChain
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream certstream = fullStream (certfile);
-
-            Collection<? extends Certificate> c = cf.generateCertificates(certstream) ;
-            Certificate[] certs = new Certificate[c.toArray().length];
-
-            if (c.size() == 1) {
-                certstream = fullStream (certfile);
-                System.out.println("One certificate, no chain.");
-                Certificate cert = cf.generateCertificate(certstream) ;
-                certs[0] = cert;
-            } else {
-                System.out.println("Certificate chain length: "+c.size());
-                certs = (Certificate[])c.toArray();
-            }
-
-            // storing keystore
-            ks.setKeyEntry(defaultalias, ff, 
-                           keypass.toCharArray(),
-                           certs );
-            System.out.println ("Key and certificate stored.");
-            System.out.println ("Alias:"+defaultalias+"  Password:"+keypass);
-            ks.store(new FileOutputStream ( keystorename ),
-                     keypass.toCharArray());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-	
-	  /* @param fname The filename
-	     * @return The filled InputStream
-	     * @exception IOException, if the Streams couldn't be created.
-	     **/
-	    private static InputStream fullStream ( String fname ) throws IOException {
-	        FileInputStream fis = new FileInputStream(fname);
-	        DataInputStream dis = new DataInputStream(fis);
-	        byte[] bytes = new byte[dis.available()];
-	        dis.readFully(bytes);
-	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-	        return bais;
-	    }
-
-		@Override
-		public boolean hasPage() {
-			return true;
+		
+		Properties p = new Properties();
+		if (sshkeyfile != null && sshkeyfile.length() > 0) {
+			p.put(ZendDevCloud.SSH_PRIVATE_KEY, fullStream(sshkeyfile));
 		}
+		
+		final IZendTarget t = tm.createTarget(uniqueId, target[0].getHost().toString(),
+				target[0].getKey(), target[0].getSecretKey(), p);
+				
+		return t;
+	}
+
+	/*
+	 * @param fname The filename
+	 * 
+	 * @return The filled InputStream
+	 * 
+	 * @exception IOException, if the Streams couldn't be created.
+	 */
+	private static String fullStream(String fname) throws IOException {
+		FileInputStream fis = new FileInputStream(fname);
+		DataInputStream dis = new DataInputStream(fis);
+		byte[] bytes = new byte[dis.available()];
+		dis.readFully(bytes);
+		return new String(bytes);
+	}
+
+	@Override
+	public boolean hasPage() {
+		return true;
+	}
 
 }

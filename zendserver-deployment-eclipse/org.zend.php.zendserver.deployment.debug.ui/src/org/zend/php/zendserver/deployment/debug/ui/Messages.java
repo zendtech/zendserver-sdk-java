@@ -14,7 +14,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.debug.ui.messages"; //$NON-NLS-1$
 
 	public static String deploymentWizard_Title;
-	// public static String deploymentWizard_Message;
+	public static String deploymentWizard_Message;
 
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;
@@ -56,6 +56,10 @@ public class Messages extends NLS {
 	public static String advancedSection_Title;
 	public static String advancedSection_updateComboLabel;
 	public static String advancedSection_updateComboTooltip;
+
+	public static String DevCloudTunnelHandler_10;
+	public static String DevCloudTunnelHandler_7;
+	public static String DevCloudTunnelHandler_8;
 
 	static {
 		// initialize resource bundle

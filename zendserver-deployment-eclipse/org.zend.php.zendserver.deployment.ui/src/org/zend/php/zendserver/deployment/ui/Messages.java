@@ -43,6 +43,13 @@ public class Messages extends NLS {
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
 	public static String DetectTargetAction_DetectTarget;
+	public static String DevCloudDetailsComposite_0;
+	public static String DevCloudDetailsComposite_1;
+	public static String DevCloudDetailsComposite_2;
+	public static String DevCloudDetailsComposite_3;
+	public static String DevCloudDetailsComposite_4;
+	public static String DevCloudDetailsComposite_5;
+	public static String DevCloudDetailsComposite_6;
 	public static String DevCloudDetailsComposite_Password;
 	public static String DevCloudDetailsComposite_PasswordTooltip;
 	public static String DevCloudDetailsComposite_Username;
