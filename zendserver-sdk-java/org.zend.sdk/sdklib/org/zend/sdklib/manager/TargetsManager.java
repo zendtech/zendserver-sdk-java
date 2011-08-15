@@ -13,6 +13,9 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
@@ -267,6 +270,18 @@ public class TargetsManager extends AbstractChangeNotifier {
 	}
 
 	/**
+	 * @param targetId
+	 * @param host
+	 * @param key
+	 * @param secretKey
+	 * @return
+	 */
+	public IZendTarget createTarget(String targetId, String host, String key,
+			String secretKey) {
+		return createTarget(targetId, host, key, secretKey, null);
+	}
+	
+	/**
 	 * Creates and adds new target based on provided parameters.
 	 * 
 	 * @param targetId
@@ -276,10 +291,19 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @return
 	 */
 	public IZendTarget createTarget(String targetId, String host, String key,
-			String secretKey) {
+			String secretKey, Properties extraProperties) {
 		try {
-			IZendTarget target = add(new ZendTarget(targetId, new URL(host),
-					key, secretKey));
+			final ZendTarget t = new ZendTarget(targetId, new URL(host),
+					key, secretKey);
+			
+			if (extraProperties != null && !extraProperties.isEmpty()) {
+				final Set<Entry<Object, Object>> entrySet = extraProperties.entrySet();
+				for (Entry<Object, Object> entry : entrySet) {
+					t.addProperty(entry.getKey().toString(), entry.getValue().toString());
+				}
+			}
+			
+			IZendTarget target = add(t);
 			if (target == null) {
 				return null;
 			}
