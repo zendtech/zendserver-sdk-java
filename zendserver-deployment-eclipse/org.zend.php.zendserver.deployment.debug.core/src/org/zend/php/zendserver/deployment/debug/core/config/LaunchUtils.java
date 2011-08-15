@@ -9,10 +9,12 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -27,16 +29,20 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
+import org.zend.sdklib.target.IZendTarget;
 
 @SuppressWarnings("restriction")
 public class LaunchUtils {
@@ -69,6 +75,29 @@ public class LaunchUtils {
 
 		config = wc.doSave();
 		return config;
+	}
+
+	public static IDeploymentHelper createDefaultHelper(IProject project) {
+		IZendTarget target = getTargetFromPreferences(project);
+		if (target != null) {
+			try {
+				IDeploymentHelper helper = new DeploymentHelper();
+				URL targetUrl = target.getDefaultServerURL();
+				URL baseUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(),
+						targetUrl.getPort(), "/" + project.getName()); //$NON-NLS-1$
+				helper.setBaseURL(baseUrl.toString());
+				helper.setDefaultServer(true);
+				helper.setTargetId(target.getId());
+				helper.setTargetHost(target.getHost().toString());
+				helper.setIgnoreFailures(false);
+				helper.setOperationType(IDeploymentHelper.DEPLOY);
+				helper.setProjectName(project.getName());
+				return helper;
+			} catch (MalformedURLException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 
 	public static void updateLaunchConfiguration(IProject project,
@@ -244,6 +273,20 @@ public class LaunchUtils {
 				}
 			} catch (MalformedURLException e) {
 				// ignore and continue searching
+			}
+		}
+		return null;
+	}
+
+	private static IZendTarget getTargetFromPreferences(IProject project) {
+		IEclipsePreferences pref = new ProjectScope(project).getNode(DeploymentCore.PLUGIN_ID);
+		String targetId = pref.get("targetId", null);
+		String targetHost = pref.get("targetHost", null);
+		if (targetId != null) {
+			TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
+			IZendTarget target = manager.getTargetById(targetId);
+			if (target != null && target.getHost().toString().equals(targetHost)) {
+				return target;
 			}
 		}
 		return null;

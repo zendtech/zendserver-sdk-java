@@ -53,6 +53,16 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 	private void execute(final String mode, IProject project, String targetId) {
 		ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
 		if (config == null) {
+			IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
+			if (defaultHelper != null) {
+				try {
+					config = LaunchUtils.createConfiguration(project, defaultHelper);
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		if (config == null) {
 			IDeploymentHelper targetHelper = new DeploymentHelper();
 			targetHelper.setTargetId(targetId);
 			targetHelper.setProjectName(project.getName());

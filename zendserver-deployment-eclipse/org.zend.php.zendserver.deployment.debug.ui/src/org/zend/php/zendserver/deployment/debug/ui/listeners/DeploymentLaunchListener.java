@@ -52,6 +52,15 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 				switch (helper.getOperationType()) {
 				case IDeploymentHelper.DEPLOY:
 					if (!helper.getTargetId().isEmpty()) {
+						IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
+						if (defaultHelper != null) {
+							try {
+								LaunchUtils.updateLaunchConfiguration(project, defaultHelper,
+										configuration.getWorkingCopy());
+							} catch (CoreException e) {
+								Activator.log(e);
+							}
+						}
 						job = new DeployLaunchJob(helper, project);
 					} else {
 						openDeploymentWizard(configuration, helper, project);
