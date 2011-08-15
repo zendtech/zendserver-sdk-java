@@ -46,6 +46,8 @@ public enum ResponseCode {
 	DIRECT_ACCESS_FORBIDDEN(403, "directAccessForbidden",
 			"Direct access to a ZSCM managed Server is not allowed"),
 
+	NO_SUCH_APPLICATION(404, "noSuchApplication", "The provided application ID does not exist"),
+
 	NOT_IMPLEMENTED_BY_EDITION(405, "notImplementedByEdition",
 			"Method is not implemented by this edition of Zend Server (e.g. cluster related methods on Zend Server)"),
 
@@ -53,6 +55,11 @@ public enum ResponseCode {
 			"API version is not supported by this version of Zend Server"),
 
 	BASE_URL_CONFLICT(409, "baseUrlConflict", "Provided base URL is already in use"),
+
+	APPLICATION_CONFLICT(
+			409,
+			"applicationConflict",
+			"Provided application package includes a different application, and not a different version of the existing application"),
 
 	INTERNAL_SERVER_ERROR(500, "internalServerError", "An unexpected error on the server side"),
 
