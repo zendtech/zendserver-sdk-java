@@ -57,6 +57,10 @@ public class Messages extends NLS {
 	public static String advancedSection_updateComboLabel;
 	public static String advancedSection_updateComboTooltip;
 
+	public static String applicationConflictDialog_Message;
+
+	public static String applicationConflictDialog_Title;
+
 	public static String DevCloudTunnelHandler_10;
 	public static String DevCloudTunnelHandler_7;
 	public static String DevCloudTunnelHandler_8;

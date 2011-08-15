@@ -294,12 +294,8 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 
 	private MessageDialog getApplicationConflictDialog() {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return new MessageDialog(
-				shell,
-				"Application Conflict",
-				null,
-				"An update can only be executed for the same application. Do you want to change the application to update?",
-				MessageDialog.QUESTION, new String[] {
+		return new MessageDialog(shell, Messages.applicationConflictDialog_Title, null,
+				Messages.applicationConflictDialog_Message, MessageDialog.QUESTION, new String[] {
 						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 0);
 	}
