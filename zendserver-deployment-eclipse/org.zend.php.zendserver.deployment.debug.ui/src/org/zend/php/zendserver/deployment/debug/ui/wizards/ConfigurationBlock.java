@@ -500,21 +500,11 @@ public class ConfigurationBlock extends AbstractBlock {
 						combo.add(info.getAppName() + " (name: " + info.getUserAppName() + ")");
 					}
 				}
-				if (combo.getItemCount() > 0) {
+				if (currentAppId != -1 && combo.getItemCount() > 0) {
 					if (getOperationType() == IDeploymentHelper.UPDATE
 							|| getOperationType() == IDeploymentHelper.AUTO_DEPLOY) {
-						URL url = getBaseURL();
-						if (isDefaultServer()) {
-							try {
-								url = new URL(url.getProtocol(), DEFAULT_HOST, url
-										.getFile());
-							} catch (MalformedURLException e) {
-								// ignore
-							}
-						}
-						String urlString = url.toString();
 						for (int i = 0; i < applicationInfos.length; i++) {
-							if (applicationInfos[i].getBaseUrl().equals(urlString)) {
+							if (applicationInfos[i].getId() == currentAppId) {
 								combo.select(i);
 								fillFieldsByAppInfo(combo);
 							}
