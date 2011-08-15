@@ -16,7 +16,7 @@ import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendDevPaasDetect;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -127,7 +127,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 	}
 
 	private IZendTarget resolveTarget(final String devPaas) {
-		final ZendDevPaasDetect detect = new ZendDevPaasDetect();
+		final ZendDevCloud detect = new ZendDevCloud();
 		final String[] split = devPaas.split(":");
 		if (split.length != 2) {
 

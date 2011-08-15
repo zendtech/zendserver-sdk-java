@@ -33,10 +33,12 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  * @author Roy, 2011
  */
-public class ZendDevPaasDetect {
+public class ZendDevCloud {
 
 	// devpass baseurl
-	private static final String INTERNAL_DEVPASS_URL = "https://projectx.zend.com";
+	public static final String DEVPASS_HOST = "projectx.zend.com";
+	public static final String INTERNAL_DEVPASS_URL = "https://" + DEVPASS_HOST;
+	public static final String SSH_PRIVATE_KEY = "ssh-private-key";
 
 	// user login
 	private static final String USER_LOGIN = "/user/login";
@@ -46,16 +48,16 @@ public class ZendDevPaasDetect {
 	private final String baseUrl;
 
 	/**
-	 * Use {@link ZendDevPaasDetect#INTERNAL_DEVPASS_URL} as basepath
+	 * Use {@link ZendDevCloud#INTERNAL_DEVPASS_URL} as basepath
 	 */
-	public ZendDevPaasDetect() {
+	public ZendDevCloud() {
 		this(INTERNAL_DEVPASS_URL);
 	}
 
 	/**
 	 * @param baseUrl
 	 */
-	public ZendDevPaasDetect(String baseUrl) {
+	public ZendDevCloud(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 
@@ -68,8 +70,8 @@ public class ZendDevPaasDetect {
 	 * @return the targets as captured by Zend DevPaas
 	 * @throws Exception
 	 */
-	public IZendTarget[] detectTarget(String username, String password)
-			throws SdkException, IOException {
+	public IZendTarget[] detectTarget(String username, String password,
+			String privateKey) throws SdkException, IOException {
 
 		final boolean orginal = setFollowRedirect();
 		SSLContextInitializer.instance.setDefaultSSLFactory();
@@ -82,7 +84,7 @@ public class ZendDevPaasDetect {
 			String[] targets = listContainers(token);
 
 			// info
-			return createZendTargets(token, targets);
+			return createZendTargets(token, targets, privateKey);
 
 		} finally {
 			HttpURLConnection.setFollowRedirects(orginal);
@@ -90,8 +92,20 @@ public class ZendDevPaasDetect {
 		}
 	}
 
-	private IZendTarget[] createZendTargets(String token, String[] targets)
+	/**
+	 * @param username
+	 * @param password
+	 * @return the container details, no ssh private key is assigned
+	 * @throws SdkException
+	 * @throws IOException
+	 */
+	public IZendTarget[] detectTarget(String username, String password)
 			throws SdkException, IOException {
+		return detectTarget(username, password, null);
+	}
+
+	private IZendTarget[] createZendTargets(String token, String[] targets,
+			String privateKey) throws SdkException, IOException {
 		List<IZendTarget> result = new ArrayList<IZendTarget>(targets.length);
 		for (String target : targets) {
 			final String json = getJson(token, target);
@@ -100,8 +114,13 @@ public class ZendDevPaasDetect {
 					"sz_api_key_name");
 			final String[] secretKey = resolveSubKey(json, "container",
 					"zs_api_key");
-			final ZendTarget zendTarget = new ZendTarget("0", new URL("https://"
-					+ host[0]), key[0], secretKey[0]);
+			final ZendTarget zendTarget = new ZendTarget("0", new URL(
+					"https://" + host[0]), key[0], secretKey[0]);
+
+			if (privateKey != null) {
+				zendTarget.addProperty(SSH_PRIVATE_KEY, privateKey);
+			}
+
 			result.add(zendTarget);
 
 		}
