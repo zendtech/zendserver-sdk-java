@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -200,7 +201,7 @@ public class ZendTarget implements IZendTarget {
 	 * @see org.zend.sdklib.target.IZendTarget#getProperty(java.lang.String)
 	 */
 	@Override
-	public String getProperty(String key) {
+	public synchronized String getProperty(String key) {
 		return properties.getProperty(EXTRA + key);
 	}
 
@@ -210,7 +211,7 @@ public class ZendTarget implements IZendTarget {
 	 * @param key
 	 * @param value
 	 */
-	public void addProperty(String key, String value) {
+	public synchronized void addProperty(String key, String value) {
 		properties.put(EXTRA + key, value);
 	}
 
@@ -220,7 +221,7 @@ public class ZendTarget implements IZendTarget {
 	 * @see org.zend.sdklib.target.IZendTarget#load(java.io.InputStream)
 	 */
 	@Override
-	public void load(InputStream is) throws IOException {
+	public synchronized void load(InputStream is) throws IOException {
 		Properties properties = new Properties();
 		properties.load(is);
 		this.id = properties.getProperty("_id");
@@ -246,14 +247,14 @@ public class ZendTarget implements IZendTarget {
 	 * @see org.zend.sdklib.target.IZendTarget#store(java.io.OutputStream)
 	 */
 	@Override
-	public void store(OutputStream os) throws IOException {
+	public synchronized void store(OutputStream os) throws IOException {
 		Properties properties = new Properties();
 		properties.put("_id", getId());
 		properties.put("_key", getKey());
 		properties.put("_secretKey", getSecretKey());
 		properties.put("_host", getHost().toString());
 		properties.put("_defaultServerURL", getDefaultServerURL().toString());
-		properties.putAll(properties);
+		properties.putAll(this.properties);
 		properties.store(os, "target properties for " + getId());
 	}
 
