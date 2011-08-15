@@ -138,6 +138,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		DataInputStream dis = new DataInputStream(fis);
 		byte[] bytes = new byte[dis.available()];
 		dis.readFully(bytes);
+		dis.close();
 		return new String(bytes);
 	}
 
