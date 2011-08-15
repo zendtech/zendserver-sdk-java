@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
@@ -299,6 +298,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void createDeployCombo(Composite container) {
 		targetsCombo.setLabel(Messages.parametersPage_DeployTo);
+		targetsCombo.setTooltip(Messages.parametersPage_DeployToTooltip);
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -310,24 +310,13 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void createOperationsSection(Composite parent) {
-		Group container = new Group(parent, SWT.NONE);
-		container.setText("Operation");
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		container.setLayoutData(gd);
-		GridLayout layout = new GridLayout(2, false);
-		container.setLayout(layout);
-		layout.marginHeight = 5;
-		layout.marginWidth = 5;
-		container.setLayout(layout);
-
-		Label operationLabel = new Label(container, SWT.NONE);
+		Label operationLabel = new Label(parent, SWT.NONE);
 		operationLabel.setText("Choose operation which should be performed:");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		operationLabel.setLayoutData(gd);
 
-		deployButton = createRadioButton(container, "Deploy");
+		deployButton = createRadioButton(parent, "Deploy");
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -335,7 +324,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		});
 
-		updateButton = createRadioButton(container, "Update");
+		updateButton = createRadioButton(parent, "Update");
 		updateButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -356,8 +345,14 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		});
 
+		Composite updateComboComposite = new Composite(parent, SWT.NONE);
+		updateComboComposite.setLayout(new GridLayout(2, true));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalSpan = 2;
+		gd.horizontalIndent = 10;
+		updateComboComposite.setLayoutData(gd);
 		updateCombo = createLabelWithCombo("Choose application to update:", "",
-				container);
+				updateComboComposite);
 		updateCombo.setEnabled(false);
 		updateCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -367,7 +362,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 
 		if (autoDeploy) {
-			autoDeployButton = createRadioButton(container, "Automatic Deploy");
+			autoDeployButton = createRadioButton(parent, "Automatic Deploy");
 			autoDeployButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -377,8 +372,14 @@ public class ConfigurationBlock extends AbstractBlock {
 				}
 			});
 
+			Composite autoDeployComboComposite = new Composite(parent, SWT.NONE);
+			autoDeployComboComposite.setLayout(new GridLayout(2, true));
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd.horizontalSpan = 2;
+			gd.horizontalIndent = 10;
+			autoDeployComboComposite.setLayoutData(gd);
 			autoDeployCombo = createLabelWithCombo("Choose application for automatic deployment:",
-					"", container);
+					"", autoDeployComboComposite);
 			autoDeployCombo.setEnabled(false);
 			autoDeployCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -420,11 +421,12 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 	}
 
-	private Button createRadioButton(Group container, String label) {
+	private Button createRadioButton(Composite container, String label) {
 		Button button = new Button(container, SWT.RADIO);
 		button.setText(label);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
+		gd.horizontalIndent = 8;
 		button.setLayoutData(gd);
 		return button;
 	}
