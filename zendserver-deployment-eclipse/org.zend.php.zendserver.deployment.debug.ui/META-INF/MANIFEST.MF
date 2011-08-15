@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  org.eclipse.core.expressions,
  org.eclipse.php.debug.ui,
- org.zend.php.zendserver.deployment.ui
+ org.zend.php.zendserver.deployment.ui,
+ org.eclipse.php.debug.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

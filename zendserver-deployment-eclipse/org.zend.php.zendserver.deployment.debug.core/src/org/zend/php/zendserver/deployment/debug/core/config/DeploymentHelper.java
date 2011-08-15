@@ -44,8 +44,11 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public static DeploymentHelper create(ILaunchConfiguration config) {
 		DeploymentHelper helper = new DeploymentHelper();
 		try {
-			helper.setBaseURL(config.getAttribute(DeploymentAttributes.BASE_URL.getName(),
-					EMPTY_STRING));
+			String baseURL = config.getAttribute(DeploymentAttributes.BASE_URL.getName(),
+					EMPTY_STRING);
+			if (!baseURL.isEmpty()) {
+				helper.setBaseURL(baseURL);
+			}
 			helper.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
 					EMPTY_STRING));
 			helper.setTargetHost(config.getAttribute(DeploymentAttributes.TARGET_HOST.getName(),

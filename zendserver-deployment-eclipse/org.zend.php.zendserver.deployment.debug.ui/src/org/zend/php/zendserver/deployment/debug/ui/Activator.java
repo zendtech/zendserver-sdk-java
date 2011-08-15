@@ -2,12 +2,9 @@ package org.zend.php.zendserver.deployment.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.zend.php.zendserver.deployment.debug.ui.listeners.DeploymentLaunchListener;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -26,8 +23,6 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
-	private ILaunchListener listener;
 
 	/**
 	 * The constructor
@@ -42,8 +37,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		listener = new DeploymentLaunchListener();
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(listener);
 	}
 
 	/*
@@ -53,7 +46,6 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(listener);
 	}
 
 	/**

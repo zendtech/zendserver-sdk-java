@@ -14,9 +14,12 @@ import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
+import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 
 public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 
+	private ResponseCode responseCode;
 
 	protected DeploymentLaunchJob(String name, IDeploymentHelper helper, IProject project) {
 		super(name, helper, project);
@@ -29,14 +32,26 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		app.addStatusChangeListener(listener);
 		ApplicationInfo info = performOperation(app, project.getLocation().toString());
 		if (monitor.isCanceled()) {
-			return Status.OK_STATUS;
+			return Status.CANCEL_STATUS;
 		}
 		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
 			return monitorApplicationStatus(listener, helper.getTargetId(), info.getId(), app,
 					monitor);
 		}
+		Throwable exception = listener.getStatus().getThrowable();
+		if (exception instanceof UnexpectedResponseCode) {
+			UnexpectedResponseCode codeException = (UnexpectedResponseCode) exception;
+			responseCode = codeException.getResponseCode();
+			if (responseCode == ResponseCode.BASE_URL_CONFLICT) {
+				return Status.OK_STATUS;
+			}
+		}
 		return new SdkStatus(listener.getStatus());
+	}
+
+	public ResponseCode getResponseCode() {
+		return responseCode;
 	}
 
 	protected abstract ApplicationInfo performOperation(ZendApplication app, String projectPath);
@@ -47,7 +62,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		ApplicationStatus result = null;
 		while (result != ApplicationStatus.DEPLOYED) {
 			if (monitor.isCanceled()) {
-				return Status.OK_STATUS;
+				return Status.CANCEL_STATUS;
 			}
 			ApplicationsList info = application.getStatus(targetId, String.valueOf(id));
 			if (info != null && info.getApplicationsInfo() != null) {

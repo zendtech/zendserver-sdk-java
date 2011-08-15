@@ -5,6 +5,7 @@ import java.util.Map;
 
 public interface IDeploymentHelper {
 
+	public static final String DEFAULT_SERVER = "<default-server>";
 	public static final int DEPLOY = 0;
 	public static final int UPDATE = 1;
 	public static final int AUTO_DEPLOY = 2;
