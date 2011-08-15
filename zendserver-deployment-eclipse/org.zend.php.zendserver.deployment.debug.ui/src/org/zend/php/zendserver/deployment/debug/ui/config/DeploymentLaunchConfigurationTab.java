@@ -100,13 +100,6 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
-	protected void updateLaunchConfigurationDialog() {
-		if (getLaunchConfigurationDialog() != null) {
-			getLaunchConfigurationDialog().updateButtons();
-			getLaunchConfigurationDialog().updateMessage();
-		}
-	}
-
 	private void setMessages(IStatus status) {
 		if (status.getSeverity() == IStatus.OK) {
 			setMessage(status.getMessage());

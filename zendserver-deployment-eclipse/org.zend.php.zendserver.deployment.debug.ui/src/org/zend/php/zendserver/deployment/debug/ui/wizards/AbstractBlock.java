@@ -80,6 +80,12 @@ public abstract class AbstractBlock {
 		Button button = new Button(composite, SWT.CHECK);
 		button.setText(desc);
 		button.setToolTipText(tooltip);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				listener.statusChanged(validatePage());
+			}
+		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		button.setLayoutData(gd);

@@ -319,6 +319,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				enableDeploySection();
+				listener.statusChanged(validatePage());
 			}
 		});
 
@@ -328,6 +329,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			public void widgetSelected(SelectionEvent e) {
 				if (updateButton.getSelection()) {
 					enableUpdateSection();
+					listener.statusChanged(validatePage());
 				}
 			}
 		});
@@ -340,6 +342,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				if (autoDeploy && autoDeployButton.getSelection()) {
 					getApplicationsInfo(autoDeployCombo);
 				}
+				listener.statusChanged(validatePage());
 			}
 		});
 
@@ -357,6 +360,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fillFieldsByAppInfo(updateCombo);
+				listener.statusChanged(validatePage());
 			}
 		});
 
@@ -367,6 +371,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				public void widgetSelected(SelectionEvent e) {
 					if (autoDeployButton.getSelection()) {
 						enableAutoDeploySection();
+						listener.statusChanged(validatePage());
 					}
 				}
 			});
@@ -384,6 +389,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fillFieldsByAppInfo(autoDeployCombo);
+					listener.statusChanged(validatePage());
 				}
 			});
 		}
