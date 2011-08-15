@@ -47,17 +47,17 @@ public class DevCloudTunnelHandler extends AbstractHandler {
 			final String host = t.getHost().getHost();
 			if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
 				user = host.substring(0, host.indexOf('.'));
-				final String property = t.getProperty(ZendDevCloud.SSH_PRIVATE_KEY); //$NON-NLS-1$
+				final String property = t.getProperty(ZendDevCloud.SSH_PRIVATE_KEY); 
 				if (property != null) {
 					try {
-						final File file = File.createTempFile("zend-cloud", "pem");
+						final File file = File.createTempFile("zend-cloud", "pem"); //$NON-NLS-1$ //$NON-NLS-2$
 						DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
 						dos.write(property.getBytes());
 						dos.close();
 						file.deleteOnExit();
 						filename = file.getAbsolutePath();
 					} catch (IOException e) {
-						throw new ExecutionException("", e);
+						throw new ExecutionException("", e); //$NON-NLS-1$
 					}
 				}
 			}
