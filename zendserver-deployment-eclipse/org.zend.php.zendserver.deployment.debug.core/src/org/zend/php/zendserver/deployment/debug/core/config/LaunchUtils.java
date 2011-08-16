@@ -52,7 +52,6 @@ public class LaunchUtils {
 	public static ILaunchConfiguration createConfiguration(IProject project,
 			IDeploymentHelper helper) throws CoreException {
 		ILaunchConfiguration config = null;
-
 		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
 				getNewConfigurationName(project.getName(), helper.getTargetHost()));
 
@@ -88,7 +87,7 @@ public class LaunchUtils {
 				helper.setBaseURL(baseUrl.toString());
 				helper.setDefaultServer(true);
 				helper.setTargetId(target.getId());
-				helper.setTargetHost(target.getHost().toString());
+				helper.setTargetHost(target.getHost().getHost().toString());
 				helper.setIgnoreFailures(false);
 				helper.setOperationType(IDeploymentHelper.DEPLOY);
 				helper.setProjectName(project.getName());
