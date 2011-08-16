@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -24,9 +25,13 @@ public class FileField extends TextField {
 	private IContainer root;
 	private IDescriptorContainer fModel;
 	
-	public FileField(IDescriptorContainer model, Feature key, String label, IContainer root) {
-		super(model.getDescriptorModel(), key, label);
+	public FileField(IDeploymentDescriptor descriptor, Feature key, String label, IContainer root) {
+		super(descriptor, key, label);
 		this.root = root;
+	}
+	
+	public FileField(IDescriptorContainer model, Feature key, String label, IContainer root) {
+		this(model.getDescriptorModel(), key, label, root);
 		this.fModel = model;
 	}
 
@@ -53,22 +58,27 @@ public class FileField extends TextField {
 				OpenFileDialog dialog = new OpenFileDialog(shell, root, labelTxt, msg, text.getText());
 				String newSelection = openDialog(dialog);
 				if (newSelection != null) {
-					try {
-						IMappingModel mappingModel = fModel.getMappingModel();
-						String mappedPath = mappingModel.getPackagePath(IMappingModel.APPDIR,
-								newSelection);
-						if (mappedPath == null) {
-							mappingModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-									newSelection, false);
-							mappedPath = mappingModel.getPackagePath(IMappingModel.APPDIR,
+					if (fModel != null) {
+						try {
+							IMappingModel mappingModel = fModel.getMappingModel();
+							String mappedPath = mappingModel.getPackagePath(IMappingModel.APPDIR,
 									newSelection);
-							mappingModel.store();
+							if (mappedPath == null) {
+								mappingModel.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+										newSelection, false);
+								mappedPath = mappingModel.getPackagePath(IMappingModel.APPDIR,
+										newSelection);
+								mappingModel.store();
+							}
+							String appdir = fModel.getDescriptorModel().getApplicationDir();
+							text.setText(appdir + SEPARATOR + getUnifiedPath(mappedPath));
+						} catch (IOException e1) {
+							Activator.log(e1);
 						}
-						String appdir = fModel.getDescriptorModel().getApplicationDir();
-						text.setText(appdir + SEPARATOR + getUnifiedPath(mappedPath));
-					} catch (IOException e1) {
-						Activator.log(e1);
+					} else {
+						text.setText(newSelection);
 					}
+					
 				}
 			}
 			

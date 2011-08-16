@@ -236,10 +236,10 @@ public class OverviewPage extends DescriptorEditorPage {
 		apiVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_API,
 				Messages.OverviewPage_1));
-		license = addField(new FileField(fModel,
+		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
 				"License", editor.getProject())); //$NON-NLS-1$
-		icon = addField(new FileField(fModel, DeploymentDescriptorPackage.ICON,
+		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
 				Messages.OverviewPage_Icon, editor.getProject()));
 		docRoot = addField(new FolderField(fModel,
 				DeploymentDescriptorPackage.DOCROOT,
