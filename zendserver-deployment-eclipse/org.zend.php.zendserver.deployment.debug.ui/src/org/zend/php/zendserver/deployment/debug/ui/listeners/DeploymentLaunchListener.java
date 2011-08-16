@@ -1,6 +1,10 @@
 package org.zend.php.zendserver.deployment.debug.ui.listeners;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +23,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
@@ -51,16 +58,19 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 				final IProject project = LaunchUtils.getProjectFromFilename(configuration);
 				switch (helper.getOperationType()) {
 				case IDeploymentHelper.DEPLOY:
-					if (!helper.getTargetId().isEmpty()) {
+					if (helper.getTargetId().isEmpty()) {
 						IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
 						if (defaultHelper != null) {
 							try {
+								helper = defaultHelper;
 								LaunchUtils.updateLaunchConfiguration(project, defaultHelper,
 										configuration.getWorkingCopy());
 							} catch (CoreException e) {
 								Activator.log(e);
 							}
 						}
+					}
+					if (!helper.getTargetId().isEmpty() && !hasParameters(project)) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
 						openDeploymentWizard(configuration, helper, project);
@@ -98,8 +108,15 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 		return OK;
 	}
 
-	private int preLaunch(ILaunchConfiguration configuration) {
-		return preLaunch(configuration, null, null, null);
+	private boolean hasParameters(IProject project) {
+		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		IDescriptorContainer model = DescriptorContainerManager.getService()
+				.openDescriptorContainer((IFile) descriptor);
+		List<IParameter> params = model.getDescriptorModel().getParameters();
+		if (params != null && params.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	private int verifyJobResult(ILaunchConfiguration config, IDeploymentHelper helper,
@@ -152,7 +169,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 	}
 
 	private int handleBaseUrlConflict(ILaunchConfiguration config, IDeploymentHelper helper,
-			IProject project) {
+			IProject project) throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
@@ -163,15 +180,14 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 			}
 		});
 		if (!dialogResult) {
-			ILaunchConfigurationWorkingCopy wc;
-			try {
-				wc = config.getWorkingCopy();
-				wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
-				wc.doSave();
-			} catch (CoreException e) {
-				Activator.log(e);
+			openDeploymentWizard(config, helper, project);
+			if (job == null) {
+				return CANCEL;
 			}
-			return preLaunch(config);
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(config, job.getHelper(), project);
 		} else {
 			dialogResult = false;
 			job = new NoIdUpdateLaunchJob(helper, project);
