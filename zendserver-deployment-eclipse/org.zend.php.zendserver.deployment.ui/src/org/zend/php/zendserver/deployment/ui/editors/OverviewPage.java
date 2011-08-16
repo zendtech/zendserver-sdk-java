@@ -270,12 +270,12 @@ public class OverviewPage extends DescriptorEditorPage {
 		releaseVersion.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
 
+		appDir.create(sectionClient, toolkit);
+		docRoot.create(sectionClient, toolkit);
+		
 		license.create(sectionClient, toolkit);
 
 		icon.create(sectionClient, toolkit);
-
-		docRoot.create(sectionClient, toolkit);
-		appDir.create(sectionClient, toolkit);
 	}
 
 	protected void handleLinkClick(Object href) {
