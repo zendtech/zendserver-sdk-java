@@ -70,7 +70,7 @@ public class DevCloudTunnelHandler extends AbstractHandler {
 			t.connect();
 		} catch (IOException e) {
 			MessageDialog.openError(window.getShell(), Messages.DevCloudTunnelHandler_7,
-					Messages.DevCloudTunnelHandler_8);
+					e.getMessage());
 			Activator.log(e);
 			return null;
 		}
