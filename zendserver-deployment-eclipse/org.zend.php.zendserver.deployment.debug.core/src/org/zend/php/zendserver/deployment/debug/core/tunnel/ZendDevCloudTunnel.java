@@ -9,8 +9,10 @@ package org.zend.php.zendserver.deployment.debug.core.tunnel;
 
 import java.io.IOException;
 
+import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxyHTTP;
@@ -42,7 +44,7 @@ public class ZendDevCloudTunnel {
 	public ZendDevCloudTunnel(String user, String baseUrl, String filename, UserInfo ui) {
 		if (user == null || filename == null || ui == null) {
 			throw new IllegalArgumentException(
-					"error setting user or filename to Ssh Tunnel");
+					"error setting user or filename to Ssh Tunnel"); //$NON-NLS-1$
 		}
 		this.user = user;
 		this.baseUrl = baseUrl;
@@ -55,19 +57,24 @@ public class ZendDevCloudTunnel {
 	}
 
 	public void connect() throws IOException {
+		JSch jsch = new JSch();
+		Session session = null;
 		try {
-			JSch jsch = new JSch();
-			Session session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
-			session.disconnect();
-			
+			session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
 			session.setUserInfo(ui);
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
 			jsch.addIdentity(filename);
 			session.connect();
-			session.setPortForwardingR(10137, "127.0.0.1", 10137);
 		} catch (JSchException e) {
 			throw new IOException(e);
+		}
+	
+		try {
+			session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
+		} catch (JSchException e) {
+			final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1, user, baseUrl);
+			throw new IOException(msg);
 		}
 	}
 }

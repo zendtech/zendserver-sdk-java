@@ -17,6 +17,8 @@ public class Messages extends NLS {
 	public static String statusJob_Title;
 	public static String updateJob_Title;
 
+	public static String ZendDevCloudTunnel_1;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
