@@ -9,6 +9,7 @@
 	<version>
 		<release>1.4.1.1</release>
 	</version>
-	<eula>data/LICENSE.txt</eula>
+	<eula>eula/license.txt</eula>
+	<icon>icon/appicon.png</icon>
 	<docroot>public</docroot>
 </package>
