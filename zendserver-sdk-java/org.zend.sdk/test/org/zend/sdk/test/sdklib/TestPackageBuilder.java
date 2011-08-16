@@ -88,6 +88,8 @@ public class TestPackageBuilder extends AbstractTest {
 		File parent = result.getParentFile();
 		assertTrue(new File(parent, "/data/public/inner_public").exists());
 		assertTrue(new File(parent, "/data/emptyFolder").exists());
+		assertTrue(new File(parent, "/eula/license.txt").exists());
+		assertTrue(new File(parent, "/icon/appicon.png").exists());
 	}
 
 	@Test
@@ -140,7 +142,7 @@ public class TestPackageBuilder extends AbstractTest {
 		assertEquals(StatusCode.STARTING, statuses.get(0).getCode());
 		assertEquals(StatusCode.STOPPING, statuses.get(statuses.size() - 1)
 				.getCode());
-		assertEquals(3, statuses.size() - 2);
+		assertEquals(5, statuses.size() - 2);
 	}
 
 	public void unzip(File packageFile) {

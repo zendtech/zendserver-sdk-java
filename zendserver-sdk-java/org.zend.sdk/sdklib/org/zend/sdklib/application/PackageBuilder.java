@@ -119,6 +119,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			File descriptorFile = new File(container,
 					ProjectResourcesWriter.DESCRIPTOR);
 			addFileToZip(descriptorFile, null, null, null);
+			resolveIconAndLicence();
 			resolveMappings();
 			out.close();
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
@@ -155,6 +156,27 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	 */
 	public File createDeploymentPackage() {
 		return createDeploymentPackage(new File("."));
+	}
+
+	private void resolveIconAndLicence() {
+		String icon = getIconName(container);
+		if (icon != null) {
+			try {
+				addFileToZip(new File(container, icon), null, null, null);
+			} catch (IOException e) {
+				// do nothing, it means that descriptor has entries which are
+				// not valid
+			}
+		}
+		String license = getLicenseName(container);
+		if (license != null) {
+			try {
+				addFileToZip(new File(container, license), null, null, null);
+			} catch (IOException e) {
+				// do nothing, it means that descriptor has entries which are
+				// not valid
+			}
+		}
 	}
 
 	private void resolveMappings() throws IOException {
@@ -274,6 +296,24 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		Package p = getPackage(container);
 		if (p != null) {
 			result = p.getScriptsdir();
+		}
+		return result;
+	}
+
+	private String getIconName(File container) {
+		String result = null;
+		Package p = getPackage(container);
+		if (p != null) {
+			result = p.getIcon();
+		}
+		return result;
+	}
+
+	private String getLicenseName(File container) {
+		String result = null;
+		Package p = getPackage(container);
+		if (p != null) {
+			result = p.getEula();
 		}
 		return result;
 	}
