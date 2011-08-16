@@ -376,7 +376,8 @@ public class MappingModel implements IMappingModel {
 					if (includePath.equals(path)) {
 						return new File(entry.getFolder(), path).getPath();
 					} else {
-						String fileName = path.substring(0, path.lastIndexOf(File.separator));
+						int index = path.lastIndexOf(File.separator);
+						String fileName = index != -1 ? path.substring(0, index) : path;
 						if (includePath.equals(fileName)) {
 							return new File(entry.getFolder(), path).getPath();
 						}
