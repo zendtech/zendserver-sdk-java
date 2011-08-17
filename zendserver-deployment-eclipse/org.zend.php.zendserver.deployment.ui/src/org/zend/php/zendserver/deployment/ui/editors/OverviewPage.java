@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -26,10 +27,13 @@ import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 
 public class OverviewPage extends DescriptorEditorPage {
+
+	private static final String VIEW = "view:"; //$NON-NLS-1$
 
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
 
@@ -192,11 +196,32 @@ public class OverviewPage extends DescriptorEditorPage {
 	private void createTestingSection(IManagedForm managedForm, Composite body) {
 		FormToolkit toolkit = managedForm.getToolkit();
 
-		Section section = toolkit.createSection(body,
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(body, Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_Testing);
-		section.setDescription(Messages.OverviewPage_TestingDescr);
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);
+		
 		final Composite sectionClient = toolkit.createComposite(section);
+		
+		FormText formText = toolkit.createFormText(sectionClient, true);
+		formText.setText(Messages.OverviewPage_TestingDescr, true, true);
+		formText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		formText.addHyperlinkListener(new HyperlinkAdapter() {
+			
+			public void linkActivated(HyperlinkEvent e) {
+				Object obj = e.getHref();
+				String href = (String) obj;
+				if (href.startsWith(VIEW)) {
+					String viewId = href.substring(VIEW.length());
+					try {
+						getSite().getPage().showView(viewId);
+					} catch (PartInitException ex) {
+						Activator.log(ex);
+					}
+				}
+			}
+		});
+		
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
 
