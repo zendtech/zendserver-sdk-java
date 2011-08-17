@@ -58,6 +58,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Button deployButton;
 	private Button updateButton;
 	private Button autoDeployButton;
+	private Button noActionButton;
 
 	private IRunnableContext context;
 	private Combo updateCombo;
@@ -152,6 +153,12 @@ public class ConfigurationBlock extends AbstractBlock {
 				enableAutoDeploySection();
 			}
 			break;
+		case IDeploymentHelper.NO_ACTION:
+			if (!noActionButton.getSelection()) {
+				noActionButton.setSelection(true);
+				enableNoActionSection();
+			}
+			break;
 		default:
 			break;
 		}
@@ -223,7 +230,10 @@ public class ConfigurationBlock extends AbstractBlock {
 		if (updateButton.getSelection()) {
 			return IDeploymentHelper.UPDATE;
 		}
-		return IDeploymentHelper.AUTO_DEPLOY;
+		if (autoDeployButton.getSelection()) {
+			return IDeploymentHelper.AUTO_DEPLOY;
+		}
+		return IDeploymentHelper.NO_ACTION;
 	}
 
 	private ApplicationInfo getUpdateSelection() {
@@ -326,6 +336,15 @@ public class ConfigurationBlock extends AbstractBlock {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		operationLabel.setLayoutData(gd);
+
+		noActionButton = createRadioButton(parent, Messages.advancedSection_NoAction);
+		noActionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				enableNoActionSection();
+				listener.statusChanged(validatePage());
+			}
+		});
 
 		deployButton = createRadioButton(parent, Messages.advancedSection_Deploy);
 		deployButton.addSelectionListener(new SelectionAdapter() {
@@ -456,6 +475,15 @@ public class ConfigurationBlock extends AbstractBlock {
 		initializeFields(helper);
 		setBaseURLEnabled(true);
 		setUserAppNameEnabled(true);
+		ignoreFailures.setEnabled(true);
+	}
+
+	private void enableNoActionSection() {
+		setBaseURLEnabled(false);
+		setUserAppNameEnabled(false);
+		autoDeployCombo.setEnabled(false);
+		updateCombo.setEnabled(false);
+		ignoreFailures.setEnabled(false);
 	}
 
 	private void enableUpdateSection() {
@@ -464,6 +492,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		autoDeployCombo.setEnabled(false);
 		getApplicationsInfo(updateCombo);
 		updateCombo.setEnabled(true);
+		ignoreFailures.setEnabled(true);
 	}
 
 	private void enableAutoDeploySection() {
@@ -472,6 +501,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		updateCombo.setEnabled(false);
 		getApplicationsInfo(autoDeployCombo);
 		autoDeployCombo.setEnabled(true);
+		ignoreFailures.setEnabled(true);
 	}
 
 	private void getApplicationsInfo(Combo combo) {

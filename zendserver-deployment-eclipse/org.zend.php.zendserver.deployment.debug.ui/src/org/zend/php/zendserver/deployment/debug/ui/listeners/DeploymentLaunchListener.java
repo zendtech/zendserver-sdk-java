@@ -74,11 +74,12 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 						job = new DeployLaunchJob(helper, project);
 					} else {
 						openDeploymentWizard(configuration, helper, project);
-						if (job == null) {
-							return CANCEL;
-						}
 					}
-					addJobListener(configuration, project);
+					if (job == null) {
+						return OK;
+					} else if (job.getHelper().getOperationType() != IDeploymentHelper.AUTO_DEPLOY) {
+						addJobListener(configuration, project);
+					}
 					break;
 				case IDeploymentHelper.UPDATE:
 					job = new UpdateLaunchJob(helper, project);
@@ -92,6 +93,8 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 					job.setHelper(helper);
 					job.setProject(project);
 					break;
+				case IDeploymentHelper.NO_ACTION:
+					return OK;
 				default:
 					return CANCEL;
 				}
@@ -282,7 +285,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 						job.setHelper(helper);
 						job.setProject(project);
 						break;
-					default:
+					case IDeploymentHelper.NO_ACTION:
 						return;
 					}
 				} else {

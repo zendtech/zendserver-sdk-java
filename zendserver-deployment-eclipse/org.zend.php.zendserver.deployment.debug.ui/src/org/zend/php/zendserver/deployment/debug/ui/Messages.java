@@ -51,6 +51,7 @@ public class Messages extends NLS {
 	public static String advancedSection_Deploy;
 	public static String advancedSection_Update;
 	public static String advancedSection_AutoDeploy;
+	public static String advancedSection_NoAction;
 	public static String advancedSection_autoDeployComboLabel;
 	public static String advancedSection_autoDeployComboTooltip;
 	public static String advancedSection_Title;
