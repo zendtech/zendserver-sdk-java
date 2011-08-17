@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -7,7 +8,9 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -22,6 +25,7 @@ import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
 import org.zend.sdklib.event.IStatusChangeEvent;
 import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * TreeViewer that shows targets configured in ZendSDK and
@@ -61,7 +65,7 @@ public class TargetsViewer {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			
 			public void doubleClick(DoubleClickEvent event) {
-				new EditTargetAction(viewer).run();
+				handleDoubleClick(event);
 			}
 		});
 		
@@ -94,6 +98,26 @@ public class TargetsViewer {
 		});
 	}
 	
+	protected void handleDoubleClick(DoubleClickEvent event) {
+		ISelection selection = event.getSelection();
+		if (selection.isEmpty()) {
+			return;
+		}
+
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		Object obj = ssel.getFirstElement();
+		
+		if (obj instanceof IZendTarget) {
+			new EditTargetAction(viewer).run();
+			return;
+		} 
+		
+		IDoubleClickListener adapter = (IDoubleClickListener) Platform.getAdapterManager().getAdapter(obj, IDoubleClickListener.class);
+		if (adapter != null) {
+			adapter.doubleClick(event);
+		}
+	}
+
 	protected void refreshViewer() {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
