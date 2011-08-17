@@ -134,5 +134,15 @@
             class="org.zend.php.zendserver.deployment.debug.ui.listeners.DeploymentLaunchListener">
       </launchDelegateListener>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.debug.core.ILaunchConfiguration"
+            class="org.zend.php.zendserver.deployment.debug.ui.adapter.AdapterFactory">
+         <adapter
+               type="org.eclipse.jface.viewers.IDoubleClickListener">
+         </adapter>
+      </factory>
+   </extension>
 
 </plugin>

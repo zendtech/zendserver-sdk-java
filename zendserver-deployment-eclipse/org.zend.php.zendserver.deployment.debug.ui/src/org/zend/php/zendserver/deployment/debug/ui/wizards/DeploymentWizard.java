@@ -13,6 +13,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -30,7 +32,19 @@ public class DeploymentWizard extends Wizard {
 	private IProject project;
 	private IDeploymentHelper helper;
 
+	public DeploymentWizard(ILaunchConfiguration config) {
+		DeploymentHelper helper = DeploymentHelper.create(config);
+		String projectName = helper.getProjectName();
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		
+		init(project, helper);
+	}
+	
 	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
+		init(project, helper);
+	}
+
+	private void init(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
