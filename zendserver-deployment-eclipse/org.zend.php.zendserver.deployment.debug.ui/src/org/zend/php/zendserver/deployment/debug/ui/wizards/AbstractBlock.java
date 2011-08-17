@@ -35,6 +35,8 @@ public abstract class AbstractBlock {
 	public Composite createContents(Composite parent) {
 		container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 		return container;
 	}

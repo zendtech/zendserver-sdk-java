@@ -15,6 +15,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,7 +26,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -75,7 +79,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	@Override
-	public Composite createContents(Composite parent) {
+	public Composite createContents(final Composite parent) {
 		super.createContents(parent);
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
@@ -83,6 +87,16 @@ public class ConfigurationBlock extends AbstractBlock {
 		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer()); //$NON-NLS-1$
 		ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		expComposite.addExpansionListener(new ExpansionAdapter() {
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				if (e.getState()) {
+					Shell shell = parent.getShell();
+					Point point = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+					shell.setSize(shell.getSize().x, point.y);
+				}
+			}
+		});
 		expComposite.setText(Messages.advancedSection_Title);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 2;
@@ -96,7 +110,6 @@ public class ConfigurationBlock extends AbstractBlock {
 				Messages.configurationPage_ignoreFailuresTooltip, advancedSection);
 		;
 		expComposite.setClient(advancedSection);
-		expComposite.setExpanded(true);
 		return getContainer();
 	}
 
@@ -348,7 +361,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 		Composite updateComboComposite = new Composite(parent, SWT.NONE);
 		updateComboComposite.setLayout(new GridLayout(2, true));
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 10;
 		updateComboComposite.setLayoutData(gd);
@@ -378,7 +391,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 			Composite autoDeployComboComposite = new Composite(parent, SWT.NONE);
 			autoDeployComboComposite.setLayout(new GridLayout(2, true));
-			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			gd.horizontalSpan = 2;
 			gd.horizontalIndent = 10;
 			autoDeployComboComposite.setLayoutData(gd);

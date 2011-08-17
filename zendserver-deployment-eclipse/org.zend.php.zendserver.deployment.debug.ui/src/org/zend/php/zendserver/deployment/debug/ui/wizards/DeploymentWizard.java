@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -73,6 +75,18 @@ public class DeploymentWizard extends Wizard {
 		helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 		helper.setDefaultServer(true);
 		return helper;
+	}
+
+	@Override
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		getShell().setMinimumSize(550, 350);
+		getShell().setSize(getShell().getMinimumSize());
+		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
+		Rectangle shellArea = getShell().getBounds();
+		int x = monitorArea.x + (monitorArea.width - shellArea.width) / 2;
+		int y = monitorArea.y + (monitorArea.height - shellArea.height) / 3;
+		getShell().setLocation(x, y);
 	}
 
 	@Override

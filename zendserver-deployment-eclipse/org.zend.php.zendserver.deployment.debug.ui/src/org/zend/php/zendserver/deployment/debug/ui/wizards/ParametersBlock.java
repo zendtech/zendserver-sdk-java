@@ -125,7 +125,7 @@ public class ParametersBlock extends AbstractBlock {
 
 	private List<DeploymentParameter> parameters;
 	private IDescriptorContainer model;
-	private Group parametersGroup;
+	private ScrolledComposite parametersGroup;
 
 	public ParametersBlock(IStatusChangeListener context) {
 		super(context);
@@ -184,25 +184,19 @@ public class ParametersBlock extends AbstractBlock {
 	}
 
 	private void createParameterGroups(Composite container) {
-		parametersGroup = new Group(container, SWT.NULL);
-		parametersGroup.setText(Messages.parametersPage_applicationParams);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalSpan = 2;
-		parametersGroup.setLayoutData(gd);
-		parametersGroup.setLayout(new FillLayout(SWT.FILL));
+		parametersGroup = new ScrolledComposite(container, SWT.V_SCROLL);
 		if (model.getDescriptorModel() != null) {
-			final ScrolledComposite scrollComposite = new ScrolledComposite(parametersGroup,
-					SWT.V_SCROLL);
-			scrollComposite.setLayout(new FillLayout());
-			final Composite parent = new Composite(scrollComposite, SWT.NONE);
+			parametersGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+			parametersGroup.setLayout(new FillLayout());
+			final Composite parent = new Composite(parametersGroup, SWT.NONE);
 			parent.setLayout(new GridLayout(2, false));
-			scrollComposite.setExpandVertical(true);
-			scrollComposite.setExpandHorizontal(true);
-			scrollComposite.setContent(parent);
-			scrollComposite.addControlListener(new ControlAdapter() {
+			parametersGroup.setExpandVertical(true);
+			parametersGroup.setExpandHorizontal(true);
+			parametersGroup.setContent(parent);
+			parametersGroup.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {
-					Rectangle r = scrollComposite.getClientArea();
-					scrollComposite.setMinSize(parent.computeSize(r.width, SWT.DEFAULT));
+					Rectangle r = parametersGroup.getClientArea();
+					parametersGroup.setMinSize(parent.computeSize(r.width, SWT.DEFAULT));
 				}
 			});
 			List<ParametersCategory> categories = createCategories(model.getDescriptorModel()
