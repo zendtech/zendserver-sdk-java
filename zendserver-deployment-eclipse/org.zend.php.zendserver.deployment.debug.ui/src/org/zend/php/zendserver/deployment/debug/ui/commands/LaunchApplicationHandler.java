@@ -87,10 +87,10 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 				} catch (CoreException e) {
 					Activator.log(e);
 				}
+				if (config != null) {
+					DebugUITools.launch(config, mode);
+				}
 			}
-		}
-		if (config != null) {
-			DebugUITools.launch(config, mode);
 		}
 	}
 
