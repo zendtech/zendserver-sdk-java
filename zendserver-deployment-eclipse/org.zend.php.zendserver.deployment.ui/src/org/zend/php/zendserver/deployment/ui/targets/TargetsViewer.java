@@ -6,19 +6,22 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
@@ -35,6 +38,7 @@ public class TargetsViewer {
 
 	private TreeViewer viewer;
 	private IStatusChangeListener listener;
+	private MenuManager menuMgr;
 
 	/**
 	 * Create viewer control
@@ -68,6 +72,11 @@ public class TargetsViewer {
 				handleDoubleClick(event);
 			}
 		});
+		
+		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
 		
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
 			
@@ -143,8 +152,12 @@ public class TargetsViewer {
 		return viewer;
 	}
 
-	public Viewer getViewer() {
+	public TreeViewer getViewer() {
 		return viewer;
+	}
+	
+	public MenuManager getMenuManager() {
+		return menuMgr;
 	}
 
 }

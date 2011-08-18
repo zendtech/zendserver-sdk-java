@@ -36,6 +36,9 @@ public class TargetsViewPart extends ViewPart {
 		
 		IMenuManager menuManager = actionBars.getMenuManager();
 		menuManager.add(new RefreshViewerAction(tv.getViewer()));
+		
+		getViewSite().registerContextMenu(tv.getMenuManager(), tv.getViewer());
+		getViewSite().setSelectionProvider(tv.getViewer());
 	}
 
 	@Override
