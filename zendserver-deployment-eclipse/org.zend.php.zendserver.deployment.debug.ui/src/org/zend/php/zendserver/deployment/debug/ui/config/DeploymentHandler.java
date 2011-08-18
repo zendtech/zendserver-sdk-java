@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -92,6 +93,7 @@ public class DeploymentHandler {
 					job.setProject(project);
 					break;
 				case IDeploymentHelper.NO_ACTION:
+					updateLaunchConfiguration(helper, config, project);
 					return OK;
 				default:
 					return CANCEL;
@@ -268,6 +270,11 @@ public class DeploymentHandler {
 						job.setProject(project);
 						break;
 					case IDeploymentHelper.NO_ACTION:
+						try {
+							updateLaunchConfiguration(updatedHelper, config, project);
+						} catch (CoreException e) {
+							Activator.log(e);
+						}
 						return;
 					}
 				} else {
@@ -293,6 +300,18 @@ public class DeploymentHandler {
 			return null;
 		}
 		return null;
+	}
+
+	private void updateLaunchConfiguration(IDeploymentHelper helper,
+			final ILaunchConfiguration config, final IProject project) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = null;
+		if (config instanceof ILaunchConfigurationWorkingCopy) {
+			wc = (ILaunchConfigurationWorkingCopy) config;
+		} else {
+			wc = config.getWorkingCopy();
+		}
+		LaunchUtils.updateLaunchConfiguration(project, helper, wc);
+		wc.doSave();
 	}
 
 	private MessageDialog getUpdateExistingApplicationDialog() {
