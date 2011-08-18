@@ -50,6 +50,9 @@
                commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
                label="Remove"
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

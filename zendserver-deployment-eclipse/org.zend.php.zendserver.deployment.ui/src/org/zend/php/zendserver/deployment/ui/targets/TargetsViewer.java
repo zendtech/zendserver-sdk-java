@@ -11,8 +11,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -74,11 +76,17 @@ public class TargetsViewer {
 		});
 		
 		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.add(new Separator("popupGroup1"));
-		menuMgr.add(new Separator("popupGroup2"));
+		menuMgr.add(new Separator("popupGroup1")); //$NON-NLS-1$
+		menuMgr.add(new Separator("popupGroup2")); //$NON-NLS-1$
 		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
+			
+			public void selectionChanged(SelectionChangedEvent event) {
+				menuMgr.updateAll(true);
+			}
+		});
 		viewer.getControl().setMenu(menu);
 		
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
