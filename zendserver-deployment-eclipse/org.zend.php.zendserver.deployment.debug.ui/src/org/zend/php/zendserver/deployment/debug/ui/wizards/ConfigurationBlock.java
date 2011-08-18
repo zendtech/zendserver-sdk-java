@@ -570,7 +570,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void changeHost(IZendTarget target) {
-		URL targetHost = target.getHost();
+		URL targetHost = target.getDefaultServerURL();
 		URL oldUrl = getBaseURL();
 		try {
 			URL updatedUrl = new URL(targetHost.getProtocol(), targetHost.getHost(),
