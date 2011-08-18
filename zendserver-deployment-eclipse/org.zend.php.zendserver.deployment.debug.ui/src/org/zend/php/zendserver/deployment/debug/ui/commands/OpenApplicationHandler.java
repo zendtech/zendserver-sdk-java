@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -16,16 +18,10 @@ import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHandler;
 public class OpenApplicationHandler extends AbstractDeploymentHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Object obj = event.getApplicationContext();
-		IEvaluationContext ctx = null;
-		if (obj instanceof IEvaluationContext) {
-			ctx = (IEvaluationContext) obj;
+		final ILaunchConfiguration config = getLaunchConfiguration(event.getApplicationContext());
+		if (config == null) {
+			return null;
 		}
-
-		ISelection selection = (ISelection) ctx.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-		IStructuredSelection sselection = (IStructuredSelection) selection;
-		Object object = sselection.getFirstElement();
-		final ILaunchConfiguration config = (ILaunchConfiguration) object;
 		Job job = new Job("Deployment Wizard") { //$NON-NLS-1$
 
 			@Override
@@ -40,6 +36,46 @@ public class OpenApplicationHandler extends AbstractDeploymentHandler {
 		};
 		job.setSystem(true);
 		job.schedule();
+		return null;
+	}
+	
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		setBaseEnabled(getLaunchConfiguration(evaluationContext) != null);
+	}
+	
+	private ILaunchConfiguration getLaunchConfiguration(Object evaluationContext) {
+		IEvaluationContext ctx = null;
+		if (evaluationContext instanceof IEvaluationContext) {
+			ctx = (IEvaluationContext) evaluationContext;
+		} else {
+			return null;
+		}
+		
+		Object object = ctx.getDefaultVariable();
+		
+		if (object instanceof List<?>) {
+			List<?> list = (List<?>) object;
+			if (list.size() > 0) {
+				object = list.get(0);
+			}
+		}
+		
+		if (object instanceof ILaunchConfiguration) {
+			return (ILaunchConfiguration) object;
+		}
+		
+		object = ctx.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		if (object instanceof ISelection) {
+			ISelection selection = (ISelection) object; 
+			IStructuredSelection sselection = (IStructuredSelection) selection;
+			object = sselection.getFirstElement();
+		}
+		
+		if (object instanceof ILaunchConfiguration) {
+			return (ILaunchConfiguration) object;
+		}
+		
 		return null;
 	}
 }

@@ -82,6 +82,9 @@
                commandId="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
                label="Open"
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
@@ -92,6 +95,9 @@
                   name="mode"
                   value="run">
             </parameter>
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
@@ -102,6 +108,9 @@
                   name="mode"
                   value="debug">
             </parameter>
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
