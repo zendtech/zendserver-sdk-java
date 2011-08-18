@@ -96,7 +96,6 @@ public class ConfigurationBlock extends AbstractBlock {
 					Point point = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 					shell.setSize(shell.getSize().x, point.y);
 				}
-				getContainer().pack();
 			}
 		});
 		expComposite.setText(Messages.advancedSection_Title);
