@@ -51,28 +51,6 @@
                label="Remove"
                style="push">
          </command>
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-               label="Run"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <instanceof
-                     value="org.eclipse.debug.core.ILaunchConfiguration">
-               </instanceof>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-               label="Debug"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <instanceof
-                     value="org.eclipse.debug.core.ILaunchConfiguration">
-               </instanceof>
-            </visibleWhen>
-         </command>
       </menuContribution>
    </extension>
    <extension
