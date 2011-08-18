@@ -34,8 +34,8 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 
 public class DeploymentHandler {
 
-	private static final int OK = 0;
-	private static final int CANCEL = -1;
+	public static final int OK = 0;
+	public static final int CANCEL = -1;
 
 	private AbstractLaunchJob job;
 
@@ -78,13 +78,10 @@ public class DeploymentHandler {
 					}
 					if (job == null) {
 						return OK;
-					} else if (job.getHelper().getOperationType() != IDeploymentHelper.AUTO_DEPLOY) {
-						job.addJobChangeListener(listener);
 					}
 					break;
 				case IDeploymentHelper.UPDATE:
 					job = new UpdateLaunchJob(helper, project);
-					job.addJobChangeListener(listener);
 					break;
 				case IDeploymentHelper.AUTO_DEPLOY:
 					job = getAutoDeployJob();
@@ -99,6 +96,7 @@ public class DeploymentHandler {
 				default:
 					return CANCEL;
 				}
+				job.addJobChangeListener(listener);
 				job.setUser(true);
 				job.schedule();
 				job.join();
@@ -111,8 +109,8 @@ public class DeploymentHandler {
 		}
 		return OK;
 	}
-
-	public int openDeploymentWizard() {
+	
+	public int openDeploymentWizard(boolean updateLaunchConfiguration) {
 		job = null;
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
@@ -121,11 +119,13 @@ public class DeploymentHandler {
 				openDeploymentWizard(config, helper, project);
 				if (job == null) {
 					return OK;
-				} else if (job.getHelper().getOperationType() != IDeploymentHelper.AUTO_DEPLOY) {
+				}
+				if (updateLaunchConfiguration) {
 					job.addJobChangeListener(listener);
 				}
 				job.setUser(true);
 				job.schedule();
+				job.join();
 				return verifyJobResult(config, job.getHelper(), project);
 			}
 		} catch (CoreException e) {
@@ -193,6 +193,7 @@ public class DeploymentHandler {
 			if (job == null) {
 				return CANCEL;
 			}
+			job.addJobChangeListener(listener);
 			job.setUser(true);
 			job.schedule();
 			job.join();
@@ -219,6 +220,7 @@ public class DeploymentHandler {
 			if (job == null) {
 				return CANCEL;
 			}
+			job.addJobChangeListener(listener);
 			job.setUser(true);
 			job.schedule();
 			job.join();
@@ -253,18 +255,16 @@ public class DeploymentHandler {
 					switch (updatedHelper.getOperationType()) {
 					case IDeploymentHelper.DEPLOY:
 						job = new DeployLaunchJob(updatedHelper, project);
-						job.addJobChangeListener(listener);
 						break;
 					case IDeploymentHelper.UPDATE:
 						job = new UpdateLaunchJob(updatedHelper, project);
-						job.addJobChangeListener(listener);
 						break;
 					case IDeploymentHelper.AUTO_DEPLOY:
 						job = getAutoDeployJob();
 						if (job == null) {
 							break;
 						}
-						job.setHelper(helper);
+						job.setHelper(updatedHelper);
 						job.setProject(project);
 						break;
 					case IDeploymentHelper.NO_ACTION:

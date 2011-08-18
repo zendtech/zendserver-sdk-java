@@ -10,9 +10,9 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
+import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
-import org.zend.webapi.core.connection.response.ResponseCode;
 
 public class DeployJobChangeListener extends JobChangeAdapter {
 
@@ -26,18 +26,22 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 
 	@Override
 	public void done(IJobChangeEvent event) {
-		DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) event.getJob();
+		AbstractLaunchJob launchJob = (AbstractLaunchJob) event.getJob();
 		int status = event.getResult().getSeverity();
 		switch (status) {
 		case IStatus.OK:
-			if (deploymentJob.getResponseCode() == null) {
-				IProject project;
-				try {
-					project = LaunchUtils.getProjectFromFilename(config);
-					updateLaunchConfiguration(deploymentJob, config, project);
-				} catch (CoreException e) {
-					Activator.log(e);
+			if (launchJob instanceof DeploymentLaunchJob) {
+				DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) launchJob;
+				if (deploymentJob.getResponseCode() != null) {
+					return;
 				}
+			}
+			IProject project;
+			try {
+				project = LaunchUtils.getProjectFromFilename(config);
+				updateLaunchConfiguration(launchJob, config, project);
+			} catch (CoreException e) {
+				Activator.log(e);
 			}
 			break;
 		case IStatus.CANCEL:
@@ -52,12 +56,8 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		return cancelled;
 	}
 
-	private void updateLaunchConfiguration(DeploymentLaunchJob job,
+	private void updateLaunchConfiguration(AbstractLaunchJob job,
 			final ILaunchConfiguration config, final IProject project) throws CoreException {
-		ResponseCode code = job.getResponseCode();
-		if (code != null) {
-			return;
-		}
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			wc = (ILaunchConfigurationWorkingCopy) config;
