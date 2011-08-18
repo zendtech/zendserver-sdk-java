@@ -76,27 +76,15 @@ public class LaunchUtils {
 		return config;
 	}
 
+	public static IDeploymentHelper createDefaultHelper(String targetId, IProject project) {
+		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
+		IZendTarget target = manager.getTargetById(targetId);
+		return createDefaultHelper(project, target);
+	}
+
 	public static IDeploymentHelper createDefaultHelper(IProject project) {
 		IZendTarget target = getTargetFromPreferences(project);
-		if (target != null) {
-			try {
-				IDeploymentHelper helper = new DeploymentHelper();
-				URL targetUrl = target.getDefaultServerURL();
-				URL baseUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(),
-						targetUrl.getPort(), "/" + project.getName()); //$NON-NLS-1$
-				helper.setBaseURL(baseUrl.toString());
-				helper.setDefaultServer(true);
-				helper.setTargetId(target.getId());
-				helper.setTargetHost(target.getHost().getHost().toString());
-				helper.setIgnoreFailures(false);
-				helper.setOperationType(IDeploymentHelper.DEPLOY);
-				helper.setProjectName(project.getName());
-				return helper;
-			} catch (MalformedURLException e) {
-				return null;
-			}
-		}
-		return null;
+		return createDefaultHelper(project, target);
 	}
 
 	public static void updateLaunchConfiguration(IProject project,
@@ -277,10 +265,32 @@ public class LaunchUtils {
 		return null;
 	}
 
+	private static IDeploymentHelper createDefaultHelper(IProject project, IZendTarget target) {
+		if (target != null) {
+			try {
+				IDeploymentHelper helper = new DeploymentHelper();
+				URL targetUrl = target.getDefaultServerURL();
+				URL baseUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(),
+						targetUrl.getPort(), "/" + project.getName()); //$NON-NLS-1$
+				helper.setBaseURL(baseUrl.toString());
+				helper.setDefaultServer(true);
+				helper.setTargetId(target.getId());
+				helper.setTargetHost(target.getHost().getHost().toString());
+				helper.setIgnoreFailures(false);
+				helper.setOperationType(IDeploymentHelper.DEPLOY);
+				helper.setProjectName(project.getName());
+				return helper;
+			} catch (MalformedURLException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
 	private static IZendTarget getTargetFromPreferences(IProject project) {
 		IEclipsePreferences pref = new ProjectScope(project).getNode(DeploymentCore.PLUGIN_ID);
-		String targetId = pref.get("targetId", null);
-		String targetHost = pref.get("targetHost", null);
+		String targetId = pref.get("targetId", null); //$NON-NLS-1$
+		String targetHost = pref.get("targetHost", null); //$NON-NLS-1$
 		if (targetId != null) {
 			TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 			IZendTarget target = manager.getTargetById(targetId);

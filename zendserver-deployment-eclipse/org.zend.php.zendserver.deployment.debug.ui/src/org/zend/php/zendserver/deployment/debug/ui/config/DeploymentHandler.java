@@ -75,7 +75,7 @@ public class DeploymentHandler {
 					if (!helper.getTargetId().isEmpty() && !hasParameters(project)) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
-						openDeploymentWizard(config, helper, project);
+						doOpenDeploymentWizard(helper, project);
 					}
 					if (job == null) {
 						return OK;
@@ -102,7 +102,7 @@ public class DeploymentHandler {
 				job.setUser(true);
 				job.schedule();
 				job.join();
-				return verifyJobResult(config, job.getHelper(), project);
+				return verifyJobResult(job.getHelper(), project);
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -112,13 +112,30 @@ public class DeploymentHandler {
 		return OK;
 	}
 	
+	public int openNoConfigDeploymentWizard(IDeploymentHelper helper, IProject project) {
+		job = null;
+		try {
+			doOpenDeploymentWizard(helper, project);
+			if (job == null) {
+				return OK;
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(job.getHelper(), project);
+		} catch (InterruptedException e) {
+			Activator.log(e);
+		}
+		return OK;
+	}
+
 	public int openDeploymentWizard(boolean updateLaunchConfiguration) {
 		job = null;
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
 				final IProject project = LaunchUtils.getProjectFromFilename(config);
-				openDeploymentWizard(config, helper, project);
+				doOpenDeploymentWizard(helper, project);
 				if (job == null) {
 					return OK;
 				}
@@ -128,7 +145,7 @@ public class DeploymentHandler {
 				job.setUser(true);
 				job.schedule();
 				job.join();
-				return verifyJobResult(config, job.getHelper(), project);
+				return verifyJobResult(job.getHelper(), project);
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -156,8 +173,8 @@ public class DeploymentHandler {
 		return cancelled;
 	}
 
-	private int verifyJobResult(ILaunchConfiguration config, IDeploymentHelper helper,
-			IProject project) throws InterruptedException {
+	private int verifyJobResult(IDeploymentHelper helper, IProject project)
+			throws InterruptedException {
 		if (isCancelled()) {
 			return CANCEL;
 		}
@@ -169,9 +186,9 @@ public class DeploymentHandler {
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
-				return handleBaseUrlConflict(config, helper, project);
+				return handleBaseUrlConflict(helper, project);
 			case APPLICATION_CONFLICT:
-				return handleApplicationConflict(config, helper, project);
+				return handleApplicationConflict(helper, project);
 			default:
 				break;
 			}
@@ -179,8 +196,8 @@ public class DeploymentHandler {
 		return OK;
 	}
 	
-	private int handleApplicationConflict(ILaunchConfiguration config, IDeploymentHelper helper,
-			IProject project) throws InterruptedException {
+	private int handleApplicationConflict(IDeploymentHelper helper, IProject project)
+			throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
@@ -191,7 +208,7 @@ public class DeploymentHandler {
 			}
 		});
 		if (!dialogResult) {
-			openDeploymentWizard(config, helper, project);
+			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
 				return CANCEL;
 			}
@@ -199,14 +216,14 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			return verifyJobResult(config, job.getHelper(), project);
+			return verifyJobResult(job.getHelper(), project);
 		} else {
 			dialogResult = false;
 			return CANCEL;
 		}
 	}
 
-	private int handleBaseUrlConflict(ILaunchConfiguration config, IDeploymentHelper helper,
+	private int handleBaseUrlConflict(IDeploymentHelper helper,
 			IProject project) throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
@@ -218,7 +235,7 @@ public class DeploymentHandler {
 			}
 		});
 		if (!dialogResult) {
-			openDeploymentWizard(config, helper, project);
+			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
 				return CANCEL;
 			}
@@ -226,7 +243,7 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			return verifyJobResult(config, job.getHelper(), project);
+			return verifyJobResult(job.getHelper(), project);
 		} else {
 			dialogResult = false;
 			job = new NoIdUpdateLaunchJob(helper, project);
@@ -242,8 +259,7 @@ public class DeploymentHandler {
 		}
 	}
 
-	private void openDeploymentWizard(final ILaunchConfiguration configuration,
-			final IDeploymentHelper helper, final IProject project) {
+	private void doOpenDeploymentWizard(final IDeploymentHelper helper, final IProject project) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
@@ -271,6 +287,8 @@ public class DeploymentHandler {
 						break;
 					case IDeploymentHelper.NO_ACTION:
 						try {
+							// TODO move it up to not update config for deploy
+							// action
 							updateLaunchConfiguration(updatedHelper, config, project);
 						} catch (CoreException e) {
 							Activator.log(e);

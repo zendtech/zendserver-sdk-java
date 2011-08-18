@@ -1,8 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -14,14 +11,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
-import org.zend.sdklib.target.IZendTarget;
 
 public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 
@@ -60,23 +54,11 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		if (config == null) {
 			IDeploymentHelper defaultHelper = null;
 			if (targetId != null) {
-				defaultHelper = createHelper(targetId, project);
+				defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
 			} else {
 				defaultHelper = LaunchUtils.createDefaultHelper(project);
 			}
-			if (defaultHelper != null) {
-				try {
-					config = LaunchUtils.createConfiguration(project, defaultHelper);
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
-			}
-		}
-		if (config == null) {
-			IDeploymentHelper targetHelper = new DeploymentHelper();
-			targetHelper.setTargetId(targetId);
-			targetHelper.setProjectName(project.getName());
-			DeploymentWizard wizard = new DeploymentWizard(project, targetHelper);
+			DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper);
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			dialog.setPageSize(550, 350);
@@ -92,30 +74,6 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 				}
 			}
 		}
-	}
-
-	private IDeploymentHelper createHelper(String targetId, IProject project) {
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
-				String.valueOf(targetId));
-		if (target != null) {
-			try {
-				IDeploymentHelper helper = new DeploymentHelper();
-				URL targetUrl = target.getDefaultServerURL();
-				URL baseUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(),
-						targetUrl.getPort(), "/" + project.getName()); //$NON-NLS-1$
-				helper.setBaseURL(baseUrl.toString());
-				helper.setDefaultServer(true);
-				helper.setTargetId(target.getId());
-				helper.setTargetHost(target.getHost().getHost().toString());
-				helper.setIgnoreFailures(false);
-				helper.setOperationType(IDeploymentHelper.DEPLOY);
-				helper.setProjectName(project.getName());
-				return helper;
-			} catch (MalformedURLException e) {
-				return null;
-			}
-		}
-		return null;
 	}
 
 }
