@@ -45,7 +45,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=additions">
+            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup2">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
                label="Remove"
