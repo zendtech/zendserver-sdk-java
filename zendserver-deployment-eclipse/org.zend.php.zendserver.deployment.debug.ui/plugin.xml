@@ -75,6 +75,35 @@
             </command>
          </toolbar>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=additions">
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
+               label="Open"
+               style="push">
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/run_exc.gif"
+               label="Run"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="run">
+            </parameter>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+               icon="icons/obj16/debug_exc.gif"
+               label="Debug"
+               style="push">
+            <parameter
+                  name="mode"
+                  value="debug">
+            </parameter>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -93,14 +122,10 @@
             id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
             name="Deploy PHP Application">
       </command>
-      <category
-            id="org.zend.php.zendserver.deployment.debug.ui.commands.category"
-            name="Sample Category">
-      </category>
       <command
-            categoryId="org.zend.php.zendserver.deployment.debug.ui.commands.category"
-            id="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
-            name="Sample Command">
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
+            name="Open Deployment Wizard">
       </command>
    </extension>
    <extension
