@@ -63,7 +63,15 @@ public class MappingMoveParticipant extends MoveParticipant {
 		}
 		
 		DeploymentRefactoring r = new DeploymentRefactoring("move");
-		boolean hasChanged = r.updatePathInMapping(oldFullPath, newFullPath, mapping);
+		
+		boolean hasChanged;
+		if (newParent.getProject().equals(affectedResource.getProject())) {
+			hasChanged = r.updatePathInMapping(oldFullPath, newFullPath, mapping);
+		} else {
+			// move from one project to another - make no changes, leave it for validator to detect error
+			hasChanged = r.removePathFromMapping(oldFullPath, mapping);
+		}
+		
 		
 		if (! hasChanged) {
 			return null;

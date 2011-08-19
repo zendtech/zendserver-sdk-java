@@ -50,6 +50,12 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 		}
 		
 		IContainer newParent = (IContainer) newPath;
+		
+		// move from one project to another - make no changes, leave it for validator to detect error
+		if (! newParent.getProject().equals(affectedResource.getProject())) {
+			return null;
+		}
+		
 		IPath projectRelativePath = affectedResource.getProjectRelativePath();
 		String oldFullPath = projectRelativePath.toString();
 		String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
