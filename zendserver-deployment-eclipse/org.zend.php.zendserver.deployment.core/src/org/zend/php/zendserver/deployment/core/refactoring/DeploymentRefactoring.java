@@ -144,5 +144,30 @@ public class DeploymentRefactoring {
 		
 		return exactMatchFound || parentMatchFound;
 	}
+
+	public boolean removePathFromMapping(String oldFullPath,
+			IMappingModel mappingModel) {
+		boolean exactMatchFound = false;
+		
+		List<IMappingEntry> entries = mappingModel.getEnties();
+		for (IMappingEntry entry : entries) {
+			IMapping toRemove = null;
+			
+			List<IMapping> mappings = entry.getMappings();
+			for (IMapping mapping : mappings) {
+				String currentPath = mapping.getPath();
+				if (oldFullPath.equals(currentPath)) {
+					exactMatchFound = true;
+					toRemove = mapping;
+				}
+			}
+			
+			if (toRemove != null) {
+				mappings.remove(toRemove);
+			}
+		}
+		
+		return exactMatchFound;
+	}
 	
 }
