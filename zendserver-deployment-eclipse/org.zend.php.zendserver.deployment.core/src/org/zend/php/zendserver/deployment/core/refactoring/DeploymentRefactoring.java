@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -15,6 +17,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.sdklib.internal.mapping.Mapping;
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingLoader;
@@ -103,21 +106,43 @@ public class DeploymentRefactoring {
 
 	public boolean updatePathInMapping(String oldFullPath, String newFullPath,
 			IMappingModel mappingModel) {
-		boolean changed = false;
+		boolean exactMatchFound = false;
+		boolean parentMatchFound = false;
+		
+		IPath oldFull = new Path(oldFullPath);
+		IPath newFull = new Path(newFullPath);
 		
 		List<IMappingEntry> entries = mappingModel.getEnties();
 		for (IMappingEntry entry : entries) {
+			boolean oldPathHasMapping = false;
+			boolean newPathHasMapping = false;
+			
 			List<IMapping> mappings = entry.getMappings();
 			for (IMapping mapping : mappings) {
 				String currentPath = mapping.getPath();
 				if (oldFullPath.equals(currentPath)) {
+					// old location is directly in maping, change it to new one
 					mapping.setPath(newFullPath);
-					changed = true;
+					exactMatchFound = true;
+				} else {
+					IPath current = new Path(currentPath);
+					if (current.isPrefixOf(oldFull)) {
+						oldPathHasMapping = true;
+					}
+					if (current.isPrefixOf(newFull)) {
+						newPathHasMapping = true;
+					}
 				}
+			}
+			
+			// old location was in mapping, but new one is not, hence add new one
+			if (oldPathHasMapping && !newPathHasMapping) {
+				mappings.add(new Mapping(newFullPath, false));
+				parentMatchFound = true;
 			}
 		}
 		
-		return changed;
+		return exactMatchFound || parentMatchFound;
 	}
 	
 }
