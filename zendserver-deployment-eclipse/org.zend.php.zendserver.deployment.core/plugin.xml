@@ -61,5 +61,46 @@
             name="severity">
       </attribute>
    </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.createParticipants">
+      <createParticipant
+            class="org.zend.php.zendserver.deployment.ui.CreateParticipant1"
+            id="org.zend.php.zendserver.deployment.ui.createParticipant1"
+            name="name">
+         <enablement></enablement>
+      </createParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="org.zend.php.zendserver.deployment.ui.MoveParticipant1"
+            id="org.zend.php.zendserver.deployment.ui.moveParticipant1"
+            name="name">
+         <enablement></enablement>
+      </moveParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentRenameParticipant"
+            id="org.zend.php.zendserver.deployment.ui.renameParticipant1"
+            name="Rename">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+      </renameParticipant>
+   </extension>
 
+
+   <extension
+         point="org.eclipse.ltk.core.refactoring.deleteParticipants">
+      <deleteParticipant
+            class="org.zend.php.zendserver.deployment.ui.DeleteParticipant1"
+            id="org.zend.php.zendserver.deployment.ui.deleteParticipant1"
+            name="name">
+         <enablement></enablement>
+      </deleteParticipant>
+   </extension>
 </plugin>

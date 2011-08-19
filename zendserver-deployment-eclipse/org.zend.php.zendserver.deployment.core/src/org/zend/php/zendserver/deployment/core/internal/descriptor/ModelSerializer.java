@@ -48,6 +48,8 @@ public class ModelSerializer {
 	private Document document;
 	private DocumentStore dest;
 
+	private int documentLength;
+
 	public ModelSerializer() {
 		domfactory = DocumentBuilderFactory.newInstance();
 		try {
@@ -67,6 +69,7 @@ public class ModelSerializer {
 		}
 		CalculateOffsets c = new CalculateOffsets(src2);
 		c.traverse(document);
+		documentLength = c.getDocumentLength();
 		
 		Node root = getNode(document, DeploymentDescriptorPackage.PACKAGE.xpath);
 		
@@ -511,5 +514,9 @@ public class ModelSerializer {
 		}
 		
 		return sb.toString();
+	}
+
+	public int getDocumentLength() {
+		return documentLength;
 	}
 }

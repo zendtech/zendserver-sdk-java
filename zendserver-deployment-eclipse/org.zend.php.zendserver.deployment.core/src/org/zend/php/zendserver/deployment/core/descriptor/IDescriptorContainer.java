@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.core.descriptor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.ModelSerializer;
 import org.zend.sdklib.mapping.IMappingModel;
 
 /**
@@ -51,5 +52,7 @@ public interface IDescriptorContainer {
 	 * slowing down modifications.
 	 */
 	void load();
+
+	ModelSerializer getModelSerializer();
 
 }

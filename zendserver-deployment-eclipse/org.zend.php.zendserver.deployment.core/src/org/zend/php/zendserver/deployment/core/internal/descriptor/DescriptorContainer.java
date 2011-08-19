@@ -37,6 +37,10 @@ public class DescriptorContainer implements IDescriptorContainer {
 		lm.setOutput(new FileStore(file));
 		fFile = file;
 	}
+	
+	public ModelSerializer getModelSerializer() {
+		return lm;
+	}
 
 	public void load() {
 		InputStream src = null;

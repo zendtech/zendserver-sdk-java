@@ -45,4 +45,8 @@ public class CalculateOffsets {
 	    	node = tw.nextNode();
 	    }
 	}
+
+	public int getDocumentLength() {
+		return cachedDoc.length();
+	}
 }
