@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -158,16 +159,24 @@ public class LaunchUtils {
 
 	public static IProject getProjectFromFilename(ILaunchConfiguration config) throws CoreException {
 		String fileName = config.getAttribute(Server.FILE_NAME, (String) null);
-		if (fileName == null) {
-			return null;
+		String projectName = null;
+		if (fileName != null) {
+			IPath filePath = new Path(fileName);
+			if (filePath.segmentCount() > 0) {
+				projectName = filePath.segment(0);
+			}
 		}
-		IPath filePath = new Path(fileName);
-		IProject project = null;
-		try {
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(filePath.segment(0));
-		} catch (Throwable t) {
+		
+		if (projectName == null) {
+			projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 		}
-		return project;
+		
+		if (projectName != null) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			return root.getProject(projectName);
+		}
+		
+		return null;
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
