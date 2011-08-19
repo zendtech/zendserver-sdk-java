@@ -470,7 +470,9 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void enableDeploySection() {
 		updateCombo.setEnabled(false);
-		autoDeployCombo.setEnabled(false);
+		if (autoDeployCombo != null) {
+			autoDeployCombo.setEnabled(false);
+		}
 		IDeploymentHelper helper = new DeploymentHelper();
 		helper.setOperationType(getOperationType());
 		initializeFields(helper);
