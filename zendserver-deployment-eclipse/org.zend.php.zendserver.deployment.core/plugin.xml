@@ -62,28 +62,22 @@
       </attribute>
    </extension>
    <extension
-         point="org.eclipse.ltk.core.refactoring.createParticipants">
-      <createParticipant
-            class="org.zend.php.zendserver.deployment.ui.CreateParticipant1"
-            id="org.zend.php.zendserver.deployment.ui.createParticipant1"
-            name="name">
-         <enablement></enablement>
-      </createParticipant>
-   </extension>
-   <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
-            class="org.zend.php.zendserver.deployment.ui.MoveParticipant1"
-            id="org.zend.php.zendserver.deployment.ui.moveParticipant1"
-            name="name">
-         <enablement></enablement>
+            class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentMoveParticipant"
+            id="org.zend.php.zendserver.deployment.ui.moveParticipant"
+            name="Move">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof></enablement>
       </moveParticipant>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentRenameParticipant"
-            id="org.zend.php.zendserver.deployment.ui.renameParticipant1"
+            id="org.zend.php.zendserver.deployment.ui.renameParticipant"
             name="Rename">
          <enablement>
             <instanceof
@@ -97,10 +91,13 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.deleteParticipants">
       <deleteParticipant
-            class="org.zend.php.zendserver.deployment.ui.DeleteParticipant1"
+            class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentDeleteParticipant"
             id="org.zend.php.zendserver.deployment.ui.deleteParticipant1"
-            name="name">
-         <enablement></enablement>
+            name="Delete">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof></enablement>
       </deleteParticipant>
    </extension>
 </plugin>

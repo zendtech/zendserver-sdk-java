@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core.refactoring;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -10,14 +11,14 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
+import org.eclipse.ltk.core.refactoring.participants.MoveArguments;
+import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
-public class DeploymentRenameParticipant extends RenameParticipant {
-
+public class DeploymentMoveParticipant extends MoveParticipant {
+	
 	private IResource affectedResource;
 
 	@Override
@@ -42,13 +43,16 @@ public class DeploymentRenameParticipant extends RenameParticipant {
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
+		MoveArguments args = getArguments();
+		Object newPath = args.getDestination();
+		if (! (newPath instanceof IContainer)) {
+			return null;
+		}
 		
-		RenameArguments args = getArguments();
-		String newName = args.getNewName();
-		
+		IContainer newParent = (IContainer) newPath;
 		IPath projectRelativePath = affectedResource.getProjectRelativePath();
 		String oldFullPath = projectRelativePath.toString();
-		String newFullPath = projectRelativePath.removeLastSegments(1).append(newName).toString();
+		String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
 		
 		IProject project = affectedResource.getProject();
 		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
@@ -57,7 +61,7 @@ public class DeploymentRenameParticipant extends RenameParticipant {
 		}
 		
 		IDeploymentDescriptor descriptor = container.getDescriptorModel();
-		DeploymentRefactoring r = new DeploymentRefactoring("rename");
+		DeploymentRefactoring r = new DeploymentRefactoring("move");
 		boolean hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 		
 		if (! hasChanged) {
@@ -68,4 +72,5 @@ public class DeploymentRenameParticipant extends RenameParticipant {
 		
 		return change;
 	}
+
 }
