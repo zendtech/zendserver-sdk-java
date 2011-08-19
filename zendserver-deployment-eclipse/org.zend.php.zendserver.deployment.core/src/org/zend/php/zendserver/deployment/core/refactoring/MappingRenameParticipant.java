@@ -13,10 +13,10 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.sdklib.mapping.IMappingModel;
 
-public class DeploymentRenameParticipant extends RenameParticipant {
+public class MappingRenameParticipant extends RenameParticipant {
 
 	private IResource affectedResource;
 
@@ -52,19 +52,20 @@ public class DeploymentRenameParticipant extends RenameParticipant {
 		
 		IProject project = affectedResource.getProject();
 		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
-		if (! container.getFile().exists()) {
+		container.initializeMappingModel(null);
+		IMappingModel mapping = container.getMappingModel();
+		if (! mapping.getMappingFile().exists()) {
 			return null;
 		}
 		
-		IDeploymentDescriptor descriptor = container.getDescriptorModel();
 		DeploymentRefactoring r = new DeploymentRefactoring("rename");
-		boolean hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
+		boolean hasChanged = r.updatePathInMapping(oldFullPath, newFullPath, mapping);
 		
 		if (! hasChanged) {
 			return null;
 		}
 		
-		TextFileChange change = r.createTextChange(container);
+		TextFileChange change = r.createMappingTextChange(container);
 		
 		return change;
 	}

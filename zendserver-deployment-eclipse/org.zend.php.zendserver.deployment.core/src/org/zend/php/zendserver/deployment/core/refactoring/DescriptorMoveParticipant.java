@@ -17,7 +17,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
-public class DeploymentMoveParticipant extends MoveParticipant {
+public class DescriptorMoveParticipant extends MoveParticipant {
 	
 	private IResource affectedResource;
 
@@ -60,15 +60,15 @@ public class DeploymentMoveParticipant extends MoveParticipant {
 			return null;
 		}
 		
-		IDeploymentDescriptor descriptor = container.getDescriptorModel();
 		DeploymentRefactoring r = new DeploymentRefactoring("move");
+		IDeploymentDescriptor descriptor = container.getDescriptorModel();
 		boolean hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 		
 		if (! hasChanged) {
 			return null;
 		}
 		
-		TextFileChange change = r.createTextChange(container);
+		TextFileChange change = r.createDescriptorTextChange(container);
 		
 		return change;
 	}

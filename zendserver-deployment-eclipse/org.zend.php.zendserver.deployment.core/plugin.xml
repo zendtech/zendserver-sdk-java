@@ -64,21 +64,41 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
-            class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentMoveParticipant"
+            class="org.zend.php.zendserver.deployment.core.refactoring.DescriptorMoveParticipant"
             id="org.zend.php.zendserver.deployment.ui.moveParticipant"
-            name="Move">
+            name="Descriptor Move">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof></enablement>
       </moveParticipant>
+      <moveParticipant
+            class="org.zend.php.zendserver.deployment.core.refactoring.MappingMoveParticipant"
+            id="org.zend.php.zendserver.deployment.ui.moveParticipant"
+            name="Mapping Move">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+      </moveParticipant>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="org.zend.php.zendserver.deployment.core.refactoring.DeploymentRenameParticipant"
+            class="org.zend.php.zendserver.deployment.core.refactoring.DescriptorRenameParticipant"
             id="org.zend.php.zendserver.deployment.ui.renameParticipant"
-            name="Rename">
+            name="Descriptor Rename">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="org.zend.php.zendserver.deployment.core.refactoring.MappingRenameParticipant"
+            id="org.zend.php.zendserver.deployment.ui.renameParticipant"
+            name="Mapping Rename">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IResource">

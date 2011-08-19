@@ -55,4 +55,10 @@ public interface IDescriptorContainer {
 
 	ModelSerializer getModelSerializer();
 
+	/**
+	 * File containing mapping properties, file may not exist yet  
+	 * @return
+	 */
+	IFile getMappingFile();
+
 }

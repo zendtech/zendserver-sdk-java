@@ -45,4 +45,8 @@ public class EclipseMappingModelLoader extends PropertiesBasedMappingLoader {
 		}
 	}
 
+	public void setDocument(IDocument resultDocument) {
+		this.document = resultDocument;
+	}
+
 }

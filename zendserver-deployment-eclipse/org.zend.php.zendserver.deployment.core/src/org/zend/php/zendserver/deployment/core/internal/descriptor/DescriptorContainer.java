@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
@@ -143,5 +144,9 @@ public class DescriptorContainer implements IDescriptorContainer {
 		} catch (TransformerException e) {
 			DeploymentCore.log(e);
 		}
+	}
+
+	public IFile getMappingFile() {
+		return getFile().getParent().getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
 	}
 }
