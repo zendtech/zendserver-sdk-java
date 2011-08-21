@@ -157,7 +157,7 @@ public class ParametersBlock extends AbstractBlock {
 	@Override
 	public Composite createContents(Composite parent) {
 		super.createContents(parent);
-		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		return getContainer();
 	}
 

@@ -10,8 +10,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
@@ -28,21 +34,33 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	private ConfigurationBlock configBlock;
 	private ParametersBlock parametersBlock;
 	private IProject project;
+	private Composite container;
 
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		final ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
+		scrolledComposite.setLayout(new FillLayout());
+		container = new Composite(scrolledComposite, SWT.NONE);
+		container.setLayout(new GridLayout(1, false));
+		scrolledComposite.setExpandVertical(true);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setContent(container);
+		scrolledComposite.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				Rectangle r = scrolledComposite.getClientArea();
+				scrolledComposite.setMinSize(container.computeSize(r.width, SWT.DEFAULT));
+			}
+		});
 		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
-		configBlock.createContents(composite);
+		configBlock.createContents(container);
 		parametersBlock = new ParametersBlock(this);
-		parametersBlock.createContents(composite);
+		parametersBlock.createContents(container);
 		setDeploymentPageEnablement(false);
-		setControl(composite);
+		setControl(scrolledComposite);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			project = getProject(configuration);

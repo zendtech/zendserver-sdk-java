@@ -82,12 +82,12 @@ public class ConfigurationBlock extends AbstractBlock {
 	@Override
 	public Composite createContents(final Composite parent) {
 		super.createContents(parent);
-		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
 		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer()); //$NON-NLS-1$
 		new Label(getContainer(), SWT.NONE);
-		ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
+		final ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
 		expComposite.addExpansionListener(new ExpansionAdapter() {
 			@Override
@@ -97,6 +97,8 @@ public class ConfigurationBlock extends AbstractBlock {
 					Point point = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 					shell.setSize(shell.getSize().x, point.y);
 				}
+				expComposite.setSize(expComposite.getSize().x,
+						expComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			}
 		});
 		expComposite.setText(Messages.advancedSection_Title);
