@@ -25,6 +25,7 @@ public class TargetsCombo {
 		for (int i = 0; i < targetsList.length; i++) {
 			if (targetsList[i].getId().equals(targetId)) {
 				targetsCombo.select(i);
+				return;
 			}
 		}
 	}

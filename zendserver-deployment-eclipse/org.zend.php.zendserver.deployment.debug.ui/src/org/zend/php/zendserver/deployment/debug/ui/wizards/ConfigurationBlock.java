@@ -134,6 +134,20 @@ public class ConfigurationBlock extends AbstractBlock {
 		initDefaultOperation(helper);
 	}
 
+	public void clear() {
+		baseUrl.setText(""); //$NON-NLS-1$
+		userAppName.setText(""); //$NON-NLS-1$
+		ignoreFailures.setSelection(true);
+		deployButton.setSelection(false);
+		updateButton.setSelection(false);
+		autoDeployButton.setSelection(false);
+		noActionButton.setSelection(false);
+		updateCombo.setEnabled(false);
+		updateCombo.clearSelection();
+		autoDeployCombo.setEnabled(false);
+		autoDeployCombo.clearSelection();
+	}
+
 	public void initDefaultOperation(IDeploymentHelper helper) {
 		switch (helper.getOperationType()) {
 		case IDeploymentHelper.DEPLOY:
@@ -271,7 +285,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	private boolean isDefaultServer() {
 		URL baseUrl = getBaseURL();
 		URL targetUrl = getTarget().getHost();
-		if (baseUrl.getHost().equals(targetUrl.getHost())) {
+		if (baseUrl != null && baseUrl.getHost().equals(targetUrl.getHost())) {
 			return true;
 		}
 		return false;
@@ -576,8 +590,14 @@ public class ConfigurationBlock extends AbstractBlock {
 		URL targetHost = target.getDefaultServerURL();
 		URL oldUrl = getBaseURL();
 		try {
-			URL updatedUrl = new URL(targetHost.getProtocol(), targetHost.getHost(),
-					targetHost.getPort(), oldUrl.getFile());
+			URL updatedUrl = null;
+			if (oldUrl == null) {
+				updatedUrl = new URL(targetHost.getProtocol(), targetHost.getHost(),
+						targetHost.getPort(), "/"); //$NON-NLS-1$
+			} else {
+				updatedUrl = new URL(targetHost.getProtocol(), targetHost.getHost(),
+						targetHost.getPort(), oldUrl.getFile());
+			}
 			baseUrl.setText(updatedUrl.toString());
 		} catch (MalformedURLException e) {
 			Activator.log(e);

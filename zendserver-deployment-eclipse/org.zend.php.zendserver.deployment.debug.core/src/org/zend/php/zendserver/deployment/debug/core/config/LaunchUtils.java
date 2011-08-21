@@ -259,6 +259,9 @@ public class LaunchUtils {
 	}
 
 	private static Server findExistingServer(URL baseURL) {
+		if (baseURL == null) {
+			return null;
+		}
 		Server[] servers = ServersManager.getServers();
 		for (Server server : servers) {
 			try {

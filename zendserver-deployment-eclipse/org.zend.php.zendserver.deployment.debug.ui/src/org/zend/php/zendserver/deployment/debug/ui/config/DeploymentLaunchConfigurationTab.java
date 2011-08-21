@@ -42,15 +42,26 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
-
+	
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			project = getProject(configuration);
 			if (project == null) {
-				project = LaunchUtils.getProjectFromFilename(configuration);
+				configBlock.clear();
+				configBlock.initializeFields(new DeploymentHelper());
 				setDeploymentPageEnablement(true);
-			}
-			if (project != null) {
+				project = LaunchUtils.getProjectFromFilename(configuration);
+				if (project != null) {
+					IDeploymentHelper helper = new DeploymentHelper();
+					helper.setProjectName(project.getName());
+					helper.setDefaultServer(true);
+					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
+					parametersBlock.createParametersGroup(project);
+					configBlock.initializeFields(helper);
+					parametersBlock.initializeFields(helper);
+				}
+			} else {
+				configBlock.clear();
 				parametersBlock.createParametersGroup(project);
 				IDeploymentHelper helper = DeploymentHelper.create(configuration);
 				configBlock.initializeFields(helper);
@@ -66,10 +77,12 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			IDeploymentHelper helper = configBlock.getHelper();
 			helper.setProjectName(project.getName());
 			helper.setUserParams(parametersBlock.getHelper().getUserParams());
-			try {
-				LaunchUtils.updateLaunchConfiguration(project, helper, wc);
-			} catch (CoreException e) {
-				Activator.log(e);
+			if (helper.getBaseURL() != null) {
+				try {
+					LaunchUtils.updateLaunchConfiguration(project, helper, wc);
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
