@@ -27,7 +27,7 @@ public class OpenApplicationHandler extends AbstractDeploymentHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				DeploymentHandler handler = new DeploymentHandler(config);
-				if (handler.openDeploymentWizard(true) == DeploymentHandler.OK) {
+				if (handler.openDeploymentWizard() == DeploymentHandler.OK) {
 					return Status.OK_STATUS;
 				} else {
 					return Status.CANCEL_STATUS;

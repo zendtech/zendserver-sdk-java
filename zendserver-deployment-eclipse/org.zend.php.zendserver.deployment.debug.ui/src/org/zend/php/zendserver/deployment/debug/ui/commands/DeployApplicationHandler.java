@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHandler;
@@ -47,25 +46,18 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 	}
 
 	private void execute(final String mode, final IProject project, final String targetId) {
-		final ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
 		Job job = new Job("Deployment Wizard") { //$NON-NLS-1$
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				DeploymentHandler handler = new DeploymentHandler(config);
-				int result = 0;
-				if (config == null) {
-					IDeploymentHelper defaultHelper = null;
-					if (targetId != null) {
-						defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
-					} else {
-						defaultHelper = LaunchUtils.createDefaultHelper(project);
-					}
-					result = handler.openNoConfigDeploymentWizard(defaultHelper, project);
+				DeploymentHandler handler = new DeploymentHandler();
+				IDeploymentHelper defaultHelper = null;
+				if (targetId != null) {
+					defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
 				} else {
-					result = handler.openDeploymentWizard(false);
+					defaultHelper = LaunchUtils.createDefaultHelper(project);
 				}
-				if (result == DeploymentHandler.OK) {
+				if (handler.openNoConfigDeploymentWizard(defaultHelper, project) == DeploymentHandler.OK) {
 					return Status.OK_STATUS;
 				} else {
 					return Status.CANCEL_STATUS;

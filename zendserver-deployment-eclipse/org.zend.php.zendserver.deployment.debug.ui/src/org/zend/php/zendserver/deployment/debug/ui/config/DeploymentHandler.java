@@ -42,18 +42,23 @@ public class DeploymentHandler {
 
 	private boolean dialogResult;
 	private boolean cancelled;
-	private DeployJobChangeListener listener;
 
+	private DeployJobChangeListener listener;
+	
 	private ILaunchConfiguration config;
+
+	public DeploymentHandler() {
+		this(null);
+	}
 
 	public DeploymentHandler(ILaunchConfiguration config) {
 		super();
 		this.config = config;
-		this.listener = new DeployJobChangeListener(config);
 	}
 
 	public int executeDeployment() {
 		job = null;
+		listener = new DeployJobChangeListener(config);
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
@@ -111,7 +116,7 @@ public class DeploymentHandler {
 		}
 		return OK;
 	}
-	
+
 	public int openNoConfigDeploymentWizard(IDeploymentHelper helper, IProject project) {
 		job = null;
 		try {
@@ -129,8 +134,9 @@ public class DeploymentHandler {
 		return OK;
 	}
 
-	public int openDeploymentWizard(boolean updateLaunchConfiguration) {
+	public int openDeploymentWizard() {
 		job = null;
+		listener = new DeployJobChangeListener(config);
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
@@ -139,9 +145,7 @@ public class DeploymentHandler {
 				if (job == null) {
 					return OK;
 				}
-				if (updateLaunchConfiguration) {
-					job.addJobChangeListener(listener);
-				}
+				job.addJobChangeListener(listener);
 				job.setUser(true);
 				job.schedule();
 				job.join();
@@ -195,7 +199,7 @@ public class DeploymentHandler {
 		}
 		return OK;
 	}
-	
+
 	private int handleApplicationConflict(IDeploymentHelper helper, IProject project)
 			throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -212,7 +216,9 @@ public class DeploymentHandler {
 			if (job == null) {
 				return CANCEL;
 			}
-			job.addJobChangeListener(listener);
+			if (listener != null) {
+				job.addJobChangeListener(listener);
+			}
 			job.setUser(true);
 			job.schedule();
 			job.join();
@@ -223,8 +229,8 @@ public class DeploymentHandler {
 		}
 	}
 
-	private int handleBaseUrlConflict(IDeploymentHelper helper,
-			IProject project) throws InterruptedException {
+	private int handleBaseUrlConflict(IDeploymentHelper helper, IProject project)
+			throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
@@ -239,7 +245,9 @@ public class DeploymentHandler {
 			if (job == null) {
 				return CANCEL;
 			}
-			job.addJobChangeListener(listener);
+			if (listener != null) {
+				job.addJobChangeListener(listener);
+			}
 			job.setUser(true);
 			job.schedule();
 			job.join();
@@ -247,14 +255,12 @@ public class DeploymentHandler {
 		} else {
 			dialogResult = false;
 			job = new NoIdUpdateLaunchJob(helper, project);
-			job.addJobChangeListener(listener);
+			if (listener != null) {
+				job.addJobChangeListener(listener);
+			}
 			job.setUser(true);
 			job.schedule();
-			try {
-				job.join();
-			} catch (InterruptedException e) {
-				Activator.log(e);
-			}
+			job.join();
 			return OK;
 		}
 	}
@@ -263,7 +269,7 @@ public class DeploymentHandler {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				DeploymentWizard wizard = new DeploymentWizard(project, helper);
+				DeploymentWizard wizard = new DeploymentWizard(project, helper, config != null);
 				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.setPageSize(550, 350);
@@ -287,9 +293,9 @@ public class DeploymentHandler {
 						break;
 					case IDeploymentHelper.NO_ACTION:
 						try {
-							// TODO move it up to not update config for deploy
-							// action
-							updateLaunchConfiguration(updatedHelper, config, project);
+							if (config != null) {
+								updateLaunchConfiguration(updatedHelper, config, project);
+							}
 						} catch (CoreException e) {
 							Activator.log(e);
 						}

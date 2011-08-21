@@ -45,13 +45,15 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		}
 		
 		ILaunchConfiguration config = null;
-		obj = ctx.getDefaultVariable();
-		if (obj instanceof List<?>) {
-			List<?> list = (List<?>) obj;
-			if (list.size() > 0) {
-				obj = list.get(0);
-				if (obj instanceof ILaunchConfiguration) {
-					config = (ILaunchConfiguration) obj;
+		if (ctx != null) {
+			obj = ctx.getDefaultVariable();
+			if (obj instanceof List<?>) {
+				List<?> list = (List<?>) obj;
+				if (list.size() > 0) {
+					obj = list.get(0);
+					if (obj instanceof ILaunchConfiguration) {
+						config = (ILaunchConfiguration) obj;
+					}
 				}
 			}
 		}
@@ -76,7 +78,7 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 			} else {
 				defaultHelper = LaunchUtils.createDefaultHelper(project);
 			}
-			DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper);
+			DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper, true);
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			dialog.setPageSize(550, 350);
@@ -87,10 +89,10 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 				} catch (CoreException e) {
 					Activator.log(e);
 				}
-				if (config != null) {
-					DebugUITools.launch(config, mode);
-				}
 			}
+		}
+		if (config != null) {
+			DebugUITools.launch(config, mode);
 		}
 	}
 

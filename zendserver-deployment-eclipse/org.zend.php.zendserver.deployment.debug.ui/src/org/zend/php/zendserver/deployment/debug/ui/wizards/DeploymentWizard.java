@@ -34,19 +34,18 @@ public class DeploymentWizard extends Wizard {
 	private IProject project;
 	private IDeploymentHelper helper;
 
-	public DeploymentWizard(ILaunchConfiguration config) {
+	public DeploymentWizard(ILaunchConfiguration config, boolean isLaunch) {
 		DeploymentHelper helper = DeploymentHelper.create(config);
 		String projectName = helper.getProjectName();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		
-		init(project, helper);
+		init(project, helper, isLaunch);
 	}
 	
-	public DeploymentWizard(IProject project, IDeploymentHelper helper) {
-		init(project, helper);
+	public DeploymentWizard(IProject project, IDeploymentHelper helper, boolean isLaunch) {
+		init(project, helper, isLaunch);
 	}
 
-	private void init(IProject project, IDeploymentHelper helper) {
+	private void init(IProject project, IDeploymentHelper helper, boolean isLaunch) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
@@ -58,8 +57,13 @@ public class DeploymentWizard extends Wizard {
 			this.helper = updateHelper(helper);
 		}
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Messages.deploymentWizard_Title);
-		setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		if (isLaunch) {
+			setWindowTitle(Messages.deploymentWizard_LaunchTitle);
+			setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		} else {
+			setWindowTitle(Messages.deploymentWizard_DeployTitle);
+			setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+		}
 	}
 
 	private IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {

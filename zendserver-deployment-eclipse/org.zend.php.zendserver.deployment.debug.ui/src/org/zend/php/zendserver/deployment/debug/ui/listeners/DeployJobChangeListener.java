@@ -39,7 +39,7 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 			IProject project;
 			try {
 				project = LaunchUtils.getProjectFromFilename(config);
-				updateLaunchConfiguration(launchJob, config, project);
+				updateLaunchConfiguration(launchJob, project);
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
@@ -56,8 +56,8 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		return cancelled;
 	}
 
-	private void updateLaunchConfiguration(AbstractLaunchJob job,
-			final ILaunchConfiguration config, final IProject project) throws CoreException {
+	private void updateLaunchConfiguration(AbstractLaunchJob job, final IProject project)
+			throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			wc = (ILaunchConfigurationWorkingCopy) config;

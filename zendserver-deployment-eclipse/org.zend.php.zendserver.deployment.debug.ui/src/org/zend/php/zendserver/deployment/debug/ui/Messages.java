@@ -13,7 +13,8 @@ public class Messages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.debug.ui.messages"; //$NON-NLS-1$
 
-	public static String deploymentWizard_Title;
+	public static String deploymentWizard_LaunchTitle;
+	public static String deploymentWizard_DeployTitle;
 	public static String deploymentWizard_Message;
 
 	public static String runContribution_LaunchingPHPApp;
