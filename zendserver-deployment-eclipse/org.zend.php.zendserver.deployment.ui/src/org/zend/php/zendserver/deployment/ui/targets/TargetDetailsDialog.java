@@ -94,7 +94,7 @@ public class TargetDetailsDialog extends Dialog {
 		targetComposite.addPropertyChangeListener(ZendTargetDetailsComposite.PROP_ERROR_MESSAGE, new PropertyChangeListener() {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
-				final Object newVal = evt.getNewValue();
+				final Object newVal = evt.getNewValue() != null ? evt.getNewValue() : ""; //$NON-NLS-1$
 				if ((errorLabel == null) || (errorLabel.isDisposed())) {
 					return;
 				}
