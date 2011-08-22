@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.IDocument;
@@ -175,8 +174,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	}
 	
 	private void initMapping() throws PartInitException {
-		IFile propsFile = (IFile) fModel.getFile().getParent()
-				.getFile(new Path(MappingModelFactory.DEPLOYMENT_PROPERTIES));
+		IFile propsFile = (IFile) fModel.getMappingFile();
 		propertiesInput = new FileEditorInput(propsFile);
 		try {
 			fDocumentProvider.connect(getPropertiesInput());
