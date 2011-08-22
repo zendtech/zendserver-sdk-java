@@ -471,4 +471,12 @@ public class MappingModel implements IMappingModel {
 		return result;
 	}
 
+	@Override
+	public IMappingLoader getLoader() {
+		return loader;
+	}
+
+	public File getMappingFile() {
+		return mappingFile;
+	}
 }
