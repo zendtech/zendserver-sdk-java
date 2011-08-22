@@ -197,4 +197,8 @@ public interface IMappingModel {
 	 */
 	List<IMapping> getDefaultExclusion();
 
+	IMappingLoader getLoader();
+
+	File getMappingFile();
+
 }
