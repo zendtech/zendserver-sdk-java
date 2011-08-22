@@ -70,7 +70,6 @@ public class AutomationPage extends DescriptorEditorPage {
 		Section section = toolkit.createSection(parent,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.marginWidth = 5;
-		section.marginHeight = 5;
 		section.setText(Messages.AutomationPage_WhatsAutomation);
 		section.setDescription(Messages.AutomationPage_Description);
 		Composite sectionClient = toolkit.createComposite(section);

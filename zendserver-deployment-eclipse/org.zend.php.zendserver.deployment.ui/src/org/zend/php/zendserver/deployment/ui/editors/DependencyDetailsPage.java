@@ -129,7 +129,11 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 
 		Composite general = s;
 		if (isNameRequired) {
-			general = isSection ? toolkit.createComposite(s) : s;
+			if (isSection) {
+				general = toolkit.createComposite(s);
+			} else {
+				general = s;
+			}
 			addName(toolkit, general);
 		}
 
@@ -158,10 +162,9 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 	protected Section addSection(Composite parent, FormToolkit toolkit) {
 		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR);
+		s1.marginWidth = 5;
 		s1.setText(sectionTitle);
 		s1.setDescription(sectionDescription);
-		s1.marginWidth = 5;
-		s1.marginHeight = 5;
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.FILL_GRAB));
 		return s1;

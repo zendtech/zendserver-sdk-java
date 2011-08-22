@@ -161,7 +161,6 @@ public class ScriptsSection {
 		Section section = toolkit.createSection(parent,
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.marginWidth = 5;
-		section.marginHeight = 5;
 		section.setText(Messages.OverviewPage_DeploymentScripts);
 		section.setDescription(Messages.OverviewPage_ScriptsDescription);
 		Composite sectionClient = toolkit.createComposite(section);

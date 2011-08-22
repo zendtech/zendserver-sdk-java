@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -89,11 +90,9 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
-
+		
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
-		section.marginWidth = 0;
-		section.marginHeight = 0;
 		section.setText(title);
 		section.setDescription(description);
 		final SectionPart spart = new SectionPart(section);
@@ -271,5 +270,16 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		if (page != null) {
 			page.showMarkers();
 		}
+	}
+	
+	@Override
+	protected void applyLayout(Composite parent) {
+		parent.setLayout(FormLayoutFactory.createFormGridLayout(true, 1));
+	}
+	
+	@Override
+	protected void applyLayoutData(SashForm sashForm) {
+		super.applyLayoutData(sashForm);
+		//sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 }
