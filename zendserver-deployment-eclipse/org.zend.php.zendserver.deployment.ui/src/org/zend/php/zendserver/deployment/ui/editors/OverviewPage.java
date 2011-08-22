@@ -42,6 +42,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField description;
 	private TextField releaseVersion;
 	private TextField apiVersion;
+	private TextField healthcheck;
 	private TextField license;
 	private TextField icon;
 	private TextField docRoot;
@@ -261,6 +262,9 @@ public class OverviewPage extends DescriptorEditorPage {
 		apiVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_API,
 				Messages.OverviewPage_1));
+		healthcheck = addField(new TextField(descr,
+				DeploymentDescriptorPackage.HEALTHCHECK,
+				"Health-check URL"));
 		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
 				"License", editor.getProject())); //$NON-NLS-1$
@@ -294,6 +298,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		
 		releaseVersion.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
+		healthcheck.create(sectionClient, toolkit);
 
 		appDir.create(sectionClient, toolkit);
 		docRoot.create(sectionClient, toolkit);
