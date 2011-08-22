@@ -15,6 +15,10 @@ public class Messages extends NLS {
 	public static String AddTargetAction_AddTargetMessage;
 	public static String AppTreeSection_AppDirMapping;
 	public static String AppTreeSection_InfoAboutAppdirFolder;
+	public static String AutomationPage_Description;
+
+	public static String AutomationPage_WhatsAutomation;
+
 	public static String DependenciesMasterDetailsProvider_Add;
 	public static String DependenciesMasterDetailsProvider_DependencyType;
 	public static String DependenciesMasterDetailsProvider_Description;

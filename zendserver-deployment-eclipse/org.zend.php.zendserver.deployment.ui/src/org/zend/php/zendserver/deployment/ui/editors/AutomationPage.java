@@ -71,8 +71,8 @@ public class AutomationPage extends DescriptorEditorPage {
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.marginWidth = 5;
 		section.marginHeight = 5;
-		section.setText("What's automation?");
-		section.setDescription("Deployment scripts are PHP scripts invoked when application is deployed and removed from the target.\n\n They can take parameters specified by user during deployment, or variables specified during development.\n\n You may use scripts, parameters and variables to automate application installation process accross many targets.");
+		section.setText(Messages.AutomationPage_WhatsAutomation);
+		section.setDescription(Messages.AutomationPage_Description);
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.TOP));
