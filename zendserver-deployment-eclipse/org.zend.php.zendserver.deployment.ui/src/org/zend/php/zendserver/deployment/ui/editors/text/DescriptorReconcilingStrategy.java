@@ -31,6 +31,7 @@ public class DescriptorReconcilingStrategy implements IReconcilingStrategy {
 		IDescriptorContainer container = fEditor.getDescriptorContainer();
 		container.load();
 		
+		validator.setFile(container.getFile());
 		ValidationStatus[] statuses = validator.validate(container.getDescriptorModel(), fEditor.getDocument());
 		DescriptorValidator.reportProblems(container.getFile(), statuses);
 	}

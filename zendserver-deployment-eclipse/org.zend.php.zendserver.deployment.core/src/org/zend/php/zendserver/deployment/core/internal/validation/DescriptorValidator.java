@@ -120,6 +120,7 @@ public class DescriptorValidator {
 		}
 		
 		DescriptorSemanticValidator validator = new DescriptorSemanticValidator();
+		validator.setFile(file);
 		ValidationStatus[] statuses = validator.validate(model.getDescriptorModel(), doc);
 		
 		reportProblems(file, statuses);

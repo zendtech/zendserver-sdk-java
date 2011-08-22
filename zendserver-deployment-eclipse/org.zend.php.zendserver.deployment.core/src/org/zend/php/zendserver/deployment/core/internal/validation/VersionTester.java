@@ -10,7 +10,7 @@ public class VersionTester extends PropertyTester {
 
 	private Pattern pattern = Pattern.compile("[0-9]*(\\.[0-9]+){0,3}"); //$NON-NLS-1$
 	
-	public VersionTester() {
+	public VersionTester(DescriptorSemanticValidator descriptorSemanticValidator) {
 		super(ValidationStatus.ERROR);
 	}
 

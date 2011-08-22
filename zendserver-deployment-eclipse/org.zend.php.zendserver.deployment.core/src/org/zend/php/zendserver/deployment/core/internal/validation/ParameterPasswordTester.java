@@ -8,7 +8,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class ParameterPasswordTester extends PropertyTester {
 
-	public ParameterPasswordTester(int severity) {
+	public ParameterPasswordTester(DescriptorSemanticValidator descriptorSemanticValidator, int severity) {
 		super(severity);
 	}
 

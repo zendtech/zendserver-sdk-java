@@ -7,7 +7,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class FieldNotEmptyTester extends PropertyTester {
 
-	public FieldNotEmptyTester() {
+	public FieldNotEmptyTester(DescriptorSemanticValidator descriptorSemanticValidator) {
 		super(ValidationStatus.ERROR);
 	}
 

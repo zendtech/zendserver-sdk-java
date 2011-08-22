@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
@@ -17,11 +18,12 @@ public class DescriptorSemanticValidator {
 
 	private Map<Feature, PropertyTester[]> testers;
 	private IDocument document;
+	private IFile file;
 	
 	public DescriptorSemanticValidator() {
 		testers = new HashMap<Feature, PropertyTester[]>();
 		
-		PropertyTester tester = new FieldNotEmptyTester();
+		PropertyTester tester = new FieldNotEmptyTester(this);
 		add(DeploymentDescriptorPackage.PKG_NAME, tester);
 		add(DeploymentDescriptorPackage.VERSION_RELEASE, tester);
 		add(DeploymentDescriptorPackage.APPDIR, tester); // may be empty but must exist
@@ -36,13 +38,15 @@ public class DescriptorSemanticValidator {
 		add(DeploymentDescriptorPackage.VALUE, tester);
 		
 		//
-		tester = new ParameterPasswordTester(ValidationStatus.ERROR);
+		tester = new ParameterPasswordTester(this, ValidationStatus.ERROR);
 		add(DeploymentDescriptorPackage.IDENTICAL, tester);
 		
-		tester = new FileExistsTester();
+		tester = new FileExistsTester(this, ValidationStatus.WARNING);
+		add(DeploymentDescriptorPackage.EULA, tester);
+		add(DeploymentDescriptorPackage.ICON, tester);
 		// TODO consider mapping
 		
-		tester = new VersionTester();
+		tester = new VersionTester(this);
 		add(DeploymentDescriptorPackage.VERSION_API, tester);
 		add(DeploymentDescriptorPackage.VERSION_RELEASE, tester);
 	}
@@ -127,6 +131,14 @@ public class DescriptorSemanticValidator {
 		List<ValidationStatus> statuses = new ArrayList<ValidationStatus>();
 		validate(-1, -1, descr, statuses);
 		return statuses.toArray(new ValidationStatus[statuses.size()]);
+	}
+
+	public void setFile(IFile file) {
+		this.file = file;
+	}
+	
+	public IFile getFile() {
+		return file;
 	}
 	
 }
