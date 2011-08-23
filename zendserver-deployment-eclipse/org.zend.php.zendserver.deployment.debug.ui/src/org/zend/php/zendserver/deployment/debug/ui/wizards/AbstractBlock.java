@@ -33,6 +33,10 @@ public abstract class AbstractBlock {
 	public abstract IDeploymentHelper getHelper();
 
 	public Composite createContents(Composite parent) {
+		return createContents(parent, false);
+	}
+
+	public Composite createContents(Composite parent, boolean resizeShell) {
 		container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;

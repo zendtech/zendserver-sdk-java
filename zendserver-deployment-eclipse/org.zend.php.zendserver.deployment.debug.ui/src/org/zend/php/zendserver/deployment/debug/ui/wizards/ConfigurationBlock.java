@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
@@ -80,8 +82,8 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	@Override
-	public Composite createContents(final Composite parent) {
-		super.createContents(parent);
+	public Composite createContents(final Composite parent, final boolean resizeShell) {
+		super.createContents(parent, resizeShell);
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
@@ -92,13 +94,16 @@ public class ConfigurationBlock extends AbstractBlock {
 		expComposite.addExpansionListener(new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
-				if (e.getState()) {
+				if (e.getState() && resizeShell) {
 					Shell shell = parent.getShell();
 					Point point = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 					shell.setSize(shell.getSize().x, point.y);
 				}
-				expComposite.setSize(expComposite.getSize().x,
-						expComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+				SharedScrolledComposite scrolledComposite = getParentScrolledComposite(expComposite
+						.getParent());
+				if (scrolledComposite != null) {
+					scrolledComposite.reflow(true);
+				}
 			}
 		});
 		expComposite.setText(Messages.advancedSection_Title);
@@ -115,6 +120,21 @@ public class ConfigurationBlock extends AbstractBlock {
 		;
 		expComposite.setClient(advancedSection);
 		return getContainer();
+	}
+
+	protected SharedScrolledComposite getParentScrolledComposite(Control control) {
+		Control parent = control.getParent();
+		if (parent != null) {
+			if (parent instanceof SharedScrolledComposite) {
+				return (SharedScrolledComposite) parent;
+			} else {
+				parent = parent.getParent();
+				if (parent instanceof SharedScrolledComposite) {
+					return (SharedScrolledComposite) parent;
+				}
+			}
+		} 
+		return null;
 	}
 
 	@Override

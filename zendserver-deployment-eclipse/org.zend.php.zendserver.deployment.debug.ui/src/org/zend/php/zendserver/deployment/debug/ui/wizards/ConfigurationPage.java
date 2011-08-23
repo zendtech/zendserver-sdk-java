@@ -28,7 +28,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 	private ConfigurationBlock block;
 
 	public void createControl(Composite parent) {
-		Composite container = block.createContents(parent);
+		Composite container = block.createContents(parent, true);
 		setControl(container);
 		if (helper != null) {
 			block.initializeFields(helper);
