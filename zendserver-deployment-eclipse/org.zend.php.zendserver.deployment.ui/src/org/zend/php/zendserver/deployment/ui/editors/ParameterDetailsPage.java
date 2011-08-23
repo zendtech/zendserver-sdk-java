@@ -150,6 +150,8 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		GridData gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;
 		gd.widthHint = 100;
+		
+		toolkit.paintBordersFor(client);
 	}
 	
 	private void refreshParametersList() {

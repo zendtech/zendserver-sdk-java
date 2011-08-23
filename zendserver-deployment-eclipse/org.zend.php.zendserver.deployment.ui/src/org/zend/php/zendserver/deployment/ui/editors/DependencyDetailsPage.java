@@ -150,6 +150,8 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 			// safe to cast into section
 			((Section) s).setClient(isNameRequired ? general : client);
 		}
+		
+		toolkit.paintBordersFor(client);
 	}
 
 	/**
@@ -196,5 +198,6 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 				DeploymentDescriptorPackage.DEPENDENCY_NAME, nameLabel,
 				provider.getNames()));
 		name.create(hint, toolkit);
+		toolkit.paintBordersFor(hint);
 	}
 }

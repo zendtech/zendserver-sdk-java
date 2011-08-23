@@ -143,6 +143,8 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 				refreshViewer(event.target);
 			}
 		});
+		
+		toolkit.paintBordersFor(client);
 	}
 
 	protected void addButtons(FormToolkit toolkit, Composite buttons) {

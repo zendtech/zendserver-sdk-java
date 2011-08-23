@@ -66,5 +66,7 @@ public class VariableDetailsPage extends DescriptorDetailsPage {
 		name.create(client, toolkit);
 		EditorField value = fields.add(new TextField(null, DeploymentDescriptorPackage.VALUE, Messages.VariableDetailsPage_Value));
 		value.create(client, toolkit);
+		
+		toolkit.paintBordersFor(client);
 	}
 }

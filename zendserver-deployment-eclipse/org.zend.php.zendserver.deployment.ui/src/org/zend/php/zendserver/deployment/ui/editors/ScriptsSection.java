@@ -208,6 +208,8 @@ public class ScriptsSection {
 				}
 			}
 		});
+		
+		toolkit.paintBordersFor(sectionClient);
 	}
 
 	protected IFile getScript(String scriptName) {

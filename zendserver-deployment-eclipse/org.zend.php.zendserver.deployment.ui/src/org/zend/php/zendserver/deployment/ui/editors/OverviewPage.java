@@ -81,7 +81,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		
 		createTestingSection(managedForm, right);
 		createExportingSection(managedForm, right);
-
+		
 		form.reflow(true);
 		
 		showMarkers();
@@ -306,6 +306,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		license.create(sectionClient, toolkit);
 
 		icon.create(sectionClient, toolkit);
+		
+		toolkit.paintBordersFor(sectionClient);
 	}
 
 	protected void handleLinkClick(Object href) {

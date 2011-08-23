@@ -132,6 +132,8 @@ public abstract class ResourceListSection {
 
 		removeButton = createButton(toolkit, buttons,
 				Messages.ResourceListSection_Remove);
+		
+		toolkit.paintBordersFor(client);
 	}
 
 	private Button createButton(FormToolkit toolkit, Composite buttons,
