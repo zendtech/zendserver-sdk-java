@@ -36,18 +36,20 @@ public class Sdk {
 	}
 	
 	public void install() throws BundleException {
-		for (int i = 0; i < BUNDLES.length; i++) {
-			String bundlePath = "file://" + location + BUNDLES[i].sdkLocation; //$NON-NLS-1$
-			//DeploymentCore.log(new Status(IStatus.INFO, DeploymentCore.PLUGIN_ID, "Installing "+bundlePath));
-			try {
-				if (!bundleIsInstalled(bundlePath) && !bundleByNameIsInstalled(BUNDLES[i].name)) {
-					Bundle bundle = DeploymentCore.getContext().installBundle(bundlePath);
-					bundle.start();
+		if (location != null) {
+			for (int i = 0; i < BUNDLES.length; i++) {
+				String bundlePath = "file://" + location + BUNDLES[i].sdkLocation; //$NON-NLS-1$
+				//DeploymentCore.log(new Status(IStatus.INFO, DeploymentCore.PLUGIN_ID, "Installing "+bundlePath));
+				try {
+					if (!bundleIsInstalled(bundlePath) && !bundleByNameIsInstalled(BUNDLES[i].name)) {
+						Bundle bundle = DeploymentCore.getContext().installBundle(bundlePath);
+						bundle.start();
+					}
+				} catch (BundleException e) {
+					System.err.println("Error loading bundle "+bundlePath); //$NON-NLS-1$
+					e.printStackTrace();
+					throw e;
 				}
-			} catch (BundleException e) {
-				System.err.println("Error loading bundle "+bundlePath); //$NON-NLS-1$
-				e.printStackTrace();
-				throw e;
 			}
 		}
 		

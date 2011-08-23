@@ -23,10 +23,8 @@ public class SdkManager implements IPreferenceChangeListener {
 	
 	public SdkManager() throws BundleException {
 		String path = DeploymentCore.getPreferenceScope().get(SDK_PATH, getDefaultSdkPath());
-		if (path != null) {
-			currentSdk = new Sdk(path);
-			currentSdk.install();
-		}
+		currentSdk = new Sdk(path);
+		currentSdk.install();
 	}
 	
 	public static String getDefaultSdkPath() {
