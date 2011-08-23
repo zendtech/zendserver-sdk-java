@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -275,11 +274,5 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 	@Override
 	protected void applyLayout(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createFormGridLayout(true, 1));
-	}
-	
-	@Override
-	protected void applyLayoutData(SashForm sashForm) {
-		super.applyLayoutData(sashForm);
-		//sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 }
