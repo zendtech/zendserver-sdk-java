@@ -8,8 +8,19 @@ package org.zend.php.zendserver.deployment.core.descriptor;
  */
 public enum ParameterType {
 
-	STRING(IParameter.STRING), CHOICE(IParameter.CHOICE), CHECKBOX(IParameter.CHECKBOX), PASSWORD(
-			IParameter.PASSWORD), EMAIL(IParameter.EMAIL), HOSTNAME(IParameter.HOSTNAME);
+	STRING(IParameter.STRING),
+	
+	CHOICE(IParameter.CHOICE),
+	
+	CHECKBOX(IParameter.CHECKBOX),
+	
+	PASSWORD(IParameter.PASSWORD),
+	
+	EMAIL(IParameter.EMAIL),
+	
+	HOSTNAME(IParameter.HOSTNAME),
+	
+	NUMBER(IParameter.NUMBER);
 
 	private final String name;
 

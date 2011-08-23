@@ -45,7 +45,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
 		configBlock.createContents(container, false);
 		parametersBlock = new ParametersBlock(this);
-		parametersBlock.createContents(container, false);
+		parametersBlock.createContents(container);
 		setDeploymentPageEnablement(false);
 		setControl(scrolledComposite);
 	}
