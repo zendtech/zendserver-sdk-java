@@ -150,8 +150,6 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 			// safe to cast into section
 			((Section) s).setClient(isNameRequired ? general : client);
 		}
-		
-		toolkit.paintBordersFor(client);
 	}
 
 	/**
