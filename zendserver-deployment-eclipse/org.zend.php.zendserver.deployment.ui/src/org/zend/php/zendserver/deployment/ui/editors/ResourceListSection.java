@@ -169,11 +169,7 @@ public abstract class ResourceListSection {
 
 		Section section = toolkit.createSection(body,
 				Section.TITLE_BAR | Section.DESCRIPTION | Section.TWISTIE);
-		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
-				.getActiveForeground());
-		section.setToggleColor(toolkit.getHyperlinkGroup()
-				.getActiveForeground());
-
+		
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
