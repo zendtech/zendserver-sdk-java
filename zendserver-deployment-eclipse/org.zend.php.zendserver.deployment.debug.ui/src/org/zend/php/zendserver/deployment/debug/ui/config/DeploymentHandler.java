@@ -7,7 +7,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -96,6 +99,14 @@ public class DeploymentHandler {
 					}
 					job.setHelper(helper);
 					job.setProject(project);
+					job.addJobChangeListener(new JobChangeAdapter() {
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (event.getResult().getSeverity() == IStatus.CANCEL) {
+								cancelled = true;
+							}
+						}
+					});
 					break;
 				case IDeploymentHelper.NO_ACTION:
 					updateLaunchConfiguration(helper, config, project);
@@ -290,6 +301,14 @@ public class DeploymentHandler {
 						}
 						job.setHelper(updatedHelper);
 						job.setProject(project);
+						job.addJobChangeListener(new JobChangeAdapter() {
+							@Override
+							public void done(IJobChangeEvent event) {
+								if (event.getResult().getSeverity() == IStatus.CANCEL) {
+									cancelled = true;
+								}
+							}
+						});
 						break;
 					case IDeploymentHelper.NO_ACTION:
 						try {
