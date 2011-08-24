@@ -1,14 +1,19 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -39,6 +44,12 @@ public class DetectTargetAction extends Action {
 			runElevated();
 		} catch (DetectionException e) {
 			// do nothing
+		}
+		
+		if ((target.isTemporary()) && (EnvironmentUtils.isUnderLinux())) {
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			String msg = MessageFormat.format("sudo java -jar org.zend.sdk.jar org.zend.sdkcli.Main detect target -k {0} -s {1}", target.getKey(), target.getSecretKey());
+			MessageDialog.openInformation(shell, "Target detected", "To complete adding local target, please run the following command:\n"+msg);
 		}
 	}
 
