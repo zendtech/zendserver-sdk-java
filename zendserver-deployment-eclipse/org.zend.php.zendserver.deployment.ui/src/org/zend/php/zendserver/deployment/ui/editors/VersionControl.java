@@ -194,6 +194,8 @@ public class VersionControl {
 					Messages.VersionControl_Maximum);
 			minField.create(range, toolkit);
 			maxField.create(range, toolkit);
+
+			toolkit.paintBordersFor(range);
 		}
 
 		if ((modes & EXCLUDE) == EXCLUDE) {
@@ -213,6 +215,9 @@ public class VersionControl {
 					DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS,
 					Messages.VersionControl_0);
 			conflictsField.create(conflicts, toolkit);
+			
+
+			toolkit.paintBordersFor(conflicts);
 		}
 
 		if ((modes & EQUALS) == EQUALS) {
@@ -224,6 +229,9 @@ public class VersionControl {
 					DeploymentDescriptorPackage.DEPENDENCY_EQUALS,
 					Messages.VersionControl_0);
 			equalsField.create(equals, toolkit);
+			
+
+			toolkit.paintBordersFor(equals);
 		}
 	}
 
