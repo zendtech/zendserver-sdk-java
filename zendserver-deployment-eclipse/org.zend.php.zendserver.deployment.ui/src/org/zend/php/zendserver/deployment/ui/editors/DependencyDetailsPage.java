@@ -42,6 +42,8 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 	// provider of proposal list (null if name is not required)
 	private IProposalProvider provider;
 
+	private String labelText;
+
 	public DependencyDetailsPage(DeploymentDescriptorEditor editor, String sectionTitle, String sectionDescription) {
 		super(editor);
 		this.sectionTitle = sectionTitle;
@@ -145,6 +147,9 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 		for (EditorField ef : versionFields) {
 			fields.add(ef);
 		}
+		if (labelText != null) {
+			version.setEqualsLabel(labelText);
+		}
 
 		if (isSection) {
 			// safe to cast into section
@@ -197,5 +202,9 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 				provider.getNames()));
 		name.create(hint, toolkit);
 		toolkit.paintBordersFor(hint);
+	}
+	
+	public void setEqualsLabel(String text) {
+		this.labelText = text;
 	}
 }

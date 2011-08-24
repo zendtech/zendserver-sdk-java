@@ -11,6 +11,7 @@ public class DirectiveDependencyDetailsPage extends DependencyDetailsPage {
 				Messages.DirectiveDependencyDetailsPage_SpecifyDirectiveProperties);
 		setNameRequired(Messages.DirectiveDependencyDetailsPage_Directive,
 				new PHPDirectivesProvider());
+		setEqualsLabel("Value");
 	}
 
 	public int getVersionModes() {

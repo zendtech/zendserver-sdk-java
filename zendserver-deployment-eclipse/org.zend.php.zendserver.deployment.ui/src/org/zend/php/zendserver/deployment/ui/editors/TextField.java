@@ -9,9 +9,11 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
@@ -204,6 +206,18 @@ public class TextField implements EditorField {
 			break;
 			}
 		}
+	}
+
+	public void setLabel(String text) {
+		if (label == null) {
+			return;
+		}
+		if (label instanceof Label) {
+			((Label) label).setText(text);
+		} else if (label instanceof Hyperlink) {
+			((Hyperlink) label).setText(text);
+		}
+		
 	}
 	
 }

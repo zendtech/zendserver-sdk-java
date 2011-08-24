@@ -312,4 +312,8 @@ public class VersionControl {
 		}
 		return fields.toArray(new EditorField[fields.size()]);
 	}
+	
+	public void setEqualsLabel(String label) {
+		equalsField.setLabel(label);
+	}
 }
