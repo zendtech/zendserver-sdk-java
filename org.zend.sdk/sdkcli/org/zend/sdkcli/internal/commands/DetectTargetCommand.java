@@ -11,10 +11,13 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
+import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiException;
 
 /**
  * Detect localhost target.
@@ -74,9 +77,27 @@ public class DetectTargetCommand extends TargetAwareCommand {
 				getLogger().error("\tError message: " + e2.getMessage());
 			}
 		} catch (PrivilegesException e3) {
-			getLogger().error("Use administrator account with elevated privileges");
-			getLogger().error("Please consider using:");
-			getLogger().error("\t> elevate detect target");
+			if (EnvironmentUtils.isUnderLinux()
+					|| EnvironmentUtils.isUnderMaxOSX()) {
+
+				ZendTargetAutoDetect detection = null;
+				try {
+					detection = new ZendTargetAutoDetect();
+				} catch (IOException e) {
+				}
+				target = detection.createTemporaryLocalhost(targetId, key);
+				try {
+					// suppress connect cause the
+					getTargetManager().add(target, true);
+				} catch (WebApiException e1) {
+					// since the key is not registered yet, most probably there
+					// will be a failure here
+				}
+			} else {
+				getLogger().error("Use administrator account with elevated privileges");
+				getLogger().error("Please consider using:");
+				getLogger().error("\t> elevate detect target");
+			}
 		} catch (DetectionException e4) {
 			// not handled
 		}
