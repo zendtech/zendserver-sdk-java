@@ -22,7 +22,6 @@ import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
-import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -202,24 +201,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} catch (IOException e) {
 
 			log.warning(e);
-
-			if (EnvironmentUtils.isUnderLinux()
-					|| EnvironmentUtils.isUnderMaxOSX()) {
-
-				final IZendTarget local = detection.createTemporaryLocalhost(
-						targetId, key);
-				try {
-					// suppress connect cause the
-					add(local, true);
-				} catch (WebApiException e1) {
-					// since the key is not registered yet, most probably there
-					// will be a failure here
-				}
-
-				return local;
-			} else {
-				throw new PrivilegesException();
-			}
+			throw new PrivilegesException();
 
 		} catch (WebApiException e) {
 			final ResponseCode responseCode = e.getResponseCode();
