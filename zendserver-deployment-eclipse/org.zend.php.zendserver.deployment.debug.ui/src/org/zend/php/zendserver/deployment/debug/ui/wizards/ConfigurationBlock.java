@@ -71,6 +71,8 @@ public class ConfigurationBlock extends AbstractBlock {
 	private boolean autoDeploy;
 	private int currentAppId;
 
+	private int advancedSectionHeight = 0;
+
 	public ConfigurationBlock(IStatusChangeListener listener) {
 		this(listener, null);
 	}
@@ -96,9 +98,21 @@ public class ConfigurationBlock extends AbstractBlock {
 			public void expansionStateChanged(ExpansionEvent e) {
 				if (e.getState() && resizeShell) {
 					Shell shell = parent.getShell();
-					Point point = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-					shell.setSize(shell.getSize().x, point.y);
+					Point shellSize = shell.getSize();
+					if (advancedSectionHeight == 0) {
+						Point groupSize = expComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+						advancedSectionHeight = groupSize.y;
+					}
+					shell.setSize(shellSize.x, shellSize.y + advancedSectionHeight);
+					getContainer().layout();
 				}
+				if (!e.getState() && resizeShell) {
+					getContainer().layout();
+					Shell shell = parent.getShell();
+					Point shellSize = shell.getSize();
+					shell.setSize(shellSize.x, shellSize.y - advancedSectionHeight);
+				}
+
 				SharedScrolledComposite scrolledComposite = getParentScrolledComposite(expComposite
 						.getParent());
 				if (scrolledComposite != null) {
