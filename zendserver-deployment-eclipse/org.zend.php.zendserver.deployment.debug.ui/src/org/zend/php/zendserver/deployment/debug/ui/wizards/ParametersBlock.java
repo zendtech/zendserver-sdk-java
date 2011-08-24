@@ -1,7 +1,10 @@
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,16 +12,17 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -32,10 +36,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -44,7 +48,6 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.editors.OpenFileDialog;
 
 public class ParametersBlock extends AbstractBlock {
 
@@ -269,7 +272,7 @@ public class ParametersBlock extends AbstractBlock {
 		exportButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				exportParameters();
+				exportParameters(e.widget.getDisplay().getActiveShell());
 			}
 		});
 	}
@@ -282,18 +285,20 @@ public class ParametersBlock extends AbstractBlock {
 	}
 
 	private void importParameters(Shell shell) {
-		OpenFileDialog dialog = new OpenFileDialog(shell, model.getFile().getParent(),
-				Messages.ParametersBlock_ImportDialogTitle,
-				Messages.ParametersBlock_ImportDialogDescription, ""); //$NON-NLS-1$
-		String selection = dialog.openFile();
-		if (selection.isEmpty()) {
+		FileDialog dialog = new FileDialog(shell);
+		dialog.setFileName("params.properties"); //$NON-NLS-1$
+		dialog.setFilterPath(model.getFile().getParent().getLocation().toOSString());
+		dialog.setText(Messages.ParametersBlock_ImportDialogDescription);
+		dialog.setFilterExtensions(new String[] { "*" }); //$NON-NLS-1$
+		String selection = dialog.open();
+		if (selection == null) {
 			return;
 		}
-		IResource selectedResource = model.getFile().getParent().findMember(selection);
-		if (selectedResource != null && !(selectedResource instanceof IContainer)) {
+		File selectedFile = new File(selection);
+		if (selectedFile != null && !selectedFile.isDirectory() && selectedFile.exists()) {
 			Properties props = new Properties();
 			try {
-				props.load(new FileInputStream(selectedResource.getLocation().toFile()));
+				props.load(new FileInputStream(selectedFile));
 				Map<String, String> userParams = new HashMap<String, String>();
 				Enumeration<?> names = props.propertyNames();
 				if (names == null) {
@@ -314,13 +319,36 @@ public class ParametersBlock extends AbstractBlock {
 		}
 	}
 
-	private void exportParameters() {
-		ExportParametersWizard wizard = new ExportParametersWizard(model.getFile().getParent(),
-				getHelper().getUserParams());
-		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-		WizardDialog dialog = new WizardDialog(shell, wizard);
-		dialog.create();
-		dialog.open();
+	private void exportParameters(Shell shell) {
+		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+		dialog.setText(Messages.ParametersBlock_ExportDialogDescription);
+		dialog.setFileName("params.properties"); //$NON-NLS-1$
+		dialog.setFilterPath(model.getFile().getParent().getLocation().toOSString());
+		dialog.setFilterExtensions(new String[] { "*" }); //$NON-NLS-1$
+		dialog.setOverwrite(true);
+
+		final String destination = dialog.open();
+		if (destination == null || destination.isEmpty()) {
+			return;
+		}
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			public void run() {
+				Properties props = new Properties();
+				Map<String, String> params = getHelper().getUserParams();
+				Set<Entry<String, String>> paramsSet = params.entrySet();
+				for (Entry<String, String> param : paramsSet) {
+					props.put(param.getKey(), param.getValue());
+				}
+				try {
+					OutputStream out = new FileOutputStream(new File(destination));
+					props.store(out, "deployment parameters"); //$NON-NLS-1$
+					out.close();
+				} catch (IOException e) {
+					Activator.log(e);
+				}
+
+			}
+		});
 	}
 
 	private void createParameterGroups(Composite container) {

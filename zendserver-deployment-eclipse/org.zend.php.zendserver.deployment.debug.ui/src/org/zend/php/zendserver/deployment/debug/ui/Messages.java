@@ -70,11 +70,6 @@ public class Messages extends NLS {
 	public static String EmailValidator_InvalidEmail;
 
 	public static String ExportParametersWizard_ExportError_Message;
-	public static String ExportParametersWizard_JobDescription;
-	public static String ExportParametersWizard_JobTitle;
-	public static String ExportParametersWizard_PageDescription;
-	public static String ExportParametersWizard_PageTitle;
-	public static String ExportParametersWizard_WizardTitile;
 
 	public static String NumberValidator_NotANumber;
 	public static String PasswordValidator_InvalidPassword;
@@ -82,6 +77,7 @@ public class Messages extends NLS {
 	public static String ParametersBlock_ExportButton;
 	public static String ParametersBlock_ImportButton;
 	public static String ParametersBlock_ImportDialogDescription;
+	public static String ParametersBlock_ExportDialogDescription;
 	public static String ParametersBlock_ImportDialogTitle;
 
 	static {
