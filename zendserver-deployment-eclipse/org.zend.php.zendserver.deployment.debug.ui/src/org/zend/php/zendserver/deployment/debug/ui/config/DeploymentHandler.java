@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -80,13 +81,13 @@ public class DeploymentHandler {
 							}
 						}
 					}
-					if (!helper.getTargetId().isEmpty() && !hasParameters(project)) {
+					if (!helper.getTargetId().isEmpty() && !hasEmptyParameters(project, helper)) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
 						doOpenDeploymentWizard(helper, project);
 					}
 					if (job == null) {
-						return OK;
+						return CANCEL;
 					}
 					break;
 				case IDeploymentHelper.UPDATE:
@@ -170,12 +171,23 @@ public class DeploymentHandler {
 		return OK;
 	}
 
-	private boolean hasParameters(IProject project) {
+	private boolean hasEmptyParameters(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer((IFile) descriptor);
-		List<IParameter> params = model.getDescriptorModel().getParameters();
+		List<IParameter> definedParams = model.getDescriptorModel().getParameters();
+		if (definedParams == null || definedParams.size() == 0) {
+			return false;
+		}
+		Map<String, String> params = helper.getUserParams();
 		if (params != null && params.size() > 0) {
+			for (IParameter parameter : definedParams) {
+				String value = (String) params.get(parameter.getId());
+				if (parameter.isRequired() && (value == null || value.isEmpty())) {
+					return true;
+				}
+			}
+		} else {
 			return true;
 		}
 		return false;
@@ -321,6 +333,7 @@ public class DeploymentHandler {
 						return;
 					}
 				} else {
+					cancelled = true;
 					job = null;
 				}
 			}
