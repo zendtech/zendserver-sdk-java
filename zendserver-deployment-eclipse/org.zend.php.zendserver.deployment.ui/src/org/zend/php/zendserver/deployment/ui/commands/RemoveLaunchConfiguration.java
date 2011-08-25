@@ -19,6 +19,12 @@ public class RemoveLaunchConfiguration extends AbstractHandler {
 		EvaluationContext ctx = (EvaluationContext) event.getApplicationContext();
 		
 		Object element = ctx.getDefaultVariable();
+		if (element instanceof List) {
+			List<?> list = (List<?>) element;
+			if (list.size() > 0) {
+				element = list.get(0);
+			}
+		}
 		if (element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration cfg = (ILaunchConfiguration) element;
 			try {
