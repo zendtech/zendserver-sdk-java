@@ -91,7 +91,11 @@ public class DeploymentHandler {
 					}
 					break;
 				case IDeploymentHelper.UPDATE:
-					job = new UpdateLaunchJob(helper, project);
+					if (hasEmptyParameters(project, helper)) {
+						doOpenDeploymentWizard(helper, project);
+					} else {
+						job = new UpdateLaunchJob(helper, project);
+					}
 					break;
 				case IDeploymentHelper.AUTO_DEPLOY:
 					job = getAutoDeployJob();
