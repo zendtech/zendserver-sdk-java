@@ -150,6 +150,15 @@
             id="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
             name="Open Deployment Wizard">
       </command>
+	 <category
+            id="org.zend.php.zendserver.deployment.debug.ui.commands.category"
+            name="Sample Category">
+      </category>
+      <command
+            categoryId="org.zend.php.zendserver.deployment.debug.ui.commands.category"
+            id="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
+            name="Sample Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
