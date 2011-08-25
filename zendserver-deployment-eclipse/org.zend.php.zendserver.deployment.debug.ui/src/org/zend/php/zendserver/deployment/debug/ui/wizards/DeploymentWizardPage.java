@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
 public abstract class DeploymentWizardPage extends WizardPage implements IStatusChangeListener {
 

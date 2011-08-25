@@ -42,6 +42,7 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
@@ -86,7 +87,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	@Override
 	public Composite createContents(final Composite parent, final boolean resizeShell) {
 		super.createContents(parent, resizeShell);
-		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
 		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer()); //$NON-NLS-1$

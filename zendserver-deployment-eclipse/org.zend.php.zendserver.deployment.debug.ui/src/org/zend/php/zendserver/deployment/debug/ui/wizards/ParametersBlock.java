@@ -48,6 +48,7 @@ import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
 public class ParametersBlock extends AbstractBlock {
 
