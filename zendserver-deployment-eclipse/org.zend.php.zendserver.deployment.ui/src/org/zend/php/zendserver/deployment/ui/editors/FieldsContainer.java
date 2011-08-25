@@ -1,8 +1,9 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,10 +18,10 @@ import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDe
  */
 public class FieldsContainer {
 
-	private Map<Feature, EditorField> fields = new LinkedHashMap<Feature, EditorField>();
-
+	private List<EditorField> fields = new ArrayList<EditorField>();
+	
 	public EditorField add(EditorField field) {
-		fields.put(field.getKey(), field);
+		fields.add(field);
 		return field;
 	}
 
@@ -28,8 +29,8 @@ public class FieldsContainer {
 			List<Feature> toRemove) {
 		if (toRemove != null) {
 			for (Feature feature : toRemove) {
-				EditorField field = fields.get(feature);
-				if (field != null) {
+				EditorField[] fields = getFields(feature);
+				for (EditorField field : fields) {
 					field.setDecoration(null);
 				}
 			}
@@ -38,16 +39,26 @@ public class FieldsContainer {
 		if (toShow != null) {
 			for (Map.Entry<Feature, FormDecoration> entry : toShow.entrySet()) {
 				FormDecoration status = entry.getValue();
-				EditorField field = fields.get(entry.getKey());
-				if (field != null) {
+				EditorField[] fields = getFields(entry.getKey());
+				for (EditorField field : fields) {
 					field.setDecoration(status);
 				}
 			}
 		}
 	}
 
+	private EditorField[] getFields(Feature key) {
+		List<EditorField> out = new ArrayList<EditorField>();
+		for (EditorField f : fields) {
+			if (key.equals(f.getKey())) {
+				out.add(f);
+			}
+		}
+		return out.toArray(new EditorField[out.size()]);
+	}
+	
 	public Map<Integer, Feature> getFeatureIds() {
-		Set<Feature> keyset = fields.keySet();
+		Collection<Feature> keyset = keySet();
 		Map<Integer, Feature> featureIds = new HashMap<Integer, Feature>();
 		for (Feature f : keyset) {
 			featureIds.put(f.id, f);
@@ -57,21 +68,25 @@ public class FieldsContainer {
 	}
 
 	public Collection<Feature> keySet() {
-		return fields.keySet();
+		Set<Feature> out = new HashSet<Feature>();
+		for (EditorField f : fields) {
+			out.add(f.getKey());
+		}
+		return out;
 	}
 
 	public void refresh() {
-		for (EditorField e : fields.values()) {
+		for (EditorField e : fields) {
 			e.refresh();
 		}
 	}
 
 	public Collection<EditorField> fields() {
-		return fields.values();
+		return fields;
 	}
 
 	public void setInput(IModelObject input) {
-		for (EditorField e : fields.values()) {
+		for (EditorField e : fields) {
 			e.setInput(input);
 		}
 	}
