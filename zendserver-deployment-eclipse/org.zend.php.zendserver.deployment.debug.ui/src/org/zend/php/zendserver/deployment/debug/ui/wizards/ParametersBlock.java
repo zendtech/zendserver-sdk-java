@@ -219,6 +219,9 @@ public class ParametersBlock extends AbstractBlock {
 			if (value == null || value.isEmpty()) {
 				value = param.getParameter().getDefaultValue();
 			}
+			if (value == null) {
+				value = ""; //$NON-NLS-1$
+			}
 			result.put(param.getId(), value);
 		}
 		DeploymentHelper helper = new DeploymentHelper();
