@@ -20,7 +20,8 @@ import swt.elevate.ElevatedProgramFactory;
 public class ZendCmdLine {
 
 	private String createJavaCommand() {
-		File java = new File(System.getProperty("java.home") + "/bin/java.exe"); //$NON-NLS-1$ //$NON-NLS-2$
+		String javaExecName = Platform.OS_WIN32.equals(Platform.getOS()) ? "java.exe" : "java"; //$NON-NLS-1$ //$NON-NLS-2$
+		File java = new File(System.getProperty("java.home") + "/bin/" + javaExecName); //$NON-NLS-1$ //$NON-NLS-2$
 		return java.getAbsolutePath();
 	}
 	
@@ -44,12 +45,13 @@ public class ZendCmdLine {
 		if (Platform.inDevelopmentMode()) {
 			rootPath = "/bin"; //$NON-NLS-1$
 		}
-		cp.append(new File(zendSdkPath, rootPath)).append(';');
+		String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
+		cp.append(new File(zendSdkPath, rootPath)).append(pathSeparator);
 		
 		Enumeration<?> libs = zendSdk.findEntries("/lib", "*.jar", false); //$NON-NLS-1$ //$NON-NLS-2$
 		while (libs.hasMoreElements()) {
 			URL lib = (URL) libs.nextElement();
-			cp.append(new File(zendSdkPath, lib.getPath())).append(';');
+			cp.append(new File(zendSdkPath, lib.getPath())).append(pathSeparator);
 		}
 		cp.append('"');
 		command.append(cp);
