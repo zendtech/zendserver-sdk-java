@@ -161,7 +161,10 @@ public class ParametersBlock extends AbstractBlock {
 				}
 				break;
 			default:
-				break;
+				return;
+			}
+			if (parameter.isReadOnly()) {
+				control.setEnabled(false);
 			}
 		}
 
