@@ -154,6 +154,14 @@ public class ParametersBlock extends AbstractBlock {
 				control = createLabelWithCombo(name, tooltip, composite);
 				List<String> values = parameter.getValidValues();
 				((Combo) control).setItems(values.toArray(new String[values.size()]));
+				if (parameter.getDefaultValue() != null) {
+					String defaultValue = parameter.getDefaultValue();
+					for (int i = 0; i < values.size(); i++) {
+						if (values.get(i).equals(defaultValue)) {
+							((Combo) control).select(i);
+						}
+					}
+				}
 				break;
 			case CHECKBOX:
 				control = createLabelWithCheckbox(name, tooltip, composite);
@@ -207,7 +215,11 @@ public class ParametersBlock extends AbstractBlock {
 	public IDeploymentHelper getHelper() {
 		HashMap<String, String> result = new HashMap<String, String>();
 		for (DeploymentParameter param : parameters) {
-			result.put(param.getId(), param.getValue());
+			String value = param.getValue();
+			if (value == null || value.isEmpty()) {
+				value = param.getParameter().getDefaultValue();
+			}
+			result.put(param.getId(), value);
 		}
 		DeploymentHelper helper = new DeploymentHelper();
 		helper.setUserParams(result);

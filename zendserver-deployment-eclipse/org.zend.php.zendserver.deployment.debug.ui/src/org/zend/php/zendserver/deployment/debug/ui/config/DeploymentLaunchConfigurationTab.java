@@ -1,5 +1,10 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -9,28 +14,38 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.debug.ui.dialogs.DeploymentParametersDialog;
+import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationBlock;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.IStatusChangeListener;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.ParametersBlock;
 
 public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements
 		IStatusChangeListener {
 
 	private ConfigurationBlock configBlock;
-	private ParametersBlock parametersBlock;
 	private IProject project;
 	private Composite container;
+	private IDeploymentHelper helper;
+	private Map<String, String> currentParameters;
+	private Button parametersButton;
 
 	public void createControl(Composite parent) {
 		final SharedScrolledComposite scrolledComposite = new SharedScrolledComposite(parent,
@@ -44,8 +59,22 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		scrolledComposite.setContent(container);
 		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
 		configBlock.createContents(container, false);
-		parametersBlock = new ParametersBlock(this);
-		parametersBlock.createContents(container);
+		parametersButton = new Button(container, SWT.PUSH);
+		parametersButton.setText(Messages.DeploymentParameters_Title);
+		parametersButton.setEnabled(false);
+		parametersButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Shell shell = e.widget.getDisplay().getActiveShell();
+				DeploymentParametersDialog dialog = new DeploymentParametersDialog(shell, project,
+						helper);
+				if (dialog.open() == Window.OK) {
+					currentParameters = dialog.getParameters();
+					updateLaunchConfigurationDialog();
+				}
+			}
+		});
 		setDeploymentPageEnablement(false);
 		setControl(scrolledComposite);
 	}
@@ -62,20 +91,19 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				setDeploymentPageEnablement(true);
 				project = LaunchUtils.getProjectFromFilename(configuration);
 				if (project != null) {
-					IDeploymentHelper helper = new DeploymentHelper();
+					helper = new DeploymentHelper();
 					helper.setProjectName(project.getName());
 					helper.setDefaultServer(true);
 					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
-					parametersBlock.createParametersGroup(project);
+					helper.setUserParams(getUserParameters());
 					configBlock.initializeFields(helper);
-					parametersBlock.initializeFields(helper);
+					setParametersButtonEnabled();
 				}
 			} else {
 				configBlock.clear();
-				parametersBlock.createParametersGroup(project);
-				IDeploymentHelper helper = DeploymentHelper.create(configuration);
+				helper = DeploymentHelper.create(configuration);
 				configBlock.initializeFields(helper);
-				parametersBlock.initializeFields(helper);
+				setParametersButtonEnabled();
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -84,12 +112,17 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
 		if (project != null) {
-			IDeploymentHelper helper = configBlock.getHelper();
+			IDeploymentHelper updatedHelper = configBlock.getHelper();
 			helper.setProjectName(project.getName());
-			helper.setUserParams(parametersBlock.getHelper().getUserParams());
-			if (helper.getBaseURL() != null) {
+			if (currentParameters == null) {
+				updatedHelper.setUserParams(helper.getUserParams());
+			} else {
+				updatedHelper.setUserParams(currentParameters);
+			}
+			helper = updatedHelper;
+			if (updatedHelper.getBaseURL() != null) {
 				try {
-					LaunchUtils.updateLaunchConfiguration(project, helper, wc);
+					LaunchUtils.updateLaunchConfiguration(project, updatedHelper, wc);
 				} catch (CoreException e) {
 					Activator.log(e);
 				}
@@ -111,7 +144,6 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		IStatus status = configBlock.validatePage();
 		setMessages(status);
 		if (status.getSeverity() == IStatus.OK) {
-			status = parametersBlock.validatePage();
 			setMessages(status);
 			if (status.getSeverity() == IStatus.OK) {
 				return super.isValid(launchConfig);
@@ -148,6 +180,26 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		configBlock.setDeployComboEnabled(value);
 		configBlock.setBaseURLEnabled(value);
 		configBlock.setUserAppNameEnabled(value);
+	}
+
+	private Map<String, String> getUserParameters() {
+		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		IDescriptorContainer model = DescriptorContainerManager.getService()
+				.openDescriptorContainer((IFile) descriptor);
+		Map<String, String> result = new HashMap<String, String>();
+		List<IParameter> params = model.getDescriptorModel().getParameters();
+		for (IParameter parameter : params) {
+			result.put(parameter.getId(), parameter.getDefaultValue());
+		}
+		return result;
+	}
+
+	private void setParametersButtonEnabled() {
+		if (helper.getUserParams() == null || helper.getUserParams().size() == 0) {
+			parametersButton.setEnabled(false);
+		} else {
+			parametersButton.setEnabled(true);
+		}
 	}
 
 }

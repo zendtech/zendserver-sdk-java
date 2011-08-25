@@ -63,6 +63,8 @@ public class Messages extends NLS {
 
 	public static String applicationConflictDialog_Title;
 
+	public static String DeploymentParameters_Title;
+
 	public static String DevCloudTunnelHandler_10;
 	public static String DevCloudTunnelHandler_7;
 	public static String DevCloudTunnelHandler_8;
