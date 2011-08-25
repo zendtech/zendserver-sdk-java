@@ -3,6 +3,9 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -10,6 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
@@ -67,12 +71,12 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		return new String[] { hostText.getText(), keyText.getText(), secretText.getText(), };
 	}
 
-	public IZendTarget createTarget(String[] data) {
+	public IZendTarget createTarget(String[] data) throws CoreException {
 		URL host = null;
 		try {
 			host = new URL(data[0]);
 		} catch (MalformedURLException e) {
-			// should be checked earlier
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();

@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -42,6 +43,8 @@ public class ValidateTargetJob extends Job {
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
+		} catch (CoreException e) {
+			return e.getStatus();
 		}
 
 		if (target == null) {

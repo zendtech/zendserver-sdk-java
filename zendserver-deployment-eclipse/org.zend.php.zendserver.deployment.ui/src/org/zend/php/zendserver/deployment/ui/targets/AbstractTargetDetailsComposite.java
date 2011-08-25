@@ -4,6 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -67,7 +68,7 @@ public abstract class AbstractTargetDetailsComposite {
 	 * @throws IOException
 	 */
 	abstract protected IZendTarget createTarget(String[] data)
-			throws SdkException, IOException;
+			throws SdkException, IOException, CoreException;
 
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
