@@ -75,7 +75,7 @@ public class ZendCmdLine {
 		String java = createJavaCommand();
 		String args = createZendCommand(cmd);
 		
-		boolean result = prog.launch(java, args);
+		boolean result = prog.launch("Zend SDK", java, args); //$NON-NLS-1$
 		return result;
 	}
 
