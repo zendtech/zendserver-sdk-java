@@ -45,6 +45,10 @@ import org.zend.sdklib.project.DeploymentScriptTypes;
  */
 public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
+	private static final String DEFAULT_DOCROOT = "public";
+
+	private static final String DEFAULT_APP_DIR = "data";
+
 	public static final String DESCRIPTOR = "deployment.xml";
 
 	// properties of the subject project
@@ -126,7 +130,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			throw new IllegalArgumentException(
 					"Failed to create deployment descriptor. Project name is missing");
 		}
-		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), "data",
+		DescriptorWriter w = new DescriptorWriter(xmlEscape(name), DEFAULT_APP_DIR,
 				null, "1.0.0");
 		w.write(outputStream);
 		outputStream.close();
@@ -216,14 +220,14 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		PackageDescription desc = new PackageDescription(packageStream);
 		File scriptsDir = findExistingScripts(descrFile.getParentFile());
 		String scripts = scriptsDir != null ? scriptsDir.getName() : null;
-		File docroot = findPublicFolder(descrFile.getParentFile());
 		boolean isDirty = false;
+		File docroot = findPublicFolder(descrFile.getParentFile());
 		if (scripts != null && !scripts.equals(desc.getPackage().getScriptsdir())) {
 			desc.getPackage().setScriptsdir(scripts);
 			isDirty = true;
 		}
 		if (docroot != null && !docroot.getName().equals(desc.getPackage().getDocroot())) {
-			desc.getPackage().setDocroot("public");
+			desc.getPackage().setDocroot(DEFAULT_APP_DIR +"/" + DEFAULT_DOCROOT);
 			isDirty = true;
 		}
 		packageStream.close();
@@ -282,7 +286,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		if (root.isDirectory()) {
 			File[] files = root.listFiles();
 			for (File file : files) {
-				if (file.isDirectory() && file.getName().equals("public")) {
+				if (file.isDirectory() && file.getName().equals(DEFAULT_DOCROOT)) {
 					return file;
 				}
 			}
