@@ -13,9 +13,9 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
@@ -36,7 +36,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  */
 public class TargetsManager extends AbstractChangeNotifier {
 
-	private static final String DEFAULT_KEY = "sdk";
+	public static final String DEFAULT_KEY = "sdk";
 
 	/**
 	 * All targets loaded in the manager
