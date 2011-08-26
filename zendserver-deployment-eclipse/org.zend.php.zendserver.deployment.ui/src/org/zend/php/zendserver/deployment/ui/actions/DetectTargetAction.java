@@ -61,7 +61,8 @@ public class DetectTargetAction extends Action {
 			ZendCmdLine zcmd = new ZendCmdLine();
 			
 			try {
-				if (! zcmd.runElevated("detect target -t "+id)) { //$NON-NLS-1$
+				String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name");
+				if (! zcmd.runElevated("detect target -t "+id+" -k "+key)) { //$NON-NLS-1$
 					return;
 				}
 			} catch (IOException e) {
