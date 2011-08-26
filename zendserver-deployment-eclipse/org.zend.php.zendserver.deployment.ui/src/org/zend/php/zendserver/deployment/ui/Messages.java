@@ -150,6 +150,8 @@ public class Messages extends NLS {
 	public static String TargetDialog_validate;
 	public static String TargetsLabelProvider_TargetLabel;
 	public static String TextHintField_0;
+
+	public static String UninstallApplicationHandler_0;
 	public static String ValidateTargetJob_ValidatingTarget;
 	public static String VariableDetailsPage_Details;
 	public static String VariableDetailsPage_Name;

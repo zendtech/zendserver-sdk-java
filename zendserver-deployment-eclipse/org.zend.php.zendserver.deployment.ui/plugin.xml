@@ -54,6 +54,14 @@
                   checkEnabled="true">
             </visibleWhen>
          </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.uninstallApplication"
+               label="Uninstall"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -73,6 +81,11 @@
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchConfiguration"
             id="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
             name="Remove Launch Configuration">
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.UninstallApplicationHandler"
+            id="org.zend.php.zendserver.deployment.ui.uninstallApplication"
+            name="Uninstall Application">
       </command>
    </extension>
    <extension
