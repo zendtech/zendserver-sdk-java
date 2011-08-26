@@ -1,7 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -48,8 +47,14 @@ public class DetectTargetAction extends Action {
 		
 		if ((target.isTemporary()) && (EnvironmentUtils.isUnderLinux())) {
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-			String msg = MessageFormat.format("sudo java -jar org.zend.sdk.jar org.zend.sdkcli.Main detect target -k {0} -s {1}", target.getKey(), target.getSecretKey());
-			MessageDialog.openInformation(shell, "Target detected", "To complete adding local target, please run the following command:\n"+msg);
+			ZendCmdLine zcmd = new ZendCmdLine();
+			String msg;
+			try {
+				msg = zcmd.getFullCommandLine("detect target"); //$NON-NLS-1$
+			} catch (IOException e) {
+				msg = e.getMessage() + Messages.DetectTargetAction_SeeDocs;
+			}
+			MessageDialog.openInformation(shell, Messages.DetectTargetAction_TargetDetected, Messages.DetectTargetAction_ToComplete+msg);
 		}
 	}
 
@@ -61,8 +66,8 @@ public class DetectTargetAction extends Action {
 			ZendCmdLine zcmd = new ZendCmdLine();
 			
 			try {
-				String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name");
-				if (! zcmd.runElevated("detect target -t "+id+" -k "+key)) { //$NON-NLS-1$
+				String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (! zcmd.runElevated("detect target -t "+id+" -k "+key)) { //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 			} catch (IOException e) {

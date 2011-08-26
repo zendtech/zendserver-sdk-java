@@ -47,6 +47,9 @@ public class Messages extends NLS {
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
 	public static String DetectTargetAction_DetectTarget;
+	public static String DetectTargetAction_SeeDocs;
+	public static String DetectTargetAction_TargetDetected;
+	public static String DetectTargetAction_ToComplete;
 	public static String DevCloudDetailsComposite_0;
 	public static String DevCloudDetailsComposite_1;
 	public static String DevCloudDetailsComposite_2;

@@ -19,13 +19,13 @@ import swt.elevate.ElevatedProgramFactory;
  */
 public class ZendCmdLine {
 
-	private String createJavaCommand() {
+	private String getJavaPath() {
 		String javaExecName = Platform.OS_WIN32.equals(Platform.getOS()) ? "java.exe" : "java"; //$NON-NLS-1$ //$NON-NLS-2$
 		File java = new File(System.getProperty("java.home") + "/bin/" + javaExecName); //$NON-NLS-1$ //$NON-NLS-2$
 		return java.getAbsolutePath();
 	}
 	
-	private String createZendCommand(String cmdString) throws IOException {
+	private String getZendCommandArgs(String cmdString) throws IOException {
 		StringBuilder command = new StringBuilder();
 		
 		Bundle zendSdk = FrameworkUtil.getBundle(org.zend.sdkcli.Main.class);
@@ -70,10 +70,16 @@ public class ZendCmdLine {
 		return location.getAbsolutePath();
 	}
 	
+	public String getFullCommandLine(String cmd) throws IOException {
+		String java = getJavaPath();
+		String args = getZendCommandArgs(cmd);
+		return java + args;
+	}
+	
 	public boolean runElevated(String cmd) throws IOException {
 		ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
-		String java = createJavaCommand();
-		String args = createZendCommand(cmd);
+		String java = getJavaPath();
+		String args = getZendCommandArgs(cmd);
 		
 		boolean result = prog.launch("Zend SDK", java, args); //$NON-NLS-1$
 		return result;
