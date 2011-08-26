@@ -16,6 +16,7 @@ import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.ServerVersionException;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
@@ -85,6 +86,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 					detection = new ZendTargetAutoDetect();
 				} catch (IOException e) {
 				}
+				key = key != null ? key : TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name");
 				target = detection.createTemporaryLocalhost(targetId, key);
 				try {
 					// suppress connect cause the
