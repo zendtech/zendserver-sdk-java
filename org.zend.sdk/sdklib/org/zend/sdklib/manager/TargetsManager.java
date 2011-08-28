@@ -67,9 +67,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 			} else {
 				this.all.add(zTarget);
 			}
-			if (this.all.size() > 0) {
-				defaultId = this.all.get(0).getId();
-			}
+		}
+		if (this.all.size() > 0) {
+			defaultId = this.all.get(0).getId();
 		}
 	}
 
