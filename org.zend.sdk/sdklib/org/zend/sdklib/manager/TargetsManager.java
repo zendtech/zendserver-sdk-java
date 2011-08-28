@@ -13,9 +13,9 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.library.BasicStatus;
@@ -66,6 +66,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 						"Conflict found when adding " + zTarget.getId()));
 			} else {
 				this.all.add(zTarget);
+			}
+			if (this.all.size() > 0) {
+				defaultId = this.all.get(0).getId();
 			}
 		}
 	}
