@@ -39,6 +39,8 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String PROPERTIES = "p";
 	private static final String DEVPASS = "d";
 
+	private Properties props;
+
 	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
 	public String getDevPaas() {
 		return getValue(DEVPASS);
@@ -161,21 +163,23 @@ public class AddTargetCommand extends TargetAwareCommand {
 	 * @return Properties loaded object
 	 */
 	private Properties getProperties() {
-		final File file = getPropertiesFile();
-		if (file == null) {
-			return null;
+		if (props == null) {
+			final File file = getPropertiesFile();
+			if (file == null) {
+				return null;
+			}
+			try {
+				Properties p = new Properties();
+				p.load(new FileInputStream(file));
+				getLogger().info("Loading file " + file.getAbsolutePath());
+				props = p;
+			} catch (FileNotFoundException e) {
+				getLogger().error("File not found " + file.getAbsolutePath());
+			} catch (IOException e) {
+				getLogger().error("Error reading " + file.getAbsolutePath());
+			}
 		}
-		try {
-			Properties p = new Properties();
-			p.load(new FileInputStream(file));
-			getLogger().info("Loading file " + file.getAbsolutePath());
-			return p;
-		} catch (FileNotFoundException e) {
-			getLogger().error("File not found " + file.getAbsolutePath());
-		} catch (IOException e) {
-			getLogger().error("Error reading " + file.getAbsolutePath());
-		}
-		return null;
+		return props;
 	}
 
 }
