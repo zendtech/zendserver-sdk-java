@@ -156,8 +156,14 @@ public class AutomationPage extends DescriptorEditorPage {
 
 				}
 			});
-
 		
+			GridData gd1 = (GridData) addButton1.getLayoutData();
+			GridData gd2 = (GridData) addButton2.getLayoutData();
+			GridData gd3 = (GridData) removeButton.getLayoutData();
+			int maxsize = Math.max(Math.max(gd1.widthHint, gd2.widthHint), gd3.widthHint);
+			gd1.widthHint = maxsize;
+			gd2.widthHint = maxsize;
+			gd3.widthHint = maxsize;
 		}
 	}
 
