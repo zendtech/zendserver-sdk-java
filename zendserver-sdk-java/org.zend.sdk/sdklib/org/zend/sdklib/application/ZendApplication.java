@@ -283,7 +283,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 			WebApiClient client = getClient(targetId);
 			int appIdint = Integer.parseInt(appId);
 			return client
-					.applicationRedeploy(appIdint, ignoreFailures, servers);
+					.applicationSynchronize(appIdint, ignoreFailures, servers);
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (NumberFormatException e) {

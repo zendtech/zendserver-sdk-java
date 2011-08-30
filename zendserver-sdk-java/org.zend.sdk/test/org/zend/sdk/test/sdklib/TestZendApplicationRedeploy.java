@@ -43,14 +43,14 @@ public class TestZendApplicationRedeploy extends AbstractWebApiTest {
 
 	private void setSuccessCall() throws WebApiException, IOException {
 		when(
-			client.applicationRedeploy(anyInt(), anyBoolean(), (String[])anyVararg())).thenReturn(
+			client.applicationSynchronize(anyInt(), anyBoolean(), (String[])anyVararg())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationRedeploy",
 						IResponseData.ResponseType.APPLICATION_INFO));
 	}
 	
 	private void setFailedCall() throws WebApiException, IOException {
 		when(
-			client.applicationRedeploy(anyInt(), anyBoolean(), (String[])anyVararg())).thenThrow(
+			client.applicationSynchronize(anyInt(), anyBoolean(), (String[])anyVararg())).thenThrow(
 				new SignatureException("testError"));
 	}
 

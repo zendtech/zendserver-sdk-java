@@ -35,7 +35,7 @@ public class TestRedeployApplicationCommand extends AbstractWebApiTest {
 		assertNotNull(command);
 		doReturn(application).when(command).getApplication();
 		when(
-				client.applicationRedeploy(anyInt(), anyBoolean(), (String[])anyVararg())).thenReturn(
+				client.applicationSynchronize(anyInt(), anyBoolean(), (String[])anyVararg())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationRedeploy",
 						IResponseData.ResponseType.APPLICATION_INFO));
 		assertTrue(command.execute(cmdLine));
