@@ -36,8 +36,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	private static final String HREF_RESTORE_PASSWORD = "restorePassword"; //$NON-NLS-1$
 	private static final String HREF_CREATE_ACCOUNT = "createAccount"; //$NON-NLS-1$
 	
-	private static final String RESTORE_PASSWORD_URL = "http://www.restore.devcloud.account.password/"; //$NON-NLS-1$
-	private static final String CREATE_ACCOUNT_URL = "http://www.create.devcloud.account/"; //$NON-NLS-1$
+	private static final String RESTORE_PASSWORD_URL = "http://www.zend.com/user/lost"; //$NON-NLS-1$
+	private static final String CREATE_ACCOUNT_URL = "http://www.zend.com/user/register"; //$NON-NLS-1$
 	
 	private Text usernameText;
 	private Text passwordText;
