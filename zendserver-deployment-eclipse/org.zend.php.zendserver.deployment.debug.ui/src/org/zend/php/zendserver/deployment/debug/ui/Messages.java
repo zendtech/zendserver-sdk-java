@@ -65,6 +65,10 @@ public class Messages extends NLS {
 
 	public static String DeploymentParameters_Title;
 
+	public static String DevCloudTunnelHandler_0;
+
+	public static String DevCloudTunnelHandler_1;
+
 	public static String DevCloudTunnelHandler_10;
 	public static String DevCloudTunnelHandler_7;
 	public static String DevCloudTunnelHandler_8;

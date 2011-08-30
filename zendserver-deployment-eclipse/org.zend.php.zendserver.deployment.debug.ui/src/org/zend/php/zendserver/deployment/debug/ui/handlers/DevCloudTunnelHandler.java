@@ -47,11 +47,14 @@ public class DevCloudTunnelHandler extends AbstractHandler {
 			final String host = t.getHost().getHost();
 			if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
 				user = host.substring(0, host.indexOf('.'));
-				final String property = t.getProperty(ZendDevCloud.SSH_PRIVATE_KEY); 
+				final String property = t
+						.getProperty(ZendDevCloud.SSH_PRIVATE_KEY);
 				if (property != null) {
 					try {
-						final File file = File.createTempFile("zend-cloud", "pem"); //$NON-NLS-1$ //$NON-NLS-2$
-						DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
+						final File file = File.createTempFile(
+								"zend-cloud", "pem"); //$NON-NLS-1$ //$NON-NLS-2$
+						DataOutputStream dos = new DataOutputStream(
+								new FileOutputStream(file));
 						dos.write(property.getBytes());
 						dos.close();
 						file.deleteOnExit();
@@ -64,18 +67,26 @@ public class DevCloudTunnelHandler extends AbstractHandler {
 		}
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
-		
+
+		if (user == null || user.length() == 0 || filename == null
+				|| filename.length() == 0) {
+			MessageDialog.openError(window.getShell(), Messages.DevCloudTunnelHandler_0,
+					Messages.DevCloudTunnelHandler_1);
+			return null;
+		}
+
 		ZendDevCloudTunnel t = new ZendDevCloudTunnel(user, filename);
 		try {
 			t.connect();
 		} catch (IOException e) {
-			MessageDialog.openError(window.getShell(), Messages.DevCloudTunnelHandler_7,
-					e.getMessage());
+			MessageDialog.openError(window.getShell(),
+					Messages.DevCloudTunnelHandler_7, e.getMessage());
 			Activator.log(e);
 			return null;
 		}
 
-		MessageDialog.openInformation(window.getShell(), Messages.DevCloudTunnelHandler_7,
+		MessageDialog.openInformation(window.getShell(),
+				Messages.DevCloudTunnelHandler_7,
 				Messages.DevCloudTunnelHandler_10);
 		return null;
 	}
