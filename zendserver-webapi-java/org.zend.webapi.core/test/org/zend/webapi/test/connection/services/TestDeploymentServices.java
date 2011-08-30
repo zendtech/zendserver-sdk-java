@@ -316,7 +316,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			int serverId = servers.getApplicationServers().get(0).getId();
 			ApplicationInfo applicationInfo = Configuration
 					.getClient()
-					.applicationRedeploy(appId, false, String.valueOf(serverId));
+					.applicationSynchronize(appId, false, String.valueOf(serverId));
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
@@ -329,7 +329,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			initMock(handler.applicationRedeploy(), "applicationRedeploy",
 					ResponseCode.ACCEPTED);
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationRedeploy(appId, false);
+					.applicationSynchronize(appId, false);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
@@ -342,7 +342,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			initMock(handler.applicationRedeploy(), "applicationRedeploy",
 					ResponseCode.ACCEPTED);
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationRedeploy(appId);
+					.applicationSynchronize(appId);
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}
@@ -358,7 +358,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			Assert.assertTrue(servers.getApplicationServers().size() > 0);
 			int serverId = servers.getApplicationServers().get(0).getId();
 			ApplicationInfo applicationInfo = Configuration.getClient()
-					.applicationRedeploy(appId, String.valueOf(serverId));
+					.applicationSynchronize(appId, String.valueOf(serverId));
 			DataUtils.checkValidApplicationInfo(applicationInfo);
 		}
 	}

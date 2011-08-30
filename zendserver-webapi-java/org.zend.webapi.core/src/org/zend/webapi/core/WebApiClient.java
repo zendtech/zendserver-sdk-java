@@ -817,11 +817,11 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationRedeploy(final int appId,
+	public ApplicationInfo applicationSynchronize(final int appId,
 			final Boolean ignoreFailures, final String... servers)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.APPLICATION_REDEPLOY,
+				WebApiMethodType.APPLICATION_SYNCHRONIZE,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -853,9 +853,9 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationRedeploy(int appId, String... servers)
+	public ApplicationInfo applicationSynchronize(int appId, String... servers)
 			throws WebApiException {
-		return applicationRedeploy(appId, null, servers);
+		return applicationSynchronize(appId, null, servers);
 	}
 
 	/**
@@ -873,9 +873,9 @@ public class WebApiClient {
 	 * @return information about redeployed application
 	 * @throws WebApiException
 	 */
-	public ApplicationInfo applicationRedeploy(int appId)
+	public ApplicationInfo applicationSynchronize(int appId)
 			throws WebApiException {
-		return applicationRedeploy(appId, (Boolean) null);
+		return applicationSynchronize(appId, (Boolean) null);
 	}
 
 	/**

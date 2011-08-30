@@ -119,9 +119,9 @@ public enum WebApiMethodType {
 	APPLICATION_REMOVE("applicationRemove", ApplicationRemoveRequest.class),
 
 	/**
-	 * @see ApplicationRemoveRequest
+	 * @see ApplicationRedeployRequest
 	 */
-	APPLICATION_REDEPLOY("applicationRedeploy",
+	APPLICATION_SYNCHRONIZE("applicationSynchronize",
 			ApplicationRedeployRequest.class);
 
 	/**
