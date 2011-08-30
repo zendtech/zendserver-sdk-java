@@ -99,14 +99,6 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.zend.php.zendserver.deployment.ui.preferences.SdkPreferencePage"
-            id="org.zend.php.zendserver.deployment.ui.zendsdk"
-            name="Zend SDK">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.exportWizards">
       <category
             id="org.zend.php.zendserver.deployment"
