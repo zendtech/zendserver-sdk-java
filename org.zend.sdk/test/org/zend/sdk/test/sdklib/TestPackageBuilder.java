@@ -68,6 +68,18 @@ public class TestPackageBuilder extends AbstractTest {
 		assertNotNull(result);
 		assertTrue(result.exists());
 	}
+	
+	@Test
+	public void testCreatePackageEmptyAppdir() throws IOException {
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project7"));
+		File result = builder.createDeploymentPackage(file.getCanonicalPath());
+		assertNotNull(result);
+		assertTrue(result.exists());
+		unzip(result);
+		File parent = result.getParentFile();
+		assertTrue(new File(parent, "/data/").exists());
+	}
 
 	@Test
 	public void testCreatePackageFile() throws IOException {
