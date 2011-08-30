@@ -183,9 +183,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String appdir = getAppdirName(container);
 		String scriptsdir = getScriptsdirName(container);
 		if (appdir != null) {
+			addNewFolderToZip(new File(container, appdir));
 			resolveMapping(IMappingModel.APPDIR, appdir);
 		}
 		if (scriptsdir != null) {
+			addNewFolderToZip(new File(container, scriptsdir));
 			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir);
 		}
 	}
@@ -206,6 +208,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				}
 			}
 		}
+	}
+
+	private void addNewFolderToZip(File root) throws IOException {
+		String location = root.getCanonicalPath();
+		String path = getContainerRelativePath(location) + "/";
+		ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
+		out.putNextEntry(entry);
 	}
 
 	private void addFileToZip(File root, String mappingFolder,
