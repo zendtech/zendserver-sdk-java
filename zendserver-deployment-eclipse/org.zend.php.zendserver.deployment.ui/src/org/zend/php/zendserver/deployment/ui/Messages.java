@@ -57,8 +57,10 @@ public class Messages extends NLS {
 	public static String DevCloudDetailsComposite_4;
 	public static String DevCloudDetailsComposite_5;
 	public static String DevCloudDetailsComposite_6;
+	public static String DevCloudDetailsComposite_CreatePHPCloudAccount;
 	public static String DevCloudDetailsComposite_Password;
 	public static String DevCloudDetailsComposite_PasswordTooltip;
+	public static String DevCloudDetailsComposite_RestorePassword;
 	public static String DevCloudDetailsComposite_Username;
 	public static String DevCloudDetailsComposite_UsernameTooltip;
 	public static String DirectiveDependencyDetailsPage_Directive;

@@ -10,11 +10,17 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
@@ -27,6 +33,12 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 
+	private static final String HREF_RESTORE_PASSWORD = "restorePassword"; //$NON-NLS-1$
+	private static final String HREF_CREATE_ACCOUNT = "createAccount"; //$NON-NLS-1$
+	
+	private static final String RESTORE_PASSWORD_URL = "http://www.restore.devcloud.account.password/"; //$NON-NLS-1$
+	private static final String CREATE_ACCOUNT_URL = "http://www.create.devcloud.account/"; //$NON-NLS-1$
+	
 	private Text usernameText;
 	private Text passwordText;
 	private Text privateKeyText;
@@ -52,6 +64,33 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		passwordText
 				.setToolTipText(Messages.DevCloudDetailsComposite_PasswordTooltip);
 
+		Composite hyperlinks = new Composite(composite, SWT.NONE);
+		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false, 4, 1);
+		hyperlinks.setLayoutData(gd);
+		hyperlinks.setLayout(new GridLayout(2, false));
+		
+		Hyperlink createAccount = new Hyperlink(hyperlinks, SWT.NONE);
+		createAccount.setUnderlined(true);
+		createAccount.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+		createAccount.setText(Messages.DevCloudDetailsComposite_CreatePHPCloudAccount);
+		createAccount.setHref(HREF_CREATE_ACCOUNT);
+		
+		Hyperlink forgotPassword = new Hyperlink(hyperlinks, SWT.NONE);
+		forgotPassword.setUnderlined(true);
+		forgotPassword.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+		forgotPassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
+		forgotPassword.setHref(HREF_RESTORE_PASSWORD);
+				
+		IHyperlinkListener hrefListener = new HyperlinkAdapter() {
+			
+			public void linkActivated(HyperlinkEvent e) {
+				handleHyperlink(e.getHref());
+			}
+		};
+		
+		createAccount.addHyperlinkListener(hrefListener);
+		createAccount.addHyperlinkListener(hrefListener);
+		
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
 		privateKeyText = new Text(composite, SWT.BORDER);
@@ -89,6 +128,14 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		label.setLayoutData(layoutData);
 				
 		return composite;
+	}
+
+	protected void handleHyperlink(Object href) {
+		if (HREF_CREATE_ACCOUNT.equals(href)) {
+			Program.launch(CREATE_ACCOUNT_URL);
+		} else if (HREF_RESTORE_PASSWORD.equals(href)) {
+			Program.launch(RESTORE_PASSWORD_URL);
+		}
 	}
 
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {
