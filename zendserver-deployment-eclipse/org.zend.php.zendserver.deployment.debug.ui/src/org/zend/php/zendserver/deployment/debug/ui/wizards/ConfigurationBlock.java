@@ -378,7 +378,8 @@ public class ConfigurationBlock extends AbstractBlock {
 				if (newTarget != null) {
 					targetsCombo.updateItems();
 					targetsCombo.select(newTarget.getId());
-					validatePage();
+					changeHost(targetsCombo.getSelected());
+					listener.statusChanged(validatePage());
 				}
 			}
 		});
