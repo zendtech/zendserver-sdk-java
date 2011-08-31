@@ -90,7 +90,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
-		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer()); //$NON-NLS-1$
+		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer(), true); //$NON-NLS-1$
 		new Label(getContainer(), SWT.NONE);
 		final ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
@@ -126,10 +126,12 @@ public class ConfigurationBlock extends AbstractBlock {
 		gd.horizontalSpan = 2;
 		expComposite.setLayoutData(gd);
 		Composite advancedSection = new Composite(expComposite, SWT.NONE);
-		advancedSection.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		advancedSection.setLayout(layout);
 		createOperationsSection(advancedSection);
 		userAppName = createLabelWithText(Messages.configurationPage_appUserName,
-				Messages.configurationPage_appUserNameTooltip, advancedSection);
+				Messages.configurationPage_appUserNameTooltip, advancedSection, false);
 		ignoreFailures = createLabelWithCheckbox(Messages.configurationPage_ignoreFailures,
 				Messages.configurationPage_ignoreFailuresTooltip, advancedSection);
 		;
@@ -222,9 +224,16 @@ public class ConfigurationBlock extends AbstractBlock {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.configurationPage_ValidationError_TargetLocation);
 		}
-		if (getBaseURL() == null) {
+		URL baseUrl = null;
+		try {
+			baseUrl = getBaseURL();
+		} catch (MalformedURLException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.configurationPage_ValidationError_BaseUrl);
+		}
+		if (baseUrl == null) {
+			return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+					"URL is empty."); //$NON-NLS-1$
 		}
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.configurationPage_Description);
 	}
@@ -232,9 +241,14 @@ public class ConfigurationBlock extends AbstractBlock {
 	@Override
 	public IDeploymentHelper getHelper() {
 		DeploymentHelper helper = new DeploymentHelper();
-		URL url = getBaseURL();
-		if (url != null) {
-			helper.setBaseURL(url.toString());
+		URL baseUrl = null;
+		try {
+			baseUrl = getBaseURL();
+		} catch (MalformedURLException e) {
+			// ignore, handled later
+		}
+		if (baseUrl != null) {
+			helper.setBaseURL(baseUrl.toString());
 		}
 		helper.setTargetId(getTarget().getId());
 		helper.setTargetHost(getTarget().getHost().getHost());
@@ -310,17 +324,21 @@ public class ConfigurationBlock extends AbstractBlock {
 		return null;
 	}
 
-	private URL getBaseURL() {
-		try {
-			URL result = new URL(baseUrl.getText());
-			return result;
-		} catch (MalformedURLException e) {
+	private URL getBaseURL() throws MalformedURLException {
+		if (baseUrl.getText().isEmpty()) {
 			return null;
 		}
+		URL result = new URL(baseUrl.getText());
+		return result;
 	}
 
 	private boolean isDefaultServer() {
-		URL baseUrl = getBaseURL();
+		URL baseUrl = null;
+		try {
+			baseUrl = getBaseURL();
+		} catch (MalformedURLException e) {
+			// ignore, handled later
+		}
 		URL targetUrl = getTarget().getHost();
 		if (baseUrl != null && baseUrl.getHost().equals(targetUrl.getHost())) {
 			return true;
@@ -431,7 +449,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 
 		Composite updateComboComposite = new Composite(parent, SWT.NONE);
-		updateComboComposite.setLayout(new GridLayout(2, true));
+		updateComboComposite.setLayout(new GridLayout(2, false));
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 10;
@@ -461,7 +479,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			});
 
 			Composite autoDeployComboComposite = new Composite(parent, SWT.NONE);
-			autoDeployComboComposite.setLayout(new GridLayout(2, true));
+			autoDeployComboComposite.setLayout(new GridLayout(2, false));
 			gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			gd.horizontalSpan = 2;
 			gd.horizontalIndent = 10;
@@ -625,7 +643,12 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private void changeHost(IZendTarget target) {
 		URL targetHost = target.getDefaultServerURL();
-		URL oldUrl = getBaseURL();
+		URL oldUrl = null;
+		try {
+			oldUrl = getBaseURL();
+		} catch (MalformedURLException e) {
+			// ignore, handled later
+		}
 		try {
 			URL updatedUrl = null;
 			if (oldUrl == null) {

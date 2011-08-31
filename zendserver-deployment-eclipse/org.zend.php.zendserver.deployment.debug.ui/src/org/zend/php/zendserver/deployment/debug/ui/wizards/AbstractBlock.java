@@ -41,6 +41,7 @@ public abstract class AbstractBlock {
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
+		layout.horizontalSpacing = 0;
 		container.setLayout(layout);
 		return container;
 	}
@@ -68,9 +69,23 @@ public abstract class AbstractBlock {
 		return combo;
 	}
 
-	protected Text createLabelWithText(String labelText, String tooltip, Composite container) {
-		Label label = new Label(container, SWT.NULL);
+	protected Text createLabelWithText(String labelText, String tooltip, Composite container, boolean required) {
+		Composite labelComposite = new Composite(container, SWT.NONE);
+		labelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		labelComposite.setLayout(layout);
+		Label label = new Label(labelComposite, SWT.NONE);
 		label.setText(labelText);
+		GridData gd = new GridData(SWT.LEFT, SWT.FILL, true, true);
+		gd.minimumWidth = 100;
+		label.setLayoutData(gd);
+		if (required) {
+			Label asteriks = new Label(labelComposite, SWT.NONE);
+			asteriks.setText("*"); //$NON-NLS-1$
+			asteriks.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
+		}
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -138,13 +137,15 @@ public class ParametersBlock extends AbstractBlock {
 			case HOSTNAME:
 			case NUMBER:
 			case EMAIL:
-				control = createLabelWithText(name, tooltip, composite);
+				control = createLabelWithText(name, tooltip, composite,
+						parameter.isRequired());
 				if (parameter.getDefaultValue() != null) {
 					((Text) control).setText(parameter.getDefaultValue());
 				}
 				break;
 			case PASSWORD:
-				control = createLabelWithText(name, tooltip, composite);
+				control = createLabelWithText(name, tooltip, composite,
+						parameter.isRequired());
 				((Text) control).setEchoChar('*');
 				if (parameter.getDefaultValue() != null) {
 					((Text) control).setText(parameter.getDefaultValue());
@@ -259,8 +260,8 @@ public class ParametersBlock extends AbstractBlock {
 		for (DeploymentParameter param : parameters) {
 			if (param.getParameter().isRequired() && param.getValue().isEmpty()) {
 				exportButton.setEnabled(false);
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, MessageFormat.format(
-						Messages.parametersPage_ValidationError_ParamRequired, param.getName()));
+				return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+						param.getName());
 			}
 			IStatus status = param.validate();
 			if (status.getSeverity() == IStatus.ERROR) {
@@ -376,7 +377,9 @@ public class ParametersBlock extends AbstractBlock {
 			parametersGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			parametersGroup.setLayout(new FillLayout());
 			final Composite parent = new Composite(parametersGroup, SWT.NONE);
-			parent.setLayout(new GridLayout(2, true));
+			GridLayout layout = new GridLayout(2, false);
+			layout.horizontalSpacing = 0;
+			parent.setLayout(layout);
 			parametersGroup.setExpandVertical(true);
 			parametersGroup.setExpandHorizontal(true);
 			parametersGroup.setContent(parent);

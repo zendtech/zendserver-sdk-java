@@ -41,7 +41,6 @@ public class Messages extends NLS {
 	public static String parametersPage_Name;
 	public static String parametersPage_Title;
 	public static String parametersPage_applicationParams;
-	public static String parametersPage_ValidationError_ParamRequired;
 
 	public static String updateExistingApplicationDialog_Title;
 	public static String updateExistingApplicationDialog_Message;

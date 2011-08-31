@@ -20,7 +20,11 @@ public abstract class DeploymentWizardPage extends WizardPage implements IStatus
 			setErrorMessage(null);
 			setPageComplete(true);
 		} else {
-			setErrorMessage(status.getMessage());
+			if (status.getSeverity() == IStatus.ERROR) {
+				setErrorMessage(status.getMessage());
+			} else {
+				setErrorMessage(null);
+			}
 			setPageComplete(false);
 		}
 	}
