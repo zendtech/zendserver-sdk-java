@@ -62,6 +62,7 @@ public class ZendDevCloudTunnel {
 		try {
 			session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
 			session.setUserInfo(ui);
+ 	        session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
 			jsch.addIdentity(filename);
