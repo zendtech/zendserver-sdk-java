@@ -11,7 +11,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 	public int preLaunch(ILaunchConfiguration configuration, String mode, ILaunch launch,
 			IProgressMonitor monitor) {
 		DeploymentHandler handler = new DeploymentHandler(configuration);
-		return handler.executeDeployment();
+		return handler.executeDeployment(mode);
 	}
 	
 }

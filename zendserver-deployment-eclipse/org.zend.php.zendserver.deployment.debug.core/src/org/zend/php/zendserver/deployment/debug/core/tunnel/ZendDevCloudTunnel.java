@@ -7,12 +7,14 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.core.tunnel;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 
-import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxyHTTP;
@@ -29,9 +31,11 @@ import com.jcraft.jsch.UserInfo;
 public class ZendDevCloudTunnel {
 
 	private String user;
+	private String privateKey;
+
 	private String baseUrl;
-	private String filename;
 	private UserInfo ui;
+	private Session session;
 
 	/**
 	 * @param user
@@ -41,41 +45,81 @@ public class ZendDevCloudTunnel {
 	 * @param filename
 	 *            - of the public key (should be in PEM format)
 	 */
-	public ZendDevCloudTunnel(String user, String baseUrl, String filename, UserInfo ui) {
-		if (user == null || filename == null || ui == null) {
+	public ZendDevCloudTunnel(String user, String baseUrl, String privateKey, UserInfo ui) {
+		if (user == null || privateKey == null || ui == null) {
 			throw new IllegalArgumentException(
 					"error setting user or filename to Ssh Tunnel"); //$NON-NLS-1$
 		}
 		this.user = user;
 		this.baseUrl = baseUrl;
-		this.filename = filename;
+		this.privateKey = privateKey;
 		this.ui = ui;
 	}
 
-	public ZendDevCloudTunnel(String user, String filename) {
-		this(user, ZendDevCloud.DEVPASS_HOST, filename, new EmptyUserInfo());
+	public ZendDevCloudTunnel(String user, String privateKey) {
+		this(user, ZendDevCloud.DEVPASS_HOST, privateKey, new EmptyUserInfo());
 	}
 
 	public void connect() throws IOException {
+		if (session != null && !session.isConnected()) {
+			try {
+				session.connect();
+			} catch (JSchException e) {
+				throw new IOException(e);
+			}
+		}
+		if (session == null) {
+			try {
+				createSession();
+				session.connect();
+			} catch (JSchException e) {
+				throw new IOException(e);
+			}
+
+			try {
+				session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
+			} catch (JSchException e) {
+				final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1, user, baseUrl);
+				throw new IOException(msg);
+			}
+		}
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public boolean isConnected() {
+		return session != null ? session.isConnected() : false;
+	}
+
+	public void disconnect() {
+		if (isConnected()) {
+			session.disconnect();
+		}
+	}
+
+	private String getPrivateKeyFile() throws IOException {
+		File file = File.createTempFile("zend-cloud", "pem"); //$NON-NLS-1$ //$NON-NLS-2$
+		DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
+		dos.write(privateKey.getBytes());
+		dos.close();
+		file.deleteOnExit();
+		return file.getAbsolutePath();
+	}
+
+	private void createSession() throws IOException {
 		JSch jsch = new JSch();
-		Session session = null;
 		try {
 			session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
 			session.setUserInfo(ui);
  	        session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
-			jsch.addIdentity(filename);
-			session.connect();
+			jsch.addIdentity(getPrivateKeyFile());
 		} catch (JSchException e) {
 			throw new IOException(e);
 		}
-	
-		try {
-			session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
-		} catch (JSchException e) {
-			final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1, user, baseUrl);
-			throw new IOException(msg);
-		}
 	}
+
 }

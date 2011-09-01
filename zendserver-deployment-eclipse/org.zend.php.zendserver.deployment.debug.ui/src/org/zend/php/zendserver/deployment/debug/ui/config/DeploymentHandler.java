@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -23,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
@@ -31,10 +33,12 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.NoIdUpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
+import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 public class DeploymentHandler {
@@ -50,6 +54,7 @@ public class DeploymentHandler {
 	private DeployJobChangeListener listener;
 	
 	private ILaunchConfiguration config;
+	private String mode;
 
 	public DeploymentHandler() {
 		this(null);
@@ -60,7 +65,8 @@ public class DeploymentHandler {
 		this.config = config;
 	}
 
-	public int executeDeployment() {
+	public int executeDeployment(String executionMode) {
+		mode = executionMode;
 		job = null;
 		listener = new DeployJobChangeListener(config);
 		try {
@@ -213,7 +219,7 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
-				return OK;
+				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
@@ -222,6 +228,31 @@ public class DeploymentHandler {
 				return handleApplicationConflict(helper, project);
 			default:
 				break;
+			}
+		}
+		return checkSSHTunnel(helper);
+	}
+
+	private int checkSSHTunnel(IDeploymentHelper helper) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
+					helper.getTargetId());
+			try {
+				if (!ZendDevCloudTunnelManager.getManager().connect(target)) {
+					throw new IllegalStateException(
+							Messages.DeploymentHandler_sshTunnelErrorMessage);
+				}
+			} catch (final Exception e) {
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+					public void run() {
+						Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getShell();
+						MessageDialog.openError(shell,
+								Messages.DeploymentHandler_sshTunnelErrorTitle, e.getMessage());
+					}
+				});
+				return CANCEL;
 			}
 		}
 		return OK;

@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.debug.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 
 public class Activator implements BundleActivator {
 
@@ -27,6 +28,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		ZendDevCloudTunnelManager.getManager().disconnectAll();
 	}
 
 }

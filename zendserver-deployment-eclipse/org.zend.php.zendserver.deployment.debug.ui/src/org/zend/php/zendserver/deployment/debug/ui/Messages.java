@@ -62,15 +62,10 @@ public class Messages extends NLS {
 
 	public static String applicationConflictDialog_Title;
 
+	public static String DeploymentHandler_sshTunnelErrorMessage;
+	public static String DeploymentHandler_sshTunnelErrorTitle;
+
 	public static String DeploymentParameters_Title;
-
-	public static String DevCloudTunnelHandler_0;
-
-	public static String DevCloudTunnelHandler_1;
-
-	public static String DevCloudTunnelHandler_10;
-	public static String DevCloudTunnelHandler_7;
-	public static String DevCloudTunnelHandler_8;
 
 	public static String EmailValidator_InvalidEmail;
 

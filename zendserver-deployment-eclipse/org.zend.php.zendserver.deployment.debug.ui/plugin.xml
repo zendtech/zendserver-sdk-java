@@ -64,18 +64,6 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="org.zend.php.zendserver.deployment.debug.ui.toolbars.sampleToolbar">
-            <command
-                  commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
-                  icon="icons/sample.gif"
-                  id="org.zend.php.zendserver.deployment.debug.ui.toolbars.sampleCommand"
-                  tooltip="Open SSH Tunnel to Zend DevCloud">
-            </command>
-         </toolbar>
-      </menuContribution>
-      <menuContribution
             allPopups="false"
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
          <command
@@ -149,15 +137,6 @@
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
             name="Open Deployment Wizard">
-      </command>
-	 <category
-            id="org.zend.php.zendserver.deployment.debug.ui.commands.category"
-            name="Sample Category">
-      </category>
-      <command
-            categoryId="org.zend.php.zendserver.deployment.debug.ui.commands.category"
-            id="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
-            name="Sample Command">
       </command>
    </extension>
    <extension
