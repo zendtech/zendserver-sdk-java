@@ -10,6 +10,8 @@ import org.zend.sdklib.target.IZendTarget;
 
 public class ZendDevCloudTunnelManager {
 
+	public static final String DEVPASS_HOST = ZendDevCloud.DEVPASS_HOST;
+
 	private static ZendDevCloudTunnelManager manager;
 
 	private Map<IZendTarget, ZendDevCloudTunnel> targets;
