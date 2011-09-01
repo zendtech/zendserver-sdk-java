@@ -204,7 +204,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} catch (IOException e) {
 
 			log.warning(e);
-			throw new PrivilegesException();
+			throw new PrivilegesException(e.getMessage());
 
 		} catch (WebApiException e) {
 			final ResponseCode responseCode = e.getResponseCode();
