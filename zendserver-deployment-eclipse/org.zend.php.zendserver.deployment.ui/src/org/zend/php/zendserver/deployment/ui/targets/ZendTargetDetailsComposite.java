@@ -7,6 +7,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -33,17 +35,26 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(2, false));
 
+		ModifyListener modifyListener = new ModifyListener() {
+			
+			public void modifyText(ModifyEvent e) {
+				changeSupport.firePropertyChange(PROP_MODIFY, null, ((Text)e.getSource()).getText());
+			}
+		};
+		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_Host);
 		hostText = new Text(composite, SWT.BORDER);
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
 		hostText.setToolTipText(Messages.TargetDialog_HostTooltip);
+		hostText.addModifyListener(modifyListener);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_KeyName);
 		keyText = new Text(composite, SWT.BORDER);
 		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
 		keyText.setToolTipText(Messages.TargetDialog_KeyTooltip);
+		keyText.addModifyListener(modifyListener);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_KeySecret);
@@ -51,7 +62,8 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
 				false));
 		secretText.setToolTipText(Messages.TargetDialog_SecretTooltip);
-
+		secretText.addModifyListener(modifyListener);
+		
 		return composite;
 	}
 

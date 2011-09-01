@@ -7,12 +7,14 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.targets.TargetDetailsDialog;
+import org.zend.php.zendserver.deployment.ui.targets.CreateTargetWizard;
+import org.zend.php.zendserver.deployment.ui.targets.ZendTargetDetailsComposite;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -50,17 +52,18 @@ public class EditTargetAction extends Action implements
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 
-		TargetDetailsDialog dialog = new TargetDetailsDialog(window.getShell());
-		dialog.setMessage(Messages.EditTargetAction_EditTargetMessage);
-		dialog.setTitle(Messages.EditTargetAction_EditTarget);
-		dialog.setDefaultTarget(toEdit);
+		CreateTargetWizard ctw = new CreateTargetWizard();
+		ctw.setType(ZendTargetDetailsComposite.class.getName());
+		ctw.setDefaultTarget(toEdit);
+		WizardDialog dialog = ctw.createDialog(window.getShell());
+		ctw.setWindowTitle(Messages.EditTargetAction_EditTarget);
 
 		if (dialog.open() != Window.OK) {
 			return; // canceled by user
 		}
 
 		
-		IZendTarget newTarget = dialog.getTarget();
+		IZendTarget newTarget = ctw.getTarget();
 		if (newTarget == null) {
 			return; // validation error while editing target
 		}

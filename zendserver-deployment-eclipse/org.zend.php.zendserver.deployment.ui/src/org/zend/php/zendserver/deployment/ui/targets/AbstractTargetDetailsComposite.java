@@ -5,13 +5,16 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiException;
 
 /**
  * Abstract subclass for editing target details.
@@ -23,10 +26,13 @@ public abstract class AbstractTargetDetailsComposite {
 	 * Fired when validation event occurs.
 	 */
 	public static final String PROP_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
+	public static final String PROP_MODIFY = "modify"; //$NON-NLS-1$
 
-	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(
+	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(
 			this);
 
+	private String[] data;
+	
 	private String errorMessage;
 
 	protected IZendTarget result;
@@ -91,23 +97,63 @@ public abstract class AbstractTargetDetailsComposite {
 		return errorMessage;
 	}
 
-	public Job validate() {
-		ValidateTargetJob job = new ValidateTargetJob(this);
-		job.setUser(true);
-		job.schedule();
-		job.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				result = ((ValidateTargetJob) event.getJob()).getResultTarget();
-				IStatus jobresult = event.getJob().getResult();
-				String message = jobresult.getMessage();
+	public IStatus validate(IProgressMonitor monitor) {
+		result = null;
+		monitor.beginTask("Validating target", 4);
+		monitor.worked(1);
+		Display.getDefault().syncExec(new Runnable() {
 
-				setErrorMessage(jobresult.getSeverity() == IStatus.OK ? null
-						: message);
+			public void run() {
+				data = getData();
 			}
 		});
+		monitor.worked(2);
+		IStatus result = doValidate(data);
+		monitor.worked(1);
+		
+		return result;
+	}
+	
+	private IStatus doValidate(String[] data) {
+		ZendTarget target;
+		try {
+			target = (ZendTarget) createTarget(data);
+		} catch (SdkException e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
+		} catch (IOException e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
+		} catch (CoreException e) {
+			return e.getStatus();
+		} catch (RuntimeException e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
+		}
 
-		return job;
+		if (target == null) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Target was not created.");
+		}
+		
+		String message = target.validateTarget();
+		if (message != null) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
+		}
+
+		if (! target.isTemporary()) {
+			try {
+				target.connect();
+			} catch (WebApiException ex) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						ex.getMessage(), ex);
+			} catch (RuntimeException e) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						e.getMessage(), e);
+			}
+		}
+		
+		result = target;
+		return Status.OK_STATUS;
 	}
 
 	public IZendTarget getTarget() {

@@ -93,6 +93,10 @@ public class SelectTargetType {
 		this.type = type;
 		changeSupport.firePropertyChange(PROP_TYPE, oldType, type);
 	}
+	
+	public void clearSelection() {
+		gallery.deselectAll();
+	}
 
 	public int getSelectionCount() {
 		return gallery.getSelectionCount();

@@ -35,12 +35,25 @@ public class DetectTargetAction extends Action {
 
 	@Override
 	public void run() {
+		try {
+			doRun();
+		} catch (Throwable ex) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage()), StatusManager.SHOW);
+		}
+	}
+	
+	public void doRun() throws PrivilegesException {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		
 		try {
 			target = tm.detectLocalhostTarget(null, null);
 		} catch (PrivilegesException e1) {
-			runElevated();
+			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
+			if (prog != null) {
+				runElevated();
+			} else {
+				throw e1;
+			}
 		} catch (DetectionException e) {
 			// do nothing
 		}

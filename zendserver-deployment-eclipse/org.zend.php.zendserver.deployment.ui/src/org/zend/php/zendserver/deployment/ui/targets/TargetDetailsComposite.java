@@ -1,8 +1,12 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -12,6 +16,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Single area that contains all different composites for editing target details.
@@ -30,6 +35,8 @@ public class TargetDetailsComposite {
 	private Composite clientArea;
 	
 	private int currentComposite;
+
+	private IRunnableContext runnableContext;
 	
 	public TargetDetailsComposite(Contribution[] elements) {
 		AbstractTargetDetailsComposite[] composites = new AbstractTargetDetailsComposite[elements.length];
@@ -98,7 +105,13 @@ public class TargetDetailsComposite {
 		validateButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				targetComposites[currentComposite].validate();
+				try {
+					validate();
+				} catch (InvocationTargetException e1) {
+					// empty, ignore validate exception
+				} catch (InterruptedException e1) {
+					// empty, cancel pressed
+				}
 			}
 		});
 		
@@ -150,15 +163,40 @@ public class TargetDetailsComposite {
 		return (idx != -1) && targetComposites[idx].hasPage();
 	}
 
+	private IStatus result;
+	
 	/**
 	 * Validate data entered by user.
 	 * Returns job (already scheduled), that performs validation. One may want to listen on the job change
 	 * to update the GUI accordingly.
 	 * 
 	 * @return Job that performs validation.
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
 	 */
-	public Job validate() {
-		return targetComposites[currentComposite].validate();
+	public void validate() throws InvocationTargetException, InterruptedException {
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				result = targetComposites[currentComposite].validate(monitor);
+			}
+		};
+		runnableContext.run(true, true, runnable);
+		targetComposites[currentComposite].setErrorMessage(result.getSeverity() == IStatus.OK ? null
+				: result.getMessage());
+	}
+
+	public void setDefaultTargetSettings(IZendTarget defaultTarget) {
+		targetComposites[currentComposite].setDefaultTargetSettings(defaultTarget);
+	}
+
+	public IZendTarget getTarget() {
+		return targetComposites[currentComposite].getTarget();
+	}
+
+	public void setRunnableContext(IRunnableContext context) {
+		this.runnableContext = context;
 	}
 	
 }

@@ -3,9 +3,13 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -25,6 +29,7 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -48,6 +53,13 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(4, false));
 
+		ModifyListener modifyListener = new ModifyListener() {
+			
+			public void modifyText(ModifyEvent e) {
+				changeSupport.firePropertyChange(PROP_MODIFY, null, ((Text)e.getSource()).getText());
+			}
+		};
+		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_Username);
 		usernameText = new Text(composite, SWT.BORDER);
@@ -56,6 +68,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		usernameText.setLayoutData(layoutData);
 		usernameText
 				.setToolTipText(Messages.DevCloudDetailsComposite_UsernameTooltip);
+		usernameText.addModifyListener(modifyListener);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_Password);
@@ -63,6 +76,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		passwordText.setLayoutData(layoutData);
 		passwordText
 				.setToolTipText(Messages.DevCloudDetailsComposite_PasswordTooltip);
+		passwordText.addModifyListener(modifyListener);
 
 		Composite hyperlinks = new Composite(composite, SWT.NONE);
 		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false, 4, 1);
@@ -98,6 +112,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 				false));
 		privateKeyText
 				.setToolTipText(Messages.DevCloudDetailsComposite_1);
+		privateKeyText.addModifyListener(modifyListener);
+		
 		Button btnBrowse = new Button(composite, SWT.PUSH);
 		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
 		Button btnGenerate = new Button(composite, SWT.PUSH);
@@ -122,7 +138,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		label.setText(Messages.DevCloudDetailsComposite_4
 				+ Messages.DevCloudDetailsComposite_5 +
 				Messages.DevCloudDetailsComposite_6);
-		layoutData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.widthHint = 500;
 		layoutData.horizontalSpan = 3;
 		layoutData.verticalSpan = 2;
 		label.setLayoutData(layoutData);
@@ -167,9 +184,16 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			p.put(ZendDevCloud.SSH_PRIVATE_KEY, fullStream(sshkeyfile));
 		}
 		
-		final IZendTarget t = tm.createTarget(uniqueId, target[0].getHost().toString(),
-				target[0].getKey(), target[0].getSecretKey(), p);
-				
+		final ZendTarget t = new ZendTarget(uniqueId, target[0].getHost(),
+				target[0].getKey(), target[0].getSecretKey());
+		
+		if (p != null && !p.isEmpty()) {
+			final Set<Entry<Object, Object>> entrySet = p.entrySet();
+			for (Entry<Object, Object> entry : entrySet) {
+				t.addProperty(entry.getKey().toString(), entry.getValue().toString());
+			}
+		}
+		
 		return t;
 	}
 
