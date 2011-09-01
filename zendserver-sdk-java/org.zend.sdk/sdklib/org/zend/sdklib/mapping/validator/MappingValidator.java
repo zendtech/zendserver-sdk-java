@@ -122,7 +122,7 @@ public class MappingValidator implements IMappingValidator {
 		}
 		for (String entry : values) {
 			entry = entry.trim();
-			if (entry.isEmpty()) {
+			if (entry.isEmpty() || entry.equals(LINE_SEPARATOR)) {
 				continue;
 			}
 			boolean isGlobal = entry.startsWith(GLOBAL);
