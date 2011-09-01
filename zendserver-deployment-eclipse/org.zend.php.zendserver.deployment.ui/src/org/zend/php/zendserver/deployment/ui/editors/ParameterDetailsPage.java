@@ -128,7 +128,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		EditorField readonly = (CheckboxField) fields.add(new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly));
 		readonly.create(client, toolkit);
 		
-		identical = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical));
+		identical = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical, SWT.READ_ONLY));
 		identical.create(client, toolkit);
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 			

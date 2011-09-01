@@ -24,6 +24,7 @@ public class ComboField implements EditorField {
 	protected Label label;
 	protected Combo text;
 	protected String labelTxt;
+	private int style;
 	protected IModelObject target;
 	protected Feature key;
 	protected boolean isRefresh;
@@ -31,9 +32,14 @@ public class ComboField implements EditorField {
 	private String[] items;
 	
 	public ComboField(IModelObject target,Feature key, String label) {
+		this(target, key, label, SWT.NONE);
+	}
+	
+	public ComboField(IModelObject target,Feature key, String label, int style) {
 		this.target = target;
 		this.key = key;
 		this.labelTxt = label;
+		this.style = style;
 	}
 	
 	public Feature getKey() {
@@ -59,7 +65,7 @@ public class ComboField implements EditorField {
 		label = toolkit.createLabel(parent, labelTxt);
 		GridData gd = new GridData();
 		label.setLayoutData(gd);
-		text = new Combo(parent, SWT.NONE);
+		text = new Combo(parent, style);
 		if (this.items != null) {
 			text.setItems(items);
 		}
