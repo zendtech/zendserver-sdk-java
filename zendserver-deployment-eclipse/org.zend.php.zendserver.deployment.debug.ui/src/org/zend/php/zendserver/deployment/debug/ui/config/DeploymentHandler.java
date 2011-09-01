@@ -234,7 +234,7 @@ public class DeploymentHandler {
 	}
 
 	private int checkSSHTunnel(IDeploymentHelper helper) {
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
 					helper.getTargetId());
 			try {

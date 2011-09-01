@@ -56,7 +56,7 @@ public class ZendDevCloudTunnelManager {
 	private ZendDevCloudTunnel getTunnel(IZendTarget target) {
 		Set<IZendTarget> targetsSet = targets.keySet();
 		for (IZendTarget t : targetsSet) {
-			if (target.getHost().equals(t.getHost())) {
+			if (target.getHost().getHost().equals(t.getHost().getHost())) {
 				return targets.get(t);
 			}
 		}
