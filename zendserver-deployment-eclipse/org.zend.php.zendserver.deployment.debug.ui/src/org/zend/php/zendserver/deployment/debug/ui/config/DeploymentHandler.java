@@ -38,6 +38,7 @@ import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -219,6 +220,7 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
+
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
@@ -234,7 +236,9 @@ public class DeploymentHandler {
 	}
 
 	private int checkSSHTunnel(IDeploymentHelper helper) {
-		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
+		String targetHost = helper.getTargetHost();
+		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)
+				&& targetHost.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
 			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
 					helper.getTargetId());
 			try {
