@@ -172,6 +172,7 @@ public class TestPackageBuilder extends AbstractTest {
 				if (entry.getName().endsWith("/")) {
 					file.mkdir();
 				} else {
+					file.getParentFile().mkdirs();
 					file.createNewFile();
 					FileOutputStream out = new FileOutputStream(file);
 					dest = new BufferedOutputStream(out, BUFFER);
