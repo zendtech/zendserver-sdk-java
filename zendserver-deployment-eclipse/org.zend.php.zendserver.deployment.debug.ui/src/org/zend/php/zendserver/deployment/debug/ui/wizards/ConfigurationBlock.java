@@ -4,11 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,7 +36,7 @@ import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
+import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
@@ -81,7 +78,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	public ConfigurationBlock(IStatusChangeListener listener, IRunnableContext context) {
 		super(listener);
 		this.context = context;
-		this.autoDeploy = isAutoDeployAvailable();
+		this.autoDeploy = LaunchUtils.isAutoDeployAvailable();
 	}
 
 	@Override
@@ -663,24 +660,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		} catch (MalformedURLException e) {
 			Activator.log(e);
 		}
-	}
-
-	private boolean isAutoDeployAvailable() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.AUTO_DEPLOY_EXTENSION_ID);
-		try {
-			for (IConfigurationElement e : config) {
-
-				final Object o = e.createExecutableExtension("class"); //$NON-NLS-1$
-				if (o instanceof AbstractLaunchJob) {
-					return true;
-				}
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-			return false;
-		}
-		return false;
 	}
 
 }

@@ -7,9 +7,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -31,14 +29,13 @@ import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
-import org.zend.php.zendserver.deployment.debug.core.jobs.NoIdUpdateLaunchJob;
+import org.zend.php.zendserver.deployment.debug.core.jobs.ExisitngAppIdJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -105,7 +102,7 @@ public class DeploymentHandler {
 					}
 					break;
 				case IDeploymentHelper.AUTO_DEPLOY:
-					job = getAutoDeployJob();
+					job = LaunchUtils.getAutoDeployJob();
 					if (job == null) {
 						return CANCEL;
 					}
@@ -211,7 +208,7 @@ public class DeploymentHandler {
 		return cancelled;
 	}
 
-	private int verifyJobResult(IDeploymentHelper helper, IProject project)
+	private int verifyJobResult(final IDeploymentHelper helper, IProject project)
 			throws InterruptedException {
 		if (isCancelled()) {
 			return CANCEL;
@@ -220,11 +217,26 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
-
+				if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
+					job = getAutoDeployJob(helper, project);
+				}
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
+				String targetHost = helper.getTargetHost();
+				if (LaunchUtils.isAutoDeployAvailable()
+						&& targetHost
+								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+					job = new ExisitngAppIdJob(helper, project);
+					job.setUser(true);
+					job.schedule();
+					job.join();
+					job = getAutoDeployJob(job.getHelper(), project);
+					if (job != null) {
+						return checkSSHTunnel(helper);
+					}
+				}
 				return handleBaseUrlConflict(helper, project);
 			case APPLICATION_CONFLICT:
 				return handleApplicationConflict(helper, project);
@@ -233,6 +245,35 @@ public class DeploymentHandler {
 			}
 		}
 		return checkSSHTunnel(helper);
+	}
+
+	private AbstractLaunchJob getAutoDeployJob(IDeploymentHelper helper,
+			IProject project)
+			throws InterruptedException {
+		AbstractLaunchJob job = LaunchUtils.getAutoDeployJob();
+		if (job == null) {
+			// if auto deploy is not available then just leave
+			// configuration without changes
+			return null;
+		}
+		helper.setOperationType(IDeploymentHelper.AUTO_DEPLOY);
+		job.setHelper(helper);
+		job.setProject(project);
+		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().getSeverity() == IStatus.CANCEL) {
+					cancelled = true;
+				}
+			}
+		});
+		if (listener != null) {
+			job.addJobChangeListener(listener);
+		}
+		job.setUser(true);
+		job.schedule();
+		job.join();
+		return job;
 	}
 
 	private int checkSSHTunnel(IDeploymentHelper helper) {
@@ -316,7 +357,11 @@ public class DeploymentHandler {
 			return verifyJobResult(job.getHelper(), project);
 		} else {
 			dialogResult = false;
-			job = new NoIdUpdateLaunchJob(helper, project);
+			job = new ExisitngAppIdJob(helper, project);
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			job = new UpdateLaunchJob(job.getHelper(), project);
 			if (listener != null) {
 				job.addJobChangeListener(listener);
 			}
@@ -346,7 +391,7 @@ public class DeploymentHandler {
 						job = new UpdateLaunchJob(updatedHelper, project);
 						break;
 					case IDeploymentHelper.AUTO_DEPLOY:
-						job = getAutoDeployJob();
+						job = LaunchUtils.getAutoDeployJob();
 						if (job == null) {
 							break;
 						}
@@ -377,24 +422,6 @@ public class DeploymentHandler {
 				}
 			}
 		});
-	}
-
-	private AbstractLaunchJob getAutoDeployJob() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.AUTO_DEPLOY_EXTENSION_ID);
-		try {
-			for (IConfigurationElement e : config) {
-
-				final Object o = e.createExecutableExtension("class"); //$NON-NLS-1$
-				if (o instanceof AbstractLaunchJob) {
-					return (AbstractLaunchJob) o;
-				}
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-			return null;
-		}
-		return null;
 	}
 
 	private void updateLaunchConfiguration(IDeploymentHelper helper,

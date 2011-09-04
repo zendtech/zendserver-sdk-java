@@ -12,6 +12,7 @@ import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
+import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 
 public class DeployJobChangeListener extends JobChangeAdapter {
@@ -66,8 +67,17 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		}
 		IDeploymentHelper helper = job.getHelper();
 		LaunchUtils.updateLaunchConfiguration(project, helper, wc);
+		String targetHost = job.getHelper().getTargetHost();
 		if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
-			wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.UPDATE);
+			if (LaunchUtils.isAutoDeployAvailable()
+					&& targetHost
+							.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
+						IDeploymentHelper.AUTO_DEPLOY);
+			} else {
+				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
+						IDeploymentHelper.UPDATE);
+			}
 		}
 		wc.doSave();
 	}

@@ -8,6 +8,8 @@ public class Activator implements BundleActivator {
 
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.debug.core"; //$NON-NLS-1$
 
+	public static final String AUTO_DEPLOY_EXTENSION_ID = "org.zend.php.zendserver.deployment.autoDeploy"; //$NON-NLS-1$
+
 	private static BundleContext context;
 
 	static BundleContext getContext() {

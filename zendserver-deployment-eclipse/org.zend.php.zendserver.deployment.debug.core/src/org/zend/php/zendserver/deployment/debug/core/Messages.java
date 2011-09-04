@@ -16,6 +16,7 @@ public class Messages extends NLS {
 	public static String deploymentJob_Title;
 	public static String statusJob_Title;
 	public static String updateJob_Title;
+	public static String ExisitngAppIdJob_JobTitle;
 
 	public static String ZendDevCloudTunnel_1;
 

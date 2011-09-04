@@ -13,8 +13,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -37,6 +39,9 @@ import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerMan
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.debug.core.Activator;
+import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
+import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingEntry;
@@ -44,6 +49,8 @@ import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.connection.data.ApplicationInfo;
+import org.zend.webapi.core.connection.data.ApplicationsList;
 
 @SuppressWarnings("restriction")
 public class LaunchUtils {
@@ -176,6 +183,28 @@ public class LaunchUtils {
 			return root.getProject(projectName);
 		}
 		
+		return null;
+	}
+
+	public static boolean isAutoDeployAvailable() {
+		return getAutoDeployJob() != null ? true : false;
+	}
+
+	public static AbstractLaunchJob getAutoDeployJob() {
+		IConfigurationElement[] config = Platform
+				.getExtensionRegistry()
+				.getConfigurationElementsFor(Activator.AUTO_DEPLOY_EXTENSION_ID);
+		try {
+			for (IConfigurationElement e : config) {
+
+				final Object o = e.createExecutableExtension("class"); //$NON-NLS-1$
+				if (o instanceof AbstractLaunchJob) {
+					return (AbstractLaunchJob) o;
+				}
+			}
+		} catch (CoreException e) {
+			return null;
+		}
 		return null;
 	}
 
