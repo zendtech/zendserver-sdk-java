@@ -149,13 +149,6 @@
       </launchConfigurationTab>
    </extension>
    <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.zend.php.zendserver.deployment.debug.ui.handlers.DevCloudTunnelHandler"
-            commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand">
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.ui.bindings">
       <key
             commandId="org.zend.php.zendserver.deployment.debug.ui.commands.sampleCommand"
