@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.debug.ui.listeners;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.php.debug.core.debugger.launching.ILaunchDelegateListener;
@@ -18,7 +19,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 		try {
 			final IProject project = LaunchUtils.getProjectFromFilename(configuration);
 			if (project == null || !project.hasNature(DeploymentNature.ID)) {
-				 return 0;
+				 return IStatus.OK;
 			}
 			
 			DeploymentHandler handler = new DeploymentHandler(configuration);
