@@ -16,9 +16,9 @@ import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.ServerVersionException;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiException;
 
 /**
  * Detect localhost target.
@@ -91,7 +91,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 				try {
 					// suppress connect cause the
 					getTargetManager().add(target, true);
-				} catch (WebApiException e1) {
+				} catch (TargetException e1) {
 					// since the key is not registered yet, most probably there
 					// will be a failure here
 				}
