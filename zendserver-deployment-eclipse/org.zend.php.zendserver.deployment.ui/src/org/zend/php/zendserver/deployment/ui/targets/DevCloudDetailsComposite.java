@@ -1,17 +1,19 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -25,7 +27,11 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
@@ -105,20 +111,31 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		createAccount.addHyperlinkListener(hrefListener);
 		createAccount.addHyperlinkListener(hrefListener);
 		
-		label = new Label(composite, SWT.NONE);
+		Section advancedExpandable = new Section(composite, Section.TWISTIE | Section.CLIENT_INDENT);
+		advancedExpandable.setText("Advanced");
+		advancedExpandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
+		Composite advanced = new Composite(advancedExpandable, SWT.NONE);
+		advanced.setLayout(new GridLayout(4, false));
+		advancedExpandable.setClient(advanced);
+		
+		label = new Label(advanced, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
-		privateKeyText = new Text(composite, SWT.BORDER);
-		privateKeyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+		privateKeyText = new Text(advanced, SWT.BORDER);
+		privateKeyText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 		privateKeyText
 				.setToolTipText(Messages.DevCloudDetailsComposite_1);
+		File existingKey = EclipseSSH2Settings.getPrivateKey(ZendDevCloud.KEY_TYPE);
+		if (existingKey != null) {
+			privateKeyText.setText(existingKey.getPath());
+		}
 		privateKeyText.addModifyListener(modifyListener);
 		
-		Button btnBrowse = new Button(composite, SWT.PUSH);
+		Button btnBrowse = new Button(advanced, SWT.PUSH);
 		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
-		Button btnGenerate = new Button(composite, SWT.PUSH);
+		Button btnGenerate = new Button(advanced, SWT.PUSH);
 		btnGenerate.setText(Messages.DevCloudDetailsComposite_3);
-		btnBrowse.addSelectionListener(new SelectionListener() {
+		btnBrowse.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				final FileDialog d = new FileDialog(e.display.getActiveShell(),
@@ -128,25 +145,47 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 					privateKeyText.setText(file);
 				}
 			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
+		});
+		btnGenerate.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				generateKey();
 			}
 		});
 
-		label = new Label(composite, SWT.WRAP);
-		label = new Label(composite, SWT.WRAP);
+		label = new Label(advanced, SWT.WRAP);
 		label.setText(Messages.DevCloudDetailsComposite_4
 				+ Messages.DevCloudDetailsComposite_5 +
 				Messages.DevCloudDetailsComposite_6);
 		layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.widthHint = 500;
-		layoutData.horizontalSpan = 3;
-		layoutData.verticalSpan = 2;
+		layoutData.horizontalSpan = 4;
 		label.setLayoutData(layoutData);
 				
 		return composite;
 	}
 
+	private void generateKey() {
+		FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
+		String file = d.open();
+		if (file == null) {
+			return;
+		}
+		
+		try {
+			byte[] key = EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE);
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(key);
+			fos.close();
+			
+			privateKeyText.setText(file);
+		} catch (IOException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
+		}
+	}
+	
 	protected void handleHyperlink(Object href) {
 		if (HREF_CREATE_ACCOUNT.equals(href)) {
 			Program.launch(CREATE_ACCOUNT_URL);
@@ -168,9 +207,9 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		ZendDevCloud detect = new ZendDevCloud();
 		String username = data[0];
 		String password = data[1];
-		String sshkeyfile = data[2];
+		String privateKeyPath = data[2];
 
-		IZendTarget[] target = detect.detectTarget(username, password);
+		IZendTarget[] target = detect.detectTarget(username, password, privateKeyPath);
 		if (target == null || target.length == 0) {
 			return null;
 		}
@@ -179,20 +218,12 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 
 		String uniqueId = tm.createUniqueId(null);
 		
-		Properties p = new Properties();
-		if (sshkeyfile != null && sshkeyfile.length() > 0) {
-			p.put(ZendDevCloud.SSH_PRIVATE_KEY, fullStream(sshkeyfile));
-		}
-		
 		final ZendTarget t = new ZendTarget(uniqueId, target[0].getHost(),
 				target[0].getKey(), target[0].getSecretKey());
 		
-		if (p != null && !p.isEmpty()) {
-			final Set<Entry<Object, Object>> entrySet = p.entrySet();
-			for (Entry<Object, Object> entry : entrySet) {
-				t.addProperty(entry.getKey().toString(), entry.getValue().toString());
-			}
-		}
+		t.addProperty(ZendDevCloud.TARGET_CONTAINER, target[0].getProperty(ZendDevCloud.TARGET_CONTAINER));
+		t.addProperty(ZendDevCloud.TARGET_TOKEN, target[0].getProperty(ZendDevCloud.TARGET_TOKEN));
+		t.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);
 		
 		return t;
 	}

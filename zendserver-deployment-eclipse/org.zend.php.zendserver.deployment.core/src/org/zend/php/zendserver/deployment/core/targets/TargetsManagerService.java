@@ -20,7 +20,7 @@ public class TargetsManagerService {
 	public static final TargetsManagerService INSTANCE = new TargetsManagerService();
 	
 	private TargetsManagerService() {
-		tm = new TargetsManager();
+		tm = new EclipseTargetsManager();
 	}
 	
 	/**
@@ -30,6 +30,12 @@ public class TargetsManagerService {
 		return tm;
 	}
 	
+	/**
+	 * Sets default target for project
+	 * 
+	 * @param target
+	 * @param project
+	 */
 	public void storeTarget(IZendTarget target, IProject project) {
 		IEclipsePreferences pref = new ProjectScope(project).getNode(DeploymentCore.PLUGIN_ID);
 		pref.put("targetId", target.getId());

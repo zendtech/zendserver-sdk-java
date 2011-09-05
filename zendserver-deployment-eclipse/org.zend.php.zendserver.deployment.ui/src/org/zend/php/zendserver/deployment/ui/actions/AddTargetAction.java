@@ -12,9 +12,9 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.CreateTargetWizard;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiException;
 
 /**
  * Adds new Deployment Target via TargetDetailsDialog.
@@ -47,7 +47,7 @@ public class AddTargetAction extends Action {
 		try {
 			tm.add(newTarget);
 			addedTarget = newTarget;
-		} catch (WebApiException e) {
+		} catch (TargetException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
 		}
 	}
