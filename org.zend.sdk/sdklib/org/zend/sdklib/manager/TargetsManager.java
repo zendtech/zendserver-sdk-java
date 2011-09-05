@@ -79,7 +79,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target)
-			throws WebApiException {
+			throws TargetException {
 		return add(target, false);
 	}
 
@@ -90,14 +90,18 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target,
-			boolean suppressConnect) throws WebApiException {
+			boolean suppressConnect) throws TargetException {
 		if (!validTarget(target)) {
 			return null;
 		}
 
 		// try to connect to server
-		if (!suppressConnect && !target.connect()) {
-			return null;
+		try {
+			if (!suppressConnect && !target.connect()) {
+				return null;
+			}
+		} catch (WebApiException e) {
+			throw new TargetException(e);
 		}
 
 		// notify loader on addition
@@ -206,12 +210,18 @@ public class TargetsManager extends AbstractChangeNotifier {
 			log.warning(e);
 			throw new PrivilegesException(e.getMessage());
 
-		} catch (WebApiException e) {
-			final ResponseCode responseCode = e.getResponseCode();
-			int code = (responseCode != null) ? responseCode.getCode() : -1;
-			final String message = e.getMessage();
-			
-			throw new ServerVersionException(code, message);
+		} catch (TargetException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof WebApiException) {
+				WebApiException webE = (WebApiException) cause;
+				final ResponseCode responseCode = webE.getResponseCode();
+				int code = (responseCode != null) ? responseCode.getCode() : -1;
+				final String message = webE.getMessage();
+				
+				throw new ServerVersionException(code, message);
+			} else {
+				throw new DetectionException(e);
+			}
 		}
 	}
 
@@ -296,7 +306,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} catch (MalformedURLException e) {
 			log.error("Error adding Zend Target " + targetId);
 			log.error("\tPossible error: " + e.getMessage());
-		} catch (WebApiException e) {
+		} catch (TargetException e) {
 			log.error("Error adding Zend Target " + targetId);
 			log.error("\tPossible error: " + e.getMessage());
 		}

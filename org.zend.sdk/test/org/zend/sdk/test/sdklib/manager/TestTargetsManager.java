@@ -24,6 +24,7 @@ import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.DetectionException;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -72,7 +73,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddTarget() throws WebApiException {
+	public void testAddTarget() throws WebApiException, TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -80,7 +81,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testNullIdAddTarget() throws WebApiException,
+	public void testNullIdAddTarget() throws WebApiException, TargetException,
 			MalformedURLException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = spy(new ZendTarget(null, new URL(
@@ -91,7 +92,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddDisconnectedTarget() throws WebApiException {
+	public void testAddDisconnectedTarget() throws WebApiException, TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		when(target.connect()).thenReturn(false);
@@ -99,7 +100,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddDuplicatedTarget() throws WebApiException {
+	public void testAddDuplicatedTarget() throws WebApiException, TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -108,13 +109,13 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddNullTarget() throws WebApiException {
+	public void testAddNullTarget() throws TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		assertNull(manager.add(null));
 	}
 
 	@Test
-	public void testRemoveTarget() throws WebApiException {
+	public void testRemoveTarget() throws WebApiException, TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -137,7 +138,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testGetTargetById() throws WebApiException {
+	public void testGetTargetById() throws WebApiException, TargetException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -158,7 +159,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testDetectLocalhost() throws WebApiException, IOException, DetectionException {
+	public void testDetectLocalhost() throws WebApiException, TargetException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -168,7 +169,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testDetectLocalhostNoId() throws WebApiException, IOException, DetectionException {
+	public void testDetectLocalhostNoId() throws WebApiException, TargetException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -177,7 +178,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTarget() throws WebApiException {
+	public void testCreateTarget() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertNotNull(manager.createTarget("1", "http://localhost", "mykey",
@@ -185,7 +186,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetNoId() throws WebApiException {
+	public void testCreateTargetNoId() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertNotNull(manager
@@ -193,7 +194,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetFailAdd() throws WebApiException {
+	public void testCreateTargetFailAdd() throws TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
 		assertNull(manager.createTarget("1", "http://localhost", "mykey",
@@ -201,7 +202,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetInvalidUrl() throws WebApiException {
+	public void testCreateTargetInvalidUrl() throws TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
 		assertNull(manager.createTarget("1", "aaa11://localhost", "mykey",
@@ -209,7 +210,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetAddThrowsException() throws WebApiException {
+	public void testCreateTargetAddThrowsException() throws TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		Mockito.doThrow(new SignatureException("testError")).when(manager)
 				.add(any(IZendTarget.class));
@@ -218,7 +219,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget() throws WebApiException {
+	public void testUpdateTarget() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
@@ -230,7 +231,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget2() throws WebApiException {
+	public void testUpdateTarget2() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
@@ -242,7 +243,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget3() throws WebApiException {
+	public void testUpdateTarget3() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, null,
@@ -254,14 +255,14 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTargetNullId() throws WebApiException {
+	public void testUpdateTargetNullId() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNull(manager.updateTarget(null, null, null, null, null));
 	}
 
 	@Test
-	public void testUpdateTargetInvalidUrl() throws WebApiException {
+	public void testUpdateTargetInvalidUrl() throws WebApiException, TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNull(manager.updateTarget("dev4", "a111://qwerty", null, null, null));

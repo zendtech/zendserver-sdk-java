@@ -12,6 +12,7 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
@@ -19,7 +20,7 @@ public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 	private String[] validCommand = new String[] { "detect", "target" };
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException, IOException {
+	public void testExecute() throws ParseError, WebApiException, TargetException, IOException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);

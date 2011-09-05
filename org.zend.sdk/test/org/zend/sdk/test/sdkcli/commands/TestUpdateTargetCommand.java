@@ -13,6 +13,7 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.UpdateTargetCommand;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
@@ -21,7 +22,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 			"dev4", "-k", "newKey", "-s", "000000", "-h", "http://newHost" };
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException {
+	public void testExecute() throws ParseError, WebApiException, TargetException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		UpdateTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
@@ -38,7 +39,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
+	public void testExecuteInvalidUrl() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"target", "-t", "dev4", "-h", "a111:/\test1test" });
@@ -49,7 +50,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteNoChanges() throws ParseError, WebApiException,
+	public void testExecuteNoChanges() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"target", "-t", "dev4" });
@@ -60,7 +61,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteProperties() throws ParseError, WebApiException,
+	public void testExecuteProperties() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"target", "-t", "dev4", "-p",
@@ -73,7 +74,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
-			WebApiException, MalformedURLException {
+			WebApiException, TargetException, MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "update",
 				"target", "-t", "dev4", "-p", "nofilename" });
 		UpdateTargetCommand command = getCommand(cmdLine);
