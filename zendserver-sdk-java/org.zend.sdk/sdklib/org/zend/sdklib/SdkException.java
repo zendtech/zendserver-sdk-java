@@ -19,4 +19,8 @@ public class SdkException extends Exception {
 		super(message);
 	}
 	
+	public SdkException(String message, Exception e) {
+		super(message, e);
+	}
+	
 }

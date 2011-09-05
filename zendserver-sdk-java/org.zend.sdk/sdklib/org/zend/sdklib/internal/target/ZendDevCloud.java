@@ -10,11 +10,15 @@ package org.zend.sdklib.internal.target;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +39,23 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class ZendDevCloud {
 
+	private static final String UPLOAD_KEY_TOKEN = "ff9e0274b11cd48d1edd7b9706394908";
 	// devpass baseurl
 	public static final String DEVPASS_HOST = "projectx.zend.com";
 	public static final String INTERNAL_DEVPASS_URL = "https://" + DEVPASS_HOST;
-	public static final String SSH_PRIVATE_KEY = "ssh-private-key";
 
 	// user login
 	private static final String USER_LOGIN = "/user/login";
 	private static final String CONTAINER_LIST = "/container/list?format=json";
 
+	// ssh settings
+	public static final String KEY_TYPE = "RSA";
+	
+	// target properties
+	public static final String TARGET_TOKEN = "devcloud.token";
+	public static final String TARGET_CONTAINER = "devcloud.container";
+	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
+	
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
 
@@ -59,6 +71,78 @@ public class ZendDevCloud {
 	 */
 	public ZendDevCloud(String baseUrl) {
 		this.baseUrl = baseUrl;
+	}
+
+	public void uploadPublicKey(IZendTarget target) throws SdkException {
+		String token = target.getProperty(TARGET_TOKEN);
+		String container = target.getProperty(TARGET_CONTAINER);
+		String privateKeyPath = target.getProperty(SSH_PRIVATE_KEY_PATH);
+		
+		String publicKey;
+		try {
+			publicKey = getPublicKeyPath(privateKeyPath);
+		} catch (InvalidKeySpecException e) {
+			throw new SdkException(e.getMessage(), e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new SdkException(e.getMessage(), e);
+		}
+		
+		if (token == null) {
+			throw new SdkException("Token is missing.");
+		}
+		
+		if (container == null) {
+			throw new SdkException("Container name is missing.");
+		}
+		
+		if (publicKey == null) {
+			throw new SdkException("Public key is missing.");
+		}
+		
+		uploadPublicKey(token, container, publicKey);
+	}
+	
+	private static String getPublicKeyPath(String privateKey) throws InvalidKeySpecException, NoSuchAlgorithmException {
+		return privateKey + ".pub";
+	}
+
+	/**
+	 * Uploads public key 
+	 * @return null on success, or an error message otherwise
+	 * @throws IOException 
+	 * @throws SdkException 
+	 * @throws JSONException 
+	 */
+	public void uploadPublicKey(String token, String container, String publicKey) throws SdkException {
+		final boolean orginal = setFollowRedirect();
+		SSLContextInitializer.instance.setDefaultSSLFactory();
+
+		try {
+			String text;
+			try {
+				text = doUploadKey(token, container, publicKey);
+			} catch (IOException e) {
+				throw new SdkException("Connection error, while uploading public key to target", e);
+			}
+			
+			String status;
+			String message;
+			try {
+				final JSONObject json = new JSONObject(text);
+				status = (String) json.get("status");
+				message = (String) json.get("message");
+			} catch (JSONException ex) {
+				throw new RuntimeException("Invalid JSON response from target", ex);
+			}
+			
+			if (! "Success".equals(status)) {
+				throw new SdkException(message);
+			}
+			
+		} finally {
+			HttpURLConnection.setFollowRedirects(orginal);
+			SSLContextInitializer.instance.restoreDefaultSSLFactory();
+		}
 	}
 
 	/**
@@ -109,6 +193,8 @@ public class ZendDevCloud {
 		List<IZendTarget> result = new ArrayList<IZendTarget>(targets.length);
 		for (String target : targets) {
 			final String json = getJson(token, target);
+			System.out.println("Result json "+json);
+			final String[] name = resolveSubKey(json, "container", "name");
 			final String[] host = resolveSubKey(json, "container", "hostname");
 			final String[] key = resolveSubKey(json, "container",
 					"sz_api_key_name");
@@ -118,8 +204,13 @@ public class ZendDevCloud {
 					"https://" + host[0]), key[0], secretKey[0]);
 
 			if (privateKey != null) {
-				zendTarget.addProperty(SSH_PRIVATE_KEY, privateKey);
+				zendTarget.addProperty(SSH_PRIVATE_KEY_PATH, privateKey);
 			}
+			
+			if (name != null && name.length > 0) {
+				zendTarget.addProperty(TARGET_CONTAINER, name[0]);
+			}
+			zendTarget.addProperty(TARGET_TOKEN, token);
 
 			result.add(zendTarget);
 
@@ -132,19 +223,72 @@ public class ZendDevCloud {
 		final String json = getJson(token, CONTAINER_LIST);
 		return resolveSubKey(json, "containers", "url");
 	}
+	
+	private String doUploadKey(final String token, String container, String pubKeyPath) throws IOException {
+		
+		URL url = new URL(baseUrl + "/container/"+ container + "/key/import?format=json");
+		
+		File f = new File(pubKeyPath);
+		BufferedReader br = new BufferedReader(new FileReader(f));
+		StringBuilder sb = new StringBuilder();
+		String l;
+		while ((l = br.readLine()) != null) {
+			sb.append(l);
+		}
+		br.close();
+		String pubKey = sb.toString();
+	//	pubKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6AikXZHymcnI1sCvsn08QFaz0erMmIoB9xiHX8Hm/pRAAiK3JGGU/Oo/VDwebWFasH/blh+/Ay0U9UnmhorqLpZasbYem5bUuEktqWuGriAkrfRnF5/csnAR5wkIlk1KSFOnikcP8gENMbs4uRBjLEpWSUUDPIUMmBHL7mABSMhfFWWiPi/PsM/5DzkuXnQlNqwUSstqClwpWTDh/4Hd7dkQJIJanA09ilb3AkrI4wxzi0fF8xG+mrl7kzDORN32BifLIne4o/R17jfRB9e0uvyHqKh4ZMHMJjhOOTU0WBUmeSJ7hIZBaHbQVSEaNRcuQNBj0kdszMQHtKDIWdqzR";
+		final String content = MessageFormat.format(
+				"pubKeyFile={1}&requestToken={0}",
+				URLEncoder.encode(UPLOAD_KEY_TOKEN, "UTF-8"),
+				URLEncoder.encode(pubKey, "UTF-8"));
 
-	private String getJson(String token, String header) throws SdkException,
-			IOException {
-		URL url = new URL(baseUrl + header);
 		HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+		urlConn.setRequestMethod("POST");
 		urlConn.setRequestProperty("Cookie", token);
+		System.out.println("send "+content);
+		
+		urlConn.setDoOutput(true);
+		urlConn.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
 
+		DataOutputStream printout = new DataOutputStream(
+				urlConn.getOutputStream());
+		printout.writeBytes(content);
+		printout.flush();
+		printout.close();
+		
 		final int responseCode = urlConn.getResponseCode();
 		if (responseCode != 200) {
 			throw new IOException("Response code Error accessing "
 					+ url.toString());
 		}
 
+		BufferedReader is = new BufferedReader(new InputStreamReader(
+				urlConn.getInputStream()));
+
+		String json = is.readLine();
+		if (json == null) {
+			// TODO: error
+			return null;
+		}
+		is.close();
+
+		return json;
+	}
+
+	private String getJson(String token, String header) throws SdkException,
+			IOException {
+		URL url = new URL(baseUrl + header);
+		HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+		urlConn.setRequestProperty("Cookie", token);
+		System.out.println("listContainers, send cookie "+token);
+		final int responseCode = urlConn.getResponseCode();
+		if (responseCode != 200) {
+			throw new IOException("Response code Error accessing "
+					+ url.toString());
+		}
+		System.out.println("listCOntainers, receive cookie "+urlConn.getHeaderField("Cookie"));
 		BufferedReader is = new BufferedReader(new InputStreamReader(
 				urlConn.getInputStream()));
 
@@ -221,7 +365,7 @@ public class ZendDevCloud {
 		}
 
 		urlConn.disconnect();
-
+		System.out.println("Received cookie: "+cookie);
 		cookie = cookie.substring(0, cookie.indexOf(";"));
 		return cookie;
 	}
@@ -230,6 +374,10 @@ public class ZendDevCloud {
 		final boolean orginal = HttpURLConnection.getFollowRedirects();
 		HttpURLConnection.setFollowRedirects(false);
 		return orginal;
+	}
+
+	public boolean isCloudTarget(IZendTarget result) {
+		return result.getProperty(TARGET_TOKEN) != null;
 	}
 
 }

@@ -12,8 +12,9 @@ import java.net.MalformedURLException;
 import org.junit.Test;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
-import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.AddTargetCommand;
+import org.zend.sdkcli.internal.commands.CommandLine;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 
@@ -23,7 +24,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 			"1", "-k", "mykey", "-s", "123456", "-h", "http://test1test" };
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException {
+	public void testExecute() throws ParseError, WebApiException, TargetException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
@@ -32,7 +33,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteNoId() throws ParseError, WebApiException {
+	public void testExecuteNoId() throws ParseError, WebApiException, TargetException {
 		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-k", "mykey", "-s", "123456", "-h",
 				"http://test1test" });
@@ -43,7 +44,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteAddFail() throws ParseError, WebApiException {
+	public void testExecuteAddFail() throws ParseError, TargetException {
 		CommandLine cmdLine = new CommandLine(validCommand);
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
@@ -63,7 +64,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteProperties() throws ParseError, WebApiException,
+	public void testExecuteProperties() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-t", "1", "-h", "http://test1test", "-p",
@@ -76,7 +77,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
-			WebApiException, MalformedURLException {
+			WebApiException, TargetException, MalformedURLException {
 		CommandLine cmdLine = new CommandLine(new String[] { "add",
 				"target", "-t", "1", "-h", "http://test1test", "-p",
 				"nofilename" });
