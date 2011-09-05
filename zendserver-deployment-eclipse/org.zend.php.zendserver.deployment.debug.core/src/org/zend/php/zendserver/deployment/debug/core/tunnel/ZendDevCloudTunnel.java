@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.core.tunnel;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.zend.php.zendserver.deployment.debug.core.Messages;
@@ -100,12 +97,7 @@ public class ZendDevCloudTunnel {
 	}
 
 	private String getPrivateKeyFile() throws IOException {
-		File file = File.createTempFile("zend-cloud", "pem"); //$NON-NLS-1$ //$NON-NLS-2$
-		DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
-		dos.write(privateKey.getBytes());
-		dos.close();
-		file.deleteOnExit();
-		return file.getAbsolutePath();
+		return privateKey;
 	}
 
 	private void createSession() throws IOException {

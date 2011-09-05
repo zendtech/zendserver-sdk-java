@@ -68,7 +68,7 @@ public class ZendDevCloudTunnelManager {
 	private String getSSHPrivateKey(IZendTarget target) {
 		String host = target.getHost().getHost();
 		if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
-			return target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY);
+			return target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		}
 		return null;
 	}
