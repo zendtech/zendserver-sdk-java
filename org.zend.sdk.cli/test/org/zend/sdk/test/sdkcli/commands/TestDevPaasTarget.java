@@ -1,4 +1,4 @@
-package org.zend.sdk.test.sdklib.target;
+package org.zend.sdk.test.sdkcli.commands;
 
 import java.io.IOException;
 
