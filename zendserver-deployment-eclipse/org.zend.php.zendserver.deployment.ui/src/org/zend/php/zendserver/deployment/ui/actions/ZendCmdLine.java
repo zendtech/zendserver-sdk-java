@@ -28,7 +28,10 @@ public class ZendCmdLine {
 	private String getZendCommandArgs(String cmdString) throws IOException {
 		StringBuilder command = new StringBuilder();
 		
-		Bundle zendSdk = FrameworkUtil.getBundle(org.zend.sdkcli.Main.class);
+		// TODO: fix this
+		Bundle zendSdk = FrameworkUtil.getBundle(this.getClass());
+		// was: 
+		// Bundle zendSdk = FrameworkUtil.getBundle(org.zend.sdkcli.Main.class);
 		String zendSdkPath = getZendSdkClassPath(zendSdk);
 		
 		if (Platform.OS_WIN32.equals(Platform.getOS())) {
