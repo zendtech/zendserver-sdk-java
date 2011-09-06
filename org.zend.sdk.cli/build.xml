@@ -17,6 +17,8 @@
 		<pathelement location="lib/org.restlet.ext.xml.jar" />
 		<pathelement location="lib/org.restlet.jar" />
 		<pathelement location="lib/zend-webapi.jar" />
+		<pathelement location="lib/com.jcraft.jsch_0.1.41.jar" />
+		<pathelement location="lib/org.eclipse.jgit-1.1.0.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
 		<pathelement location="lib-test/mockito-all-1.8.5.jar" />
 		<pathelement location="resources/generator/jaxb/jaxb-impl.jar" />		
@@ -55,6 +57,8 @@
 			<pathelement location="lib/org.restlet.ext.xml.jar" />
 			<pathelement location="lib/org.restlet.jar" />
 			<pathelement location="lib/zend-webapi.jar" />
+			<pathelement location="lib/com.jcraft.jsch_0.1.41.jar" />
+			<pathelement location="lib/org.eclipse.jgit-1.1.0.jar" />
 			<pathelement location="lib-test/junit-4.8.2.jar" />
 			<pathelement location="lib-test/mockito-all-1.8.5.jar" />
 		</path>
