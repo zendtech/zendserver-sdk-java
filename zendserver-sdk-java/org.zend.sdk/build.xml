@@ -188,7 +188,6 @@
 		    <zipfileset dir="docs" 		prefix="${prefix}/docs"/>
 		    <zipfileset dir="junit" 		prefix="${prefix}/junit"/>
 		    <zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
-			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 			<zipfileset dir="." includes="README" prefix="${prefix}/"  />
 		</zip>
 		
@@ -196,7 +195,6 @@
 			<exclude name="*/**"/>
 			<zipfileset dir="lib" excludes="org.zend.sdk.jar,zend-test-sdk.jar" prefix="${prefix}/lib" />
 		    <zipfileset dir="resources" excludes="generator/**" prefix="${prefix}/resources/"/>
-			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 			<zipfileset dir="." includes="README" prefix="${prefix}/"  />
 		</zip>
 	</target>

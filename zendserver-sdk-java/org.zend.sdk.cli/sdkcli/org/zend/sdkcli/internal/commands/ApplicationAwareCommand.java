@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
@@ -27,7 +28,8 @@ public abstract class ApplicationAwareCommand extends TargetAwareCommand {
 	private final ZendApplication application;
 
 	public ApplicationAwareCommand() {
-		application = new ZendApplication(new UserBasedTargetLoader());
+		application = new ZendApplication(new UserBasedTargetLoader(),
+				new CliMappingLoader());
 	}
 
 	public ZendApplication getApplication() {

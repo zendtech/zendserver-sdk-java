@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.restlet.ext.xml.DomRepresentation;
+import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.webapi.core.WebApiClient;
@@ -26,7 +27,8 @@ public class AbstractWebApiTest extends AbstractTest {
 
 	@Before
 	public void startup() throws MalformedURLException {
-		application = spy(new ZendApplication(new UserBasedTargetLoader()));
+		application = spy(new ZendApplication(new UserBasedTargetLoader(),
+				new CliMappingLoader()));
 		client = Mockito.mock(WebApiClient.class);
 		doReturn(client).when(application).getClient(anyString());
 	}
