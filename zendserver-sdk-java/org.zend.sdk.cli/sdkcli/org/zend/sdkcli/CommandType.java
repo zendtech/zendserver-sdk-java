@@ -22,6 +22,8 @@ public enum CommandType {
 	
 	UPDATE_PROJECT("update", "project", "Updates a Zend project."),
 
+	CLONE_PROJECT("clone", "project", "Clone project from git repository"),
+
 	LIST_TARGETS("list", "targets", "Lists known deployment target environments."),
 
 	ADD_TARGET("add", "target", "Adds new target environment for deploying applications."),

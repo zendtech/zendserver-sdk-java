@@ -17,6 +17,7 @@ import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
 import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
+import org.zend.sdkcli.internal.commands.GitCloneProjectCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListRepositoriesCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
@@ -60,6 +61,9 @@ public class CommandFactory {
 			break;
 		case UPDATE_PROJECT:
 			command = new UpdateProjectCommand();
+			break;
+		case CLONE_PROJECT:
+			command = new GitCloneProjectCommand();
 			break;
 		case LIST_TARGETS:
 			command = new ListTargetsCommand();
