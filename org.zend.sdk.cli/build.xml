@@ -18,7 +18,9 @@
 		<pathelement location="lib/org.restlet.jar" />
 		<pathelement location="lib/zend-webapi.jar" />
 		<pathelement location="lib-test/junit-4.8.2.jar" />
-		<pathelement location="lib-test/mockito-all-1.8.5.jar" />	
+		<pathelement location="lib-test/mockito-all-1.8.5.jar" />
+		<pathelement location="resources/generator/jaxb/jaxb-impl.jar" />		
+		<pathelement location="resources/generator/jaxb/xerces.jar" />	
 	</path>
 
 	<property name="coverage.dir" value="${basedir}/coverage" />
@@ -77,6 +79,7 @@
 				<exclude name="**/*.launch" />
 				<exclude name="**/*.java" />
 			</fileset>
+			<fileset dir="resources" />
 		</copy>
 	</target>
 
@@ -228,6 +231,7 @@
 		    <zipfileset dir="test" 		prefix="${prefix}/test"/>
 		    <zipfileset dir="lib" 		prefix="${prefix}/lib"/>
 		    <zipfileset dir="docs" 		prefix="${prefix}/docs"/>
+			<zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
 		    <zipfileset dir="junit" 		prefix="${prefix}/junit"/>
 			<zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
 			<zipfileset dir="." includes="README" prefix="${prefix}/"  />
@@ -237,6 +241,7 @@
 			<exclude name="*/**"/>
 			<zipfileset dir="lib" excludes="zend-test-sdk-cli.jar" prefix="${prefix}/lib" />
 		    <zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
+			<zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
 			<zipfileset dir="." includes="README" prefix="${prefix}/"  />
 		</zip>
 	</target>
