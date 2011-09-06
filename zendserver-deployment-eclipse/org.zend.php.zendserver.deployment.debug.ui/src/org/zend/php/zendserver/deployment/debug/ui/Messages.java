@@ -69,8 +69,6 @@ public class Messages extends NLS {
 
 	public static String EmailValidator_InvalidEmail;
 
-	public static String ExportParametersWizard_ExportError_Message;
-
 	public static String LaunchApplicationHandler_0;
 
 	public static String LaunchApplicationHandler_1;
