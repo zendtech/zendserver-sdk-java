@@ -9,6 +9,7 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
 
+import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.PackageBuilder;
 
@@ -45,7 +46,7 @@ public class CreatePackageCommand extends TargetAwareCommand {
 			return false;
 		}
 		PackageBuilder builder = null;
-		builder = new PackageBuilder(project);
+		builder = new PackageBuilder(project, new CliMappingLoader());
 		File result = null;
 		String destination = getDestination();
 		if (destination == null) {

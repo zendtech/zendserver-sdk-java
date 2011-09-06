@@ -10,6 +10,7 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
 
+import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
 
@@ -44,7 +45,8 @@ public class UpdateProjectCommand extends AbstractCommand {
 
 	@Override
 	public boolean doExecute() {
-		ZendProject project = new ZendProject(getDestination());
+		ZendProject project = new ZendProject(getDestination(),
+				new CliMappingLoader());
 
 		try {
 			final boolean update = project.update(getScripts());
