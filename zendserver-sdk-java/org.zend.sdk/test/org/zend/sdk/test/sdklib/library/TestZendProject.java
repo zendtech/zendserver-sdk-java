@@ -9,8 +9,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
-import org.zend.sdk.test.sdkcli.commands.TestCreateProjectCommand;
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.application.ZendProject;
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -20,8 +18,8 @@ public class TestZendProject extends AbstractTest {
 	public static final String FOLDER = "test/config/apps/";
 
 	@Test
-	public void testZendProjectCreation1() throws ParseError, IOException {
-		String dirName = TestCreateProjectCommand.getTempFileName();
+	public void testZendProjectCreation1() throws IOException {
+		String dirName = getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
 		assertTrue(project.create("name", TemplateApplications.SIMPLE, "all"));
 		assertTrue(new File(dirName + "/"
@@ -39,8 +37,8 @@ public class TestZendProject extends AbstractTest {
 	}
 
 	@Test
-	public void testZendProjectCreation2() throws ParseError, IOException {
-		String dirName = TestCreateProjectCommand.getTempFileName();
+	public void testZendProjectCreation2() throws IOException {
+		String dirName = getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
 		assertTrue(project.create("name", TemplateApplications.SIMPLE, "all"));
 		assertTrue(new File(dirName + "/"
@@ -58,8 +56,8 @@ public class TestZendProject extends AbstractTest {
 	}
 
 	@Test
-	public void testZendProjectUpdate() throws ParseError, IOException {
-		String dirName = TestCreateProjectCommand.getTempFileName();
+	public void testZendProjectUpdate() throws IOException {
+		String dirName = getTempFileName();
 		File dest = new File(dirName);
 		File src = new File(FOLDER + "Project6");
 		copyProject(src, dest, src.getParentFile().getAbsolutePath());
@@ -112,6 +110,13 @@ public class TestZendProject extends AbstractTest {
 			if (fos != null)
 				fos.close();
 		}
+	}
+
+	public static String getTempFileName() throws IOException {
+		File temp = File.createTempFile("temp", "tst");
+		temp.delete();
+		temp.mkdir();
+		return temp.getAbsolutePath();
 	}
 
 }

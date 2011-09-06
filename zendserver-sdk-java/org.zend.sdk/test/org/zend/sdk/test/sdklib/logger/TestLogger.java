@@ -3,10 +3,8 @@ package org.zend.sdk.test.sdklib.logger;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
-import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 
@@ -57,7 +55,7 @@ public class TestLogger {
 	@Test
 	public void testDebug() {
 		ILogger log = Log.getInstance().getLogger("");
-		ParseError error = new ParseError(new ParseException("debug"));
+		Exception error = new Exception("debug");
 		log.debug(error);
 		Object result = logger.getLastLog();
 		checkValidResultMessage(error, result);
@@ -66,7 +64,7 @@ public class TestLogger {
 	@Test
 	public void testInfo() {
 		ILogger log = Log.getInstance().getLogger("");
-		ParseError error = new ParseError(new ParseException("info"));
+		Exception error = new Exception("info");
 		log.info(error);
 		Object result = logger.getLastLog();
 		checkValidResultMessage(error, result);
@@ -75,7 +73,7 @@ public class TestLogger {
 	@Test
 	public void testWarning() {
 		ILogger log = Log.getInstance().getLogger("");
-		ParseError error = new ParseError(new ParseException("warning"));
+		Exception error = new Exception("warning");
 		log.warning(error);
 		Object result = logger.getLastLog();
 		checkValidResultMessage(error, result);
@@ -84,7 +82,7 @@ public class TestLogger {
 	@Test
 	public void testError() {
 		ILogger log = Log.getInstance().getLogger("");
-		ParseError error = new ParseError(new ParseException("error"));
+		Exception error = new Exception("error");
 		log.error(error);
 		Object result = logger.getLastLog();
 		checkValidResultMessage(error, result);
@@ -96,9 +94,9 @@ public class TestLogger {
 		Log.getInstance().getLogger("");
 	}
 
-	private void checkValidResultMessage(ParseError expected, Object actual) {
-		assertTrue(actual instanceof ParseError);
-		ParseError actualError = (ParseError) actual;
+	private void checkValidResultMessage(Exception expected, Object actual) {
+		assertTrue(actual instanceof Exception);
+		Exception actualError = (Exception) actual;
 		assertSame(expected.getMessage(), actualError.getMessage());
 	}
 

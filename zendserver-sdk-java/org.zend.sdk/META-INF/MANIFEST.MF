@@ -6,13 +6,6 @@ Bundle-Version: 1.0.0.0
 Bundle-Vendor: Zend Technologies
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.apache.commons.cli,
- org.zend.sdkcli,
- org.zend.sdkcli.internal.commands,
- org.zend.sdkcli.internal.logger,
- org.zend.sdkcli.internal.options,
- org.zend.sdkhelp.docs,
- org.zend.sdkhelp.repository,
- org.zend.sdkhelp.validation,
  org.zend.sdklib,
  org.zend.sdklib.application,
  org.zend.sdklib.event,

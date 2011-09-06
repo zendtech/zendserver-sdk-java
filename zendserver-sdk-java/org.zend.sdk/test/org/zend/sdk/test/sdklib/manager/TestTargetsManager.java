@@ -29,7 +29,6 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
 public class TestTargetsManager extends AbstractTest {
 
@@ -212,7 +211,7 @@ public class TestTargetsManager extends AbstractTest {
 	@Test
 	public void testCreateTargetAddThrowsException() throws TargetException {
 		TargetsManager manager = spy(new TargetsManager(loader));
-		Mockito.doThrow(new SignatureException("testError")).when(manager)
+		Mockito.doThrow(new TargetException("testError")).when(manager)
 				.add(any(IZendTarget.class));
 		assertNull(manager.createTarget("1", "http://localhost", "mykey",
 				"43543"));
