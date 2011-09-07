@@ -87,7 +87,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		getContainer().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createDeployCombo(getContainer());
 		createLocationLink(getContainer());
-		baseUrl = createLabelWithText(Messages.configurationPage_baseURL, "", getContainer(), true); //$NON-NLS-1$
+		baseUrl = createLabelWithText(Messages.configurationPage_baseURL,
+				"", getContainer(), false); //$NON-NLS-1$
 		new Label(getContainer(), SWT.NONE);
 		final ExpandableComposite expComposite = new ExpandableComposite(getContainer(), SWT.NONE,
 				ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
