@@ -41,7 +41,6 @@ import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
-import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMapping;
 import org.zend.sdklib.mapping.IMappingEntry;
@@ -49,8 +48,6 @@ import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.connection.data.ApplicationInfo;
-import org.zend.webapi.core.connection.data.ApplicationsList;
 
 @SuppressWarnings("restriction")
 public class LaunchUtils {
@@ -98,9 +95,39 @@ public class LaunchUtils {
 	public static void updateLaunchConfiguration(IProject project,
 			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		IResource resource = getFile(project);
+
+		String pathToFile = null;
+		String currentFile = wc.getAttribute(Server.FILE_NAME, (String) null);
 		if (resource != null) {
-			wc.setAttribute(Server.FILE_NAME, resource.getFullPath().toString());
-			wc.setMappedResources(new IResource[] { resource });
+			if (currentFile != null) {
+				IPath currentPath = new Path(currentFile);
+				IPath relativePath = resource.getProjectRelativePath();
+				IPath currentRelativePath = currentPath
+						.makeRelativeTo(new Path(project.getName()));
+				if (relativePath.equals(currentRelativePath)) {
+					wc.setAttribute(Server.FILE_NAME, resource.getFullPath()
+							.toString());
+					wc.setMappedResources(new IResource[] { resource });
+				} else {
+					IDescriptorContainer descriptorContainer = DescriptorContainerManager
+							.getService().openDescriptorContainer(project);
+					String documentRoot = descriptorContainer
+							.getDescriptorModel().getDocumentRoot();
+					if (documentRoot != null && !documentRoot.isEmpty()) {
+						pathToFile = currentRelativePath.makeRelativeTo(
+								new Path(documentRoot)).toString();
+					} else {
+						pathToFile = currentRelativePath.toString();
+					}
+					wc.setAttribute(Server.FILE_NAME, currentPath.toString());
+					wc.setMappedResources(new IResource[] { project
+							.getWorkspace().getRoot().findMember(currentPath) });
+				}
+			} else {
+				wc.setAttribute(Server.FILE_NAME, resource.getFullPath()
+						.toString());
+				wc.setMappedResources(new IResource[] { resource });
+			}
 		}
 
 		Server server = findExistingServer(helper.getBaseURL());
@@ -108,12 +135,18 @@ public class LaunchUtils {
 			server = createPHPServer(helper.getBaseURL(), helper.getTargetId());
 		}
 		wc.setAttribute(Server.NAME, server.getName());
+		ServersManager.setDefaultServer(project, server);
 
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
 		URL baseURL = helper.getBaseURL();
 		if (baseURL != null) {
-			wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
+			if (pathToFile != null) {
+				wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString()
+						+ "/" + pathToFile); //$NON-NLS-1$
+			} else {
+				wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
+			}
 		}
 		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
 		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper.getBaseURL().toString());
@@ -204,6 +237,23 @@ public class LaunchUtils {
 			}
 		} catch (CoreException e) {
 			return null;
+		}
+		return null;
+	}
+
+	public static IZendTarget getDefaultTarget(IProject project) {
+		Server server = ServersManager.getDefaultServer(project);
+		String serverHost = server.getHost();
+		if (server != null) {
+			IZendTarget[] targets = TargetsManagerService.INSTANCE
+					.getTargetManager().getTargets();
+			if (targets != null) {
+				for (IZendTarget target : targets) {
+					if (serverHost.equals(target.getHost().toString())) {
+						return target;
+					}
+				}
+			}
 		}
 		return null;
 	}

@@ -88,6 +88,11 @@ public class DeploymentHandler {
 					if (!helper.getTargetId().isEmpty() && !hasEmptyParameters(project, helper)) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
+						setDefaultTarget(helper, project);
+						if (helper.getTargetId() != null
+								|| !helper.getTargetId().isEmpty()) {
+							helper.setProjectName(project.getName());
+						}
 						doOpenDeploymentWizard(helper, project);
 					}
 					if (job == null) {
@@ -96,6 +101,11 @@ public class DeploymentHandler {
 					break;
 				case IDeploymentHelper.UPDATE:
 					if (hasEmptyParameters(project, helper)) {
+						setDefaultTarget(helper, project);
+						if (helper.getTargetId() != null
+								|| !helper.getTargetId().isEmpty()) {
+							helper.setProjectName(project.getName());
+						}
 						doOpenDeploymentWizard(helper, project);
 					} else {
 						job = new UpdateLaunchJob(helper, project);
@@ -177,6 +187,18 @@ public class DeploymentHandler {
 			Activator.log(e);
 		}
 		return OK;
+	}
+
+	private void setDefaultTarget(IDeploymentHelper helper,
+			final IProject project) {
+		String targetId = helper.getTargetId();
+		if (targetId == null || targetId.isEmpty()) {
+			IZendTarget defaultTarget = LaunchUtils.getDefaultTarget(project);
+			if (defaultTarget != null) {
+				helper.setTargetId(defaultTarget.getId());
+				helper.setTargetHost(defaultTarget.getHost().toString());
+			}
+		}
 	}
 
 	private boolean hasEmptyParameters(IProject project, IDeploymentHelper helper) {
