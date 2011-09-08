@@ -37,6 +37,49 @@ public class TestZendProject extends AbstractTest {
 	}
 
 	@Test
+	public void testZendProjectCreationZF() throws IOException {
+		String dirName = getTempFileName();
+		ZendProject project = new ZendProject(new File(dirName));
+		assertTrue(project.create("name", TemplateApplications.ZEND, "all"));
+		assertTrue(new File(dirName + "/"
+				+ MappingModelFactory.DEPLOYMENT_PROPERTIES).exists());
+		assertTrue(new File(dirName + "/deployment.xml").exists());
+		assertTrue(new File(dirName + "/public/index.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_activate.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_deactivate.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_stage.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_unstage.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_activate.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_deactivate.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_stage.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_unstage.php").exists());
+		assertTrue(new File(dirName + "/application/Bootstrap.php").exists());
+	}
+
+	@Test
+	public void testZendProjectCreationQuickstart() throws IOException {
+		String dirName = getTempFileName();
+		ZendProject project = new ZendProject(new File(dirName));
+		assertTrue(project.create("name", TemplateApplications.QUICKSTART,
+				"all"));
+		assertTrue(new File(dirName + "/"
+				+ MappingModelFactory.DEPLOYMENT_PROPERTIES).exists());
+		assertTrue(new File(dirName + "/deployment.xml").exists());
+		assertTrue(new File(dirName + "/public/index.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_activate.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_deactivate.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_stage.php").exists());
+		assertTrue(new File(dirName + "/scripts/post_unstage.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_activate.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_deactivate.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_stage.php").exists());
+		assertTrue(new File(dirName + "/scripts/pre_unstage.php").exists());
+		assertTrue(new File(dirName + "/application/Bootstrap.php").exists());
+		assertTrue(new File(dirName
+				+ "/application/controllers/GuestbookController.php").exists());
+	}
+
+	@Test
 	public void testZendProjectCreation2() throws IOException {
 		String dirName = getTempFileName();
 		ZendProject project = new ZendProject(new File(dirName));
