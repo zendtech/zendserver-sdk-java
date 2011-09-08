@@ -100,6 +100,11 @@ public class ZendDevCloud {
 			throw new SdkException("Public key is missing.");
 		}
 		
+		File pubKeyFile = new File(publicKey);
+		if (! pubKeyFile.exists()) {
+			throw new SdkException("Public key file does not exist.");
+		}
+		
 		uploadPublicKey(token, container, publicKey);
 	}
 	
