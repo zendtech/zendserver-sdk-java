@@ -189,8 +189,8 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 				if (!model.isExcluded(null, name) && !shoudBeExcluded(name)) {
 					if (name.equals(scriptdir) && file.isDirectory()) {
 						String[] scripts = file.list();
-						for (String script : scripts) {
-							if (DeploymentScriptTypes.byFilename(script) != null) {
+						if (scripts != null) {
+							for (String script : scripts) {
 								String path = name + "/" + script;
 								model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
 										false);
