@@ -3,7 +3,6 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -173,14 +172,9 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		}
 		
 		try {
-			byte[] key = EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE);
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(key);
-			fos.close();
+			EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE, file);
 			
 			privateKeyText.setText(file);
-		} catch (IOException e) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
 		}

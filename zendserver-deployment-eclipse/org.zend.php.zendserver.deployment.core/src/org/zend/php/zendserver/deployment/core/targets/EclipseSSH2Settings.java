@@ -2,15 +2,13 @@ package org.zend.php.zendserver.deployment.core.targets;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
@@ -21,6 +19,10 @@ import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPairRSA;
 
 public class EclipseSSH2Settings {
 
@@ -51,16 +53,24 @@ public class EclipseSSH2Settings {
 		return new File(ssh2Home, "id_rsa");
 	}
 	
-	public static byte[] createPrivateKey(String type) throws CoreException {
-		KeyPairGenerator gen;
+	public static void createPrivateKey(String type, String path) throws CoreException {
+		Assert.isTrue(IConstants.RSA.equals(type));
+		
+		JSch jsch = JSchCorePlugin.getPlugin().getJSch();
+		KeyPairRSA pair = new KeyPairRSA(jsch);
+		com.jcraft.jsch.KeyPair pk;
 		try {
-			gen = KeyPairGenerator.getInstance(type);
-		} catch (NoSuchAlgorithmException e) {
+			pk = pair.genKeyPair(jsch, com.jcraft.jsch.KeyPair.RSA);
+		} catch (JSchException e) {
 			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
 		}
-		KeyPair pair = gen.generateKeyPair();
-		PublicKey pk = pair.getPublic();
-		return pk.getEncoded();
+		
+		try {
+			pk.writePrivateKey(new FileOutputStream(path));
+			pk.writePublicKey(new FileOutputStream(path + ".pub"), "");
+		} catch (FileNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
+		}
 	}
 
 	/**
@@ -117,8 +127,8 @@ public class EclipseSSH2Settings {
 	}
 
 	private static void copyFile(File srcFile, File destFile) throws IOException {
-		FileOutputStream fos = new FileOutputStream(srcFile);
-		FileInputStream fis = new FileInputStream(destFile);
+		FileOutputStream fos = new FileOutputStream(destFile);
+		FileInputStream fis = new FileInputStream(srcFile);
 		
 		byte[] buf = new byte[4096];
 		int len;
