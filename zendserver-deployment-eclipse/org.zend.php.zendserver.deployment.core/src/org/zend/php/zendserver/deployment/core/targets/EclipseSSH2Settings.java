@@ -26,6 +26,7 @@ import com.jcraft.jsch.KeyPairRSA;
 
 public class EclipseSSH2Settings {
 
+	private static final String PEM = ".pem";
 	private static final String KEY_NAME_SEPARATOR = ","; //$NON-NLS-1$
 
 	public static void registerDevCloudTarget(IZendTarget target) {
@@ -89,7 +90,9 @@ public class EclipseSSH2Settings {
 		String existingPrivateKeys = preferences.getString(IConstants.KEY_PRIVATEKEY);
 		List<String> existingKeys = Arrays.asList(existingPrivateKeys.split(KEY_NAME_SEPARATOR)); //$NON-NLS-1$
 		
-		File keyFile = new File(keyPath);
+		File keyFile;
+		
+		keyFile = new File(keyPath);
 		String keyName = keyFile.getName();
 		String parent = keyFile.getParent();
 
@@ -116,7 +119,7 @@ public class EclipseSSH2Settings {
 			keyFile = newKeyFile;
 		}
 		
-		existingPrivateKeys = existingPrivateKeys + KEY_NAME_SEPARATOR + keyName;
+		existingPrivateKeys = existingPrivateKeys + KEY_NAME_SEPARATOR + keyFile.getName();
 		preferences.setValue(IConstants.KEY_PRIVATEKEY, existingPrivateKeys);
 
 		JSchCorePlugin.getPlugin().setNeedToLoadKnownHosts(true);
@@ -141,6 +144,12 @@ public class EclipseSSH2Settings {
 			fis.close();
 		}
 		
+	}
+
+	public static String getSSHHome() {
+		Preferences preferences = JSchCorePlugin.getPlugin()
+				.getPluginPreferences();
+		return preferences.getString(IConstants.KEY_SSH2HOME);
 	}
 
 }
