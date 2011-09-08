@@ -194,7 +194,6 @@ public class ZendDevCloud {
 		List<IZendTarget> result = new ArrayList<IZendTarget>(targets.length);
 		for (String target : targets) {
 			final String json = getJson(token, target);
-			System.out.println("Result json "+json);
 			final String[] name = resolveSubKey(json, "container", "name");
 			final String[] host = resolveSubKey(json, "container", "hostname");
 			final String[] key = resolveSubKey(json, "container",
@@ -228,6 +227,7 @@ public class ZendDevCloud {
 	private String doUploadKey(final String token, String container, String pubKeyPath) throws IOException {
 		
 		URL url = new URL(baseUrl + "/container/"+ container + "/key/import?format=json");
+		//URL url = new URL("http://localhost/writej.php");
 		
 		File f = new File(pubKeyPath);
 		BufferedReader br = new BufferedReader(new FileReader(f));
@@ -238,16 +238,16 @@ public class ZendDevCloud {
 		}
 		br.close();
 		String pubKey = sb.toString();
-	//	pubKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6AikXZHymcnI1sCvsn08QFaz0erMmIoB9xiHX8Hm/pRAAiK3JGGU/Oo/VDwebWFasH/blh+/Ay0U9UnmhorqLpZasbYem5bUuEktqWuGriAkrfRnF5/csnAR5wkIlk1KSFOnikcP8gENMbs4uRBjLEpWSUUDPIUMmBHL7mABSMhfFWWiPi/PsM/5DzkuXnQlNqwUSstqClwpWTDh/4Hd7dkQJIJanA09ilb3AkrI4wxzi0fF8xG+mrl7kzDORN32BifLIne4o/R17jfRB9e0uvyHqKh4ZMHMJjhOOTU0WBUmeSJ7hIZBaHbQVSEaNRcuQNBj0kdszMQHtKDIWdqzR";
+
 		final String content = MessageFormat.format(
 				"pubKeyFile={1}&requestToken={0}",
 				URLEncoder.encode(UPLOAD_KEY_TOKEN, "UTF-8"),
-				URLEncoder.encode(pubKey, "UTF-8"));
+				URLEncoder.encode(URLEncoder.encode(pubKey, "UTF-8"), "UTF-8"));
 
 		HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 		urlConn.setRequestMethod("POST");
 		urlConn.setRequestProperty("Cookie", token);
-		System.out.println("send "+content);
+		urlConn.setRequestProperty("Host", url.getHost());
 		
 		urlConn.setDoOutput(true);
 		urlConn.setRequestProperty("Content-Type",
@@ -283,13 +283,11 @@ public class ZendDevCloud {
 		URL url = new URL(baseUrl + header);
 		HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 		urlConn.setRequestProperty("Cookie", token);
-		System.out.println("listContainers, send cookie "+token);
 		final int responseCode = urlConn.getResponseCode();
 		if (responseCode != 200) {
 			throw new IOException("Response code Error accessing "
 					+ url.toString());
 		}
-		System.out.println("listCOntainers, receive cookie "+urlConn.getHeaderField("Cookie"));
 		BufferedReader is = new BufferedReader(new InputStreamReader(
 				urlConn.getInputStream()));
 
@@ -366,7 +364,6 @@ public class ZendDevCloud {
 		}
 
 		urlConn.disconnect();
-		System.out.println("Received cookie: "+cookie);
 		cookie = cookie.substring(0, cookie.indexOf(";"));
 		return cookie;
 	}
