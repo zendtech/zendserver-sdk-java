@@ -165,10 +165,23 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	private void generateKey() {
-		FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
-		String file = d.open();
-		if (file == null) {
-			return;
+		String sshHome = EclipseSSH2Settings.getSSHHome();
+		String file;
+		if (sshHome != null) {
+			File tmpFile = new File(sshHome, "devcloud");
+			int i = 1;
+			while (tmpFile.exists()) {
+				tmpFile = new File(sshHome, "devcloud" + i);
+				i++;
+			}
+			
+			file = tmpFile.getAbsolutePath();
+		} else {
+			FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
+			file = d.open();
+			if (file == null) {
+				return;
+			}
 		}
 		
 		try {
