@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -121,6 +122,9 @@ public abstract class AbstractTargetDetailsComposite {
 		} catch (SdkException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
+		} catch (UnknownHostException e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					"Unknown host " + e.getMessage(), e);
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);

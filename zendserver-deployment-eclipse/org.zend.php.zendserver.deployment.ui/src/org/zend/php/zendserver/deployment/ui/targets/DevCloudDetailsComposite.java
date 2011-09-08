@@ -195,21 +195,50 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {
-		// empty, can't restore DevCloud account details from IZendTarget
+		String username = defaultTarget.getProperty(ZendDevCloud.TARGET_USERNAME);
+		if (username != null) {
+			usernameText.setText(username);
+		}
+		String privateKey = defaultTarget.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
+		if (privateKey != null) {
+			privateKeyText.setText(privateKey);
+		}
 	}
 
 	public String[] getData() {
 		return new String[] { usernameText.getText(), passwordText.getText(), privateKeyText.getText() };
 	}
 
-	public IZendTarget createTarget(String[] data) throws SdkException,
+	public IZendTarget createTarget(String[] data) throws CoreException,
 			IOException {
 		ZendDevCloud detect = new ZendDevCloud();
 		String username = data[0];
 		String password = data[1];
 		String privateKeyPath = data[2];
+		
+		if (username == null || username.trim().length() == 0) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Username is required."));
+		}
+		
+		if (password == null || password.trim().length() == 0) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Password is required."));
+		}
+		
+		if (privateKeyPath == null || privateKeyPath.trim().length() == 0) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is required."));
+		}
+		
+		File keyFile = new File(privateKeyPath);
+		if (! keyFile.exists()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key file does not exist."));
+		}
 
-		IZendTarget[] target = detect.detectTarget(username, password, privateKeyPath);
+		IZendTarget[] target;
+		try {
+			target = detect.detectTarget(username, password, privateKeyPath);
+		} catch (SdkException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
+		}
 		if (target == null || target.length == 0) {
 			return null;
 		}
@@ -221,6 +250,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		final ZendTarget t = new ZendTarget(uniqueId, target[0].getHost(),
 				target[0].getKey(), target[0].getSecretKey());
 		
+		t.addProperty(ZendDevCloud.TARGET_USERNAME, username);
 		t.addProperty(ZendDevCloud.TARGET_CONTAINER, target[0].getProperty(ZendDevCloud.TARGET_CONTAINER));
 		t.addProperty(ZendDevCloud.TARGET_TOKEN, target[0].getProperty(ZendDevCloud.TARGET_TOKEN));
 		t.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);

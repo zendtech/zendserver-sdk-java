@@ -14,7 +14,10 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.CreateTargetWizard;
+import org.zend.php.zendserver.deployment.ui.targets.DevCloudDetailsComposite;
 import org.zend.php.zendserver.deployment.ui.targets.ZendTargetDetailsComposite;
+import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -53,7 +56,7 @@ public class EditTargetAction extends Action implements
 				.getActiveWorkbenchWindow();
 
 		CreateTargetWizard ctw = new CreateTargetWizard();
-		ctw.setType(ZendTargetDetailsComposite.class.getName());
+		ctw.setType(getTargetType(toEdit));
 		ctw.setDefaultTarget(toEdit);
 		WizardDialog dialog = ctw.createDialog(window.getShell());
 		ctw.setWindowTitle(Messages.EditTargetAction_EditTarget);
@@ -74,6 +77,27 @@ public class EditTargetAction extends Action implements
 		String host = newTarget.getHost() != null ? newTarget.getHost().toString() : null;
 
 		tm.updateTarget(toEdit.getId(), host, defaultServer , newTarget.getKey(), newTarget.getSecretKey());
+		updateTargetProperties(toEdit, newTarget);
+	}
+
+	private void updateTargetProperties(IZendTarget dest,
+			IZendTarget src) {
+		ZendTarget zsSrc = (ZendTarget) src;
+		ZendTarget zsDest = (ZendTarget) dest;
+		
+		String[] keys = zsSrc.getPropertiesKeys();
+		for (String key : keys) {
+			String newValue = zsSrc.getProperty(key);
+			zsDest.addProperty(key, newValue);
+		}
+	}
+
+	private String getTargetType(IZendTarget toEdit) {
+		if ((toEdit != null) && (toEdit.getProperty(ZendDevCloud.TARGET_CONTAINER) != null)) {
+			return DevCloudDetailsComposite.class.getName();
+		}
+		
+		return ZendTargetDetailsComposite.class.getName();
 	}
 
 	@Override
