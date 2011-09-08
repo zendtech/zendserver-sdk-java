@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -277,6 +276,11 @@ public class ZendTarget implements IZendTarget {
 			return false;
 		}
 		return true;
+	}
+
+	public String[] getPropertiesKeys() {
+		Set<Object> keyset = properties.keySet();
+		return (String[]) keyset.toArray(new String[keyset.size()]);
 	}
 
 }

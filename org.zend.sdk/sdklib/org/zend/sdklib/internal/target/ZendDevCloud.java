@@ -55,6 +55,7 @@ public class ZendDevCloud {
 	public static final String TARGET_TOKEN = "devcloud.token";
 	public static final String TARGET_CONTAINER = "devcloud.container";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
+	public static String TARGET_USERNAME = "devcloud.username";
 	
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
