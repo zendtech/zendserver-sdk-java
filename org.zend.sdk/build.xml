@@ -52,7 +52,6 @@
 	<target name="init">
 		<delete dir="bin" failonerror="false">
 		</delete>
-		<ant antfile="resources/generator/build.xml" target="main"/>
 		<mkdir dir="bin" />
 		<copy includeemptydirs="false" todir="bin">
 			<fileset dir="sdklib">
@@ -65,6 +64,8 @@
 			</fileset>
 			<fileset dir="resources" />
 		</copy>
+		
+		<ant antfile="resources/generator/build.xml" target="main"/>
 	</target>
 
 	<target name="javadoc">
