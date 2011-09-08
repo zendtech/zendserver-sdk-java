@@ -38,7 +38,8 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerConfiguration {
+public class PropertiesFileSourceViewerConfiguration extends
+		TextSourceViewerConfiguration {
 
 	private class SingleTokenJavaScanner extends AbstractPropertyScanner {
 
@@ -89,10 +90,13 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 
 					ITypedRegion partition = null;
 					if (fDocument instanceof IDocumentExtension3)
-						partition = ((IDocumentExtension3) fDocument).getPartition(
-								IPropertiesFilePartitions.PROPERTIES_FILE_PARTITIONING, i, false);
+						partition = ((IDocumentExtension3) fDocument)
+								.getPartition(
+										IPropertiesFilePartitions.PROPERTIES_FILE_PARTITIONING,
+										i, false);
 					return partition != null
-							&& IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType());
+							&& IDocument.DEFAULT_CONTENT_TYPE.equals(partition
+									.getType());
 				} catch (BadLocationException ex) {
 					return false;
 				} catch (BadPartitioningException e) {
@@ -109,7 +113,8 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 		}
 
 		private String[] fgTokenProperties = { PROPERTIES_FILE_COLORING_VALUE,
-				PROPERTIES_FILE_COLORING_ARGUMENT, PROPERTIES_FILE_COLORING_ASSIGNMENT };
+				PROPERTIES_FILE_COLORING_ARGUMENT,
+				PROPERTIES_FILE_COLORING_ASSIGNMENT };
 
 		/**
 		 * Creates a property value code scanner
@@ -159,16 +164,17 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 			return rules;
 		}
 	}
-	
-	public static final String PROPERTIES_FILE_COLORING_KEY= "pf_coloring_key"; //$NON-NLS-1$
-	public static final String PROPERTIES_FILE_COLORING_COMMENT= "pf_coloring_comment"; //$NON-NLS-1$
-	public static final String PROPERTIES_FILE_COLORING_VALUE= "pf_coloring_value"; //$NON-NLS-1$
-	public static final String PROPERTIES_FILE_COLORING_ASSIGNMENT= "pf_coloring_assignment"; //$NON-NLS-1$
-	public static final String PROPERTIES_FILE_COLORING_ARGUMENT= "pf_coloring_argument"; //$NON-NLS-1$
+
+	public static final String PROPERTIES_FILE_COLORING_KEY = "pf_coloring_key"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_COMMENT = "pf_coloring_comment"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_VALUE = "pf_coloring_value"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_ASSIGNMENT = "pf_coloring_assignment"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILE_COLORING_ARGUMENT = "pf_coloring_argument"; //$NON-NLS-1$
 
 	/** Properties file content type */
-	private static final IContentType PROPERTIES_CONTENT_TYPE = Platform.getContentTypeManager()
-			.getContentType("org.eclipse.jdt.core.javaProperties"); //$NON-NLS-1$
+	private static final IContentType PROPERTIES_CONTENT_TYPE = Platform
+			.getContentTypeManager().getContentType(
+					"org.eclipse.jdt.core.javaProperties"); //$NON-NLS-1$
 
 	/**
 	 * The property key scanner.
@@ -201,7 +207,8 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * @param partitioning
 	 *            the document partitioning for this configuration
 	 */
-	public PropertiesFileSourceViewerConfiguration(PropertiesColorManager colorManager,
+	public PropertiesFileSourceViewerConfiguration(
+			PropertiesColorManager colorManager,
 			IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		fColorManager = colorManager;
@@ -213,9 +220,11 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		fPropertyKeyScanner = new SingleTokenJavaScanner(PROPERTIES_FILE_COLORING_KEY);
+		fPropertyKeyScanner = new SingleTokenJavaScanner(
+				PROPERTIES_FILE_COLORING_KEY);
 		fPropertyValueScanner = new PropertyValueScanner();
-		fCommentScanner = new SingleTokenJavaScanner(PROPERTIES_FILE_COLORING_COMMENT);
+		fCommentScanner = new SingleTokenJavaScanner(
+				PROPERTIES_FILE_COLORING_COMMENT);
 	}
 
 	/**
@@ -258,12 +267,15 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * @see SourceViewerConfiguration#getPresentationReconciler(ISourceViewer)
 	 */
 	@Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+	public IPresentationReconciler getPresentationReconciler(
+			ISourceViewer sourceViewer) {
 
 		PresentationReconciler reconciler = new PropertiesPresentationReconciler();
-		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		reconciler
+				.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
-		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getPropertyKeyScanner());
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(
+				getPropertyKeyScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
@@ -315,7 +327,8 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return fPropertyKeyScanner.affectsBehavior(event) || fCommentScanner.affectsBehavior(event)
+		return fPropertyKeyScanner.affectsBehavior(event)
+				|| fCommentScanner.affectsBehavior(event)
 				|| fPropertyValueScanner.affectsBehavior(event);
 	}
 
@@ -344,11 +357,12 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 */
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+		if (!EditorsUI.getPreferenceStore().getBoolean(
+				SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
 
-		IReconcilingStrategy strategy = new SpellingReconcileStrategy(sourceViewer,
-				EditorsUI.getSpellingService()) {
+		IReconcilingStrategy strategy = new SpellingReconcileStrategy(
+				sourceViewer, EditorsUI.getSpellingService()) {
 			@Override
 			protected IContentType getContentType() {
 				return PROPERTIES_CONTENT_TYPE;
@@ -368,8 +382,18 @@ public class PropertiesFileSourceViewerConfiguration extends TextSourceViewerCon
 	 * (org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	@Override
-	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
+	public String[] getDefaultPrefixes(ISourceViewer sourceViewer,
+			String contentType) {
 		return new String[] { "#", "" }; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/*
+	 * @see
+	 * org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org
+	 * .eclipse.jface.text.source.ISourceViewer)
+	 */
+	public int getTabWidth(ISourceViewer sourceViewer) {
+		return 4;
 	}
 
 }
