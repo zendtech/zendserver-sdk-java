@@ -239,7 +239,11 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
-				if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
+				String targetHost = helper.getTargetHost();
+				if (helper.getOperationType() == IDeploymentHelper.DEPLOY
+						&& LaunchUtils.isAutoDeployAvailable()
+						&& targetHost
+								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
 					job = getAutoDeployJob(helper, project);
 				}
 				return checkSSHTunnel(helper);
