@@ -26,7 +26,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -109,17 +108,10 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		
 		createAccount.addHyperlinkListener(hrefListener);
 		createAccount.addHyperlinkListener(hrefListener);
-		
-		Section advancedExpandable = new Section(composite, Section.TWISTIE | Section.CLIENT_INDENT);
-		advancedExpandable.setText("Advanced");
-		advancedExpandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-		Composite advanced = new Composite(advancedExpandable, SWT.NONE);
-		advanced.setLayout(new GridLayout(4, false));
-		advancedExpandable.setClient(advanced);
-		
-		label = new Label(advanced, SWT.NONE);
+				
+		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
-		privateKeyText = new Text(advanced, SWT.BORDER);
+		privateKeyText = new Text(composite, SWT.BORDER);
 		privateKeyText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 		privateKeyText
@@ -130,9 +122,9 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		}
 		privateKeyText.addModifyListener(modifyListener);
 		
-		Button btnBrowse = new Button(advanced, SWT.PUSH);
+		Button btnBrowse = new Button(composite, SWT.PUSH);
 		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
-		Button btnGenerate = new Button(advanced, SWT.PUSH);
+		Button btnGenerate = new Button(composite, SWT.PUSH);
 		btnGenerate.setText(Messages.DevCloudDetailsComposite_3);
 		btnBrowse.addSelectionListener(new SelectionAdapter() {
 
@@ -152,7 +144,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			}
 		});
 
-		label = new Label(advanced, SWT.WRAP);
+		label = new Label(composite, SWT.WRAP);
 		label.setText(Messages.DevCloudDetailsComposite_4
 				+ Messages.DevCloudDetailsComposite_5 +
 				Messages.DevCloudDetailsComposite_6);
