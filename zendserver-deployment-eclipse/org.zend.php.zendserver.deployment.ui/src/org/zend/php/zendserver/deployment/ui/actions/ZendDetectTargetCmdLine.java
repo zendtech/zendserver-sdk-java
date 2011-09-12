@@ -10,14 +10,15 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.zend.sdklib.internal.target.ZendTargetDetectMain;
 
 import swt.elevate.ElevatedProgram;
 import swt.elevate.ElevatedProgramFactory;
 
 /**
- * Run ZendSDK from command line
+ * Run ZendSDK zetect target command line
  */
-public class ZendCmdLine {
+public class ZendDetectTargetCmdLine {
 
 	private String getJavaPath() {
 		String javaExecName = Platform.OS_WIN32.equals(Platform.getOS()) ? "java.exe" : "java"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -25,13 +26,10 @@ public class ZendCmdLine {
 		return java.getAbsolutePath();
 	}
 	
-	private String getZendCommandArgs(String cmdString) throws IOException {
+	private String getZendCommandArgs(String targetId, String key) throws IOException {
 		StringBuilder command = new StringBuilder();
 		
-		// TODO: fix this
-		Bundle zendSdk = FrameworkUtil.getBundle(this.getClass());
-		// was: 
-		// Bundle zendSdk = FrameworkUtil.getBundle(org.zend.sdkcli.Main.class);
+		Bundle zendSdk = FrameworkUtil.getBundle(ZendTargetDetectMain.class);
 		String zendSdkPath = getZendSdkClassPath(zendSdk);
 		
 		if (Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -52,15 +50,23 @@ public class ZendCmdLine {
 		cp.append(new File(zendSdkPath, rootPath)).append(pathSeparator);
 		
 		Enumeration<?> libs = zendSdk.findEntries("/lib", "*.jar", false); //$NON-NLS-1$ //$NON-NLS-2$
-		while (libs.hasMoreElements()) {
-			URL lib = (URL) libs.nextElement();
-			cp.append(new File(zendSdkPath, lib.getPath())).append(pathSeparator);
+		if (libs != null) {
+			while (libs.hasMoreElements()) {
+				URL lib = (URL) libs.nextElement();
+				cp.append(new File(zendSdkPath, lib.getPath())).append(pathSeparator);
+			}
 		}
 		cp.append('"');
 		command.append(cp);
 		
-		command.append(" org.zend.sdkcli.Main "); //$NON-NLS-1$
-		command.append(cmdString);
+		command.append(" ").append(ZendTargetDetectMain.class.getName()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+		if (targetId != null) {
+			command.append(" ").append(targetId).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+		
+			if (key != null) {
+				command.append(" ").append(key).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 		
 		return command.toString();
 	}
@@ -73,16 +79,16 @@ public class ZendCmdLine {
 		return location.getAbsolutePath();
 	}
 	
-	public String getFullCommandLine(String cmd) throws IOException {
+	public String getFullCommandLine(String targetId, String key) throws IOException {
 		String java = getJavaPath();
-		String args = getZendCommandArgs(cmd);
+		String args = getZendCommandArgs(targetId, key);
 		return java + args;
 	}
 	
-	public boolean runElevated(String cmd) throws IOException {
+	public boolean runElevated(String targetId, String key) throws IOException {
 		ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
 		String java = getJavaPath();
-		String args = getZendCommandArgs(cmd);
+		String args = getZendCommandArgs(targetId, key);
 		
 		boolean result = prog.launch("Zend SDK", java, args); //$NON-NLS-1$
 		return result;

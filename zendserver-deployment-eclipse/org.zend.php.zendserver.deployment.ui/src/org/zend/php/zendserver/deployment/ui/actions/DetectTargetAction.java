@@ -58,12 +58,16 @@ public class DetectTargetAction extends Action {
 			// do nothing
 		}
 		
+		if (target == null) {
+			return;
+		}
+		
 		if ((target.isTemporary()) && (EnvironmentUtils.isUnderLinux())) {
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-			ZendCmdLine zcmd = new ZendCmdLine();
+			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
 			String msg;
 			try {
-				msg = zcmd.getFullCommandLine("detect target"); //$NON-NLS-1$
+				msg = zcmd.getFullCommandLine(null, null); //$NON-NLS-1$
 			} catch (IOException e) {
 				msg = e.getMessage() + Messages.DetectTargetAction_SeeDocs;
 			}
@@ -76,11 +80,11 @@ public class DetectTargetAction extends Action {
 		ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
 		if (prog != null) {
 			String id = tm.createUniqueId("local"); //$NON-NLS-1$
-			ZendCmdLine zcmd = new ZendCmdLine();
+			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
 			
 			try {
 				String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (! zcmd.runElevated("detect target -t "+id+" -k "+key)) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (! zcmd.runElevated(id, key)) {
 					return;
 				}
 			} catch (IOException e) {
