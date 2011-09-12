@@ -49,7 +49,7 @@ public class GenerateManual {
 
 		printStream.print("<h3>Project actions and options</h3>");
 		tableCommands(printStream, CommandType.CREATE_PROJECT,
-				CommandType.UPDATE_PROJECT);
+				CommandType.UPDATE_PROJECT, CommandType.CLONE_PROJECT);
 
 		printStream.print("<h3>Application actions and options</h3>");
 		tableCommands(printStream, CommandType.DEPLOY_APPLICATION,
