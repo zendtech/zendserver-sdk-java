@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -47,6 +48,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	
 	private static final String RESTORE_PASSWORD_URL = "http://www.zend.com/user/lost"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "http://www.zend.com/user/register"; //$NON-NLS-1$
+	
+	private static final String GENERATED_KEY_FILENAME = "devcloud";  //$NON-NLS-1$
 	
 	private Text usernameText;
 	private Text passwordText;
@@ -157,17 +160,23 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	private void generateKey() {
+		
 		String sshHome = EclipseSSH2Settings.getSSHHome();
 		String file;
 		if (sshHome != null) {
-			File tmpFile = new File(sshHome, "devcloud");
+			File tmpFile = new File(sshHome, GENERATED_KEY_FILENAME);
 			int i = 1;
 			while (tmpFile.exists()) {
-				tmpFile = new File(sshHome, "devcloud" + i);
+				tmpFile = new File(sshHome, GENERATED_KEY_FILENAME + i);
 				i++;
 			}
 			
 			file = tmpFile.getAbsolutePath();
+			
+			boolean confirm = MessageDialog.openConfirm(privateKeyText.getShell(), "Generate Key", Messages.bind("New SSH RSA private key will be written to {0}. Do you want to continue?", file));
+			if (!confirm) {
+				return;
+			}
 		} else {
 			FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
 			file = d.open();
