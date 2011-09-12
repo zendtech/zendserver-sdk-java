@@ -17,8 +17,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,16 +75,8 @@ public class ZendDevCloud {
 	public void uploadPublicKey(IZendTarget target) throws SdkException {
 		String token = target.getProperty(TARGET_TOKEN);
 		String container = target.getProperty(TARGET_CONTAINER);
-		String privateKeyPath = target.getProperty(SSH_PRIVATE_KEY_PATH);
 		
-		String publicKey;
-		try {
-			publicKey = getPublicKeyPath(privateKeyPath);
-		} catch (InvalidKeySpecException e) {
-			throw new SdkException(e.getMessage(), e);
-		} catch (NoSuchAlgorithmException e) {
-			throw new SdkException(e.getMessage(), e);
-		}
+		String publicKey = getPublicKeyPath(target);
 		
 		if (token == null) {
 			throw new SdkException("Token is missing.");
@@ -102,14 +92,15 @@ public class ZendDevCloud {
 		
 		File pubKeyFile = new File(publicKey);
 		if (! pubKeyFile.exists()) {
-			throw new SdkException("Public key file does not exist.");
+			throw new PublicKeyNotFoundException("Public key file does not exist.");
 		}
 		
 		uploadPublicKey(token, container, publicKey);
 	}
 	
-	private static String getPublicKeyPath(String privateKey) throws InvalidKeySpecException, NoSuchAlgorithmException {
-		return privateKey + ".pub";
+	public static String getPublicKeyPath(IZendTarget target) {
+		String path = target.getProperty(SSH_PRIVATE_KEY_PATH);
+		return path != null ? path + ".pub" : path;
 	}
 
 	/**
