@@ -9,5 +9,13 @@ public class PublicKeyNotFoundException extends SdkException {
 	public PublicKeyNotFoundException(String message) {
 		super(message);
 	}
+
+	public PublicKeyNotFoundException(Exception e) {
+		super(e);
+	}
+	
+	public PublicKeyNotFoundException(String message, Exception e) {
+		super(message, e);
+	}
 	
 }
