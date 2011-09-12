@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
-import java.io.File;
-
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetException;
@@ -29,11 +27,7 @@ public class EclipseTargetsManager extends TargetsManager {
 		
 		ZendDevCloud cloud = new ZendDevCloud();
 		if (cloud.isCloudTarget(target)) {
-			String pubKeyPath = ZendDevCloud.getPublicKeyPath(target);
-			File pubKey = new File(pubKeyPath);
-			if (! pubKey.exists()) {
-				// TODO create PUBKEY
-			}
+			cloud.setPublicKeyBuilder(new JSCHPubKeyDecryptor());
 			try {
 				cloud.uploadPublicKey(target);
 			} catch (SdkException e) {
