@@ -46,7 +46,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		return value;
 	}
 
-	@Option(opt = DIR, required = false, description = "The optional directory associated with the clone operation. If the directory isn't set, a name associated with the source uri will be used.", argName = "directory")
+	@Option(opt = DIR, required = false, description = "The optional directory associated with the clone operation. If the directory isn't set, a name associated with the source uri will be used", argName = "directory")
 	public String getDir() {
 		final String value = getValue(DIR);
 		return value;
