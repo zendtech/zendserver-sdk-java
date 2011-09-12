@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -280,7 +282,14 @@ public class ZendTarget implements IZendTarget {
 
 	public String[] getPropertiesKeys() {
 		Set<Object> keyset = properties.keySet();
-		return (String[]) keyset.toArray(new String[keyset.size()]);
+		List<String> result = new ArrayList<String>();
+		for (Object o : keyset) {
+			String key = (String) o;
+			if (key.startsWith(EXTRA)) {
+				result.add(key.substring(EXTRA.length()));
+			}
+		}
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 }
