@@ -10,8 +10,6 @@ package org.zend.sdklib.internal.target;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -57,6 +55,7 @@ public class ZendDevCloud {
 	
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
+	private PublicKeyBuilder pubKeyProvider;
 
 	/**
 	 * Use {@link ZendDevCloud#INTERNAL_DEVPASS_URL} as basepath
@@ -90,17 +89,15 @@ public class ZendDevCloud {
 			throw new SdkException("Public key is missing.");
 		}
 		
-		File pubKeyFile = new File(publicKey);
-		if (! pubKeyFile.exists()) {
-			throw new PublicKeyNotFoundException("Public key file does not exist.");
-		}
-		
 		uploadPublicKey(token, container, publicKey);
 	}
 	
-	public static String getPublicKeyPath(IZendTarget target) {
+	public String getPublicKeyPath(IZendTarget target) throws PublicKeyNotFoundException {
 		String path = target.getProperty(SSH_PRIVATE_KEY_PATH);
-		return path != null ? path + ".pub" : path;
+		if (pubKeyProvider == null) {
+			throw new PublicKeyNotFoundException("Not able to create public key.");
+		}
+		return pubKeyProvider.getPublicKey(path);
 	}
 
 	/**
@@ -220,21 +217,11 @@ public class ZendDevCloud {
 		return resolveSubKey(json, "containers", "url");
 	}
 	
-	private String doUploadKey(final String token, String container, String pubKeyPath) throws IOException {
+	private String doUploadKey(final String token, String container, String pubKey) throws IOException {
 		
 		URL url = new URL(baseUrl + "/container/"+ container + "/key/import?format=json");
 		//URL url = new URL("http://localhost/writej.php");
 		
-		File f = new File(pubKeyPath);
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		StringBuilder sb = new StringBuilder();
-		String l;
-		while ((l = br.readLine()) != null) {
-			sb.append(l);
-		}
-		br.close();
-		String pubKey = sb.toString();
-
 		final String content = MessageFormat.format(
 				"pubKeyFile={1}&requestToken={0}",
 				URLEncoder.encode(UPLOAD_KEY_TOKEN, "UTF-8"),
@@ -372,6 +359,10 @@ public class ZendDevCloud {
 
 	public boolean isCloudTarget(IZendTarget result) {
 		return result.getProperty(TARGET_TOKEN) != null;
+	}
+	
+	public void setPublicKeyBuilder(PublicKeyBuilder provider) {
+		this.pubKeyProvider = provider;
 	}
 
 }
