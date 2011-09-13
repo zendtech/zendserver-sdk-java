@@ -181,8 +181,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws DetectionException {
 
-		// resolve target id and key
-		targetId = createUniqueId(null);
+		if (targetId == null) {
+			targetId = createUniqueId(null);
+		}	
 		key = key != null ? key : DEFAULT_KEY + "." + System.getProperty("user.name");
 
 		final IZendTarget existing = getExistingLocalhost();
