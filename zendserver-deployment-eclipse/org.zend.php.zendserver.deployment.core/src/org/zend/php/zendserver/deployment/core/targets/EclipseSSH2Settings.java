@@ -68,7 +68,6 @@ public class EclipseSSH2Settings {
 		
 		try {
 			pk.writePrivateKey(new FileOutputStream(path));
-			pk.writePublicKey(new FileOutputStream(path + ".pub"), "");
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
 		}
