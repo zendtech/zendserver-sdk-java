@@ -208,7 +208,7 @@ public class ZendTargetAutoDetect {
 	 * @return
 	 * @throws IOException
 	 */
-	private String findExistingSecretKey(String key) throws IOException {
+	public String findExistingSecretKey(String key) throws IOException {
 		// assert permissions are elevated
 		File keysFile = getApiKeysFile();
 		if (!keysFile.canRead()) {
