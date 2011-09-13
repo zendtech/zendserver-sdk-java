@@ -45,16 +45,15 @@ public class ZendTargetDetectMain {
 		};
 		Log.getInstance().registerLogger(logger );
 		
-		if (args.length > 1) {
+		if (args.length >= 1) {
 			targetId = args[0];
 		}
-		if (args.length > 2) {
+		if (args.length >= 2) {
 			key = args[1];
 		}
 		
 		TargetsManager tm = new TargetsManager();
 		tm.detectLocalhostTarget(targetId, key);
-		
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
