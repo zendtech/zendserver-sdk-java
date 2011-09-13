@@ -53,7 +53,7 @@ public class ZendTargetDetectMain {
 		}
 		
 		TargetsManager tm = new TargetsManager();
-		tm.detectLocalhostTarget(targetId, key);
+		tm.detectLocalhostTarget(targetId, key, false);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
