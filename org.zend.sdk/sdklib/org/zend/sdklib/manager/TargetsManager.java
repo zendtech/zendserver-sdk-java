@@ -187,15 +187,23 @@ public class TargetsManager extends AbstractChangeNotifier {
 		key = key != null ? key : DEFAULT_KEY + "." + System.getProperty("user.name");
 
 		final IZendTarget existing = getExistingLocalhost();
-		if (existing != null) {
-			return existing;
-		}
-
+		
 		ZendTargetAutoDetect detection = null;
 		try {
 			detection = new ZendTargetAutoDetect();
 		} catch (IOException e) {
 			throw new MissingZendServerException(e);
+		}
+		
+		if (existing != null) {
+			// only return existing, if it's key still exists and is valid
+			try {
+				String existingSecret = detection.findExistingSecretKey(key);
+				if (existingSecret != null && existingSecret.equals(existing.getSecretKey())) {
+					return existing;
+				}
+			} catch (IOException e) {
+			}
 		}
 		
 		try {
