@@ -21,7 +21,7 @@ import swt.elevate.ElevatedProgramFactory;
 public class ZendDetectTargetCmdLine {
 
 	private String getJavaPath() {
-		String javaExecName = Platform.OS_WIN32.equals(Platform.getOS()) ? "java.exe" : "java"; //$NON-NLS-1$ //$NON-NLS-2$
+		String javaExecName = Platform.OS_WIN32.equals(Platform.getOS()) ? "javaw.exe" : "java"; //$NON-NLS-1$ //$NON-NLS-2$
 		File java = new File(System.getProperty("java.home") + "/bin/" + javaExecName); //$NON-NLS-1$ //$NON-NLS-2$
 		return java.getAbsolutePath();
 	}

@@ -114,7 +114,6 @@ public class DetectTargetAction extends Action {
 				} catch (DetectionException e) {
 					// ignore
 				}
-				System.out.println("try "+tries+", "+target);
 			} while (target == null && (tries-- > 0));
 		}
 	}
