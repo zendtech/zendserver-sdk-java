@@ -43,6 +43,7 @@ public class DetectTargetAction extends Action {
 	}
 	
 	public void doRun() throws PrivilegesException {
+		target = null;
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		
 		try {
@@ -82,8 +83,8 @@ public class DetectTargetAction extends Action {
 			String id = tm.createUniqueId("local"); //$NON-NLS-1$
 			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
 			
+			String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (! zcmd.runElevated(id, key)) {
 					return;
 				}
@@ -98,11 +99,23 @@ public class DetectTargetAction extends Action {
 			 * again to detect target.
 			 */ 
 			
-			try {
-				target = tm.detectLocalhostTarget(id, null);
-			} catch (DetectionException e) {
-				// ignore
-			}
+			int maxtries = 3;
+			int tries = maxtries;
+			do {
+				if (tries < maxtries) {
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						// empty
+					}
+				}
+				try {
+					target = tm.detectLocalhostTarget(id, key);
+				} catch (DetectionException e) {
+					// ignore
+				}
+				System.out.println("try "+tries+", "+target);
+			} while (target == null && (tries-- > 0));
 		}
 	}
 
