@@ -110,7 +110,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		};
 		
 		createAccount.addHyperlinkListener(hrefListener);
-		createAccount.addHyperlinkListener(hrefListener);
+		forgotPassword.addHyperlinkListener(hrefListener);
 				
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
