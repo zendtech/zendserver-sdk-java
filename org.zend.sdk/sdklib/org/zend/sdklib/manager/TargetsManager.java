@@ -180,6 +180,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws DetectionException {
+		return detectLocalhostTarget(targetId, key, true);
+	}
+	
+	public synchronized IZendTarget detectLocalhostTarget(String targetId,
+			String key, boolean add) throws DetectionException {
 
 		if (targetId == null) {
 			targetId = createUniqueId(null);
@@ -212,7 +217,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 			final IZendTarget local = detection.createLocalhostTarget(targetId,
 					key);
 
-			return add(local);
+			if (add) {
+				return add(local);
+			} else {
+				return local;
+			}
 
 		} catch (IOException e) {
 
