@@ -245,7 +245,7 @@
 			<exclude name="*/**"/>
 			<zipfileset dir="lib" excludes="zend-test-sdk-cli.jar" prefix="${prefix}/lib" />
 		    <zipfileset dir="tools" prefix="${prefix}/tools" filemode="755" />
-			<zipfileset dir="resources" 	prefix="${prefix}/resources/"/>
+		    <zipfileset dir="resources" excludes="generator/**" prefix="${prefix}/resources/"/>
 			<zipfileset dir="." includes="README" prefix="${prefix}/"  />
 		</zip>
 	</target>
