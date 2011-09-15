@@ -296,6 +296,9 @@ public class MappingModel implements IMappingModel {
 	public String getFolder(String path) throws IOException {
 		for (IMappingEntry entry : entries) {
 			if (entry.getType() == Type.INCLUDE) {
+				if (isExcluded(entry.getFolder(), path)) {
+					return null;
+				}
 				List<IMapping> mappings = entry.getMappings();
 				path = new File(path).toString();
 				for (IMapping include : mappings) {
@@ -306,6 +309,14 @@ public class MappingModel implements IMappingModel {
 							return entry.getFolder();
 						}
 					} else {
+						File pathFile = new File(path);
+						if (pathFile.isAbsolute()) {
+							File includeFile = new File(mappingFile.getParentFile(), include.getPath());
+							if (pathFile.getCanonicalPath().startsWith(
+									includeFile.getCanonicalPath())) {
+								return entry.getFolder();
+							}
+						}
 						if (include.getPath().equals(path)) {
 							return entry.getFolder();
 						} else {
