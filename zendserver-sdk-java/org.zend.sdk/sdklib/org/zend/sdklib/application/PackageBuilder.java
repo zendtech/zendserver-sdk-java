@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -50,29 +52,31 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private File container;
 	private IMappingModel model;
 
+	private Set<String> addedPaths;
+
 	public PackageBuilder(File container, IMappingLoader loader,
 			IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
-		this.model = MappingModelFactory.createModel(loader, container);
+		this.model = loader != null ? MappingModelFactory.createModel(loader,
+				container) : MappingModelFactory.createDefaultModel(container);
+		this.addedPaths = new HashSet<String>();
 	}
 
 	public PackageBuilder(File container, IChangeNotifier notifier) {
-		super(notifier);
-		this.container = container;
-		this.model = MappingModelFactory.createDefaultModel(container);
+		this(container, null, notifier);
 	}
 
 	public PackageBuilder(File container, IMappingLoader loader) {
 		super();
 		this.container = container;
-		this.model = MappingModelFactory.createModel(loader, container);
+		this.model = loader != null ? MappingModelFactory.createModel(loader,
+				container) : MappingModelFactory.createDefaultModel(container);
+		this.addedPaths = new HashSet<String>();
 	}
 
 	public PackageBuilder(File container) {
-		super();
-		this.container = container;
-		this.model = MappingModelFactory.createDefaultModel(container);
+		this(container, (IMappingLoader) null);
 	}
 
 	/**
@@ -238,20 +242,24 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				if (root.isDirectory()) {
 					path += "/";
 				}
-				ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
-				out.putNextEntry(entry);
-				if (!root.isDirectory()) {
-					int count;
-					byte data[] = new byte[BUFFER];
-					BufferedInputStream in = new BufferedInputStream(new FileInputStream(location),
-							BUFFER);
-					while ((count = in.read(data, 0, BUFFER)) != -1) {
-						out.write(data, 0, count);
+				path = path.replaceAll("\\\\", "/");
+				if (addedPaths.add(path)) {
+					ZipEntry entry = new ZipEntry(path);
+					out.putNextEntry(entry);
+					if (!root.isDirectory()) {
+						int count;
+						byte data[] = new byte[BUFFER];
+						BufferedInputStream in = new BufferedInputStream(
+								new FileInputStream(location), BUFFER);
+						while ((count = in.read(data, 0, BUFFER)) != -1) {
+							out.write(data, 0, count);
+						}
+						in.close();
 					}
-					in.close();
+					notifier.statusChanged(new BasicStatus(
+							StatusCode.PROCESSING, "Package creation",
+							"Creating deployment package...", 1));
 				}
-				notifier.statusChanged(new BasicStatus(StatusCode.PROCESSING,
-						"Package creation", "Creating deployment package...", 1));
 			}
 		}
 	}
