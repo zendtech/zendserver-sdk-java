@@ -45,6 +45,7 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 				Activator.log(e);
 			}
 			break;
+		case IStatus.ERROR:
 		case IStatus.CANCEL:
 			cancelled = true;
 			break;

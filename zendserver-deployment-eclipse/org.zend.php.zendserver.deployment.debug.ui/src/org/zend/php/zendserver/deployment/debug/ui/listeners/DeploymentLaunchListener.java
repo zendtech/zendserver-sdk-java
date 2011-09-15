@@ -23,7 +23,11 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 			}
 			
 			DeploymentHandler handler = new DeploymentHandler(configuration);
-			return handler.executeDeployment(mode);
+			int result = handler.executeDeployment(mode);
+			if (result == DeploymentHandler.CANCEL) {
+				configuration.delete();
+			}
+			return result;
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

@@ -225,7 +225,7 @@ public class DeploymentHandler {
 
 	private boolean isCancelled() {
 		if (listener != null) {
-			return listener.isCancelled() && cancelled;
+			return listener.isCancelled() || cancelled;
 		}
 		return cancelled;
 	}
