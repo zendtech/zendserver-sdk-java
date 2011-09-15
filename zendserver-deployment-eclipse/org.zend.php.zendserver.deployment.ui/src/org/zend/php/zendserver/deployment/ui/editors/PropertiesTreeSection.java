@@ -263,16 +263,54 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			removeIncludeMapping(name);
 			removeExcludeMapping(name);
 		}
+		removeExcludeMapping(getName(folder));
 		addIncludeMapping(getName(folder), false);
 	}
 
 	private void handleFolderFileChecked(IResource file) throws CoreException {
 		handleRootFileChecked(file);
+		removeIfParentIncluded(file);
 	}
 
 	private void handleFolderFolderChecked(IContainer folder)
 			throws CoreException {
 		handleRootFolderChecked(folder);
+		removeIfParentIncluded(folder);
+	}
+
+	private void removeIfParentIncluded(IResource resource) {
+		IContainer parent = resource.getParent();
+		if (parent == null || parent.equals(getContainer())) {
+			return;
+		}
+		try {
+			String parentIncluded = model.getMappingModel().getFolder(parent.getLocation().toString());
+			if (parentIncluded != null) {
+				if (!isExcludedAnyParents(resource)) {
+					removeIncludeMapping(getName(resource));
+					return;
+				}
+			}
+			removeIfParentIncluded(parent);
+		} catch (IOException e) {
+			//
+		}
+	}
+
+	private boolean isExcludedAnyParents(IResource resource) {
+		IContainer parent = resource.getParent();
+		if (parent != null) {
+			try {
+				if (model.getMappingModel().isExcluded(getFolder(), parent.getLocation().toString())) {
+					return true;
+				} else {
+					return isExcludedAnyParents(parent);
+				}
+			} catch (IOException e) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	private boolean addIncludeMapping(String name, boolean isGlobal) {
