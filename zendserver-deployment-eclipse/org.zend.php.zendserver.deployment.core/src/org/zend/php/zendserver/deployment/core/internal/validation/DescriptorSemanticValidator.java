@@ -37,10 +37,6 @@ public class DescriptorSemanticValidator {
 		add(DeploymentDescriptorPackage.VAR_NAME, tester);
 		add(DeploymentDescriptorPackage.VALUE, tester);
 		
-		//
-		tester = new ParameterPasswordTester(this, ValidationStatus.ERROR);
-		add(DeploymentDescriptorPackage.IDENTICAL, tester);
-		
 		tester = new FileExistsTester(this, ValidationStatus.WARNING);
 		add(DeploymentDescriptorPackage.EULA, tester);
 		add(DeploymentDescriptorPackage.ICON, tester);
