@@ -65,6 +65,8 @@ public class Messages extends NLS {
 	public static String DeploymentHandler_sshTunnelErrorMessage;
 	public static String DeploymentHandler_sshTunnelErrorTitle;
 
+	public static String DeploymentLaunchConfigurationTab_EnableDeployment;
+
 	public static String DeploymentParameters_Title;
 
 	public static String EmailValidator_InvalidEmail;

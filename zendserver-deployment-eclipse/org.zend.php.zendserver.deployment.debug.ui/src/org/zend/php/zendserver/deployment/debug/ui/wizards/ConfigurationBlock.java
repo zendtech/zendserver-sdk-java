@@ -287,6 +287,15 @@ public class ConfigurationBlock extends AbstractBlock {
 		ignoreFailures.setEnabled(value);
 	}
 
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		setBaseURLEnabled(enabled);
+		setDeployComboEnabled(enabled);
+		setUserAppNameEnabled(enabled);
+		setIgnoreFailuresEnabled(enabled);
+	}
+
 	private int getOperationType() {
 		if (deployButton.getSelection()) {
 			return IDeploymentHelper.DEPLOY;

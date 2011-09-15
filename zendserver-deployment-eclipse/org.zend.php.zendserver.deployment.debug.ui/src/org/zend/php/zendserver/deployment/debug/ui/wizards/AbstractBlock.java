@@ -46,6 +46,10 @@ public abstract class AbstractBlock {
 		return container;
 	}
 
+	public void setEnabled(boolean enabled) {
+		container.setEnabled(enabled);
+	}
+
 	protected Composite getContainer() {
 		return container;
 	}

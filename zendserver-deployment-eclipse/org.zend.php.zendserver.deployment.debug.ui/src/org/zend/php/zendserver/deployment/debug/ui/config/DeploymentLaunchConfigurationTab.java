@@ -46,6 +46,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	private IDeploymentHelper helper;
 	private Map<String, String> currentParameters;
 	private Button parametersButton;
+	Button enableDeployment;
 
 	public void createControl(Composite parent) {
 		final SharedScrolledComposite scrolledComposite = new SharedScrolledComposite(parent,
@@ -57,8 +58,19 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setContent(container);
+		enableDeployment = new Button(container, SWT.CHECK);
+		enableDeployment.setText(Messages.DeploymentLaunchConfigurationTab_EnableDeployment);
+		enableDeployment.setSelection(false);
+		enableDeployment.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				configBlock.setEnabled(enableDeployment.getSelection());
+				parametersButton.setEnabled(enableDeployment.getSelection());
+			}
+		});
 		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
 		configBlock.createContents(container, false);
+		configBlock.setEnabled(false);
 		parametersButton = new Button(container, SWT.PUSH);
 		parametersButton.setText(Messages.DeploymentParameters_Title);
 		parametersButton.setEnabled(false);
@@ -83,26 +95,32 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		configBlock.setEnabled(false);
+		parametersButton.setEnabled(false);
+		enableDeployment.setSelection(false);
 		try {
 			project = getProject(configuration);
 			if (project == null) {
 				configBlock.clear();
 				configBlock.initializeFields(new DeploymentHelper());
-				setDeploymentPageEnablement(true);
 				project = LaunchUtils.getProjectFromFilename(configuration);
-				if (project != null) {
+				if (project != null && hasDeplymentSupport(project)) {
+					enableDeployment.setSelection(true);
 					helper = new DeploymentHelper();
 					helper.setProjectName(project.getName());
 					helper.setDefaultServer(true);
 					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 					helper.setUserParams(getUserParameters());
 					configBlock.initializeFields(helper);
+					configBlock.setEnabled(true);
 					setParametersButtonEnabled();
 				}
-			} else {
+			} else if (hasDeplymentSupport(project)) {
+				enableDeployment.setSelection(true);
 				configBlock.clear();
 				helper = DeploymentHelper.create(configuration);
 				configBlock.initializeFields(helper);
+				configBlock.setEnabled(true);
 				setParametersButtonEnabled();
 			}
 		} catch (CoreException e) {
@@ -110,7 +128,16 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
+	private boolean hasDeplymentSupport(IProject project2) {
+		IResource descriptor = project
+				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		return descriptor != null;
+	}
+
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
+		if (!enableDeployment.getSelection()) {
+			return;
+		}
 		if (project != null) {
 			IDeploymentHelper updatedHelper = configBlock.getHelper();
 			helper.setProjectName(project.getName());
@@ -141,6 +168,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (!enableDeployment.getSelection()) {
+			return true;
+		}
 		IStatus status = configBlock.validatePage();
 		setMessages(status);
 		if (status.getSeverity() == IStatus.OK) {
