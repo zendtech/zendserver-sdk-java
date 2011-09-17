@@ -82,6 +82,18 @@ public class TestPackageBuilder extends AbstractTest {
 	}
 
 	@Test
+	public void testCreatePackageNoAppdir() throws IOException {
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project8"));
+		File result = builder.createDeploymentPackage(file.getCanonicalPath());
+		assertNotNull(result);
+		assertTrue(result.exists());
+		unzip(result);
+		File parent = result.getParentFile();
+		assertTrue(new File(parent, "/include_it").exists());
+	}
+
+	@Test
 	public void testCreatePackageFile() throws IOException {
 		PackageBuilder builder = new PackageBuilder(new File(FOLDER
 				+ "Project1"));

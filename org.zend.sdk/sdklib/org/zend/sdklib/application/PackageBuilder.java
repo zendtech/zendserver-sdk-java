@@ -187,7 +187,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String appdir = getAppdirName(container);
 		String scriptsdir = getScriptsdirName(container);
 		if (appdir != null) {
-			addNewFolderToZip(new File(container, appdir));
+			if (!appdir.isEmpty()) {
+				addNewFolderToZip(new File(container, appdir));
+			}
 			resolveMapping(IMappingModel.APPDIR, appdir);
 		}
 		if (scriptsdir != null) {
@@ -242,6 +244,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					path += "/";
 				}
 				path = path.replaceAll("\\\\", "/");
+				if (path.startsWith("/")) {
+					path = path.substring(1);
+				}
 				if (addedPaths.add(path)) {
 					ZipEntry entry = new ZipEntry(path);
 					out.putNextEntry(entry);
