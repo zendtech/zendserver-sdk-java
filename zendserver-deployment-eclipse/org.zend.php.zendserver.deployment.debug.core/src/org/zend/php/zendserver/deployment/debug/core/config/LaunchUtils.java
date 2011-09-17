@@ -114,6 +114,10 @@ public class LaunchUtils {
 					String documentRoot = descriptorContainer
 							.getDescriptorModel().getDocumentRoot();
 					if (documentRoot != null && !documentRoot.isEmpty()) {
+						int index = documentRoot.indexOf("/"); //$NON-NLS-1$
+						if (index != -1) {
+							documentRoot = documentRoot.substring(index + 1);
+						}
 						pathToFile = currentRelativePath.makeRelativeTo(
 								new Path(documentRoot)).toString();
 					} else {
