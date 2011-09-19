@@ -254,14 +254,7 @@ public class DeploymentHandler {
 				if (LaunchUtils.isAutoDeployAvailable()
 						&& targetHost
 								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
-					job = new ExisitngAppIdJob(helper, project);
-					job.setUser(true);
-					job.schedule();
-					job.join();
-					job = getAutoDeployJob(job.getHelper(), project);
-					if (job != null) {
-						return checkSSHTunnel(helper);
-					}
+					return handleBaseUrlConflictDevCloud(helper, project);
 				}
 				return handleBaseUrlConflict(helper, project);
 			case APPLICATION_CONFLICT:
@@ -358,12 +351,57 @@ public class DeploymentHandler {
 		}
 	}
 
+	private int handleBaseUrlConflictDevCloud(IDeploymentHelper helper,
+			IProject project) throws InterruptedException {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			public void run() {
+				MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingAppDevCloudDialog_Message);
+				if (dialog.open() == 0) {
+					dialogResult = true;
+				}
+			}
+		});
+		if (!dialogResult) {
+			doOpenDeploymentWizard(helper, project);
+			if (job == null) {
+				return CANCEL;
+			}
+			if (listener != null) {
+				job.addJobChangeListener(listener);
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(job.getHelper(), project);
+		} else {
+			dialogResult = false;
+			job = new ExisitngAppIdJob(helper, project);
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			job = new UpdateLaunchJob(job.getHelper(), project);
+			if (listener != null) {
+				job.addJobChangeListener(listener);
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			job = getAutoDeployJob(job.getHelper(), project);
+			if (job != null) {
+				return checkSSHTunnel(helper);
+			} else {
+				return CANCEL;
+			}
+		}
+	}
+
 	private int handleBaseUrlConflict(IDeploymentHelper helper, IProject project)
 			throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
-				MessageDialog dialog = getUpdateExistingApplicationDialog();
+				MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
 				if (dialog.open() == 0) {
 					dialogResult = true;
 				}
@@ -462,11 +500,13 @@ public class DeploymentHandler {
 		wc.doSave();
 	}
 
-	private MessageDialog getUpdateExistingApplicationDialog() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return new MessageDialog(shell, Messages.updateExistingApplicationDialog_Title, null,
-				Messages.updateExistingApplicationDialog_Message, MessageDialog.QUESTION,
-				new String[] { Messages.updateExistingApplicationDialog_yesButton,
+	private MessageDialog getUpdateExistingApplicationDialog(String message) {
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell();
+		return new MessageDialog(shell,
+				Messages.updateExistingApplicationDialog_Title, null, message,
+				MessageDialog.QUESTION, new String[] {
+						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 1);
 	}
 
