@@ -38,6 +38,7 @@ import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
@@ -260,6 +261,16 @@ public class LaunchUtils {
 			}
 		}
 		return null;
+	}
+
+	public static boolean configureTargetSSH(String targetId) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		if (target == null) {
+			return false;
+		}
+		EclipseSSH2Settings.registerDevCloudTarget(target);
+		return true;
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
