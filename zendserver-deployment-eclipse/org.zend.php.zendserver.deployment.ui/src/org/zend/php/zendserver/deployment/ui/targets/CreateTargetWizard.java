@@ -139,5 +139,10 @@ public class CreateTargetWizard extends Wizard {
 			detailsPage.setDefaultTargetSettings(target);
 		}
 	}
+	
+	@Override
+	public boolean canFinish() {
+		return detailsPage.isPageComplete();
+	}
 
 }

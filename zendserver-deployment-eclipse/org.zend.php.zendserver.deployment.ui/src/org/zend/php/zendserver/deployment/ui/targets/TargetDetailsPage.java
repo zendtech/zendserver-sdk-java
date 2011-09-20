@@ -43,7 +43,7 @@ public class TargetDetailsPage extends WizardPage {
 				AbstractTargetDetailsComposite src = (AbstractTargetDetailsComposite) evt.getSource();
 				target = src.getTarget();
 				final String errorMessage = (String) evt.getNewValue();
-				//setPageComplete(errorMessage == null);
+				setPageComplete(errorMessage == null);
 				
 				Display.getDefault().syncExec(new Runnable() {
 					
@@ -67,7 +67,7 @@ public class TargetDetailsPage extends WizardPage {
 		if (defaultTargetSettings != null) {
 			composite.setDefaultTargetSettings(defaultTargetSettings);
 		}
-//		setPageComplete(true);
+		setPageComplete(false);
 		setControl(newControl);
 	}
 
@@ -85,7 +85,7 @@ public class TargetDetailsPage extends WizardPage {
 	public void validate() throws InvocationTargetException, InterruptedException {
 		target = null;
 		composite.validate();
-	//	setPageComplete(target != null);
+		setPageComplete(target != null);
 	}
 
 	public void setDefaultTargetSettings(IZendTarget target) {
