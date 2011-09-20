@@ -31,8 +31,6 @@ import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.library.IChangeNotifier;
 import org.zend.sdklib.library.StatusCode;
-import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
@@ -239,27 +237,19 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 	}
 
 	private File getScriptsDirectory(File container) throws IOException {
-		IMappingModel model = MappingModelFactory.createDefaultModel(container);
-		File mappingFile = new File(container,
-				MappingModelFactory.DEPLOYMENT_PROPERTIES);
-		File result = null;
-		if (mappingFile.exists()) {
-			IMappingEntry scriptsEntry = model.getEntry(
-					IMappingModel.SCRIPTSDIR, Type.INCLUDE);
-			if (scriptsEntry != null) {
-				List<IMapping> mappings = scriptsEntry.getMappings();
-				for (IMapping mapping : mappings) {
-					result = new File(container, mapping.getPath()).getParentFile();
-					if (result.isDirectory()) {
-						return result;
-					}
-				}
+		Package pkg = getPackage(container);
+		if (pkg == null) {
+			// try to find existing scripts
+			File existingFolder = findExistingScripts(container);
+			if (existingFolder != null) {
+				return existingFolder;
 			}
 		}
-		if (result == null) {
-			return new File(container, "scripts");
+		String scriptFolder = pkg.getScriptsdir();
+		if (scriptFolder == null) {
+			scriptFolder = "scripts";
 		}
-		return result;
+		return new File(container, scriptFolder);
 	}
 
 	private File findExistingScripts(File root) throws IOException {
@@ -294,14 +284,14 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private static String getProjectName(File descriptor) {
+	private static Package getPackage(File container) {
+		File descriptor = new File(container, ProjectResourcesWriter.DESCRIPTOR);
 		Package pkg;
 		try {
-			pkg = JaxbHelper.unmarshalPackage(new FileInputStream(descriptor));
+			FileInputStream stream = new FileInputStream(descriptor);
+			pkg = JaxbHelper.unmarshalPackage(stream);
 		} catch (FileNotFoundException e) {
-			// no descriptor file - choose project name as direcory name
-			final File parentFile = descriptor.getParentFile();
-			return parentFile.getName();
+			return null;
 		} catch (IOException e) {
 			throw new IllegalArgumentException("Error reading descriptor file "
 					+ descriptor.getAbsolutePath());
@@ -314,7 +304,16 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			throw new IllegalArgumentException("Error reading descriptor file "
 					+ descriptor.getAbsolutePath());
 		}
+		return pkg;
+	}
 
+	private static String getProjectName(File descriptor) {
+		Package pkg = getPackage(descriptor.getParentFile());
+		if (pkg == null) {
+			// no descriptor file - choose project name as directory name
+			final File parentFile = descriptor.getParentFile();
+			return parentFile.getName();
+		}
 		return pkg.getName();
 	}
 
