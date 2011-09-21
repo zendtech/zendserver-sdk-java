@@ -236,8 +236,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				String path = getContainerRelativePath(location);
 				if (mapping != null && mapping.getPath() != null) {
 					path = root.getCanonicalPath();
-					String fullMapping = container.getCanonicalPath();
-					String destFolder = path.substring(fullMapping.length());
+					String fullMapping = new File(container, mapping.getPath())
+							.getCanonicalPath();
+					String destFolder = path.substring(fullMapping
+							.lastIndexOf(File.separator));
 					path = mappingFolder + destFolder;
 				}
 				if (root.isDirectory()) {
