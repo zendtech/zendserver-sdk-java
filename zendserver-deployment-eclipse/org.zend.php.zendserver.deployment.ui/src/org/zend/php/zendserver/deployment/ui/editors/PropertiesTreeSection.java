@@ -251,14 +251,17 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 
 	private void handleFileInFolderUnchecked(IResource file) throws CoreException {
 		IContainer parent = file.getParent();
-		String parentIncluded = null;
 		try {
-			parentIncluded = model.getMappingModel().getFolder(getName(parent));
+			String[] parentsIncluded = model.getMappingModel().getFolders(parent.getLocation().toString());
+			if (parentsIncluded != null) {
+				for (String parentName : parentsIncluded) {
+					if (parentName.equals(getFolder())) {
+						addExcludeMapping(getName(file), false);
+					}
+				}
+			}
 		} catch (IOException e) {
 			// should not occur if we are there
-		}
-		if (getFolder().equals(parentIncluded)) {
-			addExcludeMapping(getName(file), false);
 		}
 	}
 
@@ -299,11 +302,15 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			return;
 		}
 		try {
-			String parentIncluded = model.getMappingModel().getFolder(parent.getLocation().toString());
-			if (parentIncluded != null) {
-				if (!isExcludedAnyParents(resource)) {
-					removeIncludeMapping(getName(resource));
-					return;
+			String[] parentsIncluded = model.getMappingModel().getFolders(parent.getLocation().toString());
+			if (parentsIncluded != null) {
+				for (String parentName : parentsIncluded) {
+					if (parentName.equals(getFolder())) {
+						if (!isExcludedAnyParents(resource)) {
+							removeIncludeMapping(getName(resource));
+							return;
+						}
+					}
 				}
 			}
 			removeIfParentIncluded(parent);
