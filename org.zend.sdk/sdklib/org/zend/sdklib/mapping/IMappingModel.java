@@ -166,7 +166,7 @@ public interface IMappingModel {
 	 * @return mapped folder name
 	 * @throws IOException
 	 */
-	String getFolder(String path) throws IOException;
+	String[] getFolders(String path) throws IOException;
 
 	/**
 	 * Get project relative path to the given file based on the mapping model.
