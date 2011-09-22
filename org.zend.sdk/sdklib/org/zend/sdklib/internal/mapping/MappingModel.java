@@ -293,11 +293,12 @@ public class MappingModel implements IMappingModel {
 	 * @see org.zend.sdklib.mapping.IMappingModel#getFolder(java.lang.String)
 	 */
 	@Override
-	public String getFolder(String path) throws IOException {
+	public String[] getFolders(String path) throws IOException {
+		List<String> result = new ArrayList<String>();
 		for (IMappingEntry entry : entries) {
 			if (entry.getType() == Type.INCLUDE) {
 				if (isExcluded(entry.getFolder(), path)) {
-					return null;
+					continue;
 				}
 				List<IMapping> mappings = entry.getMappings();
 				path = new File(path).toString();
@@ -306,7 +307,8 @@ public class MappingModel implements IMappingModel {
 						String fileName = path.substring(path
 								.lastIndexOf(File.separator) + 1);
 						if (include.getPath().equals(fileName)) {
-							return entry.getFolder();
+							result.add(entry.getFolder());
+							continue;
 						}
 					} else {
 						File pathFile = new File(path);
@@ -314,18 +316,20 @@ public class MappingModel implements IMappingModel {
 							File includeFile = new File(mappingFile.getParentFile(), include.getPath());
 							if (pathFile.getCanonicalPath().startsWith(
 									includeFile.getCanonicalPath())) {
-								return entry.getFolder();
+								result.add(entry.getFolder());
 							}
 						}
 						if (include.getPath().equals(path)) {
-							return entry.getFolder();
+							result.add(entry.getFolder());
+							continue;
 						} else {
 							int index = path.lastIndexOf(File.separator);
 							if (index > -1) {
 								String fileName = path.substring(0,
 										path.lastIndexOf(File.separator));
 								if (include.getPath().equals(fileName)) {
-									return entry.getFolder();
+									result.add(entry.getFolder());
+									continue;
 								}
 							}
 						}
@@ -333,7 +337,7 @@ public class MappingModel implements IMappingModel {
 				}
 			}
 		}
-		return null;
+		return result.toArray(new String[0]);
 	}
 
 	/*

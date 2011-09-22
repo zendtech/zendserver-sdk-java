@@ -233,21 +233,33 @@ public class TestMappingModel {
 	@Test
 	public void testGetFolders() throws IOException {
 		IMappingModel model = getModel();
-		assertEquals(1, model.getFolders().size());
+		assertEquals(2, model.getFolders().size());
 	}
 
 	@Test
 	public void testGetFolder() throws IOException {
 		IMappingModel model = getModel();
 		String folder = "public";
-		assertEquals("data", model.getFolder(folder));
+		String[] folders = model.getFolders(folder);
+		assertEquals(1, folders.length);
+		assertEquals("data", folders[0]);
 	}
 
 	@Test
 	public void testGetFolderIsContent() throws IOException {
 		IMappingModel model = getModel();
 		String folder = "public/abc";
-		assertEquals("data", model.getFolder(folder));
+		String[] folders = model.getFolders(folder);
+		assertEquals(1, folders.length);
+		assertEquals("data", folders[0]);
+	}
+
+	@Test
+	public void testGetFolderDouble() throws IOException {
+		IMappingModel model = getModel();
+		String folder = "public/double";
+		String[] folders = model.getFolders(folder);
+		assertEquals(2, folders.length);
 	}
 
 	@Test
