@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -67,16 +68,30 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 	}
 
 	public class TreeContentProvider implements ITreeContentProvider {
+		
+		private final List<String> excluded = Arrays.asList(new String[] {
+			".buildpath", ".project", ".settings", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		});
 
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IContainer) {
-				try {
-					return ((IContainer) parent).members();
-				} catch (CoreException e) {
-					// TODO log
+			try {
+				if (parent instanceof IContainer) {
+						return getFilteredMembers(parent);
 				}
+			} catch (CoreException e) {
 			}
 			return new Object[0];
+		}
+
+		private Object[] getFilteredMembers(Object parent) throws CoreException {
+			List<IResource> filteredMembers = new ArrayList<IResource>();
+			IResource[] members = ((IContainer) parent).members();
+			for (IResource res : members) {
+				if (!excluded.contains(res.getName())) {
+					filteredMembers.add(res);
+				}
+			}
+			return filteredMembers.toArray(new IResource[0]);
 		}
 
 		/**
@@ -84,10 +99,10 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 		 */
 		public Object[] getChildren(Object parent) {
 			try {
-				if (parent instanceof IFolder)
-					return ((IFolder) parent).members();
+				if (parent instanceof IFolder) {
+					return getFilteredMembers(parent);
+				} 
 			} catch (CoreException e) {
-				// TODO log
 			}
 			return new Object[0];
 		}
