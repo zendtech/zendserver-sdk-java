@@ -295,6 +295,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
 		((GridData)description.getText().getLayoutData()).heightHint = 50;
+		((GridData)description.getText().getLayoutData()).widthHint = 50;
 		
 		releaseVersion.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
