@@ -29,6 +29,7 @@ public class EditTargetAction extends Action implements
 
 	private ISelectionProvider provider;
 	private boolean isEnabled;
+	private ISelection selection;
 
 	public EditTargetAction(ISelectionProvider provider) {
 		super(Messages.EditTargetAction_EditTarget, Activator
@@ -36,11 +37,25 @@ public class EditTargetAction extends Action implements
 		this.provider = provider;
 		provider.addSelectionChangedListener(this);
 	}
+	
+	public EditTargetAction(ISelection selection) {
+		super(Messages.EditTargetAction_EditTarget, Activator
+				.getImageDescriptor(Activator.IMAGE_EDIT_TARGET));
+		this.selection = selection;
+	}
 
 	@Override
 	public void run() {
-		ISelection selection = provider.getSelection();
-		if (selection.isEmpty()) {
+		ISelection selection = null;
+		if (this.provider != null) {
+			selection = provider.getSelection();
+		}
+		
+		if (this.selection != null) {
+			selection = this.selection;
+		}
+		
+		if (selection == null || selection.isEmpty()) {
 			return;
 		}
 

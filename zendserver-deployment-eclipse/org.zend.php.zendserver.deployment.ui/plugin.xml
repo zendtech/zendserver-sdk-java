@@ -45,9 +45,29 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
+            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.openTarget"
+               label="Open Target"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup2">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
+               label="Remove"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.removeTarget"
                label="Remove"
                style="push">
             <visibleWhen
@@ -81,6 +101,16 @@
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchConfiguration"
             id="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
             name="Remove Launch Configuration">
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveTargetCommand"
+            id="org.zend.php.zendserver.deployment.ui.removeTarget"
+            name="Remove Target">
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenTargetCommand"
+            id="org.zend.php.zendserver.deployment.ui.openTarget"
+            name="Open Target">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.UninstallApplicationHandler"
