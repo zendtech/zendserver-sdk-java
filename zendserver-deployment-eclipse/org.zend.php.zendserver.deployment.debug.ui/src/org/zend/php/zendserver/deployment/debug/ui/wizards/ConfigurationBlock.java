@@ -562,7 +562,9 @@ public class ConfigurationBlock extends AbstractBlock {
 	private void enableNoActionSection() {
 		setBaseURLEnabled(false);
 		setUserAppNameEnabled(false);
-		autoDeployCombo.setEnabled(false);
+		if (autoDeployCombo != null) {
+			autoDeployCombo.setEnabled(false);
+		}
 		updateCombo.setEnabled(false);
 		ignoreFailures.setEnabled(false);
 	}
@@ -570,7 +572,9 @@ public class ConfigurationBlock extends AbstractBlock {
 	private void enableUpdateSection() {
 		setBaseURLEnabled(false);
 		setUserAppNameEnabled(false);
-		autoDeployCombo.setEnabled(false);
+		if (autoDeployCombo != null) {
+			autoDeployCombo.setEnabled(false);
+		}
 		getApplicationsInfo(updateCombo);
 		updateCombo.setEnabled(true);
 		ignoreFailures.setEnabled(true);
