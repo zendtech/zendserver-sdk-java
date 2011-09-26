@@ -95,6 +95,7 @@ public class SelectTargetType {
 	}
 	
 	public void clearSelection() {
+		this.type = null;
 		gallery.deselectAll();
 	}
 
