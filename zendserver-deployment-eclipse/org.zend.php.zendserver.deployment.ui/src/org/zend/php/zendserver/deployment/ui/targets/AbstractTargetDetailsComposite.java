@@ -127,7 +127,7 @@ public abstract class AbstractTargetDetailsComposite {
 			}
 			
 		});
-		cancelThread.run();
+		cancelThread.start();
 		IStatus result = doValidate(data);
 		monitor.worked(1);
 		
