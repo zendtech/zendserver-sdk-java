@@ -39,6 +39,14 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 			return passphrase;
 		}
 	}
+	
+	public void isValidPrivateKey(String pkey) throws PublicKeyNotFoundException {
+		try {
+			KeyPair.load(getJSch(), pkey);
+		} catch (JSchException e) {
+			throw new PublicKeyNotFoundException(e);
+		}
+	}
 
 	public String getPublicKey(String pkeyab) throws PublicKeyNotFoundException {
 

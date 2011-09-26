@@ -29,10 +29,12 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
+import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
@@ -239,6 +241,13 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		File keyFile = new File(privateKeyPath);
 		if (! keyFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key file does not exist."));
+		}
+		
+		JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();
+		try {
+			decryptor.isValidPrivateKey(privateKeyPath);
+		} catch (PublicKeyNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is not valid.", e));
 		}
 
 		IZendTarget[] target;
