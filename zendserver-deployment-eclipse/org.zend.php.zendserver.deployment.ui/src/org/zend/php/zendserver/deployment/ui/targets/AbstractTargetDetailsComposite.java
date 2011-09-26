@@ -98,7 +98,7 @@ public abstract class AbstractTargetDetailsComposite {
 		return errorMessage;
 	}
 
-	public IStatus validate(IProgressMonitor monitor) {
+	public IStatus validate(final IProgressMonitor monitor) {
 		result = null;
 		monitor.beginTask("Validating target", 4);
 		monitor.worked(1);
@@ -109,6 +109,25 @@ public abstract class AbstractTargetDetailsComposite {
 			}
 		});
 		monitor.worked(2);
+		final Thread toCancel = Thread.currentThread();
+		Thread cancelThread = new Thread(new Runnable() {
+
+			public void run() {
+				while (toCancel.isAlive() && !monitor.isCanceled()) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// ignore
+					}
+				}
+				
+				if (toCancel.isAlive() && monitor.isCanceled()) {
+					toCancel.interrupt();
+				}
+			}
+			
+		});
+		cancelThread.run();
 		IStatus result = doValidate(data);
 		monitor.worked(1);
 		
