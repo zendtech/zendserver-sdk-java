@@ -68,7 +68,7 @@ public class DetectTargetAction extends Action {
 			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
 			String msg;
 			try {
-				msg = zcmd.getFullCommandLine(null, null); //$NON-NLS-1$
+				msg = zcmd.getFullCommandLine(null, null);
 			} catch (IOException e) {
 				msg = e.getMessage() + Messages.DetectTargetAction_SeeDocs;
 			}
