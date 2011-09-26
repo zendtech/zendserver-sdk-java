@@ -41,6 +41,8 @@ public class TargetsViewer {
 	private TreeViewer viewer;
 	private IStatusChangeListener listener;
 	private MenuManager menuMgr;
+	private ILaunchListener launchListener;
+	private ILaunchConfigurationListener cfgChangeListener;
 
 	/**
 	 * Create viewer control
@@ -89,7 +91,7 @@ public class TargetsViewer {
 		});
 		viewer.getControl().setMenu(menu);
 		
-		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
+		cfgChangeListener = new ILaunchConfigurationListener() {
 			
 			public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 				refreshViewer();
@@ -100,9 +102,10 @@ public class TargetsViewer {
 			
 			public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 			}
-		});
+		};
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(cfgChangeListener);
 		
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchListener() {
+		launchListener = new ILaunchListener() {
 			
 			public void launchRemoved(ILaunch launch) {
 				refreshViewer();
@@ -115,7 +118,8 @@ public class TargetsViewer {
 			public void launchAdded(ILaunch launch) {
 				refreshViewer();
 			}
-		});
+		};
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(launchListener);
 	}
 	
 	protected void handleDoubleClick(DoubleClickEvent event) {
@@ -149,6 +153,8 @@ public class TargetsViewer {
 	public void dispose() {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		tm.removeStatusChangeListener(listener);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(cfgChangeListener);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(launchListener);
 	}
 
 	/**
