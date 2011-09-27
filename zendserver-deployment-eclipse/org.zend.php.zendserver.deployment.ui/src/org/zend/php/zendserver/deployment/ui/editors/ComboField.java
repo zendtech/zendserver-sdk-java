@@ -49,8 +49,24 @@ public class ComboField implements EditorField {
 	public void refresh() {
 		isRefresh = true;
 		try {
+			text.deselectAll();
+			
 			String value = target != null ? target.get(key) : null;
+			
+			// read-writeable combo fields
 			text.setText(value == null ? "" : value); //$NON-NLS-1$
+			
+			// read-only combo fields
+			if (value != null) {
+				String[] items = text.getItems();
+				
+				for (int i = 0; i < items.length; i++) {
+					if (value.equals(items[i])) {
+						text.select(i);
+						break;
+					}
+				}
+			}			
 		} finally {
 			isRefresh = false;
 		}
