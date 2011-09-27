@@ -25,10 +25,15 @@ public class UninstallApplicationHandler extends AbstractHandler {
 		Object element = ctx.getDefaultVariable();
 		if (element instanceof List) {
 			List<?> list = (List<?>) element;
-			if (list.size() > 0) {
-				element = list.get(0);
+			for (Object o : list) {
+				uninstall(o);
 			}
 		}
+		
+		return null;
+	}
+	
+	private void uninstall(Object element) {
 		if (element instanceof ILaunchConfiguration) {
 			final ILaunchConfiguration cfg = (ILaunchConfiguration) element;
 			Job job = new Job(Messages.UninstallApplicationHandler_0) {
@@ -53,21 +58,25 @@ public class UninstallApplicationHandler extends AbstractHandler {
 			job.schedule();
 			
 		}
-		
-		return null;
 	}
-	
+
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		EvaluationContext ctx = (EvaluationContext) evaluationContext;
 		Object obj = ctx.getDefaultVariable();
+		boolean enabled = false;
 		if (obj instanceof List) {
 			List<?> list = (List<?>) obj;
 			if (list.size() > 0) {
-				obj = list.get(0);
+				enabled = true;
+				for (Object o : list) {
+					if (! (o instanceof ILaunchConfiguration)) {
+						enabled = false;
+					}
+				}
 			}
 		}
-		setBaseEnabled(obj instanceof ILaunchConfiguration);
+		setBaseEnabled(enabled);
 	}
 	
 }

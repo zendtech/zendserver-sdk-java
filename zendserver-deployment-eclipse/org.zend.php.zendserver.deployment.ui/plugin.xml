@@ -67,14 +67,6 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.zend.php.zendserver.deployment.ui.removeTarget"
-               label="Remove"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-         <command
                commandId="org.zend.php.zendserver.deployment.ui.uninstallApplication"
                label="Uninstall"
                style="push">
@@ -98,14 +90,9 @@
             name="Run PHPUnit Test">
       </command>
       <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchConfiguration"
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchOrTarget"
             id="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
             name="Remove Launch Configuration">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveTargetCommand"
-            id="org.zend.php.zendserver.deployment.ui.removeTarget"
-            name="Remove Target">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenTargetCommand"
