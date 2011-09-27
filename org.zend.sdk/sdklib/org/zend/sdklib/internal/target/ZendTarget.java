@@ -23,6 +23,7 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
  * Represents a target in the environment
@@ -276,8 +277,33 @@ public class ZendTarget implements IZendTarget {
 					.toString());
 		} catch (MalformedURLException e) {
 			return false;
+		} catch (final WebApiException e) {
+			final String betterMessage = replaceWebApiMessage(e.getMessage());
+			if (betterMessage != null) {
+				throw new WebApiException() {
+					
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public ResponseCode getResponseCode() {
+						return e.getResponseCode();
+					}
+					
+					@Override
+					public String getMessage() {
+						return betterMessage;
+					}
+				};
+			}
 		}
 		return true;
+	}
+
+	private String replaceWebApiMessage(String message) {
+		if ("Zend Server Community Edition does not rely on licensing".equals(message)) {
+			return "Zend Server Community Edition does not support deployment";
+		}
+		return null;
 	}
 
 	public String[] getPropertiesKeys() {
