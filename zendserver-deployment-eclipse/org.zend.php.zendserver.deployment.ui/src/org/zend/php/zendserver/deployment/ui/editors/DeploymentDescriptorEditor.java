@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -306,6 +307,37 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					}
 				}
 			}
+		}
+		
+		IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+			
+			public boolean visit(IResourceDelta delta) throws CoreException {
+				IResource resource = delta.getResource();
+				IFile editorFile = fModel.getFile();
+				
+				if (resource instanceof IProject) {
+					// project was closed
+					IProject project = (IProject) resource;
+					
+					if (editorFile.getProject().equals(project) && (!project.isOpen())) {
+						close(false);
+					}
+				} else if (resource instanceof IFile) {
+					// descriptor file was removed
+					
+					IFile file = (IFile) resource;
+					if (delta.getKind() == IResourceDelta.REMOVED && editorFile.equals(file)) {
+						close(false);
+					}
+				}
+				return true;
+			}
+		};
+		
+		try {
+			delta.accept(visitor);
+		} catch (CoreException e) {
+			// ignore
 		}
 	}
 
