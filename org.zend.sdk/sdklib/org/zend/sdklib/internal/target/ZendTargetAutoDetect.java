@@ -43,6 +43,7 @@ public class ZendTargetAutoDetect {
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
 	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found"
 			+ "please refer to http://www.zend.com/server";
+	private static final String MAC_NOT_SUPPORTED = "Deployment on local Mac is not supported. This feature is for Linux and Windows Zend Server editions only.";
 
 	// linux key
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc";
@@ -245,7 +246,11 @@ public class ZendTargetAutoDetect {
 			return;
 		}
 
-		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
+		if (EnvironmentUtils.isUnderMaxOSX()) {
+			throw new IllegalStateException(MAC_NOT_SUPPORTED);
+		}
+		
+		if (EnvironmentUtils.isUnderLinux()) {
 			zendServerInstallLocation = getLocalZendServerFromFile();
 		} else {
 			// (EnvironmentUtils.isUnderWindows())
