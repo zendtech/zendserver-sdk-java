@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -128,7 +129,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		EditorField readonly = (CheckboxField) fields.add(new CheckboxField(null, DeploymentDescriptorPackage.READONLY, Messages.ParameterDetailsPage_Readonly));
 		readonly.create(client, toolkit);
 		
-		identical = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical, SWT.READ_ONLY));
+		identical = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.IDENTICAL, Messages.ParameterDetailsPage_Identical));
 		identical.create(client, toolkit);
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 			
@@ -164,7 +165,10 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 			items[i] = paramId;
 		}
 		
-		identical.setItems(items);
+		String[] oldItems = identical.getCombo().getItems();
+		if (!Arrays.equals(oldItems, items)) {
+			identical.setItems(items);
+		}
 	}
 	
 	private void showChoiceWidgets() {
