@@ -56,7 +56,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return hasOption(IGNORE_FAILURES);
 	}
 
-	@Option(opt = VHOST, required = false, description = "The name of the vhost to create or use if exists")
+	@Option(opt = VHOST, required = false, description = "Specify the virtual host which should be used. If a virtual host with the specified name does not exist, it will be created. By default if virtual host is not specified then the default one will be used (marked as <default-server> in the application url)")
 	public String getVhost() {
 		return getValue(VHOST);
 	}
