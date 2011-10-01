@@ -194,7 +194,8 @@ public class ZendDevCloud {
 			final String[] secretKey = resolveSubKey(json, "container",
 					"zs_api_key");
 			final ZendTarget zendTarget = new ZendTarget("0", new URL(
-					"https://" + host[0]), key[0], secretKey[0]);
+					"https://" + host[0]), new URL("http://" + host[0]),
+					key[0], secretKey[0]);
 
 			if (privateKey != null) {
 				zendTarget.addProperty(SSH_PRIVATE_KEY_PATH, privateKey);
