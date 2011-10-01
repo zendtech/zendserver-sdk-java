@@ -265,7 +265,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		String uniqueId = tm.createUniqueId(null);
 		
 		final ZendTarget t = new ZendTarget(uniqueId, target[0].getHost(),
-				target[0].getKey(), target[0].getSecretKey());
+				target[0].getDefaultServerURL(), target[0].getKey(), target[0].getSecretKey());
 		
 		t.addProperty(ZendDevCloud.TARGET_USERNAME, username);
 		t.addProperty(ZendDevCloud.TARGET_CONTAINER, target[0].getProperty(ZendDevCloud.TARGET_CONTAINER));
