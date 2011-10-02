@@ -102,20 +102,14 @@ public class EclipseSSH2Settings {
 				// key is already in ssh2Home, so we'll only add it to the list (later below)
 			}
 		} else {
-			// key is in external directory. Let's copy it to ssh2Home and add to keysList
-			if (existingKeys.contains(keyName)) {
-				keyName = newNameHint;
-				if (existingKeys.contains(keyName)) {
-					int i = 1;
-					do {
-						keyName = newNameHint + i;
-					} while (existingKeys.contains(keyName));
-				}
-			}
-			
+			// key is in external directory. Let's copy it to ssh2Home
 			File newKeyFile = new File(ssh2Home, keyName);
 			copyFile(keyFile, newKeyFile);
 			keyFile = newKeyFile;
+			// if key is already on the list do not add it again
+			if (existingKeys.contains(keyName)) {
+				return newKeyFile.toString();
+			}
 		}
 		
 		existingPrivateKeys = existingPrivateKeys + KEY_NAME_SEPARATOR + keyFile.getName();
