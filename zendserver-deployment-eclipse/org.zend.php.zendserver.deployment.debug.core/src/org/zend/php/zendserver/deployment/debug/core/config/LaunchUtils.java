@@ -269,7 +269,7 @@ public class LaunchUtils {
 		if (target == null) {
 			return false;
 		}
-		EclipseSSH2Settings.registerDevCloudTarget(target);
+		EclipseSSH2Settings.registerDevCloudTarget(target, true);
 		return true;
 	}
 

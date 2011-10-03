@@ -22,7 +22,7 @@ public class EclipseTargetsManager extends TargetsManager {
 		IZendTarget result = super.add(target, suppressConnect);
 		
 		if (result != null) {
-			EclipseSSH2Settings.registerDevCloudTarget(result);
+			EclipseSSH2Settings.registerDevCloudTarget(result, false);
 		}
 		
 		ZendDevCloud cloud = new ZendDevCloud();

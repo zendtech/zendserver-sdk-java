@@ -29,7 +29,7 @@ public class EclipseSSH2Settings {
 	private static final String PEM = ".pem";
 	private static final String KEY_NAME_SEPARATOR = ","; //$NON-NLS-1$
 
-	public static void registerDevCloudTarget(IZendTarget target) {
+	public static void registerDevCloudTarget(IZendTarget target, boolean overwrite) {
 		String keyPath = target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		
 		if (keyPath == null) {
@@ -37,7 +37,7 @@ public class EclipseSSH2Settings {
 		}
 		
 		try {
-			String newPath = copySSHKey(keyPath, target.getId());
+			String newPath = copySSHKey(keyPath, target.getId(), overwrite);
 			if (!keyPath.equals(newPath)) {
 				ZendTarget zsTarget = (ZendTarget) target;
 				zsTarget.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, newPath);
@@ -78,11 +78,12 @@ public class EclipseSSH2Settings {
 	 * 
 	 * @param keyPath existing key
 	 * @param newNameHint hint to use when inventing new key name
+	 * @param overwrite 
 	 * @return copied key full path
 	 * 
 	 * @throws IOException
 	 */
-	private static String copySSHKey(String keyPath, String newNameHint) throws IOException {
+	private static String copySSHKey(String keyPath, String newNameHint, boolean overwrite) throws IOException {
 		Preferences preferences = JSchCorePlugin.getPlugin()
 				.getPluginPreferences();
 		String ssh2Home = preferences.getString(IConstants.KEY_SSH2HOME);
@@ -102,12 +103,21 @@ public class EclipseSSH2Settings {
 				// key is already in ssh2Home, so we'll only add it to the list (later below)
 			}
 		} else {
+			if (existingKeys.contains(keyName) && !overwrite) {
+				keyName = newNameHint;
+				if (existingKeys.contains(keyName)) {
+					int i = 1;
+					do {
+						keyName = newNameHint + i++;
+					} while (existingKeys.contains(keyName));
+				}
+			}
 			// key is in external directory. Let's copy it to ssh2Home
 			File newKeyFile = new File(ssh2Home, keyName);
 			copyFile(keyFile, newKeyFile);
 			keyFile = newKeyFile;
 			// if key is already on the list do not add it again
-			if (existingKeys.contains(keyName)) {
+			if (existingKeys.contains(keyName) && overwrite) {
 				return newKeyFile.toString();
 			}
 		}
