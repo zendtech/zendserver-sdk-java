@@ -159,8 +159,12 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());
 		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
-		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
-		wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), helper.getTargetHost());
+		if (helper.getTargetId() != null && !helper.getTargetId().isEmpty()) {
+			wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(),
+					helper.getTargetId());
+			wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(),
+					helper.getTargetHost());
+		}
 		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
 		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
 		String location = helper.getInstalledLocation();

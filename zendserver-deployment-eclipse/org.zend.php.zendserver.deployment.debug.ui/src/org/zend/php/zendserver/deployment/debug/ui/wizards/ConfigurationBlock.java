@@ -158,7 +158,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		
 		URL newBaseURL = helper.getBaseURL();
 		if (newBaseURL != null) {
-			if (helper.isDefaultServer()) {
+			if (helper.isDefaultServer() && getTarget() != null) {
 				String targetHost = getTarget().getDefaultServerURL().toString();
 				baseUrl.setText(targetHost + newBaseURL.getPath());
 			} else {
@@ -248,8 +248,10 @@ public class ConfigurationBlock extends AbstractBlock {
 		if (baseUrl != null) {
 			helper.setBaseURL(baseUrl.toString());
 		}
-		helper.setTargetId(getTarget().getId());
-		helper.setTargetHost(getTarget().getHost().getHost());
+		if (getTarget() != null) {
+			helper.setTargetId(getTarget().getId());
+			helper.setTargetHost(getTarget().getHost().getHost());
+		}
 		if (getOperationType() == IDeploymentHelper.UPDATE) {
 			ApplicationInfo info = getUpdateSelection();
 			if (info != null) {
@@ -346,9 +348,12 @@ public class ConfigurationBlock extends AbstractBlock {
 		} catch (MalformedURLException e) {
 			// ignore, handled later
 		}
-		URL targetUrl = getTarget().getHost();
-		if (baseUrl != null && baseUrl.getHost().equals(targetUrl.getHost())) {
-			return true;
+		if (getTarget() != null) {
+			URL targetUrl = getTarget().getHost();
+			if (baseUrl != null
+					&& baseUrl.getHost().equals(targetUrl.getHost())) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -519,9 +524,11 @@ public class ConfigurationBlock extends AbstractBlock {
 				if (baseURL.getHost().equals(IDeploymentHelper.DEFAULT_SERVER)) {
 					helper.setDefaultServer(true);
 					IZendTarget target = getTarget();
-					URL updatedURL = new URL(baseURL.getProtocol(), target.getHost().getHost(),
-							baseURL.getPath());
-					helper.setBaseURL(updatedURL.toString());
+					if (target != null) {
+						URL updatedURL = new URL(baseURL.getProtocol(), target
+								.getHost().getHost(), baseURL.getPath());
+						helper.setBaseURL(updatedURL.toString());
+					}
 				} else {
 					helper.setDefaultServer(false);
 					helper.setBaseURL(baseURL.toString());
