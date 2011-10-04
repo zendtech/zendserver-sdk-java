@@ -290,6 +290,12 @@ public class LaunchUtils {
 		IMappingModel model = MappingModelFactory.createModel(new EclipseMappingModelLoader(),
 				new File(project.getLocation().toString()));
 		IMappingEntry entry = model.getEntry(IMappingModel.APPDIR, Type.INCLUDE);
+		// check if there is deployment.properties file at all, if not then
+		// return descriptor file
+		if (entry == null) {
+			return project
+					.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		}
 		List<IMapping> mappings = entry.getMappings();
 		for (IMapping mapping : mappings) {
 			IResource mappedResource = project.findMember(mapping.getPath());
