@@ -1,12 +1,8 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -37,17 +33,11 @@ import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.sdklib.manager.TargetsManager;
-import org.zend.sdklib.mapping.IMapping;
-import org.zend.sdklib.mapping.IMappingEntry;
-import org.zend.sdklib.mapping.IMappingEntry.Type;
-import org.zend.sdklib.mapping.IMappingModel;
-import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.target.IZendTarget;
 
 @SuppressWarnings("restriction")
@@ -278,53 +268,7 @@ public class LaunchUtils {
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
-		IDescriptorContainer descriptorContainer = DescriptorContainerManager.getService()
-				.openDescriptorContainer(project);
-		String documentRoot = descriptorContainer.getDescriptorModel().getDocumentRoot();
-		if (documentRoot != null && !documentRoot.isEmpty()) {
-			IResource documentResource = project.findMember(documentRoot);
-			if (documentResource instanceof IContainer) {
-				return getFile(((IContainer) documentResource).members());
-			}
-		}
-		IMappingModel model = MappingModelFactory.createModel(new EclipseMappingModelLoader(),
-				new File(project.getLocation().toString()));
-		IMappingEntry entry = model.getEntry(IMappingModel.APPDIR, Type.INCLUDE);
-		// check if there is deployment.properties file at all, if not then
-		// return descriptor file
-		if (entry == null) {
-			return project
-					.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
-		}
-		List<IMapping> mappings = entry.getMappings();
-		for (IMapping mapping : mappings) {
-			IResource mappedResource = project.findMember(mapping.getPath());
-			if (mappedResource instanceof IContainer) {
-				return getFile(((IContainer) mappedResource).members());
-			} else {
-				return mappedResource;
-			}
-		}
-		return null;
-	}
-
-	private static IResource getFile(IResource[] members) throws CoreException {
-		List<IResource> toCheck = new ArrayList<IResource>();
-		for (IResource member : members) {
-			if (member instanceof IContainer) {
-				IResource[] children = ((IContainer) member).members();
-				for (IResource child : children) {
-					if (child instanceof IContainer) {
-						toCheck.add(child);
-					} else {
-						return child;
-					}
-				}
-			} else {
-				return member;
-			}
-		}
-		return getFile(toCheck.toArray(new IResource[0]));
+		return project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 	}
 
 	private static String getNewConfigurationName(String fileName, String targetHost) {
