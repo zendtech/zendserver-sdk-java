@@ -93,6 +93,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		case STAGE_ERROR:
 		case UNSTAGE_ERROR:
 		case UPLOAD_ERROR:
+		case UNKNOWN:
 			return true;
 		default:
 			return false;
