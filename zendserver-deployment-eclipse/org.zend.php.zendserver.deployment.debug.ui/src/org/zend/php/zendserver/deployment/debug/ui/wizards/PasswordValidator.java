@@ -24,7 +24,7 @@ public class PasswordValidator implements IParameterValidator {
 		}
 		Map<String, String> params = block.getHelper().getUserParams();
 		String identical = params.get(identicalId);
-		if (value != null && value.equals(identical)) {
+		if (identical == null || (value != null && value.equals(identical))) {
 			return Status.OK_STATUS;
 		} else {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, MessageFormat.format(

@@ -10,11 +10,14 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 public class NumberValidator implements IParameterValidator {
 
 	public IStatus validate(String id, String value) {
-		try {
-			Integer.valueOf(value);
-		} catch (NumberFormatException e) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, MessageFormat
-					.format(Messages.NumberValidator_NotANumber, id));
+		if (!value.isEmpty()) {
+			try {
+				Integer.valueOf(value);
+			} catch (NumberFormatException e) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						MessageFormat.format(
+								Messages.NumberValidator_NotANumber, id));
+			}
 		}
 		return Status.OK_STATUS;
 	}
