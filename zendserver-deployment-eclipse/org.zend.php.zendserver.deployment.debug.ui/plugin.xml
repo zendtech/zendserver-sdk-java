@@ -137,6 +137,11 @@
             id="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
             name="Open Deployment Wizard">
       </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenTunnelCommand"
+            id="org.zend.php.zendserver.deployment.debug.openSshTunnel"
+            name="Open SSH Tunnel">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">

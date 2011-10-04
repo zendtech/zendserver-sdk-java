@@ -18,10 +18,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help,
  org.eclipse.debug.core,
  org.eclipse.nebula.widgets.gallery,
- org.apache.xerces
+ org.apache.xerces,
+ org.mortbay.jetty.server,
+ org.mortbay.jetty.util
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.core.expressions
+Import-Package: javax.servlet,
+ javax.servlet.http,
+ org.eclipse.core.expressions
 Export-Package: org.zend.php.zendserver.deployment.ui,
  org.zend.php.zendserver.deployment.ui.actions,
  org.zend.php.zendserver.deployment.ui.commands,

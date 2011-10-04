@@ -167,5 +167,9 @@
             class="org.zend.php.zendserver.deployment.ui.DeploymentUIPreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup></startup>
+   </extension>
 
 </plugin>
