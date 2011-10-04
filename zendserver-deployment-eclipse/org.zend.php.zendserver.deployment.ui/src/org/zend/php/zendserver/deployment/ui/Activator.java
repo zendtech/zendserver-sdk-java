@@ -11,6 +11,7 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.ui.chrome.SocketCommandListener;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -83,6 +84,8 @@ public class Activator extends AbstractUIPlugin {
 
 	private FormColors formColors;
 
+	private SocketCommandListener socketCommand;
+
 	/**
 	 * The constructor
 	 */
@@ -101,6 +104,9 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		
 		DeploymentCore.getDefault().getSdk().isInstalled();
+		
+		socketCommand = new SocketCommandListener();
+		socketCommand.start();
 	}
 
 	/*
@@ -113,6 +119,8 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		
+		socketCommand.stop();
 	}
 
 	/**
