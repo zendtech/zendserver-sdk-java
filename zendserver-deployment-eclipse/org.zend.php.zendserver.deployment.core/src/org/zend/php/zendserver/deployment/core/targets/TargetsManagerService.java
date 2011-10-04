@@ -2,9 +2,11 @@ package org.zend.php.zendserver.deployment.core.targets;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -45,6 +47,20 @@ public class TargetsManagerService {
 		} catch (BackingStoreException e) {
 			DeploymentCore.log(e);
 		}
+	}
+
+	public IZendTarget getContainerByName(String containerName) {
+		Assert.isNotNull(containerName);
+		
+		IZendTarget[] targets = getTargetManager().getTargets();
+		for (IZendTarget target : targets) {
+			String container = target.getProperty(ZendDevCloud.TARGET_CONTAINER);
+			if (containerName.equals(container)) {
+				return target;
+			}
+		}
+		
+		return null;
 	}
 	
 }
