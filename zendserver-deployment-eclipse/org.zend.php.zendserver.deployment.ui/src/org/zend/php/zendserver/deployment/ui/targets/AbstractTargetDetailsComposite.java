@@ -33,10 +33,10 @@ public abstract class AbstractTargetDetailsComposite {
 			this);
 
 	private String[] data;
-	
+
 	private String errorMessage;
 
-	protected IZendTarget result;
+	protected IZendTarget[] result;
 
 	/**
 	 * Creates composite contents and returns control.
@@ -74,7 +74,7 @@ public abstract class AbstractTargetDetailsComposite {
 	 * @throws SdkException
 	 * @throws IOException
 	 */
-	abstract protected IZendTarget createTarget(String[] data)
+	abstract protected IZendTarget[] createTarget(String[] data)
 			throws SdkException, IOException, CoreException;
 
 	public void addPropertyChangeListener(String propertyName,
@@ -120,24 +120,24 @@ public abstract class AbstractTargetDetailsComposite {
 						// ignore
 					}
 				}
-				
+
 				if (toCancel.isAlive() && monitor.isCanceled()) {
 					toCancel.interrupt();
 				}
 			}
-			
+
 		});
 		cancelThread.start();
 		IStatus result = doValidate(data);
 		monitor.worked(1);
-		
+
 		return result;
 	}
-	
+
 	private IStatus doValidate(String[] data) {
-		ZendTarget target;
+		IZendTarget[] targets;
 		try {
-			target = (ZendTarget) createTarget(data);
+			targets = createTarget(data);
 		} catch (SdkException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
@@ -154,37 +154,42 @@ public abstract class AbstractTargetDetailsComposite {
 					e.getMessage(), e);
 		}
 
-		if (target == null) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Target was not created.");
-		}
-		
-		String message = target.validateTarget();
-		if (message != null) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
-		}
+		for (IZendTarget target : targets) {
 
-		if (! target.isTemporary()) {
-			try {
-				target.connect();
-			} catch (WebApiException ex) {
+			if (target == null) {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						ex.getMessage(), ex);
-			} catch (RuntimeException e) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						e.getMessage(), e);
+						"Target was not created.");
+			}
+
+			String message = ((ZendTarget)target).validateTarget();
+			if (message != null) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
+			}
+
+			if (!target.isTemporary()) {
+				try {
+					target.connect();
+				} catch (WebApiException ex) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							ex.getMessage(), ex);
+				} catch (RuntimeException e) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
+				}
 			}
 		}
-		
-		result = target;
+		result = targets;
 		return Status.OK_STATUS;
 	}
 
-	public IZendTarget getTarget() {
+	public IZendTarget[] getTarget() {
 		return result;
 	}
 
 	/**
-	 * Early checking if create() returns any GUI, or not. Some target types don't need GUI - e.g. local target detection.
+	 * Early checking if create() returns any GUI, or not. Some target types
+	 * don't need GUI - e.g. local target detection.
+	 * 
 	 * @return
 	 */
 	abstract public boolean hasPage();

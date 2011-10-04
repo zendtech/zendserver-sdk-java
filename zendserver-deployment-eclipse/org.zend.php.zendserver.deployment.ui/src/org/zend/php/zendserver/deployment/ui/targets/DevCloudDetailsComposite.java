@@ -219,7 +219,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		return new String[] { usernameText.getText(), passwordText.getText(), privateKeyText.getText() };
 	}
 
-	public IZendTarget createTarget(String[] data) throws CoreException,
+	public IZendTarget[] createTarget(String[] data) throws CoreException,
 			IOException {
 		ZendDevCloud detect = new ZendDevCloud();
 		String username = data[0];
@@ -261,18 +261,20 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		ZendTarget[] zts= new ZendTarget[target.length];
 
 		String uniqueId = tm.createUniqueId(null);
+		for (int i = 0; i < target.length; i++) {
+			zts[i] = new ZendTarget(uniqueId + "_" + i, target[i].getHost(), //$NON-NLS-1$
+					target[i].getDefaultServerURL(), target[i].getKey(), target[i].getSecretKey());
+			
+			zts[i].addProperty(ZendDevCloud.TARGET_USERNAME, username);
+			zts[i].addProperty(ZendDevCloud.TARGET_CONTAINER, target[i].getProperty(ZendDevCloud.TARGET_CONTAINER));
+			zts[i].addProperty(ZendDevCloud.TARGET_TOKEN, target[i].getProperty(ZendDevCloud.TARGET_TOKEN));
+			zts[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);
+		}
 		
-		final ZendTarget t = new ZendTarget(uniqueId, target[0].getHost(),
-				target[0].getDefaultServerURL(), target[0].getKey(), target[0].getSecretKey());
-		
-		t.addProperty(ZendDevCloud.TARGET_USERNAME, username);
-		t.addProperty(ZendDevCloud.TARGET_CONTAINER, target[0].getProperty(ZendDevCloud.TARGET_CONTAINER));
-		t.addProperty(ZendDevCloud.TARGET_TOKEN, target[0].getProperty(ZendDevCloud.TARGET_TOKEN));
-		t.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);
-		
-		return t;
+		return zts;
 	}
 
 	/*

@@ -20,7 +20,7 @@ public class TargetDetailsPage extends WizardPage {
 
 	private TargetDetailsComposite composite;
 	
-	private IZendTarget target;
+	private IZendTarget[] targets;
 
 	private IZendTarget defaultTargetSettings;
 	
@@ -41,7 +41,7 @@ public class TargetDetailsPage extends WizardPage {
 			
 			public void propertyChange(PropertyChangeEvent evt) {
 				AbstractTargetDetailsComposite src = (AbstractTargetDetailsComposite) evt.getSource();
-				target = src.getTarget();
+				targets = src.getTarget();
 				final String errorMessage = (String) evt.getNewValue();
 				setPageComplete(errorMessage == null);
 				
@@ -58,7 +58,7 @@ public class TargetDetailsPage extends WizardPage {
 		PropertyChangeListener modifyListener = new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent evt) {
-				target = null;
+				targets = null;
 			}
 			
 		};
@@ -74,18 +74,18 @@ public class TargetDetailsPage extends WizardPage {
 	public void setType(String name) {
 		composite.setType(name);
 		setErrorMessage(null);
-		target = null;
+		targets = null;
 	//	setPageComplete(!composite.hasPage(name));
 	}
 	
-	public IZendTarget getTarget() {
-		return target;
+	public IZendTarget[] getTarget() {
+		return targets;
 	}
 	
 	public void validate() throws InvocationTargetException, InterruptedException {
-		target = null;
+		targets = null;
 		composite.validate();
-		setPageComplete(target != null);
+		setPageComplete(targets != null);
 	}
 
 	public void setDefaultTargetSettings(IZendTarget target) {

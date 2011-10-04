@@ -41,12 +41,14 @@ public class AddTargetAction extends Action {
 			return; // canceled by user
 		}
 		
-		IZendTarget newTarget = wizard.getTarget();
+		IZendTarget[] newTarget = wizard.getTarget();
 		
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		try {
-			tm.add(newTarget);
-			addedTarget = newTarget;
+			for (IZendTarget t : newTarget) {
+				tm.add(t);
+				addedTarget = t;
+			}
 		} catch (TargetException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.SHOW);
 		}

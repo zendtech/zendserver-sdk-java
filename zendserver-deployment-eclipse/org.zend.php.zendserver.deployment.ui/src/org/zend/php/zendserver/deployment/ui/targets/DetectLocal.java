@@ -25,12 +25,12 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	}
 
 	@Override
-	protected IZendTarget createTarget(String[] data) throws SdkException,
+	protected IZendTarget[] createTarget(String[] data) throws SdkException,
 			IOException {
-		
+
 		DetectTargetAction detectTargetAction = new DetectTargetAction();
 		detectTargetAction.run();
-		return detectTargetAction.getDetectedTarget();
+		return new IZendTarget[] { detectTargetAction.getDetectedTarget() };
 	}
 
 	@Override

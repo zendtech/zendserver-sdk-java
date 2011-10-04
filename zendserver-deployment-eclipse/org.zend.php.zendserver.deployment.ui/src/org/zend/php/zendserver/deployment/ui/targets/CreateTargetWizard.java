@@ -90,8 +90,8 @@ public class CreateTargetWizard extends Wizard {
 	
 	@Override
 	public boolean performFinish() {
-		IZendTarget target = detailsPage.getTarget();
-		if(target != null) {
+		IZendTarget[] targets = detailsPage.getTarget();
+		if(targets != null && targets.length != 0) {
 			return true;
 		}
 		
@@ -119,7 +119,7 @@ public class CreateTargetWizard extends Wizard {
 		return dialog;
 	}
 
-	public IZendTarget getTarget() {
+	public IZendTarget[] getTarget() {
 		return detailsPage.getTarget();
 	}
 	

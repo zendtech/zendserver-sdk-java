@@ -36,12 +36,13 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		composite.setLayout(new GridLayout(2, false));
 
 		ModifyListener modifyListener = new ModifyListener() {
-			
+
 			public void modifyText(ModifyEvent e) {
-				changeSupport.firePropertyChange(PROP_MODIFY, null, ((Text)e.getSource()).getText());
+				changeSupport.firePropertyChange(PROP_MODIFY, null,
+						((Text) e.getSource()).getText());
 			}
 		};
-		
+
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_Host);
 		hostText = new Text(composite, SWT.BORDER);
@@ -63,7 +64,7 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 				false));
 		secretText.setToolTipText(Messages.TargetDialog_SecretTooltip);
 		secretText.addModifyListener(modifyListener);
-		
+
 		return composite;
 	}
 
@@ -80,20 +81,22 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public String[] getData() {
-		return new String[] { hostText.getText(), keyText.getText(), secretText.getText(), };
+		return new String[] { hostText.getText(), keyText.getText(),
+				secretText.getText(), };
 	}
 
-	public IZendTarget createTarget(String[] data) throws CoreException {
+	public IZendTarget[] createTarget(String[] data) throws CoreException {
 		URL host = null;
 		try {
 			host = new URL(data[0]);
 		} catch (MalformedURLException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
+			throw new CoreException(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, e.getMessage()));
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		String id = tm.createUniqueId(null);
-		return new ZendTarget(id, host, data[1], data[2]);
+		return new IZendTarget[] { new ZendTarget(id, host, data[1], data[2]) };
 	}
 
 	@Override

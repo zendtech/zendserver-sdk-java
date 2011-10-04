@@ -191,7 +191,7 @@ public class TargetDetailsComposite {
 		targetComposites[currentComposite].setDefaultTargetSettings(defaultTarget);
 	}
 
-	public IZendTarget getTarget() {
+	public IZendTarget[] getTarget() {
 		return targetComposites[currentComposite].getTarget();
 	}
 

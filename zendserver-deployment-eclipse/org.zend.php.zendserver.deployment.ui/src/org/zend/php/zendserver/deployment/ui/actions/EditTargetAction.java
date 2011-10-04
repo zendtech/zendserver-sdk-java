@@ -81,11 +81,24 @@ public class EditTargetAction extends Action implements
 		}
 
 		
-		IZendTarget newTarget = ctw.getTarget();
-		if (newTarget == null) {
+		IZendTarget[] newTargets = ctw.getTarget();
+		if (newTargets == null) {
 			return; // validation error while editing target
 		}
 
+		// what happens for multiple case?
+		IZendTarget newTarget = null;  
+		String origContainerName = toEdit.getProperty(ZendDevCloud.TARGET_CONTAINER);
+		for (IZendTarget t : newTargets) {
+			String containerName = t.getProperty(ZendDevCloud.TARGET_CONTAINER);
+			if (origContainerName.equals(containerName)) {
+				newTarget = t;
+			}
+		}
+		if (newTarget == null) {
+			return; // validation error while editing target
+		}
+		
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		
 		String defaultServer = newTarget.getDefaultServerURL() != null ? newTarget.getDefaultServerURL().toString() : null;
