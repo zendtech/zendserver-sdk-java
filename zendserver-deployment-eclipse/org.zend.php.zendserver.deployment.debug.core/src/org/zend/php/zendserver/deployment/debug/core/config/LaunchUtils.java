@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -267,6 +268,33 @@ public class LaunchUtils {
 		return true;
 	}
 
+	public static boolean updateConfigForRunAs(ILaunchConfiguration config)
+			throws CoreException {
+		String filename = config.getAttribute(Server.FILE_NAME, (String) null);
+		if (filename == null
+				|| filename
+						.endsWith(DescriptorContainerManager.DESCRIPTOR_PATH)) {
+			return false;
+		}
+		ILaunchConfiguration[] configs = DebugPlugin.getDefault()
+				.getLaunchManager()
+				.getLaunchConfigurations(getConfigurationType());
+
+		int numConfigs = configs == null ? 0 : configs.length;
+		for (int i = 0; i < numConfigs; i++) {
+			String projectName = configs[i].getAttribute(
+					DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
+			IProject project = getProjectFromFilename(config);
+			if (project != null && project.getName().equals(projectName)) {
+				ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
+				copyDeploymentConfguration(project, copy, configs[i]);
+				copy.doSave();
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private static IResource getFile(IProject project) throws CoreException {
 		return project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 	}
@@ -359,6 +387,79 @@ public class LaunchUtils {
 			}
 		}
 		return null;
+	}
+
+	private static void copyDeploymentConfguration(IProject project,
+			ILaunchConfigurationWorkingCopy wc, ILaunchConfiguration oldConfig)
+			throws CoreException {
+		String pathToFile = null;
+		IPath filePath = new Path(wc.getAttribute(Server.FILE_NAME,
+				(String) null));
+		IDescriptorContainer descriptorContainer = DescriptorContainerManager
+				.getService().openDescriptorContainer(project);
+		String documentRoot = descriptorContainer.getDescriptorModel()
+				.getDocumentRoot();
+		if (documentRoot != null && !documentRoot.isEmpty()) {
+			int index = documentRoot.indexOf("/"); //$NON-NLS-1$
+			if (index != -1) {
+				documentRoot = documentRoot.substring(index + 1);
+			}
+			IResource docResource = project.findMember(documentRoot);
+			if (docResource != null) {
+				pathToFile = filePath.makeRelativeTo(docResource.getFullPath())
+						.toString();
+			}
+		} else {
+			pathToFile = filePath.makeRelativeTo(project.getFullPath())
+					.toString();
+		}
+		wc.setAttribute(Server.FILE_NAME, filePath.toString());
+		wc.setMappedResources(new IResource[] { project.getWorkspace()
+				.getRoot().findMember(filePath) });
+
+		// always use non-generated url
+		wc.setAttribute(AUTO_GENERATED_URL, false);
+		wc.setAttribute(
+				Server.BASE_URL,
+				oldConfig.getAttribute(DeploymentAttributes.BASE_URL.getName(),
+						(String) null) + "/" + pathToFile); //$NON-NLS-1$
+
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), oldConfig
+				.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
+		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), oldConfig
+				.getAttribute(DeploymentAttributes.BASE_URL.getName(),
+						(String) null));
+		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.APPLICATION_NAME.getName(),
+						(String) null));
+		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.DEFAULT_SERVER.getName(), true));
+		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.IGNORE_FAILURES.getName(), false));
+		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
+				project.getName());
+		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), oldConfig
+				.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
+						(String) null));
+		wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), oldConfig
+				.getAttribute(DeploymentAttributes.TARGET_HOST.getName(),
+						(String) null));
+		wc.setAttribute(
+				DeploymentAttributes.PARAMETERS.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.PARAMETERS.getName(),
+						Collections.emptyMap()));
+		wc.setAttribute(
+				DeploymentAttributes.OPERATION_TYPE.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.OPERATION_TYPE.getName(), 0));
+		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.INSTALLED_LOCATION.getName(),
+						(String) null));
 	}
 
 }

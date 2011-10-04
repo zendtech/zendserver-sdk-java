@@ -66,6 +66,15 @@ public class DeploymentHandler {
 	public int executeDeployment(String executionMode) {
 		mode = executionMode;
 		job = null;
+		try {
+			boolean isRunAs = LaunchUtils.updateConfigForRunAs(config);
+			if (isRunAs) {
+				return OK;
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+			return CANCEL;
+		}
 		listener = new DeployJobChangeListener(config);
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
