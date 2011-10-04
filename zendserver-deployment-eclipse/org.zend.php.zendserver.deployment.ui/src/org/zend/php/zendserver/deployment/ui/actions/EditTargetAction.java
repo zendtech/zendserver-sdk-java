@@ -89,12 +89,17 @@ public class EditTargetAction extends Action implements
 		// what happens for multiple case?
 		IZendTarget newTarget = null;  
 		String origContainerName = toEdit.getProperty(ZendDevCloud.TARGET_CONTAINER);
-		for (IZendTarget t : newTargets) {
-			String containerName = t.getProperty(ZendDevCloud.TARGET_CONTAINER);
-			if (origContainerName.equals(containerName)) {
-				newTarget = t;
-			}
+		if (origContainerName != null) {
+			for (IZendTarget t : newTargets) {
+				String containerName = t.getProperty(ZendDevCloud.TARGET_CONTAINER);
+				if (origContainerName.equals(containerName)) {
+					newTarget = t;
+				}
+			}	
+		} else {
+			newTarget = newTargets.length > 0 ? newTargets[0] : null;
 		}
+		
 		if (newTarget == null) {
 			return; // validation error while editing target
 		}
