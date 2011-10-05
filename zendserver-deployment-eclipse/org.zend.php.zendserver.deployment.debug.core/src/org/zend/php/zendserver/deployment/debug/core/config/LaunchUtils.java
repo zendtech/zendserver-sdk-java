@@ -345,15 +345,25 @@ public class LaunchUtils {
 		for (Server server : servers) {
 			try {
 				URL serverBaseURL = new URL(server.getBaseURL());
-				if (serverBaseURL.getHost().equals(baseURL.getHost())
-						&& serverBaseURL.getPort() == baseURL.getPort()) {
-					return server;
+				if (serverBaseURL.getHost().equals(baseURL.getHost())) {
+					if ((serverBaseURL.getPort() == baseURL.getPort())
+							|| (isDefaultPort(serverBaseURL) && isDefaultPort(baseURL))) {
+						return server;
+					}
 				}
 			} catch (MalformedURLException e) {
 				// ignore and continue searching
 			}
 		}
 		return null;
+	}
+
+	private static boolean isDefaultPort(URL url) {
+		int port = url.getPort();
+		if (port == -1 || port == 80) {
+			return true;
+		}
+		return false;
 	}
 
 	private static IDeploymentHelper createDefaultHelper(IProject project, IZendTarget target) {
