@@ -95,6 +95,9 @@ public class SocketCommandListener {
 		HttpResponse response = new HttpResponse(out);
 		try {
 			HttpRequest request = readRequest(in);
+			if (request == null) {
+				return;
+			}
 			handler.handle(request, response);
 		} catch (Throwable e) {
 			response.setStatus(HttpResponse.ERROR);
@@ -107,7 +110,7 @@ public class SocketCommandListener {
 
 		String request = in.readLine();
 		if (request == null) {
-			throw new ParseError();
+			return null;
 		}
 		int idx = request.indexOf(' ');
 		if (idx == -1) {
