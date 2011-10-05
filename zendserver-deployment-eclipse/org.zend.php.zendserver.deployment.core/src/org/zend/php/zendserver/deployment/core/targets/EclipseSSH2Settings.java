@@ -136,6 +136,11 @@ public class EclipseSSH2Settings {
 		FileOutputStream fos = new FileOutputStream(destFile);
 		FileInputStream fis = new FileInputStream(srcFile);
 		
+		File dir = destFile.getParentFile();
+		if (! dir.exists()) {
+			dir.mkdirs();
+		}
+		
 		byte[] buf = new byte[4096];
 		int len;
 		try {
