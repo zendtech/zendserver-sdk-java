@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.chrome;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -13,7 +14,6 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.mortbay.util.ajax.JSON;
 
 /**
  * Executes commands and sends responses.
@@ -59,8 +59,28 @@ public class CommandHandler {
 		if (errorMessage != null) {
 			result.put(MESSAGE, errorMessage);
 		}
-		String json = JSON.toString(result);
+		
+		String json = toJson(result);
 		response.send(json);
+	}
+
+	private String toJson(Map<String, String> result) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{"); //$NON-NLS-1$
+		boolean isFirst = true;
+		for (Entry<String, String> entry : result.entrySet()) {
+			if (isFirst) {
+				isFirst = false;				
+			} else {
+				sb.append(", "); //$NON-NLS-1$
+			}
+			sb.append(entry.getKey());
+			sb.append(": \""); //$NON-NLS-1$
+			sb.append(entry.getValue());
+			sb.append("\""); //$NON-NLS-1$
+		}
+		sb.append("}"); //$NON-NLS-1$
+		return sb.toString();
 	}
 
 	private void executeCommand(String path, Map params) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
