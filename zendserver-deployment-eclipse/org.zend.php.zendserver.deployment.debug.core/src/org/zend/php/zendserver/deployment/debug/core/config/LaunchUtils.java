@@ -285,7 +285,10 @@ public class LaunchUtils {
 			String projectName = configs[i].getAttribute(
 					DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 			IProject project = getProjectFromFilename(config);
-			if (project != null && project.getName().equals(projectName)) {
+			if (project != null
+					&& project.getName().equals(projectName)
+					&& !filename.equals(configs[i].getAttribute(
+							Server.FILE_NAME, (String) null))) {
 				ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 				copyDeploymentConfguration(project, copy, configs[i]);
 				copy.doSave();
