@@ -65,11 +65,11 @@ public class SocketCommandListener {
 			PrintWriter out = null;
 			try {
 				clientSocket = serverSocket.accept();
-				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				out = new PrintWriter(clientSocket.getOutputStream(), true);
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				handleClientSocket(in, out);
 				
-			} catch (IOException ex) {
+			} catch (Throwable ex) { // eat all exceptions to protect server from falling
 				Activator.log(ex);
 			} finally {
 				try {
@@ -96,7 +96,7 @@ public class SocketCommandListener {
 		try {
 			HttpRequest request = readRequest(in);
 			handler.handle(request, response);
-		} catch (ParseError e) {
+		} catch (Throwable e) {
 			response.setStatus(HttpResponse.ERROR);
 			response.send(null);
 		}
@@ -105,40 +105,36 @@ public class SocketCommandListener {
 	private HttpRequest readRequest(BufferedReader in) throws IOException, ParseError {
 		HttpRequest httpRequest = new HttpRequest();
 
+		String request = in.readLine();
+		if (request == null) {
+			throw new ParseError();
+		}
+		int idx = request.indexOf(' ');
+		if (idx == -1) {
+			throw new ParseError();
+		}
+		String method = request.substring(0, idx);
+		httpRequest.setMethod(method);
+		int idx2 = request.indexOf(' ', idx + 1);
+		if (idx2 == -1) {
+			throw new ParseError();
+		}
+		String requestPath = request.substring(idx + 1, idx2);
 		try {
-			String request = in.readLine();
-			int idx = request.indexOf(' ');
-			if (idx == -1) {
+			httpRequest.setRequest(requestPath);
+		} catch (URISyntaxException e) {
+			throw new ParseError();
+		}
+		
+		String inputLine;
+		while (((inputLine = in.readLine()) != null) && (inputLine.length() > 0)) {
+			int colon = inputLine.indexOf(':');
+			if (colon == -1) {
 				throw new ParseError();
 			}
-			String method = request.substring(0, idx);
-			httpRequest.setMethod(method);
-			int idx2 = request.indexOf(' ', idx + 1);
-			if (idx2 == -1) {
-				throw new ParseError();
-			}
-			String requestPath = request.substring(idx + 1, idx2);
-			try {
-				httpRequest.setRequest(requestPath);
-			} catch (URISyntaxException e) {
-				throw new ParseError();
-			}
-			
-			String inputLine;
-			while (((inputLine = in.readLine()) != null) && (inputLine.length() > 0)) {
-				int colon = inputLine.indexOf(':');
-				if (colon == -1) {
-					throw new ParseError();
-				}
-				String key = inputLine.substring(0, colon);
-				String value = inputLine.substring(colon + 1).trim();
-				httpRequest.getHeaders().put(key, value);
-			}
-
-		} finally {
-			if (in != null) {
-				in.close();
-			}
+			String key = inputLine.substring(0, colon);
+			String value = inputLine.substring(colon + 1).trim();
+			httpRequest.getHeaders().put(key, value);
 		}
 		
 		return httpRequest;

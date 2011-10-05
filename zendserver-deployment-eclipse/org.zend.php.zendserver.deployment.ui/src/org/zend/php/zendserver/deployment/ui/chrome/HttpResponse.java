@@ -12,7 +12,7 @@ public class HttpResponse {
 	public static final int OK = 200;
 	public static int ERROR = 500;
 
-	private static final String RESPONSE_OK = "RESPONSE_OK"; //$NON-NLS-1$
+	private static final String RESPONSE_OK = "OK"; //$NON-NLS-1$
 	private static final String RESPONSE_INTERNAL_ERROR = "Internal Error"; //$NON-NLS-1$
 	
 	private static final String EOL = "\r\n"; //$NON-NLS-1$
@@ -39,11 +39,12 @@ public class HttpResponse {
 	}
 
 	public void send(String body) {
-		out.write("HTTP/1.1 "); //$NON-NLS-1$
-		out.write(Integer.toString(status));
-		out.write(" "); //$NON-NLS-1$
-		out.write(getStatusMessage());
-		out.write(EOL);
+		StringBuilder out = new StringBuilder();
+		out.append("HTTP/1.1 "); //$NON-NLS-1$
+		out.append(Integer.toString(status));
+		out.append(" "); //$NON-NLS-1$
+		out.append(getStatusMessage());
+		out.append(EOL);
 		
 		if (body != null) {
 			int bodyLength = body.length();
@@ -51,18 +52,21 @@ public class HttpResponse {
 		}
 		
 		for (Map.Entry<String, String> header : headers.entrySet()) {
-			out.write(header.getKey());
-			out.write(": "); //$NON-NLS-1$
-			out.write(header.getValue());
-			out.write(EOL);
+			out.append(header.getKey());
+			out.append(": "); //$NON-NLS-1$
+			out.append(header.getValue());
+			out.append(EOL);
 		}
 		
-		out.write(EOL);
+		out.append(EOL);
 		
 		if (body != null) {
-			out.write(body);
-			out.write(EOL);
+			out.append(body);
+			out.append(EOL);
 		}
+		
+		this.out.write(out.toString());
+		this.out.flush();
 	}
 
 	private String getStatusMessage() {
