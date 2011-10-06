@@ -40,7 +40,7 @@ public class CommandHandler {
 		String path = request.getPath();
 		String errorMessage = null;
 		try {
-			executeCommand(path, params);
+			executeCommand(path, params, request);
 		} catch (ExecutionException e) {
 			errorMessage = e.getMessage();
 		} catch (NotDefinedException e) {
@@ -83,7 +83,7 @@ public class CommandHandler {
 		return sb.toString();
 	}
 
-	private void executeCommand(String path, Map params) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
+	private void executeCommand(String path, Map params, HttpRequest request) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		Path cmdPath = new Path(path);
 		if (cmdPath.segmentCount() == 0) {
 			throw new IllegalArgumentException("Request path is missing command name."); //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class CommandHandler {
 				.getWorkbench().getService(ICommandService.class);
 		Command cmd = cmdService.getCommand(commandId);
 		
-		ExecutionEvent event = new ExecutionEvent(cmd, params, null, null);
+		ExecutionEvent event = new ExecutionEvent(cmd, params, null, request);
 		cmd.executeWithChecks(event);
 	}
 

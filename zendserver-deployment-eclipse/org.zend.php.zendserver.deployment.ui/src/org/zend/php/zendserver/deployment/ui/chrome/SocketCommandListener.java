@@ -140,6 +140,14 @@ public class SocketCommandListener {
 			httpRequest.getHeaders().put(key, value);
 		}
 		
+		StringBuilder body = new StringBuilder();
+		char[] buf = new char[4096];
+		int len;
+		while (in.ready() && ((len = in.read(buf)) > 0)) {
+			body.append(buf, 0, len);
+		}
+		httpRequest.setBody(body.toString());
+		
 		return httpRequest;
 
 	}

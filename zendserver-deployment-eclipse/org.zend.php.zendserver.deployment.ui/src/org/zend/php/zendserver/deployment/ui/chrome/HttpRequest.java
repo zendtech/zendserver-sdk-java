@@ -20,6 +20,8 @@ public class HttpRequest {
 	private Map<String, String> headers = new HashMap<String, String>();
 	private Map<String, String> paramsMap = new HashMap<String, String>();
 
+	private String body;
+
 	public String getMethod() {
 		return method;
 	}
@@ -77,6 +79,14 @@ public class HttpRequest {
 
 	public Map getParameterMap() {
 		return paramsMap;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+	
+	public String getBody() {
+		return body;
 	}
 	
 	
