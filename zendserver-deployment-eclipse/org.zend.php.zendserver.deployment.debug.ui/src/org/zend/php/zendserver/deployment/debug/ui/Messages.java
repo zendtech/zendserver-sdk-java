@@ -15,7 +15,6 @@ public class Messages extends NLS {
 
 	public static String deploymentWizard_LaunchTitle;
 	public static String deploymentWizard_DeployTitle;
-	public static String deploymentWizard_Message;
 
 	public static String runContribution_LaunchingPHPApp;
 	public static String debugContribution_LaunchingPHPApp;
