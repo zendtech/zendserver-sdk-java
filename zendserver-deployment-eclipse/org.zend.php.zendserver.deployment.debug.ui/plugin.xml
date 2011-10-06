@@ -37,6 +37,11 @@
                   value="debug">
             </parameter>
          </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
+               icon="icons/obj16/deploy_exc.png"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
