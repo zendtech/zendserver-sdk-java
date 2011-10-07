@@ -68,18 +68,42 @@
             id="org.zend.php.zendserver.deployment.ui.moveParticipant"
             name="Descriptor Move">
          <enablement>
-            <instanceof
-                  value="org.eclipse.core.resources.IResource">
-            </instanceof></enablement>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+               <with
+                     variable="element">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="org.eclipse.core.resources.IResource">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </or></enablement>
       </moveParticipant>
       <moveParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.MappingMoveParticipant"
             id="org.zend.php.zendserver.deployment.ui.moveParticipant"
             name="Mapping Move">
          <enablement>
-            <instanceof
-                  value="org.eclipse.core.resources.IResource">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+               <with
+                     variable="element">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="org.eclipse.core.resources.IResource">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </or>
          </enablement>
       </moveParticipant>
    </extension>

@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -19,12 +21,22 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
 public class DescriptorMoveParticipant extends MoveParticipant {
 	
-	private IResource affectedResource;
+	private IResource[] affectedResources;
 
 	@Override
 	protected boolean initialize(Object element) {
+		if (element instanceof List) {
+			List list = (List) element;
+			List<IResource> result = new ArrayList<IResource>(list.size());
+			for (Object item : list) {
+				if (item instanceof IResource) {
+					result.add((IResource) item);
+				}
+			}
+			affectedResources = result.toArray(new IResource[result.size()]);
+		}
 		if (element instanceof IResource) {
-			affectedResource = (IResource) element;
+			affectedResources = new IResource[] { (IResource) element };
 		}
 		return true;
 	}
@@ -51,24 +63,26 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 		
 		IContainer newParent = (IContainer) newPath;
 		
-		// move from one project to another - make no changes, leave it for validator to detect error
-		if (! newParent.getProject().equals(affectedResource.getProject())) {
-			return null;
-		}
-		
-		IPath projectRelativePath = affectedResource.getProjectRelativePath();
-		String oldFullPath = projectRelativePath.toString();
-		String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
-		
-		IProject project = affectedResource.getProject();
-		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
+		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(newParent.getProject());
 		if (! container.getFile().exists()) {
 			return null;
 		}
-		
-		DeploymentRefactoring r = new DeploymentRefactoring("move");
 		IDeploymentDescriptor descriptor = container.getDescriptorModel();
-		boolean hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
+		DeploymentRefactoring r = new DeploymentRefactoring("move"); //$NON-NLS-1$
+		
+		boolean hasChanged = false;
+		for (IResource affectedResource : affectedResources) {
+			// move from one project to another - make no changes, leave it for validator to detect error
+			if (! newParent.getProject().equals(affectedResource.getProject())) {
+				return null;
+			}
+			
+			IPath projectRelativePath = affectedResource.getProjectRelativePath();
+			String oldFullPath = projectRelativePath.toString();
+			String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
+			
+			hasChanged |= r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
+		}
 		
 		if (! hasChanged) {
 			return null;

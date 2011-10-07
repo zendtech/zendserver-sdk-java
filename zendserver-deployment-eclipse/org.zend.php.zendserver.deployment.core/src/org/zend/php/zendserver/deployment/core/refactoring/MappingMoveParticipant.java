@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.core.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,12 +22,22 @@ import org.zend.sdklib.mapping.IMappingModel;
 
 public class MappingMoveParticipant extends MoveParticipant {
 	
-	private IResource affectedResource;
+	private IResource[] affectedResources;
 
 	@Override
 	protected boolean initialize(Object element) {
+		if (element instanceof List) {
+			List list = (List) element;
+			List<IResource> result = new ArrayList<IResource>(list.size());
+			for (Object item : list) {
+				if (item instanceof IResource) {
+					result.add((IResource) item);
+				}
+			}
+			affectedResources = result.toArray(new IResource[result.size()]);
+		}
 		if (element instanceof IResource) {
-			affectedResource = (IResource) element;
+			affectedResources = new IResource[] { (IResource) element };
 		}
 		return true;
 	}
@@ -50,28 +63,31 @@ public class MappingMoveParticipant extends MoveParticipant {
 		}
 		
 		IContainer newParent = (IContainer) newPath;
-		IPath projectRelativePath = affectedResource.getProjectRelativePath();
-		String oldFullPath = projectRelativePath.toString();
-		String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
-		
-		IProject project = affectedResource.getProject();
-		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
+
+		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(newParent.getProject());
+		if (! container.getFile().exists()) {
+			return null;
+		}
 		container.initializeMappingModel(null);
 		IMappingModel mapping = container.getMappingModel();
 		if (! mapping.getMappingFile().exists()) {
 			return null;
 		}
+		DeploymentRefactoring r = new DeploymentRefactoring("move"); //$NON-NLS-1$
 		
-		DeploymentRefactoring r = new DeploymentRefactoring("move");
-		
-		boolean hasChanged;
-		if (newParent.getProject().equals(affectedResource.getProject())) {
-			hasChanged = r.updatePathInMapping(oldFullPath, newFullPath, mapping);
-		} else {
-			// move from one project to another - make no changes, leave it for validator to detect error
-			hasChanged = r.removePathFromMapping(oldFullPath, mapping);
+		boolean hasChanged = false;
+		for (IResource affectedResource : affectedResources) {
+			IPath projectRelativePath = affectedResource.getProjectRelativePath();
+			String oldFullPath = projectRelativePath.toString();
+			String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
+			
+			if (newParent.getProject().equals(affectedResource.getProject())) {
+				hasChanged |= r.updatePathInMapping(oldFullPath, newFullPath, mapping);
+			} else {
+				// move from one project to another - make no changes, leave it for validator to detect error
+				hasChanged |= r.removePathFromMapping(oldFullPath, mapping);
+			}
 		}
-		
 		
 		if (! hasChanged) {
 			return null;
