@@ -183,8 +183,10 @@ public class ConfigurationBlock extends AbstractBlock {
 		noActionButton.setSelection(false);
 		updateCombo.setEnabled(false);
 		updateCombo.clearSelection();
-		autoDeployCombo.setEnabled(false);
-		autoDeployCombo.clearSelection();
+		if (autoDeployCombo != null) {
+			autoDeployCombo.setEnabled(false);
+			autoDeployCombo.clearSelection();
+		}
 	}
 
 	public void initDefaultOperation(IDeploymentHelper helper) {
