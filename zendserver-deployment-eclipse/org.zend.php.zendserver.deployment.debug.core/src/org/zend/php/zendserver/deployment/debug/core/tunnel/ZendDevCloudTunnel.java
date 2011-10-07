@@ -21,7 +21,7 @@ import com.jcraft.jsch.UserInfo;
 /**
  * Opens tunnel to Zend DevCloud, <br/>
  * see more details at {@link https
- * ://projectx.zend.com/help/putty-ssh-debug-tunnel}
+ * ://my.phpcloud.com/help/putty-ssh-debug-tunnel}
  * 
  * @author Roy, 2011
  */
