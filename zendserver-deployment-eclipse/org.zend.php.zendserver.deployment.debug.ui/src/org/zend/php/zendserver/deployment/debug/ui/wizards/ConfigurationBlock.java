@@ -177,7 +177,9 @@ public class ConfigurationBlock extends AbstractBlock {
 		ignoreFailures.setSelection(true);
 		deployButton.setSelection(false);
 		updateButton.setSelection(false);
-		autoDeployButton.setSelection(false);
+		if (autoDeployButton != null) {
+			autoDeployButton.setSelection(false);
+		}
 		noActionButton.setSelection(false);
 		updateCombo.setEnabled(false);
 		updateCombo.clearSelection();
