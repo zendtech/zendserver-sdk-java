@@ -37,7 +37,7 @@ public class ZendDevCloud {
 
 	private static final String UPLOAD_KEY_TOKEN = "ff9e0274b11cd48d1edd7b9706394908";
 	// devpass baseurl
-	public static final String DEVPASS_HOST = "projectx.zend.com";
+	public static final String DEVPASS_HOST = "my.phpcloud.com";
 	public static final String INTERNAL_DEVPASS_URL = "https://" + DEVPASS_HOST;
 
 	// user login
