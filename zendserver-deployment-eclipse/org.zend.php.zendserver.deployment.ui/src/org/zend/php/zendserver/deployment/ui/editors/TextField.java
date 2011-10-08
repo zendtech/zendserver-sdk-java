@@ -6,6 +6,7 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -14,6 +15,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
@@ -31,17 +34,18 @@ public class TextField implements EditorField {
 	protected ControlDecoration controlDecoration;
 	protected boolean linkLabel;
 	protected int style;
+	protected IDescriptorChangeListener modelChangeListener;
 	
 	public TextField(IModelObject target,Feature key, String label) {
 		this(target, key, label, SWT.SINGLE, false);
 	}
 	
 	public TextField(IModelObject target,Feature key, String label, int style, boolean linkLabel) {
-		this.target = target;
 		this.key = key;
 		this.labelTxt = label;
 		this.style = style;
 		this.linkLabel = linkLabel;
+		setInput(target);
 	}
 	
 	public Feature getKey() {
@@ -137,7 +141,9 @@ public class TextField implements EditorField {
 	}
 	
 	public void dispose() {
-		
+		if ((target != null) && (modelChangeListener != null)) {
+			target.removeListener(modelChangeListener);
+		}
 	}
 
 	public void setFocus() {
@@ -145,10 +151,64 @@ public class TextField implements EditorField {
 	}
 
 	public void setInput(IModelObject input) {
+		if (target != null) {
+			target.removeListener(modelChangeListener);
+		}
 		target = input;
 		textValue = null;
+		if (target != null) {
+			if (modelChangeListener == null) {
+				modelChangeListener = createModelChangeListener();
+			}
+			target.addListener(modelChangeListener);
+		}
 	}
 	
+	private IDescriptorChangeListener createModelChangeListener() {
+		return new IDescriptorChangeListener() {
+			
+			public void descriptorChanged(final ChangeEvent event) {
+				if (event.feature != TextField.this.key) {
+					return;
+				}
+				
+				if (event.target != TextField.this.target) {
+					return;
+				}
+				
+				if ((text == null) || (text.isDisposed())) {
+					return;
+				}
+				
+				text.getDisplay().syncExec(new Runnable() {
+
+					public void run() {
+						if (text.isFocusControl()) {
+							return;
+						}
+										
+						String currText = text.getText();
+						String newText = (String) event.newValue;
+						
+						if (currText.equals(newText)) {
+							return;
+						}
+						
+						Point sel = text.getSelection();
+						isRefresh = true;
+						try {
+							text.setText(newText);
+							text.setSelection(Math.min(sel.x, newText.length() - 1), Math.min(sel.y, newText.length() - 1));
+						} finally {
+							isRefresh = false;
+						}
+					}
+					
+				});
+			}
+		};
+	}
+
 	public Text getText() {
 		return text;
 	}
