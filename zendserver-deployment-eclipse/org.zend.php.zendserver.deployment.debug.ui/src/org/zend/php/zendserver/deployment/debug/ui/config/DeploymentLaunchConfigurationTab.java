@@ -94,7 +94,8 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	public void initializeFrom(ILaunchConfiguration configuration) {
+	@Override
+	public void activated(ILaunchConfigurationWorkingCopy configuration) {
 		configBlock.setEnabled(false);
 		parametersButton.setEnabled(false);
 		enableDeployment.setSelection(false);
@@ -128,6 +129,15 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		if (getLaunchConfigurationDialog().getActiveTab() == this) {
+			try {
+				activated(configuration.getWorkingCopy());
+			} catch (CoreException e) {
+			}
+		}
+	}
+
 	private boolean hasDeplymentSupport(IProject project2) {
 		IResource descriptor = project
 				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
@@ -140,16 +150,20 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 		if (project != null) {
 			IDeploymentHelper updatedHelper = configBlock.getHelper();
-			helper.setProjectName(project.getName());
+			updatedHelper.setProjectName(project.getName());
 			if (currentParameters == null) {
 				updatedHelper.setUserParams(helper.getUserParams());
 			} else {
 				updatedHelper.setUserParams(currentParameters);
 			}
+			if (helper.equals(updatedHelper)) {
+				return;
+			}
 			helper = updatedHelper;
 			if (updatedHelper.getBaseURL() != null) {
 				try {
-					LaunchUtils.updateLaunchConfiguration(project, updatedHelper, wc);
+					LaunchUtils.updateLaunchConfiguration(project,
+							updatedHelper, wc);
 				} catch (CoreException e) {
 					Activator.log(e);
 				}

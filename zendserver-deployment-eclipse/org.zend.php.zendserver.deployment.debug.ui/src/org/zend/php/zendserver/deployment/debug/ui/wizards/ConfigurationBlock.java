@@ -272,7 +272,9 @@ public class ConfigurationBlock extends AbstractBlock {
 		helper.setIgnoreFailures(ignoreFailures.getSelection());
 		helper.setDefaultServer(isDefaultServer());
 		helper.setOperationType(getOperationType());
-		helper.setInstalledLocation(getInstalledLocation());
+		if (getInstalledLocation() != null) {
+			helper.setInstalledLocation(getInstalledLocation());
+		}
 		return helper;
 	}
 

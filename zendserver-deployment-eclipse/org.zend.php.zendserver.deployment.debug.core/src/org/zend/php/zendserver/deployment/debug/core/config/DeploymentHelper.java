@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -34,6 +36,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.projectName = EMPTY_STRING;
 		this.userParams = new HashMap<String, String>();
 		this.appName = EMPTY_STRING;
+		this.installedLocation = EMPTY_STRING;
 		this.ignoreFailures = false;
 		this.defaultServer = false;
 		this.virtualHost = EMPTY_STRING;
@@ -168,6 +171,56 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setInstalledLocation(String location) {
 		this.installedLocation = location;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IDeploymentHelper) {
+			IDeploymentHelper h = (IDeploymentHelper) obj;
+			if (getAppId() != h.getAppId()) {
+				return false;
+			}
+			if (!getAppName().equals(h.getAppName())) {
+				return false;
+			}
+			if (!getBaseURL().toString().equals(h.getBaseURL().toString())) {
+				return false;
+			}
+			if (!getInstalledLocation().equals(h.getInstalledLocation())) {
+				return false;
+			}
+			if (getOperationType() != h.getOperationType()) {
+				return false;
+			}
+			if (!getProjectName().equals(h.getProjectName())) {
+				return false;
+			}
+			if (!getTargetHost().equals(h.getTargetHost())) {
+				return false;
+			}
+			if (!getTargetId().equals(h.getTargetId())) {
+				return false;
+			}
+			if (!getVirtualHost().equals(h.getVirtualHost())) {
+				return false;
+			}
+			if (!compareParams(getUserParams(), h.getUserParams())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean compareParams(Map<String, String> current,
+			Map<String, String> other) {
+		Set<Entry<String, String>> entries = current.entrySet();
+		for (Entry<String, String> entry : entries) {
+			String value = other.get(entry.getKey());
+			if (value == null || !entry.getValue().equals(value)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
