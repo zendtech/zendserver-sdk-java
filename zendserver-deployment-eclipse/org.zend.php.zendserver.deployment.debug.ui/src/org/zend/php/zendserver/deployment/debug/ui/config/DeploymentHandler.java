@@ -80,6 +80,9 @@ public class DeploymentHandler {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
 				final IProject project = LaunchUtils.getProjectFromFilename(config);
+				if (!helper.isEnabled()) {
+					return OK;
+				}
 				switch (helper.getOperationType()) {
 				case IDeploymentHelper.DEPLOY:
 					if (helper.getTargetId().isEmpty()) {

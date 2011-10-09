@@ -28,6 +28,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private String virtualHost;
 	private int operationType;
 	private String installedLocation;
+	private boolean enabled;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -41,6 +42,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.defaultServer = false;
 		this.virtualHost = EMPTY_STRING;
 		this.operationType = IDeploymentHelper.DEPLOY;
+		this.enabled = true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,6 +73,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.DEPLOY));
 			helper.setInstalledLocation(config.getAttribute(
 					DeploymentAttributes.INSTALLED_LOCATION.getName(), EMPTY_STRING));
+			helper.setEnabled(config.getAttribute(
+					DeploymentAttributes.ENABLED.getName(), true));
 		} catch (CoreException e) {
 			return null;
 		}
@@ -125,6 +129,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return installedLocation;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	public void setBaseURL(String baseURL) {
 		try {
 			this.baseURL = new URL(baseURL);
@@ -173,6 +181,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.installedLocation = location;
 	}
 
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IDeploymentHelper) {
@@ -183,8 +195,11 @@ public class DeploymentHelper implements IDeploymentHelper {
 			if (!getAppName().equals(h.getAppName())) {
 				return false;
 			}
-			if (!getBaseURL().toString().equals(h.getBaseURL().toString())) {
-				return false;
+			URL baseURL = h.getBaseURL();
+			if (baseURL != null && getBaseURL() != null) {
+				if (!getBaseURL().toString().equals(baseURL.toString())) {
+					return false;
+				}
 			}
 			if (!getInstalledLocation().equals(h.getInstalledLocation())) {
 				return false;
@@ -205,6 +220,15 @@ public class DeploymentHelper implements IDeploymentHelper {
 				return false;
 			}
 			if (!compareParams(getUserParams(), h.getUserParams())) {
+				return false;
+			}
+			if (isIgnoreFailures() != h.isIgnoreFailures()) {
+				return false;
+			}
+			if (isDefaultServer() != h.isDefaultServer()) {
+				return false;
+			}
+			if (isEnabled() != h.isEnabled()) {
 				return false;
 			}
 		}

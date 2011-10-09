@@ -35,6 +35,8 @@ public interface IDeploymentHelper {
 
 	int getOperationType();
 
+	boolean isEnabled();
+
 	void setBaseURL(String baseURL);
 
 	void setTargetId(String targetId);
@@ -56,5 +58,7 @@ public interface IDeploymentHelper {
 	void setOperationType(int type);
 
 	void setInstalledLocation(String location);
+
+	void setEnabled(boolean enabled);
 
 }

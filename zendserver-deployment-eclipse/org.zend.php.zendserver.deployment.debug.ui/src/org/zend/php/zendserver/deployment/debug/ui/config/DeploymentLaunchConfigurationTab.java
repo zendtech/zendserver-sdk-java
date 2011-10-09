@@ -66,6 +66,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			public void widgetSelected(SelectionEvent e) {
 				configBlock.setEnabled(enableDeployment.getSelection());
 				parametersButton.setEnabled(enableDeployment.getSelection());
+				updateLaunchConfigurationDialog();
 			}
 		});
 		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
@@ -99,27 +100,28 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		configBlock.setEnabled(false);
 		parametersButton.setEnabled(false);
 		enableDeployment.setSelection(false);
+		helper = DeploymentHelper.create(configuration);
 		try {
 			project = getProject(configuration);
 			if (project == null) {
 				configBlock.clear();
-				configBlock.initializeFields(new DeploymentHelper());
+				configBlock.initializeFields(helper);
 				project = LaunchUtils.getProjectFromFilename(configuration);
 				if (project != null && hasDeplymentSupport(project)) {
-					enableDeployment.setSelection(true);
-					helper = new DeploymentHelper();
+					enableDeployment.setSelection(helper.isEnabled());
 					helper.setProjectName(project.getName());
 					helper.setDefaultServer(true);
 					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 					helper.setUserParams(getUserParameters());
 					configBlock.initializeFields(helper);
-					configBlock.setEnabled(true);
-					setParametersButtonEnabled();
+					if (helper.isEnabled()) {
+						configBlock.setEnabled(true);
+						setParametersButtonEnabled();
+					}
 				}
 			} else if (hasDeplymentSupport(project)) {
 				enableDeployment.setSelection(true);
 				configBlock.clear();
-				helper = DeploymentHelper.create(configuration);
 				configBlock.initializeFields(helper);
 				configBlock.setEnabled(true);
 				setParametersButtonEnabled();
@@ -138,16 +140,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
-	private boolean hasDeplymentSupport(IProject project2) {
-		IResource descriptor = project
-				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
-		return descriptor != null;
-	}
-
 	public void performApply(ILaunchConfigurationWorkingCopy wc) {
-		if (!enableDeployment.getSelection()) {
-			return;
-		}
 		if (project != null) {
 			IDeploymentHelper updatedHelper = configBlock.getHelper();
 			updatedHelper.setProjectName(project.getName());
@@ -156,11 +149,14 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			} else {
 				updatedHelper.setUserParams(currentParameters);
 			}
+			updatedHelper.setEnabled(enableDeployment.getSelection());
 			if (helper.equals(updatedHelper)) {
 				return;
 			}
 			helper = updatedHelper;
-			if (updatedHelper.getBaseURL() != null) {
+			if (!enableDeployment.getSelection()) {
+				LaunchUtils.removeDeploymentSupport(wc);
+			} else if (updatedHelper.getBaseURL() != null) {
 				try {
 					LaunchUtils.updateLaunchConfiguration(project,
 							updatedHelper, wc);
@@ -244,6 +240,12 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		} else {
 			parametersButton.setEnabled(true);
 		}
+	}
+
+	private boolean hasDeplymentSupport(IProject project) {
+		IResource descriptor = project
+				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		return descriptor != null;
 	}
 
 }

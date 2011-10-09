@@ -163,6 +163,8 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
 				helper.getInstalledLocation());
 		}
+		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
+				helper.isEnabled());
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
@@ -473,6 +475,22 @@ public class LaunchUtils {
 				oldConfig.getAttribute(
 						DeploymentAttributes.INSTALLED_LOCATION.getName(),
 						(String) null));
+	}
+
+	public static void removeDeploymentSupport(
+			ILaunchConfigurationWorkingCopy wc) {
+		wc.removeAttribute(DeploymentAttributes.APP_ID.getName());
+		wc.removeAttribute(DeploymentAttributes.BASE_URL.getName());
+		wc.removeAttribute(DeploymentAttributes.APPLICATION_NAME.getName());
+		wc.removeAttribute(DeploymentAttributes.DEFAULT_SERVER.getName());
+		wc.removeAttribute(DeploymentAttributes.IGNORE_FAILURES.getName());
+		wc.removeAttribute(DeploymentAttributes.PROJECT_NAME.getName());
+		wc.removeAttribute(DeploymentAttributes.TARGET_ID.getName());
+		wc.removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
+		wc.removeAttribute(DeploymentAttributes.PARAMETERS.getName());
+		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
+		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
+		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
 	}
 
 }

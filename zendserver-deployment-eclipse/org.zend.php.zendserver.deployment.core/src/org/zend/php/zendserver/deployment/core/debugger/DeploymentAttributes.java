@@ -1,6 +1,8 @@
 package org.zend.php.zendserver.deployment.core.debugger;
 
 public enum DeploymentAttributes {
+	
+	ENABLED("enabled"), //$NON-NLS-1$
 
 	BASE_URL("baseURL"), //$NON-NLS-1$
 	
