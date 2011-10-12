@@ -113,6 +113,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 					helper.setDefaultServer(true);
 					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 					helper.setUserParams(getUserParameters());
+					helper.setAppName(project.getName());
 					configBlock.initializeFields(helper);
 					if (helper.isEnabled()) {
 						configBlock.setEnabled(true);

@@ -71,6 +71,10 @@ public class DeploymentWizard extends Wizard {
 			toUpdate.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 			toUpdate.setDefaultServer(true);
 		}
+		String appName = toUpdate.getAppName();
+		if (appName == null || appName.isEmpty()) {
+			toUpdate.setAppName(project.getName());
+		}
 		return toUpdate;
 	}
 
@@ -78,6 +82,7 @@ public class DeploymentWizard extends Wizard {
 		IDeploymentHelper helper = new DeploymentHelper();
 		helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 		helper.setDefaultServer(true);
+		helper.setAppName(project.getName());
 		return helper;
 	}
 

@@ -194,7 +194,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		case IDeploymentHelper.DEPLOY:
 			if (!deployButton.getSelection()) {
 				deployButton.setSelection(true);
-				enableDeploySection();
+				enableDeploySection(helper);
 			}
 			break;
 		case IDeploymentHelper.UPDATE:
@@ -439,7 +439,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		deployButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableDeploySection();
+				enableDeploySection(getHelper());
 				listener.statusChanged(validatePage());
 			}
 		});
@@ -559,12 +559,11 @@ public class ConfigurationBlock extends AbstractBlock {
 		return button;
 	}
 
-	private void enableDeploySection() {
+	private void enableDeploySection(IDeploymentHelper helper) {
 		updateCombo.setEnabled(false);
 		if (autoDeployCombo != null) {
 			autoDeployCombo.setEnabled(false);
 		}
-		IDeploymentHelper helper = new DeploymentHelper();
 		helper.setOperationType(getOperationType());
 		initializeFields(helper);
 		setBaseURLEnabled(true);

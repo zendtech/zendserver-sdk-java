@@ -382,6 +382,7 @@ public class LaunchUtils {
 				helper.setIgnoreFailures(false);
 				helper.setOperationType(IDeploymentHelper.DEPLOY);
 				helper.setProjectName(project.getName());
+				helper.setAppName(project.getName());
 				return helper;
 			} catch (MalformedURLException e) {
 				return null;
