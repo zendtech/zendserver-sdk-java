@@ -29,9 +29,6 @@ public class ZendDevCloudTunnelManager {
 
 	public boolean connect(IZendTarget target) throws IOException {
 		ZendDevCloudTunnel tunnel = getTunnel(target);
-		if (tunnel != null) {
-			return true;
-		}
 		String user = getUsername(target);
 		String privateKey = getSSHPrivateKey(target);
 		if (user == null || user.length() == 0 || privateKey == null || privateKey.length() == 0) {
