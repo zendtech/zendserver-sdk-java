@@ -68,7 +68,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
-               icon="icons/obj16/debug_exc.gif"
+               icon="icons/obj16/deploy_exc.png"
                label="Deploy a PHP Application"
                style="push">
          </command>
@@ -122,6 +122,23 @@
                         value="org.eclipse.debug.core.ILaunchConfiguration">
                   </instanceof>
                </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.openSshTunnel"
+               label="Open SSH Tunnel"
+               style="push">
+           <visibleWhen
+                  checkEnabled="true">
+              <iterate
+                    ifEmpty="false"
+                    operator="and">
+                 <not>
+                    <instanceof
+                          value="org.eclipse.debug.core.ILaunchConfiguration">
+                    </instanceof>
+                 </not>
+              </iterate>
             </visibleWhen>
          </command>
       </menuContribution>
