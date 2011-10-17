@@ -176,5 +176,20 @@
          point="org.eclipse.ui.startup">
       <startup></startup>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.php.perspective">
+         <viewShortcut
+               id="org.zend.php.zendserver.deployment.ui.targetsview">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.zend.php.framework.perspective">
+         <viewShortcut
+               id="org.zend.php.zendserver.deployment.ui.targetsview">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
