@@ -6,9 +6,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -16,7 +14,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
@@ -112,27 +109,6 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		if (config != null) {
 			DebugUITools.launch(config, mode);
 		}
-	}
-
-	private void enableDeployment(IProject project) throws CoreException {
-		IProjectDescription desc = project.getDescription();
-		String[] natures = desc.getNatureIds();
-		String[] nnatures = new String[natures.length + 1];
-		System.arraycopy(natures, 0, nnatures, 0, natures.length);
-		nnatures[natures.length] = DeploymentNature.ID;
-		desc.setNatureIds(nnatures);
-		
-		project.setDescription(desc, new NullProgressMonitor());
-	}
-
-	private boolean hasDeploymentNature(IProject project) throws CoreException {
-		String[] natures = project.getDescription().getNatureIds();
-		for (String nature : natures) {
-			if (DeploymentNature.ID.equals(nature)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }
