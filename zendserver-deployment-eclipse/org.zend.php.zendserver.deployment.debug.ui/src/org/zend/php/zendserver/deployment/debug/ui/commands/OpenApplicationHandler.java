@@ -68,8 +68,10 @@ public class OpenApplicationHandler extends AbstractDeploymentHandler {
 		object = ctx.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (object instanceof ISelection) {
 			ISelection selection = (ISelection) object; 
-			IStructuredSelection sselection = (IStructuredSelection) selection;
-			object = sselection.getFirstElement();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection sselection = (IStructuredSelection) selection;
+				object = sselection.getFirstElement();
+			}
 		}
 		
 		if (object instanceof ILaunchConfiguration) {
