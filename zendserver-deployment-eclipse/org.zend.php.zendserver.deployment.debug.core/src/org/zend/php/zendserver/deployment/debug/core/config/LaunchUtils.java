@@ -44,7 +44,8 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class LaunchUtils {
 
-	public static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
+	private static final String SERVER_ENABLED = "serverEnabled"; //$NON-NLS-1$
+	private static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
 	public static ILaunchConfiguration createConfiguration(IProject project,
 			IDeploymentHelper helper) throws CoreException {
@@ -165,6 +166,7 @@ public class LaunchUtils {
 		}
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
 				helper.isEnabled());
+		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
@@ -476,6 +478,7 @@ public class LaunchUtils {
 				oldConfig.getAttribute(
 						DeploymentAttributes.INSTALLED_LOCATION.getName(),
 						(String) null));
+		wc.setAttribute(SERVER_ENABLED, false);
 	}
 
 	public static void removeDeploymentSupport(
@@ -492,6 +495,7 @@ public class LaunchUtils {
 		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
 		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
+		wc.removeAttribute(SERVER_ENABLED);
 	}
 
 }
