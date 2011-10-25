@@ -314,19 +314,20 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				IResource resource = delta.getResource();
 				IFile editorFile = fModel.getFile();
+				int flag = delta.getFlags();
 				
 				if (resource instanceof IProject) {
 					// project was closed
 					IProject project = (IProject) resource;
 					
-					if (editorFile.getProject().equals(project) && (!project.isOpen())) {
+					if (editorFile.getProject().equals(project) && (!project.isOpen()) && ((flag & IResourceDelta.OPEN) != 0)) {
 						close(false);
 					}
 				} else if (resource instanceof IFile) {
-					// descriptor file was removed
+					// descriptor file was removed, and not moved
 					
 					IFile file = (IFile) resource;
-					if (delta.getKind() == IResourceDelta.REMOVED && editorFile.equals(file)) {
+					if (delta.getKind() == IResourceDelta.REMOVED && editorFile.equals(file) && ((flag & IResourceDelta.MOVED_TO) == 0)) {
 						close(false);
 					}
 				}
