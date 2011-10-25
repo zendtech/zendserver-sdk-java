@@ -1,6 +1,7 @@
 package org.zend.sdk.test.sdklib;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -91,6 +92,19 @@ public class TestPackageBuilder extends AbstractTest {
 		unzip(result);
 		File parent = result.getParentFile();
 		assertTrue(new File(parent, "/include_it").exists());
+	}
+
+	@Test
+	public void testCreatePackageNoScriptsdir() throws IOException {
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project8"));
+		File result = builder.createDeploymentPackage(file.getCanonicalPath());
+		assertNotNull(result);
+		assertTrue(result.exists());
+		unzip(result);
+		File parent = result.getParentFile();
+		assertTrue(new File(parent, "/include_it").exists());
+		assertFalse(new File(parent, "scripts/include_it").exists());
 	}
 
 	@Test
