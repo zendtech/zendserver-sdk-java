@@ -192,7 +192,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			}
 			resolveMapping(IMappingModel.APPDIR, appdir);
 		}
-		if (scriptsdir != null) {
+		if (scriptsdir != null && !scriptsdir.isEmpty()) {
 			addNewFolderToZip(new File(container, scriptsdir));
 			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir);
 		}
