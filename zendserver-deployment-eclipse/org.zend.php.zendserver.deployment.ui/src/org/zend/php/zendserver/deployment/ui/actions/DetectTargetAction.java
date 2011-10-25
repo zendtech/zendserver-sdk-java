@@ -47,6 +47,11 @@ public class DetectTargetAction extends Action {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		
 		try {
+			// workaround for VirtualStore which silently writes configuration files to wrong destination
+			if (EnvironmentUtils.isUnderWindows()) {
+				throw new PrivilegesException("Target detection on Windows must always be run by privileged user.");
+			}
+			
 			target = tm.detectLocalhostTarget(null, null);
 		} catch (PrivilegesException e1) {
 			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
