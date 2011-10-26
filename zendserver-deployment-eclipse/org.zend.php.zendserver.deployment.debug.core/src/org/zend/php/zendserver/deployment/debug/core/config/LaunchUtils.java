@@ -293,10 +293,27 @@ public class LaunchUtils {
 					&& project.getName().equals(projectName)
 					&& !filename.equals(configs[i].getAttribute(
 							Server.FILE_NAME, (String) null))) {
-				ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
-				copyDeploymentConfguration(project, copy, configs[i]);
-				copy.doSave();
-				return true;
+				try {
+					String urlValue = config.getAttribute(Server.BASE_URL,
+							(String) null);
+					String oldUrlValue = configs[i].getAttribute(
+							Server.BASE_URL, (String) null);
+					if (urlValue != null && oldUrlValue != null) {
+						URL url = new URL(urlValue);
+						URL oldUrl = new URL(oldUrlValue);
+						if (url.getHost().equals(oldUrl.getHost())) {
+							ILaunchConfigurationWorkingCopy copy = config
+									.getWorkingCopy();
+							copyDeploymentConfguration(project, copy,
+									configs[i]);
+							copy.doSave();
+						} else {
+							continue;
+						}
+					}
+				} catch (MalformedURLException e) {
+					// just run as standard PHP file
+				}
 			}
 		}
 		return true;
