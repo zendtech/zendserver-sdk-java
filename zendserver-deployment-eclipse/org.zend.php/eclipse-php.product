@@ -52,7 +52,8 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.emf.ecore.edit"/>
       <feature id="org.eclipse.emf.edit"/>
       <feature id="org.eclipse.emf.edit.ui"/>
-      <feature id="org.zend.php.zendserver.deployment.all"/>
+      <feature id="org.zend.php.zendserver.deployment"/>
+      <feature id="org.zend.php.zendserver.deployment.debug"/>
    </features>
 
 
