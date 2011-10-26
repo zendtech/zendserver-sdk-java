@@ -173,5 +173,15 @@ public class DeploymentRefactoring {
 		
 		return exactMatchFound;
 	}
+
+	public boolean updateProjectName(String oldProjectName,
+			String newProjectName, IDeploymentDescriptor descriptor) {
+		if (newProjectName.equals(oldProjectName)) {
+			return false;
+		}
+		
+		descriptor.setName(newProjectName);
+		return true;
+	}
 	
 }

@@ -73,15 +73,20 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 		boolean hasChanged = false;
 		for (IResource affectedResource : affectedResources) {
 			// move from one project to another - make no changes, leave it for validator to detect error
-			if (! newParent.getProject().equals(affectedResource.getProject())) {
-				return null;
+			if (newParent.getProject().equals(affectedResource.getProject())) {
+				IPath projectRelativePath = affectedResource.getProjectRelativePath();
+				String oldFullPath = projectRelativePath.toString();
+				String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
+				
+				hasChanged |= r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 			}
 			
-			IPath projectRelativePath = affectedResource.getProjectRelativePath();
-			String oldFullPath = projectRelativePath.toString();
-			String newFullPath = newParent.getProjectRelativePath().append(affectedResource.getName()).toString();
-			
-			hasChanged |= r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
+			if (affectedResource.getType() == IResource.PROJECT) {	
+				// TODO update project Name
+			//	String oldProjectName = "";
+				//String newProjectName = "";
+				//hasChanged |= r.updateProjectName(oldProjectName, newProjectName, descriptor);
+			}
 		}
 		
 		if (! hasChanged) {
