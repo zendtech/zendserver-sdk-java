@@ -54,6 +54,7 @@ mac.icns</vmArgsMac>
       <feature id="org.zend.php.zendserver.deployment"/>
       <feature id="org.zend.php.zendserver.deployment.debug"/>
       <feature id="org.eclipse.xsd.edit" version="2.7.0.v20110606-0949"/>
+      <feature id="org.zend.php.feature"/>
    </features>
 
 
