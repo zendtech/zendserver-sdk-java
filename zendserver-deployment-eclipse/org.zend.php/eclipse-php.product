@@ -31,21 +31,20 @@ mac.icns</vmArgsMac>
    <vm>
    </vm>
 
+   <plugins>
+   </plugins>
+
    <features>
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.dltk.core"/>
       <feature id="org.eclipse.dltk.core.index"/>
       <feature id="org.eclipse.php"/>
       <feature id="org.eclipse.gef"/>
-      <feature id="org.eclipse.rse"/>
-      <feature id="org.eclipse.cvs"/>
-      <feature id="org.eclipse.help"/>
       <feature id="org.eclipse.wst.web_ui.feature"/>
       <feature id="org.eclipse.wst.xsl.feature"/>
       <feature id="org.eclipse.wst.common.fproj"/>
       <feature id="org.eclipse.wst.xml_ui.feature"/>
       <feature id="org.eclipse.xsd"/>
-      <feature id="org.eclipse.xsd.edit"/>
       <feature id="org.eclipse.emf.common"/>
       <feature id="org.eclipse.emf.common.ui"/>
       <feature id="org.eclipse.emf.ecore"/>
@@ -54,6 +53,7 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.emf.edit.ui"/>
       <feature id="org.zend.php.zendserver.deployment"/>
       <feature id="org.zend.php.zendserver.deployment.debug"/>
+      <feature id="org.eclipse.xsd.edit" version="2.7.0.v20110606-0949"/>
    </features>
 
 
