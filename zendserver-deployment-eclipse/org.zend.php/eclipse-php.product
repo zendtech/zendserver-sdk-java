@@ -31,6 +31,9 @@ mac.icns</vmArgsMac>
    <vm>
    </vm>
 
+   <plugins>
+      <plugin id="org.h2"/>
+   </plugins>
 
    <features>
       <feature id="org.eclipse.platform"/>
