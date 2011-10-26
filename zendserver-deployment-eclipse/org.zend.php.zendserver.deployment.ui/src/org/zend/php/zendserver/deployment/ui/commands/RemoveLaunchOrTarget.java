@@ -42,7 +42,7 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 			
 		} else if (element instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) element;
-			TargetsManagerService.INSTANCE.getTargetManager().remove(target);
+			TargetsManagerService.INSTANCE.removeTarget(target);
 		}
 		
 	}

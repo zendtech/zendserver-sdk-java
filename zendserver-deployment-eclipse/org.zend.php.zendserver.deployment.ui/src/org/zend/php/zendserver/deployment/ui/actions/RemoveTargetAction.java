@@ -2,15 +2,12 @@ package org.zend.php.zendserver.deployment.ui.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
@@ -47,11 +44,7 @@ public class RemoveTargetAction extends Action implements ISelectionChangedListe
 			Object obj = i.next();
 			if (obj instanceof IZendTarget) {
 				IZendTarget target = (IZendTarget) obj;
-				try {
-					tm.remove(tm.getTargetById(target.getId()));
-				} catch (RuntimeException ex) {
-					StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex), StatusManager.SHOW);
-				}
+				TargetsManagerService.INSTANCE.removeTarget(target);
 			}
 		}
 	}
