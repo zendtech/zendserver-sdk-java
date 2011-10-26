@@ -299,7 +299,7 @@ public class LaunchUtils {
 				return true;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
