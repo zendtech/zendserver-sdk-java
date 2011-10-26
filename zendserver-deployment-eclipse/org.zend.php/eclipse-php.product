@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="%productName" id="org.zend.php.product" application="org.eclipse.ui.ide.workbench" version="3.0.2.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <text>
+         %productDescription
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>--launcher.XXMaxPermSize 256m</programArgs>
+      <vmArgs>-Xms128M -Xmx512M</vmArgs>
+      <vmArgsMac>-Djava.awt.headless=true -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Xdock:icon=../Resources/
+mac.icns</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <launcher name="phpide">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.platform"/>
+      <feature id="org.eclipse.dltk.core"/>
+      <feature id="org.eclipse.dltk.core.index"/>
+      <feature id="org.eclipse.php"/>
+      <feature id="org.eclipse.gef"/>
+      <feature id="org.eclipse.rse"/>
+      <feature id="org.eclipse.cvs"/>
+      <feature id="org.eclipse.help"/>
+      <feature id="org.eclipse.wst.web_ui.feature"/>
+      <feature id="org.eclipse.wst.xsl.feature"/>
+      <feature id="org.eclipse.wst.common.fproj"/>
+      <feature id="org.eclipse.wst.xml_ui.feature"/>
+      <feature id="org.eclipse.xsd"/>
+      <feature id="org.eclipse.xsd.edit"/>
+      <feature id="org.eclipse.emf.common"/>
+	  <feature id="org.eclipse.emf.common.ui"/>
+	  <feature id="org.eclipse.emf.ecore"/>
+	  <feature id="org.eclipse.emf.ecore.edit"/>
+	  <feature id="org.eclipse.emf.edit"/>
+	  <feature id="org.eclipse.emf.edit.ui"/>
+   </features>
+
+
+</product>
