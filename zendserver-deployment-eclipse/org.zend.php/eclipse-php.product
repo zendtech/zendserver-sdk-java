@@ -31,6 +31,10 @@ mac.icns</vmArgsMac>
    <vm>
    </vm>
 
+   <plugins>
+      <plugin id="org.h2"/>
+   </plugins>
+
    <features>
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.dltk.core"/>
@@ -52,6 +56,7 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.emf.ecore.edit"/>
       <feature id="org.eclipse.emf.edit"/>
       <feature id="org.eclipse.emf.edit.ui"/>
+      <feature id="org.zend.php.zendserver.deployment.all"/>
    </features>
 
 
