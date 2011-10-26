@@ -21,7 +21,7 @@ mac.icns</vmArgsMac>
 
    <windowImages/>
 
-   <launcher name="phpide">
+   <launcher name="eclipse-php">
       <solaris/>
       <win useIco="false">
          <bmp/>
@@ -32,6 +32,7 @@ mac.icns</vmArgsMac>
    </vm>
 
    <plugins>
+      <plugin id="org.h2"/>
    </plugins>
 
    <features>
@@ -50,11 +51,11 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.xsd"/>
       <feature id="org.eclipse.xsd.edit"/>
       <feature id="org.eclipse.emf.common"/>
-	  <feature id="org.eclipse.emf.common.ui"/>
-	  <feature id="org.eclipse.emf.ecore"/>
-	  <feature id="org.eclipse.emf.ecore.edit"/>
-	  <feature id="org.eclipse.emf.edit"/>
-	  <feature id="org.eclipse.emf.edit.ui"/>
+      <feature id="org.eclipse.emf.common.ui"/>
+      <feature id="org.eclipse.emf.ecore"/>
+      <feature id="org.eclipse.emf.ecore.edit"/>
+      <feature id="org.eclipse.emf.edit"/>
+      <feature id="org.eclipse.emf.edit.ui"/>
    </features>
 
 
