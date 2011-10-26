@@ -80,13 +80,6 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 				
 				hasChanged |= r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 			}
-			
-			if (affectedResource.getType() == IResource.PROJECT) {	
-				// TODO update project Name
-			//	String oldProjectName = "";
-				//String newProjectName = "";
-				//hasChanged |= r.updateProjectName(oldProjectName, newProjectName, descriptor);
-			}
 		}
 		
 		if (! hasChanged) {

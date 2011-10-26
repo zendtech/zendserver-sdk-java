@@ -52,13 +52,20 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 		
 		IProject project = affectedResource.getProject();
 		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
-		if (! container.getFile().exists()) {
-			return null;
+		
+		IDeploymentDescriptor descriptor = container.getDescriptorModel();
+		
+		DeploymentRefactoring r = new DeploymentRefactoring("rename"); //$NON-NLS-1$
+		
+		boolean hasChanged = false;
+		if (container.getFile().exists()) {
+			hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 		}
 		
-		DeploymentRefactoring r = new DeploymentRefactoring("rename");
-		IDeploymentDescriptor descriptor = container.getDescriptorModel();
-		boolean hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
+		// TODO GET project descriptor from NEW PROJECT (after refactoring)
+		if (affectedResource.getType() == IResource.PROJECT) {	
+	//		hasChanged |= r.updateProjectName(newFullPath, descriptor);
+		}
 		
 		if (! hasChanged) {
 			return null;
