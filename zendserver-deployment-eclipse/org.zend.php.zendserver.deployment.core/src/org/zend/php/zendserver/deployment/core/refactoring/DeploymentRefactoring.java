@@ -91,6 +91,10 @@ public class DeploymentRefactoring {
 		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.EULA, oldFullPath, newFullPath);
 		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.ICON, oldFullPath, newFullPath);
 		
+		String appDir = descriptor.getApplicationDir();
+		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.DOCROOT, appDir+'/'+oldFullPath, appDir+'/'+newFullPath);
+		
+		
 		return updated;
 	}
 
