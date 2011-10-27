@@ -14,6 +14,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -90,6 +91,7 @@ public class DeploymentRefactoring {
 		
 		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.EULA, oldFullPath, newFullPath);
 		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.ICON, oldFullPath, newFullPath);
+		updated |= updateChildrenIfEquals(descriptor, DeploymentDescriptorPackage.PERSISTENT_RESOURCES, oldFullPath, newFullPath);
 		
 		String appDir = descriptor.getApplicationDir();
 		updated |= updateIfEquals(descriptor, DeploymentDescriptorPackage.DOCROOT, appDir+'/'+oldFullPath, appDir+'/'+newFullPath);
@@ -98,6 +100,25 @@ public class DeploymentRefactoring {
 		return updated;
 	}
 
+	public boolean updateChildrenIfEquals(IModelContainer object, Feature f, String oldValue, String newValue) {
+		if (f.type != String.class) {
+			throw new IllegalArgumentException();
+		}
+		
+		List<Object> paths = object.getChildren(f);
+		int idx = 0;
+		boolean hasChanges = false;
+		for (Object o : paths) {
+			if (oldValue.equals((String) o)) {
+				paths.set(idx, newValue);
+				hasChanges = true;
+			}
+			idx++;
+		}
+		
+		return hasChanges;
+	}
+	
 	public boolean updateIfEquals(IModelObject object, Feature f, String oldValue, String newValue) {
 		String path = object.get(f);
 		if (oldValue.equals(path)) {
