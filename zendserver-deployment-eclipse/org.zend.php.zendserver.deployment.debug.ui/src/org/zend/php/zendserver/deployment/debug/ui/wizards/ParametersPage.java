@@ -15,16 +15,20 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 public class ParametersPage extends DeploymentWizardPage {
 
 	private IProject project;
+	private ParametersBlock block;
 
-	protected ParametersPage(IProject project, IDeploymentHelper helper) {
+	protected ParametersPage(IProject project, IDeploymentHelper helper,
+			String title) {
 		super(Messages.parametersPage_Name, helper);
 		setDescription(Messages.parametersPage_Description);
-		setTitle(Messages.parametersPage_Title);
+		setTitle(title);
 		this.project = project;
 		this.block = new ParametersBlock(this);
 	}
 
-	private ParametersBlock block;
+	protected ParametersPage(IProject project, IDeploymentHelper helper) {
+		this(project, helper, Messages.parametersPage_Title);
+	}
 
 	public void createControl(Composite parent) {
 		Composite container = block.createContents(parent);

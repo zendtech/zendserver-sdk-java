@@ -28,42 +28,58 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 
 public class DeploymentWizard extends Wizard {
 
+	public enum Mode {
+		RUN, DEBUG, DEPLOY;
+	}
+
 	private ConfigurationPage configPage;
 	private ParametersPage parametersPage;
 	private IDescriptorContainer model;
 	private IProject project;
 	private IDeploymentHelper helper;
 
-	public DeploymentWizard(ILaunchConfiguration config, boolean isLaunch) {
+	public DeploymentWizard(ILaunchConfiguration config, Mode mode) {
 		DeploymentHelper helper = DeploymentHelper.create(config);
 		String projectName = helper.getProjectName();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		init(project, helper, isLaunch);
+		init(project, helper, mode);
 	}
 	
-	public DeploymentWizard(IProject project, IDeploymentHelper helper, boolean isLaunch) {
-		init(project, helper, isLaunch);
+	public DeploymentWizard(IProject project, IDeploymentHelper helper,
+			Mode mode) {
+		init(project, helper, mode);
 	}
 
-	private void init(IProject project, IDeploymentHelper helper, boolean isLaunch) {
+	private void init(IProject project, IDeploymentHelper helper, Mode mode) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
 				(IFile) descriptor);
-		this.parametersPage = new ParametersPage(project, helper);
+		setNeedsProgressMonitor(true);
+		String title = null;
+		String image = null;
+		switch (mode) {
+		case RUN:
+			title = Messages.deploymentWizard_LaunchTitle;
+			image = Activator.IMAGE_WIZBAN_DEP;
+			break;
+		case DEBUG:
+			title = Messages.deploymentWizard_DebugTitle;
+			image = Activator.IMAGE_WIZBAN_DEBUG;
+			break;
+		case DEPLOY:
+			title = Messages.deploymentWizard_DeployTitle;
+			image = Activator.IMAGE_WIZBAN_DEPLOY;
+			break;
+		}
+		this.parametersPage = new ParametersPage(project, helper, title);
 		if (helper == null || helper.getProjectName().isEmpty()) {
 			this.helper = createDefaultHelper();
 		} else {
 			this.helper = updateHelper(helper);
 		}
-		setNeedsProgressMonitor(true);
-		if (isLaunch) {
-			setWindowTitle(Messages.deploymentWizard_LaunchTitle);
-			setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-		} else {
-			setWindowTitle(Messages.deploymentWizard_DeployTitle);
-			setDefaultPageImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-		}
+		setWindowTitle(title);
+		setDefaultPageImageDescriptor(Activator.getImageDescriptor(image));
 	}
 
 	private IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
@@ -101,7 +117,8 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		this.configPage = new ConfigurationPage(helper, getContainer());
+		this.configPage = new ConfigurationPage(helper, getContainer(),
+				getWindowTitle());
 		addPage(configPage);
 		List<IParameter> parameters = model.getDescriptorModel().getParameters();
 		if (parameters != null && parameters.size() > 0) {

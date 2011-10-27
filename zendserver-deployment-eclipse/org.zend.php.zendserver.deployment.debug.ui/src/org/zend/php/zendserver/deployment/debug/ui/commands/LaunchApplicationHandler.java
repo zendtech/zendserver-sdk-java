@@ -8,6 +8,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
@@ -20,6 +21,7 @@ import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
 
 public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 
@@ -93,7 +95,10 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 			} else {
 				defaultHelper = LaunchUtils.createDefaultHelper(project);
 			}
-			DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper, true);
+			Mode wizardMode = ILaunchManager.RUN_MODE.equals(mode) ? Mode.RUN
+					: Mode.DEBUG;
+			DeploymentWizard wizard = new DeploymentWizard(project,
+					defaultHelper, wizardMode);
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			dialog.setPageSize(550, 350);

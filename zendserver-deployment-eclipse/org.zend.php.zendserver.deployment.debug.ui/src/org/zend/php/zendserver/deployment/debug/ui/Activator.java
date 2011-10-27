@@ -18,6 +18,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_DEBUG_APPLICATION = "icons/obj16/debug_exc.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DEPLOY_APPLICATION = "icons/obj16/deploy_exc.png"; //$NON-NLS-1$
 	public static final String IMAGE_WIZBAN_DEP = "icons/wizban/newdep_wiz.png"; //$NON-NLS-1$
+	public static final String IMAGE_WIZBAN_DEBUG = "icons/wizban/debug_wiz.png"; //$NON-NLS-1$
+	public static final String IMAGE_WIZBAN_DEPLOY = "icons/wizban/deploy_wiz.png"; //$NON-NLS-1$
 	public static final String IMAGE_EXPORT_PARAMS_DEP = "icons/wizban/exportParams_wiz.png"; //$NON-NLS-1$
 
 	// The shared instance

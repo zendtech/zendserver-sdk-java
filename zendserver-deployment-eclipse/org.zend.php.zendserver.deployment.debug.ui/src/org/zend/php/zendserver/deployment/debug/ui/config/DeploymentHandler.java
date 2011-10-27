@@ -36,6 +36,7 @@ import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
+import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -452,7 +453,18 @@ public class DeploymentHandler {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				DeploymentWizard wizard = new DeploymentWizard(project, helper, config != null);
+				Mode wizardMode = null;
+				if (config != null) {
+					if (ILaunchManager.RUN_MODE.equals(mode)) {
+						wizardMode = Mode.RUN;
+					} else {
+						wizardMode = Mode.DEBUG;
+					}
+				} else {
+					wizardMode = Mode.DEPLOY;
+				}
+				DeploymentWizard wizard = new DeploymentWizard(project, helper,
+						wizardMode);
 				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.setPageSize(550, 350);
