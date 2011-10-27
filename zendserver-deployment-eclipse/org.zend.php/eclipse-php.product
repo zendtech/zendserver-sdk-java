@@ -13,13 +13,18 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>--launcher.XXMaxPermSize 256m</programArgs>
+      <programArgs>--launcher.XXMaxPermSize 256m
+--launcher.defaultAction openFile
+-showlocation
+-name
+&quot;Eclipse for PHP Developers&quot;</programArgs>
       <vmArgs>-Xms128M -Xmx512M</vmArgs>
       <vmArgsMac>-Djava.awt.headless=true -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Xdock:icon=../Resources/
 mac.icns</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
+
 
    <launcher name="eclipse-php">
       <solaris/>
@@ -28,8 +33,10 @@ mac.icns</vmArgsMac>
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>

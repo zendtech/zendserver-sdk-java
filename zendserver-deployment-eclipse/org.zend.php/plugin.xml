@@ -18,13 +18,13 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="PHP Development Tools">
+            name="%productName">
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
          <property
                name="appName"
-               value="PHP Development Tools">
+               value="%productName">
          </property>
          <property
                name="aboutText"
