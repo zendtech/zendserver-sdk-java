@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
@@ -32,13 +33,13 @@ public class DeploymentRefactoring {
 		this.name = name;
 	}
 	
-	public TextFileChange createDescriptorTextChange(IDescriptorContainer container) {
+	public TextFileChange createDescriptorTextChange(IFile fileToChange, IDescriptorContainer container) {
 		int origLength = container.getModelSerializer().getDocumentLength();
 		IDocument resultDocument = new Document();
 		container.connect(resultDocument);
 		container.save();
 		
-		TextFileChange change = new TextFileChange(name, container.getFile());
+		TextFileChange change = new TextFileChange(name, fileToChange);
 		change.setEdit(new ReplaceEdit(0, origLength, resultDocument.get()));
 		return change;
 	}
@@ -195,9 +196,10 @@ public class DeploymentRefactoring {
 		return exactMatchFound;
 	}
 
-	public boolean updateProjectName(String newProjectName,
-			IDeploymentDescriptor descriptor) {
-		descriptor.setName(newProjectName);
+	public boolean updateProjectName(String oldProjectName, String newProjectName, IDeploymentDescriptor descriptor) {
+		if (oldProjectName.equals(descriptor.getName())) {
+			descriptor.setName(newProjectName);
+		}
 		return true;
 	}
 	

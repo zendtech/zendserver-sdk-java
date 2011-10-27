@@ -86,7 +86,7 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 			return null;
 		}
 		
-		TextFileChange change = r.createDescriptorTextChange(container);
+		TextFileChange change = r.createDescriptorTextChange(container.getFile(), container);
 		
 		return change;
 	}

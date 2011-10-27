@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.refactoring;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,9 +51,14 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 		IPath projectRelativePath = affectedResource.getProjectRelativePath();
 		String oldFullPath = projectRelativePath.toString();
 		String newFullPath = projectRelativePath.removeLastSegments(1).append(newName).toString();
-		
+				
 		IProject project = affectedResource.getProject();
+		
 		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
+		IFile fileToChange = container.getFile();
+		if (affectedResource.getType() == IResource.PROJECT) { // project rename - get the new project
+			fileToChange = ResourcesPlugin.getWorkspace().getRoot().getProject(newFullPath).getFile(DescriptorContainerManager.DESCRIPTOR_PATH);
+		}
 		
 		IDeploymentDescriptor descriptor = container.getDescriptorModel();
 		
@@ -62,16 +69,16 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 			hasChanged = r.updatePathInDescriptor(oldFullPath, newFullPath, descriptor);
 		}
 		
-		// TODO GET project descriptor from NEW PROJECT (after refactoring)
+		// on project rename do to update project name in descriptor
 		if (affectedResource.getType() == IResource.PROJECT) {	
-	//		hasChanged |= r.updateProjectName(newFullPath, descriptor);
+			hasChanged |= r.updateProjectName(affectedResource.getName(), newFullPath, descriptor);
 		}
 		
 		if (! hasChanged) {
 			return null;
 		}
 		
-		TextFileChange change = r.createDescriptorTextChange(container);
+		TextFileChange change = r.createDescriptorTextChange(fileToChange, container);
 		
 		return change;
 	}
