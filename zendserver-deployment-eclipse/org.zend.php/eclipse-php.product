@@ -4,6 +4,7 @@
 <product name="Eclipse for PHP Developers" id="org.zend.php.product" application="org.eclipse.ui.ide.workbench" version="3.0.2.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
+      <image path="/org.zend.php/icons/eclipse_lg.gif"/>
       <text>
          %productDescription
       </text>
@@ -23,9 +24,10 @@
 mac.icns</vmArgsMac>
    </launcherArgs>
 
-   <windowImages/>
+   <windowImages i16="/org.zend.php/icons/eclipse.png" i32="/org.zend.php/icons/eclipse32.png" i48="/org.zend.php/icons/eclipse48.png"/>
 
-
+   <splash
+      location="org.zend.php" />
    <launcher name="eclipse-php">
       <solaris/>
       <win useIco="false">
@@ -37,7 +39,6 @@ mac.icns</vmArgsMac>
    <vm>
    </vm>
 
-
    <plugins>
    </plugins>
 
@@ -46,7 +47,6 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.dltk.core"/>
       <feature id="org.eclipse.dltk.core.index"/>
       <feature id="org.eclipse.php"/>
-      <feature id="org.eclipse.wst.web_ui.feature"/>
       <feature id="org.zend.php.zendserver.deployment"/>
       <feature id="org.zend.php.zendserver.deployment.debug"/>
       <feature id="org.zend.php.feature"/>

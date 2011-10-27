@@ -18,17 +18,25 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="%productName">
+            name="Eclipse for PHP Developers">
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
          <property
                name="appName"
-               value="%productName">
+               value="Eclipse for PHP Developers">
          </property>
          <property
                name="aboutText"
                value="%productDescription">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/eclipse_lg.gif">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/eclipse.png,icons/eclipse32.png,icons/eclipse48.png">
          </property>
       </product>
    </extension>
