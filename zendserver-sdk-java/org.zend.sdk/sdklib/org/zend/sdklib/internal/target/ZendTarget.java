@@ -279,7 +279,9 @@ public class ZendTarget implements IZendTarget {
 			return false;
 		} catch (final WebApiException e) {
 			final String betterMessage = replaceWebApiMessage(e.getMessage());
-			if (betterMessage != null) {
+			if (betterMessage == null) {
+				throw e;
+			} else {
 				throw new WebApiException() {
 					
 					private static final long serialVersionUID = 1L;
