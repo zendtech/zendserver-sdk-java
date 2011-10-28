@@ -27,7 +27,10 @@ mac.icns</vmArgsMac>
    <windowImages i16="/org.zend.php/icons/eclipse.png" i32="/org.zend.php/icons/eclipse32.png" i48="/org.zend.php/icons/eclipse48.png"/>
 
    <splash
-      location="org.zend.php" />
+      location="org.zend.php"
+      startupProgressRect="10,222,435,15"
+      startupMessageRect="13,197,429,15"
+      startupForegroundColor="FFFFFF" />
    <launcher name="eclipse-php">
       <solaris/>
       <win useIco="false">

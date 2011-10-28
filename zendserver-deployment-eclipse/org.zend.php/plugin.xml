@@ -38,6 +38,17 @@
                name="windowImages"
                value="icons/eclipse.png,icons/eclipse32.png,icons/eclipse48.png">
          </property>
+         <property
+               name="startupProgressRect"
+               value="10,222,435,15"/>
+         <property
+               name="startupForegroundColor"
+               value="FFFFFF">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="13,197,432,15">
+         </property>
       </product>
    </extension>
 </plugin>
