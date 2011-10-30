@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
@@ -219,7 +220,14 @@ public class DeploymentHandler {
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer((IFile) descriptor);
 		List<IParameter> definedParams = model.getDescriptorModel().getParameters();
-		if (definedParams == null || definedParams.size() == 0) {
+		int size = 0;
+		for (IParameter param : definedParams) {
+			ParameterType type = ParameterType.byName(param.getType());
+			if (type != null) {
+				size++;
+			}
+		}
+		if (definedParams == null || size == 0) {
 			return false;
 		}
 		Map<String, String> params = helper.getUserParams();

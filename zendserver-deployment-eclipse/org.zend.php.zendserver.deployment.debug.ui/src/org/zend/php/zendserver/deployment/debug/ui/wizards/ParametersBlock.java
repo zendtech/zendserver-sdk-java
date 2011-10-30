@@ -412,9 +412,12 @@ public class ParametersBlock extends AbstractBlock {
 		} else {
 			DeploymentParameter parameter = null;
 			ParameterType type = ParameterType.byName(category.getParameter().getType());
-			parameter = new DeploymentParameter(category.getParameter(), category.getName(), type);
-			parameter.createControl(parent);
-			parameters.add(parameter);
+			if (type != null) {
+				parameter = new DeploymentParameter(category.getParameter(),
+						category.getName(), type);
+				parameter.createControl(parent);
+				parameters.add(parameter);
+			}
 		}
 	}
 
