@@ -295,15 +295,23 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		if (children != null) {
 			for (IResourceDelta child : children) {
 				if (child.getResource() == fModel.getFile().getParent()) {
-					boolean isAvailable = false;
-					if (fModel.getFile().getParent().findMember(
-							MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
-						isAvailable = true;
+					IResourceDelta[] affectedChildren = child.getAffectedChildren();
+					if (affectedChildren == null) {
+						return;
 					}
-					if (isAvailable && !isMappingAvailable()) {
-						addMappingPages();
-					} else if (!isAvailable && isMappingAvailable()) {
-						removeMappingPages();
+					for (IResourceDelta affectedChild : affectedChildren) {
+						if (affectedChild.getResource().getName().equals(MappingModelFactory.DEPLOYMENT_PROPERTIES)) {
+							boolean isAvailable = false;
+							if (fModel.getFile().getParent().findMember(
+									MappingModelFactory.DEPLOYMENT_PROPERTIES) != null) {
+								isAvailable = true;
+							}
+							if (isAvailable && !isMappingAvailable()) {
+								addMappingPages();
+							} else if (!isAvailable && isMappingAvailable()) {
+								removeMappingPages();
+							}
+						}
 					}
 				}
 			}
@@ -377,21 +385,22 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 				initMapping();
 			}
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Activator.log(e);
 		}
 		if (isMappingAvailable()) {
 			getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
 
 				public void run() {
 					try {
+						if (getPageCount() == 6) {
+							return;
+						}
 						addPage(3, new DeploymentPropertiesPage(fModel, DeploymentDescriptorEditor.this, "package", //$NON-NLS-1$
 								Messages.DeploymentDescriptorEditor_Package));
 						propertiesSourcePage = new PropertiesSourcePage("propertiesSource", DeploymentDescriptorEditor.this); //$NON-NLS-1$
 						addPage(4, propertiesSourcePage, getPropertiesInput());
 					} catch (PartInitException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Activator.log(e);
 					}
 				}
 			});
