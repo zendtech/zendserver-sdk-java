@@ -89,7 +89,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		id.create(client, toolkit);
 		((GridData)id.getText().getLayoutData()).widthHint = 100;
 		
-		ComboField type = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type));
+		ComboField type = (ComboField) fields.add(new ComboField(null, DeploymentDescriptorPackage.TYPE, Messages.ParameterDetailsPage_Type, SWT.READ_ONLY));
 		type.setItems(new String[] {
 				IParameter.CHOICE,
 				IParameter.STRING,
