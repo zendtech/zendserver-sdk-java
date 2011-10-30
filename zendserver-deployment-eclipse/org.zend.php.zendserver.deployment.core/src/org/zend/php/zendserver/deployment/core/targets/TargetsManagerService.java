@@ -32,6 +32,9 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class TargetsManagerService {
 
+	private static final String REMOTE_PROJECT = "com.zend.php.remoteproject.core"; //$NON-NLS-1$
+	private static final String REMOTE_PROJECT_ENABLED = "isRemoteProjectEnabled"; //$NON-NLS-1$
+
 	private TargetsManager tm;
 	
 	public static final TargetsManagerService INSTANCE = new TargetsManagerService();
@@ -99,8 +102,12 @@ public class TargetsManagerService {
 						IProject project = root.getProject(projectName);
 						if (project != null) {
 							ProjectScope projectScope = new ProjectScope(project);
-							IEclipsePreferences remoteNode = projectScope.getNode("com.zend.php.remoteproject.core"); //$NON-NLS-1$
-							if (remoteNode != null) {
+							IEclipsePreferences remoteNode = projectScope.getNode(REMOTE_PROJECT);
+							if (remoteNode != null
+									&& remoteNode
+											.nodeExists(REMOTE_PROJECT_ENABLED)
+									&& remoteNode.getBoolean(
+											REMOTE_PROJECT_ENABLED, false)) {
 								remoteNode.removeNode();
 								remoteNode.flush();
 							}
