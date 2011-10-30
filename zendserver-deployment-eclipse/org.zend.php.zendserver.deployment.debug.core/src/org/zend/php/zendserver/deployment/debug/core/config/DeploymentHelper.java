@@ -11,6 +11,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 
 public class DeploymentHelper implements IDeploymentHelper {
 

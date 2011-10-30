@@ -9,7 +9,7 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 
 public class ParametersPage extends DeploymentWizardPage {

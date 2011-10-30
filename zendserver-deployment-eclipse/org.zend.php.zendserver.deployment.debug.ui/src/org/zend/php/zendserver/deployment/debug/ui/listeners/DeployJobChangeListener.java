@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;

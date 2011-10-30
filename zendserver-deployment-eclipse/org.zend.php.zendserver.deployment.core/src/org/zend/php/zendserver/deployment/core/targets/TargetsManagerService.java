@@ -4,9 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,7 +17,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
@@ -31,9 +28,6 @@ import org.zend.sdklib.target.IZendTarget;
  *
  */
 public class TargetsManagerService {
-
-	private static final String REMOTE_PROJECT = "com.zend.php.remoteproject.core"; //$NON-NLS-1$
-	private static final String REMOTE_PROJECT_ENABLED = "isRemoteProjectEnabled"; //$NON-NLS-1$
 
 	private TargetsManager tm;
 	
@@ -97,25 +91,9 @@ public class TargetsManagerService {
 				ILaunchConfiguration[] configs = launchConfigs.getLaunches(target);
 				for (ILaunchConfiguration config : configs) {
 					try {
-						String projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
-						IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-						IProject project = root.getProject(projectName);
-						if (project != null) {
-							ProjectScope projectScope = new ProjectScope(project);
-							IEclipsePreferences remoteNode = projectScope.getNode(REMOTE_PROJECT);
-							if (remoteNode != null
-									&& remoteNode
-											.nodeExists(REMOTE_PROJECT_ENABLED)
-									&& remoteNode.getBoolean(
-											REMOTE_PROJECT_ENABLED, false)) {
-								remoteNode.removeNode();
-								remoteNode.flush();
-							}
-						}
+						PHPLaunchConfigs.preLaunchConfigurationRemoval(config);
 						config.delete();
 					} catch (CoreException e) {
-						return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e);
-					} catch (BackingStoreException e) {
 						return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e);
 					}
 				}

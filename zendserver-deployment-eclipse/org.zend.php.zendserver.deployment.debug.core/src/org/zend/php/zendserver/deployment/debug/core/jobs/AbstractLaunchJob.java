@@ -2,7 +2,7 @@ package org.zend.php.zendserver.deployment.debug.core.jobs;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.jobs.Job;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 
 public abstract class AbstractLaunchJob extends Job {
 

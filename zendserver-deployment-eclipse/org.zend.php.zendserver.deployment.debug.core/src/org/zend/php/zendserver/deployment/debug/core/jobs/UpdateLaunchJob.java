@@ -1,8 +1,8 @@
 package org.zend.php.zendserver.deployment.debug.core.jobs;
 
 import org.eclipse.core.resources.IProject;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 

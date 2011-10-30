@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.target.IZendTarget;
@@ -35,6 +36,7 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 		if (element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration cfg = (ILaunchConfiguration) element;
 			try {
+				PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
 				cfg.delete();
 			} catch (CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));

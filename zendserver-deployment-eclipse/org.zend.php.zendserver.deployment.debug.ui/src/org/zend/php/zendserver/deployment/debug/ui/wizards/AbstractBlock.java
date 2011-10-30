@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.zend.php.zendserver.deployment.debug.core.config.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
 public abstract class AbstractBlock {

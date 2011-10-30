@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.debug.core.config;
+package org.zend.php.zendserver.deployment.core.debugger;
 
 import java.net.URL;
 import java.util.Map;
