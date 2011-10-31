@@ -46,8 +46,8 @@ public class EnvironmentUtils {
 	}
 
 	public static boolean isUACEnabled() {
-		String keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System Value EnableLUA";
-		String[] keyPathArray = keyPath.split("\\");
+		String keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\EnableLUA";
+		String[] keyPathArray = keyPath.split("\\\\");
 		
 		RegistryValue value;
 		try {
