@@ -175,6 +175,11 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	public void writeDeploymentProperties(File container, IMappingLoader loader, boolean isUpdate)
 			throws IOException, JAXBException {
+		File exisitngMapping = new File(container,
+				MappingModelFactory.DEPLOYMENT_PROPERTIES);
+		if (exisitngMapping.exists()) {
+			return;
+		}
 		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
 				: MappingModelFactory.createModel(loader, container);
 		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
