@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jsch.internal.core.IConstants;
 import org.eclipse.jsch.internal.core.JSchCorePlugin;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
@@ -138,7 +139,10 @@ public class EclipseSSH2Settings {
 		
 		File dir = destFile.getParentFile();
 		if (! dir.exists()) {
-			dir.mkdirs();
+			boolean success = dir.mkdirs();
+			if (!success) {
+				throw new IOException(Messages.bind("Failed to copy '{0}' to '{1}'. Unable to create directory '{2}'.", new Object[] {srcFile, destFile, dir}));
+			}
 		}
 		
 		byte[] buf = new byte[4096];
