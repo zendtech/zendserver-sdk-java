@@ -7,6 +7,12 @@
  *******************************************************************************/
 package org.zend.sdklib.internal.utils;
 
+import com.ice.jni.registry.NoSuchValueException;
+import com.ice.jni.registry.Registry;
+import com.ice.jni.registry.RegistryException;
+import com.ice.jni.registry.RegistryKey;
+import com.ice.jni.registry.RegistryValue;
+
 
 public class EnvironmentUtils {
 
@@ -37,5 +43,34 @@ public class EnvironmentUtils {
 
 	public static boolean isUnderMaxOSX() {
 		return EnvironmentUtils.getOsName() == OS.MAC;
+	}
+
+	public static boolean isUACEnabled() {
+		String keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System Value EnableLUA";
+		String[] keyPathArray = keyPath.split("\\");
+		
+		RegistryValue value;
+		try {
+			RegistryKey key = Registry.HKEY_LOCAL_MACHINE;
+			for (int i = 0; i < keyPathArray.length - 1; i++) {
+				key = key.openSubKey(keyPathArray[i]);
+			}
+			value = key.getValue(keyPathArray[keyPathArray.length - 1]);
+		} catch (NoSuchValueException e) {
+			return false;
+		} catch (RegistryException e) {
+			return false;
+		}
+		byte[] data = value.getByteData();
+		if (data == null) {
+			return false;
+		}
+		for (int i = 0; i < data.length; i++) {
+			if (data[i] > 0) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
