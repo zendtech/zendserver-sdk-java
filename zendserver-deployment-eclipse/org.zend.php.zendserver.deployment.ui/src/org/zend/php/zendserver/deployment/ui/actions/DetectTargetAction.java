@@ -47,8 +47,10 @@ public class DetectTargetAction extends Action {
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		
 		try {
-			// workaround for VirtualStore which silently writes configuration files to wrong destination
-			if (EnvironmentUtils.isUnderWindows()) {
+			// test if VirtualStore is enabled, and enforce elevated target creation, 
+			// because non-elevated writes ZendServer configuration to VirtualStore,
+			// where it's never read by ZendServer
+			if (EnvironmentUtils.isUnderWindows() && EnvironmentUtils.isUACEnabled()) {
 				throw new PrivilegesException("Target detection on Windows must always be run by privileged user.");
 			}
 			
