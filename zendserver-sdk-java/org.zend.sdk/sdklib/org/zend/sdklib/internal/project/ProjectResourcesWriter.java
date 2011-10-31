@@ -294,10 +294,10 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			return null;
 		} catch (IOException e) {
 			throw new IllegalArgumentException("Error reading descriptor file "
-					+ descriptor.getAbsolutePath());
+					+ descriptor.getAbsolutePath(), e);
 		} catch (JAXBException e) {
 			throw new IllegalArgumentException("Error reading descriptor file "
-					+ descriptor.getAbsolutePath());
+					+ descriptor.getAbsolutePath(), e);
 		}
 
 		if (pkg == null) {
