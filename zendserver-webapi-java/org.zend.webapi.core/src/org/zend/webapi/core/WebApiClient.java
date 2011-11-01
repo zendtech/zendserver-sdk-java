@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.restlet.Context;
+import org.restlet.engine.Engine;
 import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
@@ -30,6 +31,7 @@ import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
+import org.zend.webapi.internal.core.connection.WebApiEngine;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRedeployRequest;
@@ -65,6 +67,8 @@ public class WebApiClient {
 
 	private static final WebApiVersion DEFAULT_VERSION = WebApiVersion.V1_1;
 
+	private static Engine engine = null;
+
 	/**
 	 * credentials of this client
 	 */
@@ -92,6 +96,10 @@ public class WebApiClient {
 		this.credentials = credentials;
 		this.clientConfiguration = clientConfiguration;
 		this.context = ctx;
+		if (engine == null) {
+			engine = new WebApiEngine();
+			Engine.setInstance(engine);
+		}
 	}
 
 	/**
