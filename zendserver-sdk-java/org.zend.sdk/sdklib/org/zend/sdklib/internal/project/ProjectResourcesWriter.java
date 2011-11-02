@@ -27,15 +27,15 @@ import org.zend.sdklib.application.ZendProject.TemplateApplications;
 import org.zend.sdklib.descriptor.PackageDescription;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.utils.JaxbHelper;
-import org.zend.sdklib.library.IChangeNotifier;
-import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.project.DeploymentScriptTypes;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.IChangeNotifier;
+import org.zend.webapi.core.progress.StatusCode;
 
 /**
  * Project creation and update handling including descriptor, scripts and

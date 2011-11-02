@@ -11,13 +11,13 @@ package org.zend.sdklib.internal.library;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.internal.event.StatusChangeEvent;
-import org.zend.sdklib.library.IChangeNotifier;
-import org.zend.sdklib.library.IStatus;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
+import org.zend.webapi.core.progress.IChangeNotifier;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.IStatusChangeEvent;
+import org.zend.webapi.core.progress.IStatusChangeListener;
 
 /**
  * Abstract class which implement {@link IChangeNotifier} interface. It is

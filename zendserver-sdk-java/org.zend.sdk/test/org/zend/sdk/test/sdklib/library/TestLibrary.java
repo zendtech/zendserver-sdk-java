@@ -3,12 +3,12 @@ package org.zend.sdk.test.sdklib.library;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.library.BasicStatus;
-import org.zend.sdklib.library.IStatus;
-import org.zend.sdklib.library.StatusCode;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.IStatusChangeEvent;
+import org.zend.webapi.core.progress.IStatusChangeListener;
+import org.zend.webapi.core.progress.StatusCode;
 
 public class TestLibrary {
 
