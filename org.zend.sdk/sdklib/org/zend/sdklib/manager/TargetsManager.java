@@ -180,11 +180,20 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws DetectionException {
-		return detectLocalhostTarget(targetId, key, true);
+		return detectLocalhostTarget(targetId, key, true, true);
 	}
 	
+	/**
+	 * 
+	 * @param targetId target id to use
+	 * @param key key name to use
+	 * @param add whether to add found target to targets list
+	 * @param createKey whether to attempt to automatically generate key secret in server config file
+	 * @return
+	 * @throws DetectionException
+	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key, boolean add) throws DetectionException {
+			String key, boolean add, boolean createKey) throws DetectionException {
 
 		if (targetId == null) {
 			targetId = createUniqueId(null);
@@ -200,19 +209,23 @@ public class TargetsManager extends AbstractChangeNotifier {
 			throw new MissingZendServerException(e);
 		}
 		
-		if (existing != null) {
-			// only return existing, if it's key still exists and is valid
-			try {
-				String existingSecret = detection.findExistingSecretKey(key);
-				if (existingSecret != null && existingSecret.equals(existing.getSecretKey())) {
-					return existing;
-				}
-			} catch (IOException e) {
-			}
+		String existingSecret = null;
+		try {
+			existingSecret = detection.findExistingSecretKey(key);
+		} catch (IOException e) {
+		}
+		
+		// only return existing, if it's key still exists and is valid
+		if ((existing != null) && (existingSecret != null) && existingSecret.equals(existing.getSecretKey())) {
+			return existing;
+		}
+		
+		// if there's no key in server config and we don't want to create automatic one, throw an error
+		if ((existingSecret == null) && (!createKey)) {
+			throw new DetectionException("Key entry '"+key+"' not found.");
 		}
 		
 		try {
-
 			// localhost not found - create one
 			final IZendTarget local = detection.createLocalhostTarget(targetId,
 					key);
