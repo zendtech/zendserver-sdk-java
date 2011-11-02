@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.application.PackageBuilder;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.library.IStatus;
-import org.zend.sdklib.library.StatusCode;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.StatusCode;
 
 public class TestPackageBuilder extends AbstractTest {
 

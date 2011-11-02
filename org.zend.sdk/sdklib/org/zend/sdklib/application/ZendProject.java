@@ -14,10 +14,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
-import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.mapping.IMappingLoader;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.StatusCode;
 
 /**
  * Create a simple project with the tool with all required meta data and scripts
