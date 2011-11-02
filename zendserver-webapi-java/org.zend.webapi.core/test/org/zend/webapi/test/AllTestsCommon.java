@@ -15,6 +15,7 @@ import org.zend.webapi.test.core.TestServiceDispatcher;
 import org.zend.webapi.test.core.TestUtils;
 import org.zend.webapi.test.core.TestWebApiExceptions;
 import org.zend.webapi.test.core.TestWebApiMethodType;
+import org.zend.webapi.test.core.progress.TestStatusCode;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestCredentials.class, TestRequest.class,
@@ -22,7 +23,7 @@ import org.zend.webapi.test.core.TestWebApiMethodType;
 		TestValues.class, TestDeploymentServices.class,
 		TestServerConfiguration.class, TestClientConfiguration.class,
 		TestServiceDispatcher.class, TestWebApiExceptions.class,
-		TestWebApiMethodType.class, TestValues.class,
+		TestWebApiMethodType.class, TestStatusCode.class, TestValues.class,
 		TestClientConfiguration.class, TestUtils.class,
 		TestWebApiExceptions.class })
 public class AllTestsCommon {

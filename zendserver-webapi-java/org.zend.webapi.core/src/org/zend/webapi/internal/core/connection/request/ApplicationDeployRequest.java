@@ -13,7 +13,6 @@ import java.util.Map;
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
-import org.restlet.representation.Representation;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.NamedInputStream;
@@ -215,8 +214,9 @@ public class ApplicationDeployRequest extends AbstractRequest {
 
 	@Override
 	public void applyParameters(Request request) {
-		Representation rep = new MultipartRepresentation(getParameters(),
-				APPLICATION_PACKAGE);
+		MultipartRepresentation rep = new MultipartRepresentation(
+				getParameters(), APPLICATION_PACKAGE);
+		rep.setNotifier(notifier);
 		request.setEntity(rep);
 	}
 

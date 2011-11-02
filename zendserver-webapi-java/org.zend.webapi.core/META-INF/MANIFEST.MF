@@ -26,6 +26,7 @@ Export-Package: org.zend.webapi.core;
    org.zend.webapi.core.connection.data.values",
  org.zend.webapi.core.connection.response;uses:="org.zend.webapi.core.connection.data,org.zend.webapi.core.connection.request,org.zend.webapi.core.connection.data.values",
  org.zend.webapi.core.connection.signature,
+ org.zend.webapi.core.progress,
  org.zend.webapi.core.service,
  org.zend.webapi.internal.core;uses:="org.zend.webapi.core",
  org.zend.webapi.internal.core.connection;

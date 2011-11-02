@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection.request;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +25,10 @@ import org.restlet.engine.io.BioUtils;
 import org.restlet.representation.OutputRepresentation;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestParameter;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.IChangeNotifier;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.StatusCode;
 
 /**
  * Defines the multipart/form- data, which can be used by a wide variety of
@@ -58,6 +61,8 @@ public class MultipartRepresentation extends OutputRepresentation {
 	 * {@link MediaType.MULTIPART_FORM_DATA}.
 	 */
 	protected MediaType mediaType;
+
+	protected IChangeNotifier notifier;
 
 	/**
 	 * The content to be represented
@@ -128,6 +133,10 @@ public class MultipartRepresentation extends OutputRepresentation {
 		this(null, getRandomBoundary(), mediaType);
 	}
 
+	public void setNotifier(IChangeNotifier notifier) {
+		this.notifier = notifier;
+	}
+
 	/**
 	 * Generates a random boundary
 	 */
@@ -144,7 +153,14 @@ public class MultipartRepresentation extends OutputRepresentation {
 	 */
 	@Override
 	public void write(OutputStream outputStream) throws IOException {
-		BioUtils.copy(new ByteArrayInputStream(this.contents), outputStream);
+		statusChanged(new BasicStatus(StatusCode.STARTING, "Sending request",
+				"Sending request...", contents.length));
+		BioUtils.copy(new WebApiInputStream(this.contents, notifier),
+				outputStream);
+		statusChanged(new BasicStatus(StatusCode.STOPPING, "Request sent",
+				"Request has been sent successfully."));
+		statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Deploying", "Deploying application to the target...", -1));
 	}
 
 	/**
@@ -274,4 +290,11 @@ public class MultipartRepresentation extends OutputRepresentation {
 		}
 		setSize(getSize() + i);
 	}
+
+	private void statusChanged(IStatus status) {
+		if (notifier != null) {
+			notifier.statusChanged(status);
+		}
+	}
+
 }

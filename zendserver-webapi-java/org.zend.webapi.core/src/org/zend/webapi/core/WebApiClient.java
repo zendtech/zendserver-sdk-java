@@ -29,6 +29,7 @@ import org.zend.webapi.core.connection.request.IRequestInitializer;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
+import org.zend.webapi.core.progress.IChangeNotifier;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.WebApiEngine;
@@ -85,6 +86,66 @@ public class WebApiClient {
 	private final Context context;
 
 	/**
+	 * Progress notifier
+	 */
+	private IChangeNotifier notifier;
+
+	/**
+	 * Constructs a new client to invoke service methods on Zend Server API
+	 * using the specified account credentials and configurations.
+	 * 
+	 * @param credentials
+	 * @param clientConfiguration
+	 * @param ctx
+	 * @param notifier
+	 */
+	public WebApiClient(WebApiCredentials credentials,
+			ClientConfiguration clientConfiguration, Context ctx,
+			IChangeNotifier notifier) {
+		this.credentials = credentials;
+		this.clientConfiguration = clientConfiguration;
+		this.context = ctx;
+		if (engine == null) {
+			engine = new WebApiEngine();
+			Engine.setInstance(engine);
+		}
+		this.notifier = notifier;
+	}
+
+	/**
+	 * Constructs a new client to invoke service methods on Zend Server API
+	 * using the the specified host and credentials.
+	 * 
+	 * @param credentials
+	 * @param host
+	 * @param notifier
+	 * @throws MalformedURLException
+	 */
+	public WebApiClient(WebApiCredentials credentials, String host,
+			IChangeNotifier notifier)
+			throws MalformedURLException {
+		this(credentials, new ClientConfiguration(new URL(host)), null,
+				notifier);
+	}
+	
+	/**
+	 * Constructs a new client to invoke service methods on Zend Server API
+	 * using the the specified host and credentials.
+	 * 
+	 * @param credentials
+	 * @param userAgent
+	 * @param context
+	 * @param notifier
+	 * @throws MalformedURLException
+	 */
+	public WebApiClient(WebApiCredentials credentials, String host,
+			Context context, IChangeNotifier notifier)
+			throws MalformedURLException {
+		this(credentials, new ClientConfiguration(new URL(host)), context,
+				notifier);
+	}
+
+	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
 	 * using the specified account credentials and configurations.
 	 * 
@@ -93,13 +154,7 @@ public class WebApiClient {
 	 */
 	public WebApiClient(WebApiCredentials credentials,
 			ClientConfiguration clientConfiguration, Context ctx) {
-		this.credentials = credentials;
-		this.clientConfiguration = clientConfiguration;
-		this.context = ctx;
-		if (engine == null) {
-			engine = new WebApiEngine();
-			Engine.setInstance(engine);
-		}
+		this(credentials, clientConfiguration, ctx, null);
 	}
 
 	/**
@@ -112,9 +167,9 @@ public class WebApiClient {
 	 */
 	public WebApiClient(WebApiCredentials credentials, String host)
 			throws MalformedURLException {
-		this(credentials, new ClientConfiguration(new URL(host)), null);
+		this(credentials, new ClientConfiguration(new URL(host)), null, null);
 	}
-	
+
 	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
 	 * using the the specified host and credentials.
@@ -124,9 +179,9 @@ public class WebApiClient {
 	 * @param context
 	 * @throws MalformedURLException
 	 */
-	public WebApiClient(WebApiCredentials credentials, String host, Context context)
-			throws MalformedURLException {
-		this(credentials, new ClientConfiguration(new URL(host)), context);
+	public WebApiClient(WebApiCredentials credentials, String host,
+			Context context) throws MalformedURLException {
+		this(credentials, new ClientConfiguration(new URL(host)), context, null);
 	}
 
 	/**
@@ -525,6 +580,7 @@ public class WebApiClient {
 						if (defaultServer != null) {
 							deployRequest.setDefaultServer(defaultServer);
 						}
+						deployRequest.setNotifier(notifier);
 					}
 				});
 		return (ApplicationInfo) handle.getData();
@@ -714,6 +770,7 @@ public class WebApiClient {
 						if (userParam != null) {
 							updateRequest.setUserParams(userParam);
 						}
+						updateRequest.setNotifier(notifier);
 					}
 				});
 		return (ApplicationInfo) handle.getData();

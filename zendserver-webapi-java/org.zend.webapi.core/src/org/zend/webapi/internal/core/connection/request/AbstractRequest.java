@@ -20,6 +20,7 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.RequestParameter;
 import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.core.progress.IChangeNotifier;
 import org.zend.webapi.internal.core.Utils;
 import org.zend.webapi.internal.core.connection.auth.signature.Signature;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
@@ -33,6 +34,7 @@ public abstract class AbstractRequest implements IRequest {
 	private final String secretKey;
 	private final String keyName;
 	private List<RequestParameter<?>> parameters;
+	protected IChangeNotifier notifier;
 
 	public AbstractRequest(WebApiVersion version, Date date, String keyName,
 			String userAgent, String host, String secretKey) {
@@ -49,6 +51,10 @@ public abstract class AbstractRequest implements IRequest {
 		this.host = host;
 		this.secretKey = secretKey;
 		this.parameters = null;
+	}
+
+	public void setNotifier(IChangeNotifier notifier) {
+		this.notifier = notifier;
 	}
 
 	/*
