@@ -53,7 +53,7 @@ public class ZendTargetDetectMain {
 		}
 		
 		TargetsManager tm = new TargetsManager();
-		tm.detectLocalhostTarget(targetId, key, false);
+		tm.detectLocalhostTarget(targetId, key, false, true);
 	}
 
 }
