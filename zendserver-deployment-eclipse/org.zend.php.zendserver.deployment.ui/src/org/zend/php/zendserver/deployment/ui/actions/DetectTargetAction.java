@@ -117,7 +117,7 @@ public class DetectTargetAction extends Action {
 					}
 				}
 				try {
-					target = tm.detectLocalhostTarget(id, key);
+					target = tm.detectLocalhostTarget(id, key, true, false);
 				} catch (DetectionException e) {
 					// ignore
 				}
