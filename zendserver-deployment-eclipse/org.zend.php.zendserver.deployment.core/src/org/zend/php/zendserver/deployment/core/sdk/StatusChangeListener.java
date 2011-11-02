@@ -1,9 +1,9 @@
 package org.zend.php.zendserver.deployment.core.sdk;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.event.IStatusChangeListener;
-import org.zend.sdklib.library.IStatus;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.IStatusChangeEvent;
+import org.zend.webapi.core.progress.IStatusChangeListener;
 
 public class StatusChangeListener implements IStatusChangeListener {
 

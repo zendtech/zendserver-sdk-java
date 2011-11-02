@@ -27,10 +27,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.event.IStatusChangeListener;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.progress.IStatusChangeEvent;
+import org.zend.webapi.core.progress.IStatusChangeListener;
 
 /**
  * TreeViewer that shows targets configured in ZendSDK and

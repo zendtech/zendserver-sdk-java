@@ -5,10 +5,10 @@ import org.zend.php.zendserver.deployment.core.DeploymentCore;
 
 public class SdkStatus implements IStatus {
 
-	private org.zend.sdklib.library.IStatus status;
+	private org.zend.webapi.core.progress.IStatus status;
 	private int severity;
 
-	public SdkStatus(org.zend.sdklib.library.IStatus status) {
+	public SdkStatus(org.zend.webapi.core.progress.IStatus status) {
 		this.status = status;
 		switch (status.getCode()) {
 		case ERROR:

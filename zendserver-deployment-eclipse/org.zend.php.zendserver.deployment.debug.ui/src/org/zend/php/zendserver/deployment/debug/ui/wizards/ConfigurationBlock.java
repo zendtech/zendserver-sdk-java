@@ -43,10 +43,10 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.progress.StatusCode;
 
 public class ConfigurationBlock extends AbstractBlock {
 
@@ -612,7 +612,8 @@ public class ConfigurationBlock extends AbstractBlock {
 						app.addStatusChangeListener(listener);
 						applicationInfos = new ApplicationInfo[0];
 						ApplicationsList info = app.getStatus(selectedTarget.getId());
-						org.zend.sdklib.library.IStatus status = listener.getStatus();
+						org.zend.webapi.core.progress.IStatus status = listener
+								.getStatus();
 						StatusCode code = status.getCode();
 						if (code == StatusCode.ERROR) {
 							StatusManager.getManager().handle(new SdkStatus(status),
