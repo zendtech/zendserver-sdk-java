@@ -8,8 +8,8 @@
 
 package org.zend.sdklib.internal.event;
 
-import org.zend.sdklib.event.IStatusChangeEvent;
-import org.zend.sdklib.library.IStatus;
+import org.zend.webapi.core.progress.IStatus;
+import org.zend.webapi.core.progress.IStatusChangeEvent;
 
 public class StatusChangeEvent implements IStatusChangeEvent {
 

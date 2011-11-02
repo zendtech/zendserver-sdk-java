@@ -18,15 +18,15 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
-import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.StatusCode;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be

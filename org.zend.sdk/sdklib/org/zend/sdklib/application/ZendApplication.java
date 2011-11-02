@@ -21,10 +21,8 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.library.BasicStatus;
 import org.zend.sdklib.internal.target.SSLContextInitializer;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
-import org.zend.sdklib.library.StatusCode;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.target.ITargetLoader;
@@ -36,6 +34,8 @@ import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.request.NamedInputStream;
+import org.zend.webapi.core.progress.BasicStatus;
+import org.zend.webapi.core.progress.StatusCode;
 
 /**
  * Utility class which provides methods to perform operations on application.
@@ -445,7 +445,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
 		String hostname = target.getHost().toString();
-		return new WebApiClient(credentials, hostname, SSLContextInitializer.instance.getRestletContext());
+		return new WebApiClient(credentials, hostname,
+				SSLContextInitializer.instance.getRestletContext(), notifier);
 	}
 
 	private Map<String, String> getUserParameters(File propsFile) {
