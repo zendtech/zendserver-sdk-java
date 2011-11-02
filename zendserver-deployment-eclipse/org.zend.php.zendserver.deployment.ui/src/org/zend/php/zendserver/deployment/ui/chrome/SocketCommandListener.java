@@ -36,7 +36,7 @@ public class SocketCommandListener {
 			public void run() {
 				ServerSocket serverSocket = null;
 				try {
-					serverSocket = new ServerSocket(port);
+					serverSocket = openServerSocket(port);
 				} catch (IOException ex) {
 					Activator.log(ex);
 					return;
@@ -56,6 +56,30 @@ public class SocketCommandListener {
 			
 		});
 		listeningThread.start();
+	}
+
+	protected ServerSocket openServerSocket(int port2) throws IOException {
+		int tries = 3;
+		
+		IOException ex = null;
+		
+		while (tries > 0) {
+			tries--;
+			try {
+				return new ServerSocket(port);
+			} catch (IOException e) {
+				ex = e;
+				if (tries > 0) {
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e1) {
+						// ignore
+					}
+				}
+			}
+		}
+		
+		throw ex;
 	}
 
 	private void serverLoop(ServerSocket serverSocket) {
