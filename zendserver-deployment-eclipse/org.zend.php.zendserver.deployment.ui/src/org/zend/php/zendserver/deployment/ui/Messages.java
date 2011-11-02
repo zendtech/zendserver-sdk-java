@@ -74,6 +74,12 @@ public class Messages extends NLS {
 	public static String ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails;
 	public static String FileField_Browse;
 	public static String FileField_SelectFile;
+	public static String MessageTranslator_DoesntLookLikeZendServer;
+
+	public static String MessageTranslator_UnknownEOF;
+
+	public static String MessageTranslator_UnknownResponseCode;
+
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;
 	public static String OverviewPage_2;
