@@ -67,6 +67,14 @@ public class EclipseSSH2Settings {
 			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, e.getMessage(), e));
 		}
 		
+		File dir = new File(path).getParentFile();
+		if (! dir.exists()) {
+			boolean success = dir.mkdirs();
+			if (!success) {
+				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, Messages.bind("Failed to create file '{0}'. Unable to create directory '{1}'.", new Object[] {path, dir})));
+			}
+		}
+		
 		try {
 			pk.writePrivateKey(new FileOutputStream(path));
 		} catch (FileNotFoundException e) {
