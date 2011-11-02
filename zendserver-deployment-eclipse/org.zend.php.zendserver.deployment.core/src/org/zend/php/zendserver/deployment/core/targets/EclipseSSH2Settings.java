@@ -142,9 +142,6 @@ public class EclipseSSH2Settings {
 	}
 
 	private static void copyFile(File srcFile, File destFile) throws IOException {
-		FileOutputStream fos = new FileOutputStream(destFile);
-		FileInputStream fis = new FileInputStream(srcFile);
-		
 		File dir = destFile.getParentFile();
 		if (! dir.exists()) {
 			boolean success = dir.mkdirs();
@@ -152,6 +149,9 @@ public class EclipseSSH2Settings {
 				throw new IOException(Messages.bind("Failed to copy '{0}' to '{1}'. Unable to create directory '{2}'.", new Object[] {srcFile, destFile, dir}));
 			}
 		}
+		
+		FileOutputStream fos = new FileOutputStream(destFile);
+		FileInputStream fis = new FileInputStream(srcFile);
 		
 		byte[] buf = new byte[4096];
 		int len;
