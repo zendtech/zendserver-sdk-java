@@ -77,6 +77,22 @@ public class DescriptorContainer implements IDescriptorContainer {
 		} catch (IOException e) {
 			// should be catched by validator, we can ignore it
 		} finally {
+			if (src != null) {
+				try {
+					src.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+
+			if (src2 != null) {
+				try {
+					src2.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+			
 			isLoading = false;
 		}
 	}
