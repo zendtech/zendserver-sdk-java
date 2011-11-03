@@ -1,0 +1,12 @@
+Welcome to the Zend SDK!
+
+In order to start developing applications, you must add at least one
+target container to host your application. You will then able to deploy
+your applications and start developing with Zend SDK.  
+
+From the command-line you can directly manage targets, projects, and 
+application repositories of the SDK, for more details execute:
+  tools\zend help
+
+For more information, please consult the Zend SDK web site at
+  http://zend-sdk.googlecode.com
