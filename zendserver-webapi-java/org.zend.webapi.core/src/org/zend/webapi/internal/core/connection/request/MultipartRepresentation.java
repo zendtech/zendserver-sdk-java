@@ -153,12 +153,14 @@ public class MultipartRepresentation extends OutputRepresentation {
 	 */
 	@Override
 	public void write(OutputStream outputStream) throws IOException {
-		statusChanged(new BasicStatus(StatusCode.STARTING, "Sending request",
-				"Sending request...", contents.length));
+		statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Package Transfering",
+				"Transfering a package to the target...", contents.length));
 		BioUtils.copy(new WebApiInputStream(this.contents, notifier),
 				outputStream);
-		statusChanged(new BasicStatus(StatusCode.STOPPING, "Request sent",
-				"Request has been sent successfully."));
+		statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Package Transfering",
+				"Package has been transfered successfully."));
 		statusChanged(new BasicStatus(StatusCode.STARTING,
 				"Deploying", "Deploying application to the target...", -1));
 	}
