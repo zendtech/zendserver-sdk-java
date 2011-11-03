@@ -22,8 +22,8 @@ public class WebApiInputStream extends ByteArrayInputStream {
 
 	@Override
 	public synchronized int read(byte[] b, int off, int len) {
-		statusChanged(new BasicStatus(StatusCode.PROCESSING, "Send request",
-				"Sending request...", b.length));
+		statusChanged(new BasicStatus(StatusCode.PROCESSING, "Package sending",
+				"Sending a package...", b.length));
 		return super.read(b, off, len);
 	}
 
