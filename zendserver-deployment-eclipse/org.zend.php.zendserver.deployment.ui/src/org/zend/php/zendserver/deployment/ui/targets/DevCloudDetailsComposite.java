@@ -49,7 +49,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	private static final String HREF_CREATE_ACCOUNT = "createAccount"; //$NON-NLS-1$
 	
 	private static final String RESTORE_PASSWORD_URL = "http://www.zend.com/user/lost"; //$NON-NLS-1$
-	private static final String CREATE_ACCOUNT_URL = "http://www.zend.com/user/register"; //$NON-NLS-1$
+	private static final String CREATE_ACCOUNT_URL = "https://my.phpcloud.com"; //$NON-NLS-1$
 	
 	private static final String GENERATED_KEY_FILENAME = "phpcloud";  //$NON-NLS-1$
 	
