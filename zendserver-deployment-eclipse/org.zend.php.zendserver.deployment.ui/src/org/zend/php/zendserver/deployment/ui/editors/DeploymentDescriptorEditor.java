@@ -152,6 +152,27 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			setPartName(file.getProject().getName());
 		}
 	}
+	
+	private void reinit(final IFile newFile) {
+		fModel = DescriptorContainerManager.getService()
+				.openDescriptorContainer(newFile);
+		FileEditorInput input = new FileEditorInput(newFile);
+		try {
+			super.init(getEditorSite(), input);
+			initDescriptor(input);
+			initMapping();
+		} catch (PartInitException e) {
+			Activator.log(e);
+			close(false);
+		}
+		getSite().getShell().getDisplay().syncExec(new Runnable() {
+
+			public void run() {
+				setPartName(newFile.getProject().getName());
+			}
+			
+		});
+	}
 
 	private void initDescriptor(IEditorInput editorInput) throws PartInitException {
 		try {
@@ -332,10 +353,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 						close(false);
 					}
 				} else if (resource instanceof IFile) {
-					// descriptor file was removed, and not moved
+					// descriptor file was removed
 					
 					IFile file = (IFile) resource;
-					if (delta.getKind() == IResourceDelta.REMOVED && editorFile.equals(file) && ((flag & IResourceDelta.MOVED_TO) == 0)) {
+					if (delta.getKind() == IResourceDelta.REMOVED && editorFile.equals(file)) {
 						close(false);
 					}
 				}
