@@ -1,10 +1,11 @@
 package org.zend.php.zendserver.deployment.core;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,10 +32,6 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 
 	private DescriptorValidator descrValidator = new DescriptorValidator();
 	
-	public IncrementalDeploymentBuilder() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	protected IProject[] build(int kind, Map args,
 			IProgressMonitor monitor) throws CoreException {
@@ -43,29 +40,26 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		
+		// find all projects touched in change
+		final Set<IProject> projects = new HashSet<IProject>();
 		delta.accept(new IResourceDeltaVisitor() {
 			
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				IResource resource = delta.getResource();
-				if ((resource instanceof IFile) && (DescriptorContainerManager.DESCRIPTOR_PATH.equals(resource.getName()))) {
-					validateDescriptor((IFile) resource);
-				}
-				
-				if ((resource instanceof IFile)
-						&& (MappingModelFactory.DEPLOYMENT_PROPERTIES.equals(resource.getName()))) {
-					validateMapping((IFile) resource);
-				}
-				
-				if (resource instanceof IProject) {
-					return true;
-				}
-				
-				if (resource instanceof IFolder) {
-					return false;
-				}
-				return false;
+				IProject project = resource.getProject();
+				projects.add(project);
+				return true;
 			}
 		});
+		
+		// for each touched project validate descriptor
+		for (IProject project : projects) {
+			IFile descrFile = project.getFile(DescriptorContainerManager.DESCRIPTOR_PATH);
+			validateDescriptor(descrFile);
+			
+			IFile mappingFile = project.getFile(MappingModelFactory.DEPLOYMENT_PROPERTIES);
+			validateMapping(mappingFile);
+		}
 		
 		return null;
 	}
