@@ -115,13 +115,13 @@ public abstract class AbstractTargetDetailsComposite {
 			public void run() {
 				while (toCancel.isAlive() && !monitor.isCanceled()) {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// ignore
 					}
 				}
 
-				if (toCancel.isAlive() && monitor.isCanceled()) {
+				while (toCancel.isAlive() && monitor.isCanceled()) {
 					toCancel.interrupt();
 				}
 			}
