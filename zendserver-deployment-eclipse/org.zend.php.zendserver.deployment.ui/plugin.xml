@@ -27,22 +27,6 @@
                style="push">
          </command>
       </menuContribution>
-      <!--menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=testing">
-         <control
-               class="org.zend.php.zendserver.deployment.ui.contributions.PHPUnitTestContribution">
-         </control>
-      </menuContribution-->
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor?after=head">
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.phpunit"
-               icon="icons/obj16/test_application.gif"
-               style="push">
-         </command>
-      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
