@@ -56,6 +56,11 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 		
 		IDescriptorContainer container = DescriptorContainerManager.getService().openDescriptorContainer(project);
 		IFile fileToChange = container.getFile();
+		
+		if (! fileToChange.exists()) {
+			return null;
+		}
+		
 		if (affectedResource.getType() == IResource.PROJECT) { // project rename - get the new project
 			fileToChange = ResourcesPlugin.getWorkspace().getRoot().getProject(newFullPath).getFile(DescriptorContainerManager.DESCRIPTOR_PATH);
 		}
