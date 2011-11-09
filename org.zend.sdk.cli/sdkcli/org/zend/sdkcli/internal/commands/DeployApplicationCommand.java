@@ -10,6 +10,7 @@ package org.zend.sdkcli.internal.commands;
 import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdkcli.monitor.StatusChangeListener;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
@@ -67,6 +68,7 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 
 	@Override
 	public boolean doExecute() {
+		getApplication().addStatusChangeListener(new StatusChangeListener());
 		ApplicationInfo info = getApplication().deploy(getPath(),
 				getBasePath(), getTargetId(), getParams(), getName(),
 				isIgnoreFailures(), getVhost(), !isVhost());
