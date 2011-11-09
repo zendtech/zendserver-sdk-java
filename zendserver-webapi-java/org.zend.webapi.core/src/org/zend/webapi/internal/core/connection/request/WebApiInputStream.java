@@ -10,6 +10,7 @@ import org.zend.webapi.core.progress.StatusCode;
 public class WebApiInputStream extends ByteArrayInputStream {
 
 	private IChangeNotifier notifier;
+	private int totalWork;
 
 	public WebApiInputStream(byte[] bytes) {
 		this(bytes, null);
@@ -18,12 +19,17 @@ public class WebApiInputStream extends ByteArrayInputStream {
 	public WebApiInputStream(byte[] bytes, IChangeNotifier notifier) {
 		super(bytes);
 		this.notifier = notifier;
+		this.totalWork = bytes.length;
 	}
 
 	@Override
 	public synchronized int read(byte[] b, int off, int len) {
-		statusChanged(new BasicStatus(StatusCode.PROCESSING, "Package Sending",
-				"Sending package...", b.length));
+		if (totalWork >= 0) {
+			statusChanged(new BasicStatus(StatusCode.PROCESSING,
+					"Package Sending", "Sending package...", totalWork
+							- b.length < 0 ? totalWork : b.length));
+			totalWork -= b.length;
+		}
 		return super.read(b, off, len);
 	}
 
