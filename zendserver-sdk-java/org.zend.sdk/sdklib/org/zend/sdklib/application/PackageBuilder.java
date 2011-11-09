@@ -261,10 +261,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 							out.write(data, 0, count);
 						}
 						in.close();
+						notifier.statusChanged(new BasicStatus(
+								StatusCode.PROCESSING, "Package creation",
+								"Creating deployment package...", 1));
 					}
-					notifier.statusChanged(new BasicStatus(
-							StatusCode.PROCESSING, "Package creation",
-							"Creating deployment package...", 1));
 				}
 			}
 		}
