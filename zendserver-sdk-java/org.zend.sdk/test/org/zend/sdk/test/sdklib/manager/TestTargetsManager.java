@@ -157,7 +157,7 @@ public class TestTargetsManager extends AbstractTest {
 		assertNull(manager.getTargetById("0"));
 	}
 
-	@Test
+	// @Test
 	public void testDetectLocalhost() throws WebApiException, TargetException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
@@ -167,7 +167,7 @@ public class TestTargetsManager extends AbstractTest {
 				target.getKey()));
 	}
 
-	@Test
+	// @Test
 	public void testDetectLocalhostNoId() throws WebApiException, TargetException, IOException, DetectionException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
