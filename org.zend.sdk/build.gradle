@@ -1,0 +1,115 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply from:"file:emma.gradle"
+
+sourceCompatibility = getBuildProperty('source')
+version = getBuildProperty('sdk.version')
+
+sourceFolder = 'sdklib'
+testFolder = 'test'
+
+repositories {
+	mavenCentral()
+	maven { url "http://maven.restlet.org" }
+	flatDir { name 'localRepository' }
+	localRepository { dirs 'lib' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.webapi.core/build/libs/' }
+}
+
+sourceSets {
+	main { java { srcDir sourceFolder } }
+	test { java { srcDir testFolder } }
+}
+
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.+'
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.5'
+	testCompile name: 'org.zend.webapi.test-0.0.15'
+	compile group: 'org.restlet.jse', name: 'org.restlet', version: '2.0.4'
+	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
+	compile name: 'registry'
+	compile name: 'org.zend.webapi-0.0.15'
+}
+
+emma {
+	copy {
+		from sourceFolder
+		into instrDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+}
+
+test {
+	scanForTestClasses = false
+	include '**/*AllLibTests.class'
+}
+
+jar {
+	manifest {
+		from ('META-INF/MANIFEST.MF') {
+			eachEntry { attribute ->
+				if (attribute.key == 'Bundle-Version') {
+					attribute.value = version
+				}
+			}
+		}
+	}
+}
+
+compileJava.doFirst {
+	copy {
+		from sourceFolder
+		into sourceSets.main.output.classesDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+	copy {
+		from testFolder
+		into sourceSets.test.output.classesDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+}
+
+task createBinPackage(type: Zip) {
+	archiveName = project.rootProject.name + '-' + version + '-bin.zip'
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '*.jar'
+	}
+	into('resources') {
+		from 'resources'
+		include 'schemas/*.xsd'
+	}
+}
+
+task createSrcPackage(type: Zip) {
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '*.jar'
+	}
+	into('src') { from sourceFolder }
+	into('test') { from testFolder }
+	into('docs') { from project.docsDir }
+	into('resources') {
+		from 'resources'
+		include 'schemas/*.xsd'
+	}
+}
+
+String getBuildProperty(String name) {
+	props = new Properties()
+	new File('artifacts.properties').withInputStream { stream ->
+		props.load(stream)
+	}
+	return props[name]
+}
