@@ -2,8 +2,9 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply from:"file:emma.gradle"
 
-sourceCompatibility = 1.5
-version = '0.0.15'
+sourceCompatibility = getBuildProperty('source')
+version = getBuildProperty('webapi.version')
+
 srcFolder = 'src'
 testFolder = 'test'
 
@@ -39,6 +40,18 @@ test {
 	include '**/*AllTests.class'
 }
 
+jar {
+	manifest {
+		from ('META-INF/MANIFEST.MF') {
+			eachEntry { attribute ->
+				if (attribute.key == 'Bundle-Version') {
+					attribute.value = version
+				}
+			}
+		}
+	}
+}
+
 compileJava.doFirst {
 	copy {
 		from testFolder
@@ -67,10 +80,7 @@ task createBinPackage(type: Zip) {
 		from 'examples'
 	}
 	into('.') {
-		from project.rootDir
-		include 'copyright.txt'
-		include 'license.html'
-		include 'readme.txt'
+		from project.rootDir.path + File.separator + 'docs'
 	}
 }
 
@@ -96,17 +106,14 @@ task createSrcPackage(type: Zip) {
 		from 'examples'
 	}
 	into('.') {
-		from project.rootDir
-		include 'copyright.txt'
-		include 'license.html'
-		include 'readme.txt'
+		from project.rootDir.path + File.separator + 'docs'
 	}
 }
 
-uploadArchives {
-	repositories {
-	   flatDir {
-		   dirs 'file:///Users/galAnonim/temp'
-	   }
+String getBuildProperty(String name) {
+	props = new Properties()
+	new File('artifacts.properties').withInputStream {
+	  stream -> props.load(stream)
 	}
+	return props[name]
 }
