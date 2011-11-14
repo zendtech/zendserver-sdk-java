@@ -1,0 +1,128 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply from:"file:emma.gradle"
+
+sourceCompatibility = getBuildProperty('source')
+version = getBuildProperty('sdk.version')
+
+sourceFolder = 'sdkcli'
+testFolder = 'test'
+
+repositories {
+	mavenCentral()
+	maven { url "http://maven.restlet.org" }
+	maven { url "http://download.eclipse.org/jgit/maven" }
+	flatDir { name 'localRepository' }
+	localRepository { dirs 'lib' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.webapi/build/libs/' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.sdk/build/libs/' }
+}
+
+sourceSets {
+	main { java { srcDir sourceFolder } }
+	test { java { srcDir testFolder } }
+}
+
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.+'
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.5'
+	testCompile name: 'org.zend.webapi.test-0.0.15'
+	compile group: 'com.jcraft', name: 'jsch', version: '0.1.41'
+	compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+	compile group: 'log4j', name: 'log4j', version: '1.2.16'
+	compile 'org.slf4j:slf4j-api:1.6.1'
+	compile 'org.slf4j:slf4j-log4j12:1.6.1'
+	compile 'org.slf4j:jul-to-slf4j:1.6.1'
+	compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '1.1.0.201109151100-r'
+	compile group: 'org.restlet.jse', name: 'org.restlet', version: '2.0.4'
+	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
+	compile name: 'registry'
+	compile name: 'archquery'
+	compile name: 'org.zend.webapi-0.0.15'
+	compile name: 'org.zend.sdk-0.0.20'
+}
+
+emma {
+	copy {
+		from sourceFolder
+		into instrDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+}
+
+test {
+	scanForTestClasses = false
+	include '**/*AllCliTests.class'
+}
+
+compileJava.doFirst {
+	copy {
+		from sourceFolder
+		into sourceSets.main.output.classesDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+	copy {
+		from testFolder
+		into sourceSets.test.output.classesDir
+		exclude '**/*.java'
+		exclude '**/.svnignore'
+	}
+}
+
+task createBinPackage(type: Zip) {
+	archiveName = project.rootProject.name + '-' + version + '-bin.zip'
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '*.jar'
+	}
+	into('resources') {
+		from 'resources'
+		include 'schemas/*.xsd'
+	}
+	into('tools') {
+		from 'tools'
+	}
+	into('.') {
+		from project.rootDir
+		include 'README'
+	}
+}
+
+task createSrcPackage(type: Zip) {
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '*.jar'
+	}
+	into('src') { from sourceFolder }
+	into('test') { from testFolder }
+	into('docs') { from project.docsDir }
+	into('resources') {
+		from 'resources'
+		include 'schemas/*.xsd'
+	}
+	into('tools') {
+		from 'tools'
+	}
+	into('.') {
+		from project.rootDir
+		include 'README'
+	}
+}
+
+String getBuildProperty(String name) {
+	props = new Properties()
+	new File('artifacts.properties').withInputStream { stream ->
+		props.load(stream)
+	}
+	return props[name]
+}
