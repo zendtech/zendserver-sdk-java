@@ -2,6 +2,8 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply from:"file:emma.gradle"
 
+ant.importBuild 'resources/generator/build.xml'
+
 sourceCompatibility = getBuildProperty('source')
 version = getBuildProperty('sdk.version')
 
