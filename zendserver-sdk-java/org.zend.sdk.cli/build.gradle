@@ -119,6 +119,38 @@ task createSrcPackage(type: Zip) {
 	}
 }
 
+
+build.doLast {
+	tmp = buildDir.path + '/tmp'
+	repository = buildDir.path + '/repository'
+	quickstartTmp = tmp + '/zf'
+	repoTmp = tmp + '/repository'
+	delete {
+		delete tmp
+		delete repository
+	}
+	execCommand('create', 'project', '-n', 'helloworld', '-d', quickstartTmp)
+	File repositoryDir = new File(repoTmp)
+	if (!repositoryDir.exists()) {
+		repositoryDir.mkdir()
+	}
+	execCommand('create', 'package', '-p', quickstartTmp, '-d', repoTmp)
+	execCommand('generate', 'repository', '-t', 'helpers/org/zend/sdkhelp/repository/quickstart.xml', '-o', repoTmp, '-p', repoTmp + '/helloworld-1.0.0.zpk')
+	copy {
+		from repoTmp
+		into repository
+	}
+	delete { delete tmp }
+}
+
+void execCommand(String... argsList) {
+	javaexec {
+		main = 'org.zend.sdkcli.Main'
+		classpath = sourceSets.main.runtimeClasspath
+		args argsList
+	}
+}
+
 String getBuildProperty(String name) {
 	props = new Properties()
 	new File('artifacts.properties').withInputStream { stream ->
