@@ -41,6 +41,7 @@ test {
 }
 
 jar {
+	archiveName = project.rootProject.name + '.jar'
 	manifest {
 		from ('META-INF/MANIFEST.MF') {
 			eachEntry { attribute ->
@@ -62,7 +63,7 @@ compileJava.doFirst {
 }
 
 task createTestJar(type: Jar) {
-	archiveName = project.rootProject.name + '.test-' + version + '.jar'
+	archiveName = project.rootProject.name + '.test.jar'
 	from sourceSets.test.output
 	from testFolder
 	exclude '**/*.java'
