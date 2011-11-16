@@ -132,7 +132,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			final boolean update = project.update(null);
 			if (update) {
 				getLogger()
-						.info("Project is updated with deployment descriptor and properties");
+						.debug("Project is updated with deployment descriptor and properties");
 			}
 		} catch (IllegalArgumentException e) {
 			getLogger().error(e.getMessage());
@@ -152,7 +152,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		return new UsernamePasswordCredentialsProvider(username, password);
 	}
 
-	private File getDirectory(String repo) throws URISyntaxException {
+	protected File getDirectory(String repo) throws URISyntaxException {
 		String dir = getDir();
 		if (dir != null) {
 			return new File(getCurrentDirectory(), dir);
