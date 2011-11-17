@@ -18,7 +18,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.SSLContextInitializer;
@@ -44,6 +43,8 @@ import org.zend.webapi.core.progress.StatusCode;
  * 
  */
 public class ZendApplication extends AbstractChangeNotifier {
+
+	public static final String TEMP_PREFIX = "ZendStudioDeployment";
 
 	private final TargetsManager manager;
 	private IMappingLoader mappingLoader;
@@ -188,29 +189,12 @@ public class ZendApplication extends AbstractChangeNotifier {
 	public ApplicationInfo deploy(String path, String basePath,
 			String targetId, Map<String, String> userParams, String appName,
 			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
-		File file = new File(path);
-		if (!file.exists()) {
-			log.error("Path does not exist: " + file);
-			return null;
-		}
-		File zendPackage = null;
-		// check if it is a package or a folder (project)
-		File tempFile = null;
-		if (file.isDirectory()) {
-			final String tempDir = System.getProperty("java.io.tmpdir");
-			tempFile = new File(tempDir + File.separator
-					+ new Random().nextInt());
-			tempFile.mkdir();
-			PackageBuilder builder = null;
-			builder = mappingLoader == null ? new PackageBuilder(new File(path))
-					: new PackageBuilder(new File(path), mappingLoader, this);
-			zendPackage = builder.createDeploymentPackage(tempFile);
-		} else {
-			zendPackage = file;
-		}
-		if (zendPackage != null) {
-			try {
-				String baseUrl = resolveBaseUrl(file, basePath, defaultServer,
+		deleteFile(getTempFile(path));
+		File zendPackage = createPackage(path);
+		try {
+			if (zendPackage != null) {
+				String baseUrl = resolveBaseUrl(new File(path), basePath,
+						defaultServer,
 						vhostName);
 				WebApiClient client = getClient(targetId);
 				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
@@ -222,21 +206,22 @@ public class ZendApplication extends AbstractChangeNotifier {
 						defaultServer);
 				notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
 						"Application deployed successfully"));
+				deleteFile(getTempFile(path));
 				return result;
-			} catch (MalformedURLException e) {
-				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-						"Error during deploying application to '" + targetId + "'", e));
-				log.error(e);
-			} catch (WebApiException e) {
-				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
-						"Error during deploying application to '" + targetId + "'", e));
-				log.error("Error during deploying application to '" + targetId
-						+ "':");
-				log.error("\tpossible error: " + e.getMessage());
 			}
-		}
-		if (tempFile != null) {
-			tempFile.deleteOnExit();
+		} catch (MalformedURLException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Deploying", "Error during deploying application to '"
+							+ targetId + "'", e));
+			log.error(e);
+			deleteFile(getTempFile(path));
+		} catch (WebApiException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Deploying", "Error during deploying application to '"
+							+ targetId + "'", e));
+			log.error("Error during deploying application to '" + targetId
+					+ "':");
+			log.error("\tpossible error: " + e.getMessage());
 		}
 		return null;
 	}
@@ -380,36 +365,20 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 */
 	public ApplicationInfo update(String path, String targetId, String appId,
 			Map<String, String> userParams, Boolean ignoreFailures) {
-		File file = new File(path);
-		if (!file.exists()) {
-			log.error("Path does not exist: " + file);
-			return null;
-		}
-		File zendPackage = null;
-		// check if it is a package or a folder (project)
-		File tempFile = null;
-		if (file.isDirectory()) {
-			final String tempDir = System.getProperty("java.io.tmpdir");
-			tempFile = new File(tempDir + File.separator
-					+ new Random().nextInt());
-			tempFile.mkdir();
-			PackageBuilder builder = null;
-			builder = mappingLoader == null ? new PackageBuilder(new File(path))
-					: new PackageBuilder(new File(path), mappingLoader, this);
-			zendPackage = builder.createDeploymentPackage(tempFile);
-		} else {
-			zendPackage = file;
-		}
+		File zendPackage = createPackage(path);
 		try {
-			int appIdint = Integer.parseInt(appId);
-			WebApiClient client = getClient(targetId);
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Updating",
-					"Updating application on the target...", -1));
-			ApplicationInfo result = client.applicationUpdate(appIdint, new NamedInputStream(
-					zendPackage), ignoreFailures, userParams);
-			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Updating",
-					"Application updated successfully"));
-			return result;
+			if (zendPackage != null) {
+				int appIdint = Integer.parseInt(appId);
+				WebApiClient client = getClient(targetId);
+				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+						"Updating", "Updating application on the target...", -1));
+				ApplicationInfo result = client.applicationUpdate(appIdint,
+						new NamedInputStream(zendPackage), ignoreFailures,
+						userParams);
+				notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+						"Updating", "Application updated successfully"));
+				return result;
+			}
 		} catch (MalformedURLException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Updating",
 					"Error during updating application on '" + targetId + "'", e));
@@ -420,9 +389,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 			log.error("Error during updating application on '" + targetId
 					+ "':");
 			log.error("\tpossible error: " + e.getMessage());
-		}
-		if (tempFile != null) {
-			tempFile.deleteOnExit();
+		} finally {
+			deleteFile(getTempFile(path));
 		}
 		return null;
 	}
@@ -468,6 +436,57 @@ public class ZendApplication extends AbstractChangeNotifier {
 			log.error(e);
 		}
 		return result;
+	}
+
+	private File createPackage(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			log.error("Path does not exist: " + file);
+			return null;
+		}
+		if (file.isDirectory()) {
+			File tempFile = getTempFile(path);
+			if (tempFile.isDirectory()) {
+				File[] children = tempFile.listFiles();
+				if (children.length == 1) {
+					return children[0];
+				}
+			}
+			PackageBuilder builder = null;
+			builder = mappingLoader == null ? new PackageBuilder(new File(path))
+					: new PackageBuilder(new File(path), mappingLoader, this);
+			return builder.createDeploymentPackage(tempFile);
+		} else {
+			return file;
+		}
+	}
+
+	private File getTempFile(String path) {
+		String tempDir = System.getProperty("java.io.tmpdir");
+		path = path.replace("\\", "/");
+		String suffix = path.substring(path.lastIndexOf("/") + 1);
+		File tempFile = new File(tempDir + File.separator + TEMP_PREFIX
+				+ suffix);
+		if (!tempFile.exists()) {
+			tempFile.mkdir();
+		}
+		return tempFile;
+	}
+
+	private boolean deleteFile(File file) {
+		if (file == null || !file.exists()) {
+			return true;
+		}
+		if (file.isDirectory()) {
+			String[] children = file.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean result = deleteFile(new File(file, children[i]));
+				if (!result) {
+					return false;
+				}
+			}
+		}
+		return file.delete();
 	}
 
 }
