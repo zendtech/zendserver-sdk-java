@@ -15,7 +15,7 @@ repositories {
 	maven { url "http://maven.restlet.org" }
 	flatDir { name 'localRepository' }
 	localRepository { dirs 'lib' }
-	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.webapi/build/libs/' }
+	localRepository { dirs 'file:///Users/galAnonim/zend/workspaces/devenv/org.zend.webapi/build/libs' }
 }
 
 sourceSets {
@@ -57,6 +57,19 @@ jar {
 	}
 }
 
+build.doLast {
+	copy {
+		from configurations.compile
+		into project.libsDir
+	}
+}
+
+task createDistribution << {
+	createBinPackage.execute()
+	createSrcPackage.execute()
+	createPlugin.execute()
+}
+
 task createBinPackage(type: Zip) {
 	archiveName = project.rootProject.name + '-' + version + '-bin.zip'
 	into('lib') {
@@ -90,10 +103,51 @@ task createSrcPackage(type: Zip) {
 	}
 }
 
+task createPlugin(type: Jar) {
+	archiveName = project.rootProject.name + "." + version + '.jar'
+	destinationDir = new File(project.distsDir.path + File.separator + 'plugins')
+	into('lib') {
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '**/*.jar'
+	}
+	into('.') {
+		from sourceSets.main.output.classesDir
+		from sourceSets.main.output.resourcesDir
+	}
+	into('schemas') {
+		from 'resources/schemas'
+		include '*.xsd'
+	}
+	manifest {
+		from ('META-INF/MANIFEST.MF') {
+			eachEntry { attribute ->
+				if (attribute.key == 'Bundle-Version') {
+					attribute.value = version
+				}
+				if (attribute.key == 'Bundle-ClassPath') {
+					attribute.value = createBundleClasspath()
+				}
+			}
+		}
+	}
+}
+
 String getBuildProperty(String name) {
 	props = new Properties()
 	new File('artifacts.properties').withInputStream { stream ->
 		props.load(stream)
 	}
 	return props[name]
+}
+
+String createBundleClasspath() {
+	StringBuilder builder = new StringBuilder()
+	configurations.compile.collect {
+		builder.append('lib/' + it.name + ", ")
+	}
+	builder.append('.');
+	return builder.toString()
 }
