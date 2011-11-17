@@ -7,6 +7,7 @@ version = getBuildProperty('sdk.version')
 
 sourceFolder = 'sdkcli'
 testFolder = 'test'
+helpersFolder = 'helpers'
 
 repositories {
 	mavenCentral()
@@ -19,8 +20,20 @@ repositories {
 }
 
 sourceSets {
-	main { java { srcDir sourceFolder } }
-	test { java { srcDir testFolder } }
+	main {
+		java {
+			srcDir sourceFolder
+			srcDir helpersFolder
+		}
+		resources {
+			srcDir sourceFolder
+			srcDir helpersFolder
+		}
+	}
+	test {
+		java { srcDir testFolder }
+		resources { srcDir testFolder }
+	}
 }
 
 dependencies {
@@ -42,15 +55,6 @@ dependencies {
 	compile name: 'org.zend.sdk'
 }
 
-emma {
-	copy {
-		from sourceFolder
-		into instrDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
-	}
-}
-
 test {
 	scanForTestClasses = false
 	include '**/*AllCliTests.class'
@@ -58,21 +62,8 @@ test {
 
 jar {
 	archiveName = project.rootProject.name + '.jar'
-}
-
-compileJava.doFirst {
-	copy {
-		from sourceFolder
-		into sourceSets.main.output.classesDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
-	}
-	copy {
-		from testFolder
-		into sourceSets.test.output.classesDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
-	}
+	from sourceSets.main.output.classesDir
+	exclude 'org/zend/sdkhelp' 
 }
 
 task createBinPackage(type: Zip) {
@@ -133,13 +124,13 @@ build.doLast {
 		delete tmp
 		delete repository
 	}
-	execCommand('create', 'project', '-n', 'helloworld', '-d', quickstartTmp)
+	execCommand('org.zend.sdkcli.Main', 'create', 'project', '-n', 'helloworld', '-d', quickstartTmp)
 	File repositoryDir = new File(repoTmp)
 	if (!repositoryDir.exists()) {
 		repositoryDir.mkdir()
 	}
-	execCommand('create', 'package', '-p', quickstartTmp, '-d', repoTmp)
-	execCommand('generate', 'repository', '-t', 'helpers/org/zend/sdkhelp/repository/quickstart.xml', '-o', repoTmp, '-p', repoTmp + '/helloworld-1.0.0.zpk')
+	execCommand('org.zend.sdkcli.Main', 'create', 'package', '-p', quickstartTmp, '-d', repoTmp)
+	execCommand('org.zend.sdkcli.Main', 'generate', 'repository', '-t', 'helpers/org/zend/sdkhelp/repository/quickstart.xml', '-o', repoTmp, '-p', repoTmp + '/helloworld-1.0.0.zpk')
 	copy {
 		from repoTmp
 		into repository
@@ -147,9 +138,14 @@ build.doLast {
 	delete { delete tmp }
 }
 
-void execCommand(String... argsList) {
+javadoc.doLast {
+	execCommand('org.zend.sdkhelp.docs.GenerateManual', project.docsDir.path + "/syntax.html")
+	execCommand('org.zend.sdkhelp.validation.ValidationReport', project.docsDir.path + "/conflicts.html")
+}
+
+void execCommand(String mainName, String... argsList) {
 	javaexec {
-		main = 'org.zend.sdkcli.Main'
+		main = mainName
 		classpath = sourceSets.main.runtimeClasspath
 		args argsList
 	}
