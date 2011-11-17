@@ -15,7 +15,7 @@ public class UpdateLaunchJob extends DeploymentLaunchJob {
 	@Override
 	protected ApplicationInfo performOperation(ZendApplication app, String projectPath) {
 		String appId = String.valueOf(helper.getAppId());
-		return app.update(project.getLocation().toString(), helper.getTargetId(), appId,
+		return app.update(projectPath, helper.getTargetId(), appId,
 				helper.getUserParams(), helper.isIgnoreFailures());
 	}
 
