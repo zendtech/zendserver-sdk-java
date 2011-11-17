@@ -19,8 +19,14 @@ repositories {
 }
 
 sourceSets {
-	main { java { srcDir sourceFolder } }
-	test { java { srcDir testFolder } }
+	main {
+		java { srcDir sourceFolder }
+		resources { srcDir sourceFolder }
+	}
+	test {
+		java { srcDir testFolder } 
+		resources { srcDir testFolder }
+	}
 }
 
 dependencies {
@@ -31,15 +37,6 @@ dependencies {
 	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
 	compile name: 'registry'
 	compile name: 'org.zend.webapi'
-}
-
-emma {
-	copy {
-		from sourceFolder
-		into instrDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
-	}
 }
 
 test {
@@ -57,21 +54,6 @@ jar {
 				}
 			}
 		}
-	}
-}
-
-compileJava.doFirst {
-	copy {
-		from sourceFolder
-		into sourceSets.main.output.classesDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
-	}
-	copy {
-		from testFolder
-		into sourceSets.test.output.classesDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
 	}
 }
 
