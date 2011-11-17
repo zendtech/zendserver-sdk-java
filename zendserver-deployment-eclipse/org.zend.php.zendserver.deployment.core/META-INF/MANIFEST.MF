@@ -25,4 +25,3 @@ Export-Package: org.zend.php.zendserver.deployment.core,
  org.zend.php.zendserver.deployment.core.sdk,
  org.zend.php.zendserver.deployment.core.targets,
  org.zend.php.zendserver.deployment.core.utils
-Import-Package: org.zend.webapi.core.progress
