@@ -25,6 +25,9 @@ sourceSets {
 		java {
 			srcDir testFolder
 		}
+		resources {
+			srcDir testFolder
+		}
 	}
 }
 
@@ -50,15 +53,6 @@ jar {
 				}
 			}
 		}
-	}
-}
-
-compileJava.doFirst {
-	copy {
-		from testFolder
-		into sourceSets.test.output.classesDir
-		exclude '**/*.java'
-		exclude '**/.svnignore'
 	}
 }
 
