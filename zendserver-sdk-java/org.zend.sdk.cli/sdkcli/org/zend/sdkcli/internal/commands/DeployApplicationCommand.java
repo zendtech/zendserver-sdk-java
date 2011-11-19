@@ -215,14 +215,11 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 										"There is no {0} application in {1} respository",
 												getAppName(),
 												getRepositoryName()));
-						return false;
 					}
 				} catch (SdkException e) {
 					getLogger().error(e);
-					return false;
 				} catch (IOException e) {
 					getLogger().error(e);
-					return false;
 				}
 			} else if (getRepo() != null) {
 				doDeploy = cloneCommand.doExecute();
