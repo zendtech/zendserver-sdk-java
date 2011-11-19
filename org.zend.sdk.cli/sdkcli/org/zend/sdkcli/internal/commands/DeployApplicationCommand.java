@@ -8,12 +8,20 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.eclipse.jgit.transport.URIish;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdkcli.monitor.StatusChangeListener;
+import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
+import org.zend.sdklib.manager.RepositoryManager;
+import org.zend.sdklib.repository.IRepository;
+import org.zend.sdklib.repository.site.Application;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
@@ -84,11 +92,13 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 	private static final String NAME = "n";
 	private static final String IGNORE_FAILURES = "f";
 	private static final String VHOST = "h";
-	private static final String REPO = "r";
+	private static final String REPO = "l";
 	private static final String USER = "u";
 	private static final String PASSWD = "p";
 	private static final String KEY = "k";
 	private static final String BRANCH = "g";
+	private static final String APP_ID = "i";
+	private static final String APP_REPO = "r";
 
 	private DeployCloneCommand cloneCommand = new DeployCloneCommand();
 
@@ -159,38 +169,97 @@ public class DeployApplicationCommand extends ApplicationAwareCommand {
 		return value;
 	}
 
+	@Option(opt = APP_ID, required = false, description = "Application id from reposiotry", argName = "key")
+	public String getAppName() {
+		final String value = getValue(APP_ID);
+		return value;
+	}
+
+	@Option(opt = APP_REPO, required = false, description = "URL of repository from which application should be deployed", argName = "branch")
+	public String getRepositoryName() {
+		final String value = getValue(APP_REPO);
+		return value;
+	}
+
 	public boolean isVhost() {
 		return getVhost() != null;
 	}
 
 	@Override
 	public boolean doExecute() {
-		boolean result = true;
-		if (getRepo() != null) {
-			result = cloneCommand.doExecute();
-		}
-		if (result) {
-			try {
-				getApplication()
-						.addStatusChangeListener(new StatusChangeListener());
-				ApplicationInfo info = getApplication().deploy(getPath(),
-						getBasePath(), getTargetId(), getParams(), getName(),
+		boolean doDeploy = true;
+		ApplicationInfo info = null;
+		getApplication().addStatusChangeListener(new StatusChangeListener());
+		try {
+			if (getRepositoryName() != null && getAppName() != null) {
+				doDeploy = false;
+				RepositoryManager manager = new RepositoryManager(
+						new UserBasedRepositoryLoader());
+				IRepository repository = manager
+						.getRepositoryById(getRepositoryName());
+				if (repository == null) {
+					getLogger().error("Incorrect repository URL");
+					return false;
+				}
+				try {
+					Application app = getApplicationFromReposiotry(repository);
+					if (app != null) {
+						InputStream stream = repository.getPackage(app);
+						info = getApplication().deploy(stream, app,
+								getBasePath(), getTargetId(), getParams(),
+								getName(), isIgnoreFailures(), getVhost(),
+								!isVhost());
+					} else {
+						getLogger().error(
+								MessageFormat.format(
+										"There is no {0} application in {1} respository",
+												getAppName(),
+												getRepositoryName()));
+						return false;
+					}
+				} catch (SdkException e) {
+					getLogger().error(e);
+					return false;
+				} catch (IOException e) {
+					getLogger().error(e);
+					return false;
+				}
+			} else if (getRepo() != null) {
+				doDeploy = cloneCommand.doExecute();
+			}
+			if (doDeploy) {
+				info = getApplication().deploy(getPath(), getBasePath(),
+						getTargetId(), getParams(), getName(),
 						isIgnoreFailures(), getVhost(), !isVhost());
-				if (info != null) {
-					getLogger()
-							.info(MessageFormat
-									.format("Application {0} (id {1}) is deployed to {2}",
-											info.getAppName(), info.getId(),
-											info.getBaseUrl()));
-					return true;
-				}
-			} finally {
-				if (getRepo() != null && cloneCommand.getProjectFile() != null) {
-					delete(cloneCommand.getProjectFile());
-				}
+			}
+			if (info != null) {
+				getLogger().info(
+						MessageFormat.format(
+								"Application {0} (id {1}) is deployed to {2}",
+								info.getAppName(), info.getId(),
+								info.getBaseUrl()));
+				return true;
+			}
+		} finally {
+			if (getRepo() != null && cloneCommand.getProjectFile() != null) {
+				delete(cloneCommand.getProjectFile());
 			}
 		}
 		return false;
+	}
+
+	private Application getApplicationFromReposiotry(IRepository repository)
+			throws SdkException {
+		List<Application> apps = repository.getSite().getApplication();
+		if (apps != null) {
+			String name = getAppName();
+			for (Application app : apps) {
+				if (app.getName().equals(name)) {
+					return app;
+				}
+			}
+		}
+		return null;
 	}
 
 	private boolean delete(File file) {

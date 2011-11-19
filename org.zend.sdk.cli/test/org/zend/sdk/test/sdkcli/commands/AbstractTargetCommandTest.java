@@ -35,7 +35,7 @@ public class AbstractTargetCommandTest extends AbstractTest {
 
 	@After
 	public void shutdown() {
-		file.deleteOnExit();
+		delete(file);
 	}
 
 	protected IZendTarget getTarget() throws WebApiException {
