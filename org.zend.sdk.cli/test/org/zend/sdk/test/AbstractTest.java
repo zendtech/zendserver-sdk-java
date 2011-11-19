@@ -1,5 +1,7 @@
 package org.zend.sdk.test;
 
+import java.io.File;
+
 import org.junit.Before;
 import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
@@ -36,4 +38,21 @@ public class AbstractTest {
 			}
 		});
 	}
+
+	protected boolean delete(File file) {
+		if (file == null || !file.exists()) {
+			return true;
+		}
+		if (file.isDirectory()) {
+			String[] children = file.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean result = delete(new File(file, children[i]));
+				if (!result) {
+					return false;
+				}
+			}
+		}
+		return file.delete();
+	}
+
 }
