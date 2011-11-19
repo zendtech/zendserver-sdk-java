@@ -8,22 +8,28 @@
 package org.zend.sdklib.application;
 
 //import java.io.File;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.SSLContextInitializer;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMappingLoader;
+import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
@@ -160,6 +166,48 @@ public class ZendApplication extends AbstractChangeNotifier {
 	/**
 	 * Deploys a new application to the specified target.
 	 * 
+	 * @param inputStream
+	 *            - input stream for application package
+	 * @param application
+	 *            - application description from repository site
+	 * @param targetId
+	 *            - target id
+	 * @param propertiesFile
+	 *            - path to properties file which consists user deployment
+	 *            parameters
+	 * @param appName
+	 *            - application name
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @param vhostName
+	 *            - the name of the vhost to use, if such a virtual host wasn't
+	 *            already created by Zend Server it will be created
+	 * @param defaultServer
+	 *            - deploy the application on the default server; the base URL
+	 *            host provided will be ignored and replaced with
+	 *            <default-server>.
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo deploy(InputStream inputStream,
+			Application application, String basePath, String targetId,
+			String propertiesFile, String appName, Boolean ignoreFailures,
+			String vhostName, Boolean defaultServer) {
+		if (inputStream != null && application != null) {
+			String path = getPackagePath(inputStream, application);
+			if (path != null) {
+				return deploy(path, basePath, targetId, propertiesFile,
+						appName, ignoreFailures, vhostName, defaultServer);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Deploys a new application to the specified target.
+	 * 
 	 * @param path
 	 *            - path to project location or application package
 	 * @param basePath
@@ -226,21 +274,48 @@ public class ZendApplication extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private String resolveBaseUrl(File path, String basePath,
-			Boolean defaultServer, String vhostName)
-			throws MalformedURLException {
-
-		if (basePath == null) {
-			basePath = path.getName();
+	/**
+	 * Deploys a new application to the specified target.
+	 * 
+	 * @param inputStream
+	 *            - input stream for application package
+	 * @param application
+	 *            - application description from repository site
+	 * @param basePath
+	 *            - base path to deploy the application to. relative to
+	 *            host/vhost
+	 * @param targetId
+	 *            - target id
+	 * @param userParams
+	 *            - map with user parameters (key and value)
+	 * @param appName
+	 *            - application name
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @param vhostName
+	 *            - The virtual host to use, if such a virtual host wasn't
+	 *            already created by Zend Server - it is created.
+	 * @param defaultServer
+	 *            - deploy the application on the default server; the base URL
+	 *            host provided will be ignored and replaced with
+	 *            <default-server>.
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo deploy(InputStream inputStream,
+			Application application, String basePath, String targetId,
+			Map<String, String> userParams, String appName,
+			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
+		if (inputStream != null && application != null) {
+			String path = getPackagePath(inputStream, application);
+			if (path != null) {
+				return deploy(path, basePath, targetId, userParams, appName,
+						ignoreFailures, vhostName, defaultServer);
+			}
 		}
-		if (basePath.startsWith("/")) {
-			basePath = basePath.substring(1);
-		}
-
-		String url = MessageFormat.format("http://{0}/{1}",
-				vhostName == null ? "default-server" : vhostName, basePath);
-		log.debug("resolved url " + url);
-		return url;
+		return null;
 	}
 
 	/**
@@ -487,6 +562,74 @@ public class ZendApplication extends AbstractChangeNotifier {
 			}
 		}
 		return file.delete();
+	}
+
+	private String getPackagePath(InputStream in, Application app) {
+		String packageName = getPackageName(app.getUrl());
+		File tempFile = getTempFile(packageName);
+		tempFile = new File(tempFile.getAbsolutePath() + new Random().nextInt());
+		if (!tempFile.exists()) {
+			tempFile.mkdir();
+		}
+		File packageFile = new File(tempFile, packageName);
+		OutputStream out = null;
+		notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+				"Package Downloading",
+				"Downloading package from repository...", -1));
+		try {
+			if (!packageFile.exists()) {
+				packageFile.createNewFile();
+			}
+			out = new FileOutputStream(packageFile);
+			byte[] buffer = new byte[2048];
+			int len = in.read(buffer);
+			while (len != -1) {
+				out.write(buffer, 0, len);
+				len = in.read(buffer);
+			}
+		} catch (IOException e) {
+			log.error(e);
+			return null;
+		} finally {
+			closeStream(in);
+			closeStream(out);
+		}
+		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+				"Package Downloading",
+				"Package is downloaded from repository successfully.", -1));
+		return packageFile.getAbsolutePath();
+	}
+
+	private void closeStream(Closeable stream) {
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException e) {
+				log.error(e);
+			}
+		}
+	}
+
+	private String getPackageName(String url) {
+		url = url.replace("\\", "/");
+		return url.substring(url.lastIndexOf("/") + 1);
+	}
+
+	private String resolveBaseUrl(File path, String basePath,
+			Boolean defaultServer, String vhostName)
+			throws MalformedURLException {
+
+		if (basePath == null) {
+			basePath = path.getName();
+		}
+		if (basePath.startsWith("/")) {
+			basePath = basePath.substring(1);
+		}
+
+		String url = MessageFormat.format("http://{0}/{1}",
+				vhostName == null ? "default-server" : vhostName, basePath);
+		log.debug("resolved url " + url);
+		return url;
 	}
 
 }

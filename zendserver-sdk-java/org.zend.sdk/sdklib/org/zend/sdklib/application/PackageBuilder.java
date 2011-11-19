@@ -45,7 +45,8 @@ import org.zend.webapi.core.progress.StatusCode;
  */
 public class PackageBuilder extends AbstractChangeNotifier {
 
-	private static final String EXTENSION = ".zpk";
+	public static final String EXTENSION = ".zpk";
+
 	private static final int BUFFER = 1024;
 
 	private ZipOutputStream out;
