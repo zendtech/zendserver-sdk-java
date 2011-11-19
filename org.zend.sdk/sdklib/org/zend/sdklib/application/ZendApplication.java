@@ -127,7 +127,6 @@ public class ZendApplication extends AbstractChangeNotifier {
 	 * @param propertiesFile
 	 *            - path to properties file which consists user deployment
 	 *            parameters
-	 * 
 	 * @param appName
 	 *            - application name
 	 * @param ignoreFailures
@@ -423,6 +422,40 @@ public class ZendApplication extends AbstractChangeNotifier {
 	/**
 	 * Updates/redeploys an existing application.
 	 * 
+	 * @param inputStream
+	 *            - input stream for application package
+	 * @param application
+	 *            - application description from repository site
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @param propertiesFile
+	 *            - path to properties file which consists user deployment
+	 *            parameters
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo update(InputStream inputStream,
+			Application application, String targetId, String appId,
+			String propertiesFile, Boolean ignoreFailures) {
+		if (inputStream != null && application != null) {
+			String path = getPackagePath(inputStream, application);
+			if (path != null) {
+				return update(path, targetId, appId, propertiesFile,
+						ignoreFailures);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Updates/redeploys an existing application.
+	 * 
 	 * @param path
 	 *            - path to project location or application package
 	 * @param targetId
@@ -466,6 +499,38 @@ public class ZendApplication extends AbstractChangeNotifier {
 			log.error("\tpossible error: " + e.getMessage());
 		} finally {
 			deleteFile(getTempFile(path));
+		}
+		return null;
+	}
+
+	/**
+	 * Updates/redeploys an existing application.
+	 * 
+	 * @param inputStream
+	 *            - input stream for application package
+	 * @param application
+	 *            - application description from repository site
+	 * @param targetId
+	 *            - target id
+	 * @param appId
+	 *            - application id
+	 * @param userParams
+	 *            - map with user parameters (key and value)
+	 * @param ignoreFailures
+	 *            - ignore failures during staging if only some servers reported
+	 *            failures
+	 * @return instance of {@link ApplicationInfo} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist or there is no package/project in specified path
+	 */
+	public ApplicationInfo update(InputStream inputStream,
+			Application application, String targetId, String appId,
+			Map<String, String> userParams, Boolean ignoreFailures) {
+		if (inputStream != null && application != null) {
+			String path = getPackagePath(inputStream, application);
+			if (path != null) {
+				return update(path, targetId, appId, userParams, ignoreFailures);
+			}
 		}
 		return null;
 	}
