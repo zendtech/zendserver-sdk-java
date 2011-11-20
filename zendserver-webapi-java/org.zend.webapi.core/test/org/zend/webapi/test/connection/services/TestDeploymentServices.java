@@ -309,7 +309,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 	public void testApplicationRedeploy() throws WebApiException, IOException {
 		deployApplication();
 		if (isDeployed()) {
-			initMock(handler.applicationRedeploy(), "applicationRedeploy",
+			initMock(handler.applicationRedeploy(), "applicationSynchronize",
 					ResponseCode.ACCEPTED);
 			ApplicationServers servers = appInfo.getServers();
 			Assert.assertTrue(servers.getApplicationServers().size() > 0);
@@ -326,7 +326,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			IOException {
 		deployApplication();
 		if (isDeployed()) {
-			initMock(handler.applicationRedeploy(), "applicationRedeploy",
+			initMock(handler.applicationRedeploy(), "applicationSynchronize",
 					ResponseCode.ACCEPTED);
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationSynchronize(appId, false);
@@ -339,7 +339,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			throws WebApiException, IOException {
 		deployApplication();
 		if (isDeployed()) {
-			initMock(handler.applicationRedeploy(), "applicationRedeploy",
+			initMock(handler.applicationRedeploy(), "applicationSynchronize",
 					ResponseCode.ACCEPTED);
 			ApplicationInfo applicationInfo = Configuration.getClient()
 					.applicationSynchronize(appId);
@@ -352,7 +352,7 @@ public class TestDeploymentServices extends AbstractTestServer {
 			IOException {
 		deployApplication();
 		if (isDeployed()) {
-			initMock(handler.applicationRedeploy(), "applicationRedeploy",
+			initMock(handler.applicationRedeploy(), "applicationSynchronize",
 					ResponseCode.ACCEPTED);
 			ApplicationServers servers = appInfo.getServers();
 			Assert.assertTrue(servers.getApplicationServers().size() > 0);

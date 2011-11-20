@@ -212,7 +212,7 @@ public class ServerApplication extends Application {
 				applicationUpdate);
 		router.attach("/ZendServerManager/Api/applicationRemove",
 				applicationRemove);
-		router.attach("/ZendServerManager/Api/applicationRedeploy",
+		router.attach("/ZendServerManager/Api/applicationSynchronize",
 				applicationRedeploy);
 
 		return router;

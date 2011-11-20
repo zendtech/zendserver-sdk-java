@@ -79,7 +79,7 @@ public class ApplicationRedeployRequest extends AbstractRequest {
 	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
 	 */
 	public String getUri() {
-		return "/ZendServerManager/Api/applicationRedeploy";
+		return "/ZendServerManager/Api/applicationSynchronize";
 	}
 
 	/*
