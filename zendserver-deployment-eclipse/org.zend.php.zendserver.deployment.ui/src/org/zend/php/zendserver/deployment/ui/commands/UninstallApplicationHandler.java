@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
+import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.application.ZendApplication;
@@ -45,6 +46,7 @@ public class UninstallApplicationHandler extends AbstractHandler {
 						String targetId = cfg.getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String) null);
 						ZendApplication za = new ZendApplication();
 						za.remove(targetId, Integer.toString(appId));
+						PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
 						cfg.delete();
 					} catch (CoreException e) {
 						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
