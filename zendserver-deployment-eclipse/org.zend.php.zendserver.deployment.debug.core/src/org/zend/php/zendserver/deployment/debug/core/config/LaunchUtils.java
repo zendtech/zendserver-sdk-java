@@ -66,6 +66,11 @@ public class LaunchUtils {
 
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
 		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
+		wc.setAttribute(IPHPDebugConstants.USE_SSH_TUNNEL, false);
+		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_USER_NAME, ""); //$NON-NLS-1$
+		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_PASSWORD, ""); //$NON-NLS-1$
+		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
+				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
 		// set true as default
 		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 
