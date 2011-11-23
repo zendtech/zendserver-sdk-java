@@ -72,18 +72,20 @@ public class CreateProjectCommand extends AbstractCommand {
 
 	@Override
 	public boolean doExecute() {
-		ZendProject project = new ZendProject(getDestination(),
-				new CliMappingLoader());
-
-		final boolean create = project.create(getName(), getTemplate(),
-				getScripts());
-		if (create) {
-			getLogger().info(
-					"Project resources were created successfully for "
-							+ getName() + " under " + getDestination());
+		File destinationFolder = getDestination();
+		if (doOverwite(destinationFolder)) {
+			ZendProject project = new ZendProject(getDestination(),
+					new CliMappingLoader());
+			final boolean create = project.create(getName(), getTemplate(),
+					getScripts());
+			if (create) {
+				getLogger().info(
+						"Project resources were created successfully for "
+								+ getName() + " under " + getDestination());
+			}
+			return create;
 		}
-		return create;
-
+		return false;
 	}
 
 	/**
@@ -95,13 +97,43 @@ public class CreateProjectCommand extends AbstractCommand {
 	 */
 	private File resolveDestination(String destination, String name) {
 		File projectRoot = new File(destination, name);
-		if (!projectRoot.exists()) {
-			final boolean mkdir = projectRoot.mkdir();
-			if (!mkdir) {
-				return null;
+		/*
+		 * if (!projectRoot.exists()) { final boolean mkdir =
+		 * projectRoot.mkdir(); if (!mkdir) { return null; } }
+		 */
+		return projectRoot;
+	}
+
+	private boolean doOverwite(File destination) {
+		if (destination != null && destination.exists()) {
+			while (true) {
+				String question = "File "
+						+ destination.getAbsolutePath()
+						+ " already exists. Do you want to overwrite it [y:yes][n:no]?: ";
+				String answer = String.valueOf(System.console().readLine(
+						question));
+				if ("y".equalsIgnoreCase(answer)) {
+					delete(destination);
+					return true;
+				} else if ("n".equalsIgnoreCase(answer)) {
+					return false;
+				}
 			}
 		}
-		return projectRoot;
+		return true;
+	}
+
+	private boolean delete(File file) {
+		if (file.isDirectory()) {
+			String[] children = file.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean result = delete(new File(file, children[i]));
+				if (!result) {
+					return false;
+				}
+			}
+		}
+		return file.delete();
 	}
 
 }
