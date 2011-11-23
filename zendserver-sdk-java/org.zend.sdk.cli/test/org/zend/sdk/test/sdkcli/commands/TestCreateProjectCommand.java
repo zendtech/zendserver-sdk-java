@@ -19,7 +19,8 @@ public class TestCreateProjectCommand extends AbstractTest {
 	@Test
 	public void testByCommandFactory() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-n", "testName", "-d", getTempFileName(), "-t", "simple" });
+				"project", "-n", "testName", "-d", getTempFileName(), "-t",
+				"simple" });
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -28,7 +29,8 @@ public class TestCreateProjectCommand extends AbstractTest {
 	@Test
 	public void testByConstructor1() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-n", "testName", "-d", getTempFileName(), "-t", "simple", "-t", "simple" });
+				"project", "-n", "testName", "-d", getTempFileName(), "-t",
+				"simple", "-t", "simple" });
 		ICommand command = new CreateProjectCommand();
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -37,7 +39,8 @@ public class TestCreateProjectCommand extends AbstractTest {
 	@Test
 	public void testByConstructor2() throws ParseError, IOException {
 		CommandLine cmdLine = new CommandLine(new String[] { "create",
-				"project", "-n", "testName", "-d", getTempFileName(), "-s", "all", "-t", "simple" });
+				"project", "-n", "testName", "-d", getTempFileName(),
+				"-s", "all", "-t", "simple" });
 		ICommand command = new CreateProjectCommand();
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -46,7 +49,6 @@ public class TestCreateProjectCommand extends AbstractTest {
 	public static String getTempFileName() throws IOException {
 		File temp = File.createTempFile("temp", "tst");
 		temp.delete();
-		temp.mkdir();
 		return temp.getAbsolutePath();
 	}
 }
