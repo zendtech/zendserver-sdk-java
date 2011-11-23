@@ -69,7 +69,19 @@ public class ZendTargetAutoDetect {
 	}
 
 	public ZendTargetAutoDetect() throws IOException {
-		findLocalhostInstallDirectory();
+		this(true);
+	}
+
+	public ZendTargetAutoDetect(boolean init) throws IOException {
+		if (init && zendServerInstallLocation == null) {
+			zendServerInstallLocation = findLocalhostInstallDirectory();
+		}
+	}
+
+	public void init() throws IOException {
+		if (zendServerInstallLocation == null) {
+			zendServerInstallLocation = findLocalhostInstallDirectory();
+		}
 	}
 
 	/**
@@ -237,29 +249,25 @@ public class ZendTargetAutoDetect {
 	}
 
 	/**
-	 * @return returns the Local installed Zend Server, null if no local Zend
-	 *         Server installed.
+	 * @return returns location of the local Zend Server instance, null if no
+	 *         local Zend Server installed.
 	 * @throws IOException
 	 */
-	private void findLocalhostInstallDirectory() throws IOException {
-		if (zendServerInstallLocation != null) {
-			return;
-		}
-
+	public String findLocalhostInstallDirectory() throws IOException {
 		if (EnvironmentUtils.isUnderMaxOSX()) {
 			throw new IllegalStateException(MAC_NOT_SUPPORTED);
 		}
-		
+		String result = null;
 		if (EnvironmentUtils.isUnderLinux()) {
-			zendServerInstallLocation = getLocalZendServerFromFile();
+			result = getLocalZendServerFromFile();
 		} else {
 			// (EnvironmentUtils.isUnderWindows())
-			zendServerInstallLocation = getLocalZendServerFromRegistry();
+			result = getLocalZendServerFromRegistry();
 		}
-
-		if (zendServerInstallLocation == null) {
+		if (result == null) {
 			throw new IllegalStateException(MISSING_ZEND_SERVER);
 		}
+		return result;
 	}
 
 	private String getLocalZendServerFromFile() {
