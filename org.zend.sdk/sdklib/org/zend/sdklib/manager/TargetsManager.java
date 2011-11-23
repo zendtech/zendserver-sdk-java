@@ -204,7 +204,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		
 		ZendTargetAutoDetect detection = null;
 		try {
-			detection = new ZendTargetAutoDetect();
+			detection = getAutoDetector();
 		} catch (IOException e) {
 			throw new MissingZendServerException(e);
 		}
@@ -256,9 +256,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 	}
 
+	public ZendTargetAutoDetect getAutoDetector() throws IOException {
+		return new ZendTargetAutoDetect();
+	}
+
 	public synchronized String applyKeyToLocalhost(String key, String secretKey)
 			throws IOException {
-		final ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
+		final ZendTargetAutoDetect detection = getAutoDetector();
 		final String appliedSecretKey = detection
 				.applySecretKey(key, secretKey);
 		return appliedSecretKey;

@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -157,23 +158,20 @@ public class TestTargetsManager extends AbstractTest {
 		assertNull(manager.getTargetById("0"));
 	}
 
-	// @Test
-	public void testDetectLocalhost() throws WebApiException, TargetException, IOException, DetectionException {
-		TargetsManager manager = new TargetsManager(loader);
-		IZendTarget target = getTarget();
-		manager.add(target);
-		assertTrue(manager.getTargets().length == 1);
-		assertNotNull(manager.detectLocalhostTarget(target.getId(),
-				target.getKey()));
+	@Test
+	public void testDetectLocalhost() throws WebApiException, TargetException,
+			IOException, DetectionException {
+		TargetsManager manager = getManagerForLocalhostDetection();
+		IZendTarget target = manager.detectLocalhostTarget("test", "sdk.admin",
+				false, false);
+		assertNotNull(target);
 	}
 
-	// @Test
-	public void testDetectLocalhostNoId() throws WebApiException, TargetException, IOException, DetectionException {
-		TargetsManager manager = new TargetsManager(loader);
-		IZendTarget target = getTarget();
-		manager.add(target);
-		assertTrue(manager.getTargets().length == 1);
-		assertNotNull(manager.detectLocalhostTarget(target.getKey(), null));
+	@Test(expected = DetectionException.class)
+	public void testDetectLocalhostNoKey() throws WebApiException,
+			TargetException, IOException, DetectionException {
+		TargetsManager manager = getManagerForLocalhostDetection();
+		manager.detectLocalhostTarget("test", null, false, false);
 	}
 
 	@Test
@@ -277,6 +275,17 @@ public class TestTargetsManager extends AbstractTest {
 			// ignore
 		}
 		return target;
+	}
+
+	private TargetsManager getManagerForLocalhostDetection()
+			throws IOException, DetectionException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		ZendTargetAutoDetect detector = spy(new ZendTargetAutoDetect(false));
+		doReturn("test/config/server").when(detector)
+				.findLocalhostInstallDirectory();
+		detector.init();
+		doReturn(detector).when(manager).getAutoDetector();
+		return manager;
 	}
 
 }
