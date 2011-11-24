@@ -40,6 +40,10 @@ dependencies {
 	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
 }
 
+eclipse {
+	classpath.downloadSources = false
+}
+
 test {
 	scanForTestClasses = false
 	include '**/*AllTests.class'
