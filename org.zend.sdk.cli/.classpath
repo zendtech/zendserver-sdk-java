@@ -5,18 +5,5 @@
 	<classpathentry kind="src" path="helpers"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/archquery.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jul-to-slf4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/org.restlet.ext.xml.jar"/>
-	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/zend-webapi.jar"/>
-	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
-	<classpathentry kind="lib" path="lib-test/mockito-all-1.8.5.jar"/>
-	<classpathentry kind="lib" path="lib/zend-sdk.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jgit-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/com.jcraft.jsch_0.1.41.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
