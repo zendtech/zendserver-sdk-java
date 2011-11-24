@@ -3,15 +3,10 @@
 	<classpathentry kind="src" path="sdklib"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.restlet.ext.xml.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.restlet.jar"/>
 	<classpathentry kind="lib" path="lib/registry.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.zend.sdk/lib/x86"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/zend-webapi.jar" sourcepath="/org.zend.webapi"/>
-	<classpathentry kind="lib" path="lib-test/junit-4.8.2.jar"/>
-	<classpathentry kind="lib" path="lib-test/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
