@@ -15,6 +15,7 @@ repositories {
 	maven { url "http://maven.restlet.org" }
 	flatDir { name 'localRepository' }
 	localRepository { dirs 'lib' }
+	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.webapi/build/libs/' }
 	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.webapi/build/libs/' }
 }
 
@@ -37,6 +38,10 @@ dependencies {
 	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
 	compile name: 'registry'
 	compile name: 'org.zend.webapi'
+}
+
+eclipse {
+	classpath.downloadSources = false
 }
 
 test {
