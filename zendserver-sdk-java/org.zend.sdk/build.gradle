@@ -42,6 +42,11 @@ dependencies {
 
 eclipse {
 	classpath.downloadSources = false
+	classpath.file {
+		whenMerged {classpath ->
+			classpath.entries.unique { a, b -> a.kind.equals(b.kind) && a.path.equals(b.path) ? 0 : 1 }
+		}
+	}
 }
 
 test {
@@ -105,6 +110,20 @@ task createSrcPackage(type: Zip) {
 	into('docs') { from project.docsDir }
 	into('resources') {
 		from 'resources'
+	}
+}
+
+task createSourceJar(type: Jar) {
+	archiveName = project.rootProject.name + '-sources.jar'
+	from sourceSets.main.allSource
+	manifest {
+		from ('META-INF/MANIFEST.MF') {
+			eachEntry { attribute ->
+				if (attribute.key == 'Bundle-Version') {
+					attribute.value = version
+				}
+			}
+		}
 	}
 }
 

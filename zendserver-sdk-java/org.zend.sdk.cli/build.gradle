@@ -59,6 +59,11 @@ dependencies {
 
 eclipse {
 	classpath.downloadSources = false
+	classpath.file {
+		whenMerged {classpath ->
+			classpath.entries.unique { a, b -> a.kind.equals(b.kind) && a.path.equals(b.path) ? 0 : 1 }
+		}
+	}
 }
 
 test {
