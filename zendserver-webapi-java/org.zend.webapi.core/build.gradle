@@ -42,6 +42,11 @@ dependencies {
 
 eclipse {
 	classpath.downloadSources = false
+	classpath.file {
+		whenMerged {classpath ->
+			classpath.entries.unique { a, b -> a.kind.equals(b.kind) && a.path.equals(b.path) ? 0 : 1 }
+		}
+	}
 }
 
 test {
@@ -69,6 +74,16 @@ task createTestJar(type: Jar) {
 	exclude '**/*.java'
 	exclude '**/.svnignore'
 	exclude '**/.svn'
+}
+
+task createSourceJar(type: Jar) {
+	archiveName = project.rootProject.name + '-sources.jar'
+	from sourceSets.main.allSource
+}
+
+task createJavadocJar(type: Jar, dependsOn:javadoc) {
+	archiveName = project.rootProject.name + '-javadoc.jar'
+	from javadoc.destinationDir
 }
 
 task createBinPackage(type: Zip) {
