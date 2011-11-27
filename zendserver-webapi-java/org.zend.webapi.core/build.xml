@@ -1,0 +1,32 @@
+<project name="runGradle" default="gradle">
+	<target name="gradle" description="run gradle script">
+		<condition property="isUnix">
+			<os family="unix" />
+		</condition>
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<antcall target="gradle_unix" />
+		<antcall target="gradle_windows" />
+	</target>
+	<target name="gradle_unix" if="isUnix">
+		<exec executable="${gradle.home}/bin/gradle" dir=".">
+			<arg value="build"/>
+			<arg value="createTestJar"/>
+			<arg value="eclipseClasspath"/>
+			<arg value="-x"/>
+			<arg value="test"/>
+			<arg value="--daemon"/>
+		</exec>
+	</target>
+	<target name="gradle_windows" if="isWindows">
+		<exec executable="${gradle.home}/bin/gradle.bat" dir=".">
+			<arg value="build"/>
+			<arg value="createTestJar"/>
+			<arg value="eclipseClasspath"/>
+			<arg value="-x"/>
+			<arg value="test"/>
+			<arg value="--daemon"/>
+		</exec>
+	</target>
+</project>
