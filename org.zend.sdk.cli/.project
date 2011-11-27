@@ -11,11 +11,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/gradle sdk-cli [Builder].launch</value>
-				</dictionary>
-				<dictionary>
-					<key>incclean</key>
-					<value>true</value>
+					<value>&lt;project&gt;/.externalToolBuilders/gradle sdk-cli.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
