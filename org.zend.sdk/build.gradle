@@ -128,7 +128,7 @@ task createSourceJar(type: Jar) {
 }
 
 task createPlugin(type: Jar) {
-	archiveName = project.rootProject.name + '.jar'
+	archiveName = project.rootProject.name + '_1.0.0.0.jar'
 	destinationDir = new File(project.distsDir.path + File.separator + 'plugins')
 	into('lib') {
 		from configurations.compile
@@ -149,7 +149,7 @@ task createPlugin(type: Jar) {
 		from ('META-INF/MANIFEST.MF') {
 			eachEntry { attribute ->
 				if (attribute.key == 'Bundle-Version') {
-					attribute.value = '1.' + version
+					attribute.value = '1.0.0.0'
 				}
 				if (attribute.key == 'Bundle-ClassPath') {
 					attribute.value = createBundleClasspath()
