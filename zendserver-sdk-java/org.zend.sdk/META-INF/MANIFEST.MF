@@ -50,3 +50,4 @@ Bundle-ClassPath: build/libs/org.osgi.core-4.0.0.jar,
  build/libs/org.restlet.ext.xml-2.0.4.jar,
  build/libs/org.zend.webapi.jar,
  build/libs/registry.jar
+Eclipse-BundleShape: dir
