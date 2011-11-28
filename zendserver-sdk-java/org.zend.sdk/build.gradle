@@ -149,7 +149,7 @@ task createPlugin(type: Jar) {
 		from ('META-INF/MANIFEST.MF') {
 			eachEntry { attribute ->
 				if (attribute.key == 'Bundle-Version') {
-					attribute.value = '1.' + version
+					attribute.value = '1.0.0.0'
 				}
 				if (attribute.key == 'Bundle-ClassPath') {
 					attribute.value = createBundleClasspath()
