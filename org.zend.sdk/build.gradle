@@ -149,7 +149,7 @@ task createPlugin(type: Jar) {
 		from ('META-INF/MANIFEST.MF') {
 			eachEntry { attribute ->
 				if (attribute.key == 'Bundle-Version') {
-					attribute.value = '1.0.0.0'
+					attribute.value = '1.' + version
 				}
 				if (attribute.key == 'Bundle-ClassPath') {
 					attribute.value = createBundleClasspath()
@@ -160,7 +160,7 @@ task createPlugin(type: Jar) {
 }
 
 createPlugin.doLast {
-	ant.echo(message: 'sdk.version=1.0.0.0', file: project.distsDir.path + File.separator + 'plugins' + File.separator + 'sdk.version')
+	ant.echo(message: 'sdk.version=1.' + version, file: project.distsDir.path + File.separator + 'plugins' + File.separator + 'sdk.version')
 }
 
 String getBuildProperty(String name) {
