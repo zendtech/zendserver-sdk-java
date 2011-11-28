@@ -19,7 +19,11 @@
 		</exec>
 	</target>
 	<target name="gradle_windows" if="isWindows">
-		<exec executable="${gradle.home}/bin/gradle.bat" dir=".">
+		<condition property="home" value="${env.GRADLE_HOME}">
+			<isset property="env.GRADLE_HOME"/>
+		</condition>
+		<property name="home" value="${gradle.home}"/>
+		<exec executable="${home}/bin/gradle.bat" dir=".">
 			<arg value="build"/>
 			<arg value="eclipseClasspath"/>
 			<arg value="-x"/>
