@@ -41,6 +41,10 @@ public class TestCreatePackageCommand extends AbstractTest {
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
+		File pacakge = new File("Magento-1.4.1.1.zpk");
+		if (pacakge.exists()) {
+			delete(pacakge);
+		}
 	}
 
 	@Test
