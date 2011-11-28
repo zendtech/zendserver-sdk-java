@@ -126,7 +126,7 @@ task createSrcPackage(type: Zip) {
 }
 
 
-build.doLast {
+task generateBasicRepository << {
 	tmp = buildDir.path + '/tmp'
 	repository = buildDir.path + '/repository'
 	quickstartTmp = tmp + '/zf'
