@@ -128,7 +128,7 @@ task createSourceJar(type: Jar) {
 }
 
 task createPlugin(type: Jar) {
-	archiveName = project.rootProject.name + "_1." + version + '.jar'
+	archiveName = project.rootProject.name + '.jar'
 	destinationDir = new File(project.distsDir.path + File.separator + 'plugins')
 	into('lib') {
 		from configurations.compile
