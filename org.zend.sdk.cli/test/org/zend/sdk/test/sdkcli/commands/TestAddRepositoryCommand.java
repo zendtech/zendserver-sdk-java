@@ -16,11 +16,11 @@ public class TestAddRepositoryCommand extends AbstractRepositoryCommandTest {
 	public void testByCommandFactory() throws ParseError {
 		File repositoryFolder = new File(FOLDER + "repository");
 		String reposiotryUrl = "file:/" + repositoryFolder.getAbsolutePath();
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"repository", "-u", reposiotryUrl, "-n", "testRepo" });
-		ICommand command = getCommand(cmdLine);
+		CommandLine line = getLine("add repository -u " + reposiotryUrl
+				+ " -n testRepo");
+		ICommand command = getCommand(line);
 		assertNotNull(command);
-		assertTrue(command.execute(cmdLine));
+		assertTrue(command.execute(line));
 	}
 
 }

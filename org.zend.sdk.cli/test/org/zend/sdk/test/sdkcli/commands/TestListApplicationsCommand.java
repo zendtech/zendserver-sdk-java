@@ -24,15 +24,10 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 
 public class TestListApplicationsCommand extends AbstractWebApiTest {
 
-	private String[] validCommand = new String[] { "list", "applications",
-			"-t", "0" };
-
 	@Test
 	public void testExecute() throws ParseError, WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("list applications -t 0");
 		ListApplicationsCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus((String[]) anyVararg())).thenReturn(
 				(ApplicationsList) getResponseData("applicationGetStatus",
 						IResponseData.ResponseType.APPLICATIONS_LIST));
@@ -42,12 +37,10 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 	@Test
 	public void testExecuteNoApps() throws ParseError, WebApiException,
 			IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("list applications -t 0");
 		ListApplicationsCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		ApplicationsList mockList = Mockito.mock(ApplicationsList.class);
 		when(mockList.getApplicationsInfo()).thenReturn(null);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus((String[]) anyVararg())).thenReturn(
 				mockList);
 		assertTrue(command.execute(cmdLine));
@@ -56,10 +49,8 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("list applications -t 0");
 		ListApplicationsCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
 		assertFalse(command.execute(cmdLine));
@@ -69,6 +60,8 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 			throws ParseError {
 		ListApplicationsCommand command = spy((ListApplicationsCommand) CommandFactory
 				.createCommand(cmdLine));
+		assertNotNull(command);
+		doReturn(application).when(command).getApplication();
 		return command;
 	}
 

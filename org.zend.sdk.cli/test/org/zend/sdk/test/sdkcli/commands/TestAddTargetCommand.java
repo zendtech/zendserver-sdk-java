@@ -20,12 +20,9 @@ import org.zend.webapi.core.WebApiException;
 
 public class TestAddTargetCommand extends AbstractTargetCommandTest {
 
-	private String[] validCommand = new String[] { "add", "target", "-t",
-			"1", "-k", "mykey", "-s", "123456", "-h", "http://test1test" };
-
 	@Test
 	public void testExecute() throws ParseError, WebApiException, TargetException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("add target -t 1 -k mykey -s 123456 -h http://test1test");
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
@@ -34,9 +31,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteNoId() throws ParseError, WebApiException, TargetException {
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"target", "-k", "mykey", "-s", "123456", "-h",
-				"http://test1test" });
+		CommandLine cmdLine = getLine("add target -k mykey -s 123456 -h http://test1test");
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
@@ -45,7 +40,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteAddFail() throws ParseError, TargetException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("add target -t 1 -k mykey -s 123456 -h http://test1test");
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(null).when(manager).add(any(IZendTarget.class));
@@ -55,9 +50,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"target", "-t", "1", "-key", "mykey", "-secretKey", "123456",
-				"-host", "a111:/\test1test" });
+		CommandLine cmdLine = getLine("add target -t 1 -key mykey -secretKey 123456 -host a111:/\test1test");
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		assertFalse(command.execute(cmdLine));
@@ -66,9 +59,8 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteProperties() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"target", "-t", "1", "-h", "http://test1test", "-p",
-				this.getClass().getResource("target.properties").getPath() });
+		CommandLine cmdLine = getLine("add target -t 1 -h http://test1test -p "
+				+ this.getClass().getResource("target.properties").getPath());
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
@@ -78,9 +70,7 @@ public class TestAddTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
 			WebApiException, TargetException, MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"target", "-t", "1", "-h", "http://test1test", "-p",
-				"nofilename" });
+		CommandLine cmdLine = getLine("add target -t 1 -h http://test1test -p nofilename");
 		AddTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));

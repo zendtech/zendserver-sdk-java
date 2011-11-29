@@ -20,8 +20,6 @@ import org.zend.webapi.test.server.utils.ServerUtils;
 
 public class AbstractWebApiTest extends AbstractTest {
 
-	public static final String FOLDER = "test/config/apps/";
-
 	protected ZendApplication application;
 	protected WebApiClient client;
 
