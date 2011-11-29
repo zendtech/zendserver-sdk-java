@@ -78,48 +78,51 @@ jar {
 }
 
 task createBinPackage(type: Zip) {
-	archiveName = project.rootProject.name + '-' + version + '-bin.zip'
-	into('lib') {
+	String folderName = 'zend-sdk-cli-' + version
+	archiveName = folderName + '-bin.zip'
+	into(folderName + '/lib') {
 		from project.libsDir
 		from configurations.compile
 	}
-	into('lib') {
+	into(folderName + '/lib') {
 		from 'lib'
 		exclude '*.jar'
 	}
-	into('resources') {
+	into(folderName + '/resources') {
 		from 'resources'
 		include 'schemas/*.xsd'
 	}
-	into('tools') {
+	into(folderName + '/tools') {
 		from 'tools'
 	}
-	into('.') {
+	into(folderName) {
 		from project.rootDir
 		include 'README'
 	}
 }
 
 task createSrcPackage(type: Zip) {
-	into('lib') {
+	String folderName = 'zend-sdk-cli-' + version
+	archiveName = folderName + '.zip'
+	into(folderName + '/lib') {
 		from project.libsDir
 		from configurations.compile
 	}
-	into('lib') {
+	into(folderName + '/lib') {
 		from 'lib'
 		exclude '*.jar'
 	}
-	into('src') { from sourceFolder }
-	into('test') { from testFolder }
-	into('docs') { from project.docsDir }
-	into('resources') {
+	into(folderName + '/src') { from sourceFolder }
+	into(folderName + '/test') { from testFolder }
+	into(folderName + '/docs') { from project.docsDir }
+	into(folderName + '/resources') {
 		from 'resources'
 		include 'schemas/*.xsd'
 	}
-	into('tools') {
+	into(folderName + '/tools') {
 		from 'tools'
 	}
-	into('.') {
+	into(folderName) {
 		from project.rootDir
 		include 'README'
 	}
