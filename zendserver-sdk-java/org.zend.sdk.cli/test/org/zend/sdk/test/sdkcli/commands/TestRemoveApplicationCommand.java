@@ -23,15 +23,10 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 
 public class TestRemoveApplicationCommand extends AbstractWebApiTest {
 
-	private String[] validCommand = new String[] { "remove", "application",
-			"-t", "0", "-a", "1" };
-
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("remove application -t 0 -a 1");
 		RemoveApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(
 				client.applicationRemove(anyInt())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationRemove",
@@ -42,10 +37,8 @@ public class TestRemoveApplicationCommand extends AbstractWebApiTest {
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("remove application -t 0 -a 1");
 		RemoveApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
 		assertFalse(command.execute(cmdLine));
@@ -55,6 +48,8 @@ public class TestRemoveApplicationCommand extends AbstractWebApiTest {
 			throws ParseError {
 		RemoveApplicationCommand command = spy((RemoveApplicationCommand) CommandFactory
 				.createCommand(cmdLine));
+		assertNotNull(command);
+		doReturn(application).when(command).getApplication();
 		return command;
 	}
 

@@ -3,10 +3,6 @@ package org.zend.sdk.test.sdkcli.commands;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import java.io.File;
-import java.util.Random;
-
-import org.junit.After;
 import org.junit.Before;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandFactory;
@@ -19,22 +15,11 @@ import org.zend.sdklib.repository.IRepositoryLoader;
 
 public class AbstractRepositoryCommandTest extends AbstractTest {
 
-	protected static final String FOLDER = "test/config/apps/";
-
 	private IRepositoryLoader loader;
-	private File file;
 
 	@Before
 	public void startup() {
-		final String tempDir = System.getProperty("java.io.tmpdir");
-		file = new File(tempDir + File.separator + new Random().nextInt());
-		file.mkdir();
 		loader = new UserBasedRepositoryLoader(file);
-	}
-
-	@After
-	public void shutdown() {
-		delete(file);
 	}
 
 	public RepositoryManager getRepositoryManager() {

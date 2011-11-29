@@ -15,17 +15,14 @@ public class TestDevPaasTarget extends AbstractTest {
 	@Test
 	public void testCreateTargetHostWithPort() throws SdkException,
 			IOException, ParseError {
-
-		CommandLine cl = new CommandLine(new String[] { "add", "target", "-d",
-				"ganoro:ganoro" });
+		CommandLine cl = getLine("add target -d ganoro:ganoro");
 		AddTargetCommand add = new AddTargetCommand();
 		final boolean execute = add.execute(cl);
-
 	}
+	
 	@Test
 	public void testAddTarget() throws SdkException, ParseError {
-		
-		CommandLine cl = new CommandLine(new String[] { "detect", "target"});
+		CommandLine cl = getLine("detect target");
 		DetectTargetCommand add = new DetectTargetCommand();
 		final boolean execute = add.execute(cl);
 	}
