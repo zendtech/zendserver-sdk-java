@@ -8,10 +8,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.commands.AbstractCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
 
 public class TestCreatePackageCommand extends AbstractTest {
@@ -57,5 +59,16 @@ public class TestCreatePackageCommand extends AbstractTest {
 		assertTrue(command.execute(cmdLine));
 		File result = new File(file, "Magento-1.4.1.1.zpk");
 		assertTrue(result.exists());
+	}
+
+	@Test
+	public void testNoArgsIncorrectProject() throws ParseError {
+		CommandLine cmdLine = getLine("create package");
+		AbstractCommand command = Mockito.spy((AbstractCommand) CommandFactory
+				.createCommand(cmdLine));
+		Mockito.doReturn(file.getAbsolutePath()).when(command)
+				.getCurrentDirectory();
+		assertNotNull(command);
+		assertFalse(command.execute(cmdLine));
 	}
 }
