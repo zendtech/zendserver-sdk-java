@@ -3,14 +3,15 @@ package org.zend.sdk.test.sdkcli.commands;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.commands.AbstractCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
 
@@ -43,9 +44,28 @@ public class TestCreateProjectCommand extends AbstractTest {
 		assertTrue(command.execute(cmdLine));
 	}
 	
-	public static String getTempFileName() throws IOException {
-		File temp = File.createTempFile("temp", "tst");
-		temp.delete();
-		return temp.getAbsolutePath();
+	@Test
+	public void testNoDestination() throws ParseError, IOException {
+		CommandLine cmdLine = getLine("create project -n testName");
+		AbstractCommand command = Mockito.spy((AbstractCommand) CommandFactory
+				.createCommand(cmdLine));
+		Mockito.doReturn(file.getAbsolutePath()).when(command)
+				.getCurrentDirectory();
+		assertNotNull(command);
+		assertTrue(command.execute(cmdLine));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidTemplate() throws ParseError, IOException {
+		CommandLine cmdLine = getLine("create project -n testName -d "
+				+ getTempFileName() + " -t incorrect");
+		ICommand command = new CreateProjectCommand();
+		assertNotNull(command);
+		command.execute(cmdLine);
+	}
+
+	private String getTempFileName() throws IOException {
+		file.delete();
+		return file.getAbsolutePath();
 	}
 }

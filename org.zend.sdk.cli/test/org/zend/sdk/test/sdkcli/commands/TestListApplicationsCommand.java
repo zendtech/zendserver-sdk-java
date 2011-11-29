@@ -35,6 +35,25 @@ public class TestListApplicationsCommand extends AbstractWebApiTest {
 	}
 
 	@Test
+	public void testExecuteNoTargetAvailable() throws ParseError,
+			WebApiException,
+			IOException {
+		CommandLine cmdLine = getLine("list applications");
+		ListApplicationsCommand command = getCommand(cmdLine);
+		doReturn(null).when(command).getDefaultTargetId();
+		assertFalse(command.execute(cmdLine));
+	}
+
+	@Test
+	public void testExecuteIncorrectTargetId() throws ParseError,
+			WebApiException,
+			IOException {
+		CommandLine cmdLine = getLine("list applications -t nonexisitngId");
+		ListApplicationsCommand command = getCommand(cmdLine);
+		assertFalse(command.execute(cmdLine));
+	}
+
+	@Test
 	public void testExecuteNoApps() throws ParseError, WebApiException,
 			IOException {
 		CommandLine cmdLine = getLine("list applications -t 0");
