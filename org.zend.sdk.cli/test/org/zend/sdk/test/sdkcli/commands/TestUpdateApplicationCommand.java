@@ -27,15 +27,11 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 
 public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 
-	private String[] validCommand = new String[] { "update", "application",
-			"-p", FOLDER + "test-1.0.0.zpk", "-t", "0", "-a", "0" };
-
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("update application -p " + FOLDER
+				+ "test-1.0.0.zpk -t 0 -a 0");
 		UpdateApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationUpdate(anyInt(), any(NamedInputStream.class), anyBoolean(), anyMap())).thenReturn(
 			(ApplicationInfo) getResponseData("applicationUpdate",
 						IResponseData.ResponseType.APPLICATION_INFO));
@@ -45,10 +41,9 @@ public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("update application -p " + FOLDER
+				+ "test-1.0.0.zpk -t 0 -a 0");
 		UpdateApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
 		assertFalse(command.execute(cmdLine));
@@ -58,6 +53,8 @@ public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 			throws ParseError {
 		UpdateApplicationCommand command = spy((UpdateApplicationCommand) CommandFactory
 				.createCommand(cmdLine));
+		assertNotNull(command);
+		doReturn(application).when(command).getApplication();
 		return command;
 	}
 

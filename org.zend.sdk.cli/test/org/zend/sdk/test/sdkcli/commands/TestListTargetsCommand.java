@@ -19,7 +19,6 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
-import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
@@ -29,8 +28,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testNoTargetsAvailable() throws ParseError,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
-				"-status" }, Log.getInstance().getLogger("AbstractTest"));
+		CommandLine cmdLine = getLine("list targets -status");
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
 				.createCommand(cmdLine));
 		when(command.getTargetManager()).thenReturn(manager);
@@ -43,8 +41,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length != 0);
-		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
-				"-status" }, Log.getInstance().getLogger("AbstractTest"));
+		CommandLine cmdLine = getLine("list targets -status");
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
 				.createCommand(cmdLine));
 		when(command.getTargetManager()).thenReturn(manager);
@@ -58,8 +55,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 		manager.add(target);
 		assertTrue(manager.getTargets().length != 0);
 		doReturn(false).when(target).connect();
-		CommandLine cmdLine = new CommandLine(new String[] { "list", "targets",
-				"-status" }, Log.getInstance().getLogger("AbstractTest"));
+		CommandLine cmdLine = getLine("list targets -status");
 		ListTargetsCommand command = spy((ListTargetsCommand) CommandFactory
 				.createCommand(cmdLine));
 		when(command.getTargetManager()).thenReturn(manager);

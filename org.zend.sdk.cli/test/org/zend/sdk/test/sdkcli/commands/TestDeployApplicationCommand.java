@@ -16,6 +16,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.sdkcli.CommandFactory;
+import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
@@ -27,19 +28,14 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 
 public class TestDeployApplicationCommand extends AbstractWebApiTest {
 
-	private String[] validCommand = new String[] { "deploy", "application",
-			"-p", FOLDER + "test-1.0.0.zpk", "-b",
-			"http://myhost.com/aaa", "-t", "0", "-n", "myApp" };
-
 	@Test
 	public void testExecute() throws WebApiException, IOException, ParseError {
-		CommandLine cmdLine = new CommandLine(validCommand);
-		DeployApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
+		CommandLine cmdLine = getLine("deploy application -p" + FOLDER
+				+ "test-1.0.0.zpk -b http://myhost.com/aaa -t 0 -n myApp");
+		ICommand command = getCommand(cmdLine);
 		when(
-				client.applicationDeploy(any(NamedInputStream.class), anyString(),
-						anyBoolean(), any(Map.class), anyString(),
+				client.applicationDeploy(any(NamedInputStream.class),
+						anyString(), anyBoolean(), any(Map.class), anyString(),
 						anyBoolean(), anyBoolean())).thenReturn(
 				(ApplicationInfo) getResponseData("applicationDeploy",
 						IResponseData.ResponseType.APPLICATION_INFO));
@@ -49,10 +45,9 @@ public class TestDeployApplicationCommand extends AbstractWebApiTest {
 	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
-		DeployApplicationCommand command = getCommand(cmdLine);
-		assertNotNull(command);
-		doReturn(application).when(command).getApplication();
+		CommandLine cmdLine = getLine("deploy application -p" + FOLDER
+				+ "test-1.0.0.zpk -b http://myhost.com/aaa -t 0 -n myApp");
+		ICommand command = getCommand(cmdLine);
 		when(client.applicationGetStatus()).thenThrow(
 				new SignatureException("testError"));
 		assertFalse(command.execute(cmdLine));
@@ -62,6 +57,8 @@ public class TestDeployApplicationCommand extends AbstractWebApiTest {
 			throws ParseError {
 		DeployApplicationCommand command = spy((DeployApplicationCommand) CommandFactory
 				.createCommand(cmdLine));
+		assertNotNull(command);
+		doReturn(application).when(command).getApplication();
 		return command;
 	}
 

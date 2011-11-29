@@ -16,11 +16,9 @@ import org.zend.webapi.core.WebApiException;
 
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
-	private String[] validCommand = new String[] { "detect", "target" };
-
 	@Test
 	public void testExecute() throws ParseError, WebApiException, TargetException, IOException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("detect target");
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		manager.add(getTarget());

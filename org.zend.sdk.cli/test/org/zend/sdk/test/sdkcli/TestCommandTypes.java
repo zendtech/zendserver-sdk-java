@@ -5,11 +5,12 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
+import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandType;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 
-public class TestCommandTypes {
+public class TestCommandTypes extends AbstractTest {
 
 	@Test
 	public void testValidCommandType() throws ParseError {

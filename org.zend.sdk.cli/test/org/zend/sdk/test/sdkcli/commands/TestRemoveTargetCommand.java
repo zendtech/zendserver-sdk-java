@@ -16,12 +16,9 @@ import org.zend.webapi.core.WebApiException;
 
 public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 
-	private String[] validCommand = new String[] { "remove", "target", "-t",
-			"1" };
-
 	@Test
 	public void testExecute() throws ParseError, WebApiException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
 		doReturn(getTarget()).when(manager).remove(
@@ -31,7 +28,7 @@ public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteAddFail() throws ParseError, WebApiException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).remove(
 				(IZendTarget) Mockito.anyObject());
@@ -40,7 +37,7 @@ public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteFail() throws ParseError, WebApiException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
 		doReturn(null).when(manager).remove((IZendTarget) Mockito.anyObject());

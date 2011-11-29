@@ -16,13 +16,12 @@ public class TestRemoveRepositoryCommand extends AbstractRepositoryCommandTest {
 	public void testByCommandFactory() throws ParseError {
 		File repositoryFolder = new File(FOLDER + "repository");
 		String reposiotryUrl = "file:/" + repositoryFolder.getAbsolutePath();
-		CommandLine cmdLine = new CommandLine(new String[] { "add",
-				"repository", "-u", reposiotryUrl, "-n", "testRepo" });
+		CommandLine cmdLine = getLine("add repository -u " + reposiotryUrl
+				+ " -n testRepo");
 		ICommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
-		cmdLine = new CommandLine(new String[] { "remove", "repository", "-u",
-				reposiotryUrl });
+		cmdLine = getLine("remove repository -u " + reposiotryUrl);
 		command = getCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));

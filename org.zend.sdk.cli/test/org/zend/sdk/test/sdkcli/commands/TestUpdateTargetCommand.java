@@ -18,33 +18,26 @@ import org.zend.webapi.core.WebApiException;
 
 public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 
-	private String[] validCommand = new String[] { "update", "target", "-t",
-			"dev4", "-k", "newKey", "-s", "000000", "-h", "http://newHost" };
-
 	@Test
 	public void testExecute() throws ParseError, WebApiException, TargetException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("update target -t dev4 -k newKey -s 000000 -h http://newHost");
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		manager.add(getTarget());
 		assertTrue(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteUpdateFail() throws ParseError, WebApiException {
-		CommandLine cmdLine = new CommandLine(validCommand);
+		CommandLine cmdLine = getLine("update target -t dev4 -k newKey -s 000000 -h http://newHost");
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		assertFalse(command.execute(cmdLine));
 	}
 
 	@Test
 	public void testExecuteInvalidUrl() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"target", "-t", "dev4", "-h", "a111:/\test1test" });
+		CommandLine cmdLine = getLine("update target -t dev4 -h a111:/\test1test");
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		manager.add(getTarget());
 		assertFalse(command.execute(cmdLine));
 	}
@@ -52,10 +45,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteNoChanges() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"target", "-t", "dev4" });
+		CommandLine cmdLine = getLine("update target -t dev4");
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		manager.add(getTarget());
 		assertTrue(command.execute(cmdLine));
 	}
@@ -63,11 +54,9 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteProperties() throws ParseError, WebApiException, TargetException,
 			MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"target", "-t", "dev4", "-p",
-				this.getClass().getResource("target.properties").getPath() });
+		CommandLine cmdLine = getLine("update target -t dev4 -p "
+				+ this.getClass().getResource("target.properties").getPath());
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		manager.add(getTarget());
 		assertTrue(command.execute(cmdLine));
 	}
@@ -75,10 +64,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
 			WebApiException, TargetException, MalformedURLException {
-		CommandLine cmdLine = new CommandLine(new String[] { "update",
-				"target", "-t", "dev4", "-p", "nofilename" });
+		CommandLine cmdLine = getLine("update target -t dev4 -p nofilename");
 		UpdateTargetCommand command = getCommand(cmdLine);
-		assertNotNull(command);
 		manager.add(getTarget());
 		assertTrue(command.execute(cmdLine));
 	}
@@ -88,6 +75,7 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 		UpdateTargetCommand command = spy((UpdateTargetCommand) CommandFactory
 				.createCommand(cmdLine));
 		doReturn(manager).when(command).getTargetManager();
+		assertNotNull(command);
 		return command;
 	}
 

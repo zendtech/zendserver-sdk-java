@@ -15,7 +15,7 @@ public class TestUsageCommand extends AbstractTest {
 
 	@Test
 	public void testByCommandFactory() throws ParseError {
-		CommandLine cmdLine = new CommandLine(new String[] { "help" });
+		CommandLine cmdLine = getLine("help");
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -23,7 +23,7 @@ public class TestUsageCommand extends AbstractTest {
 
 	@Test
 	public void testByCommandFactory1() throws ParseError {
-		CommandLine cmdLine = new CommandLine(new String[] { "help", "create", "project" });
+		CommandLine cmdLine = getLine("help create project");
 		ICommand command = CommandFactory.createCommand(cmdLine);
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
@@ -31,7 +31,7 @@ public class TestUsageCommand extends AbstractTest {
 	
 	@Test
 	public void testByConstructor1() throws ParseError {
-		CommandLine cmdLine = new CommandLine(new String[] { "help" });
+		CommandLine cmdLine = getLine("help");
 		ICommand command = new UsageCommand();
 		assertNotNull(command);
 		assertTrue(command.execute(cmdLine));
