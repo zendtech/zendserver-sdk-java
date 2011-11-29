@@ -138,7 +138,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 		return hasOption(IGNORE_FAILURES);
 	}
 
-	@Option(opt = REPO, required = false, description = "Repository to clone from", argName = "repository")
+	@Option(opt = REPO, required = false, description = "Repository to clone from", argName = "git repository")
 	public String getGitRepository() {
 		final String value = getValue(REPO);
 		return value;
@@ -168,13 +168,13 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 		return value;
 	}
 
-	@Option(opt = APP_ID, required = false, description = "Application id in Zend Reposiotry", argName = "key")
+	@Option(opt = APP_ID, required = false, description = "Application id in Zend Reposiotry", argName = "application id")
 	public String getAppName() {
 		final String value = getValue(APP_ID);
 		return value;
 	}
 
-	@Option(opt = APP_REPO, required = false, description = "URL of Zend Repository from which application should be downloaded", argName = "branch")
+	@Option(opt = APP_REPO, required = false, description = "URL of Zend Repository from which application should be downloaded", argName = "zend repository")
 	public String getRepositoryName() {
 		final String value = getValue(APP_REPO);
 		return value;
