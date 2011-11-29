@@ -39,12 +39,6 @@ public class AddRepositoryCommand extends RepositoryAwareCommand {
 		final String url = getUrl();
 		final String name = getName();
 
-		if (url == null || url.length() == 0) {
-			getLogger()
-					.error("To add a repository it is required to provide a full URL.");
-			return false;
-		}
-
 		final RepositoryManager repositoryManager = getRepositoryManager();
 		final IRepository r = repositoryManager.createRepository(url, name);
 		if (r == null) {

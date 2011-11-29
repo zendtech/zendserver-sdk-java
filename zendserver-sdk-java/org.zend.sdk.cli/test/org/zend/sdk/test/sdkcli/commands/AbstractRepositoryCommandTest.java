@@ -16,20 +16,18 @@ import org.zend.sdklib.repository.IRepositoryLoader;
 public class AbstractRepositoryCommandTest extends AbstractTest {
 
 	private IRepositoryLoader loader;
+	protected RepositoryManager manager;
 
 	@Before
 	public void startup() {
 		loader = new UserBasedRepositoryLoader(file);
-	}
-
-	public RepositoryManager getRepositoryManager() {
-		return new RepositoryManager(loader);
+		manager = spy(new RepositoryManager(loader));
 	}
 	
 	public ICommand getCommand(CommandLine cmdLine) {
 		RepositoryAwareCommand command = spy((RepositoryAwareCommand) CommandFactory
 				.createCommand(cmdLine));
-		doReturn(getRepositoryManager()).when(command).getRepositoryManager();
+		doReturn(manager).when(command).getRepositoryManager();
 		return command;
 	}
 
