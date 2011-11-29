@@ -120,7 +120,7 @@ public class CommandLine {
 	}
 	
 	public String getArgument(int idx) {
-		return idx < arguments.length ? arguments[idx] : null;
+		return idx < arguments.length && idx >= 0 ? arguments[idx] : null;
 	}
 
 }
