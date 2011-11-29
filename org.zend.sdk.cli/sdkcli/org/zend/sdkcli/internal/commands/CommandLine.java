@@ -13,6 +13,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdklib.logger.ILogger;
+import org.zend.sdklib.logger.Log;
 
 /**
  * Helps forming the command line life cycle. At first it parses the right
@@ -53,7 +54,7 @@ public class CommandLine {
 	}
 
 	public CommandLine(String[] args) {
-		this(args, null);
+		this(args, Log.getInstance().getLogger(CommandLine.class.getName()));
 	}
 
 	private void heuristicParse() {
