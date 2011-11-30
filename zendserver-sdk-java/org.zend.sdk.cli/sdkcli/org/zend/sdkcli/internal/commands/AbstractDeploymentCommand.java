@@ -137,7 +137,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 	private static final String BRANCH = "g";
 
 	private static final String APP_ID = "i";
-	private static final String APP_REPO = "e";
+	private static final String APP_REPO = "z";
 
 	private DeploymentCloneCommand cloneCommand = new DeploymentCloneCommand(
 			this);
