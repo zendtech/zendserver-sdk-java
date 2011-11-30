@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Random;
 
 import org.eclipse.jgit.transport.URIish;
 import org.zend.sdkcli.internal.options.Option;
@@ -41,6 +42,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 	private class DeploymentCloneCommand extends GitCloneProjectCommand {
 
 		private AbstractDeploymentCommand command;
+		private File directory;
 
 		private DeploymentCloneCommand(AbstractDeploymentCommand command) {
 			this.command = command;
@@ -96,6 +98,31 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 				getLogger().error(e);
 			}
 			return null;
+		}
+
+		@Override
+		protected File getDirectory(String repo) throws URISyntaxException {
+			if (directory == null) {
+				String dir = getDir();
+				if (dir != null) {
+					directory = new File(getTempFile(dir), dir);
+				} else {
+					URIish uri = new URIish(repo);
+					String name = uri.getHumanishName();
+					directory = new File(getTempFile(name), name);
+				}
+			}
+			return directory;
+		}
+
+		private File getTempFile(String path) {
+			String tempDir = System.getProperty("java.io.tmpdir");
+			File tempFile = new File(tempDir + File.separator + path
+					+ new Random().nextInt());
+			if (!tempFile.exists()) {
+				tempFile.mkdir();
+			}
+			return tempFile;
 		}
 	}
 
@@ -240,7 +267,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 			}
 		} finally {
 			if (cloneCommand.getProjectFile() != null) {
-				delete(cloneCommand.getProjectFile());
+				delete(cloneCommand.getProjectFile().getParentFile());
 			}
 		}
 		return null;
