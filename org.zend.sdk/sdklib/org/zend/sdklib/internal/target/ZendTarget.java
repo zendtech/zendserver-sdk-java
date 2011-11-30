@@ -108,11 +108,6 @@ public class ZendTarget implements IZendTarget {
 			}
 		}
 
-		// host validation - port should not be specified
-		if (this.host.getPort() != -1) {
-			return "Target host port should not be specified";
-		}
-
 		return null;
 	}
 
