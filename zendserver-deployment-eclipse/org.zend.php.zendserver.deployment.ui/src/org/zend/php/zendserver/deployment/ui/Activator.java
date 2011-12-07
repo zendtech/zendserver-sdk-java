@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -16,7 +17,7 @@ import org.zend.php.zendserver.deployment.ui.chrome.SocketCommandListener;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends AbstractUIPlugin implements IStartup {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.ui"; //$NON-NLS-1$
@@ -190,5 +191,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public static void log(Throwable e) {
 		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
+	}
+
+	public void earlyStartup() {
+		// empty. all the startup logic that we want to run is in Activator.start method.
 	}
 }
