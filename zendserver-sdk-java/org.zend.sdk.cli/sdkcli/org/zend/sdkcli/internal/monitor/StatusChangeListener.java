@@ -1,7 +1,9 @@
-package org.zend.sdkcli.monitor;
+package org.zend.sdkcli.internal.monitor;
 
 import java.io.PrintWriter;
 
+import org.zend.sdkcli.monitor.ProgressMonitor;
+import org.zend.sdkcli.monitor.TextProgressMonitor;
 import org.zend.webapi.core.progress.IStatus;
 import org.zend.webapi.core.progress.IStatusChangeEvent;
 import org.zend.webapi.core.progress.IStatusChangeListener;
