@@ -17,6 +17,7 @@
 		<property name="home" value="${gradle.home}"/>
 		<exec executable="${home}/bin/gradle" dir=".">
 			<arg value="build"/>
+			<arg value="compileUpdateJava"/>
 			<arg value="eclipseClasspath"/>
 			<arg value="-x"/>
 			<arg value="test"/>
@@ -30,6 +31,7 @@
 		<property name="home" value="${gradle.home}"/>
 		<exec executable="${home}/bin/gradle.bat" dir=".">
 			<arg value="build"/>
+			<arg value="compileUpdateJava"/>
 			<arg value="eclipseClasspath"/>
 			<arg value="-x"/>
 			<arg value="test"/>

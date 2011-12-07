@@ -8,6 +8,8 @@ version = getBuildProperty('sdk.version')
 sourceFolder = 'sdkcli'
 testFolder = 'test'
 helpersFolder = 'helpers'
+updateFolder = 'update'
+sharedFolder = 'shared'
 
 repositories {
 	mavenCentral()
@@ -25,6 +27,7 @@ sourceSets {
 	main {
 		java {
 			srcDir sourceFolder
+			srcDir sharedFolder
 			srcDir helpersFolder
 		}
 		resources {
@@ -33,8 +36,18 @@ sourceSets {
 		}
 	}
 	test {
-		java { srcDir testFolder }
+		java { 
+			srcDir testFolder
+			srcDir sharedFolder
+			srcDir updateFolder 
+		}
 		resources { srcDir testFolder }
+	}
+	update {
+		java { 
+			srcDir updateFolder
+			srcDir sharedFolder
+		}
 	}
 }
 
@@ -73,8 +86,12 @@ test {
 
 jar {
 	archiveName = project.rootProject.name + '.jar'
-	from sourceSets.main.output.classesDir
 	exclude 'org/zend/sdkhelp' 
+}
+
+task createUpdateJar(type: Jar, dependsOn: compileUpdateJava) {
+	archiveName = 'org.zend.sdk.update.jar'
+	from sourceSets.update.output.classesDir
 }
 
 task createBinPackage(type: Zip) {
@@ -99,6 +116,10 @@ task createBinPackage(type: Zip) {
 		from project.rootDir
 		include 'README'
 	}
+}
+
+createBinPackage.doFirst {
+	ant.echo(message: 'sdk.version=' + version, file: project.libsDir.path + File.separator + 'sdk.version')
 }
 
 task createSrcPackage(type: Zip) {
