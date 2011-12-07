@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.jgit.transport.URIish;
+import org.zend.sdkcli.internal.monitor.StatusChangeListener;
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdkcli.monitor.StatusChangeListener;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
 import org.zend.sdklib.manager.RepositoryManager;
