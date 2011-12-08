@@ -33,8 +33,19 @@ public class RemoveEntry extends AbstractDeltaEntry {
 
 	@Override
 	public boolean execute(File root) throws UpdateException {
-		File fileToDelete = new File(root, file);
-		return delete(fileToDelete);
+		if (file.endsWith("*")) {
+			File parent = new File(root, file.substring(0, file.length() - 1));
+			File[] files = parent.listFiles();
+			for (File file : files) {
+				if (!delete(file)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			File fileToDelete = new File(root, file);
+			return delete(fileToDelete);
+		}
 	}
 
 	@Override
