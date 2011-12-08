@@ -108,7 +108,8 @@ public class Delta {
 
 	private File getZipFile(String location) throws UpdateException {
 		monitor.beginTask("Downloading update package", size);
-		String fileName = location.substring(location.lastIndexOf('/') + 1);
+		String fileName = location.substring(location.replace("\\", "/")
+				.lastIndexOf('/') + 1);
 		File result = new File(getTemp(), fileName);
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
