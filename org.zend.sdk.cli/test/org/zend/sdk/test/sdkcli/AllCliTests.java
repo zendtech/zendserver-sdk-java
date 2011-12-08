@@ -20,6 +20,7 @@ import org.zend.sdk.test.sdkcli.commands.TestUpdateApplicationCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUpdateProjectCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUpdateTargetCommand;
 import org.zend.sdk.test.sdkcli.commands.TestUsageCommand;
+import org.zend.sdk.test.sdkcli.update.AllUpdateTests;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestCommandTypes.class, TestEnvironmetUtils.class,
@@ -31,8 +32,8 @@ import org.zend.sdk.test.sdkcli.commands.TestUsageCommand;
 		TestRemoveApplicationCommand.class, TestUpdateApplicationCommand.class,
 		TestUpdateProjectCommand.class, TestUpdateTargetCommand.class,
 		TestAddRepositoryCommand.class, TestListRepositoriesCommand.class,
-		TestRemoveRepositoryCommand.class,
-		TestUsageCommand.class })
+		TestRemoveRepositoryCommand.class, TestUsageCommand.class,
+		AllUpdateTests.class })
 public class AllCliTests {
 
 }

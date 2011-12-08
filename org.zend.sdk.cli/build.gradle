@@ -118,6 +118,56 @@ task createBinPackage(type: Zip) {
 	}
 }
 
+task createUpdatePackage(type: Zip) {
+	destinationDir = new File(project.buildDir.path + '/tmp')
+	archiveName = 'update/' + version + '/package.zip'
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('lib') {
+		from 'lib'
+		exclude '*.jar'
+	}
+	into('resources') {
+		from 'resources'
+		include 'schemas/*.xsd'
+	}
+	into('tools') {
+		from 'tools'
+	}
+	into('.') {
+		from project.rootDir
+		include 'README'
+	}
+}
+
+task createUpdateFiles(dependsOn: createUpdatePackage) {
+	def packageFile = new File(project.buildDir, "/tmp/update/" + version + "/package.zip")
+	def delta = new XmlParser().parse(new File(project.rootDir.path + "/helpers/org/zend/sdkhelp/update/delta.xml"));
+	delta.@size = packageFile.length()
+	delta.@file = delta.@file.replaceAll("sdk.version", version)
+	File dest = new File(project.buildDir, 'tmp/update/' + version + '/delta.xml')
+	dest.getParentFile().mkdirs()
+	new XmlNodePrinter(new PrintWriter(new FileWriter(dest))).print(delta)
+	
+	def versions = new XmlParser().parse("https://zend-sdk.googlecode.com/svn/trunk/updates/versions.xml")
+	if (versions.version.findAll{ it.'@name'.equals(version) }.size() == 0) {
+		versionRange = '[,' + version + ')'
+		deltaLoc = 'https://zend-sdk.googlecode.com/svn/trunk/updates/' + version
+		versions.appendNode('version', [name: version, range: versionRange, delta: deltaLoc])
+		dest = new File(project.buildDir, 'tmp/update/versions.xml')
+		new XmlNodePrinter(new PrintWriter(new FileWriter(dest))).print(versions)
+	}
+}
+
+task createUpdate(type: Zip, dependsOn: createUpdateFiles) {
+	archiveName = 'update.zip'
+	into('updates') {
+		from project.buildDir.path + '/tmp/update'
+	}
+}
+
 createBinPackage.doFirst {
 	ant.echo(message: 'sdk.version=' + version, file: project.libsDir.path + File.separator + 'sdk.version')
 }

@@ -112,7 +112,7 @@ public class UpdateManager {
 		try {
 			props.setProperty("sdk.version", version.getStringValue());
 			props.store(new FileOutputStream(new File(string + File.separator
-					+ "sdk.version")), "");
+					+ "sdk.version")), null);
 			return true;
 		} catch (IOException e) {
 			throw new UpdateException(e);

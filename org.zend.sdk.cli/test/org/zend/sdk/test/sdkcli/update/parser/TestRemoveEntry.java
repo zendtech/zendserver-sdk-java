@@ -25,7 +25,7 @@ public class TestRemoveEntry extends AbstractXMLTest {
 	}
 
 	@Test
-	public void testCopyFiles() throws UpdateException, IOException {
+	public void testRemoveFiles() throws UpdateException, IOException {
 		String xmlString = "<remove file=\"update/\"/>";
 		Node node = getNodeFromString(xmlString, "remove");
 		RemoveEntry entry = new RemoveEntry(node);
@@ -34,9 +34,25 @@ public class TestRemoveEntry extends AbstractXMLTest {
 		createFile(new File(tmp, "update/a/w/c"));
 		createFile(new File(tmp, "update/a/z/d"));
 		assertTrue(entry.execute(tmp));
-		assertFileNotExists(tmp, "abc/update/a/b");
-		assertFileNotExists(tmp, "abc/update/a/w/c");
-		assertFileNotExists(tmp, "abc/update/a/z/d");
+		assertFileNotExists(tmp, "update/a/b");
+		assertFileNotExists(tmp, "update/a/w/c");
+		assertFileNotExists(tmp, "update/a/z/d");
+	}
+
+	@Test
+	public void testRemoveAsterisk() throws UpdateException, IOException {
+		String xmlString = "<remove file=\"update/*\"/>";
+		Node node = getNodeFromString(xmlString, "remove");
+		RemoveEntry entry = new RemoveEntry(node);
+		// create files to copy
+		createFile(new File(tmp, "update/a/b"));
+		createFile(new File(tmp, "update/a/w/c"));
+		createFile(new File(tmp, "update/a/z/d"));
+		assertTrue(entry.execute(tmp));
+		assertFileNotExists(tmp, "update/a/b");
+		assertFileNotExists(tmp, "update/a/w/c");
+		assertFileNotExists(tmp, "update/a/z/d");
+		assertFileExists(tmp, "update");
 	}
 
 	@Test
