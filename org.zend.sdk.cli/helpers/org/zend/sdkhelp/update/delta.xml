@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<delta file="http://eclipse.vipserv.org/updates/sdk.version/package.zip" size="package.size">
+	<remove file="*" />
+	<add file="lib" />
+	<add file="resources" />
+	<add file="tools" />
+	<add file="README" />
+</delta>

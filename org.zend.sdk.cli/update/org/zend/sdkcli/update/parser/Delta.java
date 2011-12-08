@@ -96,13 +96,13 @@ public class Delta {
 	}
 
 	private void parse(Document doc) {
-		NodeList adds = doc.getElementsByTagName(ADD);
-		for (int i = 0; i < adds.getLength(); i++) {
-			entries.add(new AddEntry(adds.item(i), getTemp()));
-		}
 		NodeList removes = doc.getElementsByTagName(REMOVE);
 		for (int i = 0; i < removes.getLength(); i++) {
 			entries.add(new RemoveEntry(removes.item(i)));
+		}
+		NodeList adds = doc.getElementsByTagName(ADD);
+		for (int i = 0; i < adds.getLength(); i++) {
+			entries.add(new AddEntry(adds.item(i), getTemp()));
 		}
 	}
 
