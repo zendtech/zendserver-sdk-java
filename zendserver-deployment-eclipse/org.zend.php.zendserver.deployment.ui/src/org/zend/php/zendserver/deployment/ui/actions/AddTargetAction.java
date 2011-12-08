@@ -58,11 +58,9 @@ public class AddTargetAction extends Action {
 						URL old = t.getHost();
 						URL host = new URL(old.getProtocol(), old.getHost(),
 								port, old.getFile());
-						IZendTarget target = new ZendTarget(t.getId(), host,
-								t.getDefaultServerURL(), t.getKey(),
-								t.getSecretKey());
-						if (tm.add(target) != null) {
-							addedTarget = target;
+						((ZendTarget) t).setHost(host);
+						if (tm.add(t) != null) {
+							addedTarget = t;
 							break;
 						}
 					} catch (MalformedURLException e) {
