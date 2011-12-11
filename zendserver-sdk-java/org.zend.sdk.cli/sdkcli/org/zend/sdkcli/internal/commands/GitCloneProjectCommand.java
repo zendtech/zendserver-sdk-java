@@ -76,7 +76,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			dir = getDirectory(repo);
 			clone.setDirectory(dir);
 		} catch (URISyntaxException e) {
-			getLogger().error(e.getMessage());
+			getLogger().error(e);
 			return false;
 		}
 		clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(
@@ -119,11 +119,11 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			clone.call();
 		} catch (JGitInternalException e) {
 			delete(dir);
-			getLogger().error(e.getMessage());
+			getLogger().error(e);
 			return false;
 		} catch (URISyntaxException e) {
 			delete(dir);
-			getLogger().error(e.getMessage());
+			getLogger().error(e);
 			return false;
 		}
 		updateProject(dir);
@@ -139,7 +139,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 						.debug("Project is updated with deployment descriptor and properties");
 			}
 		} catch (IllegalArgumentException e) {
-			getLogger().error(e.getMessage());
+			getLogger().error(e);
 		}
 	}
 

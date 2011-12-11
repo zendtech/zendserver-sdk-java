@@ -103,7 +103,7 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			if (!GitHelper.ZEND_CLOUD_REMOTE.equals(GitHelper
 					.getRemote(repoUrl))) {
 				getLogger()
-						.info("This command is available only for phpCloud git repositories.");
+						.error("This command is available only for phpCloud git repositories.");
 			}
 
 			AddCommand addCommand = git.add();
@@ -114,7 +114,7 @@ public class GitPushApplicationCommand extends AbstractCommand {
 				addCommand.call();
 			} catch (NoFilepatternException e) {
 				// should not occur because '.' is used
-				getLogger().error(e.getMessage());
+				getLogger().error(e);
 				return false;
 			}
 
@@ -148,7 +148,7 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			try {
 				pushCommand.call();
 			} catch (JGitInternalException e) {
-				getLogger().error(e.getMessage());
+				getLogger().error(e);
 				return false;
 			} catch (InvalidRemoteException e) {
 				// should not occur because phpCloud remote is available
