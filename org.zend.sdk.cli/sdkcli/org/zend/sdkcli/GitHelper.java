@@ -35,7 +35,8 @@ public class GitHelper {
 	public static String getRemote(String url) {
 		try {
 			URIish uri = new URIish(url);
-			if (uri.getHost().endsWith(ZendDevCloud.DEVPASS_HOST)) {
+			String host = uri.getHost();
+			if (host != null && host.endsWith(ZendDevCloud.DEVPASS_HOST)) {
 				return ZEND_CLOUD_REMOTE;
 			}
 		} catch (URISyntaxException e) {
