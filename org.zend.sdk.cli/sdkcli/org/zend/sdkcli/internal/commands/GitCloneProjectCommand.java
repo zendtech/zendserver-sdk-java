@@ -81,15 +81,15 @@ public class GitCloneProjectCommand extends AbstractCommand {
 				System.out)));
 		getLogger().info(
 				MessageFormat.format("Cloning into {0}...", dir.getName()));
-		CredentialsProvider credentials = getCredentials();
-		if (credentials != null) {
-			clone.setCredentialsProvider(credentials);
-		}
 		String branch = getBranch();
 		if (branch != null) {
 			clone.setBranch(Constants.R_HEADS + branch);
 		}
 		try {
+			CredentialsProvider credentials = getCredentials(repo);
+			if (credentials != null) {
+				clone.setCredentialsProvider(credentials);
+			}
 			URIish uri = new URIish(repo);
 			if (GITHUB_HOST.equals(uri.getHost())
 					&& "git".equals(uri.getUser())) {
@@ -117,11 +117,11 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			clone.call();
 		} catch (JGitInternalException e) {
 			delete(dir);
-			getLogger().error(e);
+			getLogger().error(e.getMessage());
 			return false;
 		} catch (URISyntaxException e) {
 			delete(dir);
-			getLogger().error(e);
+			getLogger().error(e.getMessage());
 			return false;
 		}
 		updateProject(dir);
@@ -141,10 +141,15 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		}
 	}
 
-	private CredentialsProvider getCredentials() {
+	private CredentialsProvider getCredentials(String repo)
+			throws URISyntaxException {
 		String username = getUser();
 		if (username == null) {
-			return null;
+			URIish uri = new URIish(repo);
+			username = uri.getUser();
+			if (username == null) {
+				return null;
+			}
 		}
 		String password = getPassword();
 		if (password == null) {
