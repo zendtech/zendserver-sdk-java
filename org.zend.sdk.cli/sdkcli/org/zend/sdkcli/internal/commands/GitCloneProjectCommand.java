@@ -13,6 +13,7 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdkcli.internal.ssh.GithubSshSessionFactory;
@@ -69,6 +70,7 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		CloneCommand clone = new CloneCommand();
 		String repo = getRepo();
 		clone.setURI(repo);
+		clone.setRemote(GitHelper.getRemote(repo));
 		File dir = null;
 		try {
 			dir = getDirectory(repo);
