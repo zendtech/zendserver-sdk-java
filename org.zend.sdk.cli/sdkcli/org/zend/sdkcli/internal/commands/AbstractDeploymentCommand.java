@@ -214,7 +214,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 		if (getRepositoryName() != null && getAppName() != null) {
 			info = repositoryOperation();
 		} else if (getRepositoryName() != null || getAppName() != null) {
-			getLogger().info("Missing application id or Zend Repository URL.");
+			getLogger().error("Missing application id or Zend Repository URL.");
 			return true;
 		} else if (getGitRepository() != null) {
 			info = gitOperation();

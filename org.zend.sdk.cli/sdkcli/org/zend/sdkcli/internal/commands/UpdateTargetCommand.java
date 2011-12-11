@@ -87,7 +87,7 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 		if (getHost() == null && getKey() == null && getSecretKey() == null
 				&& getDefaultServerURL() == null) {
 			getLogger()
-					.info("To update a target at least one of the following options is required: h, k, s, p.");
+					.error("To update a target at least one of the following options is required: h, k, s, p.");
 			return true;
 		}
 		IZendTarget result = getTargetManager().updateTarget(getId(), getHost(),
@@ -116,7 +116,8 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 		} catch (FileNotFoundException e) {
 			getLogger().error("File not found " + file.getAbsolutePath());
 		} catch (IOException e) {
-			getLogger().error("Error reading " + file.getAbsolutePath());
+			getLogger().error("Error during reading " + file.getAbsolutePath());
+			getLogger().error(e);
 		}
 		return null;
 	}

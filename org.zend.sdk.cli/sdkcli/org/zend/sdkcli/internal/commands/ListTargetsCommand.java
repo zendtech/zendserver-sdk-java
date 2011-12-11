@@ -43,7 +43,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 					connect = false;
 				}
 				commandLine.getLog()
-						.info("\tStatus: "
+						.error("\tStatus: "
 								+ (connect ? "connected" : "disconnected"));
 			}
 

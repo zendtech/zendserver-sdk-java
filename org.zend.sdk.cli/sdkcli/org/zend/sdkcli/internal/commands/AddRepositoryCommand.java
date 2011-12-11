@@ -47,7 +47,7 @@ public class AddRepositoryCommand extends RepositoryAwareCommand {
 		try {
 			repositoryManager.add(r);
 		} catch (SdkException e) {
-			getLogger().info("Error adding repository ('" + url + "').");
+			getLogger().error("Error adding repository ('" + url + "').");
 			getLogger().error(e);
 			return false;
 		}
