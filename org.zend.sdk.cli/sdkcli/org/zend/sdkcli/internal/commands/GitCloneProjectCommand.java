@@ -116,10 +116,12 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			}
 			clone.call();
 		} catch (JGitInternalException e) {
-			getLogger().error(e.getMessage());
+			delete(dir);
+			getLogger().error(e);
 			return false;
 		} catch (URISyntaxException e) {
-			getLogger().error(e.getMessage());
+			delete(dir);
+			getLogger().error(e);
 			return false;
 		}
 		updateProject(dir);
@@ -159,6 +161,19 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		}
 		URIish uri = new URIish(repo);
 		return new File(getCurrentDirectory(), uri.getHumanishName());
+	}
+
+	private boolean delete(File file) {
+		if (file != null && file.exists() && file.isDirectory()) {
+			String[] children = file.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean result = delete(new File(file, children[i]));
+				if (!result) {
+					return false;
+				}
+			}
+		}
+		return file.delete();
 	}
 
 }
