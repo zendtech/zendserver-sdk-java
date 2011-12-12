@@ -127,6 +127,15 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			return false;
 		}
 		updateProject(dir);
+		if (GitHelper.ZEND_CLOUD_REMOTE.equals(GitHelper.getRemote(repo))) {
+			getLogger().info(
+					"The remote name used to keep track of the phpCloud repository is: "
+							+ GitHelper.ZEND_CLOUD_REMOTE);
+		} else {
+			getLogger().info(
+					"The remote name used to keep track of the cloned repository is: "
+							+ Constants.DEFAULT_REMOTE_NAME);
+		}
 		return true;
 	}
 
