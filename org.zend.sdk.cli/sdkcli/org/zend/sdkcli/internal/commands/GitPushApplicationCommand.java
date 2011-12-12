@@ -52,12 +52,12 @@ public class GitPushApplicationCommand extends AbstractCommand {
 	private static final String AUTHOR = "a";
 
 	@Option(opt = REPO, required = true, description = "Application directory path", argName = "repository")
-	public String getRepo() {
+	public File getRepo() {
 		String value = getValue(REPO);
 		if (value == null) {
 			value = getCurrentDirectory();
 		}
-		return value;
+		return new File(value, ".git");
 	}
 
 	@Option(opt = USER, required = false, description = "User name", argName = "user")
@@ -89,9 +89,15 @@ public class GitPushApplicationCommand extends AbstractCommand {
 	protected boolean doExecute() {
 		Repository repo = null;
 		try {
-			repo = new FileRepository(new File(getRepo()));
+			File gitDir = getRepo();
+			if (!gitDir.exists()) {
+				getLogger().error(
+						"Git repository is not available in provided location");
+				return false;
+			}
+			repo = new FileRepository(getRepo());
 		} catch (IOException e) {
-			getLogger().error(e.getMessage());
+			getLogger().error(e);
 			return false;
 		}
 		if (repo != null) {
@@ -133,7 +139,7 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			try {
 				commitCommand.call();
 			} catch (Exception e) {
-				getLogger().error(e.getMessage());
+				getLogger().error(e);
 				return false;
 			}
 
