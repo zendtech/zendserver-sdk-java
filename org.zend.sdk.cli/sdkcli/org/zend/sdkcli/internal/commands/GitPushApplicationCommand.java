@@ -9,6 +9,7 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 
 import org.eclipse.jgit.api.AddCommand;
@@ -20,6 +21,7 @@ import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.URIish;
@@ -147,6 +149,8 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			PushCommand pushCommand = git.push();
 			pushCommand.setPushAll();
 			pushCommand.setRemote(GitHelper.ZEND_CLOUD_REMOTE);
+			pushCommand.setProgressMonitor(new TextProgressMonitor(
+					new PrintWriter(System.out)));
 			CredentialsProvider credentials = getCredentials(repoUrl);
 			if (credentials != null) {
 				pushCommand.setCredentialsProvider(credentials);
