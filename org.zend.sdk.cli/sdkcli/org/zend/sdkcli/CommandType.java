@@ -27,6 +27,9 @@ public enum CommandType {
 	PUSH_APPLICATION("push", "application",
 			"Push local application to the phpCloud git repository"),
 
+	ADD_REMOTE("add", "remote",
+			"Add new remote to specified local git repository"),
+
 	LIST_TARGETS("list", "targets", "Lists known deployment target environments."),
 
 	ADD_TARGET("add", "target", "Adds new target environment for deploying applications."),
