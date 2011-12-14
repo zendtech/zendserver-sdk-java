@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<delta file="http://eclipse.vipserv.org/updates/sdk.version/package.zip" size="package.size">
+<delta file="https://zend-sdk.googlecode.com/svn/trunk/updates/sdk.version/package.zip" size="package.size">
 	<remove file="*" />
 	<add file="lib" />
 	<add file="resources" />
