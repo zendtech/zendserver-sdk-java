@@ -88,10 +88,6 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			clone.setBranch(Constants.R_HEADS + branch);
 		}
 		try {
-			CredentialsProvider credentials = getCredentials(repo);
-			if (credentials != null) {
-				clone.setCredentialsProvider(credentials);
-			}
 			URIish uri = new URIish(repo);
 			if (GITHUB_HOST.equals(uri.getHost())
 					&& "git".equals(uri.getUser())) {
@@ -115,6 +111,11 @@ public class GitCloneProjectCommand extends AbstractCommand {
 				factory.setPassphrase(password);
 				factory.setKeyLocation(key);
 				SshSessionFactory.setInstance(factory);
+			} else {
+				CredentialsProvider credentials = getCredentials(repo);
+				if (credentials != null) {
+					clone.setCredentialsProvider(credentials);
+				}
 			}
 			clone.call();
 		} catch (JGitInternalException e) {
