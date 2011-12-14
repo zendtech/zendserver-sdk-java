@@ -23,7 +23,7 @@ import org.zend.sdklib.internal.target.ZendDevCloud;
  */
 public class GitHelper {
 
-	public static final String ZEND_CLOUD_REMOTE = "zendCloudRemote";
+	public static final String ZEND_CLOUD_REMOTE = "phpcloud";
 
 	/**
 	 * Returns remote valued based on provided git repository URL.
