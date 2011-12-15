@@ -160,7 +160,7 @@ task createUpdateFiles(dependsOn: createUpdatePackage) {
 		def versions = new XmlParser().parse("https://zend-sdk.googlecode.com/svn/trunk/updates/versions.xml")
 		if (versions.version.findAll{ it.'@name'.equals(version) }.size() == 0) {
 			versionRange = '[,' + version + ')'
-			deltaLoc = 'https://zend-sdk.googlecode.com/svn/trunk/updates/' + version
+			deltaLoc = 'https://zend-sdk.googlecode.com/svn/trunk/updates/' + version + '/delta.xml'
 			versions.appendNode('version', [name: version, range: versionRange, delta: deltaLoc])
 			dest = new File(project.buildDir, 'tmp/update/versions.xml')
 			new XmlNodePrinter(new PrintWriter(new FileWriter(dest))).print(versions)
