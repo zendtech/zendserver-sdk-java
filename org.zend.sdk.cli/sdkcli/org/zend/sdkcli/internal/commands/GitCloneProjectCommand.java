@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) Sep 6, 2011 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
@@ -10,23 +17,23 @@ import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdkcli.internal.ssh.GithubSshSessionFactory;
 import org.zend.sdklib.application.ZendProject;
 
-public class GitCloneProjectCommand extends AbstractCommand {
+/**
+ * Clones repository based on provided remote repository URL.
+ * 
+ * @author Wojciech Galanciak, 2011
+ * 
+ */
+public class GitCloneProjectCommand extends AbstractGitCommand {
 
 	private static final String GITHUB_HOST = "github.com";
 	private static final String REPO = "r";
 	private static final String DIR = "d";
-	private static final String USER = "u";
-	private static final String PASSWD = "p";
-	private static final String KEY = "k";
 	private static final String BRANCH = "b";
 
 	@Option(opt = REPO, required = true, description = "Repository to clone from", argName = "repository")
@@ -35,27 +42,9 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		return value;
 	}
 
-	@Option(opt = USER, required = false, description = "User name", argName = "user")
-	public String getUser() {
-		final String value = getValue(USER);
-		return value;
-	}
-
-	@Option(opt = PASSWD, required = false, description = "Password", argName = "password")
-	public String getPassword() {
-		final String value = getValue(PASSWD);
-		return value;
-	}
-
 	@Option(opt = DIR, required = false, description = "The optional directory associated with the clone operation. If the directory isn't set, a name associated with the source uri will be used", argName = "directory")
 	public String getDir() {
 		final String value = getValue(DIR);
-		return value;
-	}
-
-	@Option(opt = KEY, required = false, description = "Path to SSH private key", argName = "key")
-	public String getKey() {
-		final String value = getValue(KEY);
 		return value;
 	}
 
@@ -91,26 +80,9 @@ public class GitCloneProjectCommand extends AbstractCommand {
 			URIish uri = new URIish(repo);
 			if (GITHUB_HOST.equals(uri.getHost())
 					&& "git".equals(uri.getUser())) {
-				GithubSshSessionFactory factory = new GithubSshSessionFactory();
-				String key = getKey();
-				if (key != null) {
-					File privateKey = new File(key);
-					if (privateKey.isDirectory() || !privateKey.exists()) {
-						getLogger()
-								.error(key
-										+ " is not a valid path to SSH private key");
-						return false;
-					}
+				if (!prepareSSHFactory()) {
+					return false;
 				}
-				String password = getPassword();
-
-				if (password == null) {
-					password = String.valueOf(System.console().readPassword(
-							"Passphrase for ssh private key: "));
-				}
-				factory.setPassphrase(password);
-				factory.setKeyLocation(key);
-				SshSessionFactory.setInstance(factory);
 			} else {
 				CredentialsProvider credentials = getCredentials(repo);
 				if (credentials != null) {
@@ -151,24 +123,6 @@ public class GitCloneProjectCommand extends AbstractCommand {
 		} catch (IllegalArgumentException e) {
 			getLogger().error(e);
 		}
-	}
-
-	private CredentialsProvider getCredentials(String repo)
-			throws URISyntaxException {
-		String username = getUser();
-		if (username == null) {
-			URIish uri = new URIish(repo);
-			username = uri.getUser();
-			if (username == null) {
-				return null;
-			}
-		}
-		String password = getPassword();
-		if (password == null) {
-			password = String.valueOf(System.console().readPassword(
-					"Password: "));
-		}
-		return new UsernamePasswordCredentialsProvider(username, password);
 	}
 
 	protected File getDirectory(String repo) throws URISyntaxException {
