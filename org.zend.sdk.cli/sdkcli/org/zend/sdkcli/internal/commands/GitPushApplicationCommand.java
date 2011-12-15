@@ -47,7 +47,7 @@ import org.zend.sdkcli.internal.options.Option;
  */
 public class GitPushApplicationCommand extends AbstractCommand {
 
-	private static final String REPO = "r";
+	private static final String REPO = "a";
 	private static final String USER = "u";
 	private static final String PASSWD = "p";
 	private static final String MESSAGE = "m";
