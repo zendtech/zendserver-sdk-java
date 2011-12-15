@@ -24,7 +24,7 @@ prog=`dirname "$0"`
 libpath="${prog}/../lib/*"
 
 if [ $1 = "update" -a $# = 1 ] ; then
-exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath:${prog}/../bin" org.zend.sdkcli.update.Update "${prog}/../"
+exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath" org.zend.sdkcli.update.Update "${prog}/../"
 else
-exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath:${prog}/../bin" org.zend.sdkcli.Main "$@"
+exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath" org.zend.sdkcli.Main "$@"
 fi
