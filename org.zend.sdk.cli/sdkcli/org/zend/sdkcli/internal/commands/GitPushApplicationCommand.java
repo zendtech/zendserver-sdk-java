@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -25,7 +26,6 @@ import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.options.Option;
 
@@ -45,13 +45,13 @@ import org.zend.sdkcli.internal.options.Option;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class GitPushApplicationCommand extends AbstractCommand {
+public class GitPushApplicationCommand extends AbstractGitCommand {
 
+	private static final String GITHUB_HOST = "github.com";
 	private static final String REPO = "a";
-	private static final String USER = "u";
-	private static final String PASSWD = "p";
 	private static final String MESSAGE = "m";
 	private static final String AUTHOR = "i";
+	private static final String REMOTE = "r";
 
 	@Option(opt = REPO, required = false, description = "Application directory path", argName = "repository")
 	public File getRepo() {
@@ -60,18 +60,6 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			value = getCurrentDirectory();
 		}
 		return new File(value, ".git");
-	}
-
-	@Option(opt = USER, required = false, description = "User name", argName = "user")
-	public String getUser() {
-		String value = getValue(USER);
-		return value;
-	}
-
-	@Option(opt = PASSWD, required = false, description = "Password", argName = "password")
-	public String getPassword() {
-		String value = getValue(PASSWD);
-		return value;
 	}
 
 	@Option(opt = MESSAGE, required = false, description = "Message which will be used for commit operation", argName = "message")
@@ -84,6 +72,12 @@ public class GitPushApplicationCommand extends AbstractCommand {
 	@Option(opt = AUTHOR, required = false, description = "Author information which will be used for commit operation", argName = "message")
 	public String getAuthor() {
 		String value = getValue(AUTHOR);
+		return value;
+	}
+
+	@Option(opt = REMOTE, required = false, description = "Remote", argName = "remote")
+	public String getRemote() {
+		String value = getValue(REMOTE);
 		return value;
 	}
 
@@ -105,14 +99,15 @@ public class GitPushApplicationCommand extends AbstractCommand {
 		if (repo != null) {
 			Git git = new Git(repo);
 
+			String remote = doGetRemote(repo);
+			if (remote == null) {
+				getLogger().error("Invalid remote value: " + getRemote());
+				return false;
+			}
+
 			// perform operation only if it is clone of phpCloud repository
 			String repoUrl = git.getRepository().getConfig()
-					.getString("remote", GitHelper.ZEND_CLOUD_REMOTE, "url");
-			if (!GitHelper.ZEND_CLOUD_REMOTE.equals(GitHelper
-					.getRemote(repoUrl))) {
-				getLogger()
-						.error("This command is available only for phpCloud git repositories.");
-			}
+					.getString("remote", remote, "url");
 
 			AddCommand addCommand = git.add();
 			addCommand.setUpdate(false);
@@ -148,14 +143,23 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			// at the end push all changes
 			PushCommand pushCommand = git.push();
 			pushCommand.setPushAll();
-			pushCommand.setRemote(GitHelper.ZEND_CLOUD_REMOTE);
+			pushCommand.setRemote(remote);
 			pushCommand.setProgressMonitor(new TextProgressMonitor(
 					new PrintWriter(System.out)));
-			CredentialsProvider credentials = getCredentials(repoUrl);
-			if (credentials != null) {
-				pushCommand.setCredentialsProvider(credentials);
-			}
+
 			try {
+				URIish uri = new URIish(repoUrl);
+				if (GITHUB_HOST.equals(uri.getHost())
+						&& "git".equals(uri.getUser())) {
+					if (!prepareSSHFactory()) {
+						return false;
+					}
+				} else {
+					CredentialsProvider credentials = getCredentials(repoUrl);
+					if (credentials != null) {
+						pushCommand.setCredentialsProvider(credentials);
+					}
+				}
 				pushCommand.call();
 			} catch (JGitInternalException e) {
 				getLogger().error(e);
@@ -164,10 +168,25 @@ public class GitPushApplicationCommand extends AbstractCommand {
 				// should not occur because phpCloud remote is available
 				getLogger().error(e);
 				return false;
+			} catch (URISyntaxException e) {
+				getLogger().error(e);
+				return false;
 			}
 
 		}
 		return true;
+	}
+
+	private String doGetRemote(Repository repo) {
+		String remote = getRemote();
+		if (remote == null) {
+			remote = GitHelper.ZEND_CLOUD_REMOTE;
+		}
+		Set<String> remotes = repo.getConfig().getSubsections("remote");
+		if (remotes.contains(remote)) {
+			return remote;
+		}
+		return null;
 	}
 
 	private PersonIdent getPersonalIdent(String repo) {
@@ -200,28 +219,6 @@ public class GitPushApplicationCommand extends AbstractCommand {
 			}
 		}
 		return new PersonIdent(name, email);
-	}
-
-	private CredentialsProvider getCredentials(String repo) {
-		String username = getUser();
-		if (username == null) {
-			URIish uri;
-			try {
-				uri = new URIish(repo);
-				username = uri.getUser();
-			} catch (URISyntaxException e) {
-				// just continue
-			}
-			if (username == null) {
-				return null;
-			}
-		}
-		String password = getPassword();
-		if (password == null) {
-			password = String.valueOf(System.console().readPassword(
-					"Password: "));
-		}
-		return new UsernamePasswordCredentialsProvider(username, password);
 	}
 
 }
