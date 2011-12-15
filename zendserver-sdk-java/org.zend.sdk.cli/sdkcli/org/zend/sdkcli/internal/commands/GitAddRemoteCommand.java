@@ -9,9 +9,8 @@ package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
@@ -87,6 +86,10 @@ public class GitAddRemoteCommand extends AbstractCommand {
 				config.addFetchRefSpec(refSpec);
 				config.update(repo.getConfig());
 				repo.getConfig().save();
+				getLogger()
+						.info(MessageFormat
+								.format("New remote called \"{0}\" was added successfully",
+										config.getName()));
 			} catch (URISyntaxException e) {
 				getLogger().error("Invalid repository URL :" + getRepo());
 				return false;
@@ -100,11 +103,11 @@ public class GitAddRemoteCommand extends AbstractCommand {
 
 	private String getReposiotryName(String url) {
 		try {
-			URL repoURL = new URL(url);
+			URIish repoURL = new URIish(url);
 			String host = repoURL.getHost();
 			host = host.substring(0, host.lastIndexOf("."));
 			return host.substring(host.lastIndexOf(".") + 1);
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException e) {
 			getLogger().error(e);
 		}
 		return null;
