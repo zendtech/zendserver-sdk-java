@@ -36,7 +36,7 @@ import org.zend.sdkcli.internal.options.Option;
  */
 public class GitAddRemoteCommand extends AbstractCommand {
 
-	private static final String PROJECT = "p";
+	private static final String PROJECT = "a";
 	private static final String REPO = "r";
 
 	@Option(opt = PROJECT, required = true, description = "Application directory path", argName = "project")
