@@ -110,6 +110,7 @@ task createBinPackage(type: Zip) {
 		include 'schemas/*.xsd'
 	}
 	into(folderName + '/tools') {
+		fileMode=0755
 		from 'tools'
 	}
 	into(folderName) {
@@ -134,6 +135,7 @@ task createUpdatePackage(type: Zip) {
 		include 'schemas/*.xsd'
 	}
 	into('tools') {
+		fileMode=0755
 		from 'tools'
 	}
 	into('.') {
