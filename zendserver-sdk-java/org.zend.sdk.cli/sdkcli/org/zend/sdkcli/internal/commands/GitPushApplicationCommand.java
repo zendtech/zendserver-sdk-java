@@ -51,7 +51,7 @@ public class GitPushApplicationCommand extends AbstractCommand {
 	private static final String USER = "u";
 	private static final String PASSWD = "p";
 	private static final String MESSAGE = "m";
-	private static final String AUTHOR = "a";
+	private static final String AUTHOR = "i";
 
 	@Option(opt = REPO, required = true, description = "Application directory path", argName = "repository")
 	public File getRepo() {
