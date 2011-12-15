@@ -38,7 +38,7 @@ public class GitAddRemoteCommand extends AbstractCommand {
 	private static final String PROJECT = "a";
 	private static final String REPO = "r";
 
-	@Option(opt = PROJECT, required = true, description = "Application directory path", argName = "project")
+	@Option(opt = PROJECT, required = false, description = "Application directory path", argName = "project")
 	public File getProject() {
 		String value = getValue(PROJECT);
 		if (value == null) {
@@ -47,7 +47,7 @@ public class GitAddRemoteCommand extends AbstractCommand {
 		return new File(value, ".git");
 	}
 
-	@Option(opt = REPO, required = false, description = "Repository URL", argName = "repository")
+	@Option(opt = REPO, required = true, description = "Repository URL", argName = "repository")
 	public String getRepo() {
 		String value = getValue(REPO);
 		return value;
