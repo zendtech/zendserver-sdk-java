@@ -19,6 +19,14 @@ for /f %%a in ('%java_exe% -jar %~dp0\..\lib\archquery.jar') do set registry_pat
 set jar_path=%~dp0/../lib/*
 
 rem Finally exec the java program and end here.
-call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%;%~dp0/../bin" org.zend.sdkcli.Main %*
+
+if "%1" == "update" (goto :UPDATE) else (goto :MAIN)
+
+:UPDATE
+if "%2" == "" (call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%" org.zend.sdkcli.update.Update "%~dp0/../"
+goto :EOF) else (goto :MAIN)
+
+:MAIN
+call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%" org.zend.sdkcli.Main %*
 
 :EOF
