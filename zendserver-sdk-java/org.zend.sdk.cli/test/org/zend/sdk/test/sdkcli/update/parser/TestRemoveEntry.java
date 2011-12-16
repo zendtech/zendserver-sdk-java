@@ -56,6 +56,22 @@ public class TestRemoveEntry extends AbstractXMLTest {
 	}
 
 	@Test
+	public void testExclude() throws UpdateException, IOException {
+		String xmlString = "<remove file=\"update/*\" exclude=\"b|c\"/>";
+		Node node = getNodeFromString(xmlString, "remove");
+		RemoveEntry entry = new RemoveEntry(node);
+		// create files to copy
+		createFile(new File(tmp, "update/a/b"));
+		createFile(new File(tmp, "update/a/w/c"));
+		createFile(new File(tmp, "update/a/z/d"));
+		assertTrue(entry.execute(tmp));
+		assertFileExists(tmp, "update/a/b");
+		assertFileExists(tmp, "update/a/w/c");
+		assertFileNotExists(tmp, "update/a/z/d");
+		assertFileExists(tmp, "update");
+	}
+
+	@Test
 	public void testCopyUnexistingFile() throws UpdateException, IOException {
 		String xmlString = "<remove file=\"notExist/\"/>";
 		Node node = getNodeFromString(xmlString, "remove");
