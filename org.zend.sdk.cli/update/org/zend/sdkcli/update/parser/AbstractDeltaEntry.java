@@ -8,6 +8,8 @@
 package org.zend.sdkcli.update.parser;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Node;
 import org.zend.sdkcli.update.UpdateException;
@@ -39,19 +41,21 @@ public abstract class AbstractDeltaEntry {
 	protected abstract void parse(Node node);
 
 	protected boolean delete(File file) {
+		return delete(file, new ArrayList<String>());
+	}
+
+	protected boolean delete(File file, List<String> exclude) {
 		if (file == null || !file.exists()) {
 			return true;
 		}
 		if (file.isDirectory()) {
 			String[] children = file.list();
 			for (int i = 0; i < children.length; i++) {
-				boolean result = delete(new File(file, children[i]));
-				if (!result) {
-					return false;
-				}
+				delete(new File(file, children[i]), exclude);
 			}
+			return true;
 		}
-		return file.delete();
+		return !exclude.contains(file.getName()) ? file.delete() : true;
 	}
 
 }
