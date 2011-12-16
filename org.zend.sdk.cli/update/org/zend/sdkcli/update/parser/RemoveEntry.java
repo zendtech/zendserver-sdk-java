@@ -8,6 +8,9 @@
 package org.zend.sdkcli.update.parser;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -24,8 +27,10 @@ import org.zend.sdkcli.update.UpdateException;
 public class RemoveEntry extends AbstractDeltaEntry {
 
 	private static final String FILE = "file";
+	private static final String EXCLUDE = "exclude";
 
 	private String file;
+	private List<String> exclude;
 
 	public RemoveEntry(Node node) {
 		super(node);
@@ -37,15 +42,13 @@ public class RemoveEntry extends AbstractDeltaEntry {
 			File parent = new File(root, file.substring(0, file.length() - 1));
 			File[] files = parent.listFiles();
 			for (File file : files) {
-				if (!delete(file)) {
-					return false;
-				}
+				delete(file, exclude);
 			}
-			return true;
 		} else {
 			File fileToDelete = new File(root, file);
-			return delete(fileToDelete);
+			delete(fileToDelete, exclude);
 		}
+		return true;
 	}
 
 	@Override
@@ -56,7 +59,13 @@ public class RemoveEntry extends AbstractDeltaEntry {
 			throw new IllegalArgumentException(
 					"Invalid add tag: missing file attribute");
 		}
-		file = attributes.getNamedItem(FILE).getNodeValue();
+		file = attNode.getNodeValue();
+		attNode = attributes.getNamedItem(EXCLUDE);
+		if (attNode == null) {
+			exclude = new ArrayList<String>();
+		} else {
+			exclude = Arrays.asList(attNode.getNodeValue().split("\\|"));
+		}
 	}
 
 }
