@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <delta file="https://zend-sdk.googlecode.com/svn/trunk/updates/sdk.version/package.zip" size="package.size">
-	<remove file="lib/*" />
+	<remove file="lib/*" exclude="org.zend.sdk.update.jar|archquery.jar"/>
 	<remove file="resources/*" />
 	<remove file="README" />
 	<add file="lib" />
