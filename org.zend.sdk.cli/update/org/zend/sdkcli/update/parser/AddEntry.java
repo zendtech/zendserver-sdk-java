@@ -99,7 +99,7 @@ public class AddEntry extends AbstractDeltaEntry {
 
 	private void copyFile(File in, File out) throws IOException {
 		if (out.exists()) {
-			delete(out);
+			return;
 		}
 		createFile(out);
 		FileInputStream fis = new FileInputStream(in);
