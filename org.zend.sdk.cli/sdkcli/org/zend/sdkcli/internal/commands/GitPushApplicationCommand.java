@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.jgit.api.AddCommand;
@@ -25,6 +27,9 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.transport.TrackingRefUpdate;
 import org.eclipse.jgit.transport.URIish;
 import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.options.Option;
@@ -160,12 +165,32 @@ public class GitPushApplicationCommand extends AbstractGitCommand {
 						pushCommand.setCredentialsProvider(credentials);
 					}
 				}
-				pushCommand.call();
+				Iterable<PushResult> result = pushCommand.call();
+				for (PushResult pushResult : result) {
+					pushResult.getAdvertisedRefs();
+					Collection<RemoteRefUpdate> updates = pushResult
+							.getRemoteUpdates();
+					for (RemoteRefUpdate remoteRefUpdate : updates) {
+						TrackingRefUpdate trackingRefUpdate = remoteRefUpdate
+								.getTrackingRefUpdate();
+						getLogger()
+								.info(MessageFormat.format(
+										"Remote name: {0}, status: {1}",
+										remoteRefUpdate.getRemoteName(),
+										remoteRefUpdate.getStatus().toString()));
+						getLogger().info(
+								MessageFormat.format(
+										"Remote name: {0}, result: {1}",
+										trackingRefUpdate.getRemoteName(),
+										trackingRefUpdate.getResult()
+												.toString()));
+					}
+				}
 			} catch (JGitInternalException e) {
 				getLogger().error(e);
 				return false;
 			} catch (InvalidRemoteException e) {
-				// should not occur because phpCloud remote is available
+				// should not occur because selected remote is available
 				getLogger().error(e);
 				return false;
 			} catch (URISyntaxException e) {
