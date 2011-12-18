@@ -23,7 +23,7 @@ rem Finally exec the java program and end here.
 if "%1" == "update" (goto :UPDATE) else (goto :MAIN)
 
 :UPDATE
-if "%2" == "" (call %java_exe% -Djava.library.path="%registry_path%" -classpath "%jar_path%" org.zend.sdkcli.update.Update "%~dp0/../"
+if "%2" == "" (call %java_exe% -Djava.library.path="%registry_path%" -classpath "%~dp0/../lib/org.zend.sdk.update.jar" org.zend.sdkcli.update.Update "%~dp0/../"
 goto :EOF) else (goto :MAIN)
 
 :MAIN
