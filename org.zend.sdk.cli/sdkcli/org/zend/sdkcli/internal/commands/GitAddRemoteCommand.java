@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.Set;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
@@ -37,6 +38,7 @@ public class GitAddRemoteCommand extends AbstractCommand {
 
 	private static final String PROJECT = "a";
 	private static final String REPO = "r";
+	private static final String NAME = "n";
 
 	@Option(opt = PROJECT, required = false, description = "Application directory path", argName = "project")
 	public File getProject() {
@@ -50,6 +52,12 @@ public class GitAddRemoteCommand extends AbstractCommand {
 	@Option(opt = REPO, required = true, description = "Repository URL", argName = "repository")
 	public String getRepo() {
 		String value = getValue(REPO);
+		return value;
+	}
+	
+	@Option(opt = NAME, required = false, description = "Remote name", argName = "name")
+	public String getName() {
+		String value = getValue(NAME);
 		return value;
 	}
 
@@ -69,7 +77,7 @@ public class GitAddRemoteCommand extends AbstractCommand {
 			return false;
 		}
 		if (repo != null) {
-			String repoName = getReposiotryName(getRepo());
+			String repoName = getReposiotryName(getRepo(), repo);
 			if (repoName == null) {
 				getLogger().error("Invalid repository URL :" + getRepo());
 				return false;
@@ -101,12 +109,28 @@ public class GitAddRemoteCommand extends AbstractCommand {
 		return true;
 	}
 
-	private String getReposiotryName(String url) {
+	private String getReposiotryName(String url, Repository repo) {
+		String customName = getName();
+		if (customName != null) {
+			return customName;
+		}
 		try {
 			URIish repoURL = new URIish(url);
 			String host = repoURL.getHost();
 			host = host.substring(0, host.lastIndexOf("."));
-			return host.substring(host.lastIndexOf(".") + 1);
+			String name = host.substring(host.lastIndexOf(".") + 1);
+			Set<String> names = repo.getConfig().getSubsections("remote");
+			int suffix = 0;
+			for (String existingName : names) {
+				if (existingName.startsWith(name + "_")
+						|| existingName.equals(name)) {
+					suffix++;
+				}
+			}
+			if (suffix != 0) {
+				name += "_" + suffix;
+			}
+			return name;
 		} catch (URISyntaxException e) {
 			getLogger().error(e);
 		}
