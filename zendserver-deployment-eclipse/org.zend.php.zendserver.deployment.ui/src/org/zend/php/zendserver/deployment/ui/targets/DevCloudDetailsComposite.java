@@ -32,6 +32,7 @@ import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -296,6 +297,11 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	@Override
 	public boolean hasPage() {
 		return true;
+	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.CREATING_A_ZEND_DEVELOPER_CLOUD_TARGET;
 	}
 
 }

@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.IOException;
 
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.actions.DetectTargetAction;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.target.IZendTarget;
@@ -36,6 +37,11 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	@Override
 	public boolean hasPage() {
 		return false;
+	}
+
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.CREATING_A_LOCAL_ZEND_SERVER_TARGET;
 	}
 
 }

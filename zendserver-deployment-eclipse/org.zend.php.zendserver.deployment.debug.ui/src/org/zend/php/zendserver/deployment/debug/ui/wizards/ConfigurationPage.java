@@ -15,8 +15,8 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 public class ConfigurationPage extends DeploymentWizardPage {
 
 	protected ConfigurationPage(IDeploymentHelper helper,
-			IRunnableContext context, String title) {
-		super(Messages.configurationPage_Name, helper);
+			IRunnableContext context, String title, String help) {
+		super(Messages.configurationPage_Name, helper, help);
 		setDescription(Messages.configurationPage_Description);
 		setTitle(title);
 		this.block = new ConfigurationBlock(this, context);
@@ -24,7 +24,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 
 	protected ConfigurationPage(IDeploymentHelper helper,
 			IRunnableContext context) {
-		this(helper, context, Messages.configurationPage_Title);
+		this(helper, context, Messages.configurationPage_Title, null);
 	}
 
 	protected ConfigurationPage() {
@@ -34,6 +34,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 	private ConfigurationBlock block;
 
 	public void createControl(Composite parent) {
+		super.createControl(parent);
 		Composite container = block.createContents(parent, true);
 		setControl(container);
 		if (helper != null) {

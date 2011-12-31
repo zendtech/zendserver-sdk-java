@@ -18,8 +18,8 @@ public class ParametersPage extends DeploymentWizardPage {
 	private ParametersBlock block;
 
 	protected ParametersPage(IProject project, IDeploymentHelper helper,
-			String title) {
-		super(Messages.parametersPage_Name, helper);
+			String title, String help) {
+		super(Messages.parametersPage_Name, helper, help);
 		setDescription(Messages.parametersPage_Description);
 		setTitle(title);
 		this.project = project;
@@ -27,10 +27,11 @@ public class ParametersPage extends DeploymentWizardPage {
 	}
 
 	protected ParametersPage(IProject project, IDeploymentHelper helper) {
-		this(project, helper, Messages.parametersPage_Title);
+		this(project, helper, Messages.parametersPage_Title, null);
 	}
 
 	public void createControl(Composite parent) {
+		super.createControl(parent);
 		Composite container = block.createContents(parent);
 		block.createParametersGroup(project);
 		setControl(container);

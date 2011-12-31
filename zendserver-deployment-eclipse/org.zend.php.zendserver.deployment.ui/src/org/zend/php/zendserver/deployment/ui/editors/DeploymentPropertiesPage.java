@@ -9,6 +9,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 
 public class DeploymentPropertiesPage extends DescriptorEditorPage {
 
@@ -62,4 +63,10 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 		scriptsdirSection = new ScriptsTreeSection(getEditor(), form.getBody(),
 				toolkit, model);
 	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.PACKAGE_TAB;
+	}
+	
 }

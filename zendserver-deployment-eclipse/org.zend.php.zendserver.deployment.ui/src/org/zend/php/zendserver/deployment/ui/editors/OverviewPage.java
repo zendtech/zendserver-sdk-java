@@ -28,6 +28,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPa
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 
@@ -344,4 +345,10 @@ public class OverviewPage extends DescriptorEditorPage {
 		appDir.refresh();
 		persistent.refresh();
 	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.OVERVIEW_TAB;
+	}
+	
 }

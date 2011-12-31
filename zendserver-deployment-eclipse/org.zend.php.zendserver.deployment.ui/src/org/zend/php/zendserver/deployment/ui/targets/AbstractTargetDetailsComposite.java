@@ -61,6 +61,11 @@ public abstract class AbstractTargetDetailsComposite {
 	 * @return data to be passed to #createTarget(String[]).
 	 */
 	abstract protected String[] getData();
+	
+	/**
+	 * @return help resource
+	 */
+	abstract protected String getHelpResource();
 
 	/**
 	 * Creates target based on data gathered in UI. Can be time consuming

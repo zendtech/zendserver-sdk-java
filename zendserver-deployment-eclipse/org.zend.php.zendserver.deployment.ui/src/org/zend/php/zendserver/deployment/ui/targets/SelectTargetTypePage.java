@@ -8,7 +8,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -42,6 +44,8 @@ public class SelectTargetTypePage extends WizardPage {
 			}
 		});
 		setPageComplete(targetType.getSelectionCount() > 0);
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(getControl(), HelpContextIds.MANAGING_TARGETS);
 	}
 	
 	public SelectTargetType getSelectTargetType() {

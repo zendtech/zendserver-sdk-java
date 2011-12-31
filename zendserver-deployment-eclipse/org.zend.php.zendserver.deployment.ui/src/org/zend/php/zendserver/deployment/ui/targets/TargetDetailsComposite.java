@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
@@ -146,7 +147,10 @@ public class TargetDetailsComposite {
 				((GridData)composites[currentComposite].getLayoutData()).exclude = false;
 			}
 		}
-		
+		if (clientArea != null && currentComposite != -1) {
+			String help = targetComposites[currentComposite].getHelpResource();
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(clientArea, help);
+		}
 		if ((clientArea != null) && (! clientArea.isDisposed())) {
 			clientArea.layout();
 		}

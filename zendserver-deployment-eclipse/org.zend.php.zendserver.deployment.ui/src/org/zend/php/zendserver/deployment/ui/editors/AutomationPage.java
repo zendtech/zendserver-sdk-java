@@ -21,6 +21,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Parameter;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class AutomationPage extends DescriptorEditorPage {
@@ -165,6 +166,11 @@ public class AutomationPage extends DescriptorEditorPage {
 			gd2.widthHint = maxsize;
 			gd3.widthHint = maxsize;
 		}
+	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.TRIGGERS_TAB;
 	}
 
 }

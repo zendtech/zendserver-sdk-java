@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
@@ -102,6 +103,11 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	@Override
 	public boolean hasPage() {
 		return true;
+	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.CREATING_A_REMOTE_ZEND_SERVER_TARGET;
 	}
 
 }

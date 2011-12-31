@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.eclipse.ui.forms.IManagedForm;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 
 public class DescriptorMasterDetailsPage extends DescriptorEditorPage  {
 
@@ -28,5 +29,10 @@ public class DescriptorMasterDetailsPage extends DescriptorEditorPage  {
 	public void showMarkers() {
 		super.showMarkers();
 		block.showMarkers();
+	}
+	
+	@Override
+	protected String getHelpResource() {
+		return HelpContextIds.DEPENDENCIES_TAB;
 	}
 }

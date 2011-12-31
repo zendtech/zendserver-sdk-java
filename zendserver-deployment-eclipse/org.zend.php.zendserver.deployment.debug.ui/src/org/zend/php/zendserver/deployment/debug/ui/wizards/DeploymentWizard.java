@@ -24,6 +24,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
+import org.zend.php.zendserver.deployment.debug.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 
 public class DeploymentWizard extends Wizard {
@@ -37,6 +38,7 @@ public class DeploymentWizard extends Wizard {
 	private IDescriptorContainer model;
 	private IProject project;
 	private IDeploymentHelper helper;
+	private String help;
 
 	public DeploymentWizard(ILaunchConfiguration config, Mode mode) {
 		DeploymentHelper helper = DeploymentHelper.create(config);
@@ -62,17 +64,20 @@ public class DeploymentWizard extends Wizard {
 		case RUN:
 			title = Messages.deploymentWizard_LaunchTitle;
 			image = Activator.IMAGE_WIZBAN_DEP;
+			help = HelpContextIds.LAUNCHING_AN_APPLICATION;
 			break;
 		case DEBUG:
 			title = Messages.deploymentWizard_DebugTitle;
 			image = Activator.IMAGE_WIZBAN_DEBUG;
+			help = HelpContextIds.DEBUGGING_AN_APPLICAITON;
 			break;
 		case DEPLOY:
 			title = Messages.deploymentWizard_DeployTitle;
 			image = Activator.IMAGE_WIZBAN_DEPLOY;
+			help = HelpContextIds.DEPLOYING_AN_APPLICATION;
 			break;
 		}
-		this.parametersPage = new ParametersPage(project, helper, title);
+		this.parametersPage = new ParametersPage(project, helper, title, help);
 		if (helper == null || helper.getProjectName().isEmpty()) {
 			this.helper = createDefaultHelper();
 		} else {
@@ -118,7 +123,7 @@ public class DeploymentWizard extends Wizard {
 	public void addPages() {
 		super.addPages();
 		this.configPage = new ConfigurationPage(helper, getContainer(),
-				getWindowTitle());
+				getWindowTitle(), help);
 		addPage(configPage);
 		List<IParameter> parameters = model.getDescriptorModel().getParameters();
 		if (parameters != null && parameters.size() > 0) {
