@@ -36,8 +36,7 @@ public abstract class DeploymentWizardPage extends WizardPage implements IStatus
 
 	public void createControl(Composite parent) {
 		if (help != null) {
-			PlatformUI.getWorkbench().getHelpSystem()
-					.setHelp(getControl(), help);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, help);
 		}
 	}
 
