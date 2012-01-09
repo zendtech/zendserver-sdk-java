@@ -155,7 +155,7 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 		return value;
 	}
 
-	@Option(opt = PARAMS, required = false, description = "Properties file path of the parameters given to this application", argName = "parameters")
+	@Option(opt = PARAMS, required = false, description = "Properties file path of the parameters given to this application or a list of key=value separated by a comma", argName = "parameters")
 	public String getParams() {
 		return getValue(PARAMS);
 	}
