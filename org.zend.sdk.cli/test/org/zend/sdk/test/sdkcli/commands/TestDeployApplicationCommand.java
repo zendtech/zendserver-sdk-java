@@ -43,6 +43,20 @@ public class TestDeployApplicationCommand extends AbstractWebApiTest {
 	}
 
 	@Test
+	public void testExecuteWithParams() throws WebApiException, IOException, ParseError {
+		CommandLine cmdLine = getLine("deploy application -p" + FOLDER
+				+ "test-1.0.0.zpk -b http://myhost.com/aaa -t 0 -n myApp -m key1=value1,key2=value2");
+		ICommand command = getCommand(cmdLine);
+		when(
+				client.applicationDeploy(any(NamedInputStream.class),
+						anyString(), anyBoolean(), any(Map.class), anyString(),
+						anyBoolean(), anyBoolean())).thenReturn(
+								(ApplicationInfo) getResponseData("applicationDeploy",
+										IResponseData.ResponseType.APPLICATION_INFO));
+		assertTrue(command.execute(cmdLine));
+	}
+	
+	@Test
 	public void testExecuteTargetDisconnected() throws ParseError,
 			WebApiException, IOException {
 		CommandLine cmdLine = getLine("deploy application -p" + FOLDER
