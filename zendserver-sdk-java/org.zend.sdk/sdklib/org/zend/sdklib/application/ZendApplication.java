@@ -248,6 +248,11 @@ public class ZendApplication extends AbstractChangeNotifier {
 						defaultServer,
 						vhostName);
 				WebApiClient client = getClient(targetId);
+				if (appName == null) {
+					String[] segments = baseUrl.split("/");
+					appName = segments.length > 0 ? segments[segments.length - 1]
+							: null;
+				}
 				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 						"Deploying", "Deploying application to the target...",
 						-1));
