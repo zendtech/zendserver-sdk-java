@@ -588,9 +588,9 @@ public class ZendApplication extends AbstractChangeNotifier {
 		if (Pattern.matches("[[^,=]=[^,=]*][,[^,=]*=[^,=]*]*", propertiesString)) {
 			final String[] split = propertiesString.split(",");
 			for (String token : split) {
-				final String[] split2 = token.split("=");
-				if (split.length == 2) {
-					result.put(split2[0], split2[1]);
+				final String[] val = token.split("=");
+				if (val.length == 2) {
+					result.put(val[0], val[1]);
 				} else {
 					log.error("Error parsing property string , skipping token " + token);
 				}
