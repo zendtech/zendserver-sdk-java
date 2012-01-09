@@ -20,9 +20,11 @@ import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.SSLContextInitializer;
@@ -154,6 +156,8 @@ public class ZendApplication extends AbstractChangeNotifier {
 			File propsFile = new File(propertiesFile);
 			if (propsFile.exists()) {
 				userParams = getUserParameters(propsFile);
+			} else {
+				userParams = getUserParameters(propertiesFile);
 			}
 		}
 		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
@@ -578,6 +582,26 @@ public class ZendApplication extends AbstractChangeNotifier {
 		return result;
 	}
 
+	public Map<String, String> getUserParameters(String propertiesString) {
+		Map<String, String> result = new LinkedHashMap<String, String>(3);
+
+		if (Pattern.matches("[[^,=]=[^,=]*][,[^,=]*=[^,=]*]*", propertiesString)) {
+			final String[] split = propertiesString.split(",");
+			for (String token : split) {
+				final String[] split2 = token.split("=");
+				if (split.length == 2) {
+					result.put(split2[0], split2[1]);
+				} else {
+					log.error("Error parsing property string , skipping token " + token);
+				}
+			}
+		} else {
+			log.error("Error parsing property string " + propertiesString);
+		}
+		
+		return result;
+	}
+	
 	private File createPackage(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
