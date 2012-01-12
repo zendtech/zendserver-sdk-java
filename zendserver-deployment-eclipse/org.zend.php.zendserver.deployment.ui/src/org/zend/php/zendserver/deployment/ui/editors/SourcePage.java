@@ -32,9 +32,13 @@ public class SourcePage extends TextEditor implements IFormPage {
 		fEditor = editor;
 		fId = pageId;
 		colorManager = new ColorManager();
-
 		setDocumentProvider(editor.getDocumentProvider());
 		setSourceViewerConfiguration(new DescriptorSourceViewerConfiguration(editor, colorManager));
+	}
+
+	public SourcePage(String pageId, DeploymentDescriptorEditor editor, String contextId) {
+		this(pageId, editor);
+		setHelpContextId(contextId);
 	}
 	
 	@Override

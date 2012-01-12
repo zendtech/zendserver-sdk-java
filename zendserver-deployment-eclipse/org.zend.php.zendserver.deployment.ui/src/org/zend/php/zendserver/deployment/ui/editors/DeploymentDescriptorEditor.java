@@ -45,6 +45,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListe
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -73,7 +74,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					"dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
 			addPage(new AutomationPage(this, "automation", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
 			addMappingPages();
-			descriptorSourcePage = new SourcePage("source", this); //$NON-NLS-1$
+			descriptorSourcePage = new SourcePage("source", this, HelpContextIds.DEPLOYMENT_XML_TAB); //$NON-NLS-1$
 			addPage(descriptorSourcePage, getEditorInput());
 		} catch (PartInitException e) {
 			//
