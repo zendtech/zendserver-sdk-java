@@ -191,27 +191,31 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			if (!appdir.isEmpty()) {
 				addNewFolderToZip(new File(container, appdir));
 			}
-			resolveMapping(IMappingModel.APPDIR, appdir);
+			resolveMapping(IMappingModel.APPDIR, appdir, false);
 		}
 		if (scriptsdir != null && !scriptsdir.isEmpty()) {
 			addNewFolderToZip(new File(container, scriptsdir));
-			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir);
+			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir, true);
 		}
 	}
 
-	private void resolveMapping(String tag, String folderName)
+	private void resolveMapping(String tag, String folderName, boolean allowFlat)
 			throws IOException {
-		List<IMappingEntry> entries = model.getEnties();
+		List<IMappingEntry> entries = model.getEnties(Type.INCLUDE, tag);
+		
 		for (IMappingEntry entry : entries) {
-			if (entry.getType() == Type.INCLUDE
-					&& entry.getFolder().equals(tag)) {
-				List<IMapping> mappings = entry.getMappings();
-				for (IMapping mapping : mappings) {
-					File resource = new File(new File(container,
-							mapping.getPath()).getCanonicalPath());
-					if (resource.exists()) {
-						addFileToZip(resource, folderName, mapping, tag);
+			List<IMapping> mappings = entry.getMappings();
+			for (IMapping mapping : mappings) {
+				File resource = new File(new File(container,
+						mapping.getPath()).getCanonicalPath());
+				
+				allowFlat &= entries.size() == 1 && mappings.size() == 1; 
+				
+				if (resource.exists()) {
+					if (allowFlat) {
+						folderName = "";
 					}
+					addFileToZip(resource, folderName, mapping, tag);
 				}
 			}
 		}
