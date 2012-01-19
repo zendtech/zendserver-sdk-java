@@ -406,6 +406,16 @@ public class TargetsManager extends AbstractChangeNotifier {
 			log.error("Target with id '" + target.getId() + "' already exists.");
 			return false;
 		}
+		
+		IZendTarget[] existingTargets = getTargets();
+		for (int i = 0; i < existingTargets.length; i++) {
+			IZendTarget et = existingTargets[i];
+			if (target.getHost().equals(et.getHost()) && target.getKey().equals(et.getKey())) {
+				log.error("Target with host '"+et.getHost()+"' and key '"+et.getKey()+"' already exists.");
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
