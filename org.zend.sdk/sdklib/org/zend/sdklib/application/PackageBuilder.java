@@ -123,7 +123,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 							+ " deployment package...", calculateTotalWork()));
 			File descriptorFile = new File(container,
 					ProjectResourcesWriter.DESCRIPTOR);
-			addFileToZip(descriptorFile, null, null, null);
+			addFileToZip(descriptorFile, null, null, null, false);
 			resolveIconAndLicence();
 			resolveMappings();
 			out.close();
@@ -167,7 +167,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String icon = getIconName(container);
 		if (icon != null) {
 			try {
-				addFileToZip(new File(container, icon), null, null, null);
+				addFileToZip(new File(container, icon), null, null, null, false);
 			} catch (IOException e) {
 				// do nothing, it means that descriptor has entries which are
 				// not valid
@@ -176,7 +176,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String license = getLicenseName(container);
 		if (license != null) {
 			try {
-				addFileToZip(new File(container, license), null, null, null);
+				addFileToZip(new File(container, license), null, null, null, false);
 			} catch (IOException e) {
 				// do nothing, it means that descriptor has entries which are
 				// not valid
@@ -207,15 +207,12 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			List<IMapping> mappings = entry.getMappings();
 			for (IMapping mapping : mappings) {
 				File resource = new File(new File(container,
-						mapping.getPath()).getCanonicalPath());
-				
-				allowFlat &= entries.size() == 1 && mappings.size() == 1; 
+						mapping.getPath()).getCanonicalPath());				
 				
 				if (resource.exists()) {
-					if (allowFlat) {
-						folderName = "";
-					}
-					addFileToZip(resource, folderName, mapping, tag);
+					allowFlat &= resource.isDirectory() && entries.size() == 1 && mappings.size() == 1;
+					
+					addFileToZip(resource, folderName, mapping, tag, allowFlat);
 				}
 			}
 		}
@@ -229,12 +226,12 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private void addFileToZip(File root, String mappingFolder,
-			IMapping mapping, String tag) throws IOException {
+			IMapping mapping, String tag, boolean allowFlat) throws IOException {
 		if (!model.isExcluded(tag, root.getCanonicalPath())) {
 			if (root.isDirectory() && !isExcludeAllChildren(tag, root)) {
 				File[] children = root.listFiles();
 				for (File child : children) {
-					addFileToZip(child, mappingFolder, mapping, tag);
+					addFileToZip(child, mappingFolder, mapping, tag, allowFlat);
 				}
 			} else {
 				String location = root.getCanonicalPath();
@@ -243,7 +240,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					path = root.getCanonicalPath();
 					String fullMapping = new File(container, mapping.getPath())
 							.getCanonicalPath();
-					String destFolder = path.substring(fullMapping
+					String destFolder = path.substring((allowFlat ? path : fullMapping)
 							.lastIndexOf(File.separator));
 					path = mappingFolder + destFolder;
 				}
