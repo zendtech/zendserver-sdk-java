@@ -208,6 +208,18 @@ public class MappingModel implements IMappingModel {
 	public List<IMappingEntry> getEnties() {
 		return entries;
 	}
+	
+	@Override
+	public List<IMappingEntry> getEnties(Type type, String tag) {
+		List<IMappingEntry> result = new ArrayList<IMappingEntry>(entries.size());
+		for (IMappingEntry entry : entries) {
+			if (entry.getType() == type
+					&& entry.getFolder().equals(tag)) {
+				result.add(entry);
+			}
+		}
+		return result;
+	}
 
 	/*
 	 * (non-Javadoc)
