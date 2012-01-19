@@ -91,6 +91,11 @@ public interface IMappingModel {
 	 * @return all entries in the model
 	 */
 	List<IMappingEntry> getEnties();
+	
+	/**
+	 * @return all entries in the model with given type (e.g. INCLUDE) and tag (eg. 'scriptsdir') 
+	 */
+	List<IMappingEntry> getEnties(Type type, String tag);
 
 	/**
 	 * Saves all changes in the resource mapping
@@ -200,5 +205,6 @@ public interface IMappingModel {
 	IMappingLoader getLoader();
 
 	File getMappingFile();
+
 
 }
