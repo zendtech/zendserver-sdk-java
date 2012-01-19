@@ -185,8 +185,17 @@ public class ZendDevCloud {
 	private IZendTarget[] createZendTargets(String token, String[] targets,
 			String privateKey) throws SdkException, IOException {
 		List<IZendTarget> result = new ArrayList<IZendTarget>(targets.length);
+		
+		IOException exception = null;
 		for (String target : targets) {
-			final String json = getJson(token, target);
+			String json = null;
+			try {
+				json = getJson(token, target);
+			} catch (IOException e) {
+				// skipping the broken target
+				exception = e;
+				continue;
+			}
 			final String[] name = resolveSubKey(json, "container", "name");
 			final String[] host = resolveSubKey(json, "container", "hostname");
 			final String[] key = resolveSubKey(json, "container",
@@ -208,6 +217,9 @@ public class ZendDevCloud {
 
 			result.add(zendTarget);
 
+		}
+		if (result.size() == 0 && exception != null) {
+			throw exception;
 		}
 		return (IZendTarget[]) result.toArray(new IZendTarget[result.size()]);
 	}
