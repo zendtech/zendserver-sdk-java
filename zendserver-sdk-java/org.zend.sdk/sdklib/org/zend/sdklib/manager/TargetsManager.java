@@ -103,22 +103,37 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} catch (WebApiException e) {
 			throw new TargetException(e);
 		}
+		
+		IZendTarget existingTarget = getTarget(target.getHost(), target.getKey());
+		if (existingTarget != null) {
+			return updateTarget(existingTarget, target);
+		} else {
+			// notify loader on addition
+			this.loader.add(target);
 
-		// notify loader on addition
-		this.loader.add(target);
+			// adds the target to the list
+			final boolean added = this.all.add(target);
 
-		// adds the target to the list
-		final boolean added = this.all.add(target);
+			if (this.all.size() == 1) {
+				defaultId = this.all.get(0).getId();
+			}
+		
+			if (added) {
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "added target", "added target"));
+			}
 
-		if (this.all.size() == 1) {
-			defaultId = this.all.get(0).getId();
+			return added ? target : null;
+		}
+	}
+
+	private IZendTarget getTarget(URL host, String key) {
+		for (IZendTarget t : all) {
+			if (host.equals(t.getHost()) && key.equals(t.getKey())) {
+				return t;
+			}
 		}
 		
-		if (added) {
-			statusChanged(new BasicStatus(StatusCode.UNKNOWN, "added target", "added target"));
-		}
-
-		return added ? target : null;
+		return null;
 	}
 
 	public synchronized IZendTarget remove(IZendTarget target) {
@@ -348,6 +363,20 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
+	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget) {
+		IZendTarget updated = updateTarget(existing.getId(), newTarget.getHost().toString(), newTarget.getDefaultServerURL().toString(), newTarget.getKey(), newTarget.getSecretKey());
+		ZendTarget updatedZT = (ZendTarget) updated;
+		
+		ZendTarget newZT = (ZendTarget) newTarget;
+		String[] newZTKeys = newZT.getPropertiesKeys();
+		
+		for (String key : newZTKeys) {
+			updatedZT.addProperty(key, newZT.getProperty(key));
+		}
+		
+		return updated;
+	}
+	
 	public IZendTarget updateTarget(String targetId, String host, String defaultServer, String key,
 			String secretKey) {
 		ZendTarget target = (ZendTarget) getTargetById(targetId);
@@ -405,15 +434,6 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (getTargetById(target.getId()) != null) {
 			log.error("Target with id '" + target.getId() + "' already exists.");
 			return false;
-		}
-		
-		IZendTarget[] existingTargets = getTargets();
-		for (int i = 0; i < existingTargets.length; i++) {
-			IZendTarget et = existingTargets[i];
-			if (target.getHost().equals(et.getHost()) && target.getKey().equals(et.getKey())) {
-				log.error("Target with host '"+et.getHost()+"' and key '"+et.getKey()+"' already exists.");
-				return false;
-			}
 		}
 		
 		return true;
