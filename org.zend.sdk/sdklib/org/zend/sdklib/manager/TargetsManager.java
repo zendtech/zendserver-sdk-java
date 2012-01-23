@@ -9,6 +9,7 @@ package org.zend.sdklib.manager;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -106,10 +107,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 		
 		IZendTarget existingTarget = getTarget(target.getHost(), target.getKey());
 		if (existingTarget != null) {
-			System.out.println("update "+target.getHost()+" "+target.getKey());
 			return updateTarget(existingTarget, target);
 		} else {
-			System.out.println("add "+target.getHost()+" "+target.getKey());
 			// notify loader on addition
 			this.loader.add(target);
 
@@ -130,9 +129,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 	private IZendTarget getTarget(URL host, String key) {
 		for (IZendTarget t : all) {
-			// http://javaantipatterns.wordpress.com/2007/11/24/comparing-urls-with-urlequals/
-			if (host.getHost().equals(t.getHost().getHost()) && host.equals(t.getHost()) && key.equals(t.getKey())) {
-				return t;
+			try {
+				if (host.toURI().equals(t.getHost().toURI()) && key.equals(t.getKey())) {
+					return t;
+				}
+			} catch (URISyntaxException e) {
+				// ignore
 			}
 		}
 		
