@@ -106,8 +106,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 		
 		IZendTarget existingTarget = getTarget(target.getHost(), target.getKey());
 		if (existingTarget != null) {
+			System.out.println("update "+target.getHost()+" "+target.getKey());
 			return updateTarget(existingTarget, target);
 		} else {
+			System.out.println("add "+target.getHost()+" "+target.getKey());
 			// notify loader on addition
 			this.loader.add(target);
 
@@ -128,7 +130,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 	private IZendTarget getTarget(URL host, String key) {
 		for (IZendTarget t : all) {
-			if (host.equals(t.getHost()) && key.equals(t.getKey())) {
+			// http://javaantipatterns.wordpress.com/2007/11/24/comparing-urls-with-urlequals/
+			if (host.getHost().equals(t.getHost().getHost()) && host.equals(t.getHost()) && key.equals(t.getKey())) {
 				return t;
 			}
 		}
