@@ -6,7 +6,7 @@ ant.importBuild 'resources/generator/build.xml'
 
 sourceCompatibility = getBuildProperty('source')
 version = getBuildProperty('sdk.version')
-pluginVersion = "1." + version + getQualifier()
+pluginVersion = "1.0.5" + getQualifier()
 
 sourceFolder = 'sdklib'
 testFolder = 'test'
