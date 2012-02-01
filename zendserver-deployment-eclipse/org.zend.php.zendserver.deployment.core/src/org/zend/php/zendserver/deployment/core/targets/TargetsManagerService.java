@@ -15,6 +15,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
@@ -115,6 +118,15 @@ public class TargetsManagerService {
 					}
 				}
 				
+				IHost[] existingHosts = RSECorePlugin.getTheSystemRegistry().getHosts();
+				if (existingHosts != null && existingHosts.length > 0) {
+					for (IHost existingHost : existingHosts) {
+						if (existingHost.getHostName().equalsIgnoreCase(target.getHost().getHost())) {
+							ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+							sr.deleteHost(existingHost);
+						}
+					}
+				}
 				
 				return Status.OK_STATUS;
 			}
