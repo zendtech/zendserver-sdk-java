@@ -45,8 +45,7 @@ Export-Package: org.apache.commons.cli,
  org.zend.webapi.internal.core.connection.response
 Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
     lib/x86_64/ICE_JNIRegistry.dll; processor=x86_64; osname=win32, *
-Bundle-ClassPath: build/libs/org.osgi.core-4.0.0.jar,
- build/libs/org.restlet-2.0.4.jar,
+Bundle-ClassPath: build/libs/org.restlet-2.0.4.jar,
  build/libs/org.restlet.ext.xml-2.0.4.jar,
  build/libs/org.zend.webapi.jar,
  build/libs/registry.jar
