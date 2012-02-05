@@ -133,6 +133,7 @@ task createPlugin(type: Jar) {
 	destinationDir = new File(project.distsDir.path + File.separator + 'plugins')
 	into('lib') {
 		from configurations.compile
+		exclude 'org.osgi.core-*'
 	}
 	into('lib') {
 		from 'lib'
