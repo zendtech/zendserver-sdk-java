@@ -459,6 +459,341 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean preVisit(Parameter parameter) {
+		String currentPath = parameter.getPrefix();
+		int occurrence = parameter.getOccurrence();
+		String value = getValue(currentPath + "/name", occurrence);
+		parameter.setName(value);
+		value = getValue(currentPath + "/value", occurrence);
+		parameter.setValue(value);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(SuperGlobals superGlobals) {
+		String currentPath = superGlobals.getPrefix();
+		int occurrence = superGlobals.getOccurrence();
+		ParameterList get = new ParameterList(currentPath + "/get", occurrence);
+		superGlobals.setGet(get);
+		ParameterList post = new ParameterList(currentPath + "/post",
+				occurrence);
+		superGlobals.setPost(post);
+		ParameterList cookie = new ParameterList(currentPath + "/cookie",
+				occurrence);
+		superGlobals.setCookie(cookie);
+		ParameterList session = new ParameterList(currentPath + "/session",
+				occurrence);
+		superGlobals.setSession(session);
+		ParameterList server = new ParameterList(currentPath + "/server",
+				occurrence);
+		superGlobals.setServer(server);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(Step step) {
+		String currentPath = step.getPrefix();
+		int occurrence = step.getOccurrence();
+		String value = getValue(currentPath + "/number", occurrence);
+		step.setNumber(parseNumberIfExists(value));
+		value = getValue(currentPath + "/object", occurrence);
+		step.setObjectId(value);
+		value = getValue(currentPath + "/class", occurrence);
+		step.setClassId(value);
+		value = getValue(currentPath + "/fuction", occurrence);
+		step.setFunction(value);
+		value = getValue(currentPath + "/file", occurrence);
+		step.setFile(value);
+		value = getValue(currentPath + "/line", occurrence);
+		step.setLine(parseNumberIfExists(value));
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(CodeTracingStatus codeTracingStatus) {
+		String currentPath = codeTracingStatus.getPrefix();
+		int occurrence = codeTracingStatus.getOccurrence();
+		String value = getValue(currentPath + "/componentStatus", occurrence);
+		codeTracingStatus.setComponentStatus(value);
+		value = getValue(currentPath + "/alwaysDump", occurrence);
+		codeTracingStatus.setAlwaysDump(value);
+		value = getValue(currentPath + "/traceEnabled", occurrence);
+		codeTracingStatus.setTraceEnabled(value);
+		value = getValue(currentPath + "/developerMode", occurrence);
+		codeTracingStatus.setDeveloperMode(value);
+		value = getValue(currentPath + "/awaitsRestart", occurrence);
+		codeTracingStatus.setAwaitsRestart(parseNumberIfExists(value));
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(CodeTrace codeTrace) {
+		String currentPath = codeTrace.getPrefix();
+		int occurrence = codeTrace.getOccurrence();
+		String value = getValue(currentPath + "/id", occurrence);
+		codeTrace.setId(parseNumberIfExists(value));
+		value = getValue(currentPath + "/date", occurrence);
+		codeTrace.setDate(parseNumberIfExists(value));
+		value = getValue(currentPath + "/url", occurrence);
+		codeTrace.setUrl(value);
+		value = getValue(currentPath + "/createdBy", occurrence);
+		codeTrace.setCreatedBy(value);
+		value = getValue(currentPath + "/filesize", occurrence);
+		codeTrace.setFilesize(parseNumberIfExists(value));
+		value = getValue(currentPath + "/applicationId", occurrence);
+		codeTrace.setApplicationId(parseNumberIfExists(value));
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(EventsGroup eventsGroup) {
+		String currentPath = eventsGroup.getPrefix();
+		int occurrence = eventsGroup.getOccurrence();
+		String value = getValue(currentPath + "/eventsGroupId", occurrence);
+		eventsGroup.setEventsGroupId(value);
+		value = getValue(currentPath + "/eventsCount", occurrence);
+		eventsGroup.setEventsCount(parseNumberIfExists(value));
+		value = getValue(currentPath + "/startTime", occurrence);
+		eventsGroup.setStartTime(parseNumberIfExists(value));
+		value = getValue(currentPath + "/serverId", occurrence);
+		eventsGroup.setServerId(parseNumberIfExists(value));
+		value = getValue(currentPath + "/class", occurrence);
+		eventsGroup.setClassId(value);
+		value = getValue(currentPath + "/userData", occurrence);
+		eventsGroup.setUserData(value);
+		value = getValue(currentPath + "/javaBacktrace", occurrence);
+		eventsGroup.setJavaBacktrace(value);
+		value = getValue(currentPath + "/execTime", occurrence);
+		eventsGroup.setExecTime(parseNumberIfExists(value));
+		value = getValue(currentPath + "/avgExecTime", occurrence);
+		eventsGroup.setAvgExecTime(parseNumberIfExists(value));
+		value = getValue(currentPath + "/memUsage", occurrence);
+		eventsGroup.setMemUsage(parseNumberIfExists(value));
+		value = getValue(currentPath + "/avgMemUsage", occurrence);
+		eventsGroup.setAvgMemUsage(parseNumberIfExists(value));
+		value = getValue(currentPath + "/avgOutputSize", occurrence);
+		eventsGroup.setAvgOutputSize(parseNumberIfExists(value));
+		value = getValue(currentPath + "/load", occurrence);
+		eventsGroup.setLoad(value);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(Event event) {
+		String currentPath = event.getPrefix();
+		int occurrence = event.getOccurrence();
+		String value = getValue(currentPath + "/eventsGroupId", occurrence);
+		event.setEventsGroupId(value);
+		value = getValue(currentPath + "/type", occurrence);
+		event.setEventType(value);
+		value = getValue(currentPath + "/description", occurrence);
+		event.setDescription(value);
+		SuperGlobals superGlobals = new SuperGlobals(currentPath
+				+ "/superGlobals", occurrence);
+		event.setSuperGlobals(superGlobals);
+		Backtrace backtrace = new Backtrace(currentPath + "/backtrace",
+				occurrence);
+		event.setBacktrace(backtrace);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(Backtrace backtrace) {
+		String currentPath = backtrace.getPrefix();
+		final int size = getNodesLength(currentPath, "step",
+				backtrace.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"applicationServer", backtrace.getOccurrence());
+
+		List<Step> steps = new ArrayList<Step>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			steps.add(new Step(currentPath + "/step", index));
+		}
+
+		backtrace.setSteps(steps);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(ParameterList parameterList) {
+		String currentPath = parameterList.getPrefix();
+		final int size = getNodesLength(currentPath, "parameter",
+				parameterList.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"parameter", parameterList.getOccurrence());
+
+		List<Parameter> parameters = new ArrayList<Parameter>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			parameters.add(new Parameter(currentPath + "/parameter", index));
+		}
+
+		parameterList.setParameters(parameters);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(EventsGroupDetails eventsGroupDetails) {
+		String currentPath = eventsGroupDetails.getPrefix();
+		int occurrence = eventsGroupDetails.getOccurrence();
+		String value = getValue(currentPath + "/issueId", occurrence);
+		eventsGroupDetails.setIssueId(parseNumberIfExists(value));
+		value = getValue(currentPath + "/codeTracing", occurrence);
+		eventsGroupDetails.setCodeTracing(value);
+		EventsGroup eventsGroup = new EventsGroup(currentPath + "/eventsGroup",
+				occurrence);
+		eventsGroupDetails.setEventsGroup(eventsGroup);
+		Event event = new Event(currentPath + "/event", occurrence);
+		eventsGroupDetails.setEvent(event);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(RouteDetail routeDetail) {
+		String currentPath = routeDetail.getPrefix();
+		int occurrence = routeDetail.getOccurrence();
+		String value = getValue(currentPath + "/key", occurrence);
+		routeDetail.setKey(value);
+		value = getValue(currentPath + "/value", occurrence);
+		routeDetail.setValue(value);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(EventsGroups eventsGroups) {
+		String currentPath = eventsGroups.getPrefix();
+		final int size = getNodesLength(currentPath, "eventsGroup",
+				eventsGroups.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"eventsGroup", eventsGroups.getOccurrence());
+
+		List<EventsGroup> groups = new ArrayList<EventsGroup>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			groups.add(new EventsGroup(currentPath + "/eventsGroup", index));
+		}
+
+		eventsGroups.setGroups(groups);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(RouteDetails routeDetails) {
+		String currentPath = routeDetails.getPrefix();
+		final int size = getNodesLength(currentPath, "routeDetail",
+				routeDetails.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"routeDetail", routeDetails.getOccurrence());
+
+		List<RouteDetail> details = new ArrayList<RouteDetail>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			details.add(new RouteDetail(currentPath + "/routeDetail", index));
+		}
+
+		routeDetails.setDetails(details);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(Issue issue) {
+		String currentPath = issue.getPrefix();
+		int occurrence = issue.getOccurrence();
+		String value = getValue(currentPath + "/id", occurrence);
+		issue.setId(parseNumberIfExists(value));
+		value = getValue(currentPath + "/rule", occurrence);
+		issue.setRule(value);
+		value = getValue(currentPath + "/lastOccurance", occurrence);
+		issue.setLastOccurance(parseNumberIfExists(value));
+		value = getValue(currentPath + "/severity", occurrence);
+		issue.setSeverity(value);
+		value = getValue(currentPath + "/status", occurrence);
+		issue.setStatus(value);
+		value = getValue(currentPath + "/url", occurrence);
+		issue.setUrl(value);
+		value = getValue(currentPath + "/sourceFile", occurrence);
+		issue.setSourceFile(value);
+		value = getValue(currentPath + "/sourceLine", occurrence);
+		issue.setSourceLine(parseNumberIfExists(value));
+		value = getValue(currentPath + "/function", occurrence);
+		issue.setFunction(value);
+		value = getValue(currentPath + "/aggregationHint", occurrence);
+		issue.setAggregationHint(value);
+		value = getValue(currentPath + "/errorString", occurrence);
+		issue.setErrorString(value);
+		value = getValue(currentPath + "/errorType", occurrence);
+		issue.setErrorType(value);
+		RouteDetails routeDetails = new RouteDetails(currentPath
+				+ "/routeDetails", occurrence);
+		issue.setRouteDetails(routeDetails);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(IssueDetails issueDetails) {
+		String currentPath = issueDetails.getPrefix();
+		int occurrence = issueDetails.getOccurrence();
+		Issue issue = new Issue(currentPath + "/issue", occurrence);
+		issueDetails.setIssue(issue);
+		EventsGroups groups = new EventsGroups(currentPath + "/eventsGroups",
+				occurrence);
+		issueDetails.setEventsGroups(groups);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(Events events) {
+		String currentPath = events.getPrefix();
+		final int size = getNodesLength(currentPath, "event",
+				events.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath, "event",
+				events.getOccurrence());
+
+		List<Event> eventsList = new ArrayList<Event>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			eventsList.add(new Event(currentPath + "/event", index));
+		}
+
+		events.setEvents(eventsList);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(RequestSummary requestSummary) {
+		String currentPath = requestSummary.getPrefix();
+		int occurrence = requestSummary.getOccurrence();
+		String value = getValue(currentPath + "/eventsCount", occurrence);
+		requestSummary.setEventsCount(parseNumberIfExists(value));
+		value = getValue(currentPath + "/codeTracing", occurrence);
+		requestSummary.setCodeTracing(value);
+		Events events = new Events(currentPath + "/events", occurrence);
+		requestSummary.setEvents(events);
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return

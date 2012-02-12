@@ -110,4 +110,140 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(Parameter parameter) {
+		return true;
+	}
+
+	public boolean visit(Parameter parameter) {
+		return true;
+	}
+
+	public boolean preVisit(SuperGlobals superGlobals) {
+		return true;
+	}
+
+	public boolean visit(SuperGlobals superGlobals) {
+		return true;
+	}
+
+	public boolean preVisit(Step step) {
+		return true;
+	}
+
+	public boolean visit(Step step) {
+		return true;
+	}
+
+	public boolean preVisit(CodeTracingStatus codeTracingStatus) {
+		return true;
+	}
+
+	public boolean visit(CodeTracingStatus codeTracingStatus) {
+		return true;
+	}
+
+	public boolean preVisit(CodeTrace codeTrace) {
+		return true;
+	}
+
+	public boolean visit(CodeTrace codeTrace) {
+		return true;
+	}
+
+	public boolean preVisit(EventsGroup eventsGroup) {
+		return true;
+	}
+
+	public boolean visit(EventsGroup eventsGroup) {
+		return true;
+	}
+
+	public boolean preVisit(Event event) {
+		return true;
+	}
+
+	public boolean visit(Event event) {
+		return true;
+	}
+
+	public boolean preVisit(Backtrace backtrace) {
+		return true;
+	}
+
+	public boolean visit(Backtrace backtrace) {
+		return true;
+	}
+
+	public boolean preVisit(ParameterList parameterList) {
+		return true;
+	}
+
+	public boolean visit(ParameterList parameterList) {
+		return true;
+	}
+
+	public boolean preVisit(EventsGroupDetails eventsGroupDetails) {
+		return true;
+	}
+
+	public boolean visit(EventsGroupDetails eventsGroupDetails) {
+		return true;
+	}
+
+	public boolean preVisit(RouteDetail routeDetail) {
+		return true;
+	}
+
+	public boolean visit(RouteDetail routeDetail) {
+		return true;
+	}
+
+	public boolean preVisit(EventsGroups eventsGroups) {
+		return true;
+	}
+
+	public boolean visit(EventsGroups eventsGroups) {
+		return true;
+	}
+
+	public boolean preVisit(RouteDetails routeDetails) {
+		return true;
+	}
+
+	public boolean visit(RouteDetails routeDetails) {
+		return true;
+	}
+
+	public boolean preVisit(Issue issue) {
+		return true;
+	}
+
+	public boolean visit(Issue issue) {
+		return true;
+	}
+
+	public boolean preVisit(IssueDetails issueDetails) {
+		return true;
+	}
+
+	public boolean visit(IssueDetails issueDetails) {
+		return true;
+	}
+
+	public boolean preVisit(Events events) {
+		return true;
+	}
+
+	public boolean visit(Events events) {
+		return true;
+	}
+
+	public boolean preVisit(RequestSummary requestSummary) {
+		return true;
+	}
+
+	public boolean visit(RequestSummary requestSummary) {
+		return true;
+	}
+
 }

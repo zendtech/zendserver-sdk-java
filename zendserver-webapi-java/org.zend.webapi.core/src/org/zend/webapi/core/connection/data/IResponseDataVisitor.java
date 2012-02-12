@@ -63,4 +63,72 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(ApplicationServers applicationServersList);
 
+	public boolean preVisit(Parameter parameter);
+
+	public boolean visit(Parameter parameter);
+
+	public boolean preVisit(SuperGlobals superGlobals);
+
+	public boolean visit(SuperGlobals superGlobals);
+
+	public boolean preVisit(Step step);
+
+	public boolean visit(Step step);
+
+	public boolean preVisit(CodeTracingStatus codeTracingStatus);
+
+	public boolean visit(CodeTracingStatus codeTracingStatus);
+
+	public boolean preVisit(CodeTrace codeTrace);
+
+	public boolean visit(CodeTrace codeTrace);
+
+	public boolean preVisit(EventsGroup eventsGroup);
+
+	public boolean visit(EventsGroup eventsGroup);
+
+	public boolean preVisit(Event event);
+
+	public boolean visit(Event event);
+
+	public boolean preVisit(Backtrace backtrace);
+
+	public boolean visit(Backtrace backtrace);
+
+	public boolean preVisit(ParameterList parameterList);
+
+	public boolean visit(ParameterList parameterList);
+
+	public boolean preVisit(EventsGroupDetails eventsGroupDetails);
+
+	public boolean visit(EventsGroupDetails eventsGroupDetails);
+
+	public boolean preVisit(RouteDetail routeDetail);
+
+	public boolean visit(RouteDetail routeDetail);
+
+	public boolean preVisit(EventsGroups eventsGroups);
+
+	public boolean visit(EventsGroups eventsGroups);
+
+	public boolean preVisit(RouteDetails routeDetails);
+
+	public boolean visit(RouteDetails routeDetails);
+
+	public boolean preVisit(Issue issue);
+
+	public boolean visit(Issue issue);
+
+	public boolean preVisit(IssueDetails issueDetails);
+
+	public boolean visit(IssueDetails issueDetails);
+
+	public boolean preVisit(Events events);
+
+	public boolean visit(Events events);
+
+	public boolean preVisit(RequestSummary requestSummary);
+
+	public boolean visit(RequestSummary requestSummary);
+
 }
