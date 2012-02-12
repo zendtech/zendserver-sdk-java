@@ -48,6 +48,9 @@ public enum ResponseCode {
 
 	NO_SUCH_APPLICATION(404, "noSuchApplication", "The provided application ID does not exist"),
 
+	NO_ROLLBACK_AVAILABLE(404, "noRollbackAvailable",
+			"The application does not have a version to rollback to"),
+
 	NOT_IMPLEMENTED_BY_EDITION(405, "notImplementedByEdition",
 			"Method is not implemented by this edition of Zend Server (e.g. cluster related methods on Zend Server)"),
 

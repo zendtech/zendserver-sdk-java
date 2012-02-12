@@ -363,4 +363,18 @@ public class TestDeploymentServices extends AbstractTestServer {
 		}
 	}
 
+	@Test
+	public void testApplicationRollback() throws WebApiException, IOException {
+		deployApplication();
+		if (isDeployed()) {
+			initMock(handler.applicationRollback(), "applicationRollback",
+					ResponseCode.ACCEPTED);
+			ApplicationServers servers = appInfo.getServers();
+			Assert.assertTrue(servers.getApplicationServers().size() > 0);
+			ApplicationInfo applicationInfo = Configuration.getClient()
+					.applicationRollback(appId);
+			DataUtils.checkValidApplicationInfo(applicationInfo);
+		}
+	}
+
 }

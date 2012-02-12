@@ -108,4 +108,8 @@ public class ZendSystem {
 		return handler.clusterReconfigureServer();
 	}
 
+	public ServerResponse applicationRollback() {
+		return handler.applicationRollback();
+	}
+
 }

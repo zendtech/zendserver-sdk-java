@@ -186,6 +186,15 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet applicationRollback = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.applicationRollback();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -214,6 +223,8 @@ public class ServerApplication extends Application {
 				applicationRemove);
 		router.attach("/ZendServerManager/Api/applicationSynchronize",
 				applicationRedeploy);
+		router.attach("/ZendServerManager/Api/applicationRollback",
+				applicationRollback);
 
 		return router;
 	}

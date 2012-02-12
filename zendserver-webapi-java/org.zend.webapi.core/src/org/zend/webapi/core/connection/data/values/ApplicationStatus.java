@@ -45,6 +45,8 @@ public enum ApplicationStatus {
 
 	INCONSISTENT("inconsistent"),
 	
+	ROLLING_BACK("rollingBack"),
+
 	NOT_EXISTS("notExists");
 
 	private final String name;

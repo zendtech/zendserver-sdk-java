@@ -34,4 +34,6 @@ public interface RequestHandler {
 
 	ServerResponse clusterReconfigureServer();
 
+	ServerResponse applicationRollback();
+
 }

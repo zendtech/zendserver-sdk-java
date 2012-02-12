@@ -37,6 +37,7 @@ import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest
 import org.zend.webapi.internal.core.connection.request.ApplicationGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRedeployRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
+import org.zend.webapi.internal.core.connection.request.ApplicationRollbackRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
@@ -864,6 +865,32 @@ public class WebApiClient {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationRemoveRequest removeRequest = (ApplicationRemoveRequest) request;
+						removeRequest.setAppId(appId);
+					}
+				});
+		return (ApplicationInfo) handle.getData();
+	}
+
+	/**
+	 * Rollback an existing application to its previous version. This process is
+	 * asynchronous Ð the initial request will start the rollback process and
+	 * the initial response will show information about the application being
+	 * rolled back. The user is expected to continue checking the application
+	 * status using the applicationGetStatus method until the process is
+	 * complete.
+	 * 
+	 * @return information about removed application
+	 * @throws WebApiException
+	 * @since 1.1
+	 */
+	public ApplicationInfo applicationRollback(final int appId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.APPLICATION_ROLLBACK,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						ApplicationRollbackRequest removeRequest = (ApplicationRollbackRequest) request;
 						removeRequest.setAppId(appId);
 					}
 				});
