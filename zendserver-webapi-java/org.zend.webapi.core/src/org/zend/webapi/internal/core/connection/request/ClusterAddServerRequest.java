@@ -59,7 +59,9 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * <td>Boolean</td>
  * <td>No</td>
  * <td>Initiate a PHP restart on the cluster after adding the server; Default is
- * FALSE</td>
+ * FALSE. <i>Deprecated as of 1.1 in order to support automatic deployment. The
+ * system will restart the added server automatically and will ignore this
+ * parameter if passed.</i></td>
  * </tr>
  * </table>
  * 
@@ -139,6 +141,10 @@ public class ClusterAddServerRequest extends AbstractRequest {
 	 * server; Default is FALSE
 	 * 
 	 * @param serverName
+	 * 
+	 * @deprecated Deprecated as of 1.1 in order to support automatic
+	 *             deployment. The system will restart the added server
+	 *             automatically and will ignore this parameter if passed.
 	 */
 	public ClusterAddServerRequest setDoStart(boolean doRestart) {
 		addParameter("doRestart", doRestart);
