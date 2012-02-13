@@ -50,6 +50,8 @@ public enum ResponseCode {
 
 	NO_ROLLBACK_AVAILABLE(404, "noRollbackAvailable",
 			"The application does not have a version to rollback to"),
+			
+	NO_SUCH_TRACE(404, "noSuchTrace", "The requested trace could not be found"),
 
 	NOT_IMPLEMENTED_BY_EDITION(405, "notImplementedByEdition",
 			"Method is not implemented by this edition of Zend Server (e.g. cluster related methods on Zend Server)"),

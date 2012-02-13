@@ -21,6 +21,13 @@ import org.zend.webapi.internal.core.connection.request.ClusterEnableServerReque
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterReconfigureServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterRemoveServerRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingCreateRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingDeleteRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingDisableRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingIsEnabledRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
+import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
@@ -129,7 +136,44 @@ public enum WebApiMethodType {
 	 * @see ApplicationRedeployRequest
 	 */
 	APPLICATION_SYNCHRONIZE("applicationSynchronize",
-			ApplicationRedeployRequest.class);
+			ApplicationRedeployRequest.class),
+
+	/**
+	 * @see CodeTracingDisableRequest
+	 */
+	CODE_TRACING_DISABLE("codetracingDisable", CodeTracingDisableRequest.class),
+
+	/**
+	 * @see CodeTracingEnableRequest
+	 */
+	CODE_TRACING_ENABLE("codetracingEnable", CodeTracingEnableRequest.class),
+
+	/**
+	 * @see CodeTracingIsEnabledRequest
+	 */
+	CODE_TRACING_IS_ENABLED("codetracingIsEnabled",
+			CodeTracingIsEnabledRequest.class),
+
+	/**
+	 * @see CodeTracingCreateRequest
+	 */
+	CODE_TRACING_CREATE("codetracingCreate", CodeTracingCreateRequest.class),
+
+	/**
+	 * @see CodeTracingDeleteRequest
+	 */
+	CODE_TRACING_DELETE("codetracingDelete", CodeTracingDeleteRequest.class),
+
+	/**
+	 * @see CodeTracingListRequest
+	 */
+	CODE_TRACING_LIST("codetracingList", CodeTracingListRequest.class),
+
+	/**
+	 * @see CodetracingDownloadTraceFileRequest
+	 */
+	CODE_TRACING_DOWNLOAD_TRACE_FILE("codetracingDownloadTraceFile",
+			CodetracingDownloadTraceFileRequest.class);
 
 	/**
 	 * Name of the service

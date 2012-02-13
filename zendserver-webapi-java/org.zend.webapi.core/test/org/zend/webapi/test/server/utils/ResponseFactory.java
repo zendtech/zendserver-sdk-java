@@ -9,7 +9,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.Configuration;
+import org.zend.webapi.test.connection.services.TestCodeTracingServices;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
+import org.zend.webapi.test.server.response.CodeTraceFileResponse;
 import org.zend.webapi.test.server.response.ConfigurationResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
@@ -27,6 +29,19 @@ public class ResponseFactory {
 		inputStream.read(content);
 		return new ConfigurationResponse(code.getCode(),
 				TestServerConfiguration.EXAMLE_CONFIG, size, content);
+	}
+
+	public static ServerResponse createCodeTraceResponse(String requestName,
+			ResponseCode code) throws IOException {
+		String name = TestCodeTracingServices.CONFIG_FOLDER
+				+ TestCodeTracingServices.EXAMPLE_CODE_TRACE;
+		File file = new File(ServerUtils.createFileName(name));
+		FileInputStream inputStream = new FileInputStream(file);
+		int size = (int) file.length();
+		byte content[] = new byte[size];
+		inputStream.read(content);
+		return new CodeTraceFileResponse(code.getCode(),
+				TestCodeTracingServices.EXAMPLE_CODE_TRACE, size, content);
 	}
 
 	public static ServiceResponse createResponse(String requestName,

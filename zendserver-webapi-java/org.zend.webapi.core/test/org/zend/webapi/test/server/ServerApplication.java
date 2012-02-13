@@ -24,6 +24,7 @@ import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.routing.Router;
 import org.w3c.dom.Document;
+import org.zend.webapi.test.server.response.CodeTraceFileResponse;
 import org.zend.webapi.test.server.response.ConfigurationResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
@@ -195,6 +196,78 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet codeTracingDisable = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingDisable();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codeTracingEnable = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingEnable();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codeTracingIsEnabled = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingIsEnabled();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codeTracingCreate = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingCreate();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codeTracingList = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingList();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codeTracingDelete = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.codeTracingDelete();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet codetracingDownloadTraceFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				CodeTraceFileResponse serverResponse = (CodeTraceFileResponse) ZendSystem
+						.getInstance().codetracingDownloadTraceFile();
+				InputRepresentation representation = new InputRepresentation(
+						new ByteArrayInputStream(serverResponse.getContent()),
+						MediaType.valueOf("application/vnd.zend.serverconfig"));
+				Disposition disposition = new Disposition(
+						Disposition.TYPE_ATTACHMENT);
+				disposition.setFilename(serverResponse.getFileName());
+				representation.setDisposition(disposition);
+				representation.setSize(serverResponse.getFileSize());
+				response.setEntity(representation);
+				response.setStatus(serverResponse.getStatus());
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -225,6 +298,19 @@ public class ServerApplication extends Application {
 				applicationRedeploy);
 		router.attach("/ZendServerManager/Api/applicationRollback",
 				applicationRollback);
+		router.attach("/ZendServerManager/Api/codetracingDisable",
+				codeTracingDisable);
+		router.attach("/ZendServerManager/Api/codetracingEnable",
+				codeTracingEnable);
+		router.attach("/ZendServerManager/Api/codetracingIsEnabled",
+				codeTracingIsEnabled);
+		router.attach("/ZendServerManager/Api/codetracingCreate",
+				codeTracingCreate);
+		router.attach("/ZendServerManager/Api/codetracingDelete",
+				codeTracingDelete);
+		router.attach("/ZendServerManager/Api/codetracingList", codeTracingList);
+		router.attach("/ZendServerManager/Api/codetracingDownloadTraceFile",
+				codetracingDownloadTraceFile);
 
 		return router;
 	}

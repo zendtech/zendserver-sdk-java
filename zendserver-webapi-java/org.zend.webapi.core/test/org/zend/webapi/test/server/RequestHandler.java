@@ -36,4 +36,18 @@ public interface RequestHandler {
 
 	ServerResponse applicationRollback();
 
+	ServerResponse codeTracingDisable();
+
+	ServerResponse codeTracingEnable();
+
+	ServerResponse codeTracingIsEnabled();
+
+	ServerResponse codeTracingCreate();
+
+	ServerResponse codeTracingList();
+
+	ServerResponse codeTracingDelete();
+
+	ServerResponse codetracingDownloadTraceFile();
+
 }

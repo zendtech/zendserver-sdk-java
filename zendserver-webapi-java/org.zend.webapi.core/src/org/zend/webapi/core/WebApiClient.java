@@ -18,6 +18,10 @@ import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.CodeTrace;
+import org.zend.webapi.core.connection.data.CodeTraceFile;
+import org.zend.webapi.core.connection.data.CodeTracingList;
+import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
@@ -45,6 +49,12 @@ import org.zend.webapi.internal.core.connection.request.ClusterEnableServerReque
 import org.zend.webapi.internal.core.connection.request.ClusterGetServerStatusRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterReconfigureServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterRemoveServerRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingCreateRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingDeleteRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingDisableRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest;
+import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
+import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
 
@@ -80,7 +90,7 @@ public class WebApiClient {
 	 * Client configuration of this instance
 	 */
 	private final ClientConfiguration clientConfiguration;
-	
+
 	/**
 	 * Restlet connection context
 	 */
@@ -123,12 +133,11 @@ public class WebApiClient {
 	 * @throws MalformedURLException
 	 */
 	public WebApiClient(WebApiCredentials credentials, String host,
-			IChangeNotifier notifier)
-			throws MalformedURLException {
+			IChangeNotifier notifier) throws MalformedURLException {
 		this(credentials, new ClientConfiguration(new URL(host)), null,
 				notifier);
 	}
-	
+
 	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
 	 * using the the specified host and credentials.
@@ -357,8 +366,8 @@ public class WebApiClient {
 	 * Re-enable a cluster member. This process may be asynchronous if Session
 	 * Clustering is used – if this is the case, the initial operation will
 	 * return an HTTP 202 response. This action is idempotent. Running it on an
-	 * enabled server will result in a 200 OK response with no
-	 * consequences. On a ZSCM with no valid license, this operation will fail.
+	 * enabled server will result in a 200 OK response with no consequences. On
+	 * a ZSCM with no valid license, this operation will fail.
 	 * 
 	 * @return server info
 	 * @throws WebApiException
@@ -818,8 +827,8 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 */
 	public ApplicationInfo applicationUpdate(final int appId,
-			final NamedInputStream appPackage, final Map<String, String> userParam)
-			throws WebApiException {
+			final NamedInputStream appPackage,
+			final Map<String, String> userParam) throws WebApiException {
 		return applicationUpdate(appId, appPackage, null, userParam);
 	}
 
@@ -879,7 +888,7 @@ public class WebApiClient {
 	 * status using the applicationGetStatus method until the process is
 	 * complete.
 	 * 
-	 * @return information about removed application
+	 * @return information about application which was rolled back
 	 * @throws WebApiException
 	 * @since 1.1
 	 */
@@ -968,6 +977,238 @@ public class WebApiClient {
 	public ApplicationInfo applicationSynchronize(int appId)
 			throws WebApiException {
 		return applicationSynchronize(appId, (Boolean) null);
+	}
+
+	/**
+	 * Disable the two directives necessary for creating tracing dumps, this
+	 * action does not disable the code-tracing component. This action unsets
+	 * the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives.
+	 * 
+	 * @return The new code tracing directive's state
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingStatus codeTracingDisable(final Boolean restartNow)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_DISABLE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodeTracingDisableRequest disableRequest = (CodeTracingDisableRequest) request;
+						if (restartNow != null) {
+							disableRequest.setRestartNow(restartNow);
+						}
+					}
+				});
+		return (CodeTracingStatus) handle.getData();
+	}
+
+	/**
+	 * Disable the two directives necessary for creating tracing dumps, this
+	 * action does not disable the code-tracing component. This action unsets
+	 * the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives.
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * 
+	 * @return The new code tracing directive's state
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingStatus codeTracingDisable() throws WebApiException {
+		return codeTracingDisable(null);
+	}
+
+	/**
+	 * Disable the two directives necessary for creating tracing dumps, this
+	 * action does not disable the code-tracing component. This action unsets
+	 * the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives. Note that this action
+	 * does not deactivate the component or any other setting.
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * 
+	 * @return The new code tracing directive's state
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingStatus codeTracingEnable(final Boolean restartNow)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_ENABLE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodeTracingEnableRequest enableRequest = (CodeTracingEnableRequest) request;
+						if (restartNow != null) {
+							enableRequest.setRestartNow(restartNow);
+						}
+					}
+				});
+		return (CodeTracingStatus) handle.getData();
+	}
+
+	/**
+	 * Disable the two directives necessary for creating tracing dumps, this
+	 * action does not disable the code-tracing component. This action unsets
+	 * the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives. Note that this action
+	 * does not deactivate the component or any other setting.
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * 
+	 * @return The new code tracing directive's state
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingStatus codeTracingEnable() throws WebApiException {
+		return codeTracingEnable(null);
+	}
+
+	/**
+	 * This action checks the values of the special zend_monitor.developer_mode
+	 * & zend_monitor.event_generate_trace_file directives. The action also
+	 * checks the current activity state of the component and the trace-enabled
+	 * directive value.
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * 
+	 * @return Indication for the component's current status
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingStatus codeTracingIsEnabled() throws WebApiException {
+		IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_IS_ENABLED, null);
+		return (CodeTracingStatus) handle.getData();
+	}
+
+	/**
+	 * Create a new code-tracing entry.
+	 * 
+	 * @return A code-tracing entry with full details or an error message
+	 *         explaining the failure
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTrace codeTracingCreate(final String url) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_CREATE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodeTracingCreateRequest createRequest = (CodeTracingCreateRequest) request;
+						createRequest.setUrl(url);
+					}
+				});
+		return (CodeTrace) handle.getData();
+	}
+
+	/**
+	 * Delete a code-tracing entry.
+	 * 
+	 * @return A code-tracing entry with full details or an error message
+	 *         explaining the failure
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTrace codeTracingDelete(final String traceFile)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_DELETE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodeTracingDeleteRequest deleteRequest = (CodeTracingDeleteRequest) request;
+						deleteRequest.setTraceFile(traceFile);
+					}
+				});
+		return (CodeTrace) handle.getData();
+	}
+
+	/**
+	 * Retrieve a list of code-tracing files available for download using
+	 * codetracingDownloadTraceFile.
+	 * 
+	 * @return list of code tracies
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTracingList codeTracingList(final Integer limit,
+			final Integer offset, final String orderBy, final String direction,
+			final String... applications) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_LIST, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodeTracingListRequest listRequest = (CodeTracingListRequest) request;
+						if (limit != null) {
+							listRequest.setLimit(limit);
+						}
+						if (offset != null) {
+							listRequest.setOffset(offset);
+						}
+						if (orderBy != null) {
+							listRequest.setOrderBy(orderBy);
+						}
+						if (direction != null) {
+							listRequest.setDirection(direction);
+						}
+						if (applications != null) {
+							listRequest.setApplications(applications);
+						}
+					}
+				});
+		return (CodeTracingList) handle.getData();
+	}
+
+	/**
+	 * Download the amf file specified by codetracing identifier. This action
+	 * used to be named monitorDownloadAmf, however this action was completely
+	 * replaced by the new codetracingDownloadTraceFile action.
+	 * MonitorDownloadAmf was completely removed and will not be accessible in
+	 * WebAPI 1.2.
+	 * 
+	 * @return code trace file
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public CodeTraceFile codetracingDownloadTraceFile(final String traceFile)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.CODE_TRACING_DOWNLOAD_TRACE_FILE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						CodetracingDownloadTraceFileRequest fileRequest = (CodetracingDownloadTraceFileRequest) request;
+						fileRequest.setTraceFile(traceFile);
+					}
+				});
+		return (CodeTraceFile) handle.getData();
 	}
 
 	/**

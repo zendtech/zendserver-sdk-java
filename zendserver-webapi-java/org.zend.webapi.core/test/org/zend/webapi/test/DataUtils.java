@@ -1,5 +1,6 @@
 package org.zend.webapi.test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -8,9 +9,13 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationServer;
 import org.zend.webapi.core.connection.data.ApplicationServers;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.CodeTrace;
+import org.zend.webapi.core.connection.data.CodeTracingList;
+import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.DeployedVersion;
 import org.zend.webapi.core.connection.data.DeployedVersions;
 import org.zend.webapi.core.connection.data.IResponseData;
+import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
 import org.zend.webapi.core.connection.data.ServerInfo;
@@ -24,6 +29,13 @@ import org.zend.webapi.core.connection.data.values.SystemStatus;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 public class DataUtils {
+
+	private static List<String> componentStatus = new ArrayList<String>();
+
+	static {
+		componentStatus.add("Active");
+		componentStatus.add("Inactive");
+	}
 
 	public static void checkValidServersList(ServersList serversList) {
 		Assert.assertNotNull(serversList);
@@ -179,6 +191,37 @@ public class DataUtils {
 			DeployedVersion deployedVersionInfo) {
 		Assert.assertNotNull(deployedVersionInfo);
 		Assert.assertNotNull(deployedVersionInfo.getVersion());
+	}
+
+	// TODO check if use On|Off or 1|0
+	public static void checkValidCodeTracingStatus(CodeTracingStatus status) {
+		Assert.assertNotNull(status);
+		Assert.assertEquals(ResponseType.CODE_TRACING_STATUS, status.getType());
+		Assert.assertNotNull(status.getAlwaysDump());
+		Assert.assertNotNull(status.getAwaitsRestart());
+		Assert.assertTrue(componentStatus.contains(status.getComponentStatus()));
+		Assert.assertNotNull(status.getDeveloperMode());
+		Assert.assertNotNull(status.getTraceEnabled());
+	}
+
+	public static void checkValidCodeTrace(CodeTrace trace) {
+		Assert.assertNotNull(trace);
+		Assert.assertEquals(ResponseType.CODE_TRACE, trace.getType());
+		Assert.assertNotNull(trace.getApplicationId());
+		Assert.assertNotNull(trace.getCreatedBy());
+		Assert.assertNotNull(trace.getDate());
+		Assert.assertNotNull(trace.getId());
+		Assert.assertNotNull(trace.getUrl());
+	}
+
+	public static void checkValidCodeTracingList(CodeTracingList traces) {
+		Assert.assertNotNull(traces);
+		Assert.assertEquals(ResponseType.CODE_TRACING_LIST, traces.getType());
+		List<CodeTrace> tracesList = traces.getTraces();
+		Assert.assertNotNull(tracesList);
+		for (CodeTrace codeTrace : tracesList) {
+			checkValidCodeTrace(codeTrace);
+		}
 	}
 
 }

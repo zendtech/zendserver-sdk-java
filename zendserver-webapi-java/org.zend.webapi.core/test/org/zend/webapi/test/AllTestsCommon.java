@@ -8,6 +8,7 @@ import org.zend.webapi.test.connection.TestResponse;
 import org.zend.webapi.test.connection.TestSignatrue;
 import org.zend.webapi.test.connection.data.TestDataDigester;
 import org.zend.webapi.test.connection.data.TestValues;
+import org.zend.webapi.test.connection.services.TestCodeTracingServices;
 import org.zend.webapi.test.connection.services.TestDeploymentServices;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
 import org.zend.webapi.test.core.TestClientConfiguration;
@@ -20,7 +21,8 @@ import org.zend.webapi.test.core.progress.TestStatusCode;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestCredentials.class, TestRequest.class,
 		TestResponse.class, TestSignatrue.class, TestDataDigester.class,
-		TestValues.class, TestDeploymentServices.class,
+		TestValues.class, TestCodeTracingServices.class,
+		TestDeploymentServices.class,
 		TestServerConfiguration.class, TestClientConfiguration.class,
 		TestServiceDispatcher.class, TestWebApiExceptions.class,
 		TestWebApiMethodType.class, TestStatusCode.class, TestValues.class,

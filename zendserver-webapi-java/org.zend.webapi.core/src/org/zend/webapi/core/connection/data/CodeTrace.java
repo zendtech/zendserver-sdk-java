@@ -15,8 +15,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class CodeTrace extends AbstractResponseData {
 
-	private int id;
-	private int date;
+	private String id;
+	private long date;
 	private String url;
 	private String createdBy;
 	private int filesize;
@@ -40,14 +40,14 @@ public class CodeTrace extends AbstractResponseData {
 	/**
 	 * @return Sequential numbering of the backtrace steps
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @return Creation timestamp
 	 */
-	public int getDate() {
+	public long getDate() {
 		return date;
 	}
 
@@ -79,11 +79,11 @@ public class CodeTrace extends AbstractResponseData {
 		return applicationId;
 	}
 
-	protected void setId(int id) {
+	protected void setId(String id) {
 		this.id = id;
 	}
 
-	protected void setDate(int date) {
+	protected void setDate(long date) {
 		this.date = date;
 	}
 

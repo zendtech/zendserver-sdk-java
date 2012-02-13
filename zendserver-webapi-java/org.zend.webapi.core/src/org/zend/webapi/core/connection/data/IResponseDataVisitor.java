@@ -131,4 +131,12 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(RequestSummary requestSummary);
 
+	public boolean preVisit(CodeTracingList codeTracingList);
+
+	public boolean visit(CodeTracingList codeTracingList);
+
+	public boolean preVisit(CodeTraceFile codeTraceFile);
+
+	public boolean visit(CodeTraceFile codeTraceFile);
+
 }

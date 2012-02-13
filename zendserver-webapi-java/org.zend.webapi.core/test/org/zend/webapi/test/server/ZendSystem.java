@@ -112,4 +112,32 @@ public class ZendSystem {
 		return handler.applicationRollback();
 	}
 
+	public ServerResponse codeTracingDisable() {
+		return handler.codeTracingDisable();
+	}
+
+	public ServerResponse codeTracingEnable() {
+		return handler.codeTracingEnable();
+	}
+
+	public ServerResponse codeTracingIsEnabled() {
+		return handler.codeTracingIsEnabled();
+	}
+
+	public ServerResponse codeTracingCreate() {
+		return handler.codeTracingCreate();
+	}
+
+	public ServerResponse codeTracingList() {
+		return handler.codeTracingList();
+	}
+
+	public ServerResponse codeTracingDelete() {
+		return handler.codeTracingDelete();
+	}
+
+	public ServerResponse codetracingDownloadTraceFile() {
+		return handler.codetracingDownloadTraceFile();
+	}
+
 }

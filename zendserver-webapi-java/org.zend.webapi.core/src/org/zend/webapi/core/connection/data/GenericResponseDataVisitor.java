@@ -246,4 +246,20 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(CodeTracingList codeTracingList) {
+		return true;
+	}
+
+	public boolean visit(CodeTracingList codeTracingList) {
+		return true;
+	}
+
+	public boolean preVisit(CodeTraceFile codeTraceFile) {
+		return true;
+	}
+
+	public boolean visit(CodeTraceFile codeTraceFile) {
+		return true;
+	}
+
 }

@@ -532,9 +532,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = codeTrace.getPrefix();
 		int occurrence = codeTrace.getOccurrence();
 		String value = getValue(currentPath + "/id", occurrence);
-		codeTrace.setId(parseNumberIfExists(value));
+		codeTrace.setId(value);
 		value = getValue(currentPath + "/date", occurrence);
-		codeTrace.setDate(parseNumberIfExists(value));
+		codeTrace.setDate(parseLongIfExists(value));
 		value = getValue(currentPath + "/url", occurrence);
 		codeTrace.setUrl(value);
 		value = getValue(currentPath + "/createdBy", occurrence);
@@ -543,6 +543,28 @@ public class DataDigster extends GenericResponseDataVisitor {
 		codeTrace.setFilesize(parseNumberIfExists(value));
 		value = getValue(currentPath + "/applicationId", occurrence);
 		codeTrace.setApplicationId(parseNumberIfExists(value));
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(CodeTracingList codeTracingList) {
+		String currentPath = codeTracingList.getPrefix();
+		final int size = getNodesLength(currentPath, "codeTrace",
+				codeTracingList.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"codeTrace", codeTracingList.getOccurrence());
+
+		List<CodeTrace> traces = new ArrayList<CodeTrace>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			traces.add(new CodeTrace(currentPath + "/codeTrace", index));
+		}
+
+		codeTracingList.setTraces(traces);
 		return true;
 	}
 
@@ -794,6 +816,26 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean preVisit(CodeTraceFile codeTraceFile) {
+		Disposition disposition = representation.getDisposition();
+		if (disposition != null) {
+			codeTraceFile.setFilename(disposition.getFilename());
+		}
+		int size = (int) representation.getSize();
+		codeTraceFile.setFileSize(size);
+
+		try {
+			byte[] content = new byte[size];
+			InputStream reader = representation.getStream();
+			reader.read(content);
+			codeTraceFile.setFileContent(content);
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return
@@ -803,6 +845,17 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return 0;
 		}
 		return Integer.parseInt(value);
+	}
+
+	/**
+	 * @param value
+	 * @return long
+	 */
+	private long parseLongIfExists(String value) {
+		if (value == null || value.length() == 0) {
+			return 0;
+		}
+		return Long.parseLong(value);
 	}
 
 	private static IResponseData create(IRequest request) {
@@ -824,6 +877,14 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new ApplicationsList();
 		case APPLICATION_INFO:
 			return new ApplicationInfo();
+		case CODE_TRACING_STATUS:
+			return new CodeTracingStatus();
+		case CODE_TRACE:
+			return new CodeTrace();
+		case CODE_TRACING_LIST:
+			return new CodeTracingList();
+		case CODE_TRACE_FILE:
+			return new CodeTraceFile();
 		default:
 			return null;
 		}
@@ -833,6 +894,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 			IResponseData responseData) {
 		switch (responseData.getType()) {
 		case SERVER_CONFIG:
+		case CODE_TRACE_FILE:
 			return representation;
 		default:
 			return new DomRepresentation(representation);
