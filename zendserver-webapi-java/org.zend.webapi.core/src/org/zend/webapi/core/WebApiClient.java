@@ -22,10 +22,17 @@ import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTraceFile;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.Issue;
+import org.zend.webapi.core.connection.data.IssueDetails;
+import org.zend.webapi.core.connection.data.IssueFile;
+import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.IssueStatus;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.dispatch.IServiceDispatcher;
 import org.zend.webapi.core.connection.request.IRequest;
@@ -56,6 +63,12 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetEventGroupDetailsRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
 
 /**
@@ -1197,7 +1210,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public CodeTraceFile codetracingDownloadTraceFile(final String traceFile)
+	public CodeTraceFile codeTracingDownloadTraceFile(final String traceFile)
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CODE_TRACING_DOWNLOAD_TRACE_FILE,
@@ -1209,6 +1222,176 @@ public class WebApiClient {
 					}
 				});
 		return (CodeTraceFile) handle.getData();
+	}
+
+	/**
+	 * Retrieve information about a particular request's events and code
+	 * tracing. The requestUid identifier is provided in a cookie that is set in
+	 * the response to the particular request. This API action is designed to be
+	 * used with the new Studio browser toolbar.
+	 * <p>
+	 * Limitations:
+	 * </p>
+	 * <p>
+	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
+	 * </p>
+	 * 
+	 * @return request summary
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public RequestSummary monitorGetRequestSummary(final String requestUid)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_GET_REQUEST_SUMMARY,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorGetRequestSummaryRequest monitorRequest = (MonitorGetRequestSummaryRequest) request;
+						monitorRequest.setRequestUid(requestUid);
+					}
+				});
+		return (RequestSummary) handle.getData();
+	}
+
+	/**
+	 * Retrieve a list of monitor issues according to a preset filter
+	 * identifier. The filter identifier is shared with the UI's predefined
+	 * filters. This WebAPI method may also accept ordering details and paging
+	 * limits. The response is a list of issue elements with their general
+	 * details and event-groups identifiers.
+	 * 
+	 * @return list of issues
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public IssueList monitorGetIssuesListByPredefinedFilter(
+			final Integer filterId, final Integer limit, final Integer offset,
+			final String order, final String direction) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_GET_ISSUES_LIST_BY_PREDEFINED_FILTER,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorGetIssuesListPredefinedFilterRequest filterRequest = (MonitorGetIssuesListPredefinedFilterRequest) request;
+						filterRequest.setFilterId(filterId);
+						if (limit != null) {
+							filterRequest.setLimit(limit);
+						}
+						if (offset != null) {
+							filterRequest.setOffset(offset);
+						}
+						if (order != null) {
+							filterRequest.setOrder(order);
+						}
+						if (direction != null) {
+							filterRequest.setDirection(direction);
+						}
+					}
+				});
+		return (IssueList) handle.getData();
+	}
+
+	/**
+	 * Retrieve an issue's details according to the issueId passed as a
+	 * parameter. Additional information about event groups is also displayed.
+	 * The response is a list of issue elements with their general details and
+	 * event-groups identifiers.
+	 * 
+	 * 
+	 * @return issue details
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public IssueDetails monitorGetIssueDetails(final String issueId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorGetIssueDetailsRequest monitorRequest = (MonitorGetIssueDetailsRequest) request;
+						monitorRequest.setIssueId(issueId);
+					}
+				});
+		return (IssueDetails) handle.getData();
+	}
+
+	/**
+	 * Retrieve an issue's details according to the issueId passed as a
+	 * parameter. Additional information about event groups is also displayed.
+	 * The response is a list of issue elements with their general details and
+	 * event-groups identifiers.
+	 * 
+	 * 
+	 * @return request summary
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public EventsGroupDetails monitorGetEventGroupDetails(final String issueId,
+			final String eventsGroupId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_GET_EVENT_GROUP_DETAILS,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorGetEventGroupDetailsRequest monitorRequest = (MonitorGetEventGroupDetailsRequest) request;
+						monitorRequest.setIssueId(issueId);
+						monitorRequest.setEventsGroupId(eventsGroupId);
+					}
+				});
+		return (EventsGroupDetails) handle.getData();
+	}
+
+	/**
+	 * Download the amf file specified by codetracing identifier. This action
+	 * used to be named monitorDownloadAmf, however this action was completely
+	 * replaced by the new codetracingDownloadTraceFile action.
+	 * MonitorDownloadAmf was completely removed and will not be accessible in
+	 * WebAPI 1.2.
+	 * 
+	 * @return issue file
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public IssueFile monitorExportIssueByEventsGroup(
+			final String eventsGroupId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorExportIssueByEventsGroupRequest fileRequest = (MonitorExportIssueByEventsGroupRequest) request;
+						fileRequest.setEventsGroupId(eventsGroupId);
+					}
+				});
+		return (IssueFile) handle.getData();
+	}
+
+	/**
+	 * Modify an Issue's status code based on an Issue's Id and a status code.
+	 * Response is an issue element's updated details.
+	 * 
+	 * @return updated issue
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public Issue monitorChangeIssueStatus(final String issueId,
+			final IssueStatus newStatus)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_CHANGE_ISSUE_STATUS,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorChangeIssueStatusRequest changeRequest = (MonitorChangeIssueStatusRequest) request;
+						changeRequest.setIssueId(issueId);
+						changeRequest.setNewStatus(newStatus);
+					}
+				});
+		return (Issue) handle.getData();
 	}
 
 	/**

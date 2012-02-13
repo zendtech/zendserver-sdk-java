@@ -262,4 +262,20 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(IssueList issueList) {
+		return true;
+	}
+
+	public boolean visit(IssueList issueList) {
+		return true;
+	}
+
+	public boolean preVisit(IssueFile issueFile) {
+		return true;
+	}
+
+	public boolean visit(IssueFile issueFile) {
+		return true;
+	}
+
 }

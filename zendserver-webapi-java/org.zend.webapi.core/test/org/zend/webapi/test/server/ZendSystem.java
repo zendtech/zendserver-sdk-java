@@ -140,4 +140,28 @@ public class ZendSystem {
 		return handler.codetracingDownloadTraceFile();
 	}
 
+	public ServerResponse monitorGetRequestSummary() {
+		return handler.monitorGetRequestSummary();
+	}
+
+	public ServerResponse monitorGetIssuesListByPredefinedFilter() {
+		return handler.monitorGetIssuesListByPredefinedFilter();
+	}
+
+	public ServerResponse monitorGetIssueDetails() {
+		return handler.monitorGetIssueDetails();
+	}
+
+	public ServerResponse monitorGetEventGroupDetails() {
+		return handler.monitorGetEventGroupDetails();
+	}
+
+	public ServerResponse monitorExportIssueByEventsGroup() {
+		return handler.monitorExportIssueByEventsGroup();
+	}
+
+	public ServerResponse monitorChangeIssueStatus() {
+		return handler.monitorChangeIssueStatus();
+	}
+
 }

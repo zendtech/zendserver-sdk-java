@@ -19,7 +19,7 @@ public class EventsGroup extends AbstractResponseData {
 
 	private String eventsGroupId;
 	private int eventsCount;
-	private int startTime;
+	private long startTime;
 	private int serverId;
 	private String classId;
 	private String userData;
@@ -63,7 +63,7 @@ public class EventsGroup extends AbstractResponseData {
 	/**
 	 * @return Timestamp for the first event in the current event-group
 	 */
-	public int getStartTime() {
+	public long getStartTime() {
 		return startTime;
 	}
 
@@ -146,7 +146,7 @@ public class EventsGroup extends AbstractResponseData {
 		this.eventsCount = eventsCount;
 	}
 
-	protected void setStartTime(int startTime) {
+	protected void setStartTime(long startTime) {
 		this.startTime = startTime;
 	}
 

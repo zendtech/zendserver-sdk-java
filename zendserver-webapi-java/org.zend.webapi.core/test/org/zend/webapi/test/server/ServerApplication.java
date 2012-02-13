@@ -24,8 +24,7 @@ import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.routing.Router;
 import org.w3c.dom.Document;
-import org.zend.webapi.test.server.response.CodeTraceFileResponse;
-import org.zend.webapi.test.server.response.ConfigurationResponse;
+import org.zend.webapi.test.server.response.FileResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
 
@@ -109,7 +108,7 @@ public class ServerApplication extends Application {
 		Restlet configurationExport = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				final ConfigurationResponse serverResponse = (ConfigurationResponse) ZendSystem
+				FileResponse serverResponse = (FileResponse) ZendSystem
 						.getInstance().configurationExport();
 				InputRepresentation representation = new InputRepresentation(
 						new ByteArrayInputStream(serverResponse.getContent()),
@@ -253,7 +252,7 @@ public class ServerApplication extends Application {
 		Restlet codetracingDownloadTraceFile = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				CodeTraceFileResponse serverResponse = (CodeTraceFileResponse) ZendSystem
+				FileResponse serverResponse = (FileResponse) ZendSystem
 						.getInstance().codetracingDownloadTraceFile();
 				InputRepresentation representation = new InputRepresentation(
 						new ByteArrayInputStream(serverResponse.getContent()),
@@ -265,6 +264,69 @@ public class ServerApplication extends Application {
 				representation.setSize(serverResponse.getFileSize());
 				response.setEntity(representation);
 				response.setStatus(serverResponse.getStatus());
+			}
+		};
+
+		Restlet monitorGetRequestSummary = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.monitorGetRequestSummary();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet monitorGetIssuesListByPredefinedFilter = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.monitorGetIssuesListByPredefinedFilter();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet monitorGetIssueDetails = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.monitorGetIssueDetails();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet monitorGetEventGroupDetails = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.monitorGetEventGroupDetails();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet monitorExportIssueByEventsGroup = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				FileResponse serverResponse = (FileResponse) ZendSystem
+						.getInstance().monitorExportIssueByEventsGroup();
+				InputRepresentation representation = new InputRepresentation(
+						new ByteArrayInputStream(serverResponse.getContent()),
+						MediaType.valueOf("application/vnd.zend.eventexport"));
+				Disposition disposition = new Disposition(
+						Disposition.TYPE_ATTACHMENT);
+				disposition.setFilename(serverResponse.getFileName());
+				representation.setDisposition(disposition);
+				representation.setSize(serverResponse.getFileSize());
+				response.setEntity(representation);
+				response.setStatus(serverResponse.getStatus());
+			}
+		};
+
+		Restlet monitorChangeIssueStatus = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.monitorChangeIssueStatus();
+				prepareResponse(response, serverResponse);
 			}
 		};
 
@@ -311,7 +373,19 @@ public class ServerApplication extends Application {
 		router.attach("/ZendServerManager/Api/codetracingList", codeTracingList);
 		router.attach("/ZendServerManager/Api/codetracingDownloadTraceFile",
 				codetracingDownloadTraceFile);
-
+		router.attach("/ZendServerManager/Api/monitorGetRequestSummary",
+				monitorGetRequestSummary);
+		router.attach(
+				"/ZendServerManager/Api/monitorGetIssuesListByPredefinedFilter",
+				monitorGetIssuesListByPredefinedFilter);
+		router.attach("/ZendServerManager/Api/monitorGetIssueDetails",
+				monitorGetIssueDetails);
+		router.attach("/ZendServerManager/Api/monitorGetEventGroupDetails",
+				monitorGetEventGroupDetails);
+		router.attach("/ZendServerManager/Api/monitorExportIssueByEventsGroup",
+				monitorExportIssueByEventsGroup);
+		router.attach("/ZendServerManager/Api/monitorChangeIssueStatus",
+				monitorChangeIssueStatus);
 		return router;
 	}
 

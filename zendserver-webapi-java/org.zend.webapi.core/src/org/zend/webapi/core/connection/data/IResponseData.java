@@ -73,6 +73,10 @@ public interface IResponseData {
 
 		CODE_TRACE_FILE,
 
+		ISSUE_LIST,
+
+		ISSUE_FILE,
+
 	}
 
 	/**

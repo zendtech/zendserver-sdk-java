@@ -50,4 +50,16 @@ public interface RequestHandler {
 
 	ServerResponse codetracingDownloadTraceFile();
 
+	ServerResponse monitorGetRequestSummary();
+
+	ServerResponse monitorGetIssuesListByPredefinedFilter();
+
+	ServerResponse monitorGetIssueDetails();
+
+	ServerResponse monitorGetEventGroupDetails();
+
+	ServerResponse monitorExportIssueByEventsGroup();
+
+	ServerResponse monitorChangeIssueStatus();
+
 }

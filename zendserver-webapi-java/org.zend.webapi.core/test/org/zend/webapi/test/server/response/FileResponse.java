@@ -8,13 +8,13 @@
 package org.zend.webapi.test.server.response;
 
 
-public class CodeTraceFileResponse extends ServerResponse {
+public class FileResponse extends ServerResponse {
 
 	private String fileName;
 	private long fileSize;
 	private byte[] content;
 
-	public CodeTraceFileResponse(int code, String fileName, long fileSize,
+	public FileResponse(int code, String fileName, long fileSize,
 			byte[] content) {
 		super(code);
 		this.fileName = fileName;

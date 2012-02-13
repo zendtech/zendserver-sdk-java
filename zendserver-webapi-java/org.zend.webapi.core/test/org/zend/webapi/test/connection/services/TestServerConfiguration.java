@@ -52,8 +52,8 @@ public class TestServerConfiguration extends AbstractTestServer {
 	@Test
 	public void testConfigurationExport() throws WebApiException,
 			FileNotFoundException, IOException {
-		initConfigMock(handler.configurationExport(), "configurationExport",
-				ResponseCode.OK);
+		initFileMock(handler.configurationExport(), "configurationExport",
+				ResponseCode.OK, CONFIG_FOLDER, EXAMLE_CONFIG);
 		final ServerConfig config = Configuration.getClient()
 				.configuratioExport();
 		Assert.assertTrue(config.getFileSize() > 0);

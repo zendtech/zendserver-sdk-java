@@ -31,6 +31,12 @@ import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTrace
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetEventGroupDetailsRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
+import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
 
 /**
@@ -173,7 +179,44 @@ public enum WebApiMethodType {
 	 * @see CodetracingDownloadTraceFileRequest
 	 */
 	CODE_TRACING_DOWNLOAD_TRACE_FILE("codetracingDownloadTraceFile",
-			CodetracingDownloadTraceFileRequest.class);
+			CodetracingDownloadTraceFileRequest.class),
+
+	/**
+	 * @see MonitorGetRequestSummaryRequest
+	 */
+	MONITOR_GET_REQUEST_SUMMARY("monitorGetRequestSummary",
+			MonitorGetRequestSummaryRequest.class),
+
+	/**
+	 * @see MonitorGetIssuesListPredefinedFilterRequest
+	 */
+	MONITOR_GET_ISSUES_LIST_BY_PREDEFINED_FILTER(
+			"monitorGetIssuesListByPredefinedFilter",
+			MonitorGetIssuesListPredefinedFilterRequest.class),
+
+	/**
+	 * @see MonitorGetIssueDetailsRequest
+	 */
+	MONITOR_GET_ISSUE_DETAILS("monitorGetIssuesListByPredefinedFilter",
+			MonitorGetIssueDetailsRequest.class),
+	
+	/**
+	 * @see MonitorGetEventGroupDetailsRequest
+	 */
+	MONITOR_GET_EVENT_GROUP_DETAILS("monitorGetEventGroupDetails",
+			MonitorGetEventGroupDetailsRequest.class),
+
+	/**
+	 * @see MonitorExportIssueByEventsGroupRequest
+	 */
+	MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP("monitorExportIssueByEventsGroup",
+			MonitorExportIssueByEventsGroupRequest.class),
+
+	/**
+	 * @see MonitorChangeIssueStatusRequest
+	 */
+	MONITOR_CHANGE_ISSUE_STATUS("monitorChangeIssueStatus",
+			MonitorChangeIssueStatusRequest.class);
 
 	/**
 	 * Name of the service

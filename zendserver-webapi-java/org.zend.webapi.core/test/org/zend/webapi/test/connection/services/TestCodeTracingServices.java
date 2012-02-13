@@ -111,10 +111,11 @@ public class TestCodeTracingServices extends AbstractTestServer {
 	@Test
 	public void testCodetracingDownloadTraceFile() throws WebApiException,
 			FileNotFoundException, IOException {
-		initCodeTraceMock(handler.codetracingDownloadTraceFile(),
-				"codetracingDownloadTraceFile", ResponseCode.OK);
+		initFileMock(handler.codetracingDownloadTraceFile(),
+				"codetracingDownloadTraceFile", ResponseCode.OK, CONFIG_FOLDER,
+				EXAMPLE_CODE_TRACE);
 		CodeTraceFile file = Configuration.getClient()
-				.codetracingDownloadTraceFile("traceId");
+				.codeTracingDownloadTraceFile("traceId");
 		Assert.assertTrue(file.getFileSize() > 0);
 		Assert.assertNotNull(file.getFilename());
 		Assert.assertNotNull(file.getFileContent());

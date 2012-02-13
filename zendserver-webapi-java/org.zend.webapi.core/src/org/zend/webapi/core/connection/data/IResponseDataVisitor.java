@@ -139,4 +139,12 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(CodeTraceFile codeTraceFile);
 
+	public boolean preVisit(IssueList issueList);
+
+	public boolean visit(IssueList issueList);
+
+	public boolean preVisit(IssueFile issueFile);
+
+	public boolean visit(IssueFile issueFile);
+
 }

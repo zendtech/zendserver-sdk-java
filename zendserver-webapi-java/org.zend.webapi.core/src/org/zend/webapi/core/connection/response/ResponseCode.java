@@ -48,6 +48,11 @@ public enum ResponseCode {
 
 	NO_SUCH_APPLICATION(404, "noSuchApplication", "The provided application ID does not exist"),
 
+	NO_SUCH_FILTER_ID(404, "noSuchFilterId",
+			"The requested filter does not exist"),
+
+	NO_SUCH_ISSUE(404, "noSuchIssue", "The requested issue does not exist"),
+
 	NO_ROLLBACK_AVAILABLE(404, "noRollbackAvailable",
 			"The application does not have a version to rollback to"),
 			

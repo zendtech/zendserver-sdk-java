@@ -11,8 +11,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.Configuration;
 import org.zend.webapi.test.connection.services.TestCodeTracingServices;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
-import org.zend.webapi.test.server.response.CodeTraceFileResponse;
-import org.zend.webapi.test.server.response.ConfigurationResponse;
+import org.zend.webapi.test.server.response.FileResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
 
@@ -27,7 +26,7 @@ public class ResponseFactory {
 		int size = (int) file.length();
 		byte content[] = new byte[size];
 		inputStream.read(content);
-		return new ConfigurationResponse(code.getCode(),
+		return new FileResponse(code.getCode(),
 				TestServerConfiguration.EXAMLE_CONFIG, size, content);
 	}
 
@@ -40,8 +39,18 @@ public class ResponseFactory {
 		int size = (int) file.length();
 		byte content[] = new byte[size];
 		inputStream.read(content);
-		return new CodeTraceFileResponse(code.getCode(),
+		return new FileResponse(code.getCode(),
 				TestCodeTracingServices.EXAMPLE_CODE_TRACE, size, content);
+	}
+	
+	public static ServerResponse createFileResponse(String requestName,
+			ResponseCode code, String folder, String name) throws IOException {
+		File file = new File(ServerUtils.createFileName(folder + name));
+		FileInputStream inputStream = new FileInputStream(file);
+		int size = (int) file.length();
+		byte content[] = new byte[size];
+		inputStream.read(content);
+		return new FileResponse(code.getCode(), name, size, content);
 	}
 
 	public static ServiceResponse createResponse(String requestName,

@@ -73,25 +73,13 @@ public abstract class AbstractTestServer {
 		}
 	}
 
-	protected void initCodeTraceMock(ServerResponse toMock, String operation,
-			ResponseCode code) {
+	protected void initFileMock(ServerResponse toMock, String operation,
+			ResponseCode code, String folder, String name) {
 		if (Configuration.getType() == ServerType.EMBEDDED) {
 			try {
 				when(toMock).thenReturn(
-						ResponseFactory
-								.createCodeTraceResponse(operation, code));
-			} catch (IOException e) {
-				Assert.fail(e.getMessage());
-			}
-		}
-	}
-
-	protected void initConfigMock(ServerResponse toMock, String operation,
-			ResponseCode code) {
-		if (Configuration.getType() == ServerType.EMBEDDED) {
-			try {
-				when(toMock).thenReturn(
-						ResponseFactory.createConfigResponse(operation, code));
+						ResponseFactory.createFileResponse(operation, code,
+								folder, name));
 			} catch (IOException e) {
 				Assert.fail(e.getMessage());
 			}

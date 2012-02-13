@@ -501,7 +501,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		step.setObjectId(value);
 		value = getValue(currentPath + "/class", occurrence);
 		step.setClassId(value);
-		value = getValue(currentPath + "/fuction", occurrence);
+		value = getValue(currentPath + "/function", occurrence);
 		step.setFunction(value);
 		value = getValue(currentPath + "/file", occurrence);
 		step.setFile(value);
@@ -577,7 +577,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/eventsCount", occurrence);
 		eventsGroup.setEventsCount(parseNumberIfExists(value));
 		value = getValue(currentPath + "/startTime", occurrence);
-		eventsGroup.setStartTime(parseNumberIfExists(value));
+		eventsGroup.setStartTime(parseLongIfExists(value));
 		value = getValue(currentPath + "/serverId", occurrence);
 		eventsGroup.setServerId(parseNumberIfExists(value));
 		value = getValue(currentPath + "/class", occurrence);
@@ -609,6 +609,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 		event.setEventsGroupId(value);
 		value = getValue(currentPath + "/type", occurrence);
 		event.setEventType(value);
+		value = getValue(currentPath + "/severity", occurrence);
+		event.setSeverity(value);
 		value = getValue(currentPath + "/description", occurrence);
 		event.setDescription(value);
 		SuperGlobals superGlobals = new SuperGlobals(currentPath
@@ -744,7 +746,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/rule", occurrence);
 		issue.setRule(value);
 		value = getValue(currentPath + "/lastOccurance", occurrence);
-		issue.setLastOccurance(parseNumberIfExists(value));
+		issue.setLastOccurance(parseLongIfExists(value));
 		value = getValue(currentPath + "/severity", occurrence);
 		issue.setSeverity(value);
 		value = getValue(currentPath + "/status", occurrence);
@@ -766,6 +768,28 @@ public class DataDigster extends GenericResponseDataVisitor {
 		RouteDetails routeDetails = new RouteDetails(currentPath
 				+ "/routeDetails", occurrence);
 		issue.setRouteDetails(routeDetails);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(IssueList issueList) {
+		String currentPath = issueList.getPrefix();
+		final int size = getNodesLength(currentPath, "issue",
+				issueList.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath, "issue",
+				issueList.getOccurrence());
+
+		List<Issue> issues = new ArrayList<Issue>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			issues.add(new Issue(currentPath + "/issue", index));
+		}
+
+		issueList.setIssues(issues);
 		return true;
 	}
 
@@ -836,6 +860,26 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean preVisit(IssueFile issueFile) {
+		Disposition disposition = representation.getDisposition();
+		if (disposition != null) {
+			issueFile.setFilename(disposition.getFilename());
+		}
+		int size = (int) representation.getSize();
+		issueFile.setFileSize(size);
+
+		try {
+			byte[] content = new byte[size];
+			InputStream reader = representation.getStream();
+			reader.read(content);
+			issueFile.setFileContent(content);
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return
@@ -885,6 +929,18 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new CodeTracingList();
 		case CODE_TRACE_FILE:
 			return new CodeTraceFile();
+		case REQUEST_SUMMARY:
+			return new RequestSummary();
+		case ISSUE_LIST:
+			return new IssueList();
+		case ISSUE_DETAILS:
+			return new IssueDetails();
+		case EVENTS_GROUP_DETAILS:
+			return new EventsGroupDetails();
+		case ISSUE_FILE:
+			return new IssueFile();
+		case ISSUE:
+			return new Issue();
 		default:
 			return null;
 		}
@@ -895,6 +951,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		switch (responseData.getType()) {
 		case SERVER_CONFIG:
 		case CODE_TRACE_FILE:
+		case ISSUE_FILE:
 			return representation;
 		default:
 			return new DomRepresentation(representation);

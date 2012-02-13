@@ -9,17 +9,32 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationServer;
 import org.zend.webapi.core.connection.data.ApplicationServers;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.Backtrace;
 import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.DeployedVersion;
 import org.zend.webapi.core.connection.data.DeployedVersions;
+import org.zend.webapi.core.connection.data.Event;
+import org.zend.webapi.core.connection.data.EventsGroup;
+import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.EventsGroups;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
+import org.zend.webapi.core.connection.data.Issue;
+import org.zend.webapi.core.connection.data.IssueDetails;
+import org.zend.webapi.core.connection.data.IssueList;
 import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
+import org.zend.webapi.core.connection.data.Parameter;
+import org.zend.webapi.core.connection.data.ParameterList;
+import org.zend.webapi.core.connection.data.RequestSummary;
+import org.zend.webapi.core.connection.data.RouteDetail;
+import org.zend.webapi.core.connection.data.RouteDetails;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
+import org.zend.webapi.core.connection.data.Step;
+import org.zend.webapi.core.connection.data.SuperGlobals;
 import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
@@ -222,6 +237,150 @@ public class DataUtils {
 		for (CodeTrace codeTrace : tracesList) {
 			checkValidCodeTrace(codeTrace);
 		}
+	}
+
+	public static void checkValidRequestSummary(RequestSummary summary) {
+		Assert.assertNotNull(summary);
+		Assert.assertEquals(ResponseType.REQUEST_SUMMARY, summary.getType());
+		Assert.assertNotNull(summary.getEventsCount());
+		Assert.assertNotNull(summary.getCodeTracing());
+		List<Event> events = summary.getEvents().getEvents();
+		Assert.assertNotNull(events);
+		for (Event event : events) {
+			checkValidEvent(event);
+		}
+	}
+
+	public static void checkValidEvent(Event event) {
+		Assert.assertNotNull(event);
+		Assert.assertEquals(ResponseType.EVENT, event.getType());
+		Assert.assertNotNull(event.getDescription());
+		Assert.assertNotNull(event.getEventsGroupId());
+		Assert.assertNotNull(event.getEventType());
+		Assert.assertNotNull(event.getSeverity());
+		checkValidBacktrace(event.getBacktrace());
+		checkValidSuperGlobals(event.getSuperGlobals());
+	}
+
+	public static void checkValidBacktrace(Backtrace backtrace) {
+		Assert.assertNotNull(backtrace);
+		Assert.assertEquals(ResponseType.BACKTRACE, backtrace.getType());
+		List<Step> steps = backtrace.getSteps();
+		for (Step step : steps) {
+			checkValidStep(step);
+		}
+	}
+
+	public static void checkValidStep(Step step) {
+		Assert.assertNotNull(step);
+		Assert.assertEquals(ResponseType.STEP, step.getType());
+		Assert.assertNotNull(step.getClassId());
+		Assert.assertNotNull(step.getFile());
+		Assert.assertNotNull(step.getFunction());
+		Assert.assertNotNull(step.getObjectId());
+	}
+
+	public static void checkValidSuperGlobals(SuperGlobals superGlobals) {
+		Assert.assertNotNull(superGlobals);
+		Assert.assertEquals(ResponseType.SUPER_GLOBALS, superGlobals.getType());
+		checkValidParametersList(superGlobals.getGet());
+		checkValidParametersList(superGlobals.getCookie());
+		checkValidParametersList(superGlobals.getPost());
+		checkValidParametersList(superGlobals.getServer());
+		checkValidParametersList(superGlobals.getSession());
+	}
+
+	public static void checkValidParametersList(ParameterList list) {
+		Assert.assertNotNull(list);
+		Assert.assertEquals(ResponseType.PARAMETER_LIST, list.getType());
+		List<Parameter> parameters = list.getParameters();
+		if (parameters != null) {
+			for (Parameter parameter : parameters) {
+				Assert.assertNotNull(parameter);
+				Assert.assertEquals(ResponseType.PARAMETER, parameter.getType());
+				Assert.assertNotNull(parameter.getName());
+				Assert.assertNotNull(parameter.getValue());
+			}
+		}
+	}
+
+	public static void checkValidIssueList(IssueList issueList) {
+		Assert.assertNotNull(issueList);
+		Assert.assertEquals(ResponseType.ISSUE_LIST, issueList.getType());
+		List<Issue> issues = issueList.getIssues();
+		for (Issue issue : issues) {
+			checkValidIssue(issue);
+		}
+	}
+
+	public static void checkValidIssue(Issue issue) {
+		Assert.assertNotNull(issue);
+		Assert.assertEquals(ResponseType.ISSUE, issue.getType());
+		Assert.assertNotNull(issue.getAggregationHint());
+		Assert.assertNotNull(issue.getErrorString());
+		Assert.assertNotNull(issue.getErrorType());
+		Assert.assertNotNull(issue.getFunction());
+		Assert.assertNotNull(issue.getRule());
+		Assert.assertNotNull(issue.getSeverity());
+		Assert.assertNotNull(issue.getSourceFile());
+		Assert.assertNotNull(issue.getStatus());
+		Assert.assertNotNull(issue.getUrl());
+		checkValidRouteDetails(issue.getRouteDetails());
+	}
+
+	public static void checkValidRouteDetails(RouteDetails routeDetails) {
+		Assert.assertNotNull(routeDetails);
+		Assert.assertEquals(ResponseType.ROUTE_DETAILS, routeDetails.getType());
+		List<RouteDetail> details = routeDetails.getDetails();
+		if (details != null) {
+			for (RouteDetail routeDetail : details) {
+				checkValidRouteDetail(routeDetail);
+			}
+		}
+	}
+
+	public static void checkValidRouteDetail(RouteDetail routeDetail) {
+		Assert.assertNotNull(routeDetail);
+		Assert.assertEquals(ResponseType.ROUTE_DETAIL, routeDetail.getType());
+		Assert.assertNotNull(routeDetail.getKey());
+		Assert.assertNotNull(routeDetail.getValue());
+	}
+
+	public static void checkValidIssueDetails(IssueDetails issueDetails) {
+		Assert.assertNotNull(issueDetails);
+		Assert.assertEquals(ResponseType.ISSUE_DETAILS, issueDetails.getType());
+		checkValidIssue(issueDetails.getIssue());
+		checkValidEventsGroups(issueDetails.getEventsGroups());
+	}
+
+	public static void checkValidEventsGroups(EventsGroups eventsGroups) {
+		Assert.assertNotNull(eventsGroups);
+		Assert.assertEquals(ResponseType.EVENTS_GROUPS, eventsGroups.getType());
+		List<EventsGroup> groups = eventsGroups.getGroups();
+		if (groups != null) {
+			for (EventsGroup eventsGroup : groups) {
+				checValidEventsGroup(eventsGroup);
+			}
+		}
+	}
+
+	public static void checValidEventsGroup(EventsGroup eventsGroup) {
+		Assert.assertNotNull(eventsGroup);
+		Assert.assertEquals(ResponseType.EVENTS_GROUP, eventsGroup.getType());
+		Assert.assertNotNull(eventsGroup.getClassId());
+		Assert.assertNotNull(eventsGroup.getEventsGroupId());
+		Assert.assertNotNull(eventsGroup.getJavaBacktrace());
+		Assert.assertNotNull(eventsGroup.getLoad());
+		Assert.assertNotNull(eventsGroup.getUserData());
+	}
+
+	public static void checkValidEventsGroupDetails(EventsGroupDetails details) {
+		Assert.assertNotNull(details);
+		Assert.assertEquals(ResponseType.EVENTS_GROUP_DETAILS,
+				details.getType());
+		Assert.assertNotNull(details.getCodeTracing());
+		checkValidEvent(details.getEvent());
+		checValidEventsGroup(details.getEventsGroup());
 	}
 
 }
