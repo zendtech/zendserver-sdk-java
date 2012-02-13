@@ -22,11 +22,13 @@ import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTraceFile;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueFile;
 import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
@@ -70,6 +72,8 @@ import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRe
 import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
 
 /**
  * Client for accessing Zend Server Web API. All service calls made using this
@@ -1329,8 +1333,7 @@ public class WebApiClient {
 	 * @since 1.2
 	 */
 	public EventsGroupDetails monitorGetEventGroupDetails(final String issueId,
-			final String eventsGroupId)
-			throws WebApiException {
+			final String eventsGroupId) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_EVENT_GROUP_DETAILS,
 				new IRequestInitializer() {
@@ -1355,8 +1358,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public IssueFile monitorExportIssueByEventsGroup(
-			final String eventsGroupId)
+	public IssueFile monitorExportIssueByEventsGroup(final String eventsGroupId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP,
@@ -1379,8 +1381,7 @@ public class WebApiClient {
 	 * @since 1.2
 	 */
 	public Issue monitorChangeIssueStatus(final String issueId,
-			final IssueStatus newStatus)
-			throws WebApiException {
+			final IssueStatus newStatus) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_CHANGE_ISSUE_STATUS,
 				new IRequestInitializer() {
@@ -1392,6 +1393,109 @@ public class WebApiClient {
 					}
 				});
 		return (Issue) handle.getData();
+	}
+
+	/**
+	 * Start a debug session for specific issue.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public DebugRequest studioStartDebug(final String eventsGroupId,
+			final Boolean noRemote, final String overrideHost)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.STUDIO_START_DEBUG, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						StudioStartDebugRequest debugRequest = (StudioStartDebugRequest) request;
+						debugRequest.setEventsGroupId(eventsGroupId);
+						if (noRemote != null) {
+							debugRequest.setNoRemote(noRemote);
+						}
+						if (overrideHost != null) {
+							debugRequest.setOverrideHost(overrideHost);
+						}
+					}
+				});
+		return (DebugRequest) handle.getData();
+	}
+
+	/**
+	 * Start a debug session for specific issue.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public DebugRequest studioStartDebug(final String eventsGroupId,
+			final Boolean noRemote) throws WebApiException {
+		return studioStartDebug(eventsGroupId, noRemote, null);
+	}
+
+	/**
+	 * Start a debug session for specific issue.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public DebugRequest studioStartDebug(final String eventsGroupId,
+			final String overrideHost) throws WebApiException {
+		return studioStartDebug(eventsGroupId, null, overrideHost);
+	}
+
+	/**
+	 * Start a debug session for specific issue.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public DebugRequest studioStartDebug(final String eventsGroupId)
+			throws WebApiException {
+		return studioStartDebug(eventsGroupId, null, null);
+	}
+
+	/**
+	 * Start a profiling session with Zend Studio's integration using an
+	 * event-group's identifier. This action has the peculiar behavior of being
+	 * synchronous and hanging until the profiling session is completed.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public ProfileRequest studioStartProfile(final String eventsGroupId,
+			final String overrideHost) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.STUDIO_START_PROFILE,
+				new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						StudioStartProfileRequest profileRequest = (StudioStartProfileRequest) request;
+						profileRequest.setEventsGroupId(eventsGroupId);
+						if (overrideHost != null) {
+							profileRequest.setOverrideHost(overrideHost);
+						}
+					}
+				});
+		return (ProfileRequest) handle.getData();
+	}
+
+	/**
+	 * Start a profiling session with Zend Studio's integration using an
+	 * event-group's identifier. This action has the peculiar behavior of being
+	 * synchronous and hanging until the profiling session is completed.
+	 * 
+	 * @return debug request
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public ProfileRequest studioStartProfile(final String eventsGroupId)
+			throws WebApiException {
+		return studioStartProfile(eventsGroupId, null);
 	}
 
 	/**

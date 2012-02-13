@@ -13,6 +13,7 @@ import org.zend.webapi.core.connection.data.Backtrace;
 import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.DeployedVersion;
 import org.zend.webapi.core.connection.data.DeployedVersions;
 import org.zend.webapi.core.connection.data.Event;
@@ -28,6 +29,7 @@ import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
 import org.zend.webapi.core.connection.data.Parameter;
 import org.zend.webapi.core.connection.data.ParameterList;
+import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.RouteDetail;
 import org.zend.webapi.core.connection.data.RouteDetails;
@@ -381,6 +383,21 @@ public class DataUtils {
 		Assert.assertNotNull(details.getCodeTracing());
 		checkValidEvent(details.getEvent());
 		checValidEventsGroup(details.getEventsGroup());
+	}
+
+	public static void checkValidDebugRequest(DebugRequest debugRequest) {
+		Assert.assertNotNull(debugRequest);
+		Assert.assertEquals(ResponseType.DEBUG_REQUEST, debugRequest.getType());
+		Assert.assertNotNull(debugRequest.getSuccess());
+		Assert.assertNotNull(debugRequest.getMessage());
+	}
+
+	public static void checkValidProfileRequest(ProfileRequest profileRequest) {
+		Assert.assertNotNull(profileRequest);
+		Assert.assertEquals(ResponseType.PROFILE_REQUEST,
+				profileRequest.getType());
+		Assert.assertNotNull(profileRequest.getSuccess());
+		Assert.assertNotNull(profileRequest.getMessage());
 	}
 
 }

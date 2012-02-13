@@ -164,4 +164,12 @@ public class ZendSystem {
 		return handler.monitorChangeIssueStatus();
 	}
 
+	public ServerResponse studioStartDebug() {
+		return handler.studioStartDebug();
+	}
+
+	public ServerResponse studioStartProfile() {
+		return handler.studioStartProfile();
+	}
+
 }

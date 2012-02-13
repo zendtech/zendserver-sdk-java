@@ -12,6 +12,7 @@ import org.zend.webapi.test.connection.services.TestCodeTracingServices;
 import org.zend.webapi.test.connection.services.TestDeploymentServices;
 import org.zend.webapi.test.connection.services.TestMonitorServices;
 import org.zend.webapi.test.connection.services.TestServerConfiguration;
+import org.zend.webapi.test.connection.services.TestStudioServices;
 import org.zend.webapi.test.core.TestClientConfiguration;
 import org.zend.webapi.test.core.TestServiceDispatcher;
 import org.zend.webapi.test.core.TestUtils;
@@ -24,6 +25,7 @@ import org.zend.webapi.test.core.progress.TestStatusCode;
 		TestResponse.class, TestSignatrue.class, TestDataDigester.class,
 		TestValues.class, TestCodeTracingServices.class,
 		TestDeploymentServices.class, TestMonitorServices.class,
+		TestStudioServices.class,
 		TestServerConfiguration.class, TestClientConfiguration.class,
 		TestServiceDispatcher.class, TestWebApiExceptions.class,
 		TestWebApiMethodType.class, TestStatusCode.class, TestValues.class,

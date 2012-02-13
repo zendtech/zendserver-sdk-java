@@ -330,6 +330,24 @@ public class ServerApplication extends Application {
 			}
 		};
 
+		Restlet studioStartDebug = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.studioStartDebug();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		Restlet studioStartProfile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.studioStartProfile();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
@@ -386,6 +404,10 @@ public class ServerApplication extends Application {
 				monitorExportIssueByEventsGroup);
 		router.attach("/ZendServerManager/Api/monitorChangeIssueStatus",
 				monitorChangeIssueStatus);
+		router.attach("/ZendServerManager/Api/studioStartDebug",
+				studioStartDebug);
+		router.attach("/ZendServerManager/Api/studioStartProfile",
+				studioStartProfile);
 		return router;
 	}
 

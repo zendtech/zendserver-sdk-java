@@ -147,4 +147,12 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(IssueFile issueFile);
 
+	public boolean preVisit(DebugRequest debugRequest);
+
+	public boolean visit(DebugRequest debugRequest);
+
+	public boolean preVisit(ProfileRequest profileRequest);
+
+	public boolean visit(ProfileRequest profileRequest);
+
 }

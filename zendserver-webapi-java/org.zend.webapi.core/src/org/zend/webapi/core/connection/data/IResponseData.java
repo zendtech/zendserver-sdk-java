@@ -77,6 +77,10 @@ public interface IResponseData {
 
 		ISSUE_FILE,
 
+		DEBUG_REQUEST,
+
+		PROFILE_REQUEST,
+
 	}
 
 	/**

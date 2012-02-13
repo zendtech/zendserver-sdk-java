@@ -880,6 +880,28 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean preVisit(DebugRequest debugRequest) {
+		String currentPath = debugRequest.getPrefix();
+		int occurrence = debugRequest.getOccurrence();
+		String value = getValue(currentPath + "/success", occurrence);
+		debugRequest.setSuccess(value);
+		value = getValue(currentPath + "/message", occurrence);
+		debugRequest.setMessage(value);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(ProfileRequest profileRequest) {
+		String currentPath = profileRequest.getPrefix();
+		int occurrence = profileRequest.getOccurrence();
+		String value = getValue(currentPath + "/success", occurrence);
+		profileRequest.setSuccess(value);
+		value = getValue(currentPath + "/message", occurrence);
+		profileRequest.setMessage(value);
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return
@@ -941,6 +963,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new IssueFile();
 		case ISSUE:
 			return new Issue();
+		case DEBUG_REQUEST:
+			return new DebugRequest();
+		case PROFILE_REQUEST:
+			return new ProfileRequest();
 		default:
 			return null;
 		}

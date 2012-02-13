@@ -278,4 +278,20 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(DebugRequest debugRequest) {
+		return true;
+	}
+
+	public boolean visit(DebugRequest debugRequest) {
+		return true;
+	}
+
+	public boolean preVisit(ProfileRequest profileRequest) {
+		return true;
+	}
+
+	public boolean visit(ProfileRequest profileRequest) {
+		return true;
+	}
+
 }

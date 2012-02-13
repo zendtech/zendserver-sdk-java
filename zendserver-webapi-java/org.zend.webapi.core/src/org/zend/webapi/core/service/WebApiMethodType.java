@@ -38,6 +38,8 @@ import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRe
 import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
 
 /**
  * The Zend Server Web API is intended to allow automation of the management and
@@ -199,7 +201,7 @@ public enum WebApiMethodType {
 	 */
 	MONITOR_GET_ISSUE_DETAILS("monitorGetIssuesListByPredefinedFilter",
 			MonitorGetIssueDetailsRequest.class),
-	
+
 	/**
 	 * @see MonitorGetEventGroupDetailsRequest
 	 */
@@ -216,7 +218,17 @@ public enum WebApiMethodType {
 	 * @see MonitorChangeIssueStatusRequest
 	 */
 	MONITOR_CHANGE_ISSUE_STATUS("monitorChangeIssueStatus",
-			MonitorChangeIssueStatusRequest.class);
+			MonitorChangeIssueStatusRequest.class),
+
+	/**
+	 * @see StudioStartDebugRequest
+	 */
+	STUDIO_START_DEBUG("studioStartDebug", StudioStartDebugRequest.class),
+
+	/**
+	 * @see StudioStartProfileRequest
+	 */
+	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class);
 
 	/**
 	 * Name of the service

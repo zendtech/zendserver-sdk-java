@@ -62,4 +62,8 @@ public interface RequestHandler {
 
 	ServerResponse monitorChangeIssueStatus();
 
+	ServerResponse studioStartDebug();
+
+	ServerResponse studioStartProfile();
+
 }
