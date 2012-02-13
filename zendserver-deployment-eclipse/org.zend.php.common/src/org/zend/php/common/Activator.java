@@ -68,7 +68,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, null));
 	}
 
-	@Override
 	public void earlyStartup() {
 		// empty, all startup logic in Activator.start
 	}
