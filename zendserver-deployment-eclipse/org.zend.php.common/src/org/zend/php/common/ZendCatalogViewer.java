@@ -137,7 +137,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 	private boolean showHeader = false;
 
 	public ZendCatalogViewer(IShellProvider shellProvider,
-			IRunnableContext context) {
+			IRunnableContext context, String directoryFileName) {
 
 		this.catalog = new Catalog();
 		catalog.setEnvironment(DiscoveryCore.createEnvironment());
@@ -178,7 +178,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 		}
 		if (repo != null) {
 			remoteDiscoveryStrategy.setDirectoryUrl(repo.toString().concat(
-					"/pdt_directory.xml"));
+					directoryFileName));
 		} else {
 			performDiscovery = false;
 			handleError(Messages.ConnectorDiscovery_NoUrlDefined_Title,

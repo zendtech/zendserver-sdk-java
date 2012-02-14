@@ -17,6 +17,9 @@ import org.eclipse.swt.widgets.Display;
 
 public class Customization {
 
+	private static final String ORG_ZEND_PHP_CUSTOMIZATION_SITE_URL = "org.zend.php.customization.site.url";
+	private static final String COM_ZEND_PHP_CUSTOMIZATION_SITE_URL = "com.zend.php.customization.site.url";
+
 	public static void ShowCustomizationDialog() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
@@ -26,23 +29,25 @@ public class Customization {
 
 				// add strategy for retrieving remote catalog
 				RepositoryDiscoveryStrategy strategy = new RepositoryDiscoveryStrategy();
+				
+				URI[] uris;
 				try {
-					String uri = System.getProperty("com.zend.php.customization.site.url");
-					if (uri == null) {
-						uri = System.getProperty("org.zend.php.customization.site.url");
-					}
-					strategy.addLocation(new URI(uri));
+					uris = getSiteUris();
 				} catch (URISyntaxException e) {
 					ErrorDialog
-							.openError(
-									Display.getCurrent().getActiveShell(),
-									Messages.ConnectorDiscoveryWizardMainPage_error_title,
-									Messages.ConnectorDiscoveryWizardMainPage_error_msg,
-													new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-															Activator.INTERNAL_ERROR, e.getReason(), e));
+					.openError(
+							Display.getCurrent().getActiveShell(),
+							Messages.ConnectorDiscoveryWizardMainPage_error_title,
+							Messages.ConnectorDiscoveryWizardMainPage_error_msg,
+											new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+													Activator.INTERNAL_ERROR, e.getReason(), e));
 					Activator.log(e);
 					return;
 				}
+				for (URI uri : uris) {
+					strategy.addLocation(uri);
+				}
+				
 				catalog.getDiscoveryStrategies().add(strategy);
 
 				CatalogConfiguration configuration = new CatalogConfiguration();
@@ -63,6 +68,21 @@ public class Customization {
 		});
 	}
 
+	public static URI[] getSiteUris() throws URISyntaxException {
+		String uri = System.getProperty(COM_ZEND_PHP_CUSTOMIZATION_SITE_URL);
+		if (uri == null) {
+			uri = System.getProperty(ORG_ZEND_PHP_CUSTOMIZATION_SITE_URL);
+		}
+		
+		String[] uris = uri.split(",");
+		URI[] result = new URI[uris.length];
+		for (int i = 0; i < uris.length; i++) {
+			result[i] = new URI(uris[i]);
+		}
+		
+		return result;
+	}
+	
 	public void run() {
 		ShowCustomizationDialog();
 	}

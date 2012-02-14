@@ -284,13 +284,11 @@ public class ProfileModificationHelper {
 			return null;
 		}
 		try {
-			String siteUrl = System.getProperty("com.zend.php.customization.site.url");
-			if (siteUrl == null) {
-				siteUrl = System.getProperty("org.zend.php.customization.site.url");
-			}
-			if (siteUrl != null && !siteUrl.isEmpty()) {
-				location = new URI(siteUrl);
-				repositoryTracker.addRepository(location, null, session);
+			URI[] uris = Customization.getSiteUris();
+			if (uris.length > 0) {
+				for (URI uri : uris) {
+					repositoryTracker.addRepository(uri, null, session);
+				}
 			} else {
 				URI[] knownRepositories = repositoryTracker
 						.getKnownRepositories(session);

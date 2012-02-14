@@ -131,7 +131,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		gdL.horizontalSpacing = 0;
 		viewerComposite.setLayout(gdL);
 		final ZendCatalogViewer viewer = new ZendCatalogViewer(provider,
-				context);
+				context, "/pdt_directory.xml");
 		viewer.createControl(viewerComposite);
 		//PlatformUI
 			//	.getWorkbench()
