@@ -288,13 +288,15 @@ public class ProfileModificationHelper {
 			if (uris.length > 0) {
 				for (URI uri : uris) {
 					repositoryTracker.addRepository(uri, null, session);
+					if (isZendExtraFeatures(uri)) {
+						location = uri;
+					}
 				}
 			} else {
 				URI[] knownRepositories = repositoryTracker
 						.getKnownRepositories(session);
 				for (URI repo : knownRepositories) {
-					// TODO how to recognize Zend Extra Features Update Site???
-					if (repo.toString().contains("extra")) {
+					if (isZendExtraFeatures(repo)) {
 						location = repo;
 						// repositoryTracker.refreshRepositories(
 						// new URI[] { repo }, session, null);
@@ -307,6 +309,11 @@ public class ProfileModificationHelper {
 		}
 
 		return location;
+	}
+
+	private static boolean isZendExtraFeatures(URI uri) {
+		// TODO how to recognize Zend Extra Features Update Site???
+		return uri.toString().contains("extra");
 	}
 
 	private static List<IProfileModificationListener> getModificationListeners() {
