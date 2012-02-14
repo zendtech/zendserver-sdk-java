@@ -74,6 +74,10 @@ public class Customization {
 			uri = System.getProperty(ORG_ZEND_PHP_CUSTOMIZATION_SITE_URL);
 		}
 		
+		if (uri == null) {
+			return new URI[0];
+		}
+		
 		String[] uris = uri.split(",");
 		URI[] result = new URI[uris.length];
 		for (int i = 0; i < uris.length; i++) {
