@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
@@ -222,8 +226,13 @@ public class ZendTarget implements IZendTarget {
 		Properties properties = new Properties();
 		properties.load(is);
 		this.id = properties.getProperty("_id");
+		String encrypted = properties.getProperty("_encrypted");
+		if ("true".equals(encrypted)) {
+			this.secretKey = decrypt(properties.getProperty("_secretKey"));
+		} else {
+			this.secretKey = properties.getProperty("_secretKey");
+		}
 		this.key = properties.getProperty("_key");
-		this.secretKey = properties.getProperty("_secretKey");
 		this.host = new URL(properties.getProperty("_host"));
 		String url = properties.getProperty("_defaultServerURL");
 		if (url != null) {
@@ -248,7 +257,14 @@ public class ZendTarget implements IZendTarget {
 		Properties properties = new Properties();
 		properties.put("_id", getId());
 		properties.put("_key", getKey());
-		properties.put("_secretKey", getSecretKey());
+		String encryptedKey = encrypt(getSecretKey());
+		if (encryptedKey != null) {
+			properties.put("_encrypted", "true");
+			properties.put("_secretKey", encryptedKey);
+		} else {
+			properties.put("_encrypted", "false");
+			properties.put("_secretKey", getSecretKey());
+		}
 		properties.put("_host", getHost().toString());
 		properties.put("_defaultServerURL", getDefaultServerURL().toString());
 		properties.putAll(this.properties);
@@ -315,4 +331,32 @@ public class ZendTarget implements IZendTarget {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
+	private String encrypt(String secretKey) {
+		try {
+			Cipher cipher = Cipher.getInstance("AES");
+			SecretKeySpec k = new SecretKeySpec(getSeq(), "AES");
+			cipher.init(Cipher.ENCRYPT_MODE, k);
+			return new String(cipher.doFinal(secretKey.getBytes()));
+		} catch (Exception e) {
+			Log.getInstance().getLogger(this.getClass().getName()).error(e);
+			return null;
+		}
+	}
+
+	private String decrypt(String secretKey) {
+		try {
+			Cipher c = Cipher.getInstance("AES");
+			SecretKeySpec k = new SecretKeySpec(getSeq(), "AES");
+			c.init(Cipher.DECRYPT_MODE, k);
+			return new String(c.doFinal(secretKey.getBytes()));
+		} catch (Exception e) {
+			Log.getInstance().getLogger(this.getClass().getName()).error(e);
+			return null;
+		}
+	}
+
+	private byte[] getSeq() {
+		return "[B@10f11b8=$eEew".getBytes();
+	}
+	
 }
