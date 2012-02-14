@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.zend.sdklib.internal.utils.EnvironmentUtils;
+import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -86,6 +88,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		File confFile = new File(descriptor.path, CONF_FILENAME);
 		try {
 			confFile.createNewFile();
+			grantPermissions(confFile.getAbsolutePath(), "600");
 			FileOutputStream fos = new FileOutputStream(confFile);
 			target.store(fos);
 			fos.close();
@@ -212,6 +215,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 
 			fileOutputStream.close();
 			targetDescriptor.path.mkdir();
+			grantPermissions(targetDescriptor.path.getAbsolutePath(), "700");
 
 			return targetDescriptor.isValid() ? targetDescriptor : null;
 		} catch (IOException e) {
@@ -268,6 +272,18 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		public boolean isValid() {
 			return this.target != null && this.path.exists();
 		}
+	}
+
+	private boolean grantPermissions(String path, String permissions) {
+		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
+			try {
+				Runtime.getRuntime().exec("chmod " + permissions + " " + path);
+			} catch (IOException e) {
+				Log.getInstance().getLogger(this.getClass().getName()).error(e);
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
