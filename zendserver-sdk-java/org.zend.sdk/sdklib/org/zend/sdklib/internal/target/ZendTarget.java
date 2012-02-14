@@ -70,7 +70,8 @@ public class ZendTarget implements IZendTarget {
 	 * @param key
 	 * @param secretKey
 	 */
-	public ZendTarget(String id, URL host, URL defaultServerURL, String key, String secretKey) {
+	public ZendTarget(String id, URL host, URL defaultServerURL, String key,
+			String secretKey) {
 		super();
 		this.id = id;
 		this.host = host;
@@ -81,8 +82,9 @@ public class ZendTarget implements IZendTarget {
 
 		validateTarget();
 	}
-	
-	public ZendTarget(String id, URL host, URL defaultServerURL, String key, String secretKey, boolean temporary) {
+
+	public ZendTarget(String id, URL host, URL defaultServerURL, String key,
+			String secretKey, boolean temporary) {
 		this(id, host, defaultServerURL, key, secretKey);
 		this.isTemporary = temporary;
 	}
@@ -90,7 +92,7 @@ public class ZendTarget implements IZendTarget {
 	public boolean isTemporary() {
 		return isTemporary;
 	}
-	
+
 	/**
 	 * 
 	 * @return null or success, or an error message otherwise
@@ -108,7 +110,7 @@ public class ZendTarget implements IZendTarget {
 		for (int i = 1; i < this.id.length(); i++) {
 			char c = this.id.charAt(i);
 			if (!Character.isJavaIdentifierPart(c)) {
-				return "Target id is invalid: "+c;
+				return "Target id is invalid: " + c;
 			}
 		}
 
@@ -228,7 +230,8 @@ public class ZendTarget implements IZendTarget {
 		this.id = properties.getProperty("_id");
 		String encrypted = properties.getProperty("_encrypted");
 		if ("true".equals(encrypted)) {
-			this.secretKey = decrypt(properties.getProperty("_secretKey"));
+			this.secretKey = decrypt(convertHexToByte(properties
+					.getProperty("_secretKey")));
 		} else {
 			this.secretKey = properties.getProperty("_secretKey");
 		}
@@ -257,10 +260,10 @@ public class ZendTarget implements IZendTarget {
 		Properties properties = new Properties();
 		properties.put("_id", getId());
 		properties.put("_key", getKey());
-		String encryptedKey = encrypt(getSecretKey());
+		byte[] encryptedKey = encrypt(getSecretKey());
 		if (encryptedKey != null) {
 			properties.put("_encrypted", "true");
-			properties.put("_secretKey", encryptedKey);
+			properties.put("_secretKey", convertByteToHex(encryptedKey));
 		} else {
 			properties.put("_encrypted", "false");
 			properties.put("_secretKey", getSecretKey());
@@ -277,7 +280,8 @@ public class ZendTarget implements IZendTarget {
 				getSecretKey());
 		try {
 			String hostname = getHost().toString();
-			WebApiClient client = new WebApiClient(credentials, hostname, SSLContextInitializer.instance.getRestletContext());
+			WebApiClient client = new WebApiClient(credentials, hostname,
+					SSLContextInitializer.instance.getRestletContext());
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
 			addProperty("operatingSystem", info.getEdition().name());
@@ -294,14 +298,14 @@ public class ZendTarget implements IZendTarget {
 				throw e;
 			} else {
 				throw new WebApiException() {
-					
+
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public ResponseCode getResponseCode() {
 						return e.getResponseCode();
 					}
-					
+
 					@Override
 					public String getMessage() {
 						return betterMessage;
@@ -313,7 +317,8 @@ public class ZendTarget implements IZendTarget {
 	}
 
 	private String replaceWebApiMessage(String message) {
-		if ("Zend Server Community Edition does not rely on licensing".equals(message)) {
+		if ("Zend Server Community Edition does not rely on licensing"
+				.equals(message)) {
 			return "Zend Server Community Edition does not support deployment";
 		}
 		return null;
@@ -331,24 +336,24 @@ public class ZendTarget implements IZendTarget {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
-	private String encrypt(String secretKey) {
+	private String decrypt(byte[] secretKey) {
 		try {
-			Cipher cipher = Cipher.getInstance("AES");
+			Cipher c = Cipher.getInstance("AES");
 			SecretKeySpec k = new SecretKeySpec(getSeq(), "AES");
-			cipher.init(Cipher.ENCRYPT_MODE, k);
-			return new String(cipher.doFinal(secretKey.getBytes()));
+			c.init(Cipher.DECRYPT_MODE, k);
+			return new String(c.doFinal(secretKey));
 		} catch (Exception e) {
 			Log.getInstance().getLogger(this.getClass().getName()).error(e);
 			return null;
 		}
 	}
 
-	private String decrypt(String secretKey) {
+	private byte[] encrypt(String secretKey) {
 		try {
-			Cipher c = Cipher.getInstance("AES");
+			Cipher cipher = Cipher.getInstance("AES");
 			SecretKeySpec k = new SecretKeySpec(getSeq(), "AES");
-			c.init(Cipher.DECRYPT_MODE, k);
-			return new String(c.doFinal(secretKey.getBytes()));
+			cipher.init(Cipher.ENCRYPT_MODE, k);
+			return cipher.doFinal(secretKey.getBytes());
 		} catch (Exception e) {
 			Log.getInstance().getLogger(this.getClass().getName()).error(e);
 			return null;
@@ -358,5 +363,28 @@ public class ZendTarget implements IZendTarget {
 	private byte[] getSeq() {
 		return "[B@10f11b8=$eEew".getBytes();
 	}
-	
+
+	private String convertByteToHex(byte[] chars) {
+		String hex = new String();
+		for (int i = 0; i < chars.length; i++) {
+			String c = Integer.toHexString(0xFF & (int) chars[i]);
+			if (c.length() == 1) {
+				c = "0" + c;
+			}
+			hex += c;
+		}
+		return hex.toString();
+	}
+
+	private byte[] convertHexToByte(String hex) {
+		byte[] result = new byte[hex.length() / 2];
+		int j = 0;
+		for (int i = 0; i < hex.length() - 1; i += 2) {
+			String output = hex.substring(i, (i + 2));
+			int decimal = Integer.parseInt(output, 16);
+			result[j++] = (byte) decimal;
+		}
+		return result;
+	}
+
 }
