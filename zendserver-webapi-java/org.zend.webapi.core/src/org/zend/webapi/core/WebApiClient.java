@@ -1248,6 +1248,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_REQUEST_SUMMARY,
+				WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1274,6 +1275,7 @@ public class WebApiClient {
 			final String order, final String direction) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_ISSUES_LIST_BY_PREDEFINED_FILTER,
+				WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1310,7 +1312,7 @@ public class WebApiClient {
 	public IssueDetails monitorGetIssueDetails(final String issueId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
+				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS, WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1336,6 +1338,7 @@ public class WebApiClient {
 			final String eventsGroupId) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_EVENT_GROUP_DETAILS,
+				WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1362,6 +1365,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP,
+				WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1384,6 +1388,7 @@ public class WebApiClient {
 			final IssueStatus newStatus) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_CHANGE_ISSUE_STATUS,
+				WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1406,7 +1411,8 @@ public class WebApiClient {
 			final Boolean noRemote, final String overrideHost)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.STUDIO_START_DEBUG, new IRequestInitializer() {
+				WebApiMethodType.STUDIO_START_DEBUG, WebApiVersion.V1_2,
+				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						StudioStartDebugRequest debugRequest = (StudioStartDebugRequest) request;
@@ -1470,7 +1476,7 @@ public class WebApiClient {
 	public ProfileRequest studioStartProfile(final String eventsGroupId,
 			final String overrideHost) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.STUDIO_START_PROFILE,
+				WebApiMethodType.STUDIO_START_PROFILE, WebApiVersion.V1_2,
 				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
@@ -1513,10 +1519,30 @@ public class WebApiClient {
 	 */
 	public IResponse handle(WebApiMethodType methodType,
 			IRequestInitializer initializer) throws WebApiException {
+		return handle(methodType, DEFAULT_VERSION, initializer);
+	}
+
+	/**
+	 * Zend Server Web API is intended to allow automation of the management and
+	 * deployment of Zend Server and Zend Server Cluster Manager, and allow
+	 * integration with other Zend or 3rd party software. Call a specific
+	 * service method
+	 * 
+	 * @param methodType
+	 *            the method to be called
+	 * @param WebAPI
+	 *            client API version
+	 * @param initializer
+	 *            initializer of this request
+	 * @return the response object
+	 * @throws WebApiException
+	 */
+	public IResponse handle(WebApiMethodType methodType, WebApiVersion version,
+			IRequestInitializer initializer) throws WebApiException {
 
 		// create request
-		IRequest request = RequestFactory.createRequest(methodType,
-				DEFAULT_VERSION, new Date(), this.credentials.getKeyName(),
+		IRequest request = RequestFactory.createRequest(methodType, version,
+				new Date(), this.credentials.getKeyName(),
 				this.clientConfiguration.getUserAgent(),
 				getWebApiAddress(this.clientConfiguration.getHost()),
 				this.credentials.getSecretKey());
