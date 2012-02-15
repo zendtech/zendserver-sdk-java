@@ -248,9 +248,10 @@ public class DataUtils {
 		Assert.assertNotNull(summary.getEventsCount());
 		Assert.assertNotNull(summary.getCodeTracing());
 		List<Event> events = summary.getEvents().getEvents();
-		Assert.assertNotNull(events);
-		for (Event event : events) {
-			checkValidEvent(event);
+		if (events != null) {
+			for (Event event : events) {
+				checkValidEvent(event);
+			}
 		}
 	}
 

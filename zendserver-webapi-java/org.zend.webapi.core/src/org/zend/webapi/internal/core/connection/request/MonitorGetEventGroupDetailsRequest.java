@@ -31,7 +31,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * </tr>
  * <tr>
  * <td>issueId</td>
- * <td>Integer</td>
+ * <td>String</td>
  * <td>Yes</td>
  * <td>Issue identifier, provided in the issue element.</td>
  * </tr>
@@ -87,8 +87,8 @@ public class MonitorGetEventGroupDetailsRequest extends AbstractRequest {
 	 * 
 	 * @param uid
 	 */
-	public void setEventsGroupId(String eventsGroupId) {
-		addParameter("eventsGroupId", eventsGroupId);
+	public void setEventGroupId(int eventGroupId) {
+		addParameter("eventGroupId", eventGroupId);
 	}
 
 	/*

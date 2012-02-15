@@ -899,7 +899,7 @@ public class WebApiClient {
 
 	/**
 	 * Rollback an existing application to its previous version. This process is
-	 * asynchronous Ð the initial request will start the rollback process and
+	 * asynchronous ï¿½ the initial request will start the rollback process and
 	 * the initial response will show information about the application being
 	 * rolled back. The user is expected to continue checking the application
 	 * status using the applicationGetStatus method until the process is
@@ -1309,7 +1309,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public IssueDetails monitorGetIssueDetails(final String issueId)
+	public IssueDetails monitorGetIssueDetails(final int issueId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS, WebApiVersion.V1_2,
@@ -1335,7 +1335,7 @@ public class WebApiClient {
 	 * @since 1.2
 	 */
 	public EventsGroupDetails monitorGetEventGroupDetails(final String issueId,
-			final String eventsGroupId) throws WebApiException {
+			final int eventGroupId) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_EVENT_GROUP_DETAILS,
 				WebApiVersion.V1_2,
@@ -1344,7 +1344,7 @@ public class WebApiClient {
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetEventGroupDetailsRequest monitorRequest = (MonitorGetEventGroupDetailsRequest) request;
 						monitorRequest.setIssueId(issueId);
-						monitorRequest.setEventsGroupId(eventsGroupId);
+						monitorRequest.setEventGroupId(eventGroupId);
 					}
 				});
 		return (EventsGroupDetails) handle.getData();
@@ -1361,7 +1361,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public IssueFile monitorExportIssueByEventsGroup(final String eventsGroupId)
+	public IssueFile monitorExportIssueByEventsGroup(final int eventGroupId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP,
@@ -1370,7 +1370,7 @@ public class WebApiClient {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorExportIssueByEventsGroupRequest fileRequest = (MonitorExportIssueByEventsGroupRequest) request;
-						fileRequest.setEventsGroupId(eventsGroupId);
+						fileRequest.setEventGroupId(eventGroupId);
 					}
 				});
 		return (IssueFile) handle.getData();
@@ -1384,7 +1384,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public Issue monitorChangeIssueStatus(final String issueId,
+	public Issue monitorChangeIssueStatus(final int issueId,
 			final IssueStatus newStatus) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_CHANGE_ISSUE_STATUS,

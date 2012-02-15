@@ -17,7 +17,7 @@ public class GeneralDetails extends AbstractResponseData {
 
 	private String url;
 	private String sourceFile;
-	private int sourceLine;
+	private long sourceLine;
 	private String function;
 	private String aggregationHint;
 	private String errorString;
@@ -55,7 +55,7 @@ public class GeneralDetails extends AbstractResponseData {
 	/**
 	 * @return Line number where the issue manifests within the sourceFile
 	 */
-	public int getSourceLine() {
+	public long getSourceLine() {
 		return sourceLine;
 	}
 
@@ -95,7 +95,7 @@ public class GeneralDetails extends AbstractResponseData {
 		this.sourceFile = sourceFile;
 	}
 
-	protected void setSourceLine(int sourceLine) {
+	protected void setSourceLine(long sourceLine) {
 		this.sourceLine = sourceLine;
 	}
 

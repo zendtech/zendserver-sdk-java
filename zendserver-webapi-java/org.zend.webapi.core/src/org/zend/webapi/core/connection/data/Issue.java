@@ -17,7 +17,7 @@ public class Issue extends AbstractResponseData {
 
 	private int id;
 	private String rule;
-	private long lastOccurance;
+	private String lastOccurance;
 	private String severity;
 	private String status;
 	private GeneralDetails generalDetails;
@@ -60,9 +60,9 @@ public class Issue extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Issue's last time of manifestation
+	 * @return Issue's last time (DD-MMM-YYYY HH:MM) of manifestation
 	 */
-	public long getLastOccurance() {
+	public String getLastOccurance() {
 		return lastOccurance;
 	}
 
@@ -102,7 +102,7 @@ public class Issue extends AbstractResponseData {
 		this.rule = rule;
 	}
 
-	protected void setLastOccurance(long lastOccurance) {
+	protected void setLastOccurance(String lastOccurance) {
 		this.lastOccurance = lastOccurance;
 	}
 

@@ -39,7 +39,7 @@ public class TestMonitorServices extends AbstractTestServer {
 				"monitorGetRequestSummary",
 				ResponseCode.OK);
 		RequestSummary summary = Configuration.getClient()
-				.monitorGetRequestSummary("uid");
+				.monitorGetRequestSummary("00000000000000000000000000000001");
 		DataUtils.checkValidRequestSummary(summary);
 	}
 
@@ -60,8 +60,7 @@ public class TestMonitorServices extends AbstractTestServer {
 		initMock(handler.monitorGetIssueDetails(), "monitorGetIssueDetails",
 				ResponseCode.OK);
 		IssueDetails issueDetails = Configuration.getClient()
-				.monitorGetIssueDetails(
-				"id");
+				.monitorGetIssueDetails(1);
 		DataUtils.checkValidIssueDetails(issueDetails);
 	}
 
@@ -72,7 +71,7 @@ public class TestMonitorServices extends AbstractTestServer {
 				"monitorGetEventGroupDetails",
 				ResponseCode.OK);
 		EventsGroupDetails details = Configuration.getClient()
-				.monitorGetEventGroupDetails("id", "groupId");
+				.monitorGetEventGroupDetails("id", 0);
 		DataUtils.checkValidEventsGroupDetails(details);
 	}
 
@@ -83,7 +82,7 @@ public class TestMonitorServices extends AbstractTestServer {
 				"monitorExportIssueByEventsGroup", ResponseCode.OK,
 				CONFIG_FOLDER, EXAMPLE_CODE_TRACE);
 		IssueFile file = Configuration.getClient()
-				.monitorExportIssueByEventsGroup("groupId");
+				.monitorExportIssueByEventsGroup(0);
 		Assert.assertTrue(file.getFileSize() > 0);
 		Assert.assertNotNull(file.getFilename());
 		Assert.assertNotNull(file.getFileContent());
@@ -96,7 +95,7 @@ public class TestMonitorServices extends AbstractTestServer {
 		initMock(handler.monitorChangeIssueStatus(),
 				"monitorChangeIssueStatus", ResponseCode.OK);
 		Issue issue = Configuration.getClient()
-				.monitorChangeIssueStatus("id", IssueStatus.CLOSED);
+				.monitorChangeIssueStatus(1, IssueStatus.CLOSED);
 		DataUtils.checkValidIssue(issue);
 	}
 

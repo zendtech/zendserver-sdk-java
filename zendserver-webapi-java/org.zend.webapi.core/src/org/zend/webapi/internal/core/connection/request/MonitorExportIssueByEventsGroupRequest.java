@@ -27,7 +27,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * <th>Description</th>
  * </tr>
  * <tr>
- * <td>eventsGroupId</td>
+ * <td>eventGroupId</td>
  * <td>String</td>
  * <td>Yes</td>
  * <td>The issue event group identifier.</td>
@@ -70,8 +70,8 @@ public class MonitorExportIssueByEventsGroupRequest extends AbstractRequest {
 	 * 
 	 * @param - group id
 	 */
-	public void setEventsGroupId(String eventsGroupId) {
-		addParameter("eventsGroupId", eventsGroupId);
+	public void setEventGroupId(int eventsGroupId) {
+		addParameter("eventGroupId", eventsGroupId);
 	}
 
 	/*

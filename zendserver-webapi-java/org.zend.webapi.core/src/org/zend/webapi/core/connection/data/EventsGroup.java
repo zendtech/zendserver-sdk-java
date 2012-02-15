@@ -9,7 +9,7 @@ package org.zend.webapi.core.connection.data;
 
 /**
  * Details about an issue's evensGroup. This even describes general details
- * about groups of events, unlike the ÒeventÓ element which provides in-depth
+ * about groups of events, unlike the ï¿½eventï¿½ element which provides in-depth
  * details.
  * 
  * @author Wojciech Galanciak, 2012
@@ -19,7 +19,7 @@ public class EventsGroup extends AbstractResponseData {
 
 	private String eventsGroupId;
 	private int eventsCount;
-	private long startTime;
+	private String startTime;
 	private int serverId;
 	private String classId;
 	private String userData;
@@ -61,9 +61,10 @@ public class EventsGroup extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Timestamp for the first event in the current event-group
+	 * @return Time (DD-MMM-YYYY HH:MM) for the first event in the current
+	 *         event-group
 	 */
-	public long getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
@@ -146,7 +147,7 @@ public class EventsGroup extends AbstractResponseData {
 		this.eventsCount = eventsCount;
 	}
 
-	protected void setStartTime(long startTime) {
+	protected void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 

@@ -577,7 +577,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/eventsCount", occurrence);
 		eventsGroup.setEventsCount(parseNumberIfExists(value));
 		value = getValue(currentPath + "/startTime", occurrence);
-		eventsGroup.setStartTime(parseLongIfExists(value));
+		eventsGroup.setStartTime(value);
 		value = getValue(currentPath + "/serverId", occurrence);
 		eventsGroup.setServerId(parseNumberIfExists(value));
 		value = getValue(currentPath + "/class", occurrence);
@@ -746,7 +746,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/rule", occurrence);
 		issue.setRule(value);
 		value = getValue(currentPath + "/lastOccurance", occurrence);
-		issue.setLastOccurance(parseLongIfExists(value));
+		issue.setLastOccurance(value);
 		value = getValue(currentPath + "/severity", occurrence);
 		issue.setSeverity(value);
 		value = getValue(currentPath + "/status", occurrence);
@@ -900,7 +900,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/sourceFile", occurrence);
 		generalDetails.setSourceFile(value);
 		value = getValue(currentPath + "/sourceLine", occurrence);
-		generalDetails.setSourceLine(parseNumberIfExists(value));
+		generalDetails.setSourceLine(parseLongIfExists(value));
 		value = getValue(currentPath + "/function", occurrence);
 		generalDetails.setFunction(value);
 		value = getValue(currentPath + "/aggregationHint", occurrence);

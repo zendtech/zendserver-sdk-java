@@ -33,7 +33,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * <td>issueId</td>
  * <td>String</td>
  * <td>Yes</td>
- * <td>The predefined filter's id. Can be the filter's ÒnameÓ or the actual
+ * <td>The predefined filter's id. Can be the filter's ï¿½nameï¿½ or the actual
  * identifier randomly created by the system. This parameter is case-sensitive.</td>
  * </tr>
  * </table>
@@ -69,13 +69,13 @@ public class MonitorGetIssueDetailsRequest extends AbstractRequest {
 	}
 
 	/**
-	 * The predefined filter's id. Can be the filter's ÒnameÓ or the actual
+	 * The predefined filter's id. Can be the filter's ï¿½nameï¿½ or the actual
 	 * identifier randomly created by the system. This parameter is
 	 * case-sensitive.
 	 * 
 	 * @param uid
 	 */
-	public void setIssueId(String issueId) {
+	public void setIssueId(int issueId) {
 		addParameter("issueId", issueId);
 	}
 

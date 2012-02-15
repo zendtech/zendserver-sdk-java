@@ -32,7 +32,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * </tr>
  * <tr>
  * <td>issueId</td>
- * <td>String</td>
+ * <td>Integer</td>
  * <td>Yes</td>
  * <td>The issue identifier.</td>
  * </tr>
@@ -81,9 +81,9 @@ public class MonitorChangeIssueStatusRequest extends AbstractRequest {
 	 * Perform a php restart as part of the action to apply the new settings,
 	 * defaults to true.
 	 * 
-	 * @param boolean value
+	 * @param integer value
 	 */
-	public void setIssueId(String issueId) {
+	public void setIssueId(int issueId) {
 		addParameter("issueId", issueId);
 	}
 
@@ -91,7 +91,7 @@ public class MonitorChangeIssueStatusRequest extends AbstractRequest {
 	 * Perform a php restart as part of the action to apply the new settings,
 	 * defaults to true.
 	 * 
-	 * @param boolean value
+	 * @param IssueStatus value
 	 */
 	public void setNewStatus(IssueStatus status) {
 		addParameter("newStatus", status.getName());
