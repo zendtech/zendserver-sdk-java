@@ -294,4 +294,12 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(GeneralDetails generalDetails) {
+		return true;
+	}
+
+	public boolean visit(GeneralDetails generalDetails) {
+		return true;
+	}
+
 }

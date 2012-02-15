@@ -6,13 +6,15 @@
 	<lastOccurance>123412341234</lastOccurance>
 	<severity>Warning</severity>
 	<status>Closed</status>
-	<url>http://localhost/test.php</url>
-	<sourceFile>/var/www/test.php</sourceFile>
-	<sourceLine>302</sourceLine>
-	<function>fopen</function>
-	<aggregationHint>123412341234</aggregationHint>
-	<errorString>Permission Denied</errorString>
-	<errorType>E_WARNING</errorType>
+	<generalDetails>
+		<url>http://localhost/test.php</url>
+		<sourceFile>/var/www/test.php</sourceFile>
+		<sourceLine>302</sourceLine>
+		<function>fopen</function>
+		<aggregationHint>123412341234</aggregationHint>
+		<errorString>Permission Denied</errorString>
+		<errorType>E_WARNING</errorType>
+	</generalDetails>
 	<routeDetails>
 		<routeDetail>
 			<key>controller</key>

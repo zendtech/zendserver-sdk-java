@@ -20,13 +20,7 @@ public class Issue extends AbstractResponseData {
 	private long lastOccurance;
 	private String severity;
 	private String status;
-	private String url;
-	private String sourceFile;
-	private int sourceLine;
-	private String function;
-	private String aggregationHint;
-	private String errorString;
-	private String errorType;
+	private GeneralDetails generalDetails;
 	private RouteDetails routeDetails;
 
 	protected Issue() {
@@ -40,6 +34,9 @@ public class Issue extends AbstractResponseData {
 	public boolean accept(IResponseDataVisitor visitor) {
 		boolean visit = visitor.preVisit(this);
 		if (visit) {
+			if (this.getGeneralDetails() != null) {
+				this.getGeneralDetails().accept(visitor);
+			}
 			if (this.getRouteDetails() != null) {
 				this.getRouteDetails().accept(visitor);
 			}
@@ -84,59 +81,17 @@ public class Issue extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Issue's creating URL string
-	 */
-	public String getUrl() {
-		return url;
-	}
-
-	/**
-	 * @return Path to the file where the issue manifested
-	 */
-	public String getSourceFile() {
-		return sourceFile;
-	}
-
-	/**
-	 * @return Line number where the issue manifests within the sourceFile
-	 */
-	public int getSourceLine() {
-		return sourceLine;
-	}
-
-	/**
-	 * @return Name of the function that caused the issue to manifest
-	 */
-	public String getFunction() {
-		return function;
-	}
-
-	/**
-	 * @return A unique identifier that groups all events under this issue
-	 */
-	public String getAggregationHint() {
-		return aggregationHint;
-	}
-
-	/**
-	 * @return The error string generated for the event
-	 */
-	public String getErrorString() {
-		return errorString;
-	}
-
-	/**
-	 * @return PHP Error type created for the event
-	 */
-	public String getErrorType() {
-		return errorType;
-	}
-
-	/**
 	 * @return Route details for the issue and the request that created it
 	 */
 	public RouteDetails getRouteDetails() {
 		return routeDetails;
+	}
+
+	/**
+	 * @return general details
+	 */
+	public GeneralDetails getGeneralDetails() {
+		return generalDetails;
 	}
 
 	protected void setId(int id) {
@@ -159,32 +114,8 @@ public class Issue extends AbstractResponseData {
 		this.status = status;
 	}
 
-	protected void setUrl(String url) {
-		this.url = url;
-	}
-
-	protected void setSourceFile(String sourceFile) {
-		this.sourceFile = sourceFile;
-	}
-
-	protected void setSourceLine(int sourceLine) {
-		this.sourceLine = sourceLine;
-	}
-
-	protected void setFunction(String function) {
-		this.function = function;
-	}
-
-	protected void setAggregationHint(String aggregationHint) {
-		this.aggregationHint = aggregationHint;
-	}
-
-	protected void setErrorString(String errorString) {
-		this.errorString = errorString;
-	}
-
-	protected void setErrorType(String errorType) {
-		this.errorType = errorType;
+	protected void setGeneralDetails(GeneralDetails generalDetails) {
+		this.generalDetails = generalDetails;
 	}
 
 	protected void setRouteDetails(RouteDetails routeDetails) {

@@ -20,6 +20,7 @@ import org.zend.webapi.core.connection.data.Event;
 import org.zend.webapi.core.connection.data.EventsGroup;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.EventsGroups;
+import org.zend.webapi.core.connection.data.GeneralDetails;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.Issue;
@@ -318,16 +319,23 @@ public class DataUtils {
 	public static void checkValidIssue(Issue issue) {
 		Assert.assertNotNull(issue);
 		Assert.assertEquals(ResponseType.ISSUE, issue.getType());
-		Assert.assertNotNull(issue.getAggregationHint());
-		Assert.assertNotNull(issue.getErrorString());
-		Assert.assertNotNull(issue.getErrorType());
-		Assert.assertNotNull(issue.getFunction());
 		Assert.assertNotNull(issue.getRule());
 		Assert.assertNotNull(issue.getSeverity());
-		Assert.assertNotNull(issue.getSourceFile());
 		Assert.assertNotNull(issue.getStatus());
-		Assert.assertNotNull(issue.getUrl());
 		checkValidRouteDetails(issue.getRouteDetails());
+		checkValidGeneralDetails(issue.getGeneralDetails());
+	}
+
+	public static void checkValidGeneralDetails(GeneralDetails generalDetails) {
+		Assert.assertNotNull(generalDetails);
+		Assert.assertEquals(ResponseType.GENERAL_DETAILS,
+				generalDetails.getType());
+		Assert.assertNotNull(generalDetails.getAggregationHint());
+		Assert.assertNotNull(generalDetails.getErrorString());
+		Assert.assertNotNull(generalDetails.getErrorType());
+		Assert.assertNotNull(generalDetails.getFunction());
+		Assert.assertNotNull(generalDetails.getSourceFile());
+		Assert.assertNotNull(generalDetails.getUrl());
 	}
 
 	public static void checkValidRouteDetails(RouteDetails routeDetails) {

@@ -155,4 +155,8 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(ProfileRequest profileRequest);
 
+	public boolean preVisit(GeneralDetails generalDetails);
+
+	public boolean visit(GeneralDetails generalDetails);
+
 }

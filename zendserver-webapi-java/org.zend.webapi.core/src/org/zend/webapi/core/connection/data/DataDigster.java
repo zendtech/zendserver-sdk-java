@@ -751,20 +751,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 		issue.setSeverity(value);
 		value = getValue(currentPath + "/status", occurrence);
 		issue.setStatus(value);
-		value = getValue(currentPath + "/url", occurrence);
-		issue.setUrl(value);
-		value = getValue(currentPath + "/sourceFile", occurrence);
-		issue.setSourceFile(value);
-		value = getValue(currentPath + "/sourceLine", occurrence);
-		issue.setSourceLine(parseNumberIfExists(value));
-		value = getValue(currentPath + "/function", occurrence);
-		issue.setFunction(value);
-		value = getValue(currentPath + "/aggregationHint", occurrence);
-		issue.setAggregationHint(value);
-		value = getValue(currentPath + "/errorString", occurrence);
-		issue.setErrorString(value);
-		value = getValue(currentPath + "/errorType", occurrence);
-		issue.setErrorType(value);
+		GeneralDetails generalDetails = new GeneralDetails(currentPath
+				+ "/generalDetails", occurrence);
+		issue.setGeneralDetails(generalDetails);
 		RouteDetails routeDetails = new RouteDetails(currentPath
 				+ "/routeDetails", occurrence);
 		issue.setRouteDetails(routeDetails);
@@ -899,6 +888,27 @@ public class DataDigster extends GenericResponseDataVisitor {
 		profileRequest.setSuccess(value);
 		value = getValue(currentPath + "/message", occurrence);
 		profileRequest.setMessage(value);
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(GeneralDetails generalDetails) {
+		String currentPath = generalDetails.getPrefix();
+		int occurrence = generalDetails.getOccurrence();
+		String value = getValue(currentPath + "/url", occurrence);
+		generalDetails.setUrl(value);
+		value = getValue(currentPath + "/sourceFile", occurrence);
+		generalDetails.setSourceFile(value);
+		value = getValue(currentPath + "/sourceLine", occurrence);
+		generalDetails.setSourceLine(parseNumberIfExists(value));
+		value = getValue(currentPath + "/function", occurrence);
+		generalDetails.setFunction(value);
+		value = getValue(currentPath + "/aggregationHint", occurrence);
+		generalDetails.setAggregationHint(value);
+		value = getValue(currentPath + "/errorString", occurrence);
+		generalDetails.setErrorString(value);
+		value = getValue(currentPath + "/errorType", occurrence);
+		generalDetails.setErrorType(value);
 		return true;
 	}
 

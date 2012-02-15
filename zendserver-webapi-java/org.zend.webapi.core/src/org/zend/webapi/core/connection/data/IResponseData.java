@@ -81,6 +81,8 @@ public interface IResponseData {
 
 		PROFILE_REQUEST,
 
+		GENERAL_DETAILS,
+
 	}
 
 	/**
