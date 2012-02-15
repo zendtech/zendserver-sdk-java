@@ -226,25 +226,37 @@ public class ProfileModificationHelper {
 		return installableUnits;
 	}
 
-	static private IMetadataRepository loadRepository()
+	static private IMetadataRepository loadRepository(URI repo)
 			throws MalformedURLException, URISyntaxException,
 			ProvisionException {
 		ProvisioningSession session = ProvisioningUI.getDefaultUI()
 				.getSession();
-		URI repo = getDefaultRepository();
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) session
 				.getProvisioningAgent().getService(
 						IMetadataRepositoryManager.SERVICE_NAME);
 		return manager.loadRepository(repo, null);
 	}
 
-	static public List<IInstallableUnit> queryRepoInstallableUnits(
+	static private List<IInstallableUnit> queryRepoInstallableUnits(
 			Set<String> installableUnitIds) throws URISyntaxException,
 			MalformedURLException, ProvisionException {
-		IMetadataRepository repository = loadRepository();
-		IQueryResult<IInstallableUnit> result = repository.query(
+		
+		List<String> toFind = new ArrayList<String>(installableUnitIds);
+		
+		URI[] repos = getRepositories();
+		IQueryResult<IInstallableUnit> allIUs = null;
+		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		for (URI repo : repos) {
+			IMetadataRepository repository = loadRepository(repo);
+			allIUs = repository.query(
 				QueryUtil.createIUGroupQuery(), null);
-		return queryForIUs(installableUnitIds, result);
+			
+			getIUsFromQueryResult(toFind, allIUs, result);
+			if (toFind.isEmpty()) {
+				break;
+			}
+		}
+		return result;
 	}
 
 	static public List<IInstallableUnit> queryProfileInstallableUnits(
@@ -253,26 +265,35 @@ public class ProfileModificationHelper {
 		IProfile profile = ProvUI.getProfileRegistry(
 				ProvisioningUI.getDefaultUI().getSession()).getProfile(
 				IProfileRegistry.SELF);
-		IQueryResult<IInstallableUnit> result = profile.query(
+		IQueryResult<IInstallableUnit> queryresult = profile.query(
 				QueryUtil.createIUGroupQuery(), null);
-		return queryForIUs(installableUnitIds, result);
+		
+		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		getIUsFromQueryResult(new ArrayList(installableUnitIds), queryresult, result);
+		return result;
 	}
 
-	private static List<IInstallableUnit> queryForIUs(
-			Set<String> installableUnitIds,
-			IQueryResult<IInstallableUnit> result) {
-		final List<IInstallableUnit> installableUnits = new ArrayList<IInstallableUnit>();
-		for (Iterator<IInstallableUnit> iter = result.iterator(); iter
+	private static List<IInstallableUnit> getIUsFromQueryResult(
+			List<String> installableUnitIds,
+			IQueryResult<IInstallableUnit> queryResult, List<IInstallableUnit> installableUnits) {
+		for (Iterator<IInstallableUnit> iter = queryResult.iterator(); iter
 				.hasNext();) {
 			IInstallableUnit iu = iter.next();
 			String id = iu.getId();
-			if (installableUnitIds.contains(id))
+			if (installableUnitIds.contains(id)) {
+				installableUnitIds.remove(id);
 				installableUnits.add(iu);
+			}
+			
+			if (installableUnitIds.contains(id.concat(".feature.group"))) {
+				installableUnitIds.remove(id);
+				installableUnits.add(iu);
+			}
 		}
 		return installableUnits;
 	}
 
-	public static URI getDefaultRepository() {
+	private static URI[] getRepositories() {
 		URI location = null;
 		RepositoryTracker repositoryTracker = ProvisioningUI.getDefaultUI()
 				.getRepositoryTracker();
@@ -283,32 +304,35 @@ public class ProfileModificationHelper {
 					.logErrorMessage("RepositoryTracker or ProvisioningSession was null.");
 			return null;
 		}
+		
+		URI[] uris = null;
 		try {
-			URI[] uris = Customization.getSiteUris();
-			if (uris.length > 0) {
-				for (URI uri : uris) {
-					repositoryTracker.addRepository(uri, null, session);
-					if (isZendExtraFeatures(uri)) {
-						location = uri;
-					}
-				}
-			} else {
-				URI[] knownRepositories = repositoryTracker
-						.getKnownRepositories(session);
-				for (URI repo : knownRepositories) {
-					if (isZendExtraFeatures(repo)) {
-						location = repo;
-						// repositoryTracker.refreshRepositories(
-						// new URI[] { repo }, session, null);
-						break;
-					}
-				}
-			}
+			uris = Customization.getSiteUris();
 		} catch (URISyntaxException e) {
 			Activator.log(e);
 		}
-
-		return location;
+		
+		if (uris == null || uris.length == 0) {
+			uris = repositoryTracker
+					.getKnownRepositories(session);
+		}
+		
+		for (URI uri : uris) {
+			repositoryTracker.addRepository(uri, null, session);
+		}
+		
+		return uris;
+	}
+	
+	public static URI getExtraRepository() {
+		URI[] repos = getRepositories();
+		for (URI uri : repos) {
+			if (isZendExtraFeatures(uri)) {
+				return uri;
+			}
+		}
+		
+		return null;
 	}
 
 	private static boolean isZendExtraFeatures(URI uri) {

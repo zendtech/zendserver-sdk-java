@@ -165,7 +165,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 		URI repo = null;
 		try {
-			repo = ProfileModificationHelper.getDefaultRepository();
+			repo = ProfileModificationHelper.getExtraRepository();
 		} catch (IllegalArgumentException ex) {
 			performDiscovery = false;
 			handleError(Messages.ConnectorDiscovery_InvalidUrlDefined_Title,
