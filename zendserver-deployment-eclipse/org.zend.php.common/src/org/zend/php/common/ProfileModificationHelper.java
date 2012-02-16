@@ -47,7 +47,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 public class ProfileModificationHelper {
 
-	private static final String LISTENERS_EXT_POINT = "org.zend.php.common.profileModificationListeners";
+	private static final String LISTENERS_EXT_POINT = "org.zend.php.customization.profileModificationListeners";
 
 	static List<IInstallableUnit> toInstall;
 	static List<IInstallableUnit> toUninstall;
@@ -60,11 +60,22 @@ public class ProfileModificationHelper {
 	public static IStatus modify(IProgressMonitor monitor,
 			final List<CatalogItem> toAdd, final List<CatalogItem> toRemove,
 			final int restartPolicy) {
-		IStatus status = modify(monitor, getDescriptorIds(toAdd),
-				getDescriptorIds(toRemove), restartPolicy);
+		
+		Set<String> setToAdd = getDescriptorIds(toAdd);
+		Set<String> setToRemove = getDescriptorIds(toRemove);
+		
 		List<IProfileModificationListener> listeners = getModificationListeners();
 		for (IProfileModificationListener listener : listeners) {
-			listener.profileChanged(getIds(toAdd), getIds(toRemove), status);
+			IStatus status = listener.aboutToChange(setToAdd, setToRemove);
+			if ((status != null) && (status.getSeverity() == IStatus.CANCEL)) {
+				return status;
+			}
+		}
+		
+		IStatus status = modify(monitor, setToAdd, setToRemove, restartPolicy);
+		
+		for (IProfileModificationListener listener : listeners) {
+			listener.profileChanged(setToAdd, setToRemove, status);
 		}
 		return status;
 	}
@@ -114,7 +125,7 @@ public class ProfileModificationHelper {
 	 *            - ids of InstallableUnit
 	 * @param restartPolicy
 	 */
-	public static IStatus modify(IProgressMonitor monitor,
+	private static IStatus modify(IProgressMonitor monitor,
 			final Set<String> toAdd, final Set<String> toRemove,
 			final int restartPolicy) {
 		try {

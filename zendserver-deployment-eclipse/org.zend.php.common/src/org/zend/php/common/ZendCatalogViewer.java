@@ -87,10 +87,6 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	final Catalog catalog;
 
-	private final List<CatalogItem> toAddItems = new ArrayList<CatalogItem>();
-
-	private final List<CatalogItem> toRemoveItems = new ArrayList<CatalogItem>();
-
 	private final CatalogConfiguration configuration;
 
 	boolean ignoreUpdates;
@@ -137,7 +133,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 	private boolean showHeader = false;
 
 	public ZendCatalogViewer(IShellProvider shellProvider,
-			IRunnableContext context, String directoryFileName) {
+			IRunnableContext context) {
 
 		this.catalog = new Catalog();
 		catalog.setEnvironment(DiscoveryCore.createEnvironment());
@@ -145,11 +141,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 		// look for descriptors from installed bundles
 		// catalog.getDiscoveryStrategies().add(new BundleDiscoveryStrategy());
-
-		// look for remote descriptor
-		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
-		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
-
+		
 		this.configuration = new CatalogConfiguration();
 		configuration.setShowTagFilter(false);
 		configuration.setShowInstalled(true);
@@ -162,6 +154,12 @@ public class ZendCatalogViewer extends FilteredViewer {
 		} else {
 			this.visibleTags = new HashSet<Tag>();
 		}
+	}
+	
+	public void init(String directoryFileName) {
+		// look for remote descriptor
+		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
+		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
 
 		URI repo = null;
 		try {
@@ -620,7 +618,14 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	private void applyChanges() {
 		Object[] selection = getCatalogItems();
-		findFeatureChanges(selection);
+		
+		List<CatalogItem> toAddItems = new ArrayList<CatalogItem>();
+		List<CatalogItem> toRemoveItems = new ArrayList<CatalogItem>();
+		findFeatureChanges(selection, toAddItems, toRemoveItems);
+		doApplyChanges(toAddItems, toRemoveItems);
+	}
+	
+	protected void doApplyChanges(final List<CatalogItem> toAddItems, final List<CatalogItem> toRemoveItems) {
 		if (!toAddItems.isEmpty() || !toRemoveItems.isEmpty()) {
 			Job job = new Job(Messages.ApplyChanges_JobName) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -641,10 +646,9 @@ public class ZendCatalogViewer extends FilteredViewer {
 			job.schedule();
 		}
 	}
+	
 
-	private void findFeatureChanges(Object[] selection) {
-		toAddItems.clear();
-		toRemoveItems.clear();
+	private void findFeatureChanges(Object[] selection, List<CatalogItem> toAddItems, List<CatalogItem> toRemoveItems) {
 		List<Object> selectedConnectors = Arrays.asList(selection);
 		for (Object connector : selectedConnectors) {
 			if (connector instanceof CatalogItem) {

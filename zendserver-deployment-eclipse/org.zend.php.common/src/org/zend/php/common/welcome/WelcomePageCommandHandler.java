@@ -48,7 +48,7 @@ public class WelcomePageCommandHandler extends AbstractHandler {
 													"/resources/welcome/index.html"),
 											null);
 
-							final IEditorInput editorInput = new WelcomePageEditorInput(
+							final IEditorInput editorInput = new PdtWelcomePageEditorInput(
 									FileLocator.toFileURL(url),
 									IWorkbenchBrowserSupport.PERSISTENT,
 									"welcomeBrowser");

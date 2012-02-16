@@ -65,4 +65,8 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	public static final String ELEMENT_FACTORY_ID = WelcomePageEditorInput.class
 			.getName();
 
+	public String getDiscoveryDirFileName() {
+		return "/pdt_directory.xml";
+	}
+
 }

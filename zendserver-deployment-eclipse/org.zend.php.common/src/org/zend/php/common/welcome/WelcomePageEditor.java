@@ -34,6 +34,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 
 	private static final String IS_FIRST_WELCOME_STARTUP = "isFirstWelcomeStartup"; //$NON-NLS-1$
 
+	private ZendCatalogViewer viewer;
+
 	public WelcomePageEditor() {
 		// TODO Auto-generated constructor stub
 	}
@@ -52,6 +54,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
+		
+		WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput) input;
 	}
 
 	public boolean isDirty() {
@@ -82,6 +86,11 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		editor.setBackground(c);
 		createWelcomePageContent(editor);
 		createFeatureManager(editor);
+		
+		if (getEditorInput() instanceof WelcomePageEditorInput) {
+			WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput)getEditorInput();
+			viewer.init(welcomeInput.getDiscoveryDirFileName());
+		}
 		//PlatformUI.getWorkbench().getHelpSystem()
 			//	.setHelp(parent, IStudioHelpContextIds.WELCOME_PAGE);
 	}
@@ -130,8 +139,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		gdL.verticalSpacing = 0;
 		gdL.horizontalSpacing = 0;
 		viewerComposite.setLayout(gdL);
-		final ZendCatalogViewer viewer = new ZendCatalogViewer(provider,
-				context, "/pdt_directory.xml");
+		viewer = new ZendCatalogViewer(provider,
+				context);
 		viewer.createControl(viewerComposite);
 		//PlatformUI
 			//	.getWorkbench()
