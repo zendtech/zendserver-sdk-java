@@ -14,6 +14,7 @@ import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
+import org.zend.webapi.core.connection.data.CodeTracingStatus.Status;
 import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.DeployedVersion;
 import org.zend.webapi.core.connection.data.DeployedVersions;
@@ -48,13 +49,6 @@ import org.zend.webapi.core.connection.data.values.SystemStatus;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 public class DataUtils {
-
-	private static List<String> componentStatus = new ArrayList<String>();
-	
-	static {
-		componentStatus.add("Active");
-		componentStatus.add("Inactive");
-	}
 
 	public static void checkValidServersList(ServersList serversList) {
 		Assert.assertNotNull(serversList);
@@ -221,7 +215,7 @@ public class DataUtils {
 		Assert.assertTrue(State.UNKNOWN != status.getAwaitsRestart());
 		Assert.assertTrue(State.UNKNOWN != status.getTraceEnabled());
 		Assert.assertTrue(State.UNKNOWN != status.getDeveloperMode());
-		Assert.assertTrue(componentStatus.contains(status.getComponentStatus()));
+		Assert.assertTrue(Status.UNKNOWN != status.getComponentStatus());
 	}
 
 	public static void checkValidCodeTrace(CodeTrace trace) {

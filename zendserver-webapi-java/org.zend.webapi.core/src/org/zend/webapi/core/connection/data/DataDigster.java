@@ -22,6 +22,7 @@ import org.restlet.representation.Representation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
+import org.zend.webapi.core.connection.data.CodeTracingStatus.Status;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
@@ -516,7 +517,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = codeTracingStatus.getPrefix();
 		int occurrence = codeTracingStatus.getOccurrence();
 		String value = getValue(currentPath + "/componentStatus", occurrence);
-		codeTracingStatus.setComponentStatus(value);
+		codeTracingStatus.setComponentStatus(Status.byValue(value));
 		value = getValue(currentPath + "/alwaysDump", occurrence);
 		codeTracingStatus.setAlwaysDump(State
 				.byValue(parseNumberIfExists(value)));

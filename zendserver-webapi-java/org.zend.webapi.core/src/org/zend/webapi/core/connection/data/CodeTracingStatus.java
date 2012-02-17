@@ -52,7 +52,43 @@ public class CodeTracingStatus extends AbstractResponseData {
 		
 	}
 	
-	private String componentStatus;
+	/**
+	 * Represents set of possible code tracing statuses.
+	 */
+	public enum Status {
+		
+		ACTIVE("Active"),
+		
+		INACTIVE("Inactive"),
+		
+		UNKNOWN(null);
+		
+		private final String value;
+
+		private Status(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+		
+		public static Status byValue(String value) {
+			if (value == null) {
+				return UNKNOWN;
+			}
+			Status[] values = values();
+			for (Status status : values) {
+				if (value.equals(status.getValue())) {
+					return status;
+				}
+			}
+			return UNKNOWN;
+		}
+		
+	}
+	
+	private Status componentStatus;
 	private State alwaysDump;
 	private State traceEnabled;
 	private State developerMode;
@@ -77,7 +113,7 @@ public class CodeTracingStatus extends AbstractResponseData {
 	/**
 	 * @return Current activity status of the component: Active | Inactive
 	 */
-	public String getComponentStatus() {
+	public Status getComponentStatus() {
 		return componentStatus;
 	}
 
@@ -110,7 +146,7 @@ public class CodeTracingStatus extends AbstractResponseData {
 		return awaitsRestart;
 	}
 
-	protected void setComponentStatus(String componentStatus) {
+	protected void setComponentStatus(Status componentStatus) {
 		this.componentStatus = componentStatus;
 	}
 
