@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,16 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 			final DataDigster dataDigster = new DataDigster(request, handle);
 
+			handle.getMediaType();
+			
+			handle.getMediaType();
+			try {
+				System.out.println(handle.getText());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
@@ -88,6 +99,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			}
 			
 			dataDigster.digest();
+			
 
 			// creating the response object
 			response = ResponseFactory.createResponse(request, responseCode,

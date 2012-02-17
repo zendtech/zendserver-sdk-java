@@ -44,12 +44,12 @@ public class TestMonitorServices extends AbstractTestServer {
 	}
 
 	@Test
-	public void testMonitorGetIssuesListByPredefinedFilter()
+	public void testMonitorGetIssuesListPredefinedFilter()
 			throws WebApiException, MalformedURLException {
 		initMock(handler.monitorGetIssuesListByPredefinedFilter(),
 				"monitorGetIssuesListByPredefinedFilter", ResponseCode.OK);
 		IssueList issueList = Configuration.getClient()
-				.monitorGetIssuesListByPredefinedFilter(1, null, null,
+				.monitorGetIssuesListPredefinedFilter("All Open Events", null, null,
 						null, null);
 		DataUtils.checkValidIssueList(issueList);
 	}
@@ -60,7 +60,7 @@ public class TestMonitorServices extends AbstractTestServer {
 		initMock(handler.monitorGetIssueDetails(), "monitorGetIssueDetails",
 				ResponseCode.OK);
 		IssueDetails issueDetails = Configuration.getClient()
-				.monitorGetIssueDetails(1);
+				.monitorGetIssueDetails(30);
 		DataUtils.checkValidIssueDetails(issueDetails);
 	}
 
@@ -71,7 +71,7 @@ public class TestMonitorServices extends AbstractTestServer {
 				"monitorGetEventGroupDetails",
 				ResponseCode.OK);
 		EventsGroupDetails details = Configuration.getClient()
-				.monitorGetEventGroupDetails("id", 0);
+				.monitorGetEventGroupDetails("1", 1);
 		DataUtils.checkValidEventsGroupDetails(details);
 	}
 

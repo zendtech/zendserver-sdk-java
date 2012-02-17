@@ -1271,11 +1271,11 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public IssueList monitorGetIssuesListByPredefinedFilter(
-			final Integer filterId, final Integer limit, final Integer offset,
+	public IssueList monitorGetIssuesListPredefinedFilter(
+			final String filterId, final Integer limit, final Integer offset,
 			final String order, final String direction) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.MONITOR_GET_ISSUES_LIST_BY_PREDEFINED_FILTER,
+				WebApiMethodType.MONITOR_GET_ISSUES_LIST_PREDEFINED_FILTER,
 				WebApiVersion.V1_2, new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {

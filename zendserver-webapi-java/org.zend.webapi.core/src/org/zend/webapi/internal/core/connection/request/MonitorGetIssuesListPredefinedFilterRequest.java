@@ -83,7 +83,7 @@ public class MonitorGetIssuesListPredefinedFilterRequest extends
 	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
 	 */
 	public String getUri() {
-		return "/ZendServerManager/Api/monitorGetIssuesListByPredefinedFilter";
+		return "/ZendServerManager/Api/monitorGetIssuesListPredefinedFilter";
 	}
 
 	/*
@@ -100,7 +100,7 @@ public class MonitorGetIssuesListPredefinedFilterRequest extends
 	 * 
 	 * @param filterId
 	 */
-	public void setFilterId(int filterId) {
+	public void setFilterId(String filterId) {
 		addParameter("filterId", filterId);
 	}
 

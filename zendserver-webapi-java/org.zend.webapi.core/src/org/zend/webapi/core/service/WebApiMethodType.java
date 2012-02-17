@@ -192,8 +192,8 @@ public enum WebApiMethodType {
 	/**
 	 * @see MonitorGetIssuesListPredefinedFilterRequest
 	 */
-	MONITOR_GET_ISSUES_LIST_BY_PREDEFINED_FILTER(
-			"monitorGetIssuesListByPredefinedFilter",
+	MONITOR_GET_ISSUES_LIST_PREDEFINED_FILTER(
+			"monitorGetIssuesListPredefinedFilter",
 			MonitorGetIssuesListPredefinedFilterRequest.class),
 
 	/**

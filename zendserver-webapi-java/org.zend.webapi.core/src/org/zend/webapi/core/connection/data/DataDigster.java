@@ -21,6 +21,7 @@ import org.restlet.ext.xml.XmlRepresentation;
 import org.restlet.representation.Representation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
@@ -517,13 +518,17 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String value = getValue(currentPath + "/componentStatus", occurrence);
 		codeTracingStatus.setComponentStatus(value);
 		value = getValue(currentPath + "/alwaysDump", occurrence);
-		codeTracingStatus.setAlwaysDump(value);
+		codeTracingStatus.setAlwaysDump(State
+				.byValue(parseNumberIfExists(value)));
 		value = getValue(currentPath + "/traceEnabled", occurrence);
-		codeTracingStatus.setTraceEnabled(value);
+		codeTracingStatus.setTraceEnabled(State
+				.byValue(parseNumberIfExists(value)));
 		value = getValue(currentPath + "/developerMode", occurrence);
-		codeTracingStatus.setDeveloperMode(value);
+		codeTracingStatus.setDeveloperMode(State
+				.byValue(parseNumberIfExists(value)));
 		value = getValue(currentPath + "/awaitsRestart", occurrence);
-		codeTracingStatus.setAwaitsRestart(parseNumberIfExists(value));
+		codeTracingStatus.setAwaitsRestart(State
+				.byValue(parseNumberIfExists(value)));
 		return true;
 	}
 

@@ -85,17 +85,21 @@ public class TestCodeTracingServices extends AbstractTestServer {
 		initMock(handler.codeTracingCreate(), "codetracingCreate",
 				ResponseCode.OK);
 		CodeTrace trace = Configuration.getClient().codeTracingCreate(
-				"http://example.com");
+				"http://localhost/client/formatting.php");
 		DataUtils.checkValidCodeTrace(trace);
 	}
 
 	@Test
 	public void testCodeTracingDelete() throws WebApiException,
 			MalformedURLException {
+		initMock(handler.codeTracingList(), "codetracingList", ResponseCode.OK);
+		CodeTracingList traces = Configuration.getClient().codeTracingList(
+				null, null, null, null, (String[]) null);
+		DataUtils.checkValidCodeTracingList(traces);
 		initMock(handler.codeTracingDelete(), "codetracingDelete",
 				ResponseCode.OK);
 		CodeTrace trace = Configuration.getClient()
-				.codeTracingDelete("traceId");
+				.codeTracingDelete(traces.getTraces().get(0).getId());
 		DataUtils.checkValidCodeTrace(trace);
 	}
 
@@ -115,7 +119,7 @@ public class TestCodeTracingServices extends AbstractTestServer {
 				"codetracingDownloadTraceFile", ResponseCode.OK, CONFIG_FOLDER,
 				EXAMPLE_CODE_TRACE);
 		CodeTraceFile file = Configuration.getClient()
-				.codeTracingDownloadTraceFile("traceId");
+				.codeTracingDownloadTraceFile("0.15720.1");
 		Assert.assertTrue(file.getFileSize() > 0);
 		Assert.assertNotNull(file.getFilename());
 		Assert.assertNotNull(file.getFileContent());

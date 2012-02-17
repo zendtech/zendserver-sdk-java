@@ -13,6 +13,7 @@ import org.zend.webapi.core.connection.data.Backtrace;
 import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
 import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.DeployedVersion;
 import org.zend.webapi.core.connection.data.DeployedVersions;
@@ -49,7 +50,7 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
 public class DataUtils {
 
 	private static List<String> componentStatus = new ArrayList<String>();
-
+	
 	static {
 		componentStatus.add("Active");
 		componentStatus.add("Inactive");
@@ -217,10 +218,10 @@ public class DataUtils {
 		Assert.assertEquals(ResponseType.CODE_TRACING_STATUS, status.getType());
 		// TODO verify why this value is null
 		// Assert.assertNotNull(status.getAlwaysDump());
-		Assert.assertNotNull(status.getAwaitsRestart());
+		Assert.assertTrue(State.UNKNOWN != status.getAwaitsRestart());
+		Assert.assertTrue(State.UNKNOWN != status.getTraceEnabled());
+		Assert.assertTrue(State.UNKNOWN != status.getDeveloperMode());
 		Assert.assertTrue(componentStatus.contains(status.getComponentStatus()));
-		Assert.assertNotNull(status.getDeveloperMode());
-		Assert.assertNotNull(status.getTraceEnabled());
 	}
 
 	public static void checkValidCodeTrace(CodeTrace trace) {
@@ -272,8 +273,10 @@ public class DataUtils {
 		Assert.assertNotNull(backtrace);
 		Assert.assertEquals(ResponseType.BACKTRACE, backtrace.getType());
 		List<Step> steps = backtrace.getSteps();
-		for (Step step : steps) {
-			checkValidStep(step);
+		if (steps != null) {
+			for (Step step : steps) {
+				checkValidStep(step);
+			}
 		}
 	}
 

@@ -15,11 +15,48 @@ package org.zend.webapi.core.connection.data;
  */
 public class CodeTracingStatus extends AbstractResponseData {
 
+	
+	/**
+	 * Represents set of possible states for CodeTracingStatus fields.
+	 */
+	public enum State {
+		
+		ON(1),
+		
+		OFF(0),
+		
+		UNKNOWN(-1);
+		
+		private final int value;
+
+		private State(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+		
+		public static State byValue(int value) {
+			if (value < 0) {
+				return UNKNOWN;
+			}
+			State[] values = values();
+			for (State state : values) {
+				if (state.getValue() == value) {
+					return state;
+				}
+			}
+			return UNKNOWN;
+		}
+		
+	}
+	
 	private String componentStatus;
-	private String alwaysDump;
-	private String traceEnabled;
-	private String developerMode;
-	private int awaitsRestart;
+	private State alwaysDump;
+	private State traceEnabled;
+	private State developerMode;
+	private State awaitsRestart;
 
 	protected CodeTracingStatus() {
 		super(ResponseType.CODE_TRACING_STATUS, BASE_PATH
@@ -47,21 +84,21 @@ public class CodeTracingStatus extends AbstractResponseData {
 	/**
 	 * @return Current always_dump directive value (On|Off)
 	 */
-	public String getAlwaysDump() {
+	public State getAlwaysDump() {
 		return alwaysDump;
 	}
 
 	/**
 	 * @return Current trace_enabled directive value (On|Off)
 	 */
-	public String getTraceEnabled() {
+	public State getTraceEnabled() {
 		return traceEnabled;
 	}
 
 	/**
 	 * @return Current developer_mode directive value (On|Off)
 	 */
-	public String getDeveloperMode() {
+	public State getDeveloperMode() {
 		return developerMode;
 	}
 
@@ -69,7 +106,7 @@ public class CodeTracingStatus extends AbstractResponseData {
 	 * @return If true, ZendServer is waiting for a restart which may affect
 	 *         these settings
 	 */
-	public int getAwaitsRestart() {
+	public State getAwaitsRestart() {
 		return awaitsRestart;
 	}
 
@@ -77,19 +114,19 @@ public class CodeTracingStatus extends AbstractResponseData {
 		this.componentStatus = componentStatus;
 	}
 
-	protected void setAlwaysDump(String alwaysDump) {
+	protected void setAlwaysDump(State alwaysDump) {
 		this.alwaysDump = alwaysDump;
 	}
 
-	protected void setTraceEnabled(String traceEnabled) {
+	protected void setTraceEnabled(State traceEnabled) {
 		this.traceEnabled = traceEnabled;
 	}
 
-	protected void setDeveloperMode(String developerMode) {
+	protected void setDeveloperMode(State developerMode) {
 		this.developerMode = developerMode;
 	}
 
-	protected void setAwaitsRestart(int awaitsRestart) {
+	protected void setAwaitsRestart(State awaitsRestart) {
 		this.awaitsRestart = awaitsRestart;
 	}
 
