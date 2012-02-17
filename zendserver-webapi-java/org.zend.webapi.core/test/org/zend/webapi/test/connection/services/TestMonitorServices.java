@@ -46,7 +46,7 @@ public class TestMonitorServices extends AbstractTestServer {
 	@Test
 	public void testMonitorGetIssuesListPredefinedFilter()
 			throws WebApiException, MalformedURLException {
-		initMock(handler.monitorGetIssuesListByPredefinedFilter(),
+		initMock(handler.monitorGetIssuesListPredefinedFilter(),
 				"monitorGetIssuesListByPredefinedFilter", ResponseCode.OK);
 		IssueList issueList = Configuration.getClient()
 				.monitorGetIssuesListPredefinedFilter("All Open Events", null, null,

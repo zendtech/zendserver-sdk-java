@@ -145,7 +145,7 @@ public class ZendSystem {
 	}
 
 	public ServerResponse monitorGetIssuesListByPredefinedFilter() {
-		return handler.monitorGetIssuesListByPredefinedFilter();
+		return handler.monitorGetIssuesListPredefinedFilter();
 	}
 
 	public ServerResponse monitorGetIssueDetails() {

@@ -52,7 +52,7 @@ public interface RequestHandler {
 
 	ServerResponse monitorGetRequestSummary();
 
-	ServerResponse monitorGetIssuesListByPredefinedFilter();
+	ServerResponse monitorGetIssuesListPredefinedFilter();
 
 	ServerResponse monitorGetIssueDetails();
 

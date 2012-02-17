@@ -276,7 +276,7 @@ public class ServerApplication extends Application {
 			}
 		};
 
-		Restlet monitorGetIssuesListByPredefinedFilter = new Restlet() {
+		Restlet monitorGetIssuesListPredefinedFilter = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				ServerResponse serverResponse = ZendSystem.getInstance()
@@ -394,8 +394,8 @@ public class ServerApplication extends Application {
 		router.attach("/ZendServerManager/Api/monitorGetRequestSummary",
 				monitorGetRequestSummary);
 		router.attach(
-				"/ZendServerManager/Api/monitorGetIssuesListByPredefinedFilter",
-				monitorGetIssuesListByPredefinedFilter);
+				"/ZendServerManager/Api/monitorGetIssuesListPredefinedFilter",
+				monitorGetIssuesListPredefinedFilter);
 		router.attach("/ZendServerManager/Api/monitorGetIssueDetails",
 				monitorGetIssueDetails);
 		router.attach("/ZendServerManager/Api/monitorGetEventGroupDetails",
