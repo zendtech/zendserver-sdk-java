@@ -132,9 +132,11 @@ public class ZendCatalogViewer extends FilteredViewer {
 	 */
 	private boolean showHeader = false;
 
+	private String operationName;
+
 	public ZendCatalogViewer(IShellProvider shellProvider,
 			IRunnableContext context) {
-
+		
 		this.catalog = new Catalog();
 		catalog.setEnvironment(DiscoveryCore.createEnvironment());
 		catalog.setVerifyUpdateSiteAvailability(false);
@@ -631,7 +633,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 				protected IStatus run(IProgressMonitor monitor) {
 					return ProfileModificationHelper.modify(monitor,
 							toAddItems, toRemoveItems,
-							Policy.RESTART_POLICY_PROMPT_RESTART_OR_APPLY);
+							Policy.RESTART_POLICY_PROMPT_RESTART_OR_APPLY,
+							operationName);
 				}
 			};
 
@@ -698,6 +701,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 				return Status.OK_STATUS;
 			}
 		};
+	}
+
+	public void setOperationName(String operName) {
+		this.operationName = operName;
 	}
 
 }

@@ -59,7 +59,7 @@ public class ProfileModificationHelper {
 	}
 	public static IStatus modify(IProgressMonitor monitor,
 			final List<CatalogItem> toAdd, final List<CatalogItem> toRemove,
-			final int restartPolicy) {
+			final int restartPolicy, String jobName) {
 		
 		Set<String> setToAdd = getDescriptorIds(toAdd);
 		Set<String> setToRemove = getDescriptorIds(toRemove);
@@ -72,7 +72,7 @@ public class ProfileModificationHelper {
 			}
 		}
 		
-		IStatus status = modify(monitor, setToAdd, setToRemove, restartPolicy);
+		IStatus status = modify(monitor, setToAdd, setToRemove, restartPolicy, jobName);
 		
 		for (IProfileModificationListener listener : listeners) {
 			listener.profileChanged(setToAdd, setToRemove, status);
@@ -127,7 +127,7 @@ public class ProfileModificationHelper {
 	 */
 	private static IStatus modify(IProgressMonitor monitor,
 			final Set<String> toAdd, final Set<String> toRemove,
-			final int restartPolicy) {
+			final int restartPolicy, String jobName) {
 		try {
 			if ((toAdd == null || toAdd.isEmpty())
 					&& (toRemove == null || toRemove.isEmpty())) {
@@ -142,7 +142,7 @@ public class ProfileModificationHelper {
 				toUninstall = queryProfileInstallableUnits(toRemove);
 			}
 			ZendProfileChangeOperation op = new ZendProfileChangeOperation(
-					session, toInstall, toUninstall);
+					session, toInstall, toUninstall, jobName);
 			IStatus result = op.resolveModal(monitor);
 			if (result.getSeverity() < IStatus.ERROR) {
 				if (result.isMultiStatus()) {

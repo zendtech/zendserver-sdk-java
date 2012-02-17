@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.browser.WebBrowserEditor;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.osgi.service.prefs.Preferences;
 import org.zend.php.common.Activator;
+import org.zend.php.common.Messages;
 import org.zend.php.common.ZendCatalogViewer;
 
 
@@ -90,6 +91,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		if (getEditorInput() instanceof WelcomePageEditorInput) {
 			WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput)getEditorInput();
 			viewer.init(welcomeInput.getDiscoveryDirFileName());
+			viewer.setOperationName(Messages.ModifyOperation_InstallJobName);
 		}
 		//PlatformUI.getWorkbench().getHelpSystem()
 			//	.setHelp(parent, IStudioHelpContextIds.WELCOME_PAGE);

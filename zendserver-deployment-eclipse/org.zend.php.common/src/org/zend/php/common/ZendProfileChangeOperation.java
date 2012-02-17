@@ -1,7 +1,6 @@
 package org.zend.php.common;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,8 +16,6 @@ import org.eclipse.equinox.internal.p2.operations.IStatusCodes;
 import org.eclipse.equinox.internal.p2.operations.PlanAnalyzer;
 import org.eclipse.equinox.internal.p2.operations.PlannerResolutionJob;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
-import org.eclipse.equinox.internal.provisional.p2.director.PlannerStatus;
-import org.eclipse.equinox.internal.provisional.p2.director.RequestStatus;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
@@ -31,7 +28,6 @@ import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
 import org.eclipse.equinox.p2.planner.ProfileInclusionRules;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * This class is based on
@@ -53,6 +49,7 @@ public class ZendProfileChangeOperation {
 	ProfileChangeRequest request;
 	Collection<IInstallableUnit> toInstall;
 	Collection<IInstallableUnit> toUninstall;
+	private String provisioningJobName;
 
 	/**
 	 * Create an operation using the provided provisioning session. Unless
@@ -64,12 +61,13 @@ public class ZendProfileChangeOperation {
 	 */
 	protected ZendProfileChangeOperation(ProvisioningSession session,
 			Collection<IInstallableUnit> toInstall,
-			Collection<IInstallableUnit> toUninstall) {
+			Collection<IInstallableUnit> toUninstall, String jobName) {
 		this.session = session;
 		this.profileId = IProfileRegistry.SELF;
 		this.context = new ProvisioningContext(session.getProvisioningAgent());
 		this.toInstall = toInstall;
 		this.toUninstall = toUninstall;
+		this.provisioningJobName = jobName;
 	}
 
 	/**
@@ -181,7 +179,7 @@ public class ZendProfileChangeOperation {
 	}
 
 	protected String getProvisioningJobName() {
-		return Messages.ModifyOperation_InstallJobName;
+		return provisioningJobName;
 
 	}
 
