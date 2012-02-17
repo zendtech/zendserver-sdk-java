@@ -1,9 +1,13 @@
 package org.zend.php.common.welcome;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
+import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
 
@@ -67,6 +71,35 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 
 	public String getDiscoveryDirFileName() {
 		return "/pdt_directory.xml";
+	}
+	
+	public IAdaptable createElement(IMemento memento) {
+		int style = 0;
+		Integer integer = memento.getInteger("style");
+		if (integer != null) {
+			style = integer.intValue();
+		}
+
+		URL url = null;
+		String str = memento.getString("url");
+		if (str != null) {
+			try {
+				url = new URL(str);
+			}
+			catch (MalformedURLException e) {
+				String msg = "Malformed URL while initializing browser editor"; //$NON-NLS-1$
+				WebBrowserUIPlugin.logError(msg, e);
+			}
+		}
+
+		String id = memento.getString("id");
+		String name = memento.getString("name");
+		String tooltip = memento.getString("tooltip");
+		
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id);
+		input.setName(name);
+		input.setToolTipText(tooltip);
+		return input;
 	}
 
 }
