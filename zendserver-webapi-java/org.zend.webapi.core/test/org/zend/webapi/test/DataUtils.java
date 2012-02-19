@@ -1,6 +1,5 @@
 package org.zend.webapi.test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -206,12 +205,9 @@ public class DataUtils {
 		Assert.assertNotNull(deployedVersionInfo.getVersion());
 	}
 
-	// TODO check if use On|Off or 1|0
 	public static void checkValidCodeTracingStatus(CodeTracingStatus status) {
 		Assert.assertNotNull(status);
 		Assert.assertEquals(ResponseType.CODE_TRACING_STATUS, status.getType());
-		// TODO verify why this value is null
-		// Assert.assertNotNull(status.getAlwaysDump());
 		Assert.assertTrue(State.UNKNOWN != status.getAwaitsRestart());
 		Assert.assertTrue(State.UNKNOWN != status.getTraceEnabled());
 		Assert.assertTrue(State.UNKNOWN != status.getDeveloperMode());

@@ -89,7 +89,6 @@ public class CodeTracingStatus extends AbstractResponseData {
 	}
 	
 	private Status componentStatus;
-	private State alwaysDump;
 	private State traceEnabled;
 	private State developerMode;
 	private State awaitsRestart;
@@ -118,13 +117,6 @@ public class CodeTracingStatus extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Current always_dump directive value (On|Off)
-	 */
-	public State getAlwaysDump() {
-		return alwaysDump;
-	}
-
-	/**
 	 * @return Current trace_enabled directive value (On|Off)
 	 */
 	public State getTraceEnabled() {
@@ -148,10 +140,6 @@ public class CodeTracingStatus extends AbstractResponseData {
 
 	protected void setComponentStatus(Status componentStatus) {
 		this.componentStatus = componentStatus;
-	}
-
-	protected void setAlwaysDump(State alwaysDump) {
-		this.alwaysDump = alwaysDump;
 	}
 
 	protected void setTraceEnabled(State traceEnabled) {

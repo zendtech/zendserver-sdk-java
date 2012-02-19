@@ -518,9 +518,6 @@ public class DataDigster extends GenericResponseDataVisitor {
 		int occurrence = codeTracingStatus.getOccurrence();
 		String value = getValue(currentPath + "/componentStatus", occurrence);
 		codeTracingStatus.setComponentStatus(Status.byValue(value));
-		value = getValue(currentPath + "/alwaysDump", occurrence);
-		codeTracingStatus.setAlwaysDump(State
-				.byValue(parseNumberIfExists(value)));
 		value = getValue(currentPath + "/traceEnabled", occurrence);
 		codeTracingStatus.setTraceEnabled(State
 				.byValue(parseNumberIfExists(value)));
