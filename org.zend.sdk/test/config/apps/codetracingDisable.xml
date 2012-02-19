@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.2">
+	<requestData>
+		<apiKeyName>angel.eyes</apiKeyName>
+		<method>codetracingDisable</method>
+	</requestData>
+	<codeTracingStatus>
+		<componentStatus>Active</componentStatus>
+		<traceEnabled>1</traceEnabled>
+		<developerMode>0</developerMode>
+		<awaitsRestart>1</awaitsRestart>
+	</codeTracingStatus>
+</zendServerAPIResponse>

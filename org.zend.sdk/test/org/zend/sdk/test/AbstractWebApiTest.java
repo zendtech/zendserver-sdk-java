@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 import org.restlet.ext.xml.DomRepresentation;
 import org.zend.sdklib.application.ZendApplication;
+import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.DataDigster;
@@ -22,6 +23,7 @@ public class AbstractWebApiTest extends AbstractTest {
 	public static final String FOLDER = "test/config/apps/";
 
 	protected ZendApplication application;
+	protected ZendCodeTracing codeTracing;
 	protected WebApiClient client;
 
 	@Before
@@ -29,6 +31,9 @@ public class AbstractWebApiTest extends AbstractTest {
 		application = spy(new ZendApplication(new UserBasedTargetLoader()));
 		client = Mockito.mock(WebApiClient.class);
 		doReturn(client).when(application).getClient(anyString());
+		codeTracing = spy(new ZendCodeTracing("targetId",
+				new UserBasedTargetLoader()));
+		doReturn(client).when(codeTracing).getClient(anyString());
 	}
 
 	protected IResponseData getResponseData(String fileName,
