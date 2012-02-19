@@ -8,7 +8,6 @@
 package org.zend.sdklib.application;
 
 //import java.io.File;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,18 +25,12 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.target.SSLContextInitializer;
-import org.zend.sdklib.internal.target.UserBasedTargetLoader;
-import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.target.ITargetLoader;
-import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.auth.BasicCredentials;
-import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.request.NamedInputStream;
@@ -50,31 +43,25 @@ import org.zend.webapi.core.progress.StatusCode;
  * @author Wojciech Galanciak, 2011
  * 
  */
-public class ZendApplication extends AbstractChangeNotifier {
+public class ZendApplication extends ZendConnection {
 
 	public static final String TEMP_PREFIX = "ZendStudioDeployment";
 
-	private final TargetsManager manager;
-	private IMappingLoader mappingLoader;
-
 	public ZendApplication() {
 		super();
-		manager = new TargetsManager(new UserBasedTargetLoader());
 	}
 
 	public ZendApplication(IMappingLoader mappingLoader) {
-		this();
-		this.mappingLoader = mappingLoader;
+		super(mappingLoader);
 	}
 
 	public ZendApplication(ITargetLoader loader) {
-		super();
-		manager = new TargetsManager(loader);
+		super(loader);
 	}
 
-	public ZendApplication(ITargetLoader loader, IMappingLoader mappingLoader) {
-		this(loader);
-		this.mappingLoader = mappingLoader;
+	public ZendApplication(ITargetLoader loader,
+			IMappingLoader mappingLoader) {
+		super(loader, mappingLoader);
 	}
 
 	/**
@@ -544,28 +531,6 @@ public class ZendApplication extends AbstractChangeNotifier {
 		return null;
 	}
 
-	/**
-	 * @param targetId
-	 *            - target id
-	 * @return instance of a WebAPI client for specified target id. If target
-	 *         does not exist, it returns <code>null</code>
-	 * @throws MalformedURLException
-	 */
-	public WebApiClient getClient(String targetId) throws MalformedURLException {
-		IZendTarget target = manager.getTargetById(targetId);
-		if (target == null) {
-			final String er = "Target with id '" + targetId
-					+ "' does not exist.";
-			log.error(er);
-			throw new IllegalArgumentException(er);
-		}
-		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
-				target.getSecretKey());
-		String hostname = target.getHost().toString();
-		return new WebApiClient(credentials, hostname,
-				SSLContextInitializer.instance.getRestletContext(), notifier);
-	}
-
 	private Map<String, String> getUserParameters(File propsFile) {
 		Map<String, String> result = null;
 		Properties p = new Properties();
@@ -621,10 +586,7 @@ public class ZendApplication extends AbstractChangeNotifier {
 					return children[0];
 				}
 			}
-			PackageBuilder builder = null;
-			builder = mappingLoader == null ? new PackageBuilder(new File(path))
-					: new PackageBuilder(new File(path), mappingLoader, this);
-			return builder.createDeploymentPackage(tempFile);
+			return getPackageBuilder(path).createDeploymentPackage(tempFile);
 		} else {
 			return file;
 		}
@@ -692,16 +654,6 @@ public class ZendApplication extends AbstractChangeNotifier {
 				"Package Downloading",
 				"Package is downloaded from repository successfully.", -1));
 		return packageFile.getAbsolutePath();
-	}
-
-	private void closeStream(Closeable stream) {
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-				log.error(e);
-			}
-		}
 	}
 
 	private String getPackageName(String url) {
