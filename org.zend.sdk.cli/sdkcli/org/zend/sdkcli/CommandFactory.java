@@ -11,16 +11,22 @@ package org.zend.sdkcli;
 import org.zend.sdkcli.internal.commands.AddRepositoryCommand;
 import org.zend.sdkcli.internal.commands.AddTargetCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
+import org.zend.sdkcli.internal.commands.CreateCodetracingCommand;
 import org.zend.sdkcli.internal.commands.CreatePackageCommand;
 import org.zend.sdkcli.internal.commands.CreateProjectCommand;
+import org.zend.sdkcli.internal.commands.DeleteCodetracingCommand;
 import org.zend.sdkcli.internal.commands.DeployApplicationCommand;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
+import org.zend.sdkcli.internal.commands.DisableCodetracingCommand;
 import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
+import org.zend.sdkcli.internal.commands.EnableCodetracingCommand;
 import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
+import org.zend.sdkcli.internal.commands.GetCodetracingCommand;
 import org.zend.sdkcli.internal.commands.GitAddRemoteCommand;
 import org.zend.sdkcli.internal.commands.GitCloneProjectCommand;
 import org.zend.sdkcli.internal.commands.GitPushApplicationCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
+import org.zend.sdkcli.internal.commands.ListCodetracingCommand;
 import org.zend.sdkcli.internal.commands.ListRepositoriesCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdkcli.internal.commands.RedeployApplicationCommand;
@@ -120,6 +126,24 @@ public class CommandFactory {
 			break;
 		case GENERATE_REPOSITORIES:
 			command = new GenerateRepositoryCommand();
+			break;
+		case ENABLE_CODETRACING:
+			command = new EnableCodetracingCommand();
+			break;
+		case DISABLE_CODETRACING:
+			command = new DisableCodetracingCommand();
+			break;
+		case CREATE_CODETRACING:
+			command = new CreateCodetracingCommand();
+			break;
+		case DELETE_CODETRACING:
+			command = new DeleteCodetracingCommand();
+			break;
+		case LIST_CODETRACING:
+			command = new ListCodetracingCommand();
+			break;
+		case GET_CODETRACING:
+			command = new GetCodetracingCommand();
 			break;
 		default:
 			command = new UsageCommand();

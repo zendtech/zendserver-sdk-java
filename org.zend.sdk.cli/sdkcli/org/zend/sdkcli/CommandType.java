@@ -62,7 +62,25 @@ public enum CommandType {
 	
 	GENERATE_REPOSITORIES("generate", "repository", "generate a repository for a package"),
 	
-	HELP("help", null, "shows help information.");
+	HELP("help", null, "shows help information."),
+
+	ENABLE_CODETRACING("enable", "codetracing",
+			"Enable code tracing on specified zend target."),
+
+	DISABLE_CODETRACING("disable", "codetracing",
+			"Disable code tracing on specified zend target."),
+
+	CREATE_CODETRACING("create", "codetracing",
+			"Create code trace for specified URL."),
+
+	DELETE_CODETRACING("delete", "codetracing",
+			"Delete code trace for specified id."),
+
+	LIST_CODETRACING("list", "codetracing",
+			"List code trace for specified application(s)."),
+
+	GET_CODETRACING("get", "codetracing",
+			"Download code trace file with specified id.");
 
 	private String verb;
 	private String directObject;
