@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.2">
+	<requestData>
+		<apiKeyName>angel.eyes</apiKeyName>
+		<method>codetracingCreate</method>
+	</requestData>
+	<codeTrace>
+	<id>1.123.5</id>
+	<date>123412341234</date>
+	<url>http://localhost/test.php</url>
+	<createdBy>Monitor Event</createdBy>
+	<fileSize>12341234</fileSize>
+	<applicationId>1</applicationId>
+</codeTrace>
+</zendServerAPIResponse>
