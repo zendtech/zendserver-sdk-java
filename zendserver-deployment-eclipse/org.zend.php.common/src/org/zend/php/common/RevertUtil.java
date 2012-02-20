@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.ProvUIMessages;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -21,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class RevertUtil {
 
@@ -35,13 +37,15 @@ public class RevertUtil {
 	}
 
 	private IProfile figureOutLastPreStudioSnapshot() {
-		String profileId = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID).get(REVERT_TIMESTAMP, null);
-		if (profileId == null) {
+		long profileTimestamp = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID).getLong(REVERT_TIMESTAMP, 0);
+		if (profileTimestamp == 0) {
 			return null;
 		}
 		
+		String profileId = getProvisioningUI().getProfileId();
 		IProfileRegistry registry = ProvUI.getProfileRegistry(getSession());
-		return registry.getProfile(profileId);
+		
+		return ProvUI.getProfileRegistry(getProvisioningUI().getSession()).getProfile(profileId, profileTimestamp);
 	}
 	
 	// inspired by org.eclipse.equinox.p2.ui.RevertProfilePage.revert()
@@ -113,7 +117,16 @@ public class RevertUtil {
 	}
 	
 	public void setRevertTimestamp() {
-		String currentProfile = getProvisioningUI().getProfileId();
-		ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID).put(REVERT_TIMESTAMP, currentProfile);
+		String currentProfileId = getProvisioningUI().getProfileId();
+		IProfileRegistry registry = ProvUI.getProfileRegistry(getSession());
+		IProfile currentProfile = registry.getProfile(currentProfileId);
+		
+		IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		node.putLong(REVERT_TIMESTAMP, currentProfile.getTimestamp());
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
 	}
 }
