@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTrace;
+import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.IResponseData;
 
@@ -73,4 +75,11 @@ public class TestZendCodeTracing extends AbstractWebApiTest {
 		assertNotNull(codeTracing.deleteTrace("id"));
 	}
 
+	@Test
+	public void testGetTraces() throws WebApiException, IOException {
+		when(client.codeTracingList(Mockito.any(Integer.class), Mockito.any(Integer.class), anyString(), anyString(), anyString())).thenReturn(
+				(CodeTracingList) getResponseData("codetracingList",
+						IResponseData.ResponseType.CODE_TRACING_LIST));
+		assertNotNull(codeTracing.getTraces(false, "aaa"));
+	}
 }
