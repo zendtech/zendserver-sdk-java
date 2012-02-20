@@ -577,7 +577,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = eventsGroup.getPrefix();
 		int occurrence = eventsGroup.getOccurrence();
 		String value = getValue(currentPath + "/eventsGroupId", occurrence);
-		eventsGroup.setEventsGroupId(value);
+		eventsGroup.setEventsGroupId(parseNumberIfExists(value));
 		value = getValue(currentPath + "/eventsCount", occurrence);
 		eventsGroup.setEventsCount(parseNumberIfExists(value));
 		value = getValue(currentPath + "/startTime", occurrence);

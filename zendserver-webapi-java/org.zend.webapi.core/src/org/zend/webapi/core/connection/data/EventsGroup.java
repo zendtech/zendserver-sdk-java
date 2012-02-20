@@ -17,7 +17,7 @@ package org.zend.webapi.core.connection.data;
  */
 public class EventsGroup extends AbstractResponseData {
 
-	private String eventsGroupId;
+	private int eventsGroupId;
 	private int eventsCount;
 	private String startTime;
 	private int serverId;
@@ -49,7 +49,7 @@ public class EventsGroup extends AbstractResponseData {
 	/**
 	 * @return Event Group's identifier
 	 */
-	public String getEventsGroupId() {
+	public int getEventsGroupId() {
 		return eventsGroupId;
 	}
 
@@ -139,7 +139,7 @@ public class EventsGroup extends AbstractResponseData {
 		return load;
 	}
 
-	protected void setEventsGroupId(String eventsGroupId) {
+	protected void setEventsGroupId(int eventsGroupId) {
 		this.eventsGroupId = eventsGroupId;
 	}
 
