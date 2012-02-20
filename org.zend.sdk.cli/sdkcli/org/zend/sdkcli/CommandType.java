@@ -19,7 +19,7 @@ import org.zend.sdkcli.internal.commands.CommandLine;
 public enum CommandType {
 
 	CREATE_PROJECT("create", "project", "Creates a new Zend project."),
-	
+
 	UPDATE_PROJECT("update", "project", "Updates a Zend project."),
 
 	CLONE_PROJECT("clone", "project", "Clone project from git repository"),
@@ -30,38 +30,49 @@ public enum CommandType {
 	ADD_REMOTE("add", "remote",
 			"Add new remote to specified local git repository"),
 
-	LIST_TARGETS("list", "targets", "Lists known deployment target environments."),
+	LIST_TARGETS("list", "targets",
+			"Lists known deployment target environments."),
 
-	ADD_TARGET("add", "target", "Adds new target environment for deploying applications."),
-	
-	REMOVE_TARGET("remove", "target", "Removes target from the know targets list."),
+	ADD_TARGET("add", "target",
+			"Adds new target environment for deploying applications."),
+
+	REMOVE_TARGET("remove", "target",
+			"Removes target from the know targets list."),
 
 	DETECT_TARGET("detect", "target", "Detects target on localhost."),
-	
+
 	UPDATE_TARGET("update", "target", "Updates target's parameters."),
 
-	LIST_APPLICATIONS("list", "applications", "Lists applications installed on target."),
+	LIST_APPLICATIONS("list", "applications",
+			"Lists applications installed on target."),
 
-	DEPLOY_APPLICATION("deploy", "application", "Deploys application to target."),
-	
-	REDEPLOY_APPLICATION("redeploy", "application", "Re-deploys application on target."),
-	
-	UPDATE_APPLICATION("update", "application", "Updates application to target."),
-	
-	REMOVE_APPLICATION("remove", "application", "Removes application from target."),
+	DEPLOY_APPLICATION("deploy", "application",
+			"Deploys application to target."),
 
-	DISCOVER_APPLICATION("discover", "application", "discover new application from the repositories list."),
-	
+	REDEPLOY_APPLICATION("redeploy", "application",
+			"Re-deploys application on target."),
+
+	UPDATE_APPLICATION("update", "application",
+			"Updates application to target."),
+
+	REMOVE_APPLICATION("remove", "application",
+			"Removes application from target."),
+
+	DISCOVER_APPLICATION("discover", "application",
+			"discover new application from the repositories list."),
+
 	CREATE_PACKAGE("create", "package", "Creates deployment package."),
 
 	ADD_REPOSITORY("add", "repository", "Add repository to the discovery list."),
-	
-	REMOVE_REPOSITORY("remove", "repository", "Removes repository from the discovery list."),
-	
+
+	REMOVE_REPOSITORY("remove", "repository",
+			"Removes repository from the discovery list."),
+
 	LIST_REPOSITORIES("list", "repositories", "Show the list of repositories."),
-	
-	GENERATE_REPOSITORIES("generate", "repository", "generate a repository for a package"),
-	
+
+	GENERATE_REPOSITORIES("generate", "repository",
+			"generate a repository for a package"),
+
 	HELP("help", null, "shows help information."),
 
 	ENABLE_CODETRACING("enable", "codetracing",
@@ -80,7 +91,13 @@ public enum CommandType {
 			"List code trace for specified application(s)."),
 
 	GET_CODETRACING("get", "codetracing",
-			"Download code trace file with specified id.");
+			"Download code trace file with specified id."),
+
+	LIST_ISSUES("list", "issues", "List isses for specified target."),
+
+	GET_ISSUE("get", "issue", "Get issue with specified id."),
+
+	EXPORT_ISSUE("export", "issue", "Export issue with specified id.");
 
 	private String verb;
 	private String directObject;
@@ -96,7 +113,7 @@ public enum CommandType {
 		this.verb = verb;
 		this.directObject = directObject;
 	}
-	
+
 	private CommandType(String verb) {
 		this(verb, null, null);
 	}
