@@ -187,24 +187,21 @@ public class ZendIssue implements IZendIssue {
 				return result;
 			}
 		} catch (WebApiException e) {
-			String message = MessageFormat
-					.format("Error during exporting issue with id '{0}'",
-							issue.getId());
+			String message = MessageFormat.format(
+					"Error during exporting issue with id {0}", issue.getId());
 			monitor.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Exporting Issue File", message, e));
-			log.error(message + "':");
+			log.error(message + ":");
 			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
-			String message = MessageFormat
-					.format("Error during exporting issue with id '{0}'",
-							issue.getId());
+			String message = MessageFormat.format(
+					"Error during exporting issue with id {0}", issue.getId());
 			monitor.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Exporting Issue File", message, e));
 			log.error(e);
 		} catch (IOException e) {
-			String message = MessageFormat
-					.format("Error during exporting issue with id '{0}'",
-							issue.getId());
+			String message = MessageFormat.format(
+					"Error during exporting issue with id {0}", issue.getId());
 			monitor.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Exporting Issue File", message, e));
 			log.error(e);
