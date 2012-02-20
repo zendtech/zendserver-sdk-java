@@ -17,6 +17,7 @@ import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueList;
 import org.zend.webapi.core.progress.BasicStatus;
 import org.zend.webapi.core.progress.StatusCode;
@@ -103,6 +104,42 @@ public class ZendMonitor extends ZendConnection {
 					"Error during retrieving all issues from '{0}'", targetId);
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Retrieving All Issues", message, e));
+			log.error(e);
+		}
+		return null;
+	}
+
+	/**
+	 * Provides issue instance based on specified id.
+	 * 
+	 * @return concrete issue
+	 */
+	public IZendIssue get(int issueId) {
+		try {
+			IssueList list = getClient(targetId)
+					.monitorGetIssuesListPredefinedFilter(
+							Filters.ALL_EVENTS.getName(), null, null, null,
+							null);
+			if (list != null) {
+				List<Issue> issues = list.getIssues();
+				for (Issue issue : issues) {
+					if (issue.getId() == issueId) {
+						return new ZendIssue(issue, this);
+					}
+				}
+			}
+		} catch (WebApiException e) {
+			String message = MessageFormat.format(
+					"Error during retrieving issue with id '{0}'", issueId);
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Retrieving Issue", message, e));
+			log.error(message + "':");
+			log.error("\tpossible error: " + e.getMessage());
+		} catch (MalformedURLException e) {
+			String message = MessageFormat.format(
+					"Error during retrieving issue with id '{0}'", issueId);
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Retrieving Issue", message, e));
 			log.error(e);
 		}
 		return null;
