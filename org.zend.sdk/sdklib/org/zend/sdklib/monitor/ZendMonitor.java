@@ -9,6 +9,7 @@ package org.zend.sdklib.monitor;
 
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.sdklib.internal.application.ZendConnection;
@@ -33,7 +34,7 @@ public class ZendMonitor extends ZendConnection {
 	/**
 	 * Predefined filters.
 	 */
-	public enum Filters {
+	public enum Filter {
 
 		ALL_OPEN_EVENTS("All Open Events"),
 
@@ -45,7 +46,7 @@ public class ZendMonitor extends ZendConnection {
 
 		private String name;
 
-		private Filters(String name) {
+		private Filter(String name) {
 			this.name = name;
 		}
 
@@ -79,18 +80,15 @@ public class ZendMonitor extends ZendConnection {
 	}
 
 	/**
-	 * Provides list of issues by using {@link Filters#ALL_EVENTS} filter.
+	 * Provides list of issues by using {@link Filter#ALL_EVENTS} filter.
 	 * 
 	 * @return list of issues
 	 */
 	public List<IZendIssue> getAllIssues() {
 		try {
-			IssueList list = getClient(targetId)
-					.monitorGetIssuesListPredefinedFilter(
-							Filters.ALL_EVENTS.getName(), null, null, null,
-							null);
-			if (list != null) {
-				return ZendIssue.create(list.getIssues(), this);
+			List<Issue> issues = doGetIssues(Filter.ALL_EVENTS);
+			if (issues != null) {
+				return ZendIssue.create(issues, this);
 			}
 		} catch (WebApiException e) {
 			String message = MessageFormat.format(
@@ -116,12 +114,8 @@ public class ZendMonitor extends ZendConnection {
 	 */
 	public IZendIssue get(int issueId) {
 		try {
-			IssueList list = getClient(targetId)
-					.monitorGetIssuesListPredefinedFilter(
-							Filters.ALL_EVENTS.getName(), null, null, null,
-							null);
-			if (list != null) {
-				List<Issue> issues = list.getIssues();
+			List<Issue> issues = doGetIssues(Filter.ALL_EVENTS);
+			if (issues != null) {
 				for (Issue issue : issues) {
 					if (issue.getId() == issueId) {
 						return new ZendIssue(issue, this);
@@ -130,14 +124,14 @@ public class ZendMonitor extends ZendConnection {
 			}
 		} catch (WebApiException e) {
 			String message = MessageFormat.format(
-					"Error during retrieving issue with id '{0}'", issueId);
+					"Error during retrieving issue with id {0}", issueId);
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Retrieving Issue", message, e));
 			log.error(message + "':");
 			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat.format(
-					"Error during retrieving issue with id '{0}'", issueId);
+					"Error during retrieving issue with id {0}", issueId);
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Retrieving Issue", message, e));
 			log.error(e);
@@ -146,18 +140,15 @@ public class ZendMonitor extends ZendConnection {
 	}
 
 	/**
-	 * Provides list of issues by using {@link Filters#ALL_OPEN_EVENTS} filter.
+	 * Provides list of issues by using {@link Filter#ALL_OPEN_EVENTS} filter.
 	 * 
 	 * @return list of issues
 	 */
 	public List<IZendIssue> getOpenIssues() {
 		try {
-			IssueList list = getClient(targetId)
-					.monitorGetIssuesListPredefinedFilter(
-							Filters.ALL_OPEN_EVENTS.getName(), null, null,
-							null, null);
-			if (list != null) {
-				return ZendIssue.create(list.getIssues(), this);
+			List<Issue> issues = doGetIssues(Filter.ALL_OPEN_EVENTS);
+			if (issues != null) {
+				return ZendIssue.create(issues, this);
 			}
 		} catch (WebApiException e) {
 			String message = MessageFormat.format(
@@ -179,18 +170,15 @@ public class ZendMonitor extends ZendConnection {
 	}
 
 	/**
-	 * Provides list of issues by using {@link Filters#CRITICAL_ERRORS} filter.
+	 * Provides list of issues by using {@link Filter#CRITICAL_ERRORS} filter.
 	 * 
 	 * @return list of issues
 	 */
 	public List<IZendIssue> getCriticalErrors() {
 		try {
-			IssueList list = getClient(targetId)
-					.monitorGetIssuesListPredefinedFilter(
-							Filters.CRITICAL_ERRORS.getName(), null, null,
-							null, null);
-			if (list != null) {
-				return ZendIssue.create(list.getIssues(), this);
+			List<Issue> issues = doGetIssues(Filter.CRITICAL_ERRORS);
+			if (issues != null) {
+				return ZendIssue.create(issues, this);
 			}
 		} catch (WebApiException e) {
 			String message = MessageFormat.format(
@@ -212,19 +200,16 @@ public class ZendMonitor extends ZendConnection {
 	}
 
 	/**
-	 * Provides list of issues by using {@link Filters#PERFORMANCE_ISSUES}
+	 * Provides list of issues by using {@link Filter#PERFORMANCE_ISSUES}
 	 * filter.
 	 * 
 	 * @return list of issues
 	 */
 	public List<IZendIssue> getPerformanceIssues() {
 		try {
-			IssueList list = getClient(targetId)
-					.monitorGetIssuesListPredefinedFilter(
-							Filters.PERFORMANCE_ISSUES.getName(), null, null,
-							null, null);
-			if (list != null) {
-				return ZendIssue.create(list.getIssues(), this);
+			List<Issue> issues = doGetIssues(Filter.PERFORMANCE_ISSUES);
+			if (issues != null) {
+				return ZendIssue.create(issues, this);
 			}
 		} catch (WebApiException e) {
 			String message = MessageFormat.format(
@@ -247,6 +232,26 @@ public class ZendMonitor extends ZendConnection {
 
 	public WebApiClient getClient() throws MalformedURLException {
 		return getClient(targetId);
+	}
+
+	private List<Issue> doGetIssues(Filter filter)
+			throws MalformedURLException, WebApiException {
+		WebApiClient client = getClient();
+		List<Issue> result = new ArrayList<Issue>();
+		int offset = 0;
+		while (true) {
+			IssueList list = client.monitorGetIssuesListPredefinedFilter(
+					filter.getName(), 50, offset, null, null);
+			if (list != null) {
+				List<Issue> newIssues = list.getIssues();
+				if (newIssues != null && newIssues.size() > 0) {
+					result.addAll(newIssues);
+					offset += 50;
+				} else {
+					return result;
+				}
+			}
+		}
 	}
 
 }
