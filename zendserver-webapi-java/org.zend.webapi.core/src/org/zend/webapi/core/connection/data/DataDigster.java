@@ -25,6 +25,7 @@ import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
 import org.zend.webapi.core.connection.data.CodeTracingStatus.Status;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
+import org.zend.webapi.core.connection.data.values.IssueStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
@@ -753,7 +754,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/severity", occurrence);
 		issue.setSeverity(value);
 		value = getValue(currentPath + "/status", occurrence);
-		issue.setStatus(value);
+		issue.setStatus(IssueStatus.byName(value));
 		GeneralDetails generalDetails = new GeneralDetails(currentPath
 				+ "/generalDetails", occurrence);
 		issue.setGeneralDetails(generalDetails);

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.webapi.core.connection.data;
 
+import org.zend.webapi.core.connection.data.values.IssueStatus;
+
 /**
  * List of basic issue properties.
  * 
@@ -19,7 +21,7 @@ public class Issue extends AbstractResponseData {
 	private String rule;
 	private String lastOccurance;
 	private String severity;
-	private String status;
+	private IssueStatus status;
 	private GeneralDetails generalDetails;
 	private RouteDetails routeDetails;
 
@@ -76,7 +78,7 @@ public class Issue extends AbstractResponseData {
 	/**
 	 * @return Issue's current status
 	 */
-	public String getStatus() {
+	public IssueStatus getStatus() {
 		return status;
 	}
 
@@ -110,7 +112,7 @@ public class Issue extends AbstractResponseData {
 		this.severity = severity;
 	}
 
-	protected void setStatus(String status) {
+	protected void setStatus(IssueStatus status) {
 		this.status = status;
 	}
 
