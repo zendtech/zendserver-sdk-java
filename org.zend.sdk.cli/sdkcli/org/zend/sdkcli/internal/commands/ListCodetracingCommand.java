@@ -40,11 +40,11 @@ public class ListCodetracingCommand extends AbstractCodetracingCommand {
 			}
 			for (CodeTrace codeTrace : traces) {
 				getLogger().info(codeTrace.getId() + ":");
-				getLogger().info("\turl:	" + codeTrace.getUrl());
+				getLogger().info("\turl:		 " + codeTrace.getUrl());
 				getLogger().info(
-						"\tapplication:	" + codeTrace.getApplicationId());
-				getLogger().info("\tcreated by:	" + codeTrace.getCreatedBy());
-				getLogger().info("\tdate:	" + codeTrace.getDate());
+						"\tapplication: " + codeTrace.getApplicationId());
+				getLogger().info("\tcreated by:	 " + codeTrace.getCreatedBy());
+				getLogger().info("\tdate:		 " + getDate(codeTrace.getDate()));
 			}
 		} else {
 			getLogger().error(
