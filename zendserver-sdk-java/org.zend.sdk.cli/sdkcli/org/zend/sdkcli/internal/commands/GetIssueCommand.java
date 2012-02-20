@@ -11,8 +11,11 @@ import java.util.List;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.webapi.core.connection.data.EventsGroup;
+import org.zend.webapi.core.connection.data.EventsGroups;
 import org.zend.webapi.core.connection.data.GeneralDetails;
 import org.zend.webapi.core.connection.data.Issue;
+import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.RouteDetail;
 import org.zend.webapi.core.connection.data.RouteDetails;
 
@@ -50,10 +53,14 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 							"\terror:      " + generalDetails.getErrorType()
 									+ ": " + generalDetails.getErrorString());
 				}
-				getLogger().info(
-						"\tfunction:   " + generalDetails.getFunction() + "("
-								+ generalDetails.getSourceFile() + ":"
-								+ generalDetails.getSourceLine() + ")");
+				String function = generalDetails.getFunction();
+				if (function != null && function.length() > 0) {
+					getLogger().info(
+							"\tfunction:   " + generalDetails.getFunction()
+									+ "(" + generalDetails.getSourceFile()
+									+ ":" + generalDetails.getSourceLine()
+									+ ")");
+				}
 			}
 			RouteDetails routeDetails = issue.getRouteDetails();
 			if (routeDetails != null) {
@@ -64,6 +71,48 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 						getLogger().info(
 								"\t" + routeDetail.getKey() + " = "
 										+ routeDetail.getValue());
+					}
+				}
+			}
+			IssueDetails issueDetails = zendIssue.getDetails();
+			if (issueDetails != null) {
+				EventsGroups eventsGroups = issueDetails.getEventsGroups();
+				if (eventsGroups != null) {
+					List<EventsGroup> groups = eventsGroups.getGroups();
+					if (groups != null && groups.size() > 0) {
+						getLogger().info("events groups:");
+						for (EventsGroup group : groups) {
+							getLogger().info("\t" + group.getEventsGroupId());
+							getLogger().info(
+									"\t\tavg time:         "
+											+ group.getAvgExecTime());
+							getLogger().info(
+									"\t\tstart time:       "
+											+ group.getStartTime());
+							getLogger().info(
+									"\t\tavg memory usage: "
+											+ group.getAvgMemUsage());
+							getLogger().info(
+									"\t\tmemory usage:     "
+											+ group.getMemUsage());
+							getLogger().info(
+									"\t\tavg output size:  "
+											+ group.getAvgOutputSize());
+							getLogger().info(
+									"\t\tclass id:         "
+											+ group.getClassId());
+							getLogger().info(
+									"\t\tevents count:     "
+											+ group.getEventsCount());
+							getLogger().info(
+									"\t\texecution time:   "
+											+ group.getExecTime());
+							getLogger().info(
+									"\t\tjava backtrace:   "
+											+ group.getJavaBacktrace());
+							getLogger().info(
+									"\t\tload:             " + group.getLoad());
+						}
 					}
 				}
 			}
