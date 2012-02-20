@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.text.SimpleDateFormat;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
@@ -23,6 +25,12 @@ public abstract class AbstractCodetracingCommand extends AbstractCommand {
 	protected ZendCodeTracing getCodeTracing() {
 		String targetId = getTarget();
 		return new ZendCodeTracing(targetId, new UserBasedTargetLoader());
+	}
+
+	protected String getDate(long date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				"dd MMM yyyy HH:mm:ss Z");
+		return formatter.format(String.valueOf(date * 1000));
 	}
 
 }

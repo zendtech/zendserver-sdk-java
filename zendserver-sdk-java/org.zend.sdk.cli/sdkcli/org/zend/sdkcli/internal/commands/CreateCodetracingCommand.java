@@ -40,10 +40,10 @@ public class CreateCodetracingCommand extends AbstractCodetracingCommand {
 		CodeTrace result = getCodeTracing().createTrace(url);
 		if (result != null) {
 			getLogger().info("Code trace created successfully:");
-			getLogger().info("id:	" + result.getId());
+			getLogger().info("id:			" + result.getId());
 			getLogger().info("application:	" + result.getApplicationId());
 			getLogger().info("created by:	" + result.getCreatedBy());
-			getLogger().info("date:	" + result.getDate());
+			getLogger().info("date:			" + getDate(result.getDate()));
 		} else {
 			getLogger().error(
 					"Failed to create code trace for " + url.toString());
