@@ -165,27 +165,25 @@ public class ZendCodeTracing extends ZendConnection {
 	/**
 	 * Creates code trace for provided URL.
 	 * 
-	 * @param appId
-	 *            application id
 	 * @param url
 	 *            for which code trace should be generated
 	 * @return created code trace
 	 */
-	public CodeTrace createTrace(String appId, URL url) {
+	public CodeTrace createTrace(URL url) {
 		try {
 			return getClient(targetId).codeTracingCreate(url.toString());
 		} catch (WebApiException e) {
 			String message = MessageFormat
-					.format("Error during creating code tracing for '{0}' application on '{1}', url = {2}",
-							appId, targetId, url.toString());
+					.format("Error during creating code tracing for for '{0}' url on '{1}'",
+							url.toString(), targetId);
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Creating Code Tracing", message, e));
 			log.error(message + "':");
 			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat
-					.format("Error during creating code tracing for '{0}' application on '{1}', url = {2}",
-							appId, targetId, url.toString());
+					.format("Error during creating code tracing for for '{0}' url on '{1}'",
+							url.toString(), targetId);
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Creating Code Tracing", message, e));
 			log.error(e);
