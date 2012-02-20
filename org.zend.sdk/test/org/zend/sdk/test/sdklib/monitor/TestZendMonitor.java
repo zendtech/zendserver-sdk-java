@@ -36,6 +36,18 @@ public class TestZendMonitor extends AbstractWebApiTest {
 	}
 
 	@Test
+	public void testGetById() throws WebApiException, IOException {
+		when(
+				client.monitorGetIssuesListPredefinedFilter(anyString(),
+						Mockito.any(Integer.class), Mockito.any(Integer.class),
+						anyString(), anyString())).thenReturn(
+				(IssueList) getResponseData(
+						"monitorGetIssuesListPredefinedFilter",
+						IResponseData.ResponseType.ISSUE_LIST));
+		assertNotNull(monitor.get(11));
+	}
+
+	@Test
 	public void testGetCriticalErrors() throws WebApiException, IOException {
 		when(
 				client.monitorGetIssuesListPredefinedFilter(anyString(),
