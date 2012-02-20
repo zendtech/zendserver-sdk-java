@@ -20,13 +20,16 @@ import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdkcli.internal.commands.DisableCodetracingCommand;
 import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
 import org.zend.sdkcli.internal.commands.EnableCodetracingCommand;
+import org.zend.sdkcli.internal.commands.ExportIssueCommand;
 import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
 import org.zend.sdkcli.internal.commands.GetCodetracingCommand;
+import org.zend.sdkcli.internal.commands.GetIssueCommand;
 import org.zend.sdkcli.internal.commands.GitAddRemoteCommand;
 import org.zend.sdkcli.internal.commands.GitCloneProjectCommand;
 import org.zend.sdkcli.internal.commands.GitPushApplicationCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListCodetracingCommand;
+import org.zend.sdkcli.internal.commands.ListIssuesCommand;
 import org.zend.sdkcli.internal.commands.ListRepositoriesCommand;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdkcli.internal.commands.RedeployApplicationCommand;
@@ -144,6 +147,15 @@ public class CommandFactory {
 			break;
 		case GET_CODETRACING:
 			command = new GetCodetracingCommand();
+			break;
+		case LIST_ISSUES:
+			command = new ListIssuesCommand();
+			break;
+		case GET_ISSUE:
+			command = new GetIssueCommand();
+			break;
+		case EXPORT_ISSUE:
+			command = new ExportIssueCommand();
 			break;
 		default:
 			command = new UsageCommand();
