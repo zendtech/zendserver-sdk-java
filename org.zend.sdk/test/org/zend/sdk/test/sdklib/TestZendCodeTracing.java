@@ -64,7 +64,7 @@ public class TestZendCodeTracing extends AbstractWebApiTest {
 		when(client.codeTracingCreate(anyString())).thenReturn(
 				(CodeTrace) getResponseData("codetracingCreate",
 						IResponseData.ResponseType.CODE_TRACE));
-		assertNotNull(codeTracing.createTrace("appId", new URL("http://test")));
+		assertNotNull(codeTracing.createTrace(new URL("http://test")));
 	}
 
 	@Test
