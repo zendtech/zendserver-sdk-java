@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.zend.php.common.IProfileModificationListener;
+import org.zend.php.common.RevertUtil;
 
 public class PdtWelcomeModificationListener implements
 		IProfileModificationListener {
@@ -44,7 +45,11 @@ public class PdtWelcomeModificationListener implements
 
 	public void profileChanged(Collection<String> setToAdd,
 			Collection<String> setToRemove, IStatus status) {
-		// empty
+		
+		if ((setToAdd != null) && (setToAdd.contains(STUDIO_IU)) && status.getSeverity() == IStatus.OK) {
+			RevertUtil ru = new RevertUtil();
+			ru.setRevertTimestamp();
+		}
 	}
 
 }
