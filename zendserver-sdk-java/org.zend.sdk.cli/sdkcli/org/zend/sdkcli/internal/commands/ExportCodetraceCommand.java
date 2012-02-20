@@ -17,7 +17,7 @@ import org.zend.sdkcli.internal.options.Option;
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class GetCodetracingCommand extends AbstractCodetracingCommand {
+public class ExportCodetraceCommand extends AbstractCodetracingCommand {
 
 	private static final String TRACE_ID = "i";
 	private static final String DESTINATION = "d";
