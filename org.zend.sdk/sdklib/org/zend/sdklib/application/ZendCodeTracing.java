@@ -13,12 +13,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.target.ITargetLoader;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTraceFile;
@@ -239,17 +241,16 @@ public class ZendCodeTracing extends ZendConnection {
 	 */
 	public List<CodeTrace> getTraces(boolean all, String... appId) {
 		try {
-			CodeTracingList list = null;
 			if (all) {
-				list = getClient(targetId).codeTracingList(null, null, null,
-						null, appId);
+				return getAllTraces(appId);
 			} else {
-				list = offset != 0 ? getClient(targetId).codeTracingList(null,
+				CodeTracingList list = offset != 0 ? getClient(targetId)
+						.codeTracingList(null,
 						offset, null, null, appId) : getClient(targetId)
 						.codeTracingList(null, offset, null, null, appId);
 				offset += list.getTraces().size();
+				return list.getTraces();
 			}
-			return list.getTraces();
 		} catch (WebApiException e) {
 			String message = MessageFormat
 					.format("Error during retrieving code traces for '{0}' application(s) on '{1}'",
@@ -325,6 +326,26 @@ public class ZendCodeTracing extends ZendConnection {
 			log.error(e);
 		}
 		return null;
+	}
+
+	private List<CodeTrace> getAllTraces(String... appId)
+			throws MalformedURLException, WebApiException {
+		WebApiClient client = getClient(targetId);
+		List<CodeTrace> result = new ArrayList<CodeTrace>();
+		int offset = 0;
+		while (true) {
+			CodeTracingList list = client.codeTracingList(50, offset, null,
+					null, appId);
+			if (list != null) {
+				List<CodeTrace> newTraces = list.getTraces();
+				if (newTraces != null && newTraces.size() > 0) {
+					result.addAll(newTraces);
+					offset += 50;
+				} else {
+					return result;
+				}
+			}
+		}
 	}
 
 }
