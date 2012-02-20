@@ -76,21 +76,21 @@ public enum CommandType {
 	HELP("help", null, "shows help information."),
 
 	ENABLE_CODETRACING("enable", "codetracing",
-			"Enable code tracing on specified zend target."),
+			"Enable code tracing on specified target."),
 
 	DISABLE_CODETRACING("disable", "codetracing",
-			"Disable code tracing on specified zend target."),
+			"Disable code tracing on specified target."),
 
-	CREATE_CODETRACING("create", "codetracing",
+	CREATE_CODETRACE("create", "codetrace",
 			"Create code trace for specified URL."),
 
-	DELETE_CODETRACING("delete", "codetracing",
-			"Delete code trace for specified id."),
+	DELETE_CODETRACE("delete", "codetrace",
+			"Delete code trace with specified id."),
 
-	LIST_CODETRACING("list", "codetracing",
+	LIST_CODETRACES("list", "codetraces",
 			"List code trace for specified application(s)."),
 
-	GET_CODETRACING("get", "codetracing",
+	EXPORT_CODETRACE("export", "codetrace",
 			"Download code trace file with specified id."),
 
 	LIST_ISSUES("list", "issues", "List isses for specified target."),

@@ -22,7 +22,7 @@ import org.zend.sdkcli.internal.commands.DiscoverApplicationCommand;
 import org.zend.sdkcli.internal.commands.EnableCodetracingCommand;
 import org.zend.sdkcli.internal.commands.ExportIssueCommand;
 import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
-import org.zend.sdkcli.internal.commands.GetCodetracingCommand;
+import org.zend.sdkcli.internal.commands.ExportCodetraceCommand;
 import org.zend.sdkcli.internal.commands.GetIssueCommand;
 import org.zend.sdkcli.internal.commands.GitAddRemoteCommand;
 import org.zend.sdkcli.internal.commands.GitCloneProjectCommand;
@@ -136,17 +136,17 @@ public class CommandFactory {
 		case DISABLE_CODETRACING:
 			command = new DisableCodetracingCommand();
 			break;
-		case CREATE_CODETRACING:
+		case CREATE_CODETRACE:
 			command = new CreateCodetracingCommand();
 			break;
-		case DELETE_CODETRACING:
+		case DELETE_CODETRACE:
 			command = new DeleteCodetracingCommand();
 			break;
-		case LIST_CODETRACING:
+		case LIST_CODETRACES:
 			command = new ListCodetracingCommand();
 			break;
-		case GET_CODETRACING:
-			command = new GetCodetracingCommand();
+		case EXPORT_CODETRACE:
+			command = new ExportCodetraceCommand();
 			break;
 		case LIST_ISSUES:
 			command = new ListIssuesCommand();
