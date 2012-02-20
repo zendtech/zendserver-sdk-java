@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 
 /**
@@ -27,9 +28,15 @@ public class DisableCodetracingCommand extends AbstractCodetracingCommand {
 
 	@Override
 	public boolean doExecute() {
-		CodeTracingStatus result = getCodeTracing().disable(isRestartPhp());
-		if (result != null) {
-			getLogger().info("Code tracing disabled successfully.");
+		ZendCodeTracing codeTracing = getCodeTracing();
+		if (codeTracing.isEnabled()) {
+			CodeTracingStatus result = codeTracing.disable(isRestartPhp());
+			if (result != null) {
+				getLogger().info("Code tracing disabled successfully.");
+				return true;
+			}
+		} else {
+			getLogger().info("Code tracing is already disabled.");
 			return true;
 		}
 		getLogger().error(
