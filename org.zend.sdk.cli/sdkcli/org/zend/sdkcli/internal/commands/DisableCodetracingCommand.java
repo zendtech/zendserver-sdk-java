@@ -32,15 +32,15 @@ public class DisableCodetracingCommand extends AbstractCodetracingCommand {
 		if (codeTracing.isEnabled()) {
 			CodeTracingStatus result = codeTracing.disable(isRestartPhp());
 			if (result != null) {
-				getLogger().info("Code tracing disabled successfully.");
+				getLogger().info("Developer mode disabled successfully.");
 				return true;
 			}
 		} else {
-			getLogger().info("Code tracing is already disabled.");
+			getLogger().info("Developer mode is already disabled.");
 			return true;
 		}
 		getLogger().error(
-				"Failed to disable code tracing on target '" + getTarget()
+				"Failed to disable developer mode on target '" + getTarget()
 						+ "'");
 		return false;
 	}

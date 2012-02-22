@@ -39,6 +39,8 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 	@Override
 	public boolean doExecute() {
 		IZendIssue zendIssue = getMonitor().get(Integer.valueOf(getId()));
+		List<EventsGroupDetails> eventsGroupsDetails = zendIssue
+				.getGroupDetails();
 		if (zendIssue != null) {
 			Issue issue = zendIssue.getIssue();
 			getLogger().info("last occurance: " + issue.getLastOccurance());
@@ -76,8 +78,6 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 					}
 				}
 			}
-			List<EventsGroupDetails> eventsGroupsDetails = zendIssue
-					.getGroupDetails();
 			if (eventsGroupsDetails != null) {
 				getLogger().info("events:");
 				for (EventsGroupDetails groupDetails : eventsGroupsDetails) {
