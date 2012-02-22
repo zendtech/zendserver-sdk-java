@@ -337,6 +337,9 @@ public class ProfileModificationHelper {
 	
 	public static URI getExtraRepository() {
 		URI[] repos = getRepositories();
+		if (repos == null) {
+			return null;
+		}
 		for (URI uri : repos) {
 			if (isZendExtraFeatures(uri)) {
 				return uri;
