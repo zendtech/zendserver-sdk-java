@@ -11,13 +11,15 @@ import java.util.List;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.monitor.IZendIssue;
-import org.zend.webapi.core.connection.data.EventsGroup;
-import org.zend.webapi.core.connection.data.EventsGroups;
+import org.zend.webapi.core.connection.data.Event;
+import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.GeneralDetails;
 import org.zend.webapi.core.connection.data.Issue;
-import org.zend.webapi.core.connection.data.IssueDetails;
+import org.zend.webapi.core.connection.data.Parameter;
+import org.zend.webapi.core.connection.data.ParameterList;
 import org.zend.webapi.core.connection.data.RouteDetail;
 import org.zend.webapi.core.connection.data.RouteDetails;
+import org.zend.webapi.core.connection.data.SuperGlobals;
 
 /**
  * Command to list issues on specified target.
@@ -74,45 +76,34 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 					}
 				}
 			}
-			IssueDetails issueDetails = zendIssue.getDetails();
-			if (issueDetails != null) {
-				EventsGroups eventsGroups = issueDetails.getEventsGroups();
-				if (eventsGroups != null) {
-					List<EventsGroup> groups = eventsGroups.getGroups();
-					if (groups != null && groups.size() > 0) {
-						getLogger().info("events groups:");
-						for (EventsGroup group : groups) {
-							getLogger().info("\t" + group.getEventsGroupId());
-							getLogger().info(
-									"\t\tavg time:         "
-											+ group.getAvgExecTime());
-							getLogger().info(
-									"\t\tstart time:       "
-											+ group.getStartTime());
-							getLogger().info(
-									"\t\tavg memory usage: "
-											+ group.getAvgMemUsage());
-							getLogger().info(
-									"\t\tmemory usage:     "
-											+ group.getMemUsage());
-							getLogger().info(
-									"\t\tavg output size:  "
-											+ group.getAvgOutputSize());
-							getLogger().info(
-									"\t\tclass id:         "
-											+ group.getClassId());
-							getLogger().info(
-									"\t\tevents count:     "
-											+ group.getEventsCount());
-							getLogger().info(
-									"\t\texecution time:   "
-											+ group.getExecTime());
-							getLogger().info(
-									"\t\tjava backtrace:   "
-											+ group.getJavaBacktrace());
-							getLogger().info(
-									"\t\tload:             " + group.getLoad());
-						}
+			List<EventsGroupDetails> eventsGroupsDetails = zendIssue
+					.getGroupDetails();
+			if (eventsGroupsDetails != null) {
+				getLogger().info("events:");
+				for (EventsGroupDetails groupDetails : eventsGroupsDetails) {
+					Event event = groupDetails.getEvent();
+					getLogger().info("\ttype:        " + event.getEventType());
+					getLogger()
+							.info("\tdescription: " + event.getDescription());
+					getLogger().info("\tseverity:    " + event.getSeverity());
+					SuperGlobals superGlobals = event.getSuperGlobals();
+					if (superGlobals != null) {
+						getLogger().info("\tSuper Globals:");
+						getLogger().info("\t\tget:");
+						ParameterList globals = superGlobals.getGet();
+						printParameters(globals);
+						getLogger().info("\t\tpost:");
+						globals = superGlobals.getPost();
+						printParameters(globals);
+						getLogger().info("\t\tsession:");
+						globals = superGlobals.getSession();
+						printParameters(globals);
+						getLogger().info("\t\tcookie:");
+						globals = superGlobals.getCookie();
+						printParameters(globals);
+						getLogger().info("\t\tserver:");
+						globals = superGlobals.getServer();
+						printParameters(globals);
 					}
 				}
 			}
@@ -120,6 +111,21 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 		} else {
 			getLogger().info("There is no issue with id " + getId());
 			return true;
+		}
+	}
+
+	private void printParameters(ParameterList globals) {
+		if (globals != null) {
+			List<Parameter> params = globals.getParameters();
+			if (params != null) {
+				for (Parameter parameter : params) {
+					getLogger().info(
+							"\t\t\t" + parameter.getName() + " = "
+									+ parameter.getValue());
+				}
+			} else {
+				getLogger().info("\t\t\t<EMPTY>");
+			}
 		}
 	}
 
