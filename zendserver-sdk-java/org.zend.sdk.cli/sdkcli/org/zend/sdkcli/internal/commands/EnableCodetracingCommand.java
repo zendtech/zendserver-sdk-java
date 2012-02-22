@@ -32,16 +32,16 @@ public class EnableCodetracingCommand extends AbstractCodetracingCommand {
 		if (!codeTracing.isEnabled()) {
 			CodeTracingStatus result = getCodeTracing().enable(isRestartPhp());
 			if (result != null) {
-				getLogger().info("Code tracing enabled successfully.");
+				getLogger().info("Developer mode enabled successfully.");
 				return true;
 			}
 		} else {
-			getLogger().info("Code tracing is already enabled.");
+			getLogger().info("Developer mode is already enabled.");
 			return true;
 		}
-		getLogger()
-				.error("Failed to enable code tracing on target '"
-						+ getTarget() + "'");
+		getLogger().error(
+				"Failed to enable developer mode on target '" + getTarget()
+						+ "'");
 		return false;
 	}
 
