@@ -8,7 +8,6 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 
 /**
@@ -28,15 +27,9 @@ public class EnableCodetracingCommand extends AbstractCodetracingCommand {
 
 	@Override
 	public boolean doExecute() {
-		ZendCodeTracing codeTracing = getCodeTracing();
-		if (!codeTracing.isEnabled()) {
-			CodeTracingStatus result = getCodeTracing().enable(isRestartPhp());
-			if (result != null) {
-				getLogger().info("Developer mode enabled successfully.");
-				return true;
-			}
-		} else {
-			getLogger().info("Developer mode is already enabled.");
+		CodeTracingStatus result = getCodeTracing().enable(isRestartPhp());
+		if (result != null) {
+			getLogger().info("Developer mode enabled successfully.");
 			return true;
 		}
 		getLogger().error(
