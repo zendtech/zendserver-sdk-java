@@ -49,7 +49,7 @@ public class ListIssuesCommand extends AbstractMonitorCommand {
 		if (result != null) {
 			for (IZendIssue zendIssue : result) {
 				Issue issue = zendIssue.getIssue();
-				getLogger().info(issue.getId());
+				getLogger().info("id: " + issue.getId());
 				getLogger().info(
 						"\tlast occurance: " + issue.getLastOccurance());
 				getLogger().info("\trule:           " + issue.getRule());
