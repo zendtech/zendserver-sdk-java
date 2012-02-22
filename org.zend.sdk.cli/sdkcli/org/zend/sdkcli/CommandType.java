@@ -75,11 +75,11 @@ public enum CommandType {
 
 	HELP("help", null, "shows help information."),
 
-	ENABLE_CODETRACING("enable", "codetracing",
-			"Enable code tracing on specified target."),
+	ENABLE_CODETRACING("enable", "developer-mode",
+			"Enable developer mode on specified target."),
 
-	DISABLE_CODETRACING("disable", "codetracing",
-			"Disable code tracing on specified target."),
+	DISABLE_CODETRACING("disable", "developer-mode",
+			"Disable developer mode on specified target."),
 
 	CREATE_CODETRACE("create", "codetrace",
 			"Create code trace for specified URL."),
@@ -93,11 +93,11 @@ public enum CommandType {
 	EXPORT_CODETRACE("export", "codetrace",
 			"Download code trace file with specified id."),
 
-	LIST_ISSUES("list", "issues", "List isses for specified target."),
+	LIST_ISSUES("list", "events", "List events for specified target."),
 
-	GET_ISSUE("get", "issue", "Get issue with specified id."),
+	GET_ISSUE("get", "event", "Get event with specified id."),
 
-	EXPORT_ISSUE("export", "issue", "Export issue with specified id.");
+	EXPORT_ISSUE("export", "event", "Export issue with specified id.");
 
 	private String verb;
 	private String directObject;
