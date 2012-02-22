@@ -29,14 +29,9 @@ public class DisableCodetracingCommand extends AbstractCodetracingCommand {
 	@Override
 	public boolean doExecute() {
 		ZendCodeTracing codeTracing = getCodeTracing();
-		if (codeTracing.isEnabled()) {
-			CodeTracingStatus result = codeTracing.disable(isRestartPhp());
-			if (result != null) {
-				getLogger().info("Developer mode disabled successfully.");
-				return true;
-			}
-		} else {
-			getLogger().info("Developer mode is already disabled.");
+		CodeTracingStatus result = codeTracing.disable(isRestartPhp());
+		if (result != null) {
+			getLogger().info("Developer mode disabled successfully.");
 			return true;
 		}
 		getLogger().error(
