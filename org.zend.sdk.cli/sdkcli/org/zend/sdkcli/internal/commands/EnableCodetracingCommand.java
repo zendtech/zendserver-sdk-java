@@ -22,7 +22,10 @@ public class EnableCodetracingCommand extends AbstractCodetracingCommand {
 
 	@Option(opt = RESTART, required = false, description = "Restart php during operation", argName = "restart php")
 	public boolean isRestartPhp() {
-		return hasOption(RESTART);
+		if (hasOption(RESTART)) {
+			return Boolean.valueOf(getValue(RESTART));
+		}
+		return true;
 	}
 
 	@Override
