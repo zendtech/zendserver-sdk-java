@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.webapi.core.connection.data;
 
+import org.zend.webapi.core.connection.data.values.IssueSeverity;
 import org.zend.webapi.core.connection.data.values.IssueStatus;
 
 /**
@@ -20,7 +21,7 @@ public class Issue extends AbstractResponseData {
 	private int id;
 	private String rule;
 	private String lastOccurance;
-	private String severity;
+	private IssueSeverity severity;
 	private IssueStatus status;
 	private GeneralDetails generalDetails;
 	private RouteDetails routeDetails;
@@ -69,9 +70,9 @@ public class Issue extends AbstractResponseData {
 	}
 
 	/**
-	 * @return Issue's severity (Warning|Error)
+	 * @return Issue's severity
 	 */
-	public String getSeverity() {
+	public IssueSeverity getSeverity() {
 		return severity;
 	}
 
@@ -108,7 +109,7 @@ public class Issue extends AbstractResponseData {
 		this.lastOccurance = lastOccurance;
 	}
 
-	protected void setSeverity(String severity) {
+	protected void setSeverity(IssueSeverity severity) {
 		this.severity = severity;
 	}
 
