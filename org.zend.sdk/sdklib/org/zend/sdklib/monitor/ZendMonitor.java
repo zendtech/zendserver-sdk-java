@@ -170,6 +170,36 @@ public class ZendMonitor extends ZendConnection {
 	}
 
 	/**
+	 * Provides list of issues by using specified filter.
+	 * 
+	 * @return list of issues
+	 */
+	public List<IZendIssue> getIssues(Filter filter, int offset) {
+		try {
+			List<Issue> issues = doGetIssues(filter, offset);
+			if (issues != null) {
+				return ZendIssue.create(issues, this);
+			}
+		} catch (WebApiException e) {
+			String message = MessageFormat.format(
+					"Error during retrieving all open issues from '{0}'",
+					targetId);
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Retrieving All Open Issues", message, e));
+			log.error(message + "':");
+			log.error("\tpossible error: " + e.getMessage());
+		} catch (MalformedURLException e) {
+			String message = MessageFormat.format(
+					"Error during retrieving all open issues from '{0}'",
+					targetId);
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Retrieving All Open Issues", message, e));
+			log.error(e);
+		}
+		return null;
+	}
+
+	/**
 	 * Provides list of issues by using {@link Filter#CRITICAL_ERRORS} filter.
 	 * 
 	 * @return list of issues
@@ -236,20 +266,27 @@ public class ZendMonitor extends ZendConnection {
 
 	private List<Issue> doGetIssues(Filter filter)
 			throws MalformedURLException, WebApiException {
-		WebApiClient client = getClient();
 		List<Issue> result = new ArrayList<Issue>();
 		int offset = 0;
+		while (true) {
+			List<Issue> list = doGetIssues(filter, offset);
+			if (list != null) {
+				result.addAll(list);
+				offset += 50;
+			} else {
+				return result;
+			}
+		}
+	}
+
+	private List<Issue> doGetIssues(Filter filter, int offset)
+			throws MalformedURLException, WebApiException {
+		WebApiClient client = getClient();
 		while (true) {
 			IssueList list = client.monitorGetIssuesListPredefinedFilter(
 					filter.getName(), 50, offset, null, null);
 			if (list != null) {
-				List<Issue> newIssues = list.getIssues();
-				if (newIssues != null && newIssues.size() > 0) {
-					result.addAll(newIssues);
-					offset += 50;
-				} else {
-					return result;
-				}
+				return list.getIssues();
 			}
 		}
 	}
