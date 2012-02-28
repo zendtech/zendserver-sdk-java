@@ -1033,12 +1033,6 @@ public class WebApiClient {
 	 * <p>
 	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
 	 * </p>
-	 * <p>
-	 * Limitations:
-	 * </p>
-	 * <p>
-	 * This action explicitly does not work on Zend Server 5.6.0 for IBMi.
-	 * </p>
 	 * 
 	 * @return The new code tracing directive's state
 	 * @throws WebApiException
@@ -1049,11 +1043,8 @@ public class WebApiClient {
 	}
 
 	/**
-	 * Disable the two directives necessary for creating tracing dumps, this
-	 * action does not disable the code-tracing component. This action unsets
-	 * the special zend_monitor.developer_mode &
-	 * zend_monitor.event_generate_trace_file directives. Note that this action
-	 * does not deactivate the component or any other setting.
+	 * This action sets the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives.
 	 * <p>
 	 * Limitations:
 	 * </p>
@@ -1082,11 +1073,8 @@ public class WebApiClient {
 	}
 
 	/**
-	 * Disable the two directives necessary for creating tracing dumps, this
-	 * action does not disable the code-tracing component. This action unsets
-	 * the special zend_monitor.developer_mode &
-	 * zend_monitor.event_generate_trace_file directives. Note that this action
-	 * does not deactivate the component or any other setting.
+	 * This action sets the special zend_monitor.developer_mode &
+	 * zend_monitor.event_generate_trace_file directives.
 	 * <p>
 	 * Limitations:
 	 * </p>
