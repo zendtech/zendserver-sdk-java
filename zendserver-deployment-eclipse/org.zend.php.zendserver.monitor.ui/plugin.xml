@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.zend.php.zendserver.monitor.core.notificationProvider">
+      <notificationProvider
+            class="org.zend.php.zendserver.monitor.internal.ui.NotificationProvider">
+      </notificationProvider>
+   </extension>
+
+</plugin>
