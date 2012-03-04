@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.commands;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -12,10 +14,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendApplication;
 
 public class UninstallApplicationHandler extends AbstractHandler {
@@ -47,9 +51,14 @@ public class UninstallApplicationHandler extends AbstractHandler {
 						ZendApplication za = new ZendApplication();
 						za.remove(targetId, Integer.toString(appId));
 						PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
+						String baseURL = cfg.getAttribute(
+								DeploymentAttributes.BASE_URL.getName(), ""); //$NON-NLS-1$
 						cfg.delete();
+						MonitorManager.remove(targetId, new URL(baseURL));
 					} catch (CoreException e) {
 						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+					} catch (MalformedURLException e) {
+						StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
 					}
 					
 					return Status.OK_STATUS;

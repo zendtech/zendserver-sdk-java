@@ -42,9 +42,9 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 			try {
 				PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
 				String targetId = cfg.getAttribute(
-						DeploymentAttributes.TARGET_ID.getName(), "");
+						DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
 				String baseURL = cfg.getAttribute(
-						DeploymentAttributes.BASE_URL.getName(), "");
+						DeploymentAttributes.BASE_URL.getName(), ""); //$NON-NLS-1$
 				cfg.delete();
 				MonitorManager.remove(targetId, new URL(baseURL));
 			} catch (CoreException e) {
