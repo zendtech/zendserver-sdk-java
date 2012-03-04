@@ -38,6 +38,7 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -267,6 +268,8 @@ public class DeploymentHandler {
 								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
 					job = getAutoDeployJob(helper, project);
 				}
+				MonitorManager.create(helper.getTargetId(), project.getName(),
+						helper.getBaseURL());
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
@@ -408,6 +411,10 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
+			if (((DeploymentLaunchJob) job).getResponseCode() == null) {
+				MonitorManager.create(helper.getTargetId(), project.getName(),
+						helper.getBaseURL());
+			}
 			job = getAutoDeployJob(job.getHelper(), project);
 			if (job != null) {
 				return checkSSHTunnel(helper);
@@ -453,6 +460,10 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
+			if (((DeploymentLaunchJob) job).getResponseCode() == null) {
+				MonitorManager.create(helper.getTargetId(), project.getName(),
+						helper.getBaseURL());
+			}
 			return OK;
 		}
 	}

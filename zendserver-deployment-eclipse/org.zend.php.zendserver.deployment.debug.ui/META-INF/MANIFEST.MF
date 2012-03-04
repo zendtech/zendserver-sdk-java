@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.zend.php.zendserver.deployment.ui,
  com.jcraft.jsch,
  org.eclipse.php.debug.core,
- org.eclipse.ui.ide
+ org.eclipse.ui.ide,
+ org.zend.php.zendserver.monitor.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Zend Technologies Ltd.
