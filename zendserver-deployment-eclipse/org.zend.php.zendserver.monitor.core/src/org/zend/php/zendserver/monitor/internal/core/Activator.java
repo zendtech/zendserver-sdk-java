@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -54,6 +55,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		MonitorManager.removeAll();
 	}
 
 	/**

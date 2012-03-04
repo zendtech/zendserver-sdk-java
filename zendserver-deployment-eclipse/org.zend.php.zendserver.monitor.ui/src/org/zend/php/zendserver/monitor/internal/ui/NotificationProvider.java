@@ -27,12 +27,12 @@ public class NotificationProvider implements INotificationProvider {
 
 	@Override
 	public void showNonification(Shell shell, IZendIssue issue,
-			String basePath, String targetId, EventSource eventSource) {
-		IBody eventBody = new EventBody(targetId, eventSource, issue, basePath);
+			String targetId, EventSource eventSource) {
+		IBody eventBody = new EventBody(targetId, eventSource, issue);
 		NotificationSettings settings = new NotificationSettings();
-		settings.setTitle(Messages.NotificationProvider_Title)
-				.setClosable(true).setType(NotificationType.INFO)
-				.setBody(eventBody).setBorder(true);
+		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
+				.setType(NotificationType.INFO).setBody(eventBody)
+				.setBorder(true);
 		NotificationManager.registerNotification(NotificationManager
 				.createNotification(shell, settings));
 	}

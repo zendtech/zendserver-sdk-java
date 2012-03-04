@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.monitor.internal.ui.dialogs;
+package org.zend.php.zendserver.monitor.internal.ui;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,8 +30,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.zend.php.zendserver.monitor.core.EventSource;
-import org.zend.php.zendserver.monitor.internal.ui.Activator;
-import org.zend.php.zendserver.monitor.internal.ui.Messages;
 
 /**
  * Job responsible for opening source file in the editor.

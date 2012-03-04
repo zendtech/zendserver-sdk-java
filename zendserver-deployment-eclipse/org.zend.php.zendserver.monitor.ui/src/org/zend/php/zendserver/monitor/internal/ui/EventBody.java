@@ -7,9 +7,14 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
+import java.io.File;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -17,13 +22,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Link;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.util.FontCache;
 import org.zend.php.zendserver.monitor.core.EventSource;
-import org.zend.php.zendserver.monitor.internal.ui.dialogs.EventDetailsDialog;
+import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
+import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
 
 /**
@@ -34,27 +39,28 @@ import org.zend.sdklib.monitor.IZendIssue;
  */
 public class EventBody implements IBody {
 
-	private String application;
+	private static final String PROVIDER_EXTENSION = "org.zend.php.zendserver.monitor.ui.codeTracingEditor"; //$NON-NLS-1$
+
 	private IZendIssue zendIssue;
 	private String targetId;
 	private EventSource eventSource;
+	private static ICodeTraceEditorProvider editorProvider;
 
 	public EventBody(String targetId, EventSource eventSource,
-			IZendIssue zendIssue, String application) {
-		this.application = application;
+			IZendIssue zendIssue) {
 		this.zendIssue = zendIssue;
 		this.targetId = targetId;
 		this.eventSource = eventSource;
 	}
 
 	@Override
-	public void createContent(Composite container) {
+	public Composite createContent(Composite container) {
 		Composite composite = createEntryComposite(container);
-		createLabel(composite, Messages.EventBody_ApplicationLabel);
-		createText(composite, application);
-		createLabel(composite, Messages.EventBody_TypeLabel);
-		createText(composite, zendIssue.getIssue().getRule());
-		createDoubleClickLabel(container);
+		createDescription(composite);
+		createRepeatLink(composite);
+		createSourceLink(composite);
+		createTraceLink(composite);
+		return composite;
 	}
 
 	@Override
@@ -62,64 +68,112 @@ public class EventBody implements IBody {
 		// do not use listener
 	}
 
-	private void createDoubleClickLabel(Composite container) {
-		Label doubleClickLabel = new Label(container, SWT.CENTER);
-		doubleClickLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 3, 1));
-		Font f = doubleClickLabel.getFont();
-		FontData fd = f.getFontData()[0];
-		fd.height = 12;
-		doubleClickLabel.setFont(FontCache.getFont(fd));
-		doubleClickLabel.setText(Messages.EventBody_DoubleClickLabel);
-		doubleClickLabel.addMouseListener(new MouseAdapter() {
+	private void createTraceLink(Composite composite) {
+		if (getProvider() != null) {
+			Link traceLink = createLink(composite,
+					getLinkText(Messages.EventBody_CodetraceLink));
+			traceLink.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent event) {
+					// TODO enable it when it will work
+					// List<EventsGroupDetails> groups =
+					// zendIssue.getGroupDetails();
+					// if (groups != null && groups.size() == 1) {
+					// String traceId = groups.get(0).getCodeTracing();
+					String traceId = "0.3171.1"; //$NON-NLS-1$
+					if (traceId != null) {
+						ZendCodeTracing tracing = new ZendCodeTracing(targetId);
+						File codeTrace = tracing.get(traceId);
+						if (codeTrace != null) {
+							getProvider().openInEditor(
+									codeTrace.getAbsolutePath());
+						}
+					}
+					// }
+				}
+			});
+		}
+	}
+
+	private void createSourceLink(Composite composite) {
+		Link sourceLink = createLink(composite,
+				getLinkText(Messages.EventBody_SourceLink));
+		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				IWorkbenchWindow window = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow();
-				if (window != null) {
-					EventDetailsDialog dialog = new EventDetailsDialog(window
-							.getShell(), zendIssue, targetId, eventSource);
-					dialog.create();
-					dialog.open();
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				if (zendIssue != null) {
+					OpenInEditorJob job = new OpenInEditorJob(eventSource);
+					job.setUser(true);
+					job.schedule();
+				} else {
+					// Show message that code trace is unavailable
 				}
 			}
 		});
 	}
 
-	private Composite createEntryComposite(Composite container) {
-		Composite composite = new Composite(container, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3,
-				1));
-		return composite;
+	private void createRepeatLink(Composite composite) {
+		Link repeatLink = createLink(composite,
+				getLinkText(Messages.EventBody_2));
+		repeatLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				// TODO handle repeat action
+			}
+		});
 	}
 
-	private void createText(Composite parent, String text) {
-		if (text != null) {
-			Label textLabel = new Label(parent, SWT.NONE);
-			Font textFont = textLabel.getFont();
-			FontData textFontData = textFont.getFontData()[0];
-			textFontData.height = 11;
-			textFontData.setStyle(SWT.BOLD);
-			textLabel.setFont(FontCache.getFont(textFontData));
-			textLabel.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false,
-					true));
-			textLabel.setForeground(Display.getDefault().getSystemColor(
-					SWT.COLOR_BLACK));
-			textLabel.setText(text);
-		}
+	private String getLinkText(String text) {
+		return "<a>" + text + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private void createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.NONE);
+	private Link createLink(Composite parent, String text) {
+		Link link = new Link(parent, SWT.NONE);
+		link.setText(text);
+		link.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true));
+		return link;
+	}
+
+	private void createDescription(Composite composite) {
+		Label label = new Label(composite, SWT.WRAP);
 		Font labelFont = label.getFont();
 		FontData labelFontData = labelFont.getFontData()[0];
 		labelFontData.height = 11;
 		label.setFont(FontCache.getFont(labelFontData));
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
 		label.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLACK));
-		label.setText(text);
+		label.setText(zendIssue.getIssue().getGeneralDetails().getErrorString());
+	}
+
+	private Composite createEntryComposite(Composite container) {
+		Composite composite = new Composite(container, SWT.NONE);
+		GridLayout layout = new GridLayout(3, true);
+		layout.horizontalSpacing = layout.verticalSpacing = 2;
+		composite.setLayout(layout);
+		return composite;
+	}
+
+	private static ICodeTraceEditorProvider getProvider() {
+		if (editorProvider == null) {
+			IConfigurationElement[] elements = Platform.getExtensionRegistry()
+					.getConfigurationElementsFor(PROVIDER_EXTENSION);
+			for (IConfigurationElement element : elements) {
+				if ("codeTracingEditor".equals(element.getName())) { //$NON-NLS-1$
+					try {
+						Object listener = element
+								.createExecutableExtension("class"); //$NON-NLS-1$
+						if (listener instanceof ICodeTraceEditorProvider) {
+							editorProvider = (ICodeTraceEditorProvider) listener;
+							break;
+						}
+					} catch (CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
+		}
+		return editorProvider;
 	}
 
 }

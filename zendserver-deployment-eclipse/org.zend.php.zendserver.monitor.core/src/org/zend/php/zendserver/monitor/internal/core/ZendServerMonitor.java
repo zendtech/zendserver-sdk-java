@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,9 +28,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.monitor.core.EventSource;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
+import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
@@ -44,6 +51,7 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
 public class ZendServerMonitor extends Job {
 
 	private static final String PROVIDER_EXTENSION = "org.zend.php.zendserver.monitor.core.notificationProvider"; //$NON-NLS-1$
+	private static final String ENABLED = "enabled."; //$NON-NLS-1$
 
 	private static INotificationProvider provider;
 
@@ -55,10 +63,13 @@ public class ZendServerMonitor extends Job {
 	private long lastTime;
 	private int jobDelay = 3000;
 	private int offset;
+	private IEclipsePreferences projectScope;
+	private ZendCodeTracing codeTracing;
 
 	public ZendServerMonitor(String targetId, String project, URL url,
 			Shell parent) {
-		super("Initializing Server Monitoring..."); //$NON-NLS-1$
+		super(
+				"Initializing Server Monitoring for target with id '" + targetId + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		this.targetId = targetId;
 		this.projectName = project;
 		this.parent = parent;
@@ -70,19 +81,26 @@ public class ZendServerMonitor extends Job {
 	 * Start monitor job.
 	 */
 	public void start() {
-		lastTime = Long.MAX_VALUE;
-		setUser(true);
-		setPriority(Job.LONG);
-		schedule();
-		addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (!isSystem()) {
-					setUser(false);
-					setSystem(true);
+		if (codeTracing == null) {
+			codeTracing = new ZendCodeTracing(targetId);
+			codeTracing.enable(true);
+		}
+		if (shouldStart()) {
+			lastTime = Long.MAX_VALUE;
+			setUser(true);
+			setPriority(Job.LONG);
+			schedule();
+			addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (!isSystem()) {
+						setUser(false);
+						setSystem(true);
+					}
 				}
-			}
-		});
+			});
+
+		}
 	}
 
 	@Override
@@ -101,10 +119,8 @@ public class ZendServerMonitor extends Job {
 				Date date = getTime(issue.getLastOccurance());
 				if (date != null && date.getTime() >= lastTime) {
 					if (issue.getSeverity() == IssueSeverity.CRITICAL) {
-						String basePath = getBasePath(issue.getGeneralDetails()
-								.getUrl());
-						if (basePath != null) {
-							showNonification(zendIssue, basePath);
+						if (getBasePath(issue.getGeneralDetails().getUrl()) != null) {
+							showNonification(zendIssue);
 						}
 					}
 				}
@@ -130,7 +146,7 @@ public class ZendServerMonitor extends Job {
 	 *            base URL
 	 */
 	public void enable(URL url) {
-		if (!basePaths.contains(url.getPath())) {
+		if (!basePaths.contains(url.getPath()) && shouldStart()) {
 			basePaths.add(url.getPath());
 		}
 	}
@@ -142,7 +158,13 @@ public class ZendServerMonitor extends Job {
 	 *            base URL
 	 */
 	public void disable(URL url) {
-		basePaths.remove(url.getPath());
+		getPreferences().remove(getEnabledKey());
+		try {
+			getPreferences().flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+		basePaths.remove(createBasePath(url));
 	}
 
 	/**
@@ -153,10 +175,9 @@ public class ZendServerMonitor extends Job {
 		return basePaths.size() > 0;
 	}
 
-	private void showNonification(IZendIssue issue, String basePath) {
+	private void showNonification(IZendIssue issue) {
 		EventSource eventSource = getEventSource(issue, projectName);
-		getProvider().showNonification(parent, issue, basePath, targetId,
-				eventSource);
+		getProvider().showNonification(parent, issue, targetId, eventSource);
 
 	}
 
@@ -212,6 +233,37 @@ public class ZendServerMonitor extends Job {
 			return null;
 		}
 		return date;
+	}
+
+	private IEclipsePreferences getPreferences() {
+		if (projectScope == null) {
+			IResource project = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(projectName);
+			if (project instanceof IContainer) {
+				projectScope = new ProjectScope(project.getProject())
+						.getNode(Activator.PLUGIN_ID);
+			}
+		}
+		return projectScope;
+	}
+
+	private boolean shouldStart() {
+		try {
+			if (getPreferences().get(getEnabledKey(), null) == null) {
+				getPreferences().putBoolean(getEnabledKey(), true);
+				getPreferences().flush();
+				return true;
+			} else {
+				return getPreferences().getBoolean(getEnabledKey(), false);
+			}
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+		return false;
+	}
+
+	private String getEnabledKey() {
+		return ENABLED + targetId;
 	}
 
 	private static INotificationProvider getProvider() {

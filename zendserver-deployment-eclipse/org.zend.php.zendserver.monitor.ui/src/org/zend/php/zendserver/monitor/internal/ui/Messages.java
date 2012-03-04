@@ -17,9 +17,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.monitor.internal.ui.messages"; //$NON-NLS-1$
+	public static String EventBody_2;
 	public static String EventBody_ApplicationLabel;
+	public static String EventBody_CodetraceLink;
 	public static String EventBody_DoubleClickLabel;
-	public static String EventBody_TypeLabel;
+	public static String EventBody_SourceLink;
 	public static String EventDetailsDialog_ActionsLabel;
 	public static String EventDetailsDialog_6;
 	public static String EventDetailsDialog_Description;
@@ -29,7 +31,6 @@ public class Messages extends NLS {
 	public static String EventDetailsDialog_Title;
 	public static String EventDetailsDialog_TraceTooltip;
 	public static String EventDetailsDialog_TypeLabel;
-	public static String NotificationProvider_Title;
 	public static String OpenInEditorJob_0;
 	static {
 		// initialize resource bundle

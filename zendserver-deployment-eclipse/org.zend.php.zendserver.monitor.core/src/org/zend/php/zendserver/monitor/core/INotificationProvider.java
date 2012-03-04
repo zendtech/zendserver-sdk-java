@@ -26,14 +26,12 @@ public interface INotificationProvider {
 	 *            shell which should be a parent for notification
 	 * @param issue
 	 *            Zend Server issue
-	 * @param basePath
-	 *            application base path
 	 * @param targetId
 	 *            target id
 	 * @param eventSource
 	 *            source of the event
 	 */
-	void showNonification(Shell shell, IZendIssue issue, String basePath,
-			String targetId, EventSource eventSource);
+	void showNonification(Shell shell, IZendIssue issue, String targetId,
+			EventSource eventSource);
 
 }

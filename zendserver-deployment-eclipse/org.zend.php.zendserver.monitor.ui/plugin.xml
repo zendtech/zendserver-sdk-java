@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="codeTracingEditor" name="Code Tracing Editor" schema="schema/codeTracingEditor.exsd"/>
    <extension
          point="org.zend.php.zendserver.monitor.core.notificationProvider">
       <notificationProvider
