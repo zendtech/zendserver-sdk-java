@@ -58,6 +58,32 @@
                   checkEnabled="true">
             </visibleWhen>
          </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.enableMonitoring"
+               label="Enable Monitoring"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <test
+                     forcePluginActivation="false"
+                     property="propertyTester.monitor.visible"
+                     value="false">
+               </test>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.ui.disableMonitoring"
+               label="Disable Monitoring"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <test
+                     forcePluginActivation="false"
+                     property="propertyTester.monitor.visible"
+                     value="true">
+               </test>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -93,6 +119,16 @@
             id="org.zend.php.zendserver.deployment.ui.OpenCodeTracingSnapshot"
             name="Open Code Tracing Command">
       </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableMonitoringHandler"
+            id="org.zend.php.zendserver.deployment.ui.enableMonitoring"
+            name="Enable Monitoring">
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.DisableMonitoringHandler"
+            id="org.zend.php.zendserver.deployment.ui.disableMonitoring"
+            name="Disable Monitoring">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -100,6 +136,13 @@
             class="org.zend.php.zendserver.deployment.ui.commands.DeployVisibilityTester"
             id="org.zend.php.zendserver.deployment.ui.deployVisibilityTester"
             namespace="propertyTester.deploy"
+            properties="visible"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.zend.php.zendserver.deployment.ui.commands.MonitorStateTester"
+            id="org.zend.php.zendserver.deployment.ui.monitoringStateTester"
+            namespace="propertyTester.monitor"
             properties="visible"
             type="java.lang.Object">
       </propertyTester>
