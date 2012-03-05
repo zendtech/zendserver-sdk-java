@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.core;
 
-import org.eclipse.swt.widgets.Shell;
 import org.zend.sdklib.monitor.IZendIssue;
 
 /**
@@ -22,8 +21,6 @@ public interface INotificationProvider {
 	/**
 	 * Displays notification for event retirieved from a server.
 	 * 
-	 * @param shell
-	 *            shell which should be a parent for notification
 	 * @param issue
 	 *            Zend Server issue
 	 * @param targetId
@@ -31,7 +28,7 @@ public interface INotificationProvider {
 	 * @param eventSource
 	 *            source of the event
 	 */
-	void showNonification(Shell shell, IZendIssue issue, String targetId,
+	void showNonification(IZendIssue issue, String targetId,
 			EventSource eventSource);
 
 }

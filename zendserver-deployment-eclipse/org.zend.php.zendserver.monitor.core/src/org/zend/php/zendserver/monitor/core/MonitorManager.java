@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Shell;
 import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
 
 /**
@@ -26,7 +25,6 @@ import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
 public class MonitorManager {
 
 	private static Map<String, ZendServerMonitor> monitors;
-	private static Shell parent;
 
 	static {
 		monitors = Collections
@@ -48,7 +46,7 @@ public class MonitorManager {
 		ZendServerMonitor monitor = monitors.get(targetId);
 		if (monitor == null) {
 			final ZendServerMonitor m = new ZendServerMonitor(targetId,
-					project, url, parent);
+					project, url);
 			m.start();
 			monitors.put(targetId, m);
 		} else {
@@ -147,17 +145,6 @@ public class MonitorManager {
 			ZendServerMonitor monitor = monitors.get(key);
 			monitor.cancel();
 		}
-	}
-
-	/**
-	 * Initialize parent shell. It is required to be able to reuse this
-	 * reference for displaying notification even if different application has
-	 * user's focus (e.g. external browser).
-	 * 
-	 * @param parent
-	 */
-	public static void setParent(Shell parent) {
-		MonitorManager.parent = parent;
 	}
 
 }

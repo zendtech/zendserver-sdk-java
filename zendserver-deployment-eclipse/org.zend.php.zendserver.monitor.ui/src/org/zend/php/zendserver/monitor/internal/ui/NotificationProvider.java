@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
-import org.eclipse.swt.widgets.Shell;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
@@ -26,7 +25,7 @@ import org.zend.sdklib.monitor.IZendIssue;
 public class NotificationProvider implements INotificationProvider {
 
 	@Override
-	public void showNonification(Shell shell, IZendIssue issue,
+	public void showNonification(IZendIssue issue,
 			String targetId, EventSource eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);
 		NotificationSettings settings = new NotificationSettings();
@@ -34,7 +33,7 @@ public class NotificationProvider implements INotificationProvider {
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);
 		NotificationManager.registerNotification(NotificationManager
-				.createNotification(shell, settings));
+				.createNotification(settings));
 	}
 
 }

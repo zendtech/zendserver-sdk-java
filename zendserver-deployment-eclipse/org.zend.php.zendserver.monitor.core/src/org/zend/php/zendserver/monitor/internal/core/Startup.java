@@ -17,9 +17,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
+import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -44,13 +43,6 @@ public class Startup implements IStartup {
 	 * @see org.eclipse.ui.IStartup#earlyStartup()
 	 */
 	public void earlyStartup() {
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				Shell shell = Display.getDefault().getActiveShell();
-				MonitorManager.setParent(shell);
-			}
-		});
 		TargetsManager manager = new TargetsManager();
 		IZendTarget[] targets = manager.getTargets();
 		for (IZendTarget target : targets) {

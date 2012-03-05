@@ -29,8 +29,9 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.EventSource;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
@@ -57,7 +58,6 @@ public class ZendServerMonitor extends Job {
 
 	private String targetId;
 	private String projectName;
-	private Shell parent;
 	private List<String> basePaths;
 	private ZendMonitor monitor;
 	private long lastTime;
@@ -66,13 +66,11 @@ public class ZendServerMonitor extends Job {
 	private IEclipsePreferences projectScope;
 	private ZendCodeTracing codeTracing;
 
-	public ZendServerMonitor(String targetId, String project, URL url,
-			Shell parent) {
+	public ZendServerMonitor(String targetId, String project, URL url) {
 		super(
 				"Initializing Server Monitoring for target with id '" + targetId + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		this.targetId = targetId;
 		this.projectName = project;
-		this.parent = parent;
 		this.basePaths = new ArrayList<String>();
 		this.basePaths.add(createBasePath(url));
 	}
@@ -175,10 +173,16 @@ public class ZendServerMonitor extends Job {
 		return basePaths.size() > 0;
 	}
 
-	private void showNonification(IZendIssue issue) {
-		EventSource eventSource = getEventSource(issue, projectName);
-		getProvider().showNonification(parent, issue, targetId, eventSource);
+	private void showNonification(final IZendIssue issue) {
+		final EventSource eventSource = getEventSource(issue, projectName);
+		Display.getDefault().asyncExec(new Runnable() {
 
+			@Override
+			public void run() {
+				getProvider().showNonification(issue, targetId,
+						eventSource);
+			}
+		});
 	}
 
 	private EventSource getEventSource(IZendIssue issue, String projectName) {

@@ -8,10 +8,12 @@
 package org.zend.php.zendserver.monitor.internal.ui;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.zend.core.notifications.ui.ActionType;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.util.FontCache;
@@ -30,6 +33,7 @@ import org.zend.php.zendserver.monitor.core.EventSource;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.webapi.core.connection.data.EventsGroupDetails;
 
 /**
  * Implementation of {@link IBody} for Zend Server event notification.
@@ -44,6 +48,8 @@ public class EventBody implements IBody {
 	private IZendIssue zendIssue;
 	private String targetId;
 	private EventSource eventSource;
+
+	private IActionListener listener;
 	private static ICodeTraceEditorProvider editorProvider;
 
 	public EventBody(String targetId, EventSource eventSource,
@@ -65,7 +71,7 @@ public class EventBody implements IBody {
 
 	@Override
 	public void addActionListener(IActionListener listener) {
-		// do not use listener
+		this.listener = listener;
 	}
 
 	private void createTraceLink(Composite composite) {
@@ -75,21 +81,20 @@ public class EventBody implements IBody {
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					// TODO enable it when it will work
-					// List<EventsGroupDetails> groups =
-					// zendIssue.getGroupDetails();
-					// if (groups != null && groups.size() == 1) {
-					// String traceId = groups.get(0).getCodeTracing();
-					String traceId = "0.3171.1"; //$NON-NLS-1$
-					if (traceId != null) {
-						ZendCodeTracing tracing = new ZendCodeTracing(targetId);
-						File codeTrace = tracing.get(traceId);
-						if (codeTrace != null) {
-							getProvider().openInEditor(
-									codeTrace.getAbsolutePath());
+					List<EventsGroupDetails> groups = zendIssue
+							.getGroupDetails();
+					if (groups != null && groups.size() == 1) {
+						String traceId = groups.get(0).getCodeTracing();
+						if (traceId != null) {
+							ZendCodeTracing tracing = new ZendCodeTracing(
+									targetId);
+							File codeTrace = tracing.get(traceId);
+							if (codeTrace != null) {
+								getProvider().openInEditor(
+										codeTrace.getAbsolutePath());
+							}
 						}
 					}
-					// }
 				}
 			});
 		}
@@ -118,7 +123,12 @@ public class EventBody implements IBody {
 		repeatLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				// TODO handle repeat action
+				Job job = new RequestGeneratorJob(zendIssue);
+				job.setUser(true);
+				job.schedule();
+				if (listener != null) {
+					listener.performAction(ActionType.HIDE);
+				}
 			}
 		});
 	}

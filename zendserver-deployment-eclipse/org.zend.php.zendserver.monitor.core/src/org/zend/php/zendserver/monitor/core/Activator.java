@@ -5,13 +5,12 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.monitor.internal.core;
+package org.zend.php.zendserver.monitor.core;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.zend.php.zendserver.monitor.core.MonitorManager;
 
 /**
  * The activator class controls the plug-in life cycle.
