@@ -9,11 +9,14 @@ package org.zend.php.zendserver.monitor.internal.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -57,22 +60,18 @@ public class ZendServerMonitor extends Job {
 	private static INotificationProvider provider;
 
 	private String targetId;
-	private String projectName;
-	private List<String> basePaths;
+	private Map<String, String> applications;
 	private ZendMonitor monitor;
 	private long lastTime;
 	private int jobDelay = 3000;
 	private int offset;
-	private IEclipsePreferences projectScope;
 	private ZendCodeTracing codeTracing;
 
 	public ZendServerMonitor(String targetId, String project, URL url) {
-		super(
-				"Initializing Server Monitoring for target with id '" + targetId + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		super(Messages.ZendServerMonitor_JobTitle);
 		this.targetId = targetId;
-		this.projectName = project;
-		this.basePaths = new ArrayList<String>();
-		this.basePaths.add(createBasePath(url));
+		this.applications = new HashMap<String, String>();
+		this.applications.put(project, createBasePath(url));
 	}
 
 	/**
@@ -103,6 +102,9 @@ public class ZendServerMonitor extends Job {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
+		monitor.beginTask(MessageFormat.format(
+				Messages.ZendServerMonitor_TaskTitle, targetId),
+				IProgressMonitor.UNKNOWN);
 		List<IZendIssue> issues = null;
 		if (this.monitor == null) {
 			this.monitor = connect(monitor);
@@ -117,8 +119,10 @@ public class ZendServerMonitor extends Job {
 				Date date = getTime(issue.getLastOccurance());
 				if (date != null && date.getTime() >= lastTime) {
 					if (issue.getSeverity() == IssueSeverity.CRITICAL) {
-						if (getBasePath(issue.getGeneralDetails().getUrl()) != null) {
-							showNonification(zendIssue);
+						String basePath = issue.getGeneralDetails().getUrl();
+						String projectName = getProjectName(basePath);
+						if (projectName != null) {
+							showNonification(zendIssue, projectName);
 						}
 					}
 				}
@@ -131,38 +135,45 @@ public class ZendServerMonitor extends Job {
 			}
 		}
 		if (!monitor.isCanceled()) {
+			monitor.done();
 			this.schedule(jobDelay);
 			return Status.OK_STATUS;
 		}
+		monitor.done();
 		return Status.CANCEL_STATUS;
 	}
 
 	/**
 	 * Enable monitoring for specified application's base URL.
 	 * 
+	 * @param project
+	 * 
 	 * @param url
 	 *            base URL
 	 */
-	public void enable(URL url) {
-		if (!basePaths.contains(url.getPath()) && shouldStart()) {
-			basePaths.add(url.getPath());
+	public void enable(String project, URL url) {
+		if (!applications.containsKey(project) && shouldStart(project)) {
+			applications.put(project, createBasePath(url));
 		}
 	}
 
 	/**
 	 * Disable monitoring for specified application's base URL.
 	 * 
-	 * @param url
-	 *            base URL
+	 * @param projectName
+	 *            project name
 	 */
-	public void disable(URL url) {
-		getPreferences().remove(getEnabledKey());
-		try {
-			getPreferences().flush();
-		} catch (BackingStoreException e) {
-			Activator.log(e);
+	public void disable(String projectName) {
+		IEclipsePreferences prefs = getPreferences(projectName);
+		if (prefs != null) {
+			prefs.remove(getEnabledKey());
+			try {
+				prefs.flush();
+			} catch (BackingStoreException e) {
+				Activator.log(e);
+			}
 		}
-		basePaths.remove(createBasePath(url));
+		applications.remove(projectName);
 	}
 
 	/**
@@ -170,17 +181,16 @@ public class ZendServerMonitor extends Job {
 	 *         otherwise return <code>false</code>
 	 */
 	public boolean isEnabled() {
-		return basePaths.size() > 0;
+		return applications.size() > 0;
 	}
 
-	private void showNonification(final IZendIssue issue) {
+	private void showNonification(final IZendIssue issue, String projectName) {
 		final EventSource eventSource = getEventSource(issue, projectName);
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				getProvider().showNonification(issue, targetId,
-						eventSource);
+				getProvider().showNonification(issue, targetId, eventSource);
 			}
 		});
 	}
@@ -197,14 +207,15 @@ public class ZendServerMonitor extends Job {
 		return zendMonitor;
 	}
 
-	private String getBasePath(String urlString) {
+	private String getProjectName(String urlString) {
 		try {
 			URL url = new URL(urlString);
 			String base = createBasePath(url);
 			if (base != null) {
-				for (String basePath : basePaths) {
-					if (base.equals(basePath)) {
-						return basePath;
+				Set<String> keys = applications.keySet();
+				for (String projectName : keys) {
+					if (base.equals(applications.get(projectName))) {
+						return projectName;
 					}
 				}
 			}
@@ -239,26 +250,37 @@ public class ZendServerMonitor extends Job {
 		return date;
 	}
 
-	private IEclipsePreferences getPreferences() {
-		if (projectScope == null) {
-			IResource project = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(projectName);
-			if (project instanceof IContainer) {
-				projectScope = new ProjectScope(project.getProject())
-						.getNode(Activator.PLUGIN_ID);
-			}
+	private IEclipsePreferences getPreferences(String projectName) {
+		IResource project = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(projectName);
+		if (project instanceof IContainer) {
+			return new ProjectScope(project.getProject())
+					.getNode(Activator.PLUGIN_ID);
 		}
-		return projectScope;
+		return null;
 	}
 
 	private boolean shouldStart() {
-		try {
-			if (getPreferences().get(getEnabledKey(), null) == null) {
-				getPreferences().putBoolean(getEnabledKey(), true);
-				getPreferences().flush();
+		Set<String> keys = applications.keySet();
+		for (String projectName : keys) {
+			if (shouldStart(projectName)) {
 				return true;
-			} else {
-				return getPreferences().getBoolean(getEnabledKey(), false);
+			}
+		}
+		return false;
+	}
+
+	private boolean shouldStart(String projectName) {
+		try {
+			IEclipsePreferences prefs = getPreferences(projectName);
+			if (prefs != null) {
+				if (prefs.get(getEnabledKey(), null) == null) {
+					prefs.putBoolean(getEnabledKey(), true);
+					prefs.flush();
+					return true;
+				} else {
+					return prefs.getBoolean(getEnabledKey(), false);
+				}
 			}
 		} catch (BackingStoreException e) {
 			Activator.log(e);

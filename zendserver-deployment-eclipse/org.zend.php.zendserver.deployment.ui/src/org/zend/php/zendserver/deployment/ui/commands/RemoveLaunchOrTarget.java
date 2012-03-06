@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.ui.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -42,17 +40,16 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 			try {
 				PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
 				String targetId = cfg.getAttribute(
-						DeploymentAttributes.TARGET_ID.getName(), ""); //$NON-NLS-1$
-				String baseURL = cfg.getAttribute(
-						DeploymentAttributes.BASE_URL.getName(), ""); //$NON-NLS-1$
+						DeploymentAttributes.TARGET_ID.getName(), (String) null);
+				String projectName = cfg.getAttribute(
+						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 				cfg.delete();
-				MonitorManager.remove(targetId, new URL(baseURL));
+				if (targetId != null && projectName != null) {
+					MonitorManager.remove(targetId, projectName);
+				}
 			} catch (CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
-			} catch (MalformedURLException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
 			}
-			
 		} else if (element instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) element;
 			TargetsManagerService.INSTANCE.removeTarget(target);

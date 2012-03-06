@@ -50,7 +50,7 @@ public class MonitorManager {
 			m.start();
 			monitors.put(targetId, m);
 		} else {
-			monitor.enable(url);
+			monitor.enable(project, url);
 		}
 	}
 
@@ -102,10 +102,10 @@ public class MonitorManager {
 	 * @return <code>true</code> if monitor was available; otherwise return
 	 *         <code>false</code>
 	 */
-	public static boolean remove(String targetId, URL url) {
+	public static boolean remove(String targetId, String projectName) {
 		ZendServerMonitor monitor = monitors.get(targetId);
 		if (monitor != null) {
-			monitor.disable(url);
+			monitor.disable(projectName);
 			if (!monitor.isEnabled()) {
 				monitor.cancel();
 				monitors.remove(targetId);

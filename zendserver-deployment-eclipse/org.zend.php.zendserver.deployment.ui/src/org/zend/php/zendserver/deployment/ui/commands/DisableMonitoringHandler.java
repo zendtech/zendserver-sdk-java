@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -57,13 +55,13 @@ public class DisableMonitoringHandler extends AbstractHandler {
 				String targetId = cfg
 						.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
 								(String) null);
-				String baseURL = cfg.getAttribute(
-						DeploymentAttributes.BASE_URL.getName(), (String) null);
-				MonitorManager.remove(targetId, new URL(baseURL));
+				String projectName = cfg.getAttribute(
+						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
+				if (targetId != null && projectName != null) {
+					MonitorManager.remove(targetId, projectName);
+				}
 				return;
 			} catch (CoreException e) {
-				Activator.log(e);
-			} catch (MalformedURLException e) {
 				Activator.log(e);
 			}
 		}
