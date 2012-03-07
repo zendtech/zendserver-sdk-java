@@ -8,6 +8,8 @@
 package org.zend.php.zendserver.monitor.internal.ui;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -19,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.webapi.core.connection.data.Event;
@@ -39,32 +41,46 @@ public class RequestGeneratorJob extends Job {
 	private IZendIssue zendIssue;
 
 	public RequestGeneratorJob(IZendIssue zendIssue) {
-		super(Messages.RequestGeneratorJob_RepeatJobTitle);
+		super(Messages.RequestGeneratorJob_RepeatTaskTitle);
 		this.zendIssue = zendIssue;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final int result = generate();
-		switch (result) {
-		case 200:
-			Display.getDefault().syncExec(new Runnable() {
+		NotificationManager.registerProgress(
+				Messages.RequestGeneratorJob_NotificationTitle, 60,
+				new IRunnableWithProgress() {
 
-				@Override
-				public void run() {
-					NotificationManager.registerInfo(
-							Messages.RequestGeneratorJob_MessageTitle,
-							Messages.RequestGeneratorJob_MessageBody + result
-									+ ".", 10000); //$NON-NLS-1$
-				}
-			});
-			break;
-		case -1:
-			return new Status(Status.ERROR, Activator.PLUGIN_ID,
-					Messages.RequestGeneratorJob_RepeatFailedMessage);
-		default:
-			break;
-		}
+					@Override
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						monitor.beginTask(
+								Messages.RequestGeneratorJob_RepeatTaskTitle,
+								IProgressMonitor.UNKNOWN);
+						final int result = generate();
+						switch (result) {
+						case 200:
+							NotificationManager
+									.registerInfo(
+											Messages.RequestGeneratorJob_MessageTitle,
+											MessageFormat
+													.format(Messages.RequestGeneratorJob_MessageBody,
+															result), 5000);
+
+							break;
+						case -1:
+							NotificationManager
+									.registerInfo(
+											Messages.RequestGeneratorJob_MessageTitle,
+											Messages.RequestGeneratorJob_RepeatFailedMessage,
+											5000);
+						default:
+							break;
+						}
+						monitor.done();
+					}
+				});
 		return Status.OK_STATUS;
 	}
 

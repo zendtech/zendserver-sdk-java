@@ -19,6 +19,8 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.monitor.internal.ui.messages"; //$NON-NLS-1$
 	public static String EventBody_2;
 	public static String EventBody_ApplicationLabel;
+	public static String EventBody_CodetraceJobErrorMessage;
+	public static String EventBody_CodetraceJobTitle;
 	public static String EventBody_CodetraceLink;
 	public static String EventBody_DoubleClickLabel;
 	public static String EventBody_SourceLink;
@@ -34,8 +36,9 @@ public class Messages extends NLS {
 	public static String OpenInEditorJob_0;
 	public static String RequestGeneratorJob_MessageBody;
 	public static String RequestGeneratorJob_MessageTitle;
+	public static String RequestGeneratorJob_NotificationTitle;
 	public static String RequestGeneratorJob_RepeatFailedMessage;
-	public static String RequestGeneratorJob_RepeatJobTitle;
+	public static String RequestGeneratorJob_RepeatTaskTitle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

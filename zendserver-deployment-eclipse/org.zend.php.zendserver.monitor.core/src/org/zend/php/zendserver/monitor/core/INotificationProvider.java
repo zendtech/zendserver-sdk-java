@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.core;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.sdklib.monitor.IZendIssue;
 
 /**
@@ -19,7 +20,7 @@ import org.zend.sdklib.monitor.IZendIssue;
 public interface INotificationProvider {
 
 	/**
-	 * Displays notification for event retirieved from a server.
+	 * Displays notification for event retrieved from a server.
 	 * 
 	 * @param issue
 	 *            Zend Server issue
@@ -30,5 +31,18 @@ public interface INotificationProvider {
 	 */
 	void showNonification(IZendIssue issue, String targetId,
 			EventSource eventSource);
+
+	/**
+	 * Displays progress notification.
+	 * 
+	 * @param title
+	 *            notification title
+	 * @param height
+	 *            notification height
+	 * @param runnable
+	 *            process which should be run
+	 */
+	void showProgress(String title, int height,
+			IRunnableWithProgress runnable);
 
 }

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
@@ -34,6 +35,12 @@ public class NotificationProvider implements INotificationProvider {
 				.setBorder(true);
 		NotificationManager.registerNotification(NotificationManager
 				.createNotification(settings));
+	}
+
+	@Override
+	public void showProgress(String title, int height,
+			IRunnableWithProgress runnable) {
+		NotificationManager.registerProgress(title, height, runnable);
 	}
 
 }

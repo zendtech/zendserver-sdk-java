@@ -12,7 +12,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -81,20 +84,35 @@ public class EventBody implements IBody {
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					List<EventsGroupDetails> groups = zendIssue
-							.getGroupDetails();
-					if (groups != null && groups.size() == 1) {
-						String traceId = groups.get(0).getCodeTracing();
-						if (traceId != null) {
-							ZendCodeTracing tracing = new ZendCodeTracing(
-									targetId);
-							File codeTrace = tracing.get(traceId);
-							if (codeTrace != null) {
-								getProvider().openInEditor(
-										codeTrace.getAbsolutePath());
+					Job showCodeTraceJob = new Job(
+							Messages.EventBody_CodetraceJobTitle) {
+
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							List<EventsGroupDetails> groups = zendIssue
+									.getGroupDetails();
+							if (groups != null && groups.size() == 1) {
+								String traceId = groups.get(0).getCodeTracing();
+								if (traceId != null) {
+									ZendCodeTracing tracing = new ZendCodeTracing(
+											targetId);
+									File codeTrace = tracing.get(traceId);
+									if (codeTrace != null) {
+										getProvider().openInEditor(
+												codeTrace.getAbsolutePath());
+									} else {
+										return new Status(
+												IStatus.ERROR,
+												Activator.PLUGIN_ID,
+												Messages.EventBody_CodetraceJobErrorMessage);
+									}
+								}
 							}
+							return Status.OK_STATUS;
 						}
-					}
+					};
+					showCodeTraceJob.setSystem(true);
+					showCodeTraceJob.schedule();
 				}
 			});
 		}
@@ -106,13 +124,9 @@ public class EventBody implements IBody {
 		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				if (zendIssue != null) {
-					OpenInEditorJob job = new OpenInEditorJob(eventSource);
-					job.setUser(true);
-					job.schedule();
-				} else {
-					// Show message that code trace is unavailable
-				}
+				OpenInEditorJob job = new OpenInEditorJob(eventSource);
+				job.setUser(true);
+				job.schedule();
 			}
 		});
 	}
