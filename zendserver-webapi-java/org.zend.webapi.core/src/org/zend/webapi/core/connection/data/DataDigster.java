@@ -846,7 +846,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 		try {
 			byte[] content = new byte[size];
 			InputStream reader = representation.getStream();
-			reader.read(content);
+			int offset = 0;
+			while (offset < size) {
+				offset += reader.read(content, offset, size - offset);
+			}
 			codeTraceFile.setFileContent(content);
 		} catch (IOException e) {
 			return false;
@@ -866,7 +869,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 		try {
 			byte[] content = new byte[size];
 			InputStream reader = representation.getStream();
-			reader.read(content);
+			int offset = 0;
+			while (offset < size) {
+				offset += reader.read(content, offset, size - offset);
+			}
 			issueFile.setFileContent(content);
 		} catch (IOException e) {
 			return false;
