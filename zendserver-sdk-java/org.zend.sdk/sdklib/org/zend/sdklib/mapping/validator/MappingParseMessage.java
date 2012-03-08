@@ -33,7 +33,9 @@ public enum MappingParseMessage {
 
 	NO_APPDIR("No appdir include declaration"),
 
-	CANNOT_READ("Cannot read the properties file");
+	CANNOT_READ("Cannot read the properties file"),
+
+	INVALID_LIBRARY("Invalid library mapping value");
 
 	private String message;
 

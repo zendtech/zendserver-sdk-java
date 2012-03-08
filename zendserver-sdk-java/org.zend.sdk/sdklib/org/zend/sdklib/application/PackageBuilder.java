@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.internal.mapping.LibraryMapping;
 import org.zend.sdklib.internal.project.ProjectResourcesWriter;
 import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.mapping.IMapping;
@@ -176,7 +177,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String license = getLicenseName(container);
 		if (license != null) {
 			try {
-				addFileToZip(new File(container, license), null, null, null, false);
+				addFileToZip(new File(container, license), null, null, null,
+						false);
 			} catch (IOException e) {
 				// do nothing, it means that descriptor has entries which are
 				// not valid
@@ -192,6 +194,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				addNewFolderToZip(new File(container, appdir));
 			}
 			resolveMapping(IMappingModel.APPDIR, appdir, false);
+			resolveLibraryMapping(appdir, false);
 		}
 		if (scriptsdir != null && !scriptsdir.isEmpty()) {
 			addNewFolderToZip(new File(container, scriptsdir));
@@ -199,20 +202,52 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		}
 	}
 
-	private void resolveMapping(String tag, String folderName, boolean allowFlat)
+	private void resolveLibraryMapping(String folderName, boolean b)
 			throws IOException {
-		List<IMappingEntry> entries = model.getEnties(Type.INCLUDE, tag);
-		
+		List<IMappingEntry> entries = model.getEnties(Type.INCLUDE, "library");
+
 		for (IMappingEntry entry : entries) {
 			List<IMapping> mappings = entry.getMappings();
 			for (IMapping mapping : mappings) {
-				File resource = new File(new File(container,
-						mapping.getPath()).getCanonicalPath());				
-				
+				LibraryMapping libraryMapping = LibraryMapping.create(mapping
+						.getPath());
+				if (libraryMapping != null) {
+					String mappingFolder = folderName + File.separator
+							+ libraryMapping.getFolder();
+					String[] libs = libraryMapping.getLibraryPaths();
+					for (String library : libs) {
+						File libraryFile = new File(library);
+						if (!libraryFile.isAbsolute()) {
+							libraryFile = new File(container, library);
+						}
+						File resource = new File(libraryFile.getCanonicalPath());
+						if (resource.exists()) {
+							addFileToZip(resource, mappingFolder, library,
+									"library", false);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void resolveMapping(String tag, String folderName, boolean allowFlat)
+			throws IOException {
+		List<IMappingEntry> entries = model.getEnties(Type.INCLUDE, tag);
+
+		for (IMappingEntry entry : entries) {
+			List<IMapping> mappings = entry.getMappings();
+			for (IMapping mapping : mappings) {
+				File resource = new File(
+						new File(container, mapping.getPath())
+								.getCanonicalPath());
+
 				if (resource.exists()) {
-					allowFlat &= resource.isDirectory() && entries.size() == 1 && mappings.size() == 1;
-					
-					addFileToZip(resource, folderName, mapping, tag, allowFlat);
+					allowFlat &= resource.isDirectory() && entries.size() == 1
+							&& mappings.size() == 1;
+
+					addFileToZip(resource, folderName, mapping.getPath(), tag,
+							allowFlat);
 				}
 			}
 		}
@@ -226,22 +261,27 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private void addFileToZip(File root, String mappingFolder,
-			IMapping mapping, String tag, boolean allowFlat) throws IOException {
+			String mappingPath, String tag, boolean allowFlat)
+			throws IOException {
 		if (!model.isExcluded(tag, root.getCanonicalPath())) {
 			if (root.isDirectory() && !isExcludeAllChildren(tag, root)) {
 				File[] children = root.listFiles();
 				for (File child : children) {
-					addFileToZip(child, mappingFolder, mapping, tag, allowFlat);
+					addFileToZip(child, mappingFolder, mappingPath, tag,
+							allowFlat);
 				}
 			} else {
 				String location = root.getCanonicalPath();
 				String path = getContainerRelativePath(location);
-				if (mapping != null && mapping.getPath() != null) {
+				if (mappingPath != null) {
 					path = root.getCanonicalPath();
-					String fullMapping = new File(container, mapping.getPath())
-							.getCanonicalPath();
-					String destFolder = path.substring((allowFlat ? path : fullMapping)
-							.lastIndexOf(File.separator));
+					File file = new File(mappingPath);
+					if (!file.isAbsolute()) {
+						file = new File(container, mappingPath);
+					}
+					String fullMapping = file.getCanonicalPath();
+					String destFolder = path.substring((allowFlat ? path
+							: fullMapping).lastIndexOf(File.separator));
 					path = mappingFolder + destFolder;
 				}
 				if (root.isDirectory()) {
@@ -272,7 +312,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		}
 	}
 
-	private boolean isExcludeAllChildren(String tag, File root) throws IOException {
+	private boolean isExcludeAllChildren(String tag, File root)
+			throws IOException {
 		File[] children = root.listFiles();
 		for (File file : children) {
 			if (!model.isExcluded(tag, file.getCanonicalPath())) {
@@ -381,12 +422,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						for (String script : scripts) {
 							if (DeploymentScriptTypes.byName(script) != null) {
 								String path = name + "/" + script;
-								model.addMapping(IMappingModel.SCRIPTSDIR, Type.INCLUDE, path,
-										false);
+								model.addMapping(IMappingModel.SCRIPTSDIR,
+										Type.INCLUDE, path, false);
 							}
 						}
 					} else {
-						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE, name, false);
+						model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+								name, false);
 					}
 				}
 			}
