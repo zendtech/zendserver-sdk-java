@@ -8,6 +8,7 @@
 package org.zend.sdklib.mapping.validator;
 
 import static org.zend.sdklib.mapping.IMappingModel.APPDIR;
+import static org.zend.sdklib.mapping.IMappingModel.LIBRARY;
 import static org.zend.sdklib.mapping.IMappingModel.SCRIPTSDIR;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.EXCLUDES;
 import static org.zend.sdklib.mapping.PropertiesBasedMappingLoader.GLOBAL;
@@ -21,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.zend.sdklib.internal.mapping.LibraryMapping;
 
 /**
  * Default implementation of {@link IMappingValidator}.
@@ -59,6 +62,7 @@ public class MappingValidator implements IMappingValidator {
 		String line = null;
 		String previousLastChar = null;
 		int i = 0;
+		String lastKey = null;
 		try {
 			while ((line = reader.readLine()) != null) {
 				i++;
@@ -68,7 +72,9 @@ public class MappingValidator implements IMappingValidator {
 					if (keyStatus != null) {
 						result.add(keyStatus);
 					}
-					List<MappingParseStatus> valueStatus = checkValidValues(parts[1], i, line);
+					lastKey = parts[0].trim();
+					List<MappingParseStatus> valueStatus = checkValidValues(
+							parts[1], i, line, lastKey);
 					if (!valueStatus.isEmpty()) {
 						result.addAll(valueStatus);
 					}
@@ -79,7 +85,8 @@ public class MappingValidator implements IMappingValidator {
 							if (entry.endsWith(LINE_SEPARATOR)) {
 								entry = entry.substring(0, line.trim().length() - 1);
 							}
-							List<MappingParseStatus> valueStatus = checkValidValues(entry, i, line);
+							List<MappingParseStatus> valueStatus = checkValidValues(
+									entry, i, line, lastKey);
 							if (!valueStatus.isEmpty()) {
 								result.addAll(valueStatus);
 							}
@@ -111,7 +118,8 @@ public class MappingValidator implements IMappingValidator {
 		}
 	}
 
-	private List<MappingParseStatus> checkValidValues(String value, int lineNo, String line) {
+	private List<MappingParseStatus> checkValidValues(String value, int lineNo,
+			String line, String lastKey) {
 		List<MappingParseStatus> result = new ArrayList<MappingParseStatus>();
 		String[] values = value.split(SEPARATOR);
 		if (values.length == 0 || value.trim().length() == 0) {
@@ -125,17 +133,42 @@ public class MappingValidator implements IMappingValidator {
 			if (entry.isEmpty() || entry.equals(LINE_SEPARATOR)) {
 				continue;
 			}
-			boolean isGlobal = entry.startsWith(GLOBAL);
-			if (isGlobal) {
-				entry = entry.substring(GLOBAL.length());
-			} else {
-				File file = new File(container, entry);
-				if (!file.exists()) {
+			if ((LIBRARY + INCLUDES).equals(lastKey)) {
+				LibraryMapping mapping = LibraryMapping.create(entry);
+				if (mapping == null) {
 					int offset = line.indexOf(entry);
-					result.add(new MappingParseStatus(lineNo, offset + buffer, offset
-							+ entry.length() + buffer, MappingParseMessage.NOT_EXIST));
+					result.add(new MappingParseStatus(lineNo, offset + buffer,
+							offset + entry.length() + buffer,
+							MappingParseMessage.INVALID_LIBRARY));
+				} else {
+					String[] libs = mapping.getLibraryPaths();
+					for (String lib : libs) {
+						File libraryFile = new File(lib);
+						if (!libraryFile.isAbsolute()) {
+							libraryFile = new File(container, lib);
+						}
+						if (!libraryFile.exists()) {
+							int offset = line.indexOf(entry);
+							result.add(new MappingParseStatus(lineNo, offset
+									+ buffer, offset + entry.length() + buffer,
+									MappingParseMessage.NOT_EXIST));
+						}
+					}
 				}
+			} else {
+				boolean isGlobal = entry.startsWith(GLOBAL);
+				if (isGlobal) {
+					entry = entry.substring(GLOBAL.length());
+				} else {
+					File file = new File(container, entry);
+					if (!file.exists()) {
+						int offset = line.indexOf(entry);
+						result.add(new MappingParseStatus(lineNo, offset
+								+ buffer, offset + entry.length() + buffer,
+								MappingParseMessage.NOT_EXIST));
+					}
 
+				}
 			}
 		}
 		return result;
@@ -146,8 +179,10 @@ public class MappingValidator implements IMappingValidator {
 		if (key.equals(APPDIR + INCLUDES)) {
 			hasAppdir = true;
 			return null;
-		} else if (key.equals(APPDIR + EXCLUDES) || key.equals(SCRIPTSDIR + INCLUDES)
-				|| key.equals(SCRIPTSDIR + EXCLUDES)) {
+		} else if (key.equals(APPDIR + EXCLUDES)
+				|| key.equals(SCRIPTSDIR + INCLUDES)
+				|| key.equals(SCRIPTSDIR + EXCLUDES)
+				|| key.equals(LIBRARY + INCLUDES)) {
 			return null;
 		} else {
 			String[] parts = key.split(KEY_SEPARATOR);

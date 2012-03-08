@@ -26,6 +26,7 @@ public interface IMappingModel {
 
 	public static final String APPDIR = "appdir";
 	public static final String SCRIPTSDIR = "scriptsdir";
+	public static final String LIBRARY = "library";
 
 	/**
 	 * Adds specified entry to the model.
