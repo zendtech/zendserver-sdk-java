@@ -17,12 +17,12 @@ package org.zend.sdklib.internal.mapping;
 public class LibraryMapping {
 
 	private String folder;
-	private String[] libraryPaths;
+	private String path;
 
-	public LibraryMapping(String folder, String[] libraryPaths) {
+	public LibraryMapping(String folder, String path) {
 		super();
 		this.folder = folder;
-		this.libraryPaths = libraryPaths;
+		this.path = path;
 	}
 
 	/**
@@ -37,19 +37,19 @@ public class LibraryMapping {
 	 * @return instance of {@link LibraryMapping}
 	 */
 	public static LibraryMapping create(String input) {
-		String[] parts = input.split("\\|");
+		String[] parts = input.split(";");
 		String folder = null;
-		String[] libs = null;
+		String lib = null;
 		if (parts.length == 2) {
 			folder = parts[0];
-			libs = parts[1].split(";");
+			lib = parts[1];
 		}
 		if (parts.length == 1) {
 			folder = "";
-			libs = parts[0].split(";");
+			lib = parts[0];
 		}
-		if (folder != null && libs != null && libs.length > 0) {
-			return new LibraryMapping(folder, libs);
+		if (folder != null && lib != null) {
+			return new LibraryMapping(folder, lib);
 		}
 		return null;
 	}
@@ -64,8 +64,8 @@ public class LibraryMapping {
 	/**
 	 * @return array of paths to libraries
 	 */
-	public String[] getLibraryPaths() {
-		return libraryPaths;
+	public String getLibraryPath() {
+		return path;
 	}
 
 }

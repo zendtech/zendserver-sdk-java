@@ -7,6 +7,7 @@ import org.zend.sdk.test.sdklib.library.TestLibrary;
 import org.zend.sdk.test.sdklib.library.TestZendProject;
 import org.zend.sdk.test.sdklib.logger.TestLogger;
 import org.zend.sdk.test.sdklib.manager.TestTargetsManager;
+import org.zend.sdk.test.sdklib.mapping.TestDefaultMappingLoader;
 import org.zend.sdk.test.sdklib.mapping.TestMappingModel;
 import org.zend.sdk.test.sdklib.mapping.TestMappingValidator;
 import org.zend.sdk.test.sdklib.monitor.TestZendIssue;
@@ -29,8 +30,9 @@ import org.zend.sdk.test.sdklib.target.TestZendTarget;
 		TestUserBasedTargetLoader.class, TestZendTarget.class,
 		TestRepositoryXsd.class, TestJarBasedRepositor.class,
 		TestVersionPattern.class, TestVersionCompare.class,
-		TestMappingModel.class, TestMappingValidator.class,
-		TestZendIssue.class, TestZendMonitor.class, TestRepositoryFactory.class })
+		TestDefaultMappingLoader.class, TestMappingModel.class,
+		TestMappingValidator.class, TestZendIssue.class, TestZendMonitor.class,
+		TestRepositoryFactory.class })
 public class AllLibTests {
 
 }
