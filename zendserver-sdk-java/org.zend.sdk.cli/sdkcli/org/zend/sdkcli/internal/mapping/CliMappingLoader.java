@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import org.zend.sdklib.mapping.IMapping;
+import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.PropertiesBasedMappingLoader;
 
 public class CliMappingLoader extends PropertiesBasedMappingLoader {
@@ -32,11 +32,11 @@ public class CliMappingLoader extends PropertiesBasedMappingLoader {
 	public List<IMapping> getDefaultExclusion() throws IOException {
 		final InputStream stream = getDefaultExclusionStream();
 		if (stream != null) {
-			Properties props = loadProperties(stream);
-			String excludes = (String) props.get(EXCLUDES);
-			if (excludes != null) {
-				String[] result = excludes.split(SEPARATOR);
-				return getMappings(result);
+			List<IMappingEntry> entries = loadMapping(stream);
+			if (entries != null) {
+				for (IMappingEntry entry : entries) {
+					return entry.getMappings();
+				}
 			}
 		}
 		return Collections.emptyList();
