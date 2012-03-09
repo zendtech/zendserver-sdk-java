@@ -215,7 +215,7 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 		return result.toByteArray();
 	}
 
-	private List<IMappingEntry> loadMapping(InputStream stream)
+	protected List<IMappingEntry> loadMapping(InputStream stream)
 			throws IOException {
 		LineReader reader = new LineReader(stream);
 		List<IMappingEntry> result = new ArrayList<IMappingEntry>();
