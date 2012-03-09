@@ -214,17 +214,15 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				if (libraryMapping != null) {
 					String mappingFolder = folderName + File.separator
 							+ libraryMapping.getFolder();
-					String[] libs = libraryMapping.getLibraryPaths();
-					for (String library : libs) {
-						File libraryFile = new File(library);
-						if (!libraryFile.isAbsolute()) {
-							libraryFile = new File(container, library);
-						}
-						File resource = new File(libraryFile.getCanonicalPath());
-						if (resource.exists()) {
-							addFileToZip(resource, mappingFolder, library,
-									"library", false);
-						}
+					String library = libraryMapping.getLibraryPath();
+					File libraryFile = new File(library);
+					if (!libraryFile.isAbsolute()) {
+						libraryFile = new File(container, library);
+					}
+					File resource = new File(libraryFile.getCanonicalPath());
+					if (resource.exists()) {
+						addFileToZip(resource, mappingFolder, library,
+								"library", false);
 					}
 				}
 			}

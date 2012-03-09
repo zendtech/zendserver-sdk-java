@@ -141,18 +141,16 @@ public class MappingValidator implements IMappingValidator {
 							offset + entry.length() + buffer,
 							MappingParseMessage.INVALID_LIBRARY));
 				} else {
-					String[] libs = mapping.getLibraryPaths();
-					for (String lib : libs) {
-						File libraryFile = new File(lib);
-						if (!libraryFile.isAbsolute()) {
-							libraryFile = new File(container, lib);
-						}
-						if (!libraryFile.exists()) {
-							int offset = line.indexOf(entry);
-							result.add(new MappingParseStatus(lineNo, offset
-									+ buffer, offset + entry.length() + buffer,
-									MappingParseMessage.NOT_EXIST));
-						}
+					String lib = mapping.getLibraryPath();
+					File libraryFile = new File(lib);
+					if (!libraryFile.isAbsolute()) {
+						libraryFile = new File(container, lib);
+					}
+					if (!libraryFile.exists()) {
+						int offset = line.indexOf(entry);
+						result.add(new MappingParseStatus(lineNo, offset
+								+ buffer, offset + entry.length() + buffer,
+								MappingParseMessage.NOT_EXIST));
 					}
 				}
 			} else {
