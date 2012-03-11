@@ -60,7 +60,7 @@ public class ZendServerMonitor extends Job {
 	private static INotificationProvider provider;
 
 	private String targetId;
-	private Map<String, String> applications;
+	private Map<String, URL> applications;
 	private ZendMonitor monitor;
 	private long lastTime;
 	private int jobDelay = 3000;
@@ -70,8 +70,8 @@ public class ZendServerMonitor extends Job {
 	public ZendServerMonitor(String targetId, String project, URL url) {
 		super(Messages.ZendServerMonitor_JobTitle);
 		this.targetId = targetId;
-		this.applications = new HashMap<String, String>();
-		this.applications.put(project, createBasePath(url));
+		this.applications = new HashMap<String, URL>();
+		this.applications.put(project, url);
 	}
 
 	/**
@@ -85,8 +85,7 @@ public class ZendServerMonitor extends Job {
 		if (shouldStart()) {
 			lastTime = Long.MAX_VALUE;
 			setSystem(true);
-			getProvider().showProgress(
-					Messages.ZendServerMonitor_JobTitle, 90,
+			getProvider().showProgress(Messages.ZendServerMonitor_JobTitle, 90,
 					new IRunnableWithProgress() {
 
 						@Override
@@ -121,7 +120,9 @@ public class ZendServerMonitor extends Job {
 						String basePath = issue.getGeneralDetails().getUrl();
 						String projectName = getProjectName(basePath);
 						if (projectName != null) {
-							showNonification(zendIssue, projectName);
+							showNonification(zendIssue, projectName,
+									createBasePath(applications
+											.get(projectName)));
 						}
 					}
 				}
@@ -152,7 +153,7 @@ public class ZendServerMonitor extends Job {
 	 */
 	public void enable(String project, URL url) {
 		if (!applications.containsKey(project) && shouldStart(project)) {
-			applications.put(project, createBasePath(url));
+			applications.put(project, url);
 		}
 	}
 
@@ -183,8 +184,10 @@ public class ZendServerMonitor extends Job {
 		return applications.size() > 0;
 	}
 
-	private void showNonification(final IZendIssue issue, String projectName) {
-		final EventSource eventSource = getEventSource(issue, projectName);
+	private void showNonification(final IZendIssue issue, String projectName,
+			String basePath) {
+		final EventSource eventSource = getEventSource(issue, projectName,
+				basePath);
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
@@ -194,11 +197,12 @@ public class ZendServerMonitor extends Job {
 		});
 	}
 
-	private EventSource getEventSource(IZendIssue issue, String projectName) {
+	private EventSource getEventSource(IZendIssue issue, String projectName,
+			String basePath) {
 		GeneralDetails generalDetails = issue.getIssue().getGeneralDetails();
 		String sourceFile = generalDetails.getSourceFile();
 		long line = generalDetails.getSourceLine();
-		return new EventSource(projectName, line, sourceFile);
+		return new EventSource(projectName, basePath, line, sourceFile);
 	}
 
 	private ZendMonitor connect(IProgressMonitor monitor) {
@@ -209,11 +213,14 @@ public class ZendServerMonitor extends Job {
 	private String getProjectName(String urlString) {
 		try {
 			URL url = new URL(urlString);
-			String base = createBasePath(url);
-			if (base != null) {
+			String host = url.getHost();
+			String base = url.getPath();
+			if (host != null && base != null) {
 				Set<String> keys = applications.keySet();
 				for (String projectName : keys) {
-					if (base.equals(applications.get(projectName))) {
+					URL appUrl = applications.get(projectName);
+					if (base.startsWith(appUrl.getPath())
+							&& host.equals(appUrl.getHost())) {
 						return projectName;
 					}
 				}
@@ -226,12 +233,9 @@ public class ZendServerMonitor extends Job {
 
 	private String createBasePath(URL url) {
 		if (url != null && url.getPath() != null) {
-			String path = url.getPath().substring(1);
-			int index = path.indexOf("/"); //$NON-NLS-1$
-			if (index != -1) {
-				return url.getPath().substring(1, path.indexOf("/") + 1); //$NON-NLS-1$
-			} else {
-				return path;
+			String path = url.getPath();
+			if (path != null) {
+				return path.substring(1);
 			}
 		}
 		return null;

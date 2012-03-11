@@ -24,12 +24,15 @@ import org.eclipse.core.runtime.Path;
 public class EventSource {
 
 	private String projectName;
+	private String basePath;
 	private long line;
 	private String sourceFile;
 
-	public EventSource(String projectName, long line, String sourceFile) {
+	public EventSource(String projectName, String basePath, long line,
+			String sourceFile) {
 		super();
 		this.projectName = projectName;
+		this.basePath = basePath;
 		this.line = line;
 		this.sourceFile = sourceFile;
 	}
@@ -63,17 +66,14 @@ public class EventSource {
 	public String getProjectRelativePath() {
 		// TODO consider to change the method of extracting project relative
 		// path
-		IPath path = new Path(sourceFile);
-		String[] segments = path.segments();
-		int from = 0;
-		for (int i = 0; i < segments.length; i++) {
-			if (segments[i].equals(projectName)) {
-				from = i + 2;
-				break;
-			}
+		int index = sourceFile.indexOf(basePath);
+		if (index > -1) {
+			String location = sourceFile.substring(index + basePath.length());
+			IPath path = new Path(location);
+			IPath subPath = path.removeFirstSegments(1);
+			return subPath.toString();
 		}
-		IPath subPath = path.removeFirstSegments(from);
-		return subPath.toString();
+		return null;
 	}
 
 	/**
