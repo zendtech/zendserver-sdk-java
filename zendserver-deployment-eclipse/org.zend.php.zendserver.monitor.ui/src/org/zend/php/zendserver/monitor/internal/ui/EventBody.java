@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +29,8 @@ import org.eclipse.swt.widgets.Link;
 import org.zend.core.notifications.ui.ActionType;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
-import org.zend.core.notifications.util.FontCache;
+import org.zend.core.notifications.util.FontName;
+import org.zend.core.notifications.util.Fonts;
 import org.zend.php.zendserver.monitor.core.EventSource;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
@@ -152,7 +151,7 @@ public class EventBody implements IBody {
 	}
 
 	private Link createLink(Composite parent, String text) {
-		Link link = new Link(parent, SWT.NONE);
+		Link link = new Link(parent, SWT.NO_FOCUS);
 		link.setText(text);
 		link.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true));
 		return link;
@@ -160,10 +159,7 @@ public class EventBody implements IBody {
 
 	private void createDescription(Composite composite) {
 		Label label = new Label(composite, SWT.WRAP);
-		Font labelFont = label.getFont();
-		FontData labelFontData = labelFont.getFontData()[0];
-		labelFontData.height = 11;
-		label.setFont(FontCache.getFont(labelFontData));
+		label.setFont(Fonts.get(FontName.DEFAULT));
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
 		label.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLACK));
