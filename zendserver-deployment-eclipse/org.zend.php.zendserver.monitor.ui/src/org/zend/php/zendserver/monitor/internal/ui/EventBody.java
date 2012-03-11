@@ -20,15 +20,17 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.zend.core.notifications.ui.ActionType;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
+import org.zend.core.notifications.ui.NotificationSettings;
+import org.zend.core.notifications.ui.dialogs.ReadMoreDialog;
 import org.zend.core.notifications.util.FontName;
 import org.zend.core.notifications.util.Fonts;
 import org.zend.php.zendserver.monitor.core.EventSource;
@@ -62,9 +64,10 @@ public class EventBody implements IBody {
 	}
 
 	@Override
-	public Composite createContent(Composite container) {
+	public Composite createContent(Composite container,
+			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
-		createDescription(composite);
+		createDescription(composite, settings);
 		createRepeatLink(composite);
 		createSourceLink(composite);
 		createTraceLink(composite);
@@ -157,13 +160,47 @@ public class EventBody implements IBody {
 		return link;
 	}
 
-	private void createDescription(Composite composite) {
-		Label label = new Label(composite, SWT.WRAP);
+	private void createDescription(Composite composite,
+			NotificationSettings settings) {
+		Link label = new Link(composite, SWT.WRAP);
 		label.setFont(Fonts.get(FontName.DEFAULT));
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
 		label.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLACK));
-		label.setText(zendIssue.getIssue().getGeneralDetails().getErrorString());
+		final String text = zendIssue.getIssue().getGeneralDetails()
+				.getErrorString();
+		if (text != null) {
+			initializeDescription(settings, label, text);
+		}
+	}
+
+	private void initializeDescription(NotificationSettings settings,
+			Link label, final String text) {
+		label.setText(text);
+		int width = Math.max(settings.getWidth(),
+				NotificationSettings.DEFAULT_WIDTH);
+		Point size = label.computeSize(width, SWT.DEFAULT);
+		int height = Fonts.get(FontName.DEFAULT).getFontData()[0]
+				.getHeight();
+		if (size.y > 5 * height) {
+			int cut = (int) (text.length() * ((double) (5 * height) / (double) size.y));
+			String shortText = text.substring(0, cut);
+			int index = shortText.lastIndexOf('.');
+			if (index == -1) {
+			}
+			shortText = shortText.substring(0, index + 1);
+			shortText += " ... <a>read more</a>"; //$NON-NLS-1$
+			label.setText(shortText);
+			label.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					new ReadMoreDialog(
+							org.zend.core.notifications.Activator
+									.getDefault().getParent(),
+							Messages.EventBody_ReadMoreTitle, text).open();
+				}
+			});
+		}
 	}
 
 	private Composite createEntryComposite(Composite container) {
