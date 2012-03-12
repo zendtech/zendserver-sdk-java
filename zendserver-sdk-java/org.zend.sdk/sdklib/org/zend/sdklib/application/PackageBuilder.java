@@ -209,8 +209,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		for (IMappingEntry entry : entries) {
 			List<IMapping> mappings = entry.getMappings();
 			for (IMapping mapping : mappings) {
-				LibraryMapping libraryMapping = LibraryMapping.create(mapping
-						.getPath());
+				LibraryMapping libraryMapping = LibraryMapping.create(
+						entry.getFolder(), mapping.getPath());
 				if (libraryMapping != null) {
 					String mappingFolder = folderName + File.separator
 							+ libraryMapping.getFolder();
@@ -456,13 +456,18 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			if (entry != null) {
 				List<IMapping> includes = entry.getMappings();
 				for (IMapping mapping : includes) {
-					File file = new File(mapping.getPath());
+					String path = mapping.getPath();
+					LibraryMapping libraryMapping = LibraryMapping.create(
+							entry.getFolder(), path);
+					if (libraryMapping != null) {
+						path = libraryMapping.getLibraryPath();
+					}
+					File file = new File(path);
 					if (!file.isAbsolute()) {
 						file = new File(container, mapping.getPath());
 					}
-					File resource = new File(file.getCanonicalPath());
-					if (resource.exists()) {
-						totalWork += countFiles(resource, folder);
+					if (file.exists()) {
+						totalWork += countFiles(file, folder);
 					}
 				}
 			}
