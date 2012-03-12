@@ -274,8 +274,6 @@ public abstract class PropertiesBasedMappingLoader implements IMappingLoader {
 				Type type = INCLUDES.equals(kind) ? Type.INCLUDE : Type.EXCLUDE;
 				result.add(new MappingEntry(folderName, mappings, type));
 			}
-	
-			System.out.println(key + " " + value);
 		}
 		return result;
 	}
