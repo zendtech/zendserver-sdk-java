@@ -36,8 +36,11 @@ public class LibraryMapping {
 	 *            string
 	 * @return instance of {@link LibraryMapping}
 	 */
-	public static LibraryMapping create(String input) {
-		String[] parts = input.split(";");
+	public static LibraryMapping create(String name, String path) {
+		if (!"library".equals(name)) {
+			return null;
+		}
+		String[] parts = path.split(";");
 		String folder = null;
 		String lib = null;
 		if (parts.length == 2) {
