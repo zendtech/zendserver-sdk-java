@@ -134,7 +134,7 @@ public class MappingValidator implements IMappingValidator {
 				continue;
 			}
 			if ((LIBRARY + INCLUDES).equals(lastKey)) {
-				LibraryMapping mapping = LibraryMapping.create(entry);
+				LibraryMapping mapping = LibraryMapping.create(lastKey, entry);
 				if (mapping == null) {
 					int offset = line.indexOf(entry);
 					result.add(new MappingParseStatus(lineNo, offset + buffer,
