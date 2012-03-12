@@ -134,23 +134,27 @@ public class MappingValidator implements IMappingValidator {
 				continue;
 			}
 			if ((LIBRARY + INCLUDES).equals(lastKey)) {
-				LibraryMapping mapping = LibraryMapping.create(lastKey, entry);
-				if (mapping == null) {
-					int offset = line.indexOf(entry);
-					result.add(new MappingParseStatus(lineNo, offset + buffer,
-							offset + entry.length() + buffer,
-							MappingParseMessage.INVALID_LIBRARY));
-				} else {
-					String lib = mapping.getLibraryPath();
-					File libraryFile = new File(lib);
-					if (!libraryFile.isAbsolute()) {
-						libraryFile = new File(container, lib);
-					}
-					if (!libraryFile.exists()) {
+				if (lastKey != null) {
+					String keyName = lastKey.substring(0, lastKey.indexOf('.'));
+					LibraryMapping mapping = LibraryMapping.create(keyName,
+							entry);
+					if (mapping == null) {
 						int offset = line.indexOf(entry);
 						result.add(new MappingParseStatus(lineNo, offset
 								+ buffer, offset + entry.length() + buffer,
-								MappingParseMessage.NOT_EXIST));
+								MappingParseMessage.INVALID_LIBRARY));
+					} else {
+						String lib = mapping.getLibraryPath();
+						File libraryFile = new File(lib);
+						if (!libraryFile.isAbsolute()) {
+							libraryFile = new File(container, lib);
+						}
+						if (!libraryFile.exists()) {
+							int offset = line.indexOf(entry);
+							result.add(new MappingParseStatus(lineNo, offset
+									+ buffer, offset + entry.length() + buffer,
+									MappingParseMessage.NOT_EXIST));
+						}
 					}
 				}
 			} else {
