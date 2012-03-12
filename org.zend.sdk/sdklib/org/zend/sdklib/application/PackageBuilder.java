@@ -456,8 +456,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			if (entry != null) {
 				List<IMapping> includes = entry.getMappings();
 				for (IMapping mapping : includes) {
-					File resource = new File(new File(container,
-							mapping.getPath()).getCanonicalPath());
+					File file = new File(mapping.getPath());
+					if (!file.isAbsolute()) {
+						file = new File(container, mapping.getPath());
+					}
+					File resource = new File(file.getCanonicalPath());
 					if (resource.exists()) {
 						totalWork += countFiles(resource, folder);
 					}
