@@ -315,8 +315,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @return
 	 */
 	public IZendTarget createTarget(String host, String key, String secretKey) {
-		final String targetId = Integer.toString(getTargets().length);
-		return createTarget(targetId, host, key, secretKey);
+		return createTarget(createUniqueId(null), host, key, secretKey);
 	}
 
 	/**
