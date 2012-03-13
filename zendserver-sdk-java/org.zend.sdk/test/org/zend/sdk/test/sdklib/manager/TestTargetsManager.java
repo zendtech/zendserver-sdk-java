@@ -265,6 +265,21 @@ public class TestTargetsManager extends AbstractTest {
 		assertNull(manager.updateTarget("dev4", "a111://qwerty", null, null, null));
 	}
 
+	@Test
+	public void testCreateUniqueId() throws TargetException, WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		manager.add(getTarget());
+		assertEquals("1", manager.createUniqueId(null));
+	}
+
+	@Test
+	public void testCreateUniqueIdPrefix() throws TargetException,
+			WebApiException {
+		TargetsManager manager = spy(new TargetsManager(loader));
+		manager.add(getTarget());
+		assertEquals("target1", manager.createUniqueId("target"));
+	}
+
 	private IZendTarget getTarget() throws WebApiException {
 		IZendTarget target = null;
 		try {
