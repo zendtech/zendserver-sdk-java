@@ -97,11 +97,23 @@ public class AddTargetCommand extends TargetAwareCommand {
 
 		// resolve devpaas account properties
 		if (devPaas != null) {
-			IZendTarget t = resolveTarget(devPaas);
-			if (t != null) {
-				host = t.getHost().toString();
-				key = t.getKey();
-				secretKey = t.getSecretKey();
+			IZendTarget[] targets = resolveTarget(devPaas);
+			if (targets != null) {
+				final TargetsManager targetManager = getTargetManager();
+				String id = targetId != null ? targetId : targetManager
+						.createUniqueId(null);
+				int i = 0;
+				for (IZendTarget zendTarget : targets) {
+					key = zendTarget.getKey();
+					secretKey = zendTarget.getSecretKey();
+					host = zendTarget.getHost().toString();
+					IZendTarget target = targetManager.createTarget(id + "_"
+							+ i++, host, key, secretKey);
+					if (target == null) {
+						return false;
+					}
+				}
+				return true;
 			}
 		}
 
@@ -128,7 +140,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 		return true;
 	}
 
-	private IZendTarget resolveTarget(final String devPaas) {
+	private IZendTarget[] resolveTarget(final String devPaas) {
 		final ZendDevCloud detect = new ZendDevCloud();
 		final String[] split = devPaas.split(":");
 		if (split.length != 2) {
@@ -147,7 +159,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 					split[1]);
 
 			if (targets != null && targets.length > 0) {
-				return targets[0];
+				return targets;
 			}
 		} catch (SdkException e) {
 			getLogger().error(e);
