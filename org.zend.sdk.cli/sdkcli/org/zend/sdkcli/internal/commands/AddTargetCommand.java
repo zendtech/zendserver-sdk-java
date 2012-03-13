@@ -112,6 +112,10 @@ public class AddTargetCommand extends TargetAwareCommand {
 					if (target == null) {
 						return false;
 					}
+					getLogger()
+							.info(MessageFormat
+									.format("Target {0} was added successfully, with id {1}",
+											host, target.getId()));
 				}
 				return true;
 			}
