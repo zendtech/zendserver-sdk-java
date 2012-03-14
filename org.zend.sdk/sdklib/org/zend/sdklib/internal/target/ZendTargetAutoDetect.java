@@ -254,11 +254,8 @@ public class ZendTargetAutoDetect {
 	 * @throws IOException
 	 */
 	public String findLocalhostInstallDirectory() throws IOException {
-		if (EnvironmentUtils.isUnderMaxOSX()) {
-			throw new IllegalStateException(MAC_NOT_SUPPORTED);
-		}
 		String result = null;
-		if (EnvironmentUtils.isUnderLinux()) {
+		if (EnvironmentUtils.isUnderLinux() || EnvironmentUtils.isUnderMaxOSX()) {
 			result = getLocalZendServerFromFile();
 		} else {
 			// (EnvironmentUtils.isUnderWindows())
