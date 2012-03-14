@@ -133,14 +133,15 @@ public abstract class AbstractTargetDetailsComposite {
 
 		});
 		cancelThread.start();
-		IStatus result = doValidate(data);
+		IStatus result = doValidate(data, monitor);
 		monitor.worked(1);
 
 		return result;
 	}
 
-	private IStatus doValidate(String[] data) {
+	private IStatus doValidate(String[] data, IProgressMonitor monitor) {
 		IZendTarget[] targets;
+		monitor.subTask("Creating targets");
 		try {
 			targets = createTarget(data);
 		} catch (SdkException e) {
@@ -159,6 +160,7 @@ public abstract class AbstractTargetDetailsComposite {
 					e.getMessage(), e);
 		}
 
+		monitor.subTask("Found "+targets.length+" target"+(targets.length == 1 ? "" : "s"));
 		for (IZendTarget target : targets) {
 
 			if (target == null) {
@@ -171,6 +173,7 @@ public abstract class AbstractTargetDetailsComposite {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
 			}
 
+			monitor.subTask("Testing connection with target "+target.getHost());
 			if (!target.isTemporary()) {
 				try {
 					target.connect();
