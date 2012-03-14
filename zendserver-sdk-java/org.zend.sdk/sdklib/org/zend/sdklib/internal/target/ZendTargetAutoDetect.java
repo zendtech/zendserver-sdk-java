@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -38,13 +39,14 @@ import com.ice.jni.registry.RegistryValue;
  */
 public class ZendTargetAutoDetect {
 
+	private static final String AUTHOPEN = "/usr/libexec/authopen";
+	
 	private static final String INSTALL_LOCATION = "InstallLocation";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
 	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found"
 			+ "please refer to http://www.zend.com/server";
-	private static final String MAC_NOT_SUPPORTED = "Deployment on local Mac is not supported. This feature is for Linux and Windows Zend Server editions only.";
-
+	
 	// linux key
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc";
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb";
@@ -57,9 +59,17 @@ public class ZendTargetAutoDetect {
 	private static final String ZEND_SERVER = "ZendServer";
 	private static final String APACHE_APP_PORT = "ApacheAppPort";
 	private static final String ZEND_TECHNOLOGIES = "Zend Technologies";
+	
+	/**
+	 * Set this to true if you agree to get GUI dialogs, such as privileges elevation dialog on MacOS.
+	 * Set this to false otherwise, e.g. if you're running from command line and don't want to open any dialogs.
+	 */
+	public static boolean CAN_OPEN_GUI_DIALOGS = false;
 
 	public static URL localhost = null;
 	private String zendServerInstallLocation = null;
+
+	private Process macElevatedWrite;
 	static {
 		try {
 			localhost = new URL("http://localhost");
@@ -134,13 +144,12 @@ public class ZendTargetAutoDetect {
 		File keysFile = getApiKeysFile();
 
 		// assert permissions are elevated
-		if (!keysFile.canWrite()) {
+		if (!keysFile.canWrite() && !(EnvironmentUtils.isUnderMaxOSX() && canElevatedWriteOnMac())) {
 			throw new IOException(NEED_TO_ELEVATE);
 		}
 
-		// backup file
-		final File edited = new File(keysFile.getParentFile(), USER_INI
-				+ ".tmp");
+		// temporary file
+		final File edited = File.createTempFile(USER_INI, ".tmp");
 		if (!edited.exists()) {
 			edited.createNewFile();
 		}
@@ -152,14 +161,40 @@ public class ZendTargetAutoDetect {
 		ir.close();
 		os.close();
 
+		if (EnvironmentUtils.isUnderMaxOSX() && canElevatedWriteOnMac()) {
+			os = new PrintStream(openElevatedWriteOnMac(keysFile));
+			
+		} else { // the normal way
+			os = new PrintStream(keysFile);
+		}
+		
 		// write zend-server-users.ini and find key
 		ir = new BufferedReader(new FileReader(edited));
-		os = new PrintStream(keysFile);
 		secretKey = copyWithEdits(ir, os, key, secretKey);
 		ir.close();
 		os.close();
 
+		if (macElevatedWrite != null) {
+			try {
+				macElevatedWrite.waitFor();
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
+		
 		return trimQuotes(secretKey);
+	}
+
+	private OutputStream openElevatedWriteOnMac(File keysFile) throws IOException {
+		macElevatedWrite = Runtime.getRuntime().exec(new String[] {
+				AUTHOPEN, "-w", keysFile.toString()
+		});
+		
+		return macElevatedWrite.getOutputStream();
+	}
+
+	private boolean canElevatedWriteOnMac() {
+		return new File(AUTHOPEN).exists() && CAN_OPEN_GUI_DIALOGS;
 	}
 
 	public static String copyWithEdits(BufferedReader ir, PrintStream os,
