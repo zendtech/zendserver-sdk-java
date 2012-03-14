@@ -116,7 +116,8 @@ public class ZendServerMonitor extends Job {
 				Issue issue = zendIssue.getIssue();
 				Date date = getTime(issue.getLastOccurance());
 				if (date != null && date.getTime() >= lastTime) {
-					if (issue.getSeverity() == IssueSeverity.CRITICAL) {
+					if (issue.getSeverity() == IssueSeverity.CRITICAL
+							|| issue.getSeverity() == IssueSeverity.WARNING) {
 						String basePath = issue.getGeneralDetails().getUrl();
 						String projectName = getProjectName(basePath);
 						if (projectName != null) {
