@@ -24,6 +24,8 @@ import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
  */
 public class MonitorManager {
 
+	public static final String ENABLED = "enabled."; //$NON-NLS-1$
+
 	private static Map<String, ZendServerMonitor> monitors;
 
 	static {

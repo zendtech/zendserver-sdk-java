@@ -8,5 +8,22 @@
             class="org.zend.php.zendserver.monitor.internal.ui.NotificationProvider">
       </notificationProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.zend.php.zendserver.monitor.ui.preferences.ServerMonitoringPropertyPage"
+            id="org.zend.php.zendserver.monitor.ui.serverMonitoring"
+            name="Zend Server Monitoring">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
+         <filter
+               name="nature"
+               value="org.zend.php.zendserver.deployment.core.DeploymentNature">
+         </filter>
+      </page>
+   </extension>
 
 </plugin>
