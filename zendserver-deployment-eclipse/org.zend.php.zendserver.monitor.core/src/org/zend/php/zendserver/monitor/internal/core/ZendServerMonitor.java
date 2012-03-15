@@ -89,7 +89,6 @@ public class ZendServerMonitor extends Job {
 			getProvider().showProgress(Messages.ZendServerMonitor_JobTitle, 90,
 					new IRunnableWithProgress() {
 
-						@Override
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
 								InterruptedException {
@@ -212,7 +211,6 @@ public class ZendServerMonitor extends Job {
 				basePath);
 		Display.getDefault().asyncExec(new Runnable() {
 
-			@Override
 			public void run() {
 				getProvider().showNonification(issue, targetId, eventSource);
 			}

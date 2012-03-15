@@ -51,7 +51,6 @@ public class RequestGeneratorJob extends Job {
 				Messages.RequestGeneratorJob_NotificationTitle, 60,
 				new IRunnableWithProgress() {
 
-					@Override
 					public void run(IProgressMonitor monitor)
 							throws InvocationTargetException,
 							InterruptedException {

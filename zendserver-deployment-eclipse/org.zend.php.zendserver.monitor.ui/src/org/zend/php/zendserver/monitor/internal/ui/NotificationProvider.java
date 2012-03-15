@@ -25,7 +25,14 @@ import org.zend.sdklib.monitor.IZendIssue;
  */
 public class NotificationProvider implements INotificationProvider {
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.monitor.core.INotificationProvider#showNonification
+	 * (org.zend.sdklib.monitor.IZendIssue, java.lang.String,
+	 * org.zend.php.zendserver.monitor.core.EventSource)
+	 */
 	public void showNonification(IZendIssue issue,
 			String targetId, EventSource eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);
@@ -37,7 +44,14 @@ public class NotificationProvider implements INotificationProvider {
 				.createNotification(settings));
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.monitor.core.INotificationProvider#showProgress
+	 * (java.lang.String, int,
+	 * org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
 	public void showProgress(String title, int height,
 			IRunnableWithProgress runnable) {
 		NotificationManager.registerProgress(title, height, runnable);

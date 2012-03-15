@@ -63,7 +63,13 @@ public class EventBody implements IBody {
 		this.eventSource = eventSource;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.core.notifications.ui.IBody#createContent(org.eclipse.swt.widgets
+	 * .Composite, org.zend.core.notifications.ui.NotificationSettings)
+	 */
 	public Composite createContent(Composite container,
 			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
@@ -74,7 +80,13 @@ public class EventBody implements IBody {
 		return composite;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.core.notifications.ui.IBody#addActionListener(org.zend.core.
+	 * notifications.ui.IActionListener)
+	 */
 	public void addActionListener(IActionListener listener) {
 		this.listener = listener;
 	}
@@ -180,8 +192,7 @@ public class EventBody implements IBody {
 		int width = Math.max(settings.getWidth(),
 				NotificationSettings.DEFAULT_WIDTH);
 		Point size = label.computeSize(width, SWT.DEFAULT);
-		int height = Fonts.get(FontName.DEFAULT).getFontData()[0]
-				.getHeight();
+		int height = Fonts.get(FontName.DEFAULT).getFontData()[0].getHeight();
 		if (size.y > 5 * height) {
 			int cut = (int) (text.length() * ((double) (5 * height) / (double) size.y));
 			String shortText = text.substring(0, cut);
@@ -194,9 +205,8 @@ public class EventBody implements IBody {
 			label.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					new ReadMoreDialog(
-							org.zend.core.notifications.Activator
-									.getDefault().getParent(),
+					new ReadMoreDialog(org.zend.core.notifications.Activator
+							.getDefault().getParent(),
 							Messages.EventBody_ReadMoreTitle, text).open();
 				}
 			});
