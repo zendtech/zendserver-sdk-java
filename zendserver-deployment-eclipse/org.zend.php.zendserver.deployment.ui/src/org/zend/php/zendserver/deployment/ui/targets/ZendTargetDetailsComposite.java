@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
@@ -86,7 +87,7 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 				secretText.getText(), };
 	}
 
-	public IZendTarget[] createTarget(String[] data) throws CoreException {
+	public IZendTarget[] createTarget(String[] data, IProgressMonitor monitor) throws CoreException {
 		URL host = null;
 		try {
 			host = new URL(data[0]);

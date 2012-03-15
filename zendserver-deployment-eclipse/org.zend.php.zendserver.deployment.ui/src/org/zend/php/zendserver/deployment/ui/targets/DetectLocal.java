@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.actions.DetectTargetAction;
@@ -26,7 +27,7 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	}
 
 	@Override
-	protected IZendTarget[] createTarget(String[] data) throws SdkException,
+	protected IZendTarget[] createTarget(String[] data, IProgressMonitor monitor) throws SdkException,
 			IOException {
 
 		DetectTargetAction detectTargetAction = new DetectTargetAction();

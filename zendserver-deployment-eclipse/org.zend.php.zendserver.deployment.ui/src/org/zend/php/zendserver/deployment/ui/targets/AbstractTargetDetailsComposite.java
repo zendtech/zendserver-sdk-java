@@ -3,7 +3,11 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +27,8 @@ import org.zend.webapi.core.WebApiException;
  */
 public abstract class AbstractTargetDetailsComposite {
 
+	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
+	
 	/**
 	 * Fired when validation event occurs.
 	 */
@@ -74,12 +80,13 @@ public abstract class AbstractTargetDetailsComposite {
 	 * 
 	 * @param data
 	 *            data from getData()
+	 * @param monitor 
 	 * @return created target
 	 * 
 	 * @throws SdkException
 	 * @throws IOException
 	 */
-	abstract protected IZendTarget[] createTarget(String[] data)
+	abstract protected IZendTarget[] createTarget(String[] data, IProgressMonitor monitor)
 			throws SdkException, IOException, CoreException;
 
 	public void addPropertyChangeListener(String propertyName,
@@ -143,7 +150,7 @@ public abstract class AbstractTargetDetailsComposite {
 		IZendTarget[] targets;
 		monitor.subTask("Creating targets");
 		try {
-			targets = createTarget(data);
+			targets = createTarget(data, monitor);
 		} catch (SdkException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
@@ -161,6 +168,7 @@ public abstract class AbstractTargetDetailsComposite {
 		}
 
 		monitor.subTask("Found "+targets.length+" target"+(targets.length == 1 ? "" : "s"));
+		List<IZendTarget> finalTargets = new ArrayList<IZendTarget>(targets.length);
 		for (IZendTarget target : targets) {
 
 			if (target == null) {
@@ -173,10 +181,9 @@ public abstract class AbstractTargetDetailsComposite {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
 			}
 
-			monitor.subTask("Testing connection with target "+target.getHost());
 			if (!target.isTemporary()) {
 				try {
-					target.connect();
+					target = testConnectAndDetectPort(target, monitor);
 				} catch (WebApiException ex) {
 					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							ex.getMessage(), ex);
@@ -185,9 +192,48 @@ public abstract class AbstractTargetDetailsComposite {
 							e.getMessage(), e);
 				}
 			}
+			
+			if (target != null) {
+				finalTargets.add(target);
+			}
 		}
-		result = targets;
+		result = finalTargets.toArray(new IZendTarget[finalTargets.size()]);
 		return Status.OK_STATUS;
+	}
+
+	private IZendTarget testConnectAndDetectPort(IZendTarget target, IProgressMonitor monitor) throws WebApiException {
+		WebApiException catchedException = null;
+		
+		if (target.getHost().getPort() == -1) {
+			for (int port : possiblePorts) {
+					URL old = target.getHost();
+					URL host;
+					try {
+						host = new URL(old.getProtocol(), old.getHost(),
+								port, old.getFile());
+						((ZendTarget) target).setHost(host);
+					} catch (MalformedURLException e) {
+						// should never happen
+					}
+					monitor.subTask("Testing port "+port+" of detected target "+target.getHost().getHost());
+					try {
+					if (target.connect()) {
+						return target;
+					}
+					} catch (WebApiException ex) {
+						catchedException = ex; // before throwing exception, try out all possible ports
+					}
+			}
+			
+			if (catchedException != null) {
+				throw catchedException;
+			}
+		} else {
+			if (target.connect()) {
+				return target;
+			}
+		}
+		return null;
 	}
 
 	public IZendTarget[] getTarget() {

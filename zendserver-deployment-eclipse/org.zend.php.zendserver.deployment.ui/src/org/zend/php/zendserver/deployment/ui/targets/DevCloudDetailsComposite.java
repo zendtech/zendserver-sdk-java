@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -220,12 +221,14 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		return new String[] { usernameText.getText(), passwordText.getText(), privateKeyText.getText() };
 	}
 
-	public IZendTarget[] createTarget(String[] data) throws CoreException,
+	public IZendTarget[] createTarget(String[] data, IProgressMonitor monitor) throws CoreException,
 			IOException {
 		ZendDevCloud detect = new ZendDevCloud();
 		String username = data[0];
 		String password = data[1];
 		String privateKeyPath = data[2];
+		
+		monitor.subTask("Validating account information");
 		
 		if (username == null || username.trim().length() == 0) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Username is required."));
@@ -239,6 +242,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is required."));
 		}
 		
+		monitor.subTask("Verifying SSH key");
+		
 		File keyFile = new File(privateKeyPath);
 		if (! keyFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key file does not exist."));
@@ -250,6 +255,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		} catch (PublicKeyNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is not valid.", e));
 		}
+		
+		monitor.subTask("Detecting targets for "+username);
 
 		IZendTarget[] target;
 		try {
