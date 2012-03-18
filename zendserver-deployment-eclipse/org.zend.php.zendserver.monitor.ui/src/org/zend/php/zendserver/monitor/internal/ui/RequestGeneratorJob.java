@@ -103,7 +103,10 @@ public class RequestGeneratorJob extends Job {
 			if (globals != null) {
 				ParameterList params = globals.getPost();
 				if (params != null) {
-					method = createPostRequest(url, params);
+					List<Parameter> parameters = params.getParameters();
+					if (parameters != null && parameters.size() > 0) {
+						method = createPostRequest(url, parameters);
+					}
 				}
 				params = globals.getGet();
 				if (params != null) {
@@ -141,15 +144,12 @@ public class RequestGeneratorJob extends Job {
 	}
 
 	private HttpMethodBase createPostRequest(String url,
-			ParameterList paramsList) {
-		List<Parameter> params = paramsList.getParameters();
+			List<Parameter> parameters) {
 		PostMethod method = new PostMethod(url);
-		if (params != null) {
-			NameValuePair[] query = new NameValuePair[params.size()];
-			for (int i = 0; i < query.length; i++) {
-				Parameter param = params.get(i);
-				method.addParameter(param.getName(), param.getValue());
-			}
+		NameValuePair[] query = new NameValuePair[parameters.size()];
+		for (int i = 0; i < query.length; i++) {
+			Parameter param = parameters.get(i);
+			method.addParameter(param.getName(), param.getValue());
 		}
 		return method;
 	}
