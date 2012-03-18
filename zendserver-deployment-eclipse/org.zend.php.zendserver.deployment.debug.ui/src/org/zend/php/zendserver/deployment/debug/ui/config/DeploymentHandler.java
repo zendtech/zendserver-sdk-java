@@ -345,6 +345,7 @@ public class DeploymentHandler {
 					break;
 				}
 			} catch (Exception e) {
+				Activator.log(e);
 				String message = MessageFormat.format(
 						Messages.DeploymentHandler_sshTunnelErrorTitle,
 						target.getId());

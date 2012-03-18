@@ -13,6 +13,7 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnel.State;
 import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -78,6 +79,7 @@ public class OpenTunnelCommand extends AbstractHandler {
 			}
 			return true;
 		} catch (Exception e) {
+			Activator.log(e);
 			String message = MessageFormat.format(
 					Messages.DeploymentHandler_sshTunnelErrorTitle,
 					target.getId());
