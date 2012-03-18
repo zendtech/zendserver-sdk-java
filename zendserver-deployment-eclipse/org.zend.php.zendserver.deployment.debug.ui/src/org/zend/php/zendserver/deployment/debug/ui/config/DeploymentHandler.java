@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -32,6 +34,7 @@ import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.ExisitngAppIdJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.UpdateLaunchJob;
+import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnel.State;
 import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
@@ -323,23 +326,31 @@ public class DeploymentHandler {
 		String targetHost = helper.getTargetHost();
 		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)
 				&& targetHost.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
-			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
-					helper.getTargetId());
+			IZendTarget target = TargetsManagerService.INSTANCE
+					.getTargetManager().getTargetById(helper.getTargetId());
 			try {
-				if (!ZendDevCloudTunnelManager.getManager().connect(target)) {
-					throw new IllegalStateException(
-							Messages.DeploymentHandler_sshTunnelErrorMessage);
+				State result = ZendDevCloudTunnelManager.getManager().connect(
+						target);
+				switch (result) {
+				case CONNECTING:
+					NotificationManager.registerInfo(
+							Messages.OpenTunnelCommand_OpenTunnelTitle,
+							Messages.OpenTunnelCommand_SuccessMessage, 4000);
+					break;
+				case NOT_SUPPORTED:
+					NotificationManager.registerWarning(
+							Messages.OpenTunnelCommand_OpenTunnelTitle,
+							Messages.OpenTunnelCommand_NotSupportedMessage,
+							4000);
+					break;
 				}
-			} catch (final Exception e) {
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-					public void run() {
-						Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell();
-						MessageDialog.openError(shell,
-								Messages.DeploymentHandler_sshTunnelErrorTitle, e.getMessage());
-					}
-				});
+			} catch (Exception e) {
+				String message = MessageFormat.format(
+						Messages.DeploymentHandler_sshTunnelErrorTitle,
+						target.getId());
+				NotificationManager.registerError(
+						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
+						4000);
 				return CANCEL;
 			}
 		}

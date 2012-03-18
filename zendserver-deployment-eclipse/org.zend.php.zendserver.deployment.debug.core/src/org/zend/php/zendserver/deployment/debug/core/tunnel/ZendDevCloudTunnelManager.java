@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnel.State;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -27,12 +28,12 @@ public class ZendDevCloudTunnelManager {
 		return manager;
 	}
 
-	public boolean connect(IZendTarget target) throws IOException {
+	public State connect(IZendTarget target) throws IOException {
 		ZendDevCloudTunnel tunnel = getTunnel(target);
 		String user = getUsername(target);
 		String privateKey = getSSHPrivateKey(target);
 		if (user == null || user.length() == 0 || privateKey == null || privateKey.length() == 0) {
-			return false;
+			return State.NOT_SUPPORTED;
 		}
 		if (tunnel == null) {
 			tunnel = new ZendDevCloudTunnel(user, privateKey);
@@ -81,11 +82,11 @@ public class ZendDevCloudTunnelManager {
 		return null;
 	}
 
-	private boolean connect(ZendDevCloudTunnel tunnel) throws IOException {
+	private State connect(ZendDevCloudTunnel tunnel) throws IOException {
 		if (!tunnel.isConnected()) {
-			tunnel.connect();
+			return tunnel.connect();
 		}
-		return true;
+		return State.CONNECTED;
 	}
 
 }

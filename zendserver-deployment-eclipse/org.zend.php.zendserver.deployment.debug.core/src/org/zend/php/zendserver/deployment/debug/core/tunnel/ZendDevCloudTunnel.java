@@ -27,6 +27,21 @@ import com.jcraft.jsch.UserInfo;
  */
 public class ZendDevCloudTunnel {
 
+	public enum State {
+
+		CONNECTING,
+
+		CONNECTED,
+
+		DISCONNECTING,
+
+		DISCONNECTED,
+
+		ERROR,
+
+		NOT_SUPPORTED;
+	}
+
 	private String user;
 	private String privateKey;
 
@@ -42,7 +57,8 @@ public class ZendDevCloudTunnel {
 	 * @param filename
 	 *            - of the public key (should be in PEM format)
 	 */
-	public ZendDevCloudTunnel(String user, String baseUrl, String privateKey, UserInfo ui) {
+	public ZendDevCloudTunnel(String user, String baseUrl, String privateKey,
+			UserInfo ui) {
 		if (user == null || privateKey == null || ui == null) {
 			throw new IllegalArgumentException(
 					"error setting user or filename to Ssh Tunnel"); //$NON-NLS-1$
@@ -57,12 +73,17 @@ public class ZendDevCloudTunnel {
 		this(user, ZendDevCloud.DEVPASS_HOST, privateKey, new EmptyUserInfo());
 	}
 
-	public void connect() throws IOException {
-		if (session != null && !session.isConnected()) {
-			try {
-				session.connect();
-			} catch (JSchException e) {
-				throw new IOException(e);
+	public State connect() throws IOException {
+		if (session != null) {
+			if (!session.isConnected()) {
+				try {
+					session.connect();
+					return State.CONNECTING;
+				} catch (JSchException e) {
+					throw new IOException(e);
+				}
+			} else {
+				return State.CONNECTED;
 			}
 		}
 		if (session == null) {
@@ -75,11 +96,14 @@ public class ZendDevCloudTunnel {
 
 			try {
 				session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
+				return State.CONNECTING;
 			} catch (JSchException e) {
-				final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1, user, baseUrl);
+				final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
+						user, baseUrl);
 				throw new IOException(msg);
 			}
 		}
+		return State.ERROR;
 	}
 
 	public String getUser() {

@@ -77,6 +77,16 @@ public class Messages extends NLS {
 
 	public static String LaunchApplicationHandler_1;
 	public static String NumberValidator_NotANumber;
+	public static String OpenTunnelCommand_SuccessMessage;
+
+	public static String OpenTunnelCommand_NotSupportedMessage;
+
+	public static String OpenTunnelCommand_OpenTunnelTitle;
+
+	public static String OpenTunnelCommand_TunnelOpenedMessage;
+
+	public static String OpenTunnelCommand_UnknownContainer;
+
 	public static String PasswordValidator_InvalidPassword;
 
 	public static String ParametersBlock_ExportButton;
