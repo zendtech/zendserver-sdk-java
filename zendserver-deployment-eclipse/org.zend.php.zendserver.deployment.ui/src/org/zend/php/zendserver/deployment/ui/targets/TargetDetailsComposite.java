@@ -188,8 +188,22 @@ public class TargetDetailsComposite {
 		};
 		runnableContext.run(true, true, runnable);
 		MessageTranslator messageTranslator = new MessageTranslator();
-		targetComposites[currentComposite].setErrorMessage(result.getSeverity() == IStatus.OK ? null
-				: messageTranslator.translate(result.getMessage()));
+		switch (result.getSeverity()) {
+		case IStatus.OK:
+			targetComposites[currentComposite]
+					.setErrorMessage(null);
+			break;
+		case IStatus.WARNING:
+			targetComposites[currentComposite]
+					.setWarningMessage(messageTranslator.translate(result
+							.getMessage()));
+			break;
+		case IStatus.ERROR:
+			targetComposites[currentComposite]
+					.setErrorMessage(messageTranslator.translate(result
+							.getMessage()));
+			break;
+		}
 	}
 
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {

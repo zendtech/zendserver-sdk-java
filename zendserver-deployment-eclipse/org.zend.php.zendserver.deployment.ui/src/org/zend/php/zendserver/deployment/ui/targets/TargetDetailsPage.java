@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -44,6 +45,7 @@ public class TargetDetailsPage extends WizardPage {
 				targets = src.getTarget();
 				final String errorMessage = (String) evt.getNewValue();
 				setPageComplete(errorMessage == null);
+				setMessage(null);
 				
 				Display.getDefault().syncExec(new Runnable() {
 					
@@ -53,7 +55,25 @@ public class TargetDetailsPage extends WizardPage {
 				});
 			}
 		};
-		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_ERROR_MESSAGE, errorListener );
+		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_ERROR_MESSAGE, errorListener);
+		
+		PropertyChangeListener warningListener = new PropertyChangeListener() {
+			
+			public void propertyChange(PropertyChangeEvent evt) {
+				AbstractTargetDetailsComposite src = (AbstractTargetDetailsComposite) evt.getSource();
+				targets = src.getTarget();
+				final String warningMessage = (String) evt.getNewValue();
+				setPageComplete(true);
+				setErrorMessage(null);
+				Display.getDefault().syncExec(new Runnable() {
+					
+					public void run() {
+						setMessage(warningMessage, IMessageProvider.WARNING);
+					}
+				});
+			}
+		};
+		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_WARNING_MESSAGE, warningListener);
 		
 		PropertyChangeListener modifyListener = new PropertyChangeListener() {
 

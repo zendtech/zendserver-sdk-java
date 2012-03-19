@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
@@ -33,6 +34,7 @@ public abstract class AbstractTargetDetailsComposite {
 	 * Fired when validation event occurs.
 	 */
 	public static final String PROP_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
+	public static final String PROP_WARNING_MESSAGE = "warningMessage"; //$NON-NLS-1$
 	public static final String PROP_MODIFY = "modify"; //$NON-NLS-1$
 
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(
@@ -41,6 +43,8 @@ public abstract class AbstractTargetDetailsComposite {
 	private String[] data;
 
 	private String errorMessage;
+	
+	private String warningMessage;
 
 	protected IZendTarget[] result;
 
@@ -109,6 +113,17 @@ public abstract class AbstractTargetDetailsComposite {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
+	
+	public void setWarningMessage(String warningMessage) {
+		String oldMessage = this.warningMessage;
+		this.warningMessage = warningMessage;
+		changeSupport.firePropertyChange(PROP_WARNING_MESSAGE, oldMessage,
+				warningMessage);
+	}
+
+	public String getWarningMessage() {
+		return warningMessage;
+	}
 
 	public IStatus validate(final IProgressMonitor monitor) {
 		result = null;
@@ -169,27 +184,31 @@ public abstract class AbstractTargetDetailsComposite {
 
 		monitor.subTask("Found "+targets.length+" target"+(targets.length == 1 ? "" : "s"));
 		List<IZendTarget> finalTargets = new ArrayList<IZendTarget>(targets.length);
+		IStatus status = null;
 		for (IZendTarget target : targets) {
-
 			if (target == null) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						"Target was not created.");
+				continue;
 			}
 
 			String message = ((ZendTarget)target).validateTarget();
 			if (message != null) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
+				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message);
+				continue;
 			}
 
 			if (!target.isTemporary()) {
 				try {
 					target = testConnectAndDetectPort(target, monitor);
 				} catch (WebApiException ex) {
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							ex.getMessage(), ex);
+					continue;
 				} catch (RuntimeException e) {
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e);
+					continue;
 				}
 			}
 			
@@ -198,6 +217,14 @@ public abstract class AbstractTargetDetailsComposite {
 			}
 		}
 		result = finalTargets.toArray(new IZendTarget[finalTargets.size()]);
+		if (status != null) {
+			if (finalTargets.size() == 0) {
+				return status;
+			} else {
+				return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+						Messages.AbstractTargetDetailsComposite_8);
+			}
+		}
 		return Status.OK_STATUS;
 	}
 
