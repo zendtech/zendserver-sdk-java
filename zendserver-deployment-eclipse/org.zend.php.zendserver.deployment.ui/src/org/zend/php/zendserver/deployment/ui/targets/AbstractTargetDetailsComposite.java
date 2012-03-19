@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
@@ -221,8 +220,10 @@ public abstract class AbstractTargetDetailsComposite {
 			if (finalTargets.size() == 0) {
 				return status;
 			} else {
-				return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
-						Messages.AbstractTargetDetailsComposite_8);
+				return new Status(
+						IStatus.WARNING,
+						Activator.PLUGIN_ID,
+						"Cannot connect to at least one of containers on specfied phpcloud account. Only valid containers will be added.");
 			}
 		}
 		return Status.OK_STATUS;

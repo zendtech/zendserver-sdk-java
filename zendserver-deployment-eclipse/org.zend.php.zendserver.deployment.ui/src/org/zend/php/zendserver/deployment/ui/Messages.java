@@ -10,8 +10,6 @@ public class Messages extends NLS {
 	
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.messages"; //$NON-NLS-1$
 	
-	public static String AbstractTargetDetailsComposite_8;
-
 	public static String AddTargetAction_AddNewTarget;
 	public static String AddTargetAction_AddTarget;
 	public static String AddTargetAction_AddTargetMessage;
