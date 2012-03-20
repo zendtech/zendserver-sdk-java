@@ -23,6 +23,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class AddTargetAction extends Action {
 	
 	private IZendTarget addedTarget;
+	private String type;
 
 
 	public AddTargetAction() {
@@ -35,6 +36,9 @@ public class AddTargetAction extends Action {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		
 		CreateTargetWizard wizard = new CreateTargetWizard();
+		if (type != null) {
+			wizard.setType(type);
+		}
 		WizardDialog dialog = wizard.createDialog(window.getShell());
 		
 		if (dialog.open() != Window.OK) {
@@ -65,4 +69,16 @@ public class AddTargetAction extends Action {
 	public IZendTarget getTarget() {
 		return addedTarget;
 	}
+	
+	/**
+	 * Set to customize target creation wizard. If it is set target type
+	 * selection page is skipped.
+	 * 
+	 * @param type
+	 *            of target which should be added
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 }

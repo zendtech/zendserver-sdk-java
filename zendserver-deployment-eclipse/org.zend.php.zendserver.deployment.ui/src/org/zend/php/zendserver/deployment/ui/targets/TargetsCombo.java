@@ -1,11 +1,15 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -20,6 +24,16 @@ public class TargetsCombo {
 	private String labelText;
 
 	private String tooltip;
+
+	private boolean phpcloudOnly;
+	
+	public TargetsCombo() {
+		this(false);
+	}
+	
+	public TargetsCombo(boolean phpcloudOnly) {
+		this.phpcloudOnly = phpcloudOnly;
+	}
 	
 	public void select(String targetId) {
 		for (int i = 0; i < targetsList.length; i++) {
@@ -45,7 +59,7 @@ public class TargetsCombo {
 	}
 	
 	public void updateItems() {
-		targetsList = targetsManager.getTargets();
+		targetsList = filterTargets(targetsManager.getTargets());
 		targetsCombo.removeAll();
 		String defaultId = targetsManager.getDefaultTargetId();
 		int defaultNo = 0;
@@ -85,4 +99,23 @@ public class TargetsCombo {
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
 	}
+	
+	private IZendTarget[] filterTargets(IZendTarget[] targets) {
+		if (phpcloudOnly) {
+			List<IZendTarget> result = new ArrayList<IZendTarget>();
+			if (targets != null && targets.length > 0) {
+				for (IZendTarget target : targets) {
+					if (phpcloudOnly
+							&& !target.getHost().getHost()
+									.contains(ZendDevCloud.DEVPASS_HOST)) {
+						continue;
+					}
+					result.add(target);
+				}
+			}
+			return result.toArray(new IZendTarget[0]);
+		}
+		return targets;
+	}
+	
 }
