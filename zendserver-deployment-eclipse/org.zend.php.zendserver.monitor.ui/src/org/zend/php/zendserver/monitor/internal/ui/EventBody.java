@@ -135,7 +135,7 @@ public class EventBody implements IBody {
 	private void createSourceLink(Composite composite) {
 		Link sourceLink = createLink(composite,
 				getLinkText(Messages.EventBody_SourceLink));
-		if (eventSource.getLine() == -1 && eventSource.getSourceFile() == null
+		if (eventSource.getLine() == -1 || eventSource.getSourceFile() == null
 				|| eventSource.getProjectName() == null) {
 			sourceLink.setEnabled(false);
 		}
