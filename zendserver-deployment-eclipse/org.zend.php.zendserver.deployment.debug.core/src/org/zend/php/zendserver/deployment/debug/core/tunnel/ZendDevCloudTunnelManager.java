@@ -35,11 +35,13 @@ public class ZendDevCloudTunnelManager {
 		if (user == null || user.length() == 0 || privateKey == null || privateKey.length() == 0) {
 			return State.NOT_SUPPORTED;
 		}
+		boolean init = false;
 		if (tunnel == null) {
 			tunnel = new ZendDevCloudTunnel(user, privateKey);
 			targets.put(target, tunnel);
+			init = true;
 		}
-		return connect(tunnel);
+		return connect(tunnel, target, init);
 	}
 
 	public void disconnect(IZendTarget target) {
@@ -82,9 +84,22 @@ public class ZendDevCloudTunnelManager {
 		return null;
 	}
 
-	private State connect(ZendDevCloudTunnel tunnel) throws IOException {
-		if (!tunnel.isConnected()) {
+	private State connect(ZendDevCloudTunnel tunnel, IZendTarget target,
+			boolean init) throws IOException {
+		if (init) {
 			return tunnel.connect();
+		} else {
+			if (!tunnel.isConnected()) {
+				try {
+					return tunnel.connect();
+				} catch (IOException e) {
+					// If tunnel exists but it is disconnected and failed to
+					// connect it again
+					// try to remove old tunnel and create a new one for it
+					targets.remove(target);
+					return connect(target);
+				}
+			}
 		}
 		return State.CONNECTED;
 	}
