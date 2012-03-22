@@ -38,7 +38,6 @@ mac.icns</vmArgsMac>
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -63,6 +62,7 @@ mac.icns</vmArgsMac>
       <feature id="org.eclipse.xsd"/>
       <feature id="org.eclipse.xsd.edit"/>
       <feature id="org.eclipse.wst.common.fproj"/>
+      <feature id="org.zend.php.common"/>
    </features>
 
 
