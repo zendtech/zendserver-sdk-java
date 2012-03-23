@@ -13,7 +13,7 @@
       <page
             class="org.zend.php.zendserver.monitor.ui.preferences.ServerMonitoringPropertyPage"
             id="org.zend.php.zendserver.monitor.ui.serverMonitoring"
-            name="Zend Server Monitoring">
+            name="Application Monitoring">
          <enabledWhen>
             <adapt
                   type="org.eclipse.core.resources.IProject">

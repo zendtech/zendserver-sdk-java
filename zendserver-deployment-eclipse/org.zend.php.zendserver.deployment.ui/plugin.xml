@@ -60,7 +60,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.ui.enableMonitoring"
-               label="Enable Monitoring"
+               label="Enable Application Monitoring"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -73,7 +73,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.ui.disableMonitoring"
-               label="Disable Monitoring"
+               label="Disable Application Monitoring"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -122,12 +122,12 @@
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableMonitoringHandler"
             id="org.zend.php.zendserver.deployment.ui.enableMonitoring"
-            name="Enable Monitoring">
+            name="Enable Application Monitoring">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.DisableMonitoringHandler"
             id="org.zend.php.zendserver.deployment.ui.disableMonitoring"
-            name="Disable Monitoring">
+            name="Disable Application Monitoring">
       </command>
    </extension>
    <extension

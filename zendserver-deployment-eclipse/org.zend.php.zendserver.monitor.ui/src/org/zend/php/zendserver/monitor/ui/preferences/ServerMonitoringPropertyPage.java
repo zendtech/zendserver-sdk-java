@@ -117,7 +117,6 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 		Group group = new Group(composite, SWT.NONE);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		group.setLayout(new GridLayout(1, false));
-		group.setText(Messages.ServerMonitoringPropertyPage_SeverityGroupLabel);
 		IssueSeverity[] severityValues = IssueSeverity.values();
 		severityButtons = new Button[severityValues.length];
 		for (int i = 0; i < severityValues.length; i++) {
