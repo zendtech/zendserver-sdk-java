@@ -202,6 +202,7 @@ public class EventBody implements IBody {
 			String shortText = text.substring(0, cut);
 			int index = shortText.lastIndexOf('.');
 			if (index == -1) {
+				index = shortText.lastIndexOf(' ');
 			}
 			shortText = shortText.substring(0, index + 1);
 			shortText += " ... <a>read more</a>"; //$NON-NLS-1$
