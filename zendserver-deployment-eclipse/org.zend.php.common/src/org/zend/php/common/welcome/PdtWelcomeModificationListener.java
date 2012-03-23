@@ -18,7 +18,8 @@ public class PdtWelcomeModificationListener implements
 	
 	public IStatus aboutToChange(final Collection<String> setToAdd,
 			final Collection<String> setToRemove) {
-		
+		RevertUtil ru = new RevertUtil();
+		ru.setRevertTimestamp();
 		status = null;
 		
 		Display.getDefault().syncExec(new Runnable() {
