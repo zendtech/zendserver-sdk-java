@@ -1,10 +1,20 @@
 package org.zend.php.common;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -57,7 +67,10 @@ public class RevertUtil {
 		Job job = new UIJob("") {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				doRevert(snapshot);
+				boolean success = doRevert(snapshot);
+				if (success) {
+					postRevertFixes();
+				}
 				return Status.OK_STATUS;
 			}
 		};
@@ -65,6 +78,39 @@ public class RevertUtil {
 		job.schedule();
 	}
 	
+	protected void postRevertFixes() {
+		revertEclipseProductId();
+	}
+	
+	private void revertEclipseProductId() {
+		// ZSTD-1541 when can't upgrade PDT->Studio, show apropriate message
+		URL url = Platform.getConfigurationLocation().getURL();
+		File config = null;
+		try {
+			File configDir = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
+			config = new File(configDir, "config.ini");
+			Properties p = new Properties();
+			FileInputStream fis = new FileInputStream(config);
+			p.load(fis);
+			fis.close();
+			p.setProperty("eclipse.product", "org.zend.php.product");
+			p.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench");
+			p.setProperty("osgi.splashPath", "platform:/base/plugins/org.zend.php");
+			System.out.println(p.toString());
+			FileOutputStream fos = new FileOutputStream(config);
+			p.store(fos, null);
+			fos.close();
+		} catch (UnsupportedEncodingException e) {
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to restore eclipse.product id in configuration/config.ini after product revert due to url decode error: "+url, e));
+		}
+		catch (FileNotFoundException e) {
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to restore eclipse.product id in configuration/config.ini after product revert due to config.ini file not found: "+config, e));
+		} catch (IOException e) {
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to restore eclipse.product id in configuration/config.ini after product revert due to IO exception in config.ini: "+config, e));
+		}
+		
+	}
+
 	// inspired by org.eclipse.equinox.p2.ui.RevertProfilePage.revert()
 	private boolean doRevert(final IProfile snapshot) {
 		final String profileId = getProvisioningUI().getProfileId();
@@ -78,7 +124,6 @@ public class RevertUtil {
 				IProfileRegistry registry = ProvUI.getProfileRegistry(getSession());
 				IPlanner planner = (IPlanner) getSession().getProvisioningAgent().getService(IPlanner.SERVICE_NAME);
 				currentProfile = registry.getProfile(profileId);
-				System.out.println("about to revert to "+snapshot.getTimestamp()+" from "+currentProfile.getTimestamp());
 				plan[0] = planner.getDiffPlan(currentProfile, snapshot, monitor);
 			}
 		};
@@ -101,6 +146,11 @@ public class RevertUtil {
 				// we want to force a restart (not allow apply changes)
 				op.setRestartPolicy(ProvisioningJob.RESTART_ONLY);
 				getProvisioningUI().schedule(op, StatusManager.SHOW | StatusManager.LOG);
+				try {
+					op.join();
+				} catch (InterruptedException e) {
+					// ignore
+				}
 				reverted = true;
 			} else if (plan[0].getStatus().getSeverity() != IStatus.CANCEL) {
 				ProvUI.reportStatus(plan[0].getStatus(), StatusManager.LOG | StatusManager.SHOW);
