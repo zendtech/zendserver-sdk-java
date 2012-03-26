@@ -1,9 +1,12 @@
 package org.zend.php.common;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
@@ -21,6 +24,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -48,8 +52,21 @@ public class RevertUtil {
 		return ProvUI.getProfileRegistry(getProvisioningUI().getSession()).getProfile(profileId, profileTimestamp);
 	}
 	
+	
+	private void revert(final IProfile snapshot) {
+		Job job = new UIJob("") {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				doRevert(snapshot);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		job.schedule();
+	}
+	
 	// inspired by org.eclipse.equinox.p2.ui.RevertProfilePage.revert()
-	boolean revert(final IProfile snapshot) {
+	private boolean doRevert(final IProfile snapshot) {
 		final String profileId = getProvisioningUI().getProfileId();
 		
 		if (snapshot == null)
@@ -61,6 +78,7 @@ public class RevertUtil {
 				IProfileRegistry registry = ProvUI.getProfileRegistry(getSession());
 				IPlanner planner = (IPlanner) getSession().getProvisioningAgent().getService(IPlanner.SERVICE_NAME);
 				currentProfile = registry.getProfile(profileId);
+				System.out.println("about to revert to "+snapshot.getTimestamp()+" from "+currentProfile.getTimestamp());
 				plan[0] = planner.getDiffPlan(currentProfile, snapshot, monitor);
 			}
 		};
@@ -72,10 +90,7 @@ public class RevertUtil {
 		} catch (InterruptedException e) {
 			// nothing to report
 		}
-		// the dialog does not throw OperationCanceledException so we have to
-		// check the monitor
-		if (dialog.getProgressMonitor().isCanceled())
-			return false;
+		// ignore dialog cancel, because Revert as a part of license mechanism, cannot be canceled. 
 
 		boolean reverted = false;
 		if (plan[0] != null) {
@@ -121,8 +136,15 @@ public class RevertUtil {
 		IProfileRegistry registry = ProvUI.getProfileRegistry(getSession());
 		IProfile currentProfile = registry.getProfile(currentProfileId);
 		
+		long[] timestamps = registry.listProfileTimestamps(currentProfileId);
+		
+		Arrays.sort(timestamps);
+		
+		// why -2? we'll take last but one profile. because the last one is the current, which is going to be modified if user continues.
+		long lastTimestamp = timestamps[timestamps.length - 2];
+		
 		IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		node.putLong(REVERT_TIMESTAMP, currentProfile.getTimestamp());
+		node.putLong(REVERT_TIMESTAMP, lastTimestamp);
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
