@@ -135,7 +135,7 @@ public class DeploymentHandler {
 						return CANCEL;
 					}
 					job.setHelper(helper);
-					job.setProject(project);
+					job.setProjectPath(project);
 					job.addJobChangeListener(new JobChangeAdapter() {
 						@Override
 						public void done(IJobChangeEvent event) {
@@ -304,7 +304,7 @@ public class DeploymentHandler {
 		}
 		helper.setOperationType(IDeploymentHelper.AUTO_DEPLOY);
 		job.setHelper(helper);
-		job.setProject(project);
+		job.setProjectPath(project);
 		job.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
@@ -515,7 +515,7 @@ public class DeploymentHandler {
 							break;
 						}
 						job.setHelper(updatedHelper);
-						job.setProject(project);
+						job.setProjectPath(project);
 						job.addJobChangeListener(new JobChangeAdapter() {
 							@Override
 							public void done(IJobChangeEvent event) {

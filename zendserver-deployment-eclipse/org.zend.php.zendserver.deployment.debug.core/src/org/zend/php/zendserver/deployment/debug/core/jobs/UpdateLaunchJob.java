@@ -9,7 +9,12 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 public class UpdateLaunchJob extends DeploymentLaunchJob {
 
 	public UpdateLaunchJob(IDeploymentHelper helper, IProject project) {
-		super(Messages.updateJob_Title, helper, project);
+		super(Messages.updateJob_Title, helper, project.getLocation()
+				.toString());
+	}
+
+	public UpdateLaunchJob(IDeploymentHelper helper, String projectPath) {
+		super(Messages.updateJob_Title, helper, projectPath);
 	}
 
 	@Override

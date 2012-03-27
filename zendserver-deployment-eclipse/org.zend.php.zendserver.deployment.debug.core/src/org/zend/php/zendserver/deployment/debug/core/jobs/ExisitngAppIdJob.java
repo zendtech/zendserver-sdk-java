@@ -18,9 +18,13 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 
 public class ExisitngAppIdJob extends AbstractLaunchJob {
 
-	public ExisitngAppIdJob(IDeploymentHelper helper,
-			IProject project) {
-		super(Messages.ExisitngAppIdJob_JobTitle, helper, project);
+	public ExisitngAppIdJob(IDeploymentHelper helper, IProject project) {
+		super(Messages.ExisitngAppIdJob_JobTitle, helper, project.getLocation()
+				.toString());
+	}
+
+	public ExisitngAppIdJob(IDeploymentHelper helper, String projectPath) {
+		super(Messages.ExisitngAppIdJob_JobTitle, helper, projectPath);
 	}
 
 	@Override

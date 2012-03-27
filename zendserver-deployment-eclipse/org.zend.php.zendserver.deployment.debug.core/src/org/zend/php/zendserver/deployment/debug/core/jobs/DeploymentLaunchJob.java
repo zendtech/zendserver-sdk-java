@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.core.jobs;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,8 +20,9 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 
 	private ResponseCode responseCode;
 
-	protected DeploymentLaunchJob(String name, IDeploymentHelper helper, IProject project) {
-		super(name, helper, project);
+	protected DeploymentLaunchJob(String name, IDeploymentHelper helper,
+			String projectPath) {
+		super(name, helper, projectPath);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		StatusChangeListener listener = new StatusChangeListener(monitor);
 		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
-		ApplicationInfo info = performOperation(app, project.getLocation().toString());
+		ApplicationInfo info = performOperation(app, projectPath);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}

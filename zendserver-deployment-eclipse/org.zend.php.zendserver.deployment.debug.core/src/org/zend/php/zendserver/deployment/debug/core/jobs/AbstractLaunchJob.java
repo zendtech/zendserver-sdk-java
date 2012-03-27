@@ -7,12 +7,14 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 public abstract class AbstractLaunchJob extends Job {
 
 	protected IDeploymentHelper helper;
-	protected IProject project;
 
-	protected AbstractLaunchJob(String name, IDeploymentHelper helper, IProject project) {
+	protected String projectPath;
+
+	protected AbstractLaunchJob(String name, IDeploymentHelper helper,
+			String projectPath) {
 		super(name);
 		this.helper = helper;
-		this.project = project;
+		this.projectPath = projectPath;
 	}
 
 	public IDeploymentHelper getHelper() {
@@ -23,8 +25,12 @@ public abstract class AbstractLaunchJob extends Job {
 		this.helper = helper;
 	}
 
-	public void setProject(IProject project) {
-		this.project = project;
+	public void setProjectPath(IProject project) {
+		this.projectPath = project.getLocation().toString();
+	}
+
+	public void setProjectPath(String projectPath) {
+		this.projectPath = projectPath;
 	}
 
 }

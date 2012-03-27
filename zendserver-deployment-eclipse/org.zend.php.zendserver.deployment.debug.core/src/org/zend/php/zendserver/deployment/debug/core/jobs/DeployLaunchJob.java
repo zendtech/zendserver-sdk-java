@@ -9,14 +9,19 @@ import org.zend.webapi.core.connection.data.ApplicationInfo;
 public class DeployLaunchJob extends DeploymentLaunchJob {
 
 	public DeployLaunchJob(IDeploymentHelper helper, IProject project) {
-		super(Messages.deploymentJob_Title, helper, project);
+		super(Messages.deploymentJob_Title, helper, project.getLocation()
+				.toString());
+	}
+
+	public DeployLaunchJob(IDeploymentHelper helper, String projectPath) {
+		super(Messages.deploymentJob_Title, helper, projectPath);
 	}
 
 	@Override
 	protected ApplicationInfo performOperation(ZendApplication app, String projectPath) {
 		String vHost = helper.getBaseURL().getHost();
 		String basePath = helper.getBaseURL().getPath();
-		return app.deploy(project.getLocation().toString(), basePath, helper.getTargetId(),
+		return app.deploy(projectPath, basePath, helper.getTargetId(),
 				helper.getUserParams(), helper.getAppName(), helper.isIgnoreFailures(), vHost,
 				helper.isDefaultServer());
 	}
