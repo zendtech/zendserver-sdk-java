@@ -13,6 +13,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.ui.chrome.SocketCommandListener;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 
 /**
  * The activator class controls the plug-in life cycle
