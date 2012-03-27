@@ -77,4 +77,25 @@ public class Activator extends AbstractUIPlugin {
 				new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
 	}
 
+	/**
+	 * Log a warning.
+	 * 
+	 * @param message
+	 *            warning message
+	 */
+	public static void logWaring(String message) {
+		getDefault().getLog().log(
+				new Status(IStatus.WARNING, PLUGIN_ID, message));
+	}
+
+	/**
+	 * Log an info.
+	 * 
+	 * @param message
+	 *            info message
+	 */
+	public static void logInfo(String message) {
+		getDefault().getLog().log(new Status(IStatus.INFO, PLUGIN_ID, message));
+	}
+
 }

@@ -20,6 +20,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.IStartup;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
+import org.zend.sdklib.logger.ILogger;
+import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -36,6 +38,33 @@ public class Startup implements IStartup {
 	private static final String TARGET_ID = "org.zend.php.zendserver.deployment.targetId"; //$NON-NLS-1$
 	private static final String BASE_URL = "org.zend.php.zendserver.deployment.baseURL"; //$NON-NLS-1$
 	private static final String PROJECT_NAME = "org.zend.php.zendserver.deployment.projectName"; //$NON-NLS-1$
+
+	static {
+		Log.getInstance().registerLogger(new ILogger() {
+
+			public void warning(Object message) {
+				Activator.logWaring(message.toString());
+			}
+
+			public void info(Object message) {
+				Activator.logInfo(message.toString());
+			}
+
+			public ILogger getLogger(String creatorName, boolean verbose) {
+				return this;
+			}
+
+			public void error(Object message) {
+				if (message instanceof Exception) {
+					Activator.log((Exception) message);
+				}
+			}
+
+			public void debug(Object message) {
+				Activator.logWaring(message.toString());
+			}
+		});
+	}
 
 	/*
 	 * (non-Javadoc)
