@@ -13,7 +13,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.ui.chrome.SocketCommandListener;
-import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -64,6 +63,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif"; //$NON-NLS-1$
 
 	public static final String IMAGE_TARGET = "icons/obj16/server.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DATABASE = "icons/obj16/database.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DETECT_TARGET = "icons/obj16/detect_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ADD_TARGET = "icons/obj16/new_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_EDIT_TARGET = "icons/obj16/edit_target.gif"; //$NON-NLS-1$

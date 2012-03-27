@@ -25,8 +25,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.zend.php.zendserver.deployment.core.database.ConnectionState;
+import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
+import org.zend.php.zendserver.deployment.core.database.ITargetDatabaseListener;
+import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
+import org.zend.php.zendserver.deployment.ui.actions.OpenDatabaseConnectionAction;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.progress.IStatusChangeEvent;
@@ -43,6 +48,7 @@ public class TargetsViewer {
 	private MenuManager menuMgr;
 	private ILaunchListener launchListener;
 	private ILaunchConfigurationListener cfgChangeListener;
+	private ITargetDatabaseListener targetDatabaseListener;
 
 	/**
 	 * Create viewer control
@@ -120,6 +126,16 @@ public class TargetsViewer {
 			}
 		};
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(launchListener);
+
+		targetDatabaseListener = new ITargetDatabaseListener() {
+
+			public void stateChanged(ITargetDatabase targetDatabase,
+					ConnectionState state) {
+				refreshViewer();
+			}
+		};
+		TargetsDatabaseManager.getManager().addTargetDatabaseListener(
+				targetDatabaseListener);
 	}
 	
 	protected void handleDoubleClick(DoubleClickEvent event) {
@@ -129,12 +145,18 @@ public class TargetsViewer {
 		}
 
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		Object obj = ssel.getFirstElement();
-		
+		final Object obj = ssel.getFirstElement();
+
 		if (obj instanceof IZendTarget) {
 			new EditTargetAction(viewer).run();
 			return;
-		} 
+		}
+		if (obj instanceof ITargetDatabase) {
+			OpenDatabaseConnectionAction action = new OpenDatabaseConnectionAction(
+					(ITargetDatabase) obj);
+			action.run();
+			return;
+		}
 		
 		IDoubleClickListener adapter = (IDoubleClickListener) Platform.getAdapterManager().getAdapter(obj, IDoubleClickListener.class);
 		if (adapter != null) {
@@ -143,6 +165,10 @@ public class TargetsViewer {
 	}
 
 	protected void refreshViewer() {
+		if (viewer == null || viewer.getTree() == null
+				|| viewer.getTree().isDisposed()) {
+			return;
+		}
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				viewer.refresh();
@@ -155,6 +181,7 @@ public class TargetsViewer {
 		tm.removeStatusChangeListener(listener);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(cfgChangeListener);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(launchListener);
+		TargetsDatabaseManager.getManager().removeTargetDatabaseListener(targetDatabaseListener);
 	}
 
 	/**

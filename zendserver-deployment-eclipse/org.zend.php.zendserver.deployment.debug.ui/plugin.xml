@@ -133,11 +133,9 @@
               <iterate
                     ifEmpty="false"
                     operator="and">
-                 <not>
-                    <instanceof
-                          value="org.eclipse.debug.core.ILaunchConfiguration">
-                    </instanceof>
-                 </not>
+                 <instanceof
+                       value="org.zend.sdklib.target.IZendTarget">
+                 </instanceof>
               </iterate>
             </visibleWhen>
          </command>

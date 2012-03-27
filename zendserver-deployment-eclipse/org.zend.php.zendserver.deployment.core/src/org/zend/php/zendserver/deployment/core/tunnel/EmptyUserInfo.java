@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.debug.core.tunnel;
+package org.zend.php.zendserver.deployment.core.tunnel;
 
 import com.jcraft.jsch.UserInfo;
 

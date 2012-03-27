@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.debug.core.tunnel;
+package org.zend.php.zendserver.deployment.core.tunnel;
 
 import java.io.IOException;
 
-import org.zend.php.zendserver.deployment.debug.core.Messages;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 
 import com.jcraft.jsch.JSch;
@@ -41,6 +42,8 @@ public class ZendDevCloudTunnel {
 
 		NOT_SUPPORTED;
 	}
+
+	private static int database_port = 13306;
 
 	private String user;
 	private String privateKey;
@@ -96,6 +99,8 @@ public class ZendDevCloudTunnel {
 
 			try {
 				session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
+				session.setPortForwardingL(database_port++, user
+						+ "-db." + baseUrl, 3306); //$NON-NLS-1$
 				return State.CONNECTING;
 			} catch (JSchException e) {
 				final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
@@ -118,6 +123,25 @@ public class ZendDevCloudTunnel {
 		if (isConnected()) {
 			session.disconnect();
 		}
+	}
+
+	public int getDatabasePort() {
+		int result = -1;
+		if (session != null) {
+			try {
+				String[] locals = session.getPortForwardingL();
+				for (String local : locals) {
+					String[] segments = local.split(":"); //$NON-NLS-1$
+					if (segments.length == 3) {
+						result = Integer.valueOf(segments[0]);
+						break;
+					}
+				}
+			} catch (Exception e) {
+				DeploymentCore.log(e);
+			}
+		}
+		return result;
 	}
 
 	private String getPrivateKeyFile() throws IOException {

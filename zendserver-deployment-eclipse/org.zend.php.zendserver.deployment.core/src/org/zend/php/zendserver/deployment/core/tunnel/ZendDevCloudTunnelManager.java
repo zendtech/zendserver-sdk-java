@@ -1,11 +1,11 @@
-package org.zend.php.zendserver.deployment.debug.core.tunnel;
+package org.zend.php.zendserver.deployment.core.tunnel;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.zend.php.zendserver.deployment.debug.core.tunnel.ZendDevCloudTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -56,6 +56,22 @@ public class ZendDevCloudTunnelManager {
 		for (IZendTarget target : targetsSet) {
 			disconnect(target);
 		}
+	}
+	
+	public boolean isAvailable(IZendTarget target) {
+		ZendDevCloudTunnel tunnel = targets.get(target);
+		if (tunnel != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public int getDatabasePort(IZendTarget target) {
+		ZendDevCloudTunnel tunnel = targets.get(target);
+		if (tunnel != null) {
+			return tunnel.getDatabasePort();
+		}
+		return -1;
 	}
 
 	private ZendDevCloudTunnel getTunnel(IZendTarget target) {
