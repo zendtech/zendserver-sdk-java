@@ -40,10 +40,12 @@ public class WelcomePageFirstTimeStartup {
 				public void run() {
 					IWorkbenchPage page = PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage();
-					IViewReference outlineView = page
-							.findViewReference("org.eclipse.ui.views.ContentOutline");
-					if (outlineView != null) {
-						page.hideView(outlineView);
+					if (page != null) {
+						IViewReference outlineView = page
+								.findViewReference("org.eclipse.ui.views.ContentOutline");
+						if (outlineView != null) {
+							page.hideView(outlineView);
+						}
 					}
 				}
 			});

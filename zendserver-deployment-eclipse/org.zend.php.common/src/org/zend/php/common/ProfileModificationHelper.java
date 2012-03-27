@@ -42,6 +42,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -49,15 +50,17 @@ public class ProfileModificationHelper {
 
 	private static final String LISTENERS_EXT_POINT = "org.zend.php.customization.profileModificationListeners";
 
-	static List<IInstallableUnit> toInstall;
-	static List<IInstallableUnit> toUninstall;
+	private List<IInstallableUnit> toInstall;
+	private List<IInstallableUnit> toUninstall;
 
 	private static List<IProfileModificationListener> listeners;
+
+	private StatusHandler customStatusHandler;
 
 	public static interface Callback {
 		void runCallback();
 	}
-	public static IStatus modify(IProgressMonitor monitor,
+	public IStatus modify(IProgressMonitor monitor,
 			final List<CatalogItem> toAdd, final List<CatalogItem> toRemove,
 			final int restartPolicy, String jobName) {
 		
@@ -125,7 +128,7 @@ public class ProfileModificationHelper {
 	 *            - ids of InstallableUnit
 	 * @param restartPolicy
 	 */
-	private static IStatus modify(IProgressMonitor monitor,
+	private IStatus modify(IProgressMonitor monitor,
 			final Set<String> toAdd, final Set<String> toRemove,
 			final int restartPolicy, String jobName) {
 		try {
@@ -146,8 +149,7 @@ public class ProfileModificationHelper {
 			IStatus result = op.resolveModal(monitor);
 			if (result.getSeverity() < IStatus.ERROR) {
 				if (result.isMultiStatus()) {
-					StatusManager.getManager().handle(result,
-							StatusManager.SHOW);
+					handle(result, StatusManager.SHOW);
 				}
 				result = op.getProvisioningJob(monitor).runModal(monitor);
 			}
@@ -165,7 +167,16 @@ public class ProfileModificationHelper {
 		}
 	}
 
-	static void applyProfileChanges() {
+	private void handle(IStatus result, int show) {
+		if (customStatusHandler != null) {
+			customStatusHandler.show(result, result.getMessage());
+		} else {
+			StatusManager.getManager().handle(result,
+					StatusManager.SHOW);
+		}
+	}
+
+	private void applyProfileChanges() {
 		Configurator configurator = (Configurator) ServiceHelper.getService(
 				ProvUIActivator.getContext(), Configurator.class.getName());
 		try {
@@ -186,7 +197,7 @@ public class ProfileModificationHelper {
 		}
 	}
 
-	public static void requestRestart(final int restartPolicy,final Callback callback) {
+	public void requestRestart(final int restartPolicy,final Callback callback) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				boolean restart=false;
@@ -217,11 +228,11 @@ public class ProfileModificationHelper {
 		});
 	}
 
-	public static void requestRestart(final int restartPolicy) {
+	public void requestRestart(final int restartPolicy) {
 		requestRestart(restartPolicy, null);
 	}
 
-	private static IStatus handleException(Exception e) {
+	private IStatus handleException(Exception e) {
 		Activator.log(e);
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage());
 	}
@@ -354,7 +365,7 @@ public class ProfileModificationHelper {
 		return uri.toString().contains("extra");
 	}
 
-	private static List<IProfileModificationListener> getModificationListeners() {
+	private List<IProfileModificationListener> getModificationListeners() {
 		if (listeners == null) {
 			List<IProfileModificationListener> result = new ArrayList<IProfileModificationListener>();
 			IConfigurationElement[] elements = Platform.getExtensionRegistry()
@@ -385,4 +396,7 @@ public class ProfileModificationHelper {
 		return result;
 	}
 
+	public void setStatusHandler(StatusHandler handler) {
+		this.customStatusHandler = handler;
+	}
 }

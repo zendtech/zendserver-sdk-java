@@ -40,6 +40,7 @@ import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -134,9 +135,12 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	private String operationName;
 
+	protected ProfileModificationHelper pm;
+	
 	public ZendCatalogViewer(IShellProvider shellProvider,
 			IRunnableContext context) {
 		
+		this.pm = new ProfileModificationHelper();
 		this.catalog = new Catalog();
 		catalog.setEnvironment(DiscoveryCore.createEnvironment());
 		catalog.setVerifyUpdateSiteAvailability(false);
@@ -631,7 +635,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 		if (!toAddItems.isEmpty() || !toRemoveItems.isEmpty()) {
 			Job job = new Job(Messages.ApplyChanges_JobName) {
 				protected IStatus run(IProgressMonitor monitor) {
-					return ProfileModificationHelper.modify(monitor,
+					return pm.modify(monitor,
 							toAddItems, toRemoveItems,
 							Policy.RESTART_POLICY_PROMPT_RESTART_OR_APPLY,
 							operationName);
@@ -707,4 +711,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 		this.operationName = operName;
 	}
 
+	public void setStatusHandler(StatusHandler handler) {
+		pm.setStatusHandler(handler);
+	}
+	
 }

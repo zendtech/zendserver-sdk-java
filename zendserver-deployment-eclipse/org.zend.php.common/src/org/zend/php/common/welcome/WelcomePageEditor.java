@@ -55,8 +55,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
-		
-		WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput) input;
 	}
 
 	public boolean isDirty() {
@@ -92,6 +90,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput)getEditorInput();
 			viewer.init(welcomeInput.getDiscoveryDirFileName());
 			viewer.setOperationName(Messages.ModifyOperation_InstallJobName);
+			viewer.setStatusHandler(welcomeInput.getStatusHandler());
 		}
 		//PlatformUI.getWorkbench().getHelpSystem()
 			//	.setHelp(parent, IStudioHelpContextIds.WELCOME_PAGE);

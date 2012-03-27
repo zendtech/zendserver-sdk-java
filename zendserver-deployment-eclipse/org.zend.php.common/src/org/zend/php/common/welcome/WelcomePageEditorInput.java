@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
@@ -100,6 +101,10 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
+	}
+
+	public StatusHandler getStatusHandler() {
+		return null;
 	}
 
 }
