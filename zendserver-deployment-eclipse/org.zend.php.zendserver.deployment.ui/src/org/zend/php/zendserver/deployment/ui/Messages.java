@@ -80,6 +80,12 @@ public class Messages extends NLS {
 
 	public static String MessageTranslator_UnknownResponseCode;
 
+	public static String OpenDatabaseConnectionAction_OpenConnectionError;
+
+	public static String OpenDatabaseConnectionAction_OpenConnectionJobTitle;
+
+	public static String OpenDatabaseConnectionAction_OpenConnectionTaskTitle;
+
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;
 	public static String OverviewPage_2;

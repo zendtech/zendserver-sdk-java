@@ -22,7 +22,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.ContainerPasswordDialog;
+import org.zend.php.zendserver.monitor.core.Activator;
 
 /**
  * Open database action for selected target.
@@ -43,40 +45,16 @@ public class OpenDatabaseConnectionAction extends Action {
 	@Override
 	public void run() {
 		window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (targetConnection.createProfile()) {
-			if (!targetConnection.hasPassword()) {
-				Display.getDefault().syncExec(new Runnable() {
-
-					public void run() {
-						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
-								Display.getDefault().getActiveShell());
-						if (dialog.open() == Window.OK) {
-							targetConnection.setPassword(dialog.getPassword(),
-									dialog.getSave());
-						} else {
-							return;
-						}
-						connect();
-					}
-				});
-			} else {
-				connect();
-			}
-		}
-	}
-
-	private void connect() {
-		Job connectJob = new Job("Connecting to Database") { //$NON-NLS-1$
+		Job createProfileJob = new Job(
+				Messages.OpenDatabaseConnectionAction_OpenConnectionJobTitle) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				if (targetConnection.connect(monitor)) {
-					return Status.OK_STATUS;
-				}
-				return Status.CANCEL_STATUS;
+				return createProfile(monitor);
 			}
+
 		};
-		connectJob.addJobChangeListener(new JobChangeAdapter() {
+		createProfileJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
 				if (window != null
@@ -95,8 +73,48 @@ public class OpenDatabaseConnectionAction extends Action {
 				}
 			}
 		});
-		connectJob.setUser(true);
-		connectJob.schedule();
+		createProfileJob.setUser(true);
+		createProfileJob.schedule();
+	}
+
+	private IStatus createProfile(IProgressMonitor monitor) {
+		monitor.beginTask(
+				Messages.OpenDatabaseConnectionAction_OpenConnectionTaskTitle,
+				IProgressMonitor.UNKNOWN);
+		boolean passwordProvided = false;
+		if (targetConnection.createProfile()) {
+			if (!targetConnection.hasPassword()) {
+				passwordProvided = true;
+				Display.getDefault().syncExec(new Runnable() {
+
+					public void run() {
+						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
+								Display.getDefault().getActiveShell());
+						if (dialog.open() == Window.OK) {
+							targetConnection.setPassword(dialog.getPassword(),
+									dialog.getSave());
+						}
+					}
+				});
+			}
+			if (targetConnection.hasPassword()) {
+				try {
+					if (targetConnection.connect(monitor)) {
+						monitor.done();
+						passwordProvided = false;
+						return Status.OK_STATUS;
+					}
+				} finally {
+					if (passwordProvided) {
+						targetConnection.setPassword(null, false);
+					}
+				}
+
+				return Status.CANCEL_STATUS;
+			}
+		}
+		return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+				Messages.OpenDatabaseConnectionAction_OpenConnectionError);
 	}
 
 }

@@ -182,8 +182,13 @@ public class TargetDatabase implements ITargetDatabase {
 	 */
 	public void setPassword(String password, boolean save) {
 		Properties props = profile.getBaseProperties();
-		props.setProperty(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID,
-				password);
+		if (password != null) {
+			props.setProperty(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID,
+					password);
+		} else {
+			props.remove(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID);
+			props.remove(IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID);
+		}
 		if (save) {
 			props.setProperty(
 					IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID,
