@@ -83,7 +83,7 @@ public class RevertUtil {
 	}
 	
 	private void revertEclipseProductId() {
-		// ZSTD-1541 when can't upgrade PDT->Studio, show apropriate message
+		// ZSTD-1549	After reverting from Studio to PDT cannot start PDT
 		URL url = Platform.getConfigurationLocation().getURL();
 		File config = null;
 		try {
