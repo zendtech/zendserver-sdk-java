@@ -10,8 +10,8 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.sdklib.target.IZendTarget;
@@ -60,14 +60,20 @@ public class OpenTunnelCommand extends AbstractHandler {
 					target);
 			switch (result) {
 			case CONNECTED:
+				String message = MessageFormat.format(
+						Messages.OpenTunnelCommand_TunnelOpenedMessage,
+						target.getId());
 				NotificationManager.registerInfo(
-						Messages.OpenTunnelCommand_OpenTunnelTitle,
-						Messages.OpenTunnelCommand_TunnelOpenedMessage, 4000);
+						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
+						4000);
 				break;
 			case CONNECTING:
+				message = MessageFormat.format(
+						Messages.OpenTunnelCommand_SuccessMessage,
+						target.getId());
 				NotificationManager.registerInfo(
-						Messages.OpenTunnelCommand_OpenTunnelTitle,
-						Messages.OpenTunnelCommand_SuccessMessage, 4000);
+						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
+						4000);
 				break;
 			case NOT_SUPPORTED:
 				NotificationManager.registerWarning(
