@@ -33,6 +33,8 @@ import org.zend.sdklib.target.IZendTarget;
 public class MonitorManager {
 
 	public static final String ENABLED = "enabled."; //$NON-NLS-1$
+	public static final String HIDE_KEY = "hide"; //$NON-NLS-1$
+	public static final String HIDE_TIME_KEY = "hide_time"; //$NON-NLS-1$
 
 	private static Map<String, ZendServerMonitor> monitors;
 

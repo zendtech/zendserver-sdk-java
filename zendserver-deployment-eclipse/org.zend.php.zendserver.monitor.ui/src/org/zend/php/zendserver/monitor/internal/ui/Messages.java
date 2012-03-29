@@ -40,9 +40,13 @@ public class Messages extends NLS {
 	public static String RequestGeneratorJob_NotificationTitle;
 	public static String RequestGeneratorJob_RepeatFailedMessage;
 	public static String RequestGeneratorJob_RepeatTaskTitle;
+	public static String ServerMonitoringPropertyPage_DelayLabel;
+	public static String ServerMonitoringPropertyPage_DelayTooltip;
 	public static String ServerMonitoringPropertyPage_Description;
 	public static String ServerMonitoringPropertyPage_EnableCheckboxLabel;
 	public static String ServerMonitoringPropertyPage_EnableJobTitle;
+	public static String ServerMonitoringPropertyPage_HideLabel;
+	public static String ServerMonitoringPropertyPage_InvalidDelayMessage;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

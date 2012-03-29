@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
@@ -14,6 +18,7 @@ import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.NotificationType;
 import org.zend.php.zendserver.monitor.core.EventSource;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.monitor.IZendIssue;
 
 /**
@@ -33,13 +38,23 @@ public class NotificationProvider implements INotificationProvider {
 	 * (org.zend.sdklib.monitor.IZendIssue, java.lang.String,
 	 * org.zend.php.zendserver.monitor.core.EventSource)
 	 */
-	public void showNonification(IZendIssue issue,
-			String targetId, EventSource eventSource) {
+	public void showNonification(IZendIssue issue, String targetId,
+			EventSource eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);
 		NotificationSettings settings = new NotificationSettings();
 		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(eventSource.getProjectName());
+		if (project != null) {
+			IEclipsePreferences prefs = new ProjectScope(project)
+					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
+			if (prefs.getBoolean(MonitorManager.HIDE_KEY, false)) {
+				settings.setDelay(prefs
+						.getInt(MonitorManager.HIDE_TIME_KEY, 10) * 1000);
+			}
+		}
 		NotificationManager.registerNotification(NotificationManager
 				.createNotification(settings));
 	}
