@@ -15,6 +15,7 @@ import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
+import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 
@@ -50,6 +51,9 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 			default:
 				break;
 			}
+		} else if (exception instanceof WebApiCommunicationError) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					Messages.DeploymentLaunchJob_ConnectionRefusedMessage);
 		}
 		return new SdkStatus(listener.getStatus());
 	}

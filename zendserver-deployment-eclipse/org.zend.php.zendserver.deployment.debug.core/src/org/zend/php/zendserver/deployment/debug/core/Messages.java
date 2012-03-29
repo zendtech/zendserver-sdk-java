@@ -14,6 +14,8 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.debug.core.messages"; //$NON-NLS-1$
 
 	public static String deploymentJob_Title;
+
+	public static String DeploymentLaunchJob_ConnectionRefusedMessage;
 	public static String statusJob_Title;
 	public static String updateJob_Title;
 	public static String ExisitngAppIdJob_JobTitle;
