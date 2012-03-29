@@ -79,7 +79,7 @@ public class RequestGeneratorJob extends Job {
 						}
 						monitor.done();
 					}
-				});
+				}, false);
 		return Status.OK_STATUS;
 	}
 

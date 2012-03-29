@@ -34,10 +34,11 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class Startup implements IStartup {
 
+	public static final String TARGET_ID = "org.zend.php.zendserver.deployment.targetId"; //$NON-NLS-1$
+	public static final String BASE_URL = "org.zend.php.zendserver.deployment.baseURL"; //$NON-NLS-1$
+	public static final String PROJECT_NAME = "org.zend.php.zendserver.deployment.projectName"; //$NON-NLS-1$
+
 	private static final String LAUNCH_CONFIG_TYPE = "org.eclipse.php.debug.core.launching.webPageLaunch"; //$NON-NLS-1$
-	private static final String TARGET_ID = "org.zend.php.zendserver.deployment.targetId"; //$NON-NLS-1$
-	private static final String BASE_URL = "org.zend.php.zendserver.deployment.baseURL"; //$NON-NLS-1$
-	private static final String PROJECT_NAME = "org.zend.php.zendserver.deployment.projectName"; //$NON-NLS-1$
 
 	static {
 		Log.getInstance().registerLogger(new ILogger() {
@@ -100,7 +101,7 @@ public class Startup implements IStartup {
 		}
 	}
 
-	public ILaunchConfiguration[] getLaunches(IZendTarget target) {
+	public static ILaunchConfiguration[] getLaunches(IZendTarget target) {
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = mgr
 				.getLaunchConfigurationType(LAUNCH_CONFIG_TYPE);

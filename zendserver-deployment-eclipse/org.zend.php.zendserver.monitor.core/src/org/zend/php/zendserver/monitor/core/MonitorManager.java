@@ -7,14 +7,22 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.core;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.zend.php.zendserver.monitor.internal.core.Startup;
 import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
+import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Represents management service for application monitoring.
@@ -53,6 +61,44 @@ public class MonitorManager {
 			monitors.put(targetId, m);
 		} else {
 			monitor.enable(project, url);
+		}
+	}
+
+	/**
+	 * Create and start monitor for specified project. Monitor will be created
+	 * only on those targets where application is deployed and launch
+	 * configuration is available.
+	 * 
+	 * @param projectName
+	 *            project name
+	 */
+	public static void create(String projectName) {
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			ILaunchConfiguration[] launches = Startup.getLaunches(target);
+			if (launches != null && launches.length > 0) {
+				for (ILaunchConfiguration config : launches) {
+					try {
+						String name = config.getAttribute(Startup.PROJECT_NAME,
+								(String) null);
+						if (projectName.equals(name)) {
+							String targetId = config.getAttribute(
+									Startup.TARGET_ID, (String) null);
+							String baseURL = config.getAttribute(
+									Startup.BASE_URL, (String) null);
+							if (targetId != null && baseURL != null) {
+								MonitorManager.create(targetId, projectName,
+										new URL(baseURL));
+							}
+						}
+					} catch (MalformedURLException e) {
+						Activator.log(e);
+					} catch (CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
 		}
 	}
 
@@ -99,8 +145,8 @@ public class MonitorManager {
 	 * 
 	 * @param targetId
 	 *            target id
-	 * @param url
-	 *            URL
+	 * @param projectName
+	 *            project name
 	 * @return <code>true</code> if monitor was available; otherwise return
 	 *         <code>false</code>
 	 */
@@ -118,13 +164,36 @@ public class MonitorManager {
 	}
 
 	/**
+	 * Remove monitoring of specified project from all available monitors.
+	 * 
+	 * @param projectName
+	 *            project name
+	 */
+	public static void removeProject(String projectName) {
+		Set<String> targetsSet = monitors.keySet();
+		List<String> toRemove = new ArrayList<String>();
+		for (String targetId : targetsSet) {
+			ZendServerMonitor monitor = monitors.get(targetId);
+			if (monitor != null) {
+				monitor.disable(projectName);
+				if (!monitor.isEnabled()) {
+					toRemove.add(targetId);
+				}
+			}
+		}
+		for (String targetId : toRemove) {
+			ZendServerMonitor monitor = monitors.get(targetId);
+			monitor.cancel();
+			monitors.remove(targetId);
+		}
+	}
+
+	/**
 	 * Remove monitor for specified target. If there is no monitor for that
 	 * target, nothing happens.
 	 * 
 	 * @param targetId
 	 *            target id
-	 * @param url
-	 *            URL
 	 * @return <code>true</code> if monitor was available; otherwise return
 	 *         <code>false</code>
 	 */
@@ -147,6 +216,37 @@ public class MonitorManager {
 			ZendServerMonitor monitor = monitors.get(key);
 			monitor.cancel();
 		}
+	}
+
+	/**
+	 * Check if specified project is deployed on least one target in a current
+	 * workspace.
+	 * 
+	 * @param projectName
+	 * @return <code>true</code> if specified project is deployed on least one
+	 *         target in a current workspace; otherwise return
+	 *         <code>false</code>
+	 */
+	public static boolean isDeployed(String projectName) {
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			ILaunchConfiguration[] launches = Startup.getLaunches(target);
+			if (launches != null && launches.length > 0) {
+				for (ILaunchConfiguration config : launches) {
+					try {
+						String name = config.getAttribute(Startup.PROJECT_NAME,
+								(String) null);
+						if (projectName.equals(name)) {
+							return true;
+						}
+					} catch (CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }

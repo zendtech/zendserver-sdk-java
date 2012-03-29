@@ -7,12 +7,21 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.ui.preferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -23,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.internal.ui.Messages;
@@ -39,6 +49,7 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
 public class ServerMonitoringPropertyPage extends PropertyPage implements
 		IWorkbenchPropertyPage {
 
+	Button monitoringEnabled;
 	private Button[] severityButtons;
 	private IEclipsePreferences prefs;
 
@@ -56,9 +67,24 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, true));
+		monitoringEnabled = new Button(composite, SWT.CHECK);
+		monitoringEnabled.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateEnablement(monitoringEnabled.getSelection());
+			}
+		});
+		monitoringEnabled
+				.setText(Messages.ServerMonitoringPropertyPage_EnableCheckboxLabel);
 		createSeveritySection(composite);
 		init();
-		return null;
+		return composite;
+	}
+
+	protected void updateEnablement(boolean selection) {
+		for (Button button : severityButtons) {
+			button.setEnabled(selection);
+		}
 	}
 
 	/*
@@ -82,6 +108,23 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 			if (isDirty) {
 				prefs.flush();
 			}
+			if (getEnabledTargets().size() == 0
+					&& monitoringEnabled.getSelection()) {
+				Job createMonitors = new Job(
+						Messages.ServerMonitoringPropertyPage_EnableJobTitle) {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						MonitorManager.create(getProject().getName());
+						return Status.OK_STATUS;
+					}
+				};
+				createMonitors.setSystem(true);
+				createMonitors.schedule();
+			} else if (getEnabledTargets().size() != 0
+					&& !monitoringEnabled.getSelection()) {
+				MonitorManager.removeProject(getProject().getName());
+			}
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 			return false;
@@ -104,6 +147,28 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 			button.setEnabled(isEnabled());
 			button.setSelection(prefs.getBoolean(nodeName, false));
 		}
+		if (MonitorManager.isDeployed(project.getName())) {
+			if (getEnabledTargets().size() > 0) {
+				updateEnablement(true);
+				monitoringEnabled.setSelection(true);
+			}
+		} else {
+			monitoringEnabled.setEnabled(false);
+		}
+	}
+
+	private List<IZendTarget> getEnabledTargets() {
+		List<IZendTarget> result = new ArrayList<IZendTarget>();
+		IZendTarget[] targets = TargetsManagerService.INSTANCE
+				.getTargetManager().getTargets();
+		for (IZendTarget target : targets) {
+			String value = prefs.get(MonitorManager.ENABLED + target.getId(),
+					null);
+			if (value != null && Boolean.valueOf(value)) {
+				result.add(target);
+			}
+		}
+		return result;
 	}
 
 	private String getNodeName(Button button) {

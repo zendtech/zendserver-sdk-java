@@ -54,7 +54,7 @@ public class NotificationProvider implements INotificationProvider {
 	 */
 	public void showProgress(String title, int height,
 			IRunnableWithProgress runnable) {
-		NotificationManager.registerProgress(title, height, runnable);
+		NotificationManager.registerProgress(title, height, runnable, false);
 	}
 
 }
