@@ -42,8 +42,8 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Create and start monitor for specified target and URL. If monitor already
-	 * exists for that target, provided URL is added to be observed.
+	 * Enable monitor for specified target and URL. If monitor already exists
+	 * for that target, provided URL is added to be observed.
 	 * 
 	 * @param targetId
 	 *            target id
@@ -55,12 +55,13 @@ public class MonitorManager {
 	public static void create(String targetId, String project, URL url) {
 		ZendServerMonitor monitor = monitors.get(targetId);
 		if (monitor == null) {
-			final ZendServerMonitor m = new ZendServerMonitor(targetId,
-					project, url);
-			m.start();
-			monitors.put(targetId, m);
+			ZendServerMonitor m = new ZendServerMonitor(targetId, project, url);
+			if (m.start()) {
+				monitors.put(targetId, m);
+			}
 		} else {
 			monitor.enable(project, url);
+			// start(targetId);
 		}
 	}
 
@@ -73,31 +74,21 @@ public class MonitorManager {
 	 *            project name
 	 */
 	public static void create(String projectName) {
-		TargetsManager manager = new TargetsManager();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget target : targets) {
-			ILaunchConfiguration[] launches = Startup.getLaunches(target);
-			if (launches != null && launches.length > 0) {
-				for (ILaunchConfiguration config : launches) {
-					try {
-						String name = config.getAttribute(Startup.PROJECT_NAME,
-								(String) null);
-						if (projectName.equals(name)) {
-							String targetId = config.getAttribute(
-									Startup.TARGET_ID, (String) null);
-							String baseURL = config.getAttribute(
-									Startup.BASE_URL, (String) null);
-							if (targetId != null && baseURL != null) {
-								MonitorManager.create(targetId, projectName,
-										new URL(baseURL));
-							}
-						}
-					} catch (MalformedURLException e) {
-						Activator.log(e);
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
+		List<ILaunchConfiguration> launches = getLaunches(projectName);
+		for (ILaunchConfiguration config : launches) {
+			try {
+				String targetId = config.getAttribute(Startup.TARGET_ID,
+						(String) null);
+				String baseURL = config.getAttribute(Startup.BASE_URL,
+						(String) null);
+				if (targetId != null && baseURL != null) {
+					MonitorManager.create(targetId, projectName, new URL(
+							baseURL));
 				}
+			} catch (CoreException e) {
+				Activator.log(e);
+			} catch (MalformedURLException e) {
+				Activator.log(e);
 			}
 		}
 	}
@@ -247,6 +238,78 @@ public class MonitorManager {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * Set preference value for specified project for each target where it is
+	 * deployed and launch configuration is available.
+	 * 
+	 * @param projectName
+	 * @param enable
+	 */
+	public static void setEnabled(String projectName, boolean enable) {
+		List<ILaunchConfiguration> launches = getLaunches(projectName);
+		for (ILaunchConfiguration config : launches) {
+			try {
+				String targetId = config.getAttribute(Startup.TARGET_ID,
+						(String) null);
+				if (targetId != null) {
+					ZendServerMonitor monitor = monitors.get(targetId);
+					if (monitor != null) {
+						monitor.setEnabled(projectName, enable);
+					} else {
+						ZendServerMonitor m = new ZendServerMonitor(targetId,
+								projectName, null);
+						m.setEnabled(projectName, enable);
+					}
+				}
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * Set preference value for specified project and target.
+	 * 
+	 * @param projectName
+	 * @param enable
+	 */
+	public static void setEnabled(String targetId, String projectName,
+			boolean enable) {
+		ZendServerMonitor monitor = monitors.get(targetId);
+		if (monitor != null) {
+			monitor.setEnabled(projectName, enable);
+		} else {
+			ZendServerMonitor m = new ZendServerMonitor(targetId, projectName,
+					null);
+			m.setEnabled(projectName, enable);
+		}
+	}
+
+	private static List<ILaunchConfiguration> getLaunches(String projectName) {
+		List<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			ILaunchConfiguration[] launches = Startup.getLaunches(target);
+			if (launches != null && launches.length > 0) {
+				for (ILaunchConfiguration config : launches) {
+					try {
+						String name = config.getAttribute(Startup.PROJECT_NAME,
+								(String) null);
+						if (projectName.equals(name)) {
+							result.add(config);
+						}
+					} catch (CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 }

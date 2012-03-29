@@ -63,6 +63,7 @@ public class EnableMonitoringHandler extends AbstractHandler {
 						DeploymentAttributes.PROJECT_NAME.getName(),
 						(String) null);
 				if (projectName != null && targetId != null && baseURL != null) {
+					MonitorManager.setEnabled(targetId, projectName, true);
 					MonitorManager.create(targetId, projectName, new URL(
 							baseURL));
 					return;

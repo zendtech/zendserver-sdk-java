@@ -59,6 +59,53 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		boolean isDirty = false;
+		try {
+			for (Button button : severityButtons) {
+				boolean selection = button.getSelection();
+				String nodeName = getNodeName(button);
+				Boolean current = getCurrentValue(nodeName);
+				if ((current != null && current != selection)
+						|| (current == null && selection)) {
+					prefs.putBoolean(getNodeName(button), selection);
+					isDirty = true;
+				}
+			}
+			if (isDirty) {
+				prefs.flush();
+			}
+			if (getEnabledTargets().size() == 0
+					&& monitoringEnabled.getSelection()) {
+				Job createMonitors = new Job(
+						Messages.ServerMonitoringPropertyPage_EnableJobTitle) {
+	
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						IProject p = getProject();
+						MonitorManager.setEnabled(p.getName(), true);
+						MonitorManager.create(p.getName());
+						return Status.OK_STATUS;
+					}
+				};
+				createMonitors.setSystem(true);
+				createMonitors.schedule();
+			} else if (getEnabledTargets().size() != 0
+					&& !monitoringEnabled.getSelection()) {
+				MonitorManager.removeProject(getProject().getName());
+			}
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
 	 * .swt.widgets.Composite)
@@ -90,46 +137,32 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
-	public boolean performOk() {
-		boolean isDirty = false;
-		try {
-			for (Button button : severityButtons) {
-				boolean selection = button.getSelection();
-				String nodeName = getNodeName(button);
-				Boolean current = getCurrentValue(nodeName);
-				if ((current != null && current != selection)
-						|| (current == null && selection)) {
-					prefs.putBoolean(getNodeName(button), selection);
-					isDirty = true;
-				}
+	protected void performDefaults() {
+		IProject project = getProject();
+		for (Button button : severityButtons) {
+			IssueSeverity sev = IssueSeverity.byName(button.getText());
+			if (sev == IssueSeverity.CRITICAL || sev == IssueSeverity.WARNING) {
+				button.setSelection(true);
+			} else {
+				button.setSelection(false);
 			}
-			if (isDirty) {
-				prefs.flush();
-			}
-			if (getEnabledTargets().size() == 0
-					&& monitoringEnabled.getSelection()) {
-				Job createMonitors = new Job(
-						Messages.ServerMonitoringPropertyPage_EnableJobTitle) {
-
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						MonitorManager.create(getProject().getName());
-						return Status.OK_STATUS;
-					}
-				};
-				createMonitors.setSystem(true);
-				createMonitors.schedule();
-			} else if (getEnabledTargets().size() != 0
-					&& !monitoringEnabled.getSelection()) {
-				MonitorManager.removeProject(getProject().getName());
-			}
-		} catch (BackingStoreException e) {
-			Activator.log(e);
-			return false;
 		}
-		return true;
+		if (MonitorManager.isDeployed(project.getName())) {
+			if (getEnabledTargets().size() > 0) {
+				updateEnablement(true);
+				monitoringEnabled.setSelection(true);
+			} else {
+				updateEnablement(false);
+				monitoringEnabled.setSelection(false);
+			}
+			monitoringEnabled.setEnabled(true);
+		} else {
+			updateEnablement(false);
+			monitoringEnabled.setSelection(false);
+			monitoringEnabled.setEnabled(false);
+		}
 	}
 
 	private Boolean getCurrentValue(String nodeName) {

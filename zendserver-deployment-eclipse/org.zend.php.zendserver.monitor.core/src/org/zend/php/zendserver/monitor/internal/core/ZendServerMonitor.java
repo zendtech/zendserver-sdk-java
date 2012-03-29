@@ -72,20 +72,29 @@ public class ZendServerMonitor extends Job {
 		super(Messages.ZendServerMonitor_JobTitle);
 		this.targetId = targetId;
 		this.applications = new HashMap<IProject, URL>();
-		enable(project, url);
+		if (!applications.containsKey(project)) {
+			IResource res = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(project);
+			if (res instanceof IContainer) {
+				applications.put(res.getProject(), url);
+				setDefaultSeverities(res.getProject());
+			}
+		}
 	}
 
 	/**
 	 * Start monitor job.
 	 */
-	public void start() {
+	public boolean start() {
 		if (codeTracing == null) {
 			codeTracing = new ZendCodeTracing(targetId);
 			codeTracing.enable(true);
 		}
 		if (shouldStart()) {
 			lastTime = Long.MAX_VALUE;
-			setSystem(true);
+			if (getState() == Job.NONE) {
+				setSystem(true);
+			}
 			getProvider().showProgress(Messages.ZendServerMonitor_JobTitle, 90,
 					new IRunnableWithProgress() {
 
@@ -95,7 +104,9 @@ public class ZendServerMonitor extends Job {
 							ZendServerMonitor.this.run(monitor);
 						}
 					});
+			return true;
 		}
+		return false;
 	}
 
 	@Override
@@ -148,6 +159,31 @@ public class ZendServerMonitor extends Job {
 	}
 
 	/**
+	 * Set preference value for specified project.
+	 * 
+	 * @param projectName
+	 * @param enable
+	 */
+	public void setEnabled(String projectName, boolean enable) {
+		try {
+			IResource res = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(projectName);
+			if (res instanceof IContainer) {
+				IEclipsePreferences prefs = getPreferences(res.getProject());
+				if (prefs != null) {
+					String enabledKey = MonitorManager.ENABLED + targetId;
+					if (prefs.get(enabledKey, null) != null) {
+						prefs.putBoolean(enabledKey, enable);
+						prefs.flush();
+					}
+				}
+			}
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+	}
+
+	/**
 	 * Disable monitoring for specified application's base URL.
 	 * 
 	 * @param projectName
@@ -158,8 +194,10 @@ public class ZendServerMonitor extends Job {
 				.findMember(projectName);
 		if (res instanceof IContainer) {
 			IEclipsePreferences prefs = getPreferences(res.getProject());
-			if (prefs != null) {
-				prefs.remove(MonitorManager.ENABLED + targetId);
+			if (prefs != null
+					&& prefs.getBoolean(MonitorManager.ENABLED + targetId,
+							false)) {
+				prefs.putBoolean(MonitorManager.ENABLED + targetId, false);
 				try {
 					prefs.flush();
 				} catch (BackingStoreException e) {
