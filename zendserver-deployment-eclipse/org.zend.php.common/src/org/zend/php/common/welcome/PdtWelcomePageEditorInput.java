@@ -26,5 +26,9 @@ public class PdtWelcomePageEditorInput extends WelcomePageEditorInput {
 			
 		};
 	}
+	
+	public String getDiscoveryDirFileName() {
+		return "/pdt_directory.xml";
+	}
 
 }

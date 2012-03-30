@@ -71,7 +71,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 			.getName();
 
 	public String getDiscoveryDirFileName() {
-		return "/pdt_directory.xml";
+		return "/directory.xml";
 	}
 	
 	public IAdaptable createElement(IMemento memento) {
