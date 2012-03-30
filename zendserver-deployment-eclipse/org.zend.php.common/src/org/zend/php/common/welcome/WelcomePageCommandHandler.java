@@ -23,7 +23,6 @@ import org.zend.php.common.Activator;
 public class WelcomePageCommandHandler extends AbstractHandler {
 
 	public WelcomePageCommandHandler() {
-
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {

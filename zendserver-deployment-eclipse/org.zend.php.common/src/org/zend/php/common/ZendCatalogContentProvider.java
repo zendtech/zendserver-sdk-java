@@ -6,11 +6,8 @@ import java.util.List;
 import org.eclipse.equinox.internal.p2.discovery.Catalog;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
-import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CategoryItem;
-import org.eclipse.equinox.internal.p2.ui.discovery.wizards.DiscoveryResources;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class ZendCatalogContentProvider implements ITreeContentProvider {
@@ -56,11 +53,11 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 		if (catalog != null) {
 			List<Object> elements = new ArrayList<Object>();
 			// We don't want to display categories
-			// if (hasCategories()) {
-			// elements.addAll(catalog.getCategories());
-			// }
+			if (hasCategories()) {
+			 elements.addAll(catalog.getCategories());
+			 }
 			// Uncomment to get uncategorized items
-			elements.addAll(catalog.getItems());
+			//elements.addAll(catalog.getItems());
 			return elements.toArray(new Object[0]);
 		}
 		return new Object[0];

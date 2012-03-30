@@ -4,7 +4,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
@@ -18,15 +17,10 @@ import org.zend.php.common.Activator;
 
 public class WelcomePageFirstTimeStartup {
 
-	private static final String PHP_PRODUCT_ID = "org.zend.php.product";
 	private static final String IS_FIRST_STARTUP = "isFirstStartup";
 	private static final String SHOW_WELCOME = "showWelcome";
 
 	public static void run() {
-		if (! PHP_PRODUCT_ID.equals(Platform.getProduct().getId())) {
-			return;
-		}
-		
 		// Workspace specific preferences
 		IPreferenceStore pref = Activator.getDefault()
 				.getPreferenceStore();
