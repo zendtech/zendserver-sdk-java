@@ -86,11 +86,11 @@ public class ZendServerMonitor extends Job {
 	 * Start monitor job.
 	 */
 	public boolean start() {
-		if (codeTracing == null) {
-			codeTracing = new ZendCodeTracing(targetId);
-			codeTracing.enable(true);
-		}
 		if (shouldStart()) {
+			if (codeTracing == null) {
+				codeTracing = new ZendCodeTracing(targetId);
+				codeTracing.enable(true);
+			}
 			lastTime = Long.MAX_VALUE;
 			if (getState() == Job.NONE) {
 				setSystem(true);

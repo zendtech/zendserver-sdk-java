@@ -54,17 +54,27 @@ public class MonitorManager {
 	 * @param url
 	 *            URL which will be observed
 	 */
-	public static void create(String targetId, String project, URL url) {
-		ZendServerMonitor monitor = monitors.get(targetId);
-		if (monitor == null) {
-			ZendServerMonitor m = new ZendServerMonitor(targetId, project, url);
-			if (m.start()) {
-				monitors.put(targetId, m);
+	public static boolean create(String targetId, String project, URL url) {
+		try {
+			ZendServerMonitor monitor = monitors.get(targetId);
+			if (monitor == null) {
+				ZendServerMonitor m = new ZendServerMonitor(targetId, project,
+						url);
+				if (m.start()) {
+					monitors.put(targetId, m);
+					return true;
+				}
+			} else {
+				monitor.enable(project, url);
+				return true;
 			}
-		} else {
-			monitor.enable(project, url);
-			// start(targetId);
+		} catch (Exception e) {
+			Activator.log(e);
+			// revert changes
+			ZendServerMonitor m = new ZendServerMonitor(targetId, project, url);
+			m.setEnabled(project, false);
 		}
+		return false;
 	}
 
 	/**
