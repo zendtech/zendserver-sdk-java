@@ -60,8 +60,15 @@ public class ProfileModificationHelper {
 	public static interface Callback {
 		void runCallback();
 	}
+	
 	public IStatus modify(IProgressMonitor monitor,
-			final List<CatalogItem> toAdd, final List<CatalogItem> toRemove,
+			final Collection<CatalogItem> toAdd, final Collection<CatalogItem> toRemove,
+			final int restartPolicy) {
+		return modify(monitor, toAdd, toRemove, restartPolicy, "");
+	}
+	
+	public IStatus modify(IProgressMonitor monitor,
+			final Collection<CatalogItem> toAdd, final Collection<CatalogItem> toRemove,
 			final int restartPolicy, String jobName) {
 		
 		Set<String> setToAdd = getDescriptorIds(toAdd);
@@ -128,7 +135,7 @@ public class ProfileModificationHelper {
 	 *            - ids of InstallableUnit
 	 * @param restartPolicy
 	 */
-	private IStatus modify(IProgressMonitor monitor,
+	public IStatus modify(IProgressMonitor monitor,
 			final Set<String> toAdd, final Set<String> toRemove,
 			final int restartPolicy, String jobName) {
 		try {
@@ -237,7 +244,7 @@ public class ProfileModificationHelper {
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage());
 	}
 
-	static public Set<String> getDescriptorIds(List<CatalogItem> toAddItems) {
+	static public Set<String> getDescriptorIds(Collection<CatalogItem> toAddItems) {
 		Set<String> installableUnits = new HashSet<String>();
 		for (Object connector : toAddItems) {
 			if (connector instanceof CatalogItem) {

@@ -67,7 +67,7 @@ public class ZendProfileChangeOperation {
 		this.context = new ProvisioningContext(session.getProvisioningAgent());
 		this.toInstall = toInstall;
 		this.toUninstall = toUninstall;
-		this.provisioningJobName = jobName;
+		this.provisioningJobName = jobName != null ? jobName : Messages.ModifyOperation_InstallJobName;
 	}
 
 	/**
