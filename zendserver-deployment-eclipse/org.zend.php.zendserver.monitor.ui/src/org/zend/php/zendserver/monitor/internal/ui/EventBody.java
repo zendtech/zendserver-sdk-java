@@ -26,7 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
-import org.zend.core.notifications.ui.ActionType;
+import org.eclipse.swt.widgets.Menu;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
@@ -89,6 +89,16 @@ public class EventBody implements IBody {
 	 */
 	public void addActionListener(IActionListener listener) {
 		this.listener = listener;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.core.notifications.ui.IBody#getMenuItems(org.eclipse.swt.widgets
+	 * .Menu)
+	 */
+	public void addMenuItems(Menu menu) {
 	}
 
 	private void createTraceLink(Composite composite) {
