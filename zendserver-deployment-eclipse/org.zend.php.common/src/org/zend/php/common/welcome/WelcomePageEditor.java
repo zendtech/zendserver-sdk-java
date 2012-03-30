@@ -169,21 +169,30 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		if (preferences.getBoolean(IS_FIRST_WELCOME_STARTUP, true)) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					IWorkbenchWindow window = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow();
-					if (window == null) {
-						return;
-					}
-					IWorkbenchPage page = window.getActivePage();
-					if (page == null) {
-						return;
-					}
-					page.resetPerspective();
+					reopenOutlineView();
 					preferences.putBoolean(IS_FIRST_WELCOME_STARTUP, false);
 				}
 			});
 		}
 		super.dispose();
+	}
+
+	protected void reopenOutlineView() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+		
+		try {
+			page.showView("org.eclipse.ui.views.ContentOutline");
+		} catch (PartInitException e) {
+			Activator.log(e);
+		}
 	}
 
 }
