@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.zend.php.feature"
-      label="Eclipse for PHP Developers Feature"
+      label="%featureName"
       version="3.0.2.qualifier"
-      provider-name="Zend Technologies Ltd.">
+      provider-name="%providerName">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
-   </copyright>
-
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
    <plugin
