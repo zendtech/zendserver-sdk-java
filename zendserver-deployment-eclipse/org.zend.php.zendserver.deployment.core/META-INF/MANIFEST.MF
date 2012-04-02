@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.jcraft.jsch,
  org.eclipse.php.server.core,
  org.eclipse.rse.core,
- org.eclipse.datatools.connectivity
+ org.eclipse.datatools.connectivity,
+ org.eclipse.equinox.security
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.deployment.core,

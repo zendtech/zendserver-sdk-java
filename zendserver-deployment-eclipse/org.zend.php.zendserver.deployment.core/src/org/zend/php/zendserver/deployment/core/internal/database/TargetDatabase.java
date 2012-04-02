@@ -240,6 +240,17 @@ public class TargetDatabase implements ITargetDatabase {
 		manager.stateChanged(this, ConnectionState.UNAVAILABLE);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#getTarget
+	 * ()
+	 */
+	public IZendTarget getTarget() {
+		return target;
+	}
+
 	private boolean connectTunnel() {
 		try {
 			State result = ZendDevCloudTunnelManager.getManager().connect(

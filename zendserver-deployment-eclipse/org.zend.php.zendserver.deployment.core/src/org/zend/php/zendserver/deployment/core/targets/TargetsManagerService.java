@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -13,6 +14,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -31,6 +35,9 @@ import org.zend.sdklib.target.IZendTarget;
  *
  */
 public class TargetsManagerService {
+
+	private static final String PHPCLOUD_NODE = "phpcloud/"; //$NON-NLS-1$
+	private static final String PASSWORD_KEY = "password"; //$NON-NLS-1$
 
 	private TargetsManager tm;
 	
@@ -55,8 +62,8 @@ public class TargetsManagerService {
 	 */
 	public void storeTarget(IZendTarget target, IProject project) {
 		IEclipsePreferences pref = new ProjectScope(project).getNode(DeploymentCore.PLUGIN_ID);
-		pref.put("targetId", target.getId());
-		pref.put("targetHost", target.getHost().toString());
+		pref.put("targetId", target.getId()); //$NON-NLS-1$
+		pref.put("targetHost", target.getHost().toString()); //$NON-NLS-1$
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
@@ -141,6 +148,49 @@ public class TargetsManagerService {
 		};
 		removeJob.setSystem(true);
 		removeJob.schedule();
+	}
+	
+	
+	public void storeContainerPassword(IZendTarget target, String password) {
+		storeContainerPassword(getUser(target), password);
+	}
+
+	public void storeContainerPassword(String user, String password) {
+		ISecurePreferences root = SecurePreferencesFactory.getDefault();
+		ISecurePreferences node = root.node(PHPCLOUD_NODE + user); 
+		try {
+			node.put(PASSWORD_KEY, password, true); 
+			node.flush();
+		} catch (IOException e) {
+			DeploymentCore.log(e);
+		} catch (StorageException e) {
+			DeploymentCore.log(e);
+		}
+	}
+
+	public String getContainerPassword(IZendTarget target) {
+		return getContainerPassword(getUser(target));
+	}
+	
+	public String getContainerPassword(String user) {
+		ISecurePreferences root = SecurePreferencesFactory.getDefault();
+		ISecurePreferences node = root.node(PHPCLOUD_NODE + user); 
+		try {
+			return node.get(PASSWORD_KEY, null); 
+		} catch (StorageException e) {
+			DeploymentCore.log(e);
+		}
+		return null;
+	}
+
+	private String getUser(IZendTarget target) {
+		if (target != null) {
+			String[] host = target.getHost().getHost().split("\\."); //$NON-NLS-1$
+			if (host.length > 0) {
+				return host[0];
+			}
+		}
+		return null;
 	}
 	
 }

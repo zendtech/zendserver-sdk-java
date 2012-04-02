@@ -22,6 +22,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.ContainerPasswordDialog;
 import org.zend.php.zendserver.monitor.core.Activator;
@@ -83,13 +84,23 @@ public class OpenDatabaseConnectionAction extends Action {
 				IProgressMonitor.UNKNOWN);
 		boolean passwordProvided = false;
 		if (targetConnection.createProfile()) {
-			if (!targetConnection.hasPassword()) {
+			boolean hasPassword = targetConnection.hasPassword();
+			if (!hasPassword) {
+				String password = TargetsManagerService.INSTANCE
+						.getContainerPassword(targetConnection.getTarget());
+				if (password != null && password.length() > 0) {
+					targetConnection.setPassword(password, false);
+					hasPassword = true;
+				}
+			}
+			if (!hasPassword) {
 				passwordProvided = true;
 				Display.getDefault().syncExec(new Runnable() {
 
 					public void run() {
 						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
-								Display.getDefault().getActiveShell());
+								Display.getDefault().getActiveShell(),
+								targetConnection.getTarget());
 						if (dialog.open() == Window.OK) {
 							targetConnection.setPassword(dialog.getPassword(),
 									dialog.getSave());

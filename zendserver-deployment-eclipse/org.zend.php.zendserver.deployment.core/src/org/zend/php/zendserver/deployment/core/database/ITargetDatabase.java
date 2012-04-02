@@ -9,6 +9,7 @@ package org.zend.php.zendserver.deployment.core.database;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Represents connection between target and connection profile. It can be used
@@ -72,5 +73,10 @@ public interface ITargetDatabase {
 	 * {@link ITargetDatabase#createProfile()} will create new profile.
 	 */
 	void remove();
+
+	/**
+	 * @return associated zend target
+	 */
+	IZendTarget getTarget();
 
 }
