@@ -469,9 +469,20 @@ public class TargetsManager extends AbstractChangeNotifier {
 		String id;
 		do {
 			id = prefix + Integer.toString(idgenerator++);
-		} while (getTargetById(id) != null);
+		} while (!isIdAvailable(id));
 		
 		return id;
+	}
+
+	private boolean isIdAvailable(String id) {
+		IZendTarget[] targets = getTargets();
+		for (IZendTarget target : targets) {
+			String targetId = target.getId();
+			if (targetId.equals(id) || targetId.startsWith(id + "_")) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
