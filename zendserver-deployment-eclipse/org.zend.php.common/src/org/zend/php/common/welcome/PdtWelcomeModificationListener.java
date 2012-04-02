@@ -3,6 +3,7 @@ package org.zend.php.common.welcome;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -14,10 +15,15 @@ public class PdtWelcomeModificationListener implements
 		IProfileModificationListener {
 
 	private static final String STUDIO_IU = "com.zend.php.ide";
+	private static final String PDT_PRODUCT_ID = "org.zend.php.product";
 	private IStatus status;
 	
 	public IStatus aboutToChange(final Collection<String> setToAdd,
 			final Collection<String> setToRemove) {
+		if (! isPDtProduct()) { // do nothing, if we're not in PDT product
+			return Status.OK_STATUS;
+		}
+		
 		RevertUtil ru = new RevertUtil();
 		ru.setRevertTimestamp();
 		status = null;
@@ -46,11 +52,18 @@ public class PdtWelcomeModificationListener implements
 
 	public void profileChanged(Collection<String> setToAdd,
 			Collection<String> setToRemove, IStatus status) {
+		if (! isPDtProduct()) {  // do nothing, if we're not in PDT product
+			return;
+		}
 		
 		if ((setToAdd != null) && (setToAdd.contains(STUDIO_IU)) && status.getSeverity() == IStatus.OK) {
 			RevertUtil ru = new RevertUtil();
 			ru.setRevertTimestamp();
 		}
+	}
+
+	private boolean isPDtProduct() {
+		return PDT_PRODUCT_ID.equals(Platform.getProduct().getId());
 	}
 
 }
