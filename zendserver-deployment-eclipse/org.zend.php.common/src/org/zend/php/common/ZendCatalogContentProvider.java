@@ -53,11 +53,11 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 		if (catalog != null) {
 			List<Object> elements = new ArrayList<Object>();
 			// We don't want to display categories
-			if (hasCategories()) {
-			 elements.addAll(catalog.getCategories());
-			 }
+			//if (hasCategories()) {
+			// elements.addAll(catalog.getCategories());
+			// }
 			// Uncomment to get uncategorized items
-			//elements.addAll(catalog.getItems());
+			elements.addAll(catalog.getItems());
 			return elements.toArray(new Object[0]);
 		}
 		return new Object[0];
