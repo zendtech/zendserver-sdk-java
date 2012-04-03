@@ -11,13 +11,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.zend.php.common.Activator;
+import org.zend.php.common.ProfileModificationHelper;
 
 
 public class WelcomePageCommandHandler extends AbstractHandler {
@@ -58,6 +62,22 @@ public class WelcomePageCommandHandler extends AbstractHandler {
 						} catch (Exception e) {
 							Activator.log(e);
 						}
+						
+						ProfileModificationHelper.setStatusHandler(new StatusHandler() {
+
+									@Override
+									public void show(IStatus status,
+											String title) {
+										Shell parent = Display.getDefault()
+												.getActiveShell();
+										MessageDialog
+												.openError(
+														parent,
+														"Upgrade to Zend Studio failed",
+														"PDT version that you're using cannot be upgraded to Zend Studio due to internal version conflicts. Please make sure you're using the latest available PDT version.");
+									}
+
+								});
 					}
 				});
 				return Status.OK_STATUS;

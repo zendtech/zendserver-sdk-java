@@ -55,7 +55,7 @@ public class ProfileModificationHelper {
 
 	private static List<IProfileModificationListener> listeners;
 
-	private StatusHandler customStatusHandler;
+	private static StatusHandler customStatusHandler;
 
 	public static interface Callback {
 		void runCallback();
@@ -403,7 +403,7 @@ public class ProfileModificationHelper {
 		return result;
 	}
 
-	public void setStatusHandler(StatusHandler handler) {
-		this.customStatusHandler = handler;
+	public static void setStatusHandler(StatusHandler handler) {
+		customStatusHandler = handler;
 	}
 }

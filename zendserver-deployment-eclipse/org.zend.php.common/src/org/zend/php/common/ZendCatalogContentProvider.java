@@ -52,12 +52,12 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (catalog != null) {
 			List<Object> elements = new ArrayList<Object>();
-			// We don't want to display categories
-			//if (hasCategories()) {
-			// elements.addAll(catalog.getCategories());
-			// }
-			// Uncomment to get uncategorized items
-			elements.addAll(catalog.getItems());
+			if (hasCategories()) {
+				elements.addAll(catalog.getCategories());	
+			} else {
+				elements.addAll(catalog.getItems());
+			}
+			
 			return elements.toArray(new Object[0]);
 		}
 		return new Object[0];
@@ -97,5 +97,4 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 		}
 		return new CatalogItem[0];
 	}
-
 }

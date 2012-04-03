@@ -32,6 +32,7 @@ import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogConfiguration
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogFilter;
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.DiscoveryResources;
 import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -162,7 +163,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 		}
 	}
 	
-	public void init(String directoryFileName) {
+	public void setDiscoveryDirFileName(String directoryFileName) {
 		// look for remote descriptor
 		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
 		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
@@ -363,16 +364,18 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	protected Set<String> getInstalledFeatures(IProgressMonitor monitor) {
 		Set<String> features = new HashSet<String>();
-		IProfile profile = ProvUI.getProfileRegistry(
-				ProvisioningUI.getDefaultUI().getSession()).getProfile(
-				ProvisioningUI.getDefaultUI().getProfileId());
-		if (profile != null) {
-			IQueryResult<IInstallableUnit> result = profile.available(
-					QueryUtil.createIUGroupQuery(), monitor);
-			for (Iterator<IInstallableUnit> it = result.iterator(); it
-					.hasNext();) {
-				IInstallableUnit unit = it.next();
-				features.add(unit.getId());
+		IProfileRegistry profileReg = ProvUI.getProfileRegistry(
+				ProvisioningUI.getDefaultUI().getSession());
+		if (profileReg != null) {
+			IProfile profile = profileReg.getProfile(ProvisioningUI.getDefaultUI().getProfileId());
+			if (profile != null) {
+				IQueryResult<IInstallableUnit> result = profile.available(
+						QueryUtil.createIUGroupQuery(), monitor);
+				for (Iterator<IInstallableUnit> it = result.iterator(); it
+						.hasNext();) {
+					IInstallableUnit unit = it.next();
+					features.add(unit.getId());
+				}
 			}
 		}
 		return features;
@@ -713,6 +716,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	public void setStatusHandler(StatusHandler handler) {
 		pm.setStatusHandler(handler);
+	}
+
+	public void setShowCategories(boolean doShowCategories) {
+		contentProvider.setHasCategories(doShowCategories);
 	}
 	
 }

@@ -9,8 +9,12 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
+import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
+
+	private String discoveryFile;
+	private boolean showCategories;
 
 	public WelcomePageEditorInput() {
 		super();
@@ -22,8 +26,10 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WelcomePageEditorInput(URL url, int style, String browserId) {
+	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories) {
 		super(url, style, browserId);
+		this.discoveryFile = discoveryFile;
+		this.showCategories = showCategories;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -71,7 +77,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 			.getName();
 
 	public String getDiscoveryDirFileName() {
-		return "/directory.xml";
+		return discoveryFile;
 	}
 	
 	public IAdaptable createElement(IMemento memento) {
@@ -96,8 +102,13 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		String id = memento.getString("id");
 		String name = memento.getString("name");
 		String tooltip = memento.getString("tooltip");
+		String discoveryFileName = memento.getString("discoveryFile");
+		Boolean showCategories =memento.getBoolean("categories");
+		if (showCategories == null) {
+			showCategories = false;
+		}
 		
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id);
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories);
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
@@ -105,6 +116,15 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 
 	public StatusHandler getStatusHandler() {
 		return null;
+	}
+
+	public void initFeaturesViewer(ZendCatalogViewer viewer) {
+		viewer.setDiscoveryDirFileName(getDiscoveryDirFileName());
+		viewer.setShowCategories(doShowCategories());
+	}
+
+	public boolean doShowCategories() {
+		return showCategories;
 	}
 
 }

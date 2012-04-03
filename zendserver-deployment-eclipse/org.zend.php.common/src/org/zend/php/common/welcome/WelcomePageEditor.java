@@ -73,7 +73,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		fl.marginWidth = 0;
 		fl.spacing = 0;
 		parent.setLayout(fl);
-		Composite editor = new Composite(parent, SWT.NONE);
+		final Composite editor = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(3, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
@@ -88,10 +88,18 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		
 		if (getEditorInput() instanceof WelcomePageEditorInput) {
 			WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput)getEditorInput();
-			viewer.init(welcomeInput.getDiscoveryDirFileName());
+			welcomeInput.initFeaturesViewer(viewer);
 			viewer.setOperationName(Messages.ModifyOperation_InstallJobName);
 			viewer.setStatusHandler(welcomeInput.getStatusHandler());
 		}
+		
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				if (!editor.isDisposed()) {
+					viewer.updateCatalog();
+				}
+			}
+		});
 		//PlatformUI.getWorkbench().getHelpSystem()
 			//	.setHelp(parent, IStudioHelpContextIds.WELCOME_PAGE);
 	}
@@ -149,13 +157,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				//.setHelp(
 					//	viewerComposite,
 						//IStudioHelpContextIds.CUSTOMIZING_ZEND_STUDIO_USING_THE_WELCOME_PAGE);
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				if (!viewerComposite.isDisposed()) {
-					viewer.updateCatalog();
-				}
-			}
-		});
 	}
 
 	public void setFocus() {
