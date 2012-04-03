@@ -8,7 +8,9 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.osgi.service.prefs.Preferences;
@@ -32,14 +34,27 @@ public class WelcomePageFirstTimeStartup {
 				|| pref.getBoolean(SHOW_WELCOME)) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					IWorkbenchPage page = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getActivePage();
-					if (page != null) {
-						IViewReference outlineView = page
-								.findViewReference("org.eclipse.ui.views.ContentOutline");
-						if (outlineView != null) {
-							page.hideView(outlineView);
-						}
+					IWorkbench wb = null;
+					try {
+						wb = PlatformUI.getWorkbench();
+					} catch (IllegalArgumentException ex) {
+						return;
+					}
+					
+					IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+					if (window == null) {
+						return;
+					}
+					IWorkbenchPage page = window.getActivePage();
+					if (page == null) {
+						return;
+					}
+					
+					IViewReference outlineView = page
+							.findViewReference("org.eclipse.ui.views.ContentOutline");
+					
+					if (outlineView != null) {
+						page.hideView(outlineView);
 					}
 				}
 			});
