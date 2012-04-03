@@ -211,6 +211,10 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		if (username != null) {
 			usernameText.setText(username);
 		}
+		String password = defaultTarget.getProperty(ZendDevCloud.TARGET_PASSWORD);
+		if (password != null) {
+			passwordText.setText(password);
+		}
 		String privateKey = defaultTarget.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		if (privateKey != null) {
 			privateKeyText.setText(privateKey);
@@ -277,6 +281,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 					target[i].getDefaultServerURL(), target[i].getKey(), target[i].getSecretKey());
 			
 			zts[i].addProperty(ZendDevCloud.TARGET_USERNAME, username);
+			zts[i].addProperty(ZendDevCloud.TARGET_PASSWORD, password);
 			zts[i].addProperty(ZendDevCloud.TARGET_CONTAINER, target[i].getProperty(ZendDevCloud.TARGET_CONTAINER));
 			zts[i].addProperty(ZendDevCloud.TARGET_TOKEN, target[i].getProperty(ZendDevCloud.TARGET_TOKEN));
 			zts[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);

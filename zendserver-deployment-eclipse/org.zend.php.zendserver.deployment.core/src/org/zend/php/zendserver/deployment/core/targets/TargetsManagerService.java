@@ -152,38 +152,24 @@ public class TargetsManagerService {
 	
 	
 	public void storeContainerPassword(IZendTarget target, String password) {
-		storeContainerPassword(getUser(target), password);
+		storeContainerPassword(getContainerName(target), password);
 	}
 
-	public void storeContainerPassword(String user, String password) {
-		ISecurePreferences root = SecurePreferencesFactory.getDefault();
-		ISecurePreferences node = root.node(PHPCLOUD_NODE + user); 
-		try {
-			node.put(PASSWORD_KEY, password, true); 
-			node.flush();
-		} catch (IOException e) {
-			DeploymentCore.log(e);
-		} catch (StorageException e) {
-			DeploymentCore.log(e);
-		}
+	public void storeContainerPassword(String containerName, String password) {
+		ZendDevCloud devCloud = new ZendDevCloud();
+		devCloud.setContainerPassword(containerName, password);
 	}
 
 	public String getContainerPassword(IZendTarget target) {
-		return getContainerPassword(getUser(target));
+		return getContainerPassword(getContainerName(target));
 	}
 	
-	public String getContainerPassword(String user) {
-		ISecurePreferences root = SecurePreferencesFactory.getDefault();
-		ISecurePreferences node = root.node(PHPCLOUD_NODE + user); 
-		try {
-			return node.get(PASSWORD_KEY, null); 
-		} catch (StorageException e) {
-			DeploymentCore.log(e);
-		}
-		return null;
+	public String getContainerPassword(String containerName) {
+		ZendDevCloud devCloud = new ZendDevCloud();
+		return devCloud.getContainerPassword(containerName);
 	}
 
-	private String getUser(IZendTarget target) {
+	private String getContainerName(IZendTarget target) {
 		if (target != null) {
 			String[] host = target.getHost().getHost().split("\\."); //$NON-NLS-1$
 			if (host.length > 0) {
