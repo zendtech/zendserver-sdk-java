@@ -23,6 +23,7 @@ import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.utils.json.JSONArray;
 import org.zend.sdklib.internal.utils.json.JSONException;
 import org.zend.sdklib.internal.utils.json.JSONObject;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -50,8 +51,12 @@ public class ZendDevCloud {
 	// target properties
 	public static final String TARGET_TOKEN = "devcloud.token";
 	public static final String TARGET_CONTAINER = "devcloud.container";
+	public static final String TARGET_CONTAINER_PASSWORD = ZendTarget.ENCRYPT
+			+ "devcloud.container.password";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
-	public static String TARGET_USERNAME = "devcloud.username";
+	public static final String TARGET_USERNAME = "devcloud.username";
+	public static final String TARGET_PASSWORD = ZendTarget.ENCRYPT
+			+ "devcloud.password";
 	
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
@@ -180,6 +185,33 @@ public class ZendDevCloud {
 	public IZendTarget[] detectTarget(String username, String password)
 			throws SdkException, IOException {
 		return detectTarget(username, password, null);
+	}
+
+	public void setContainerPassword(String containerName, String password) {
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			String container = target
+					.getProperty(ZendDevCloud.TARGET_CONTAINER);
+			if (containerName.equals(container)) {
+				((ZendTarget) target).addProperty(TARGET_CONTAINER_PASSWORD,
+						password);
+				manager.updateTarget(target);
+			}
+		}
+	}
+
+	public String getContainerPassword(String containerName) {
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			String container = target
+					.getProperty(ZendDevCloud.TARGET_CONTAINER);
+			if (containerName.equals(container)) {
+				return target.getProperty(TARGET_CONTAINER_PASSWORD);
+			}
+		}
+		return null;
 	}
 
 	private IZendTarget[] createZendTargets(String token, String[] targets,
