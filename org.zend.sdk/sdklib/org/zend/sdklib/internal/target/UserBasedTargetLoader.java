@@ -86,6 +86,8 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		File confFile = new File(descriptor.path, CONF_FILENAME);
 		try {
 			confFile.createNewFile();
+			confFile.setReadable(false, false);
+			confFile.setReadable(true, true);
 			FileOutputStream fos = new FileOutputStream(confFile);
 			target.store(fos);
 			fos.close();
@@ -143,6 +145,12 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		File confFile = new File(descriptor.path, CONF_FILENAME);
 		if (confFile.exists()) {
 			confFile.delete();
+			try {
+				confFile.createNewFile();
+				confFile.setReadable(false, false);
+				confFile.setReadable(true, true);
+			} catch (IOException e) {
+			}
 		}
 		try {
 			FileOutputStream fos = new FileOutputStream(confFile);

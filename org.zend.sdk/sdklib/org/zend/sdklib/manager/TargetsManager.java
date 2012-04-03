@@ -418,6 +418,24 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 		return null;
 	}
+	
+	public IZendTarget updateTarget(IZendTarget target) {
+		try {
+			if (!target.connect()) {
+				return null;
+			}
+			IZendTarget updated = loader.update(target);
+			if (updated != null) {
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "updated target", "updated target"));
+			}
+			return updated;
+		} catch (WebApiException e) {
+			log.error("Error during updating Zend Target with id '" + target.getId()
+					+ "'");
+			log.error("\tPossible error: " + e.getMessage());
+		}
+		return null;
+	}
 
 	/**
 	 * Check for conflicts and errors in new target

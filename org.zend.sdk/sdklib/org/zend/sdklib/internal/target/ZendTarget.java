@@ -36,6 +36,8 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  */
 public class ZendTarget implements IZendTarget {
 
+	public static final String ENCRYPT = "encrypt.";
+
 	private static final String EXTRA = "extra.";
 	private String id;
 	private URL host;
@@ -205,7 +207,11 @@ public class ZendTarget implements IZendTarget {
 	 */
 	@Override
 	public synchronized String getProperty(String key) {
-		return properties.getProperty(EXTRA + key);
+		String value = properties.getProperty(EXTRA + key);
+		if (value != null && key.startsWith(ENCRYPT)) {
+			return decrypt(value);
+		}
+		return value;
 	}
 
 	/**
@@ -215,6 +221,9 @@ public class ZendTarget implements IZendTarget {
 	 * @param value
 	 */
 	public synchronized void addProperty(String key, String value) {
+		if (key.startsWith(ENCRYPT)) {
+			value = convertByteToHex(encrypt(value));
+		}
 		properties.put(EXTRA + key, value);
 	}
 
@@ -334,6 +343,10 @@ public class ZendTarget implements IZendTarget {
 			}
 		}
 		return (String[]) result.toArray(new String[result.size()]);
+	}
+
+	private String decrypt(String secretKey) {
+		return decrypt(convertHexToByte(secretKey));
 	}
 
 	private String decrypt(byte[] secretKey) {
