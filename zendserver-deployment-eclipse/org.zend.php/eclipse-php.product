@@ -46,23 +46,7 @@ mac.icns</vmArgsMac>
 
    <features>
       <feature id="org.eclipse.platform"/>
-      <feature id="org.eclipse.dltk.core"/>
-      <feature id="org.eclipse.dltk.core.index"/>
-      <feature id="org.eclipse.php"/>
-      <feature id="org.zend.php.zendserver.deployment"/>
-      <feature id="org.zend.php.zendserver.deployment.debug"/>
       <feature id="org.zend.php.feature"/>
-      <feature id="org.eclipse.emf.ecore"/>
-      <feature id="org.eclipse.emf.ecore.edit"/>
-      <feature id="org.eclipse.emf.edit"/>
-      <feature id="org.eclipse.emf.edit.ui"/>
-      <feature id="org.eclipse.emf.common"/>
-      <feature id="org.eclipse.emf.common.ui"/>
-      <feature id="org.eclipse.gef"/>
-      <feature id="org.eclipse.xsd"/>
-      <feature id="org.eclipse.xsd.edit"/>
-      <feature id="org.eclipse.wst.common.fproj"/>
-      <feature id="org.zend.php.common"/>
    </features>
 
 
