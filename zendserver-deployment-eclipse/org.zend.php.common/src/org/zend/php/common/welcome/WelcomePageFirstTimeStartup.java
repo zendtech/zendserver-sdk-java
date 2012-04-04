@@ -19,19 +19,19 @@ import org.zend.php.common.Activator;
 
 public class WelcomePageFirstTimeStartup {
 
-	private static final String IS_FIRST_STARTUP = "isFirstStartup";
+	private static final String WAS_FIRST_STARTUP = "isFirstStartup";
 	private static final String SHOW_WELCOME = "showWelcome";
 
 	public static void run() {
 		// Workspace specific preferences
 		IPreferenceStore pref = Activator.getDefault()
 				.getPreferenceStore();
+		
 		// Configuration specific preferences
 		Preferences preferences = ConfigurationScope.INSTANCE
 				.getNode(Activator.PLUGIN_ID);
 
-		if (preferences.getBoolean(IS_FIRST_STARTUP, true)
-				|| pref.getBoolean(SHOW_WELCOME)) {
+		if (!pref.getBoolean(WAS_FIRST_STARTUP) || pref.getBoolean(SHOW_WELCOME)) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					IWorkbench wb = null;
@@ -63,7 +63,7 @@ public class WelcomePageFirstTimeStartup {
 			try {
 				handlerService.executeCommand(
 						"org.zend.php.common.welcome.openEditorCommand", null);
-				pref.setValue(SHOW_WELCOME, false);
+				pref.setValue(WAS_FIRST_STARTUP, true);
 			} catch (ExecutionException e) {
 				Activator.log(e);
 			} catch (NotDefinedException e) {
