@@ -9,12 +9,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
+import org.zend.php.common.Messages;
 import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
-
+	
 	private String discoveryFile;
 	private boolean showCategories;
+	private String progressDialogMsg;
 
 	public WelcomePageEditorInput() {
 		super();
@@ -26,10 +28,11 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories) {
+	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg) {
 		super(url, style, browserId);
 		this.discoveryFile = discoveryFile;
 		this.showCategories = showCategories;
+		this.progressDialogMsg = progressDialogMsg;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -80,6 +83,15 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		return discoveryFile;
 	}
 	
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		if (discoveryFile != null) {
+			memento.putString("discoveryFile", discoveryFile);
+		}
+		memento.putBoolean("categories", showCategories);
+		memento.putString("progressDialogMsg", progressDialogMsg);
+	}
+	
 	public IAdaptable createElement(IMemento memento) {
 		int style = 0;
 		Integer integer = memento.getInteger("style");
@@ -107,8 +119,9 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		if (showCategories == null) {
 			showCategories = false;
 		}
+		String progressDialogMsg = memento.getString("progressDialogMsg");
 		
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories);
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg);
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
@@ -121,6 +134,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	public void initFeaturesViewer(ZendCatalogViewer viewer) {
 		viewer.setDiscoveryDirFileName(getDiscoveryDirFileName());
 		viewer.setShowCategories(doShowCategories());
+		viewer.setOperationName(Messages.ModifyOperation_InstallJobName);
 	}
 
 	public boolean doShowCategories() {
