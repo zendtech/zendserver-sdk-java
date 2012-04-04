@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
@@ -55,7 +56,18 @@ public class OpenInEditorJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				openEditor();
+				String sourceFile = eventSource.getSourceFile();
+				if (sourceFile == null || sourceFile.isEmpty()
+						|| eventSource.getLine() < 1) {
+					showNotAvailable();
+				} else {
+					try {
+					openEditor();
+					} catch (Exception e) {
+						Activator.log(e);
+						showNotAvailable();
+					}
+				}
 			}
 		});
 		return Status.OK_STATUS;
@@ -133,6 +145,12 @@ public class OpenInEditorJob extends Job {
 		}
 
 		return (descriptor == null) ? "" : descriptor.getId(); //$NON-NLS-1$
+	}
+
+	private void showNotAvailable() {
+		MessageDialog.openInformation(org.zend.core.notifications.Activator
+				.getDefault().getParent(), "Event Source",
+				"Source of the event is not available.");
 	}
 
 }
