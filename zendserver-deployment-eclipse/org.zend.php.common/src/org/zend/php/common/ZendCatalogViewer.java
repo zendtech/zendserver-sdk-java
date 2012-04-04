@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -394,7 +395,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 			Job job = new Job(Messages.UpdateCatalogJobName) {
 
 				protected IStatus run(IProgressMonitor monitor) {
-
+					if (viewer.getControl().isDisposed()
+							|| PlatformUI.getWorkbench().isClosing()) {
+						return Status.OK_STATUS;
+					}
 					IStatus result = catalog.performDiscovery(monitor);
 					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
@@ -433,6 +437,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 								loadingLabel.dispose();
 							GridData data = new GridData();
 							data.exclude = false;
+							if (viewer.getControl().isDisposed()
+									|| PlatformUI.getWorkbench().isClosing()) {
+								return;
+							}
 							viewer.getControl().setLayoutData(data);
 							viewer.getControl().setVisible(true);
 							GridDataFactory.fillDefaults().grab(true, true)
