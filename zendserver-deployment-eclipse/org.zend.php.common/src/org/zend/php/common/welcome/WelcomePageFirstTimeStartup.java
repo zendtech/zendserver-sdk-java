@@ -6,11 +6,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.osgi.service.prefs.Preferences;
@@ -32,32 +27,6 @@ public class WelcomePageFirstTimeStartup {
 				.getNode(Activator.PLUGIN_ID);
 
 		if (!pref.getBoolean(WAS_FIRST_STARTUP) || pref.getBoolean(SHOW_WELCOME)) {
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					IWorkbench wb = null;
-					try {
-						wb = PlatformUI.getWorkbench();
-					} catch (IllegalArgumentException ex) {
-						return;
-					}
-					
-					IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
-					if (window == null) {
-						return;
-					}
-					IWorkbenchPage page = window.getActivePage();
-					if (page == null) {
-						return;
-					}
-					
-					IViewReference outlineView = page
-							.findViewReference("org.eclipse.ui.views.ContentOutline");
-					
-					if (outlineView != null) {
-						page.hideView(outlineView);
-					}
-				}
-			});
 			IHandlerService handlerService = (IHandlerService) PlatformUI
 					.getWorkbench().getService(IHandlerService.class);
 			try {

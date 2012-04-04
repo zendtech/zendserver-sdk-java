@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -31,6 +33,8 @@ import org.zend.php.common.ZendCatalogViewer;
 
 
 public class WelcomePageEditor extends WebBrowserEditor {
+	private static final String OUTLINE_VIEW = "org.eclipse.ui.views.ContentOutline";
+
 	public static final String EDITOR_ID = "org.zend.customization.welcome.welcomePageEditor"; //$NON-NLS-1$
 
 	private static final String IS_FIRST_WELCOME_STARTUP = "isFirstWelcomeStartup"; //$NON-NLS-1$
@@ -130,6 +134,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				}
 			}
 		});
+		
+		hideWelcome();
 	}
 
 	private void createFeatureManager(Composite parent) {
@@ -177,6 +183,31 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		}
 		super.dispose();
 	}
+	
+	private void hideWelcome() {
+		IWorkbench wb = null;
+		try {
+			wb = PlatformUI.getWorkbench();
+		} catch (IllegalArgumentException ex) {
+			return;
+		}
+		
+		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+		
+		IViewReference outlineView = page
+				.findViewReference(OUTLINE_VIEW);
+		
+		if (outlineView != null) {
+			page.hideView(outlineView);
+		}
+	}
 
 	protected void reopenOutlineView() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -190,7 +221,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		}
 		
 		try {
-			page.showView("org.eclipse.ui.views.ContentOutline");
+			page.showView(OUTLINE_VIEW);
 		} catch (PartInitException e) {
 			Activator.log(e);
 		}
