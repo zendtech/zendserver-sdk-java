@@ -23,7 +23,7 @@ public enum FeatureIdentifiers {
 
 	SVN(
 			new String[] {
-					"org.eclipse.team.svn", "org.eclipse.team.svn.patch", "org.polarion.eclipse.team.svn.connector", "org.polarion.eclipse.team.svn.connector.svnkit16" }), //$NON-NLS-1$
+					"org.eclipse.team.svn", "org.eclipse.team.svn.patch", "org.polarion.eclipse.team.svn.connector"}), //$NON-NLS-1$
 
 	GIT(new String[] { "org.eclipse.egit", "org.eclipse.jgit" }), //$NON-NLS-1$
 
