@@ -92,7 +92,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		if (getEditorInput() instanceof WelcomePageEditorInput) {
 			WelcomePageEditorInput welcomeInput = (WelcomePageEditorInput)getEditorInput();
 			welcomeInput.initFeaturesViewer(viewer);
-			viewer.setStatusHandler(welcomeInput.getStatusHandler());
 		}
 		
 		Display.getCurrent().asyncExec(new Runnable() {

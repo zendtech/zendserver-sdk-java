@@ -41,7 +41,6 @@ import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -712,10 +711,6 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	public void setOperationName(String operName) {
 		this.operationName = operName;
-	}
-
-	public void setStatusHandler(StatusHandler handler) {
-		pm.setStatusHandler(handler);
 	}
 
 	public void setShowCategories(boolean doShowCategories) {

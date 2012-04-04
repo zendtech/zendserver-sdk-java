@@ -9,7 +9,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
-import org.zend.php.common.Messages;
 import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
@@ -134,7 +133,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	public void initFeaturesViewer(ZendCatalogViewer viewer) {
 		viewer.setDiscoveryDirFileName(getDiscoveryDirFileName());
 		viewer.setShowCategories(doShowCategories());
-		viewer.setOperationName(Messages.ModifyOperation_InstallJobName);
+		viewer.setOperationName(progressDialogMsg);
 	}
 
 	public boolean doShowCategories() {
