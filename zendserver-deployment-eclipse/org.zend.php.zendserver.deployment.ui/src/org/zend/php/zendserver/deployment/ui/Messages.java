@@ -46,6 +46,8 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_ZendServerVersion;
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
+	public static String DetectTargetAction_DetectUnsupportedDesc;
+	public static String DetectTargetAction_DetectUnsupportedTitle;
 	public static String DetectTargetAction_DetectTarget;
 	public static String DetectTargetAction_SeeDocs;
 	public static String DetectTargetAction_TargetDetected;

@@ -17,6 +17,7 @@ import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 import swt.elevate.ElevatedProgram;
 import swt.elevate.ElevatedProgramFactory;
@@ -63,7 +64,14 @@ public class DetectTargetAction extends Action {
 				throw e1;
 			}
 		} catch (DetectionException e) {
-			// do nothing
+			Throwable cause = e.getCause();
+			if (cause instanceof InvalidResponseException) {
+				Shell shell = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell();
+				MessageDialog.openInformation(shell,
+						Messages.DetectTargetAction_DetectUnsupportedTitle,
+						Messages.DetectTargetAction_DetectUnsupportedDesc);
+			}
 		}
 		
 		if (target == null) {
