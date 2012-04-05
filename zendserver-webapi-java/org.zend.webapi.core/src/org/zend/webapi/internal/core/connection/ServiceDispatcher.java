@@ -37,6 +37,7 @@ import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseFactory;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
+import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 import org.zend.webapi.internal.core.connection.request.HeaderParameters;
@@ -82,7 +83,10 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-
+			if (!dataDigster.validateResponse()) {
+				throw new InvalidResponseException(new Exception(
+						"Invalid response media type for XML response"));
+			}
 			if (!request.isExpectedResponseCode(responseCode)) {
 				throw new UnexpectedResponseCode(responseCode, handle);
 			}

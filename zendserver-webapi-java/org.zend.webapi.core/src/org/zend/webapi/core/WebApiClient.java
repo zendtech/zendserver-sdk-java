@@ -9,7 +9,10 @@ package org.zend.webapi.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.restlet.Context;
@@ -43,6 +46,7 @@ import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestFactory;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.progress.IChangeNotifier;
+import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.core.service.WebApiMethodType;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.WebApiEngine;
@@ -117,6 +121,18 @@ public class WebApiClient {
 	 * Progress notifier
 	 */
 	private IChangeNotifier notifier;
+
+	private boolean listenersDisabled;
+
+	private static List<IRequestListener> preListeners;
+	private static List<IRequestListener> postListeners;
+
+	static {
+		preListeners = Collections
+				.synchronizedList(new ArrayList<IRequestListener>());
+		postListeners = Collections
+				.synchronizedList(new ArrayList<IRequestListener>());
+	}
 
 	/**
 	 * Constructs a new client to invoke service methods on Zend Server API
@@ -1536,12 +1552,52 @@ public class WebApiClient {
 			initializer.init(request);
 		}
 
+		if (!listenersDisabled) {
+			synchronized (preListeners) {
+				for (IRequestListener listener : preListeners) {
+					listener.perform();
+				}
+			}
+		}
+
 		// apply request
 		IServiceDispatcher dispatcher = new ServiceDispatcher(context);
 		IResponse response = dispatcher.dispatch(request);
 
+		if (!listenersDisabled) {
+			synchronized (postListeners) {
+				for (IRequestListener listener : postListeners) {
+					listener.perform();
+				}
+			}
+		}
+
 		// return response data to caller
 		return response;
+	}
+
+	public void disableListeners() {
+		listenersDisabled = true;
+	}
+
+	public void enableListeners() {
+		listenersDisabled = false;
+	}
+
+	public static void registerPreRequestListener(IRequestListener listener) {
+		preListeners.add(listener);
+	}
+
+	public static void registerPostRequestListener(IRequestListener listener) {
+		postListeners.add(listener);
+	}
+
+	public static void unregisterPreRequestListener(IRequestListener listener) {
+		preListeners.remove(listener);
+	}
+
+	public static void unregisterPostRequestListener(IRequestListener listener) {
+		postListeners.remove(listener);
 	}
 
 	private final String getWebApiAddress(URL host) {
