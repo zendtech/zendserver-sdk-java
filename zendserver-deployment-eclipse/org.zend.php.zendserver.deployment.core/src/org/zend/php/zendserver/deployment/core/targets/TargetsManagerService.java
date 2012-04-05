@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -14,9 +13,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.equinox.security.storage.ISecurePreferences;
-import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
-import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -35,9 +31,6 @@ import org.zend.sdklib.target.IZendTarget;
  *
  */
 public class TargetsManagerService {
-
-	private static final String PHPCLOUD_NODE = "phpcloud/"; //$NON-NLS-1$
-	private static final String PASSWORD_KEY = "password"; //$NON-NLS-1$
 
 	private TargetsManager tm;
 	
@@ -152,31 +145,13 @@ public class TargetsManagerService {
 	
 	
 	public void storeContainerPassword(IZendTarget target, String password) {
-		storeContainerPassword(getContainerName(target), password);
-	}
-
-	public void storeContainerPassword(String containerName, String password) {
 		ZendDevCloud devCloud = new ZendDevCloud();
-		devCloud.setContainerPassword(containerName, password);
+		devCloud.setContainerPassword(target, password);
 	}
 
 	public String getContainerPassword(IZendTarget target) {
-		return getContainerPassword(getContainerName(target));
-	}
-	
-	public String getContainerPassword(String containerName) {
 		ZendDevCloud devCloud = new ZendDevCloud();
-		return devCloud.getContainerPassword(containerName);
-	}
-
-	private String getContainerName(IZendTarget target) {
-		if (target != null) {
-			String[] host = target.getHost().getHost().split("\\."); //$NON-NLS-1$
-			if (host.length > 0) {
-				return host[0];
-			}
-		}
-		return null;
+		return devCloud.getContainerPassword(target);
 	}
 	
 }
