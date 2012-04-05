@@ -90,7 +90,7 @@ public class StudioStartDebugRequest extends AbstractRequest {
 	 * @param - events group id
 	 */
 	public void setEventsGroupId(String eventsGroupId) {
-		addParameter("eventsGroupId", eventsGroupId);
+		addParameter("eventGroupId", eventsGroupId);
 	}
 
 	/**
