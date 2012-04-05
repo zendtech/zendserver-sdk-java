@@ -194,10 +194,17 @@ public class ZendDevCloud {
 			String container = target
 					.getProperty(ZendDevCloud.TARGET_CONTAINER);
 			if (containerName.equals(container)) {
-				((ZendTarget) target).addProperty(TARGET_CONTAINER_PASSWORD,
-						password);
-				manager.updateTarget(target);
+				setContainerPassword(target, password);
 			}
+		}
+	}
+
+	public void setContainerPassword(IZendTarget target, String password) {
+		if (target instanceof ZendTarget) {
+			((ZendTarget) target).addProperty(TARGET_CONTAINER_PASSWORD,
+					password);
+			TargetsManager manager = new TargetsManager();
+			manager.updateTarget(target);
 		}
 	}
 
@@ -208,10 +215,48 @@ public class ZendDevCloud {
 			String container = target
 					.getProperty(ZendDevCloud.TARGET_CONTAINER);
 			if (containerName.equals(container)) {
-				return target.getProperty(TARGET_CONTAINER_PASSWORD);
+				return getContainerPassword(target);
 			}
 		}
 		return null;
+	}
+
+	public String getContainerPassword(IZendTarget target) {
+		return target.getProperty(TARGET_CONTAINER_PASSWORD);
+	}
+
+	public void setPassword(IZendTarget target, String password) {
+		if (target instanceof ZendTarget) {
+			((ZendTarget) target).addProperty(TARGET_PASSWORD, password);
+			TargetsManager manager = new TargetsManager();
+			manager.updateTarget(target);
+		}
+	}
+
+	public boolean isSleeping(IZendTarget target) throws SdkException,
+			IOException {
+		String username = target.getProperty(TARGET_USERNAME);
+		String password = target.getProperty(TARGET_PASSWORD);
+		String containerName = target.getProperty(TARGET_CONTAINER);
+		boolean orginal = setFollowRedirect();
+		SSLContextInitializer.instance.setDefaultSSLFactory();
+
+		try {
+			String token = authenticate(username, password);
+			String json = getJson(token, CONTAINER_LIST);
+			System.out.println("json: " + json);
+			String[] names = resolveSubKey(json, "containers", "name");
+			String[] statuses = resolveSubKey(json, "containers", "status");
+			for (int i = 0; i < names.length; i++) {
+				if (names[i].equals(containerName)) {
+					return "S".equals(statuses[i]) ? true : false;
+				}
+			}
+		} finally {
+			HttpURLConnection.setFollowRedirects(orginal);
+			SSLContextInitializer.instance.restoreDefaultSSLFactory();
+		}
+		return false;
 	}
 
 	private IZendTarget[] createZendTargets(String token, String[] targets,
