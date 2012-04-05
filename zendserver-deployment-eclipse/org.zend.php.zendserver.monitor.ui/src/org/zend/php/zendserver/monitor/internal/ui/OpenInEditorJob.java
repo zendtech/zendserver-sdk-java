@@ -62,7 +62,7 @@ public class OpenInEditorJob extends Job {
 					showNotAvailable();
 				} else {
 					try {
-					openEditor();
+						openEditor();
 					} catch (Exception e) {
 						Activator.log(e);
 						showNotAvailable();
@@ -149,8 +149,9 @@ public class OpenInEditorJob extends Job {
 
 	private void showNotAvailable() {
 		MessageDialog.openInformation(org.zend.core.notifications.Activator
-				.getDefault().getParent(), "Event Source",
-				"Source of the event is not available.");
+				.getDefault().getParent(),
+				Messages.OpenInEditorJob_UnavailableTitle,
+				Messages.OpenInEditorJob_UnavailableMessage);
 	}
 
 }

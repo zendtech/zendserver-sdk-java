@@ -35,6 +35,8 @@ public class Messages extends NLS {
 	public static String EventDetailsDialog_TraceTooltip;
 	public static String EventDetailsDialog_TypeLabel;
 	public static String OpenInEditorJob_0;
+	public static String OpenInEditorJob_UnavailableMessage;
+	public static String OpenInEditorJob_UnavailableTitle;
 	public static String RequestGeneratorJob_MessageBody;
 	public static String RequestGeneratorJob_MessageTitle;
 	public static String RequestGeneratorJob_NotificationTitle;

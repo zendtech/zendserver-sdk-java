@@ -75,9 +75,10 @@ public class EventBody implements IBody {
 			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
 		createDescription(composite, settings);
-		createRepeatLink(composite);
+		// TODO enable repeat and trace when server side bugs will be fixed
+		// createRepeatLink(composite);
 		createSourceLink(composite);
-		createTraceLink(composite);
+		// createTraceLink(composite);
 		return composite;
 	}
 
@@ -147,9 +148,11 @@ public class EventBody implements IBody {
 		Link sourceLink = createLink(composite,
 				getLinkText(Messages.EventBody_SourceLink));
 		if (eventSource.getLine() == -1 || eventSource.getSourceFile() == null
+				|| eventSource.getSourceFile().isEmpty()
 				|| eventSource.getProjectName() == null) {
-			sourceLink.setEnabled(false);
+			sourceLink.setVisible(false);
 		}
+
 		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
