@@ -164,6 +164,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 	}
 	
 	public void setDiscoveryDirFileName(String directoryFileName) {
+		if (directoryFileName == null) {
+			return;
+		}
+		
 		// look for remote descriptor
 		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
 		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
