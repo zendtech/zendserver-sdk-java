@@ -89,7 +89,7 @@ public class OpenDatabaseConnectionAction extends Action {
 				String password = TargetsManagerService.INSTANCE
 						.getContainerPassword(targetConnection.getTarget());
 				if (password != null && password.length() > 0) {
-					targetConnection.setPassword(password, false);
+					targetConnection.setPassword(password, true);
 					hasPassword = true;
 				}
 			}
