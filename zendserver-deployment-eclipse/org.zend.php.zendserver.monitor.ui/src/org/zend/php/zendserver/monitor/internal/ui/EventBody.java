@@ -230,9 +230,8 @@ public class EventBody implements IBody {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					new ReadMoreDialog(org.zend.core.notifications.Activator
-							.getDefault().getParent(),
-							Messages.EventBody_ReadMoreTitle, text, type
-									.getLink()).open();
+							.getDefault().getParent(), type.getRule(), text,
+							type.getLink()).open();
 				}
 			});
 		} else {

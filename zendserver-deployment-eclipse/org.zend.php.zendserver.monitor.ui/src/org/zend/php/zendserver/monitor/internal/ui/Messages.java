@@ -23,7 +23,6 @@ public class Messages extends NLS {
 	public static String EventBody_CodetraceJobTitle;
 	public static String EventBody_CodetraceLink;
 	public static String EventBody_DoubleClickLabel;
-	public static String EventBody_ReadMoreTitle;
 	public static String EventBody_SourceLink;
 	public static String EventDetailsDialog_ActionsLabel;
 	public static String EventDetailsDialog_6;
