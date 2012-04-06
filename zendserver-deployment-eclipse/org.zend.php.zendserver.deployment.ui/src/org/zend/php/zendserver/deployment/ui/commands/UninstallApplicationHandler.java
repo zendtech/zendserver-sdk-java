@@ -14,10 +14,14 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendApplication;
+import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.service.IRequestListener;
 
 public class UninstallApplicationHandler extends AbstractHandler {
 
@@ -42,9 +46,16 @@ public class UninstallApplicationHandler extends AbstractHandler {
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
+					IRequestListener preListener = null;
 					try {
 						int appId = cfg.getAttribute(DeploymentAttributes.APP_ID.getName(), -1);
 						String targetId = cfg.getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String) null);
+						String targetHost = cfg.getAttribute(DeploymentAttributes.TARGET_HOST.getName(), (String) null);
+						if (targetHost != null
+								&& targetHost.contains(ZendDevCloud.DEVPASS_HOST)) {
+							preListener = new PhpcloudContainerListener(targetId);
+							WebApiClient.registerPreRequestListener(preListener);
+						}
 						ZendApplication za = new ZendApplication();
 						za.remove(targetId, Integer.toString(appId));
 						PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
@@ -56,6 +67,10 @@ public class UninstallApplicationHandler extends AbstractHandler {
 						}
 					} catch (CoreException e) {
 						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+					} finally {
+						if (preListener != null) {
+							WebApiClient.unregisterPreRequestListener(preListener);
+						}
 					}
 					return Status.OK_STATUS;
 				}

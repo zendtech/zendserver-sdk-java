@@ -15,11 +15,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.service.IRequestListener;
 
 /**
  * Abstract subclass for editing target details.
@@ -28,6 +32,7 @@ import org.zend.webapi.core.WebApiException;
 public abstract class AbstractTargetDetailsComposite {
 
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
+	private static final int[] possiblePhpcloudPorts = new int[] { 10082 };
 	
 	/**
 	 * Fired when validation event occurs.
@@ -229,37 +234,52 @@ public abstract class AbstractTargetDetailsComposite {
 		return Status.OK_STATUS;
 	}
 
-	private IZendTarget testConnectAndDetectPort(IZendTarget target, IProgressMonitor monitor) throws WebApiException {
+	private IZendTarget testConnectAndDetectPort(IZendTarget target,
+			IProgressMonitor monitor) throws WebApiException {
 		WebApiException catchedException = null;
-		
-		if (target.getHost().getPort() == -1) {
-			for (int port : possiblePorts) {
+		IRequestListener preListener = null;
+		int[] portToTest = possiblePorts;
+		try {
+			if (target.getHost().getHost().contains(ZendDevCloud.DEVPASS_HOST)) {
+				preListener = new PhpcloudContainerListener(target);
+				WebApiClient.registerPreRequestListener(preListener);
+				portToTest = possiblePhpcloudPorts;
+			}
+			if (target.getHost().getPort() == -1) {
+				for (int port : portToTest) {
 					URL old = target.getHost();
 					URL host;
 					try {
-						host = new URL(old.getProtocol(), old.getHost(),
-								port, old.getFile());
+						host = new URL(old.getProtocol(), old.getHost(), port,
+								old.getFile());
 						((ZendTarget) target).setHost(host);
 					} catch (MalformedURLException e) {
 						// should never happen
 					}
-					monitor.subTask("Testing port "+port+" of detected target "+target.getHost().getHost());
+					monitor.subTask("Testing port " + port
+							+ " of detected target "
+							+ target.getHost().getHost());
 					try {
-					if (target.connect()) {
-						return target;
-					}
+						if (target.connect()) {
+							return target;
+						}
 					} catch (WebApiException ex) {
-						catchedException = ex; // before throwing exception, try out all possible ports
+						// before throwing exception, try out all possible ports
+						catchedException = ex;
 					}
+				}
+			} else {
+				if (target.connect()) {
+					return target;
+				}
 			}
-			
-			if (catchedException != null) {
-				throw catchedException;
+		} finally {
+			if (preListener != null) {
+				WebApiClient.unregisterPreRequestListener(preListener);
 			}
-		} else {
-			if (target.connect()) {
-				return target;
-			}
+		}
+		if (catchedException != null) {
+			throw catchedException;
 		}
 		return null;
 	}
