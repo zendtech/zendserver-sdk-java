@@ -65,6 +65,9 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 
 	public static final String IMAGE_TARGET = "icons/obj16/server.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DATABASE = "icons/obj16/database.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DATABASE_CREATE = "icons/obj16/database_create.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DATABASE_ON = "icons/obj16/database_on.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DATABASE_OFF = "icons/obj16/database_off.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DETECT_TARGET = "icons/obj16/detect_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ADD_TARGET = "icons/obj16/new_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_EDIT_TARGET = "icons/obj16/edit_target.gif"; //$NON-NLS-1$

@@ -32,7 +32,27 @@ public class TargetsLabelProvider extends LabelProvider {
 			return Activator.getDefault().getImage(Activator.IMAGE_TARGET);
 		}
 		if (element instanceof ITargetDatabase) {
-			return Activator.getDefault().getImage(Activator.IMAGE_DATABASE);
+			Image result = null;
+			ConnectionState state = ((ITargetDatabase) element).getState();
+			switch (state) {
+			case CONNECTED:
+				result = Activator.getDefault().getImage(
+						Activator.IMAGE_DATABASE_ON);
+				break;
+			case DISCONNECTED:
+				result = Activator.getDefault().getImage(
+						Activator.IMAGE_DATABASE_OFF);
+				break;
+			case UNAVAILABLE:
+				result = Activator.getDefault().getImage(
+						Activator.IMAGE_DATABASE_CREATE);
+				break;
+			default:
+				result = Activator.getDefault().getImage(
+						Activator.IMAGE_DATABASE);
+				break;
+			}
+			return result;
 		}
 		if (element instanceof ILaunchConfiguration) {
 			return Activator.getDefault().getImage(Activator.IMAGE_APPLICATION);
