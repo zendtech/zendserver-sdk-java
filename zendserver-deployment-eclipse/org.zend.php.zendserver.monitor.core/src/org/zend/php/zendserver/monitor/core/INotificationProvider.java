@@ -30,7 +30,7 @@ public interface INotificationProvider {
 	 *            source of the event
 	 */
 	void showNonification(IZendIssue issue, String targetId,
-			EventSource eventSource);
+			IEventDetails eventSource);
 
 	/**
 	 * Displays progress notification.

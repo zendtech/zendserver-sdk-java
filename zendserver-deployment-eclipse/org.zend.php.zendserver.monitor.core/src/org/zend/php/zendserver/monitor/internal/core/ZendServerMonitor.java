@@ -36,14 +36,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.monitor.core.Activator;
-import org.zend.php.zendserver.monitor.core.EventSource;
+import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
-import org.zend.webapi.core.connection.data.GeneralDetails;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
@@ -243,24 +242,16 @@ public class ZendServerMonitor extends Job {
 		return false;
 	}
 
-	private void showNonification(final IZendIssue issue, String projectName,
-			String basePath) {
-		final EventSource eventSource = getEventSource(issue, projectName,
-				basePath);
+	private void showNonification(final IZendIssue issue,
+			final String projectName, final String basePath) {
 		Display.getDefault().asyncExec(new Runnable() {
 
 			public void run() {
+				IEventDetails eventSource = EventDetails.create(projectName,
+						basePath, issue.getIssue());
 				getProvider().showNonification(issue, targetId, eventSource);
 			}
 		});
-	}
-
-	private EventSource getEventSource(IZendIssue issue, String projectName,
-			String basePath) {
-		GeneralDetails generalDetails = issue.getIssue().getGeneralDetails();
-		String sourceFile = generalDetails.getSourceFile();
-		long line = generalDetails.getSourceLine();
-		return new EventSource(projectName, basePath, line, sourceFile);
 	}
 
 	private ZendMonitor connect(IProgressMonitor monitor) {

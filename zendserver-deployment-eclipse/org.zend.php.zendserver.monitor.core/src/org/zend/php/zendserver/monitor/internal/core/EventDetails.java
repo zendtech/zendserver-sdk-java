@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.monitor.core;
+package org.zend.php.zendserver.monitor.internal.core;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -13,55 +13,85 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.zend.php.zendserver.monitor.core.EventType;
+import org.zend.php.zendserver.monitor.core.IEventDetails;
+import org.zend.webapi.core.connection.data.GeneralDetails;
+import org.zend.webapi.core.connection.data.Issue;
 
 /**
- * Represents problem source. It provides interface to get project resource
- * which is related to particular event.
+ * Default implementation of {@link IEventDetails}.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class EventSource {
+public class EventDetails implements IEventDetails {
 
 	private String projectName;
 	private String basePath;
 	private long line;
 	private String sourceFile;
+	private EventType type;
 
-	public EventSource(String projectName, String basePath, long line,
-			String sourceFile) {
+	protected EventDetails(String projectName, String basePath, long line,
+			String sourceFile, EventType type) {
 		super();
 		this.projectName = projectName;
 		this.basePath = basePath;
 		this.line = line;
 		this.sourceFile = sourceFile;
+		this.type = type;
 	}
 
 	/**
-	 * @return project name
+	 * Create {@link IEventDetails} instance based on provided arguments.
+	 * 
+	 * @param projectName
+	 * @param basePath
+	 * @param issue
+	 * @return {@link IEventDetails} instance
+	 */
+	public static IEventDetails create(String projectName, String basePath,
+			Issue issue) {
+		GeneralDetails generalDetails = issue.getGeneralDetails();
+		String sourceFile = generalDetails.getSourceFile();
+		long line = generalDetails.getSourceLine();
+		EventType type = EventType.byRule(issue.getRule());
+		return new EventDetails(projectName, basePath, line, sourceFile, type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#getProjectName()
 	 */
 	public String getProjectName() {
 		return projectName;
 	}
 
-	/**
-	 * @return full path of source file on a server
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#getSourceFile()
 	 */
 	public String getSourceFile() {
 		return sourceFile;
 	}
 
-	/**
-	 * @return line number
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#getLine()
 	 */
 	public long getLine() {
 		return line;
 	}
 
-	/**
-	 * Creates project relative path based on source file path and project name.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return project relative path to the source file
+	 * @see
+	 * org.zend.php.zendserver.monitor.core.IEventDetails#getProjectRelativePath
+	 * ()
 	 */
 	public String getProjectRelativePath() {
 		// TODO consider to change the method of extracting project relative
@@ -76,11 +106,10 @@ public class EventSource {
 		return null;
 	}
 
-	/**
-	 * Returns resource for a source file for particular project in the
-	 * workspace.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return workspace resource
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#getResource()
 	 */
 	public IFile getResource() {
 		IResource project = ResourcesPlugin.getWorkspace().getRoot()
@@ -93,6 +122,15 @@ public class EventSource {
 			}
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#getType()
+	 */
+	public EventType getType() {
+		return type;
 	}
 
 }

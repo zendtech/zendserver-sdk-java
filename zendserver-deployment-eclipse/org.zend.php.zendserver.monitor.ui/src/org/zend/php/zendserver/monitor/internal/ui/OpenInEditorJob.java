@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.zend.php.zendserver.monitor.core.EventSource;
+import org.zend.php.zendserver.monitor.core.IEventDetails;
 
 /**
  * Job responsible for opening source file in the editor.
@@ -40,9 +40,9 @@ import org.zend.php.zendserver.monitor.core.EventSource;
  */
 public class OpenInEditorJob extends Job {
 
-	private EventSource eventSource;
+	private IEventDetails eventSource;
 
-	public OpenInEditorJob(EventSource eventSource) {
+	public OpenInEditorJob(IEventDetails eventSource) {
 		super(Messages.OpenInEditorJob_0);
 		this.eventSource = eventSource;
 	}

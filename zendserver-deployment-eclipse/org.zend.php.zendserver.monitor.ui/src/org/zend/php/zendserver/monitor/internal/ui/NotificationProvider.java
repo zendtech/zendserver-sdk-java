@@ -16,7 +16,7 @@ import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.NotificationType;
-import org.zend.php.zendserver.monitor.core.EventSource;
+import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.monitor.IZendIssue;
@@ -39,7 +39,7 @@ public class NotificationProvider implements INotificationProvider {
 	 * org.zend.php.zendserver.monitor.core.EventSource)
 	 */
 	public void showNonification(IZendIssue issue, String targetId,
-			EventSource eventSource) {
+			IEventDetails eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);
 		NotificationSettings settings = new NotificationSettings();
 		settings.setTitle(issue.getIssue().getRule()).setClosable(true)

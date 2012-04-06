@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.monitor.internal.ui;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.ui.ActionType;
 import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
@@ -34,7 +36,8 @@ import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.dialogs.ReadMoreDialog;
 import org.zend.core.notifications.util.FontName;
 import org.zend.core.notifications.util.Fonts;
-import org.zend.php.zendserver.monitor.core.EventSource;
+import org.zend.php.zendserver.monitor.core.EventType;
+import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
@@ -52,16 +55,16 @@ public class EventBody implements IBody {
 
 	private IZendIssue zendIssue;
 	private String targetId;
-	private EventSource eventSource;
+	private IEventDetails eventDetails;
 
 	private IActionListener listener;
 	private static ICodeTraceEditorProvider editorProvider;
 
-	public EventBody(String targetId, EventSource eventSource,
+	public EventBody(String targetId, IEventDetails eventSource,
 			IZendIssue zendIssue) {
 		this.zendIssue = zendIssue;
 		this.targetId = targetId;
-		this.eventSource = eventSource;
+		this.eventDetails = eventSource;
 	}
 
 	/*
@@ -147,16 +150,17 @@ public class EventBody implements IBody {
 	private void createSourceLink(Composite composite) {
 		Link sourceLink = createLink(composite,
 				getLinkText(Messages.EventBody_SourceLink));
-		if (eventSource.getLine() == -1 || eventSource.getSourceFile() == null
-				|| eventSource.getSourceFile().isEmpty()
-				|| eventSource.getProjectName() == null) {
+		if (eventDetails.getLine() == -1
+				|| eventDetails.getSourceFile() == null
+				|| eventDetails.getSourceFile().isEmpty()
+				|| eventDetails.getProjectName() == null) {
 			sourceLink.setVisible(false);
 		}
 
 		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				OpenInEditorJob job = new OpenInEditorJob(eventSource);
+				OpenInEditorJob job = new OpenInEditorJob(eventDetails);
 				job.setUser(true);
 				job.schedule();
 			}
@@ -206,6 +210,7 @@ public class EventBody implements IBody {
 
 	private void initializeDescription(NotificationSettings settings,
 			Link label, final String text) {
+		final EventType type = eventDetails.getType();
 		label.setText(text);
 		int width = Math.max(settings.getWidth(),
 				NotificationSettings.DEFAULT_WIDTH);
@@ -226,9 +231,29 @@ public class EventBody implements IBody {
 				public void widgetSelected(SelectionEvent e) {
 					new ReadMoreDialog(org.zend.core.notifications.Activator
 							.getDefault().getParent(),
-							Messages.EventBody_ReadMoreTitle, text).open();
+							Messages.EventBody_ReadMoreTitle, text, type
+									.getLink()).open();
 				}
 			});
+		} else {
+
+			if (type != null && type != EventType.UNKNOWN) {
+				label.setText(text + " <a>Read more</a>"); //$NON-NLS-1$
+				label.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent event) {
+						try {
+							PlatformUI
+									.getWorkbench()
+									.getBrowserSupport()
+									.getExternalBrowser()
+									.openURL(new URL(type.getLink()));
+						} catch (Exception e) {
+							Activator.log(e);
+						}
+					}
+				});
+			}
 		}
 	}
 
