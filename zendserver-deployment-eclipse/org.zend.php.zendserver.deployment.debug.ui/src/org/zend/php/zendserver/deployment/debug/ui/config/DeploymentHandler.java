@@ -271,8 +271,10 @@ public class DeploymentHandler {
 								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
 					job = getAutoDeployJob(helper, project);
 				}
-				MonitorManager.create(helper.getTargetId(), project.getName(),
-						helper.getBaseURL());
+				if (config != null) {
+					MonitorManager.create(helper.getTargetId(),
+							project.getName(), helper.getBaseURL());
+				}
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
@@ -423,7 +425,8 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			if (((DeploymentLaunchJob) job).getResponseCode() == null) {
+			if (((DeploymentLaunchJob) job).getResponseCode() == null
+					&& config != null) {
 				MonitorManager.create(helper.getTargetId(), project.getName(),
 						helper.getBaseURL());
 			}
@@ -472,7 +475,8 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			if (((DeploymentLaunchJob) job).getResponseCode() == null) {
+			if (((DeploymentLaunchJob) job).getResponseCode() == null
+					&& config != null) {
 				MonitorManager.create(helper.getTargetId(), project.getName(),
 						helper.getBaseURL());
 			}
