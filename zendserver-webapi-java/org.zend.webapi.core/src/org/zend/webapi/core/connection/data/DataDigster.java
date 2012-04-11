@@ -21,7 +21,6 @@ import org.restlet.ext.xml.XmlRepresentation;
 import org.restlet.representation.Representation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus.State;
 import org.zend.webapi.core.connection.data.CodeTracingStatus.Status;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
@@ -78,7 +77,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	 * @return validation result
 	 */
 	public boolean validateResponse() {
-		if (representation != null
+		if (representation instanceof XmlRepresentation
 				&& representation.getMediaType().getName()
 						.startsWith("application/vnd.zend.serverapi")) {
 			return true;
