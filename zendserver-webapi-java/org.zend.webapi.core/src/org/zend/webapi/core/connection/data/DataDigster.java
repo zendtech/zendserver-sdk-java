@@ -77,9 +77,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	 * @return validation result
 	 */
 	public boolean validateResponse() {
-		if (representation instanceof XmlRepresentation
+		if (representation != null
 				&& representation.getMediaType().getName()
-						.startsWith("application/vnd.zend.serverapi")) {
+						.startsWith("application/vnd.zend")) {
 			return true;
 		}
 		return false;
