@@ -27,6 +27,8 @@ import org.zend.webapi.internal.core.connection.exception.InvalidResponseExcepti
  * 
  */
 public class PhpcloudContainerListener implements IRequestListener {
+	
+	private static final String ID = DeploymentCore.PLUGIN_ID + ".phpCloudContainer"; //$NON-NLS-1$
 
 	private IZendTarget target;
 
@@ -88,6 +90,10 @@ public class PhpcloudContainerListener implements IRequestListener {
 				SSLContextInitializer.instance.getRestletContext());
 		client.disableListeners();
 		return client;
+	}
+	
+	public String getId() {
+		return ID;
 	}
 
 }
