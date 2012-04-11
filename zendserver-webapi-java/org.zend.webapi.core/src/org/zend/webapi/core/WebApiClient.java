@@ -9,11 +9,11 @@ package org.zend.webapi.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.restlet.Context;
 import org.restlet.engine.Engine;
@@ -124,14 +124,14 @@ public class WebApiClient {
 
 	private boolean listenersDisabled;
 
-	private static List<IRequestListener> preListeners;
-	private static List<IRequestListener> postListeners;
+	private static Map<IRequestListener, Integer> preListeners;
+	private static Map<IRequestListener, Integer> postListeners;
 
 	static {
 		preListeners = Collections
-				.synchronizedList(new ArrayList<IRequestListener>());
+				.synchronizedMap(new HashMap<IRequestListener, Integer>());
 		postListeners = Collections
-				.synchronizedList(new ArrayList<IRequestListener>());
+				.synchronizedMap(new HashMap<IRequestListener, Integer>());
 	}
 
 	/**
@@ -1554,7 +1554,8 @@ public class WebApiClient {
 
 		if (!listenersDisabled) {
 			synchronized (preListeners) {
-				for (IRequestListener listener : preListeners) {
+				Set<IRequestListener> keys = preListeners.keySet();
+				for (IRequestListener listener : keys) {
 					listener.perform();
 				}
 			}
@@ -1566,7 +1567,8 @@ public class WebApiClient {
 
 		if (!listenersDisabled) {
 			synchronized (postListeners) {
-				for (IRequestListener listener : postListeners) {
+				Set<IRequestListener> keys = postListeners.keySet();
+				for (IRequestListener listener : keys) {
 					listener.perform();
 				}
 			}
@@ -1585,19 +1587,63 @@ public class WebApiClient {
 	}
 
 	public static void registerPreRequestListener(IRequestListener listener) {
-		preListeners.add(listener);
+		synchronized (preListeners) {
+			Set<IRequestListener> keys = preListeners.keySet();
+			for (IRequestListener l : keys) {
+				if (l.getId().equals(listener.getId())) {
+					Integer counter = preListeners.get(l) + 1;
+					preListeners.remove(l);
+					preListeners.put(l, counter);
+					return;
+				}
+			}
+		}
+		preListeners.put(listener, 1);
 	}
 
 	public static void registerPostRequestListener(IRequestListener listener) {
-		postListeners.add(listener);
+		synchronized (postListeners) {
+			Set<IRequestListener> keys = postListeners.keySet();
+			for (IRequestListener l : keys) {
+				if (l.getId().equals(listener.getId())) {
+					Integer counter = postListeners.get(l) + 1;
+					postListeners.remove(l);
+					postListeners.put(l, counter);
+					return;
+				}
+			}
+		}
+		postListeners.put(listener, 1);
 	}
 
 	public static void unregisterPreRequestListener(IRequestListener listener) {
-		preListeners.remove(listener);
+		synchronized (preListeners) {
+			Set<IRequestListener> keys = preListeners.keySet();
+			for (IRequestListener l : keys) {
+				if (l.getId().equals(listener.getId())) {
+					Integer counter = preListeners.get(l) - 1;
+					preListeners.remove(l);
+					if (counter != 0) {
+						preListeners.put(l, counter);
+					}
+				}
+			}
+		}
 	}
 
 	public static void unregisterPostRequestListener(IRequestListener listener) {
-		postListeners.remove(listener);
+		synchronized (postListeners) {
+			Set<IRequestListener> keys = postListeners.keySet();
+			for (IRequestListener l : keys) {
+				if (l.getId().equals(listener.getId())) {
+					Integer counter = postListeners.get(l) - 1;
+					postListeners.remove(l);
+					if (counter != 0) {
+						postListeners.put(l, counter);
+					}
+				}
+			}
+		}
 	}
 
 	private final String getWebApiAddress(URL host) {
@@ -1613,4 +1659,3 @@ public class WebApiClient {
 	}
 
 }
-

@@ -23,4 +23,12 @@ public interface IRequestListener {
 	 */
 	boolean perform();
 
+	/**
+	 * Return listener id. Id is used to recognize the same listeners registered
+	 * be a different clients and avoid to register more than one of them.
+	 * 
+	 * @return listener id
+	 */
+	String getId();
+
 }
