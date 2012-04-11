@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
@@ -80,6 +81,8 @@ public class EventBody implements IBody {
 		createDescription(composite, settings);
 		// TODO enable repeat and trace when server side bugs will be fixed
 		// createRepeatLink(composite);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		createSourceLink(composite);
 		// createTraceLink(composite);
 		return composite;
@@ -190,7 +193,7 @@ public class EventBody implements IBody {
 	private Link createLink(Composite parent, String text) {
 		Link link = new Link(parent, SWT.NO_FOCUS);
 		link.setText(text);
-		link.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true));
+		link.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true));
 		return link;
 	}
 
