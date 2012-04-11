@@ -415,7 +415,8 @@ public class ServerApplication extends Application {
 			ServerResponse serverResponse) {
 		Document doc = ((ServiceResponse) serverResponse).getData();
 		Representation representation = new DomRepresentation(
-				MediaType.APPLICATION_XML, doc);
+				MediaType.register("application/vnd.zend.serverapi",
+						"version=1.1"), doc);
 
 		TransformerFactory factory = TransformerFactory.newInstance();
 		try {
