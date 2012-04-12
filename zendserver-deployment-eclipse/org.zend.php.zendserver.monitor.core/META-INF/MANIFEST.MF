@@ -8,7 +8,8 @@ Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core,
- org.zend.sdk
+ org.zend.sdk,
+ org.zend.php.zendserver.deployment.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.monitor.core

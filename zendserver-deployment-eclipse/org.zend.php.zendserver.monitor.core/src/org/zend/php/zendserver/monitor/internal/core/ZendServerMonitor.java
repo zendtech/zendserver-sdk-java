@@ -35,14 +35,19 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
+import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
@@ -88,7 +93,22 @@ public class ZendServerMonitor extends Job {
 		if (shouldStart()) {
 			if (codeTracing == null) {
 				codeTracing = new ZendCodeTracing(targetId);
-				codeTracing.enable(true);
+				PhpcloudContainerListener listener = null;
+				IZendTarget target = TargetsManagerService.INSTANCE
+						.getTargetManager().getTargetById(targetId);
+				if (target != null
+						&& target.getHost().getHost()
+								.contains(ZendDevCloud.DEVPASS_HOST)) {
+					listener = new PhpcloudContainerListener(target);
+					WebApiClient.registerPreRequestListener(listener);
+				}
+				try {
+					codeTracing.enable(true);
+				} finally {
+					if (listener != null) {
+						WebApiClient.unregisterPreRequestListener(listener);
+					}
+				}
 			}
 			lastTime = Long.MAX_VALUE;
 			if (getState() == Job.NONE) {
@@ -113,29 +133,44 @@ public class ZendServerMonitor extends Job {
 		monitor.beginTask(MessageFormat.format(
 				Messages.ZendServerMonitor_TaskTitle, targetId),
 				IProgressMonitor.UNKNOWN);
-		List<IZendIssue> issues = null;
-		if (this.monitor == null) {
-			this.monitor = connect(monitor);
-			issues = this.monitor.getOpenIssues();
-		} else {
-			issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
+		PhpcloudContainerListener listener = null;
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		if (target != null
+				&& target.getHost().getHost()
+						.contains(ZendDevCloud.DEVPASS_HOST)) {
+			listener = new PhpcloudContainerListener(target);
+			WebApiClient.registerPreRequestListener(listener);
 		}
-		if (issues != null && issues.size() > 0) {
-			handleIssues(issues);
-			offset += issues.size();
-			Date lastDate = getTime(issues.get(issues.size() - 1).getIssue()
-					.getLastOccurance());
-			if (lastDate != null) {
-				lastTime = lastDate.getTime();
+		try {
+			List<IZendIssue> issues = null;
+			if (this.monitor == null) {
+				this.monitor = connect(monitor);
+				issues = this.monitor.getOpenIssues();
+			} else {
+				issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
+			}
+			if (issues != null && issues.size() > 0) {
+				handleIssues(issues);
+				offset += issues.size();
+				Date lastDate = getTime(issues.get(issues.size() - 1)
+						.getIssue().getLastOccurance());
+				if (lastDate != null) {
+					lastTime = lastDate.getTime();
+				}
+			}
+			if (!monitor.isCanceled()) {
+				monitor.done();
+				this.schedule(jobDelay);
+				return Status.OK_STATUS;
+			}
+			monitor.done();
+			return Status.CANCEL_STATUS;
+		} finally {
+			if (listener != null) {
+				WebApiClient.unregisterPreRequestListener(listener);
 			}
 		}
-		if (!monitor.isCanceled()) {
-			monitor.done();
-			this.schedule(jobDelay);
-			return Status.OK_STATUS;
-		}
-		monitor.done();
-		return Status.CANCEL_STATUS;
 	}
 
 	/**
