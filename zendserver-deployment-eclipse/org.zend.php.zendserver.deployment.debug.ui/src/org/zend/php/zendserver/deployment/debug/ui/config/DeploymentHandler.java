@@ -335,9 +335,12 @@ public class DeploymentHandler {
 						target);
 				switch (result) {
 				case CONNECTING:
+					String message = MessageFormat.format(
+							Messages.OpenTunnelCommand_SuccessMessage,
+							target.getId());
 					NotificationManager.registerInfo(
 							Messages.OpenTunnelCommand_OpenTunnelTitle,
-							Messages.OpenTunnelCommand_SuccessMessage, 4000);
+							message, 4000);
 					break;
 				case NOT_SUPPORTED:
 					NotificationManager.registerWarning(

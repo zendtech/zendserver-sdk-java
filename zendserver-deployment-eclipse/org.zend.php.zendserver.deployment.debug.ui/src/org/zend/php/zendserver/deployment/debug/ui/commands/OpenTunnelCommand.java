@@ -58,21 +58,19 @@ public class OpenTunnelCommand extends AbstractHandler {
 		try {
 			State result = ZendDevCloudTunnelManager.getManager().connect(
 					target);
-			String id = target.getId();
-			if (id == null || id.isEmpty()) {
-				id = "the target"; //$NON-NLS-1$
-			}
 			switch (result) {
 			case CONNECTED:
 				String message = MessageFormat.format(
-						Messages.OpenTunnelCommand_TunnelOpenedMessage, id);
+						Messages.OpenTunnelCommand_TunnelOpenedMessage,
+						target.getId());
 				NotificationManager.registerInfo(
 						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
 						4000);
 				break;
 			case CONNECTING:
 				message = MessageFormat.format(
-						Messages.OpenTunnelCommand_SuccessMessage, id);
+						Messages.OpenTunnelCommand_SuccessMessage,
+						target.getId());
 				NotificationManager.registerInfo(
 						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
 						4000);
