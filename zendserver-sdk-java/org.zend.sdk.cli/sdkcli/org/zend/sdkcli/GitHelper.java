@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.transport.URIish;
-import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetsManager;
 
 /**
  * 
@@ -35,8 +35,7 @@ public class GitHelper {
 	public static String getRemote(String url) {
 		try {
 			URIish uri = new URIish(url);
-			String host = uri.getHost();
-			if (host != null && host.endsWith(ZendDevCloud.DEVPASS_HOST)) {
+			if (TargetsManager.isPhpcloud(uri.getHost())) {
 				return ZEND_CLOUD_REMOTE;
 			}
 		} catch (URISyntaxException e) {
