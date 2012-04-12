@@ -93,7 +93,7 @@ public class PhpcloudContainerListener implements IRequestListener {
 	}
 	
 	public String getId() {
-		return ID;
+		return ID + '.' + target.getId();
 	}
 
 }
