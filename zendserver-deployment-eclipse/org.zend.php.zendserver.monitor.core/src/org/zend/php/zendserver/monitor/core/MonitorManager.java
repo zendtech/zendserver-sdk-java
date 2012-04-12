@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.monitor.internal.core.Startup;
 import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
 import org.zend.sdklib.manager.TargetsManager;
@@ -159,6 +160,11 @@ public class MonitorManager {
 			monitor.disable(projectName);
 			if (!monitor.isEnabled()) {
 				monitor.cancel();
+				try {
+					monitor.flushPreferences();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
 				monitors.remove(targetId);
 				return true;
 			}
@@ -212,12 +218,15 @@ public class MonitorManager {
 
 	/**
 	 * Remove all available monitors for all targets.
+	 * 
+	 * @throws BackingStoreException
 	 */
-	public static void removeAll() {
+	public static void removeAll() throws BackingStoreException {
 		Set<String> keys = monitors.keySet();
 		for (String key : keys) {
 			ZendServerMonitor monitor = monitors.get(key);
 			monitor.cancel();
+			monitor.flushPreferences();
 		}
 	}
 

@@ -66,6 +66,7 @@ public class ZendServerMonitor extends Job {
 
 	private String targetId;
 	private Map<IProject, URL> applications;
+	private Map<IProject, IEclipsePreferences> preferences;
 	private ZendMonitor monitor;
 	private long lastTime;
 	private int jobDelay = 3000;
@@ -76,6 +77,7 @@ public class ZendServerMonitor extends Job {
 		super(Messages.ZendServerMonitor_JobTitle);
 		this.targetId = targetId;
 		this.applications = new HashMap<IProject, URL>();
+		this.preferences = new HashMap<IProject, IEclipsePreferences>();
 		if (!applications.containsKey(project)) {
 			IResource res = ResourcesPlugin.getWorkspace().getRoot()
 					.findMember(project);
@@ -199,21 +201,16 @@ public class ZendServerMonitor extends Job {
 	 * @param enable
 	 */
 	public void setEnabled(String projectName, boolean enable) {
-		try {
-			IResource res = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(projectName);
-			if (res instanceof IContainer) {
-				IEclipsePreferences prefs = getPreferences(res.getProject());
-				if (prefs != null) {
-					String enabledKey = MonitorManager.ENABLED + targetId;
-					if (prefs.get(enabledKey, null) != null) {
-						prefs.putBoolean(enabledKey, enable);
-						prefs.flush();
-					}
+		IResource res = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(projectName);
+		if (res instanceof IContainer) {
+			IEclipsePreferences prefs = getPreferences(res.getProject());
+			if (prefs != null) {
+				String enabledKey = MonitorManager.ENABLED + targetId;
+				if (prefs.get(enabledKey, null) != null) {
+					prefs.putBoolean(enabledKey, enable);
 				}
 			}
-		} catch (BackingStoreException e) {
-			Activator.log(e);
 		}
 	}
 
@@ -232,11 +229,6 @@ public class ZendServerMonitor extends Job {
 					&& prefs.getBoolean(MonitorManager.ENABLED + targetId,
 							false)) {
 				prefs.putBoolean(MonitorManager.ENABLED + targetId, false);
-				try {
-					prefs.flush();
-				} catch (BackingStoreException e) {
-					Activator.log(e);
-				}
 			}
 			applications.remove(res.getProject());
 		}
@@ -248,6 +240,19 @@ public class ZendServerMonitor extends Job {
 	 */
 	public boolean isEnabled() {
 		return applications.size() > 0;
+	}
+
+	/**
+	 * Flush preferences for all available monitors.
+	 * 
+	 * @throws BackingStoreException
+	 */
+	public void flushPreferences() throws BackingStoreException {
+		Set<IProject> keys = preferences.keySet();
+		for (IProject project : keys) {
+			IEclipsePreferences prefs = preferences.get(project);
+			prefs.flush();
+		}
 	}
 
 	private void handleIssues(List<IZendIssue> issues) {
@@ -338,7 +343,13 @@ public class ZendServerMonitor extends Job {
 	}
 
 	private IEclipsePreferences getPreferences(IProject project) {
-		return new ProjectScope(project).getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = preferences.get(project);
+		if (prefs == null) {
+			preferences.put(project,
+					new ProjectScope(project).getNode(Activator.PLUGIN_ID));
+			return preferences.get(project);
+		}
+		return prefs;
 	}
 
 	private boolean shouldStart() {
@@ -352,24 +363,19 @@ public class ZendServerMonitor extends Job {
 	}
 
 	private boolean shouldStart(String projectName) {
-		try {
-			IResource res = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(projectName);
-			if (res instanceof IContainer) {
-				IEclipsePreferences prefs = getPreferences(res.getProject());
-				if (prefs != null) {
-					String enabledKey = MonitorManager.ENABLED + targetId;
-					if (prefs.get(enabledKey, null) == null) {
-						prefs.putBoolean(enabledKey, true);
-						prefs.flush();
-						return true;
-					} else {
-						return prefs.getBoolean(enabledKey, false);
-					}
+		IResource res = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(projectName);
+		if (res instanceof IContainer) {
+			IEclipsePreferences prefs = getPreferences(res.getProject());
+			if (prefs != null) {
+				String enabledKey = MonitorManager.ENABLED + targetId;
+				if (prefs.get(enabledKey, null) == null) {
+					prefs.putBoolean(enabledKey, true);
+					return true;
+				} else {
+					return prefs.getBoolean(enabledKey, false);
 				}
 			}
-		} catch (BackingStoreException e) {
-			Activator.log(e);
 		}
 		return false;
 	}
@@ -377,7 +383,6 @@ public class ZendServerMonitor extends Job {
 	private void setDefaultSeverities(IProject project) {
 		IssueSeverity[] severityValues = IssueSeverity.values();
 		IEclipsePreferences prefs = getPreferences(project);
-		boolean isDirty = false;
 		for (IssueSeverity severity : severityValues) {
 			String nodeName = severity.getName().toLowerCase();
 			String val = prefs.get(nodeName, (String) null);
@@ -387,13 +392,6 @@ public class ZendServerMonitor extends Job {
 					prefs.putBoolean(nodeName, true);
 				}
 			}
-		}
-		try {
-			if (isDirty) {
-				prefs.flush();
-			}
-		} catch (BackingStoreException e) {
-			Activator.log(e);
 		}
 	}
 
