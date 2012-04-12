@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
@@ -240,7 +240,7 @@ public abstract class AbstractTargetDetailsComposite {
 		IRequestListener preListener = null;
 		int[] portToTest = possiblePorts;
 		try {
-			if (target.getHost().getHost().contains(ZendDevCloud.DEVPASS_HOST)) {
+			if (TargetsManager.isPhpcloud(target)) {
 				preListener = new PhpcloudContainerListener(target);
 				WebApiClient.registerPreRequestListener(preListener);
 				portToTest = possiblePhpcloudPorts;

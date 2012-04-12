@@ -42,7 +42,7 @@ import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
-import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
@@ -98,9 +98,7 @@ public class ZendServerMonitor extends Job {
 				PhpcloudContainerListener listener = null;
 				IZendTarget target = TargetsManagerService.INSTANCE
 						.getTargetManager().getTargetById(targetId);
-				if (target != null
-						&& target.getHost().getHost()
-								.contains(ZendDevCloud.DEVPASS_HOST)) {
+				if (TargetsManager.isPhpcloud(target)) {
 					listener = new PhpcloudContainerListener(target);
 					WebApiClient.registerPreRequestListener(listener);
 				}
@@ -138,9 +136,7 @@ public class ZendServerMonitor extends Job {
 		PhpcloudContainerListener listener = null;
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 				.getTargetById(targetId);
-		if (target != null
-				&& target.getHost().getHost()
-						.contains(ZendDevCloud.DEVPASS_HOST)) {
+		if (TargetsManager.isPhpcloud(target)) {
 			listener = new PhpcloudContainerListener(target);
 			WebApiClient.registerPreRequestListener(listener);
 		}

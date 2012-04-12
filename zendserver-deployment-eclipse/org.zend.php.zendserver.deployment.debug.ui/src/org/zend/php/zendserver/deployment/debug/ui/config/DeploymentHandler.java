@@ -42,6 +42,7 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeList
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -264,11 +265,9 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
-				String targetHost = helper.getTargetHost();
 				if (helper.getOperationType() == IDeploymentHelper.DEPLOY
 						&& LaunchUtils.isAutoDeployAvailable()
-						&& targetHost
-								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+						&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
 					job = getAutoDeployJob(helper, project);
 				}
 				if (config != null) {
@@ -279,10 +278,8 @@ public class DeploymentHandler {
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
-				String targetHost = helper.getTargetHost();
 				if (LaunchUtils.isAutoDeployAvailable()
-						&& targetHost
-								.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+						&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
 					return handleBaseUrlConflictDevCloud(helper, project);
 				}
 				return handleBaseUrlConflict(helper, project);
@@ -325,9 +322,8 @@ public class DeploymentHandler {
 	}
 
 	private int checkSSHTunnel(IDeploymentHelper helper) {
-		String targetHost = helper.getTargetHost();
 		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)
-				&& targetHost.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+				&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
 			IZendTarget target = TargetsManagerService.INSTANCE
 					.getTargetManager().getTargetById(helper.getTargetId());
 			try {

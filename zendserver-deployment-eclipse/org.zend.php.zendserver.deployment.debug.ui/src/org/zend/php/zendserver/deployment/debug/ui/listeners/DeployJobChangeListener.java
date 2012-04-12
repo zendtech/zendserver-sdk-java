@@ -9,11 +9,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeploymentLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
+import org.zend.sdklib.manager.TargetsManager;
 
 public class DeployJobChangeListener extends JobChangeAdapter {
 
@@ -68,11 +68,9 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		}
 		IDeploymentHelper helper = job.getHelper();
 		LaunchUtils.updateLaunchConfiguration(project, helper, wc);
-		String targetHost = job.getHelper().getTargetHost();
 		if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
 			if (LaunchUtils.isAutoDeployAvailable()
-					&& targetHost
-							.contains(ZendDevCloudTunnelManager.DEVPASS_HOST)) {
+					&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
 				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
 						IDeploymentHelper.AUTO_DEPLOY);
 			} else {

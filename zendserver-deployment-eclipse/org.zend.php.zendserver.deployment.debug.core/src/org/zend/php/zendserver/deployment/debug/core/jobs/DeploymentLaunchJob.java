@@ -11,7 +11,7 @@ import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -37,7 +37,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		app.addStatusChangeListener(listener);
 		IRequestListener preListener = new PhpcloudContainerListener(
 				helper.getTargetId());
-		if (helper.getTargetHost().contains(ZendDevCloud.DEVPASS_HOST)) {
+		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
 			WebApiClient.registerPreRequestListener(preListener);
 		}
 		try {

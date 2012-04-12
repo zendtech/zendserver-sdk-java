@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -32,8 +31,7 @@ public class TargetsContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof IZendTarget) {
 			PHPLaunchConfigs cfgs = new PHPLaunchConfigs();
 			ILaunchConfiguration[] configs = cfgs.getLaunches((IZendTarget) parentElement);
-			String host = ((IZendTarget) parentElement).getHost().getHost();
-			if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
+			if (TargetsManager.isPhpcloud((IZendTarget) parentElement)) {
 				Object[] result = new Object[configs.length + 1];
 				System.arraycopy(configs, 0, result, 1, configs.length);
 				result[0] = TargetsDatabaseManager.getManager().getConnection(

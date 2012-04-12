@@ -19,7 +19,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.service.IRequestListener;
 
@@ -51,8 +51,7 @@ public class UninstallApplicationHandler extends AbstractHandler {
 						int appId = cfg.getAttribute(DeploymentAttributes.APP_ID.getName(), -1);
 						String targetId = cfg.getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String) null);
 						String targetHost = cfg.getAttribute(DeploymentAttributes.TARGET_HOST.getName(), (String) null);
-						if (targetHost != null
-								&& targetHost.contains(ZendDevCloud.DEVPASS_HOST)) {
+						if (TargetsManager.isPhpcloud(targetHost)) {
 							preListener = new PhpcloudContainerListener(targetId);
 							WebApiClient.registerPreRequestListener(preListener);
 						}

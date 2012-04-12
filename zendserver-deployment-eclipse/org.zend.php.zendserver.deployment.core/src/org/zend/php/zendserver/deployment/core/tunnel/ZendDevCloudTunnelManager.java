@@ -7,11 +7,10 @@ import java.util.Set;
 
 import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
 import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 public class ZendDevCloudTunnelManager {
-
-	public static final String DEVPASS_HOST = ZendDevCloud.DEVPASS_HOST;
 
 	private static ZendDevCloudTunnelManager manager;
 
@@ -85,16 +84,15 @@ public class ZendDevCloudTunnelManager {
 	}
 
 	private String getSSHPrivateKey(IZendTarget target) {
-		String host = target.getHost().getHost();
-		if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
+		if (TargetsManager.isPhpcloud(target)) {
 			return target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		}
 		return null;
 	}
 
 	private String getUsername(IZendTarget target) {
-		String host = target.getHost().getHost();
-		if (host.contains(ZendDevCloud.DEVPASS_HOST)) {
+		if (TargetsManager.isPhpcloud(target)) {
+			String host = target.getHost().getHost();
 			return host.substring(0, host.indexOf('.'));
 		}
 		return null;

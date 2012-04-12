@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -105,9 +104,7 @@ public class TargetsCombo {
 			List<IZendTarget> result = new ArrayList<IZendTarget>();
 			if (targets != null && targets.length > 0) {
 				for (IZendTarget target : targets) {
-					if (phpcloudOnly
-							&& !target.getHost().getHost()
-									.contains(ZendDevCloud.DEVPASS_HOST)) {
+					if (phpcloudOnly && !TargetsManager.isPhpcloud(target)) {
 						continue;
 					}
 					result.add(target);
