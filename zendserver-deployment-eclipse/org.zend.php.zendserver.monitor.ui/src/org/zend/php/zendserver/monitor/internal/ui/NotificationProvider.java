@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
-import org.zend.core.notifications.ui.IComparator;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.NotificationType;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
@@ -73,11 +72,13 @@ public class NotificationProvider implements INotificationProvider {
 	private NotificationSettings getNotificationSettings(IZendIssue issue,
 			String targetId, IEventDetails eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);
-		IComparator comparator = getComparator(issue, eventSource);
 		NotificationSettings settings = new NotificationSettings();
 		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
 				.setType(NotificationType.INFO).setBody(eventBody)
-				.setBorder(true).setComparator(comparator);
+				.setBorder(true);
+		if (eventSource != null && eventSource.getSourceFile() != null) {
+			settings.setComparator(getComparator(issue, eventSource));
+		}
 		return settings;
 	}
 
