@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
+import org.zend.core.notifications.ui.IComparator;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.NotificationType;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
@@ -40,11 +41,8 @@ public class NotificationProvider implements INotificationProvider {
 	 */
 	public void showNonification(IZendIssue issue, String targetId,
 			IEventDetails eventSource) {
-		IBody eventBody = new EventBody(targetId, eventSource, issue);
-		NotificationSettings settings = new NotificationSettings();
-		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
-				.setType(NotificationType.INFO).setBody(eventBody)
-				.setBorder(true);
+		NotificationSettings settings = getNotificationSettings(issue,
+				targetId, eventSource);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(eventSource.getProjectName());
 		if (project != null) {
@@ -70,6 +68,23 @@ public class NotificationProvider implements INotificationProvider {
 	public void showProgress(String title, int height,
 			IRunnableWithProgress runnable) {
 		NotificationManager.registerProgress(title, height, runnable, false);
+	}
+
+	private NotificationSettings getNotificationSettings(IZendIssue issue,
+			String targetId, IEventDetails eventSource) {
+		IBody eventBody = new EventBody(targetId, eventSource, issue);
+		IComparator comparator = getComparator(issue, eventSource);
+		NotificationSettings settings = new NotificationSettings();
+		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
+				.setType(NotificationType.INFO).setBody(eventBody)
+				.setBorder(true).setComparator(comparator);
+		return settings;
+	}
+
+	private EventComparator getComparator(IZendIssue issue,
+			IEventDetails eventSource) {
+		return new EventComparator(issue.getIssue().getRule(),
+				eventSource.getSourceFile() + ':' + eventSource.getLine());
 	}
 
 }
