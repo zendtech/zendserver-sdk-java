@@ -325,6 +325,16 @@ public class ZendTarget implements IZendTarget {
 		return true;
 	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof ZendTarget) {
+			IZendTarget t = (ZendTarget) obj;
+			if (getId().equals(t.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private String replaceWebApiMessage(String message) {
 		if ("Zend Server Community Edition does not rely on licensing"
 				.equals(message)) {
