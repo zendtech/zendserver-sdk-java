@@ -9,12 +9,7 @@ package org.zend.php.zendserver.deployment.ui.commands;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
@@ -28,29 +23,9 @@ import org.zend.php.zendserver.monitor.core.MonitorManager;
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class EnableMonitoringHandler extends AbstractHandler {
+public class EnableApplicationMonitorHandler extends AbstractMonitoringHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands
-	 * .ExecutionEvent)
-	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		EvaluationContext ctx = (EvaluationContext) event
-				.getApplicationContext();
-		Object element = ctx.getDefaultVariable();
-		if (element instanceof List) {
-			List<?> list = (List<?>) element;
-			for (Object o : list) {
-				enableMonitoring(o);
-			}
-		}
-		return null;
-	}
-
-	private void enableMonitoring(Object element) {
+	protected void enableMonitoring(Object element) {
 		if (element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration cfg = (ILaunchConfiguration) element;
 			try {
@@ -63,8 +38,8 @@ public class EnableMonitoringHandler extends AbstractHandler {
 						DeploymentAttributes.PROJECT_NAME.getName(),
 						(String) null);
 				if (projectName != null && targetId != null && baseURL != null) {
-					MonitorManager.setEnabled(targetId, projectName, true);
-					MonitorManager.create(targetId, projectName, new URL(
+					MonitorManager.setApplicationEnabled(targetId, projectName, true);
+					MonitorManager.createApplicationMonitor(targetId, projectName, new URL(
 							baseURL));
 					return;
 				}

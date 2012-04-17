@@ -7,12 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.core;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,58 +20,28 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
-import org.zend.php.zendserver.monitor.core.IEventDetails;
-import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
-import org.zend.sdklib.application.ZendCodeTracing;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.monitor.IZendIssue;
-import org.zend.sdklib.monitor.ZendMonitor;
-import org.zend.sdklib.monitor.ZendMonitor.Filter;
-import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
 /**
- * Represents job which monitors particular target and notifies user about
- * server events.
+ * Represents job which monitors particular application on specified target and
+ * notifies user about server events.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class ZendServerMonitor extends Job {
+public class ZendServerMonitor extends AbstractMonitor {
 
-	private static final String PROVIDER_EXTENSION = "org.zend.php.zendserver.monitor.core.notificationProvider"; //$NON-NLS-1$
-
-	private static INotificationProvider provider;
-
-	private String targetId;
 	private Map<IProject, URL> applications;
 	private Map<IProject, IEclipsePreferences> preferences;
-	private ZendMonitor monitor;
-	private long lastTime;
-	private int jobDelay = 3000;
-	private int offset;
-	private ZendCodeTracing codeTracing;
 
 	public ZendServerMonitor(String targetId, String project, URL url) {
-		super(Messages.ZendServerMonitor_JobTitle);
-		this.targetId = targetId;
+		super(targetId, Messages.ZendServerMonitor_JobTitle);
 		this.applications = new HashMap<IProject, URL>();
 		this.preferences = new HashMap<IProject, IEclipsePreferences>();
 		if (!applications.containsKey(project)) {
@@ -84,89 +50,6 @@ public class ZendServerMonitor extends Job {
 			if (res instanceof IContainer) {
 				applications.put(res.getProject(), url);
 				setDefaultSeverities(res.getProject());
-			}
-		}
-	}
-
-	/**
-	 * Start monitor job.
-	 */
-	public boolean start() {
-		if (shouldStart()) {
-			if (codeTracing == null) {
-				codeTracing = new ZendCodeTracing(targetId);
-				PhpcloudContainerListener listener = null;
-				IZendTarget target = TargetsManagerService.INSTANCE
-						.getTargetManager().getTargetById(targetId);
-				if (TargetsManager.isPhpcloud(target)) {
-					listener = new PhpcloudContainerListener(target);
-					WebApiClient.registerPreRequestListener(listener);
-				}
-				try {
-					codeTracing.enable(true);
-				} finally {
-					if (listener != null) {
-						WebApiClient.unregisterPreRequestListener(listener);
-					}
-				}
-			}
-			lastTime = Long.MAX_VALUE;
-			if (getState() == Job.NONE) {
-				setSystem(true);
-			}
-			getProvider().showProgress(Messages.ZendServerMonitor_JobTitle, 90,
-					new IRunnableWithProgress() {
-
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
-							ZendServerMonitor.this.run(monitor);
-						}
-					});
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public IStatus run(IProgressMonitor monitor) {
-		monitor.beginTask(MessageFormat.format(
-				Messages.ZendServerMonitor_TaskTitle, targetId),
-				IProgressMonitor.UNKNOWN);
-		PhpcloudContainerListener listener = null;
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
-		if (TargetsManager.isPhpcloud(target)) {
-			listener = new PhpcloudContainerListener(target);
-			WebApiClient.registerPreRequestListener(listener);
-		}
-		try {
-			List<IZendIssue> issues = null;
-			if (this.monitor == null) {
-				this.monitor = connect(monitor);
-				issues = this.monitor.getOpenIssues();
-			} else {
-				issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
-			}
-			if (issues != null && issues.size() > 0) {
-				handleIssues(issues);
-				offset += issues.size();
-				Date lastDate = getTime(issues.get(issues.size() - 1)
-						.getIssue().getLastOccurance());
-				if (lastDate != null) {
-					lastTime = lastDate.getTime();
-				}
-			}
-			if (!monitor.isCanceled()) {
-				monitor.done();
-				this.schedule(jobDelay);
-				return Status.OK_STATUS;
-			}
-			monitor.done();
-			return Status.CANCEL_STATUS;
-		} finally {
-			if (listener != null) {
-				WebApiClient.unregisterPreRequestListener(listener);
 			}
 		}
 	}
@@ -231,17 +114,36 @@ public class ZendServerMonitor extends Job {
 	}
 
 	/**
-	 * @return <code>true</code> if it monitors at least one application;
-	 *         otherwise return <code>false</code>
+	 * Disable monitoring for all applications for this target.
+	 */
+	public void disable() {
+		Set<IProject> keys = preferences.keySet();
+		for (IProject project : keys) {
+			IEclipsePreferences prefs = getPreferences(project);
+			if (prefs != null
+					&& prefs.getBoolean(MonitorManager.ENABLED + targetId,
+							false)) {
+				prefs.putBoolean(MonitorManager.ENABLED + targetId, false);
+			}
+			applications.remove(project);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return applications.size() > 0;
 	}
 
-	/**
-	 * Flush preferences for all available monitors.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @throws BackingStoreException
+	 * @see org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#
+	 * flushPreferences()
 	 */
 	public void flushPreferences() throws BackingStoreException {
 		Set<IProject> keys = preferences.keySet();
@@ -251,7 +153,7 @@ public class ZendServerMonitor extends Job {
 		}
 	}
 
-	private void handleIssues(List<IZendIssue> issues) {
+	protected void handleIssues(List<IZendIssue> issues) {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
@@ -261,41 +163,20 @@ public class ZendServerMonitor extends Job {
 				IProject project = getProject(basePath);
 				if (project != null
 						&& shouldNotify(project, issue.getSeverity())) {
+					IEclipsePreferences prefs = new ProjectScope(project)
+							.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
+					int delay = 0;
+					if (prefs.getBoolean(MonitorManager.HIDE_KEY, false)) {
+						delay = prefs.getInt(MonitorManager.HIDE_TIME_KEY, 10) * 1000;
+					}
 					showNonification(zendIssue, project.getName(),
-							createBasePath(applications.get(project)));
+							createBasePath(applications.get(project)), delay);
 				}
 			}
 		}
 	}
 
-	private boolean shouldNotify(IProject project, IssueSeverity severity) {
-		IEclipsePreferences prefs = getPreferences(project);
-		String nodeName = severity.getName().toLowerCase();
-		String val = prefs.get(nodeName, (String) null);
-		if (val != null && Boolean.valueOf(val)) {
-			return true;
-		}
-		return false;
-	}
-
-	private void showNonification(final IZendIssue issue,
-			final String projectName, final String basePath) {
-		Display.getDefault().asyncExec(new Runnable() {
-
-			public void run() {
-				IEventDetails eventSource = EventDetails.create(projectName,
-						basePath, issue.getIssue());
-				getProvider().showNonification(issue, targetId, eventSource);
-			}
-		});
-	}
-
-	private ZendMonitor connect(IProgressMonitor monitor) {
-		ZendMonitor zendMonitor = new ZendMonitor(targetId);
-		return zendMonitor;
-	}
-
-	private IProject getProject(String urlString) {
+	protected IProject getProject(String urlString) {
 		try {
 			URL url = new URL(urlString);
 			String host = url.getHost();
@@ -316,6 +197,26 @@ public class ZendServerMonitor extends Job {
 		return null;
 	}
 
+	protected boolean shouldStart() {
+		Set<IProject> keys = applications.keySet();
+		for (IProject project : keys) {
+			if (shouldStart(project.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean shouldNotify(IProject project, IssueSeverity severity) {
+		IEclipsePreferences prefs = getPreferences(project);
+		String nodeName = severity.getName().toLowerCase();
+		String val = prefs.get(nodeName, (String) null);
+		if (val != null && Boolean.valueOf(val)) {
+			return true;
+		}
+		return false;
+	}
+
 	private String createBasePath(URL url) {
 		if (url != null && url.getPath() != null) {
 			String path = url.getPath();
@@ -326,18 +227,6 @@ public class ZendServerMonitor extends Job {
 		return null;
 	}
 
-	private Date getTime(String time) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
-		Date date = null;
-		try {
-			date = formatter.parse(time);
-		} catch (ParseException e) {
-			Activator.log(e);
-			return null;
-		}
-		return date;
-	}
-
 	private IEclipsePreferences getPreferences(IProject project) {
 		IEclipsePreferences prefs = preferences.get(project);
 		if (prefs == null) {
@@ -346,16 +235,6 @@ public class ZendServerMonitor extends Job {
 			return preferences.get(project);
 		}
 		return prefs;
-	}
-
-	private boolean shouldStart() {
-		Set<IProject> keys = applications.keySet();
-		for (IProject project : keys) {
-			if (shouldStart(project.getName())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private boolean shouldStart(String projectName) {
@@ -389,28 +268,6 @@ public class ZendServerMonitor extends Job {
 				}
 			}
 		}
-	}
-
-	private static INotificationProvider getProvider() {
-		if (provider == null) {
-			IConfigurationElement[] elements = Platform.getExtensionRegistry()
-					.getConfigurationElementsFor(PROVIDER_EXTENSION);
-			for (IConfigurationElement element : elements) {
-				if ("notificationProvider".equals(element.getName())) { //$NON-NLS-1$
-					try {
-						Object listener = element
-								.createExecutableExtension("class"); //$NON-NLS-1$
-						if (listener instanceof INotificationProvider) {
-							provider = (INotificationProvider) listener;
-							break;
-						}
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				}
-			}
-		}
-		return provider;
 	}
 
 }

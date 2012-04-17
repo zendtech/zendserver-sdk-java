@@ -28,9 +28,12 @@ public interface INotificationProvider {
 	 *            target id
 	 * @param eventSource
 	 *            source of the event
+	 * @param delay
+	 *            time after which notification will be closed automatically; if
+	 *            <code>0</code> then it will not hide automatically
 	 */
 	void showNonification(IZendIssue issue, String targetId,
-			IEventDetails eventSource);
+			IEventDetails eventSource, int delay);
 
 	/**
 	 * Displays progress notification.

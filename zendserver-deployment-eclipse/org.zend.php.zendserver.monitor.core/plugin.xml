@@ -8,5 +8,11 @@
             class="org.zend.php.zendserver.monitor.internal.core.Startup">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.zend.php.zendserver.monitor.internal.TargetsMonitorPreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

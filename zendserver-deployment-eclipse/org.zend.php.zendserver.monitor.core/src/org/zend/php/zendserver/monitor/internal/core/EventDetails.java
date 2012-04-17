@@ -96,12 +96,15 @@ public class EventDetails implements IEventDetails {
 	public String getProjectRelativePath() {
 		// TODO consider to change the method of extracting project relative
 		// path
-		int index = sourceFile.indexOf(basePath);
-		if (index > -1) {
-			String location = sourceFile.substring(index + basePath.length());
-			IPath path = new Path(location);
-			IPath subPath = path.removeFirstSegments(1);
-			return subPath.toString();
+		if (basePath != null && sourceFile != null) {
+			int index = sourceFile.indexOf(basePath);
+			if (index > -1) {
+				String location = sourceFile.substring(index
+						+ basePath.length());
+				IPath path = new Path(location);
+				IPath subPath = path.removeFirstSegments(1);
+				return subPath.toString();
+			}
 		}
 		return null;
 	}

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 
 /**
  * Property tester responsible for evaluating current monitoring enablement for
@@ -27,7 +28,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class MonitorStateTester extends PropertyTester {
+public class ApplicationMonitorStateTester extends PropertyTester {
 
 	/*
 	 * (non-Javadoc)
@@ -50,6 +51,9 @@ public class MonitorStateTester extends PropertyTester {
 								DeploymentAttributes.PROJECT_NAME.getName(),
 								(String) null);
 						if (projectName != null && targetId != null) {
+							if (MonitorManager.isTargetEnabled(targetId)) {
+								return false;
+							}
 							IEclipsePreferences scope = getPreferences(projectName);
 							return scope.getBoolean("enabled." + targetId, //$NON-NLS-1$
 									false) == (Boolean) expectedValue;

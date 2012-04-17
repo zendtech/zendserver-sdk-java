@@ -88,7 +88,7 @@ public class Startup implements IStartup {
 								(String) null);
 						if (targetId != null && baseURL != null
 								&& projectName != null) {
-							MonitorManager.create(targetId, projectName,
+							MonitorManager.createApplicationMonitor(targetId, projectName,
 									new URL(baseURL));
 						}
 					} catch (MalformedURLException e) {

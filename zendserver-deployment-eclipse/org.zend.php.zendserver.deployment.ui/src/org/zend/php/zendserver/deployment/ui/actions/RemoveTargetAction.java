@@ -46,7 +46,8 @@ public class RemoveTargetAction extends Action implements ISelectionChangedListe
 			if (obj instanceof IZendTarget) {
 				IZendTarget target = (IZendTarget) obj;
 				TargetsManagerService.INSTANCE.removeTarget(target);
-				MonitorManager.remove(target.getId());
+				MonitorManager.removeApplicationMonitor(target.getId());
+				MonitorManager.removeTargetMonitor(target.getId());
 			}
 		}
 	}

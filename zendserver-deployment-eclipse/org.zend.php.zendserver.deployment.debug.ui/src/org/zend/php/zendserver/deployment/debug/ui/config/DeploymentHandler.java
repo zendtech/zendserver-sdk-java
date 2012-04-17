@@ -271,7 +271,7 @@ public class DeploymentHandler {
 					job = getAutoDeployJob(helper, project);
 				}
 				if (config != null) {
-					MonitorManager.create(helper.getTargetId(),
+					MonitorManager.createApplicationMonitor(helper.getTargetId(),
 							project.getName(), helper.getBaseURL());
 				}
 				return checkSSHTunnel(helper);
@@ -426,7 +426,7 @@ public class DeploymentHandler {
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
 					&& config != null) {
-				MonitorManager.create(helper.getTargetId(), project.getName(),
+				MonitorManager.createApplicationMonitor(helper.getTargetId(), project.getName(),
 						helper.getBaseURL());
 			}
 			job = getAutoDeployJob(job.getHelper(), project);
@@ -476,7 +476,7 @@ public class DeploymentHandler {
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
 					&& config != null) {
-				MonitorManager.create(helper.getTargetId(), project.getName(),
+				MonitorManager.createApplicationMonitor(helper.getTargetId(), project.getName(),
 						helper.getBaseURL());
 			}
 			return OK;

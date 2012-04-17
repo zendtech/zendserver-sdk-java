@@ -44,7 +44,7 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
 /**
- * Property page for Zend Server monitoring customization.
+ * Property page for application monitoring customization.
  * 
  * @author Wojciech Galanciak, 2012
  * 
@@ -105,8 +105,8 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						IProject p = getProject();
-						MonitorManager.setEnabled(p.getName(), true);
-						MonitorManager.create(p.getName());
+						MonitorManager.setApplicationEnabled(p.getName(), true);
+						MonitorManager.createApplicationMonitor(p.getName());
 						return Status.OK_STATUS;
 					}
 				};
@@ -114,7 +114,8 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 				createMonitors.schedule();
 			} else if (getEnabledTargets().size() != 0
 					&& !monitoringEnabled.getSelection()) {
-				MonitorManager.removeProject(getProject().getName());
+				MonitorManager.removeApplicationMonitorsByProject(getProject()
+						.getName());
 			}
 		} catch (BackingStoreException e) {
 			Activator.log(e);
@@ -153,6 +154,8 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 		for (Button button : severityButtons) {
 			button.setEnabled(selection);
 		}
+		hideButton.setEnabled(selection);
+		delayText.setEnabled(selection);
 	}
 
 	/*
@@ -212,13 +215,27 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 		delayText.setText(String.valueOf(prefs.getInt(
 				MonitorManager.HIDE_TIME_KEY, 10)));
 
-		if (MonitorManager.isDeployed(project.getName())) {
+		List<IZendTarget> deployedTargets = MonitorManager
+				.getDeployedTargets(project.getName());
+		if (deployedTargets.size() > 0) {
+			int toRemove = 0;
+			for (IZendTarget target : deployedTargets) {
+				if (MonitorManager.isTargetEnabled(target.getId())) {
+					toRemove++;
+				}
+				if (deployedTargets.size() <= toRemove) {
+					monitoringEnabled.setEnabled(false);
+					updateEnablement(false);
+					return;
+				}
+			}
 			if (getEnabledTargets().size() > 0) {
 				updateEnablement(true);
 				monitoringEnabled.setSelection(true);
 			}
 		} else {
 			monitoringEnabled.setEnabled(false);
+			updateEnablement(false);
 		}
 	}
 

@@ -13,20 +13,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
-import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.monitor.core.MonitorManager;
 
 /**
- * Command handler responsible for disabling event monitoring for selected
- * application.
+ * Command handler responsible for disabling event monitoring.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class DisableMonitoringHandler extends AbstractHandler {
+public abstract class AbstractMonitoringHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
@@ -48,23 +42,6 @@ public class DisableMonitoringHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void enableMonitoring(Object element) {
-		if (element instanceof ILaunchConfiguration) {
-			final ILaunchConfiguration cfg = (ILaunchConfiguration) element;
-			try {
-				String targetId = cfg
-						.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
-								(String) null);
-				String projectName = cfg.getAttribute(
-						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
-				if (targetId != null && projectName != null) {
-					MonitorManager.remove(targetId, projectName);
-				}
-				return;
-			} catch (CoreException e) {
-				Activator.log(e);
-			}
-		}
-	}
+	protected abstract void enableMonitoring(Object element);
 
 }

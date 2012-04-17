@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.monitor.internal.core.Startup;
+import org.zend.php.zendserver.monitor.internal.core.TargetMonitor;
 import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -34,19 +35,23 @@ import org.zend.sdklib.target.IZendTarget;
 public class MonitorManager {
 
 	public static final String ENABLED = "enabled."; //$NON-NLS-1$
+	public static final String ENABLED_ALL = "enabledAll"; //$NON-NLS-1$
 	public static final String HIDE_KEY = "hide"; //$NON-NLS-1$
 	public static final String HIDE_TIME_KEY = "hide_time"; //$NON-NLS-1$
 
-	private static Map<String, ZendServerMonitor> monitors;
+	private static Map<String, ZendServerMonitor> applicationMonitors;
+	private static Map<String, TargetMonitor> targetMonitors;
 
 	static {
-		monitors = Collections
+		applicationMonitors = Collections
 				.synchronizedMap(new HashMap<String, ZendServerMonitor>());
+		targetMonitors = Collections
+				.synchronizedMap(new HashMap<String, TargetMonitor>());
 	}
 
 	/**
-	 * Enable monitor for specified target and URL. If monitor already exists
-	 * for that target, provided URL is added to be observed.
+	 * Enable application monitor for specified target and URL. If monitor
+	 * already exists for that target, provided URL is added to be observed.
 	 * 
 	 * @param targetId
 	 *            target id
@@ -55,14 +60,15 @@ public class MonitorManager {
 	 * @param url
 	 *            URL which will be observed
 	 */
-	public static boolean create(String targetId, String project, URL url) {
+	public static boolean createApplicationMonitor(String targetId,
+			String project, URL url) {
 		try {
-			ZendServerMonitor monitor = monitors.get(targetId);
+			ZendServerMonitor monitor = applicationMonitors.get(targetId);
 			if (monitor == null) {
 				ZendServerMonitor m = new ZendServerMonitor(targetId, project,
 						url);
 				if (m.start()) {
-					monitors.put(targetId, m);
+					applicationMonitors.put(targetId, m);
 					return true;
 				}
 			} else {
@@ -79,14 +85,14 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Create and start monitor for specified project. Monitor will be created
-	 * only on those targets where application is deployed and launch
+	 * Create and start application monitor for specified project. Monitor will
+	 * be created only on those targets where application is deployed and launch
 	 * configuration is available.
 	 * 
 	 * @param projectName
 	 *            project name
 	 */
-	public static void create(String projectName) {
+	public static void createApplicationMonitor(String projectName) {
 		List<ILaunchConfiguration> launches = getLaunches(projectName);
 		for (ILaunchConfiguration config : launches) {
 			try {
@@ -95,8 +101,10 @@ public class MonitorManager {
 				String baseURL = config.getAttribute(Startup.BASE_URL,
 						(String) null);
 				if (targetId != null && baseURL != null) {
-					MonitorManager.create(targetId, projectName, new URL(
-							baseURL));
+					if (!MonitorManager.isTargetEnabled(targetId)) {
+						MonitorManager.createApplicationMonitor(targetId,
+								projectName, new URL(baseURL));
+					}
 				}
 			} catch (CoreException e) {
 				Activator.log(e);
@@ -107,16 +115,16 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Stop monitor for specified target id. If there is no monitor for that
-	 * target, nothing happens.
+	 * Stop application monitor for specified target id. If there is no monitor
+	 * for that target, nothing happens.
 	 * 
 	 * @param targetId
 	 *            target id
 	 * @return <code>true</code> if monitor was available and was cancelled;
 	 *         otherwise return <code>false</code>
 	 */
-	public static boolean stop(String targetId) {
-		ZendServerMonitor monitor = monitors.get(targetId);
+	public static boolean stopApplicationMonitor(String targetId) {
+		ZendServerMonitor monitor = applicationMonitors.get(targetId);
 		if (monitor != null) {
 			monitor.cancel();
 			return true;
@@ -125,16 +133,16 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Start monitor for specified target id. If there is no monitor for that
-	 * target, nothing happens.
+	 * Start application monitor for specified target id. If there is no monitor
+	 * for that target, nothing happens.
 	 * 
 	 * @param targetId
 	 *            target id
 	 * @return <code>true</code> if monitor was available and was started;
 	 *         otherwise return <code>false</code>
 	 */
-	public static boolean start(String targetId) {
-		ZendServerMonitor monitor = monitors.get(targetId);
+	public static boolean startApplicationMonitor(String targetId) {
+		ZendServerMonitor monitor = applicationMonitors.get(targetId);
 		if (monitor != null && monitor.getState() != Job.RUNNING
 				&& monitor.getState() != Job.WAITING) {
 			monitor.start();
@@ -144,8 +152,8 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Remove monitoring of URL for specified target. If there is no monitor for
-	 * that target, nothing happens.
+	 * Remove application monitoring of URL for specified target. If there is no
+	 * monitor for that target, nothing happens.
 	 * 
 	 * @param targetId
 	 *            target id
@@ -154,8 +162,9 @@ public class MonitorManager {
 	 * @return <code>true</code> if monitor was available; otherwise return
 	 *         <code>false</code>
 	 */
-	public static boolean remove(String targetId, String projectName) {
-		ZendServerMonitor monitor = monitors.get(targetId);
+	public static boolean removeApplicationMonitor(String targetId,
+			String projectName) {
+		ZendServerMonitor monitor = applicationMonitors.get(targetId);
 		if (monitor != null) {
 			monitor.disable(projectName);
 			if (!monitor.isEnabled()) {
@@ -165,7 +174,7 @@ public class MonitorManager {
 				} catch (BackingStoreException e) {
 					Activator.log(e);
 				}
-				monitors.remove(targetId);
+				applicationMonitors.remove(targetId);
 				return true;
 			}
 		}
@@ -173,16 +182,17 @@ public class MonitorManager {
 	}
 
 	/**
-	 * Remove monitoring of specified project from all available monitors.
+	 * Remove application monitoring of specified project from all available
+	 * application monitors.
 	 * 
 	 * @param projectName
 	 *            project name
 	 */
-	public static void removeProject(String projectName) {
-		Set<String> targetsSet = monitors.keySet();
+	public static void removeApplicationMonitorsByProject(String projectName) {
+		Set<String> targetsSet = applicationMonitors.keySet();
 		List<String> toRemove = new ArrayList<String>();
 		for (String targetId : targetsSet) {
-			ZendServerMonitor monitor = monitors.get(targetId);
+			ZendServerMonitor monitor = applicationMonitors.get(targetId);
 			if (monitor != null) {
 				monitor.disable(projectName);
 				if (!monitor.isEnabled()) {
@@ -191,43 +201,105 @@ public class MonitorManager {
 			}
 		}
 		for (String targetId : toRemove) {
-			ZendServerMonitor monitor = monitors.get(targetId);
+			ZendServerMonitor monitor = applicationMonitors.get(targetId);
 			monitor.cancel();
-			monitors.remove(targetId);
+			applicationMonitors.remove(targetId);
 		}
 	}
 
 	/**
-	 * Remove monitor for specified target. If there is no monitor for that
-	 * target, nothing happens.
+	 * Remove application monitor for specified target. If there is no
+	 * application monitor for that target, nothing happens.
 	 * 
 	 * @param targetId
 	 *            target id
 	 * @return <code>true</code> if monitor was available; otherwise return
 	 *         <code>false</code>
 	 */
-	public static boolean remove(String targetId) {
-		ZendServerMonitor monitor = monitors.get(targetId);
+	public static boolean removeApplicationMonitor(String targetId) {
+		ZendServerMonitor monitor = applicationMonitors.get(targetId);
 		if (monitor != null) {
 			monitor.cancel();
-			monitors.remove(targetId);
+			applicationMonitors.remove(targetId);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Remove all available monitors for all targets.
+	 * Remove all available application monitors for all targets.
 	 * 
 	 * @throws BackingStoreException
 	 */
-	public static void removeAll() throws BackingStoreException {
-		Set<String> keys = monitors.keySet();
+	public static void removeAllApplicationMonitors()
+			throws BackingStoreException {
+		Set<String> keys = applicationMonitors.keySet();
 		for (String key : keys) {
-			ZendServerMonitor monitor = monitors.get(key);
+			ZendServerMonitor monitor = applicationMonitors.get(key);
 			monitor.cancel();
 			monitor.flushPreferences();
 		}
+	}
+
+	public static void removeAllTargetMonitors() throws BackingStoreException {
+		Set<String> keys = targetMonitors.keySet();
+		for (String key : keys) {
+			TargetMonitor monitor = targetMonitors.get(key);
+			monitor.cancel();
+			monitor.flushPreferences();
+		}
+	}
+
+	/**
+	 * Create and start target monitor for specified target id.
+	 * 
+	 * @param targetId
+	 *            target id
+	 */
+	public static boolean createTargetMonitor(String targetId) {
+		TargetMonitor monitor = targetMonitors.get(targetId);
+		if (monitor == null) {
+			TargetMonitor m = new TargetMonitor(targetId);
+			if (m.start()) {
+				targetMonitors.put(targetId, m);
+				ZendServerMonitor appMonitor = applicationMonitors
+						.get(targetId);
+				if (appMonitor != null) {
+					appMonitor.disable();
+					removeApplicationMonitor(targetId);
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Remove target monitor for specified target id. If there is no monitor for
+	 * that target, nothing happens.
+	 * 
+	 * @param targetId
+	 *            target id
+	 * @return <code>true</code> if monitor was available; otherwise return
+	 *         <code>false</code>
+	 */
+	public static boolean removeTargetMonitor(String targetId) {
+		TargetMonitor monitor = targetMonitors.get(targetId);
+		if (monitor != null) {
+			monitor.disable();
+			if (!monitor.isEnabled()) {
+				monitor.cancel();
+				try {
+					monitor.flushPreferences();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
+				targetMonitors.remove(targetId);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -262,6 +334,38 @@ public class MonitorManager {
 	}
 
 	/**
+	 * Check if specified project is deployed on least one target in a current
+	 * workspace.
+	 * 
+	 * @param projectName
+	 * @return <code>true</code> if specified project is deployed on least one
+	 *         target in a current workspace; otherwise return
+	 *         <code>false</code>
+	 */
+	public static List<IZendTarget> getDeployedTargets(String projectName) {
+		TargetsManager manager = new TargetsManager();
+		IZendTarget[] targets = manager.getTargets();
+		List<IZendTarget> result = new ArrayList<IZendTarget>();
+		for (IZendTarget target : targets) {
+			ILaunchConfiguration[] launches = Startup.getLaunches(target);
+			if (launches != null && launches.length > 0) {
+				for (ILaunchConfiguration config : launches) {
+					try {
+						String name = config.getAttribute(Startup.PROJECT_NAME,
+								(String) null);
+						if (projectName.equals(name)) {
+							result.add(target);
+						}
+					} catch (CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * 
 	 * Set preference value for specified project for each target where it is
 	 * deployed and launch configuration is available.
@@ -269,14 +373,15 @@ public class MonitorManager {
 	 * @param projectName
 	 * @param enable
 	 */
-	public static void setEnabled(String projectName, boolean enable) {
+	public static void setApplicationEnabled(String projectName, boolean enable) {
 		List<ILaunchConfiguration> launches = getLaunches(projectName);
 		for (ILaunchConfiguration config : launches) {
 			try {
 				String targetId = config.getAttribute(Startup.TARGET_ID,
 						(String) null);
 				if (targetId != null) {
-					ZendServerMonitor monitor = monitors.get(targetId);
+					ZendServerMonitor monitor = applicationMonitors
+							.get(targetId);
 					if (monitor != null) {
 						monitor.setEnabled(projectName, enable);
 					} else {
@@ -298,9 +403,9 @@ public class MonitorManager {
 	 * @param projectName
 	 * @param enable
 	 */
-	public static void setEnabled(String targetId, String projectName,
-			boolean enable) {
-		ZendServerMonitor monitor = monitors.get(targetId);
+	public static void setApplicationEnabled(String targetId,
+			String projectName, boolean enable) {
+		ZendServerMonitor monitor = applicationMonitors.get(targetId);
 		if (monitor != null) {
 			monitor.setEnabled(projectName, enable);
 		} else {
@@ -308,6 +413,27 @@ public class MonitorManager {
 					null);
 			m.setEnabled(projectName, enable);
 		}
+	}
+
+	/**
+	 * 
+	 * Set preference value for specified target.
+	 * 
+	 * @param targetId
+	 * @param enable
+	 */
+	public static void setTargetEnabled(String targetId, boolean enable) {
+		TargetMonitor monitor = targetMonitors.get(targetId);
+		if (monitor != null) {
+			monitor.setEnabled(enable);
+		} else {
+			monitor = new TargetMonitor(targetId);
+			monitor.setEnabled(enable);
+		}
+	}
+
+	public static boolean isTargetEnabled(String targetId) {
+		return Activator.getDefault().getPreferenceStore().getBoolean(targetId);
 	}
 
 	private static List<ILaunchConfiguration> getLaunches(String projectName) {

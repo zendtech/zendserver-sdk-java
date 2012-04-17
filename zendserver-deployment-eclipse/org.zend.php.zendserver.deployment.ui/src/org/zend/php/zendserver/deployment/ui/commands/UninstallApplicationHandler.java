@@ -62,7 +62,7 @@ public class UninstallApplicationHandler extends AbstractHandler {
 								DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 						cfg.delete();
 						if (targetId != null && projectName != null) {
-							MonitorManager.remove(targetId, projectName);
+							MonitorManager.removeApplicationMonitor(targetId, projectName);
 						}
 					} catch (CoreException e) {
 						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);

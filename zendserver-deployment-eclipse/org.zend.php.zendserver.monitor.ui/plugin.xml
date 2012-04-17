@@ -25,5 +25,14 @@
          </filter>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
+            class="org.zend.php.zendserver.monitor.ui.preferences.TargetsMonitoringPreferencePage"
+            id="org.zend.php.zendserver.monitor.ui.targetsMonitoring"
+            name="Targets Monitoring">
+      </page>
+   </extension>
 
 </plugin>
