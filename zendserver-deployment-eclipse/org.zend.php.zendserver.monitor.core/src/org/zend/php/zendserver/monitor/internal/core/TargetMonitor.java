@@ -49,11 +49,11 @@ public class TargetMonitor extends AbstractMonitor {
 		getPreferences().putBoolean(targetId, enable);
 	}
 
-	/**
-	 * Disable monitoring for this target.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param projectName
-	 *            project name
+	 * @see
+	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
 	 */
 	public void disable() {
 		getPreferences().putBoolean(targetId, false);

@@ -48,4 +48,16 @@ public interface INotificationProvider {
 	void showProgress(String title, int height,
 			IRunnableWithProgress runnable);
 
+	
+	/**
+	 * Displays error message when something goes wrong during monitoring
+	 * initialization or event processing.
+	 * 
+	 * @param title
+	 *            error title
+	 * @param message
+	 *            error message
+	 */
+	void showErrorMessage(String title, String message);
+	
 }

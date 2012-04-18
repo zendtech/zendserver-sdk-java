@@ -57,6 +57,17 @@ public class NotificationProvider implements INotificationProvider {
 		NotificationManager.registerProgress(title, height, runnable, false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.monitor.core.INotificationProvider#showErrorMessage
+	 * (java.lang.String, java.lang.String)
+	 */
+	public void showErrorMessage(String title, String message) {
+		NotificationManager.registerError(title, message, 6000);
+	}
+
 	private NotificationSettings getNotificationSettings(IZendIssue issue,
 			String targetId, IEventDetails eventSource) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue);

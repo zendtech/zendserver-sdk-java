@@ -37,6 +37,7 @@ import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.connection.data.CodeTracingStatus;
 
 /**
  * Represents abstract monitor job. It contains monitor internal implementation
@@ -68,34 +69,13 @@ public abstract class AbstractMonitor extends Job {
 	 */
 	public boolean start() {
 		if (shouldStart()) {
-			if (codeTracing == null) {
-				codeTracing = new ZendCodeTracing(targetId);
-				PhpcloudContainerListener listener = null;
-				IZendTarget target = TargetsManagerService.INSTANCE
-						.getTargetManager().getTargetById(targetId);
-				if (TargetsManager.isPhpcloud(target)) {
-					listener = new PhpcloudContainerListener(target);
-					WebApiClient.registerPreRequestListener(listener);
-				}
-				try {
-					codeTracing.enable(true);
-				} finally {
-					if (listener != null) {
-						WebApiClient.unregisterPreRequestListener(listener);
-					}
-				}
-			}
-			lastTime = Long.MAX_VALUE;
-			if (getState() == Job.NONE) {
-				setSystem(true);
-			}
 			getProvider().showProgress(getName(), 90,
 					new IRunnableWithProgress() {
 
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
 								InterruptedException {
-							AbstractMonitor.this.run(monitor);
+							doStart(monitor);
 						}
 					});
 			return true;
@@ -159,6 +139,11 @@ public abstract class AbstractMonitor extends Job {
 	 */
 	public abstract boolean isEnabled();
 
+	/**
+	 * Disable the whole monitor.
+	 */
+	public abstract void disable();
+
 	protected abstract void handleIssues(List<IZendIssue> issues);
 
 	protected void showNonification(final IZendIssue issue,
@@ -210,6 +195,43 @@ public abstract class AbstractMonitor extends Job {
 			return null;
 		}
 		return date;
+	}
+
+	private void doStart(IProgressMonitor monitor) {
+		monitor.beginTask(MessageFormat.format(
+				Messages.AbstractMonitor_EnablingJobName, targetId),
+				IProgressMonitor.UNKNOWN);
+		if (codeTracing == null) {
+			codeTracing = new ZendCodeTracing(targetId);
+			PhpcloudContainerListener listener = null;
+			IZendTarget target = TargetsManagerService.INSTANCE
+					.getTargetManager().getTargetById(targetId);
+			if (TargetsManager.isPhpcloud(target)) {
+				listener = new PhpcloudContainerListener(target);
+				WebApiClient.registerPreRequestListener(listener);
+			}
+			try {
+				CodeTracingStatus status = codeTracing.enable(true);
+				if (status == null) {
+					String m = MessageFormat.format(
+							Messages.AbstractMonitor_InitializationJobError,
+							targetId);
+					getProvider().showErrorMessage(getName(), m);
+					monitor.done();
+					disable();
+					return;
+				}
+			} finally {
+				if (listener != null) {
+					WebApiClient.unregisterPreRequestListener(listener);
+				}
+			}
+		}
+		lastTime = Long.MAX_VALUE;
+		if (getState() == Job.NONE) {
+			setSystem(true);
+		}
+		AbstractMonitor.this.run(monitor);
 	}
 
 }

@@ -113,8 +113,11 @@ public class ZendServerMonitor extends AbstractMonitor {
 		}
 	}
 
-	/**
-	 * Disable monitoring for all applications for this target.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
 	 */
 	public void disable() {
 		Set<IProject> keys = preferences.keySet();

@@ -76,25 +76,30 @@ public class Startup implements IStartup {
 		TargetsManager manager = new TargetsManager();
 		IZendTarget[] targets = manager.getTargets();
 		for (IZendTarget target : targets) {
-			ILaunchConfiguration[] launches = getLaunches(target);
-			if (launches != null && launches.length > 0) {
-				for (ILaunchConfiguration config : launches) {
-					try {
-						String targetId = config.getAttribute(TARGET_ID,
-								(String) null);
-						String baseURL = config.getAttribute(BASE_URL,
-								(String) null);
-						String projectName = config.getAttribute(PROJECT_NAME,
-								(String) null);
-						if (targetId != null && baseURL != null
-								&& projectName != null) {
-							MonitorManager.createApplicationMonitor(targetId, projectName,
-									new URL(baseURL));
+			if (MonitorManager.isTargetEnabled(target.getId())) {
+				MonitorManager.createTargetMonitor(target.getId());
+			} else {
+				ILaunchConfiguration[] launches = getLaunches(target);
+				if (launches != null && launches.length > 0) {
+					for (ILaunchConfiguration config : launches) {
+						try {
+							String targetId = config.getAttribute(TARGET_ID,
+									(String) null);
+							String baseURL = config.getAttribute(BASE_URL,
+									(String) null);
+							String projectName = config.getAttribute(
+									PROJECT_NAME, (String) null);
+							if (targetId != null && baseURL != null
+									&& projectName != null) {
+								MonitorManager
+										.createApplicationMonitor(targetId,
+												projectName, new URL(baseURL));
+							}
+						} catch (MalformedURLException e) {
+							Activator.log(e);
+						} catch (CoreException e) {
+							Activator.log(e);
 						}
-					} catch (MalformedURLException e) {
-						Activator.log(e);
-					} catch (CoreException e) {
-						Activator.log(e);
 					}
 				}
 			}
