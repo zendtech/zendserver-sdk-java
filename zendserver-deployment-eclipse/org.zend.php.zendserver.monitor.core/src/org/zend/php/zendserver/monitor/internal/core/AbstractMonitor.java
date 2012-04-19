@@ -37,7 +37,9 @@ import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
  * Represents abstract monitor job. It contains monitor internal implementation
@@ -213,12 +215,18 @@ public abstract class AbstractMonitor extends Job {
 			try {
 				CodeTracingStatus status = codeTracing.enable(true);
 				if (status == null) {
-					String m = MessageFormat.format(
-							Messages.AbstractMonitor_InitializationJobError,
-							targetId);
-					getProvider().showErrorMessage(getName(), m);
-					monitor.done();
-					disable();
+					String m = MessageFormat
+							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+									targetId);
+					handleError(monitor, m);
+					return;
+				}
+			} catch (WebApiException e) {
+				if (e instanceof WebApiCommunicationError) {
+					String m = MessageFormat
+							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+									targetId);
+					handleError(monitor, m);
 					return;
 				}
 			} finally {
@@ -234,4 +242,9 @@ public abstract class AbstractMonitor extends Job {
 		AbstractMonitor.this.run(monitor);
 	}
 
+	private void handleError(IProgressMonitor monitor, String m) {
+		getProvider().showErrorMessage(getName(), m);
+		monitor.done();
+		disable();
+	}
 }
