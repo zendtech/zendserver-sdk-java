@@ -48,6 +48,7 @@ public class Messages extends NLS {
 	public static String ServerMonitoringPropertyPage_EnableJobTitle;
 	public static String ServerMonitoringPropertyPage_HideLabel;
 	public static String ServerMonitoringPropertyPage_InvalidDelayMessage;
+	public static String ServerMonitoringPropertyPage_PreferencePageDescription;
 	public static String TargetsMonitoringPreferencePage_PreferencePageDescription;
 	static {
 		// initialize resource bundle

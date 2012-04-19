@@ -62,6 +62,7 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 	private IEclipsePreferences prefs;
 
 	public ServerMonitoringPropertyPage() {
+		setDescription(Messages.ServerMonitoringPropertyPage_PreferencePageDescription);
 	}
 
 	/*
