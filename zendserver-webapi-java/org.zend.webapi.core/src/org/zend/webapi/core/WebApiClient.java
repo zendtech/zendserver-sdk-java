@@ -1597,8 +1597,8 @@ public class WebApiClient {
 					return;
 				}
 			}
+			preListeners.put(listener, 1);
 		}
-		preListeners.put(listener, 1);
 	}
 
 	public static void registerPostRequestListener(IRequestListener listener) {
@@ -1612,20 +1612,18 @@ public class WebApiClient {
 					return;
 				}
 			}
+			postListeners.put(listener, 1);
 		}
-		postListeners.put(listener, 1);
 	}
 
 	public static void unregisterPreRequestListener(IRequestListener listener) {
 		synchronized (preListeners) {
-			Set<IRequestListener> keys = preListeners.keySet();
-			for (IRequestListener l : keys) {
-				if (l.getId().equals(listener.getId())) {
-					Integer counter = preListeners.get(l) - 1;
-					preListeners.remove(l);
-					if (counter != 0) {
-						preListeners.put(l, counter);
-					}
+			Integer counter = preListeners.get(listener);
+			if (counter != null && counter > 0) {
+				preListeners.remove(listener);
+				counter--;
+				if (counter > 0) {
+					preListeners.put(listener, counter);
 				}
 			}
 		}
@@ -1633,14 +1631,12 @@ public class WebApiClient {
 
 	public static void unregisterPostRequestListener(IRequestListener listener) {
 		synchronized (postListeners) {
-			Set<IRequestListener> keys = postListeners.keySet();
-			for (IRequestListener l : keys) {
-				if (l.getId().equals(listener.getId())) {
-					Integer counter = postListeners.get(l) - 1;
-					postListeners.remove(l);
-					if (counter != 0) {
-						postListeners.put(l, counter);
-					}
+			Integer counter = postListeners.get(listener);
+			if (counter != null && counter > 0) {
+				postListeners.remove(listener);
+				counter--;
+				if (counter > 0) {
+					postListeners.put(listener, counter);
 				}
 			}
 		}
