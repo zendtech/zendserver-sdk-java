@@ -19,9 +19,7 @@ public enum IssueSeverity {
 
 	WARNING("Warning"),
 
-	CRITICAL("Critical"),
-
-	UNKNOWN("Unknown");
+	CRITICAL("Critical");
 
 	private final String name;
 
@@ -31,7 +29,7 @@ public enum IssueSeverity {
 
 	public static IssueSeverity byName(String name) {
 		if (name == null) {
-			return UNKNOWN;
+			return null;
 		}
 
 		IssueSeverity[] values = values();
@@ -41,7 +39,7 @@ public enum IssueSeverity {
 			}
 		}
 
-		return UNKNOWN;
+		return null;
 	}
 
 	public String getName() {

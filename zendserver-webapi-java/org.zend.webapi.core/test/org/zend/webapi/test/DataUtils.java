@@ -41,7 +41,6 @@ import org.zend.webapi.core.connection.data.Step;
 import org.zend.webapi.core.connection.data.SuperGlobals;
 import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
-import org.zend.webapi.core.connection.data.values.IssueSeverity;
 import org.zend.webapi.core.connection.data.values.IssueStatus;
 import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerStatus;
@@ -319,7 +318,7 @@ public class DataUtils {
 		Assert.assertEquals(ResponseType.ISSUE, issue.getType());
 		Assert.assertNotNull(issue.getRule());
 		Assert.assertNotNull(issue.getSeverity());
-		Assert.assertTrue(issue.getSeverity() != IssueSeverity.UNKNOWN);
+		Assert.assertTrue(issue.getSeverity() != null);
 		Assert.assertNotNull(issue.getStatus());
 		Assert.assertTrue(issue.getStatus() != IssueStatus.UNKNOWN);
 		checkValidRouteDetails(issue.getRouteDetails());
