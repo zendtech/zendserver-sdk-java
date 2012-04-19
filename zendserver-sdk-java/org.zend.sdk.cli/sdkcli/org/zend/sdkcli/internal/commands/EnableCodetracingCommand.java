@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 
 /**
@@ -30,7 +31,15 @@ public class EnableCodetracingCommand extends AbstractCodetracingCommand {
 
 	@Override
 	public boolean doExecute() {
-		CodeTracingStatus result = getCodeTracing().enable(isRestartPhp());
+		CodeTracingStatus result = null;
+		try {
+			result = getCodeTracing().enable(isRestartPhp());
+		} catch (WebApiException e) {
+			getLogger().error(
+					"Failed to disable developer mode on target '"
+							+ getTarget() + "'");
+			return false;
+		}
 		if (result != null) {
 			getLogger().info("Developer mode enabled successfully.");
 			return true;
