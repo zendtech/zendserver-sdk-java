@@ -74,17 +74,9 @@ public class ZendIssue implements IZendIssue {
 	}
 
 	@Override
-	public IssueDetails getDetails() {
+	public IssueDetails getDetails() throws WebApiException {
 		try {
 			return monitor.getClient().monitorGetIssueDetails(issue.getId());
-		} catch (WebApiException e) {
-			String message = MessageFormat.format(
-					"Error during retrieving issue details for '{0}'",
-					issue.getId());
-			monitor.statusChanged(new BasicStatus(StatusCode.ERROR,
-					"Retrieving Issue Details", message, e));
-			log.error(message + "':");
-			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat.format(
 					"Error during retrieving issue details for '{0}'",
@@ -127,7 +119,7 @@ public class ZendIssue implements IZendIssue {
 	}
 
 	@Override
-	public List<EventsGroupDetails> getGroupDetails() {
+	public List<EventsGroupDetails> getGroupDetails() throws WebApiException {
 		try {
 			WebApiClient client = monitor.getClient();
 			IssueDetails issueDetails = client.monitorGetIssueDetails(Integer
@@ -147,14 +139,6 @@ public class ZendIssue implements IZendIssue {
 				}
 				return result;
 			}
-		} catch (WebApiException e) {
-			String message = MessageFormat.format(
-					"Error during retrieving group details for '{0}'",
-					issue.getId());
-			monitor.statusChanged(new BasicStatus(StatusCode.ERROR,
-					"Retrieving Group Details", message, e));
-			log.error(message + "':");
-			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat.format(
 					"Error during retrieving group details for '{0}'",
