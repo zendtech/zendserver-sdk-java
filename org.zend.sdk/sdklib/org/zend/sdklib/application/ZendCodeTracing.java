@@ -66,8 +66,9 @@ public class ZendCodeTracing extends ZendConnection {
 	 * Enables code tracing feature on Zend Server.
 	 * 
 	 * @return code tracing status
+	 * @throws WebApiException
 	 */
-	public CodeTracingStatus enable() {
+	public CodeTracingStatus enable() throws WebApiException {
 		return enable(false);
 	}
 
@@ -77,17 +78,11 @@ public class ZendCodeTracing extends ZendConnection {
 	 * @param restartPhp
 	 *            restart php during operation
 	 * @return code tracing status
+	 * @throws WebApiException
 	 */
-	public CodeTracingStatus enable(boolean restartPhp) {
+	public CodeTracingStatus enable(boolean restartPhp) throws WebApiException {
 		try {
 			return getClient(targetId).codeTracingEnable(restartPhp);
-		} catch (WebApiException e) {
-			String message = MessageFormat.format(
-					"Error during enabling code tracing for '{0}'", targetId);
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
-					"Enabling Code Tracing", message, e));
-			log.error(message + "':");
-			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat.format(
 					"Error during enabling code tracing for '{0}'", targetId);
@@ -102,8 +97,9 @@ public class ZendCodeTracing extends ZendConnection {
 	 * Disables code tracing feature on Zend Server.
 	 * 
 	 * @return code tracing status
+	 * @throws WebApiException
 	 */
-	public CodeTracingStatus disable() {
+	public CodeTracingStatus disable() throws WebApiException {
 		return disable(false);
 	}
 
@@ -113,17 +109,11 @@ public class ZendCodeTracing extends ZendConnection {
 	 * @param restartPhp
 	 *            restart php during operation
 	 * @return code tracing status
+	 * @throws WebApiException
 	 */
-	public CodeTracingStatus disable(boolean restartPhp) {
+	public CodeTracingStatus disable(boolean restartPhp) throws WebApiException {
 		try {
 			return getClient(targetId).codeTracingDisable(restartPhp);
-		} catch (WebApiException e) {
-			String message = MessageFormat.format(
-					"Error during disabling code tracing for '{0}'", targetId);
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
-					"Disabling Code Tracing", message, e));
-			log.error(message + "':");
-			log.error("\tpossible error: " + e.getMessage());
 		} catch (MalformedURLException e) {
 			String message = MessageFormat.format(
 					"Error during disabling code tracing for '{0}'", targetId);
