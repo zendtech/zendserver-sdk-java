@@ -29,7 +29,7 @@ public enum EventType {
 	INCONSISTENT_OUTPUT_SIZE(
 			"Inconsistent Output Size", "inconsistent_output_size"), //$NON-NLS-1$ //$NON-NLS-2$
 
-	PHP_ERROR("Fatal PHP Error", "php_error"), //$NON-NLS-1$ //$NON-NLS-2$
+	PHP_ERROR("PHP Error", "php_error"), //$NON-NLS-1$ //$NON-NLS-2$
 
 	JAVA_EXCEPTION("Uncaught Java Exception", "java_exception"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -66,7 +66,8 @@ public enum EventType {
 
 		EventType[] values = values();
 		for (EventType type : values) {
-			if (rule.equals(type.getRule())) {
+			String r = type.getRule();
+			if (r != null && rule.contains(r)) {
 				return type;
 			}
 		}

@@ -204,22 +204,24 @@ public class EventBody implements IBody {
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
 		label.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLACK));
-		final String text = zendIssue.getIssue().getGeneralDetails()
-				.getErrorString();
-		if (text != null) {
-			initializeDescription(settings, label, text);
+		String text = zendIssue.getIssue().getGeneralDetails().getErrorString();
+		if (text == null || text.isEmpty()) {
+			text = zendIssue.getIssue().getRule();
 		}
+		initializeDescription(settings, label, text);
 	}
 
 	private void initializeDescription(NotificationSettings settings,
-			Link label, final String text) {
+			Link label, String text) {
 		final EventType type = eventDetails.getType();
-		label.setText(text);
+		if (text != null) {
+			label.setText(text);
+		}
 		int width = Math.max(settings.getWidth(),
 				NotificationSettings.DEFAULT_WIDTH);
 		Point size = label.computeSize(width, SWT.DEFAULT);
 		int height = Fonts.get(FontName.DEFAULT).getFontData()[0].getHeight();
-		if (size.y > 5 * height) {
+		if (text != null && size.y > 5 * height) {
 			int cut = (int) (text.length() * ((double) (5 * height) / (double) size.y));
 			String shortText = text.substring(0, cut);
 			int index = shortText.lastIndexOf('.');
@@ -229,25 +231,30 @@ public class EventBody implements IBody {
 			shortText = shortText.substring(0, index + 1);
 			shortText += " ... <a>read more</a>"; //$NON-NLS-1$
 			label.setText(shortText);
+			final String finalText = text;
 			label.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					new ReadMoreDialog(org.zend.core.notifications.Activator
-							.getDefault().getParent(), type.getRule(), text,
-							type.getLink()).open();
+							.getDefault().getParent(), type.getRule(),
+							finalText, type.getLink()).open();
 				}
 			});
 		} else {
-
 			if (type != null && type != EventType.UNKNOWN) {
-				label.setText(text + " <a>Read more</a>"); //$NON-NLS-1$
+				if (text != null && !text.isEmpty()) {
+					if (!text.endsWith("\\.")) { //$NON-NLS-1$
+						text += '.';
+					}
+					label.setText(text + " <a>Read more</a>"); //$NON-NLS-1$
+				} else {
+					label.setText("<a>Read more</a>"); //$NON-NLS-1$
+				}
 				label.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent event) {
 						try {
-							PlatformUI
-									.getWorkbench()
-									.getBrowserSupport()
+							PlatformUI.getWorkbench().getBrowserSupport()
 									.getExternalBrowser()
 									.openURL(new URL(type.getLink()));
 						} catch (Exception e) {
