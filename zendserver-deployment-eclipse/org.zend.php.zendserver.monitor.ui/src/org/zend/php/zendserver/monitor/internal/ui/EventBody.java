@@ -212,7 +212,7 @@ public class EventBody implements IBody {
 	private Link createLink(Composite parent, String text, int align) {
 		Link link = new Link(parent, SWT.NO_FOCUS | align);
 		link.setText(text);
-		link.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true));
+		link.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		return link;
 	}
 
