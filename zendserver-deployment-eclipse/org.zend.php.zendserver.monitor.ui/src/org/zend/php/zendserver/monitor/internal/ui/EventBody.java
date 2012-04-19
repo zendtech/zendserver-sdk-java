@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,7 +43,9 @@ import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 /**
  * Implementation of {@link IBody} for Zend Server event notification.
@@ -57,15 +60,18 @@ public class EventBody implements IBody {
 	private IZendIssue zendIssue;
 	private String targetId;
 	private IEventDetails eventDetails;
+	private boolean actionAvailable;
 
 	private IActionListener listener;
+
 	private static ICodeTraceEditorProvider editorProvider;
 
 	public EventBody(String targetId, IEventDetails eventSource,
-			IZendIssue zendIssue) {
+			IZendIssue zendIssue, boolean actionsAvailable) {
 		this.zendIssue = zendIssue;
 		this.targetId = targetId;
 		this.eventDetails = eventSource;
+		this.actionAvailable = actionsAvailable;
 	}
 
 	/*
@@ -79,12 +85,14 @@ public class EventBody implements IBody {
 			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
 		createDescription(composite, settings);
-		// TODO enable repeat and trace when server side bugs will be fixed
-		// createRepeatLink(composite);
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
+		if (actionAvailable) {
+			createRepeatLink(composite);
+			createTraceLink(composite);
+		} else {
+			new Label(composite, SWT.NONE);
+			new Label(composite, SWT.NONE);
+		}
 		createSourceLink(composite);
-		// createTraceLink(composite);
 		return composite;
 	}
 
@@ -112,7 +120,7 @@ public class EventBody implements IBody {
 	private void createTraceLink(Composite composite) {
 		if (getProvider() != null) {
 			Link traceLink = createLink(composite,
-					getLinkText(Messages.EventBody_CodetraceLink));
+					getLinkText(Messages.EventBody_CodetraceLink), SWT.RIGHT);
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -121,8 +129,20 @@ public class EventBody implements IBody {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-							List<EventsGroupDetails> groups = zendIssue
-									.getGroupDetails();
+							List<EventsGroupDetails> groups;
+							try {
+								groups = zendIssue.getGroupDetails();
+							} catch (InvalidResponseException e) {
+								showMessage(
+										Messages.EventBody_CodeTraceTitle,
+										Messages.EventBody_CodeTraceNotSupportedMessage);
+								return Status.OK_STATUS;
+							} catch (WebApiException e) {
+								showMessage(
+										Messages.EventBody_CodeTraceTitle,
+										Messages.EventBody_CodeTraceFailedMessage);
+								return Status.OK_STATUS;
+							}
 							if (groups != null && groups.size() == 1) {
 								String traceId = groups.get(0).getCodeTracing();
 								if (traceId != null) {
@@ -133,9 +153,8 @@ public class EventBody implements IBody {
 										getProvider().openInEditor(
 												codeTrace.getAbsolutePath());
 									} else {
-										return new Status(
-												IStatus.ERROR,
-												Activator.PLUGIN_ID,
+										showMessage(
+												Messages.EventBody_CodeTraceTitle,
 												Messages.EventBody_CodetraceJobErrorMessage);
 									}
 								}
@@ -152,7 +171,7 @@ public class EventBody implements IBody {
 
 	private void createSourceLink(Composite composite) {
 		Link sourceLink = createLink(composite,
-				getLinkText(Messages.EventBody_SourceLink));
+				getLinkText(Messages.EventBody_SourceLink), SWT.CENTER);
 		if (eventDetails.getLine() == -1
 				|| eventDetails.getSourceFile() == null
 				|| eventDetails.getSourceFile().isEmpty()
@@ -172,7 +191,7 @@ public class EventBody implements IBody {
 
 	private void createRepeatLink(Composite composite) {
 		Link repeatLink = createLink(composite,
-				getLinkText(Messages.EventBody_2));
+				getLinkText(Messages.EventBody_2), SWT.LEFT);
 		repeatLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -190,8 +209,8 @@ public class EventBody implements IBody {
 		return "<a>" + text + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private Link createLink(Composite parent, String text) {
-		Link link = new Link(parent, SWT.NO_FOCUS);
+	private Link createLink(Composite parent, String text, int align) {
+		Link link = new Link(parent, SWT.NO_FOCUS | align);
 		link.setText(text);
 		link.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true));
 		return link;
@@ -229,7 +248,7 @@ public class EventBody implements IBody {
 				index = shortText.lastIndexOf(' ');
 			}
 			shortText = shortText.substring(0, index + 1);
-			shortText += " ... <a>read more</a>"; //$NON-NLS-1$
+			shortText += " ... " + getLinkText(Messages.EventBody_ReadMore); //$NON-NLS-1$
 			label.setText(shortText);
 			final String finalText = text;
 			label.addSelectionListener(new SelectionAdapter() {
@@ -246,9 +265,10 @@ public class EventBody implements IBody {
 					if (!text.endsWith("\\.")) { //$NON-NLS-1$
 						text += '.';
 					}
-					label.setText(text + " <a>Read more</a>"); //$NON-NLS-1$
+					label.setText(text + ' '
+							+ getLinkText(Messages.EventBody_ReadMore));
 				} else {
-					label.setText("<a>Read more</a>"); //$NON-NLS-1$
+					label.setText(getLinkText(Messages.EventBody_ReadMore));
 				}
 				label.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -294,6 +314,16 @@ public class EventBody implements IBody {
 			}
 		}
 		return editorProvider;
+	}
+
+	private void showMessage(final String title, final String message) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(
+						org.zend.core.notifications.Activator.getDefault()
+								.getParent(), title, message);
+			}
+		});
 	}
 
 }

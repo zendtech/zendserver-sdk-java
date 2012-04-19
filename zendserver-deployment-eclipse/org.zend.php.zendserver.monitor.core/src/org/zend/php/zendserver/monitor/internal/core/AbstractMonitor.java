@@ -57,7 +57,7 @@ public abstract class AbstractMonitor extends Job {
 	protected String targetId;
 	private ZendMonitor monitor;
 	protected long lastTime;
-	private int jobDelay = 3000;
+	private int jobDelay = 2000;
 	private int offset;
 	private ZendCodeTracing codeTracing;
 
@@ -104,9 +104,11 @@ public abstract class AbstractMonitor extends Job {
 				issues = this.monitor.getOpenIssues();
 			} else {
 				issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
+				if (issues != null && issues.size() > 0) {
+					handleIssues(issues);
+				}
 			}
 			if (issues != null && issues.size() > 0) {
-				handleIssues(issues);
 				offset += issues.size();
 				Date lastDate = getTime(issues.get(issues.size() - 1)
 						.getIssue().getLastOccurance());
@@ -149,16 +151,26 @@ public abstract class AbstractMonitor extends Job {
 	protected abstract void handleIssues(List<IZendIssue> issues);
 
 	protected void showNonification(final IZendIssue issue,
-			final String projectName, final String basePath, final int delay) {
+			final String projectName, final String basePath, final int delay,
+			final boolean actionsAvailable) {
 		Display.getDefault().asyncExec(new Runnable() {
 
 			public void run() {
 				IEventDetails eventSource = EventDetails.create(projectName,
 						basePath, issue.getIssue());
 				getProvider().showNonification(issue, targetId, eventSource,
-						delay);
+						delay, actionsAvailable);
 			}
 		});
+	}
+
+	protected boolean checkActions(IZendIssue issue) {
+		try {
+			issue.getGroupDetails();
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	protected abstract IProject getProject(String urlString);

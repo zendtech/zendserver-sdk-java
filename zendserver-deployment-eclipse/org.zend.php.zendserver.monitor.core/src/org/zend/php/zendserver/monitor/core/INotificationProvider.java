@@ -31,9 +31,12 @@ public interface INotificationProvider {
 	 * @param delay
 	 *            time after which notification will be closed automatically; if
 	 *            <code>0</code> then it will not hide automatically
+	 * @param actionsAvailable
+	 *            if <code>true</code> then "Repeat" and "Codetrace" actions
+	 *            will be visible
 	 */
 	void showNonification(IZendIssue issue, String targetId,
-			IEventDetails eventSource, int delay);
+			IEventDetails eventSource, int delay, boolean actionsAvailable);
 
 	/**
 	 * Displays progress notification.
@@ -45,10 +48,8 @@ public interface INotificationProvider {
 	 * @param runnable
 	 *            process which should be run
 	 */
-	void showProgress(String title, int height,
-			IRunnableWithProgress runnable);
+	void showProgress(String title, int height, IRunnableWithProgress runnable);
 
-	
 	/**
 	 * Displays error message when something goes wrong during monitoring
 	 * initialization or event processing.
@@ -59,5 +60,5 @@ public interface INotificationProvider {
 	 *            error message
 	 */
 	void showErrorMessage(String title, String message);
-	
+
 }

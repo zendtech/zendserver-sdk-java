@@ -83,6 +83,7 @@ public class TargetMonitor extends AbstractMonitor {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
+			boolean actionsAvailable = checkActions(zendIssue);
 			Date date = getTime(issue.getLastOccurance());
 			if (date != null && date.getTime() >= lastTime) {
 				String basePath = issue.getGeneralDetails().getUrl();
@@ -91,13 +92,15 @@ public class TargetMonitor extends AbstractMonitor {
 					// handle case when have not found a corresponding project
 					if (project != null) {
 						int delay = 0;
-						IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+						IPreferenceStore store = Activator.getDefault()
+								.getPreferenceStore();
 						if (store.getBoolean(MonitorManager.HIDE_KEY)) {
 							delay = store.getInt(MonitorManager.HIDE_TIME_KEY) * 1000;
 						}
-						Activator.getDefault().getPreferenceStore().getBoolean(targetId);
+						Activator.getDefault().getPreferenceStore()
+								.getBoolean(targetId);
 						showNonification(zendIssue, project.getName(), null,
-								delay);
+								delay, actionsAvailable);
 					}
 				}
 			}

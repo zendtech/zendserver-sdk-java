@@ -160,6 +160,7 @@ public class ZendServerMonitor extends AbstractMonitor {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
+			boolean actionsAvailable = checkActions(zendIssue);
 			Date date = getTime(issue.getLastOccurance());
 			if (date != null && date.getTime() >= lastTime) {
 				String basePath = issue.getGeneralDetails().getUrl();
@@ -173,7 +174,8 @@ public class ZendServerMonitor extends AbstractMonitor {
 						delay = prefs.getInt(MonitorManager.HIDE_TIME_KEY, 10) * 1000;
 					}
 					showNonification(zendIssue, project.getName(),
-							createBasePath(applications.get(project)), delay);
+							createBasePath(applications.get(project)), delay,
+							actionsAvailable);
 				}
 			}
 		}

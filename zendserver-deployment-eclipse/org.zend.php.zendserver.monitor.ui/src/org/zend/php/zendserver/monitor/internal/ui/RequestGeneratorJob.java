@@ -21,14 +21,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.Event;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.Parameter;
 import org.zend.webapi.core.connection.data.ParameterList;
 import org.zend.webapi.core.connection.data.SuperGlobals;
+import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 /**
  * Recreate and execute HTTP request based on provided request parameters.
@@ -65,7 +69,7 @@ public class RequestGeneratorJob extends Job {
 											Messages.RequestGeneratorJob_MessageTitle,
 											MessageFormat
 													.format(Messages.RequestGeneratorJob_MessageBody,
-															result), 5000);
+															result), 3000);
 
 							break;
 						case -1:
@@ -73,7 +77,7 @@ public class RequestGeneratorJob extends Job {
 									.registerInfo(
 											Messages.RequestGeneratorJob_MessageTitle,
 											Messages.RequestGeneratorJob_RepeatFailedMessage,
-											5000);
+											3000);
 						default:
 							break;
 						}
@@ -92,7 +96,19 @@ public class RequestGeneratorJob extends Job {
 	 */
 	private int generate() {
 		String url = zendIssue.getIssue().getGeneralDetails().getUrl();
-		List<EventsGroupDetails> groups = zendIssue.getGroupDetails();
+		List<EventsGroupDetails> groups = null;
+		try {
+			groups = zendIssue.getGroupDetails();
+		} catch (InvalidResponseException e) {
+			showMessage(
+					Messages.RequestGeneratorJob_RepeatActionTitle,
+					Messages.RequestGeneratorJob_RepeatActionNotSupportedMessage);
+			return -1;
+		} catch (WebApiException e) {
+			showMessage(Messages.RequestGeneratorJob_RepeatActionTitle,
+					Messages.RequestGeneratorJob_RepeatActionFailedMessage);
+			return -1;
+		}
 		if (groups != null && groups.size() > 0) {
 
 			HttpClient client = new HttpClient();
@@ -184,6 +200,16 @@ public class RequestGeneratorJob extends Job {
 			}
 		}
 		return method;
+	}
+
+	private void showMessage(final String title, final String message) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(
+						org.zend.core.notifications.Activator.getDefault()
+								.getParent(), title, message);
+			}
+		});
 	}
 
 }

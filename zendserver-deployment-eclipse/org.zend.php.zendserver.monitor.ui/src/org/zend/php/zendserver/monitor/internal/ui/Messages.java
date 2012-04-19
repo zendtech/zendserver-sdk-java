@@ -22,7 +22,11 @@ public class Messages extends NLS {
 	public static String EventBody_CodetraceJobErrorMessage;
 	public static String EventBody_CodetraceJobTitle;
 	public static String EventBody_CodetraceLink;
+	public static String EventBody_CodeTraceFailedMessage;
+	public static String EventBody_CodeTraceNotSupportedMessage;
+	public static String EventBody_CodeTraceTitle;
 	public static String EventBody_DoubleClickLabel;
+	public static String EventBody_ReadMore;
 	public static String EventBody_SourceLink;
 	public static String EventDetailsDialog_ActionsLabel;
 	public static String EventDetailsDialog_6;
@@ -39,6 +43,9 @@ public class Messages extends NLS {
 	public static String RequestGeneratorJob_MessageBody;
 	public static String RequestGeneratorJob_MessageTitle;
 	public static String RequestGeneratorJob_NotificationTitle;
+	public static String RequestGeneratorJob_RepeatActionFailedMessage;
+	public static String RequestGeneratorJob_RepeatActionNotSupportedMessage;
+	public static String RequestGeneratorJob_RepeatActionTitle;
 	public static String RequestGeneratorJob_RepeatFailedMessage;
 	public static String RequestGeneratorJob_RepeatTaskTitle;
 	public static String ServerMonitoringPropertyPage_DelayLabel;
