@@ -10,6 +10,7 @@ package org.zend.sdklib.monitor;
 import java.io.File;
 import java.util.List;
 
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
@@ -35,8 +36,9 @@ public interface IZendIssue {
 	 * Provides issue details.
 	 * 
 	 * @return issue details
+	 * @throws WebApiException
 	 */
-	IssueDetails getDetails();
+	IssueDetails getDetails() throws WebApiException;
 
 	/**
 	 * Changes issue status.
@@ -53,8 +55,9 @@ public interface IZendIssue {
 	 * (based on {@link IssueDetails#getEventsGroups()}.
 	 * 
 	 * @return group details
+	 * @throws WebApiException
 	 */
-	List<EventsGroupDetails> getGroupDetails();
+	List<EventsGroupDetails> getGroupDetails() throws WebApiException;
 	
 	/**
 	 * Exports list of issue files.

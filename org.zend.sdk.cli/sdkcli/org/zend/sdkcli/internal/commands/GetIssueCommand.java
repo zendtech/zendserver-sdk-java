@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.Event;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.GeneralDetails;
@@ -39,8 +40,12 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 	@Override
 	public boolean doExecute() {
 		IZendIssue zendIssue = getMonitor().get(Integer.valueOf(getId()));
-		List<EventsGroupDetails> eventsGroupsDetails = zendIssue
-				.getGroupDetails();
+		List<EventsGroupDetails> eventsGroupsDetails = null;
+		try {
+			eventsGroupsDetails = zendIssue.getGroupDetails();
+		} catch (WebApiException e) {
+			// ignore and just do not display group details
+		}
 		if (zendIssue != null) {
 			Issue issue = zendIssue.getIssue();
 			getLogger().info("last occurance: " + issue.getLastOccurance());
