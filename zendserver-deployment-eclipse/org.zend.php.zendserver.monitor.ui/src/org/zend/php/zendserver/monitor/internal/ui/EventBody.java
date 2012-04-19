@@ -120,7 +120,7 @@ public class EventBody implements IBody {
 	private void createTraceLink(Composite composite) {
 		if (getProvider() != null) {
 			Link traceLink = createLink(composite,
-					getLinkText(Messages.EventBody_CodetraceLink), SWT.RIGHT);
+					getLinkText(Messages.EventBody_CodetraceLink), SWT.CENTER);
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -171,7 +171,7 @@ public class EventBody implements IBody {
 
 	private void createSourceLink(Composite composite) {
 		Link sourceLink = createLink(composite,
-				getLinkText(Messages.EventBody_SourceLink), SWT.CENTER);
+				getLinkText(Messages.EventBody_SourceLink), SWT.RIGHT);
 		if (eventDetails.getLine() == -1
 				|| eventDetails.getSourceFile() == null
 				|| eventDetails.getSourceFile().isEmpty()
@@ -212,7 +212,7 @@ public class EventBody implements IBody {
 	private Link createLink(Composite parent, String text, int align) {
 		Link link = new Link(parent, SWT.NO_FOCUS | align);
 		link.setText(text);
-		link.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		link.setLayoutData(new GridData(align, SWT.FILL, false, true));
 		return link;
 	}
 
