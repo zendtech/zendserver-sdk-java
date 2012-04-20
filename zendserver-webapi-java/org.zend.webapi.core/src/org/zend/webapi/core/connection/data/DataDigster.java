@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.restlet.data.Disposition;
+import org.restlet.data.MediaType;
 import org.restlet.engine.util.DateUtils;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.ext.xml.NodeList;
@@ -77,10 +78,14 @@ public class DataDigster extends GenericResponseDataVisitor {
 	 * @return validation result
 	 */
 	public boolean validateResponse() {
-		if (representation != null
-				&& representation.getMediaType().getName()
-						.startsWith("application/vnd.zend")) {
-			return true;
+		if (representation != null) {
+			MediaType mediaType = representation.getMediaType();
+			if (mediaType != null) {
+				String mtName = mediaType.getName();
+				if (mtName != null && mtName.startsWith("application/vnd.zend")) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
