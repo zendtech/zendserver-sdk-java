@@ -86,8 +86,16 @@ public class TargetMonitor extends AbstractMonitor {
 			boolean actionsAvailable = checkActions(zendIssue);
 			Date date = getTime(issue.getLastOccurance());
 			if (date != null && date.getTime() >= lastTime) {
-				String basePath = issue.getGeneralDetails().getUrl();
-				IProject project = getProject(basePath);
+				String baseURL = issue.getGeneralDetails().getUrl();
+				IProject project = getProject(baseURL);
+				String basePath = null;
+				if (project != null) {
+					int index = baseURL.indexOf(project.getName());
+					if (index != -1) {
+						basePath = baseURL.substring(index
+								+ project.getName().length(), baseURL.length());
+					}
+				}
 				if (shouldNotify(issue.getSeverity())) {
 					// handle case when have not found a corresponding project
 					if (project != null) {
@@ -99,8 +107,8 @@ public class TargetMonitor extends AbstractMonitor {
 						}
 						Activator.getDefault().getPreferenceStore()
 								.getBoolean(targetId);
-						showNonification(zendIssue, project.getName(), null,
-								delay, actionsAvailable);
+						showNonification(zendIssue, project.getName(),
+								basePath, delay, actionsAvailable);
 					}
 				}
 			}

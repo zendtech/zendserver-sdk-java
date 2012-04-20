@@ -99,11 +99,24 @@ public class EventDetails implements IEventDetails {
 		if (basePath != null && sourceFile != null) {
 			int index = sourceFile.indexOf(basePath);
 			if (index > -1) {
-				String location = sourceFile.substring(index
-						+ basePath.length());
+				String location = sourceFile.substring(index);
 				IPath path = new Path(location);
-				IPath subPath = path.removeFirstSegments(1);
-				return subPath.toString();
+				IResource project = ResourcesPlugin.getWorkspace().getRoot()
+						.findMember(projectName);
+				if (project instanceof IContainer) {
+					while (true) {
+						IResource res = ((IContainer) project).findMember(path);
+						if (res != null) {
+							break;
+						} else {
+							path = path.removeFirstSegments(1);
+						}
+						if (path.segmentCount() == 0) {
+							break;
+						}
+					}
+				}
+				return path.segmentCount() > 0 ? path.toString() : null;
 			}
 		}
 		return null;
