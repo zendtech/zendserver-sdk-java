@@ -156,7 +156,7 @@ public class ServerMonitoringPropertyPage extends PropertyPage implements
 			button.setEnabled(selection);
 		}
 		hideButton.setEnabled(selection);
-		delayText.setEnabled(selection);
+		delayText.setEnabled(hideButton.getSelection());
 	}
 
 	/*
