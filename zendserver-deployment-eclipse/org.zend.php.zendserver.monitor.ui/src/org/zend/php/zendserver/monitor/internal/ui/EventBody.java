@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -234,6 +235,7 @@ public class EventBody implements IBody {
 			Link label, String text) {
 		final EventType type = eventDetails.getType();
 		if (text != null) {
+			text = StringEscapeUtils.unescapeHtml(text);
 			label.setText(text);
 		}
 		int width = Math.max(settings.getWidth(),
