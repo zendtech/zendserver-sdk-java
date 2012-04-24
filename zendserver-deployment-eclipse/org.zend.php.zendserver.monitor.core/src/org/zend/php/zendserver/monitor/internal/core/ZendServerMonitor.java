@@ -160,7 +160,7 @@ public class ZendServerMonitor extends AbstractMonitor {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
-			boolean actionsAvailable = checkActions(zendIssue);
+			int actionsAvailable = checkActions(zendIssue);
 			Date date = getTime(issue.getLastOccurance());
 			if (date != null && date.getTime() >= lastTime) {
 				String basePath = issue.getGeneralDetails().getUrl();

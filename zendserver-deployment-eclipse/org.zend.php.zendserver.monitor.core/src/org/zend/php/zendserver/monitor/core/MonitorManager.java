@@ -39,6 +39,9 @@ public class MonitorManager {
 	public static final String HIDE_KEY = "hide"; //$NON-NLS-1$
 	public static final String HIDE_TIME_KEY = "hide_time"; //$NON-NLS-1$
 
+	public static final int CODE_TRACE = 0x01;
+	public static final int REPEAT = 0x10;
+
 	private static Map<String, ZendServerMonitor> applicationMonitors;
 	private static Map<String, TargetMonitor> targetMonitors;
 

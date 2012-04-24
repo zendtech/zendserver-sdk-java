@@ -30,6 +30,7 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.monitor.IZendIssue;
@@ -39,6 +40,7 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
@@ -154,7 +156,7 @@ public abstract class AbstractMonitor extends Job {
 
 	protected void showNonification(final IZendIssue issue,
 			final String projectName, final String basePath, final int delay,
-			final boolean actionsAvailable) {
+			final int actionsAvailable) {
 		Display.getDefault().asyncExec(new Runnable() {
 
 			public void run() {
@@ -166,13 +168,21 @@ public abstract class AbstractMonitor extends Job {
 		});
 	}
 
-	protected boolean checkActions(IZendIssue issue) {
+	protected int checkActions(IZendIssue issue) {
+		int result = 0;
 		try {
-			issue.getGroupDetails();
+			List<EventsGroupDetails> groups = issue.getGroupDetails();
+			result += MonitorManager.REPEAT;
+			if (groups != null && groups.size() == 1) {
+				String traceId = groups.get(0).getCodeTracing();
+				if (traceId != null && !traceId.isEmpty()) {
+					result += MonitorManager.CODE_TRACE;
+				}
+			}
 		} catch (Exception e) {
-			return false;
+			return 0;
 		}
-		return true;
+		return result;
 	}
 
 	protected abstract IProject getProject(String urlString);

@@ -36,7 +36,7 @@ public interface INotificationProvider {
 	 *            will be visible
 	 */
 	void showNonification(IZendIssue issue, String targetId,
-			IEventDetails eventSource, int delay, boolean actionsAvailable);
+			IEventDetails eventSource, int delay, int actionsAvailable);
 
 	/**
 	 * Displays progress notification.

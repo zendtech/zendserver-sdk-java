@@ -41,6 +41,7 @@ import org.zend.core.notifications.util.FontName;
 import org.zend.core.notifications.util.Fonts;
 import org.zend.php.zendserver.monitor.core.EventType;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
 import org.zend.sdklib.monitor.IZendIssue;
@@ -61,14 +62,14 @@ public class EventBody implements IBody {
 	private IZendIssue zendIssue;
 	private String targetId;
 	private IEventDetails eventDetails;
-	private boolean actionAvailable;
+	private int actionAvailable;
 
 	private IActionListener listener;
 
 	private static ICodeTraceEditorProvider editorProvider;
 
 	public EventBody(String targetId, IEventDetails eventSource,
-			IZendIssue zendIssue, boolean actionsAvailable) {
+			IZendIssue zendIssue, int actionsAvailable) {
 		this.zendIssue = zendIssue;
 		this.targetId = targetId;
 		this.eventDetails = eventSource;
@@ -86,11 +87,20 @@ public class EventBody implements IBody {
 			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
 		createDescription(composite, settings);
-		if (actionAvailable) {
-			createRepeatLink(composite);
-			createTraceLink(composite);
+		if ((actionAvailable & MonitorManager.REPEAT) == MonitorManager.REPEAT) {
+			if ((actionAvailable & MonitorManager.CODE_TRACE) == 0) {
+				new Label(composite, SWT.NONE);
+				createRepeatLink(composite, SWT.CENTER);
+			} else {
+				createRepeatLink(composite, SWT.LEFT);
+			}
+
 		} else {
 			new Label(composite, SWT.NONE);
+		}
+		if ((actionAvailable & MonitorManager.CODE_TRACE) == MonitorManager.CODE_TRACE) {
+			createTraceLink(composite, SWT.CENTER);
+		} else if ((actionAvailable & MonitorManager.REPEAT) == 0) {
 			new Label(composite, SWT.NONE);
 		}
 		createSourceLink(composite);
@@ -118,10 +128,10 @@ public class EventBody implements IBody {
 	public void addMenuItems(Menu menu) {
 	}
 
-	private void createTraceLink(Composite composite) {
+	private void createTraceLink(Composite composite, int align) {
 		if (getProvider() != null) {
 			Link traceLink = createLink(composite,
-					getLinkText(Messages.EventBody_CodetraceLink), SWT.CENTER);
+					getLinkText(Messages.EventBody_CodetraceLink), align);
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -190,9 +200,9 @@ public class EventBody implements IBody {
 		});
 	}
 
-	private void createRepeatLink(Composite composite) {
+	private void createRepeatLink(Composite composite, int align) {
 		Link repeatLink = createLink(composite,
-				getLinkText(Messages.EventBody_2), SWT.LEFT);
+				getLinkText(Messages.EventBody_2), align);
 		repeatLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {

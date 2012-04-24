@@ -34,7 +34,7 @@ public class NotificationProvider implements INotificationProvider {
 	 * org.zend.php.zendserver.monitor.core.IEventDetails, int)
 	 */
 	public void showNonification(IZendIssue issue, String targetId,
-			IEventDetails eventSource, int delay, boolean actionsAvailable) {
+			IEventDetails eventSource, int delay, int actionsAvailable) {
 		NotificationSettings settings = getNotificationSettings(issue,
 				targetId, eventSource, actionsAvailable);
 		if (delay != 0) {
@@ -69,7 +69,7 @@ public class NotificationProvider implements INotificationProvider {
 	}
 
 	private NotificationSettings getNotificationSettings(IZendIssue issue,
-			String targetId, IEventDetails eventSource, boolean actionsAvailable) {
+			String targetId, IEventDetails eventSource, int actionsAvailable) {
 		IBody eventBody = new EventBody(targetId, eventSource, issue,
 				actionsAvailable);
 		NotificationSettings settings = new NotificationSettings();
