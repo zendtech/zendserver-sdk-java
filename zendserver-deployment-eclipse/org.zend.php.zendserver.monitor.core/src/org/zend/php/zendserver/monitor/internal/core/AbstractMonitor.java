@@ -39,6 +39,8 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
@@ -240,6 +242,21 @@ public abstract class AbstractMonitor extends Job {
 									targetId);
 					handleError(monitor, m);
 					return;
+				} else {
+					if (e instanceof UnexpectedResponseCode) {
+						UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+						ResponseCode code = codeException.getResponseCode();
+						switch (code) {
+						case UNSUPPORTED_API_VERSION:
+							String m = MessageFormat
+									.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
+											targetId);
+							handleError(monitor, m);
+							return;
+						default:
+							break;
+						}
+					}
 				}
 			} finally {
 				if (listener != null) {
