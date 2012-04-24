@@ -149,4 +149,17 @@ public class EventDetails implements IEventDetails {
 		return type;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.monitor.core.IEventDetails#isAvailable()
+	 */
+	public boolean isAvailable() {
+		if (getLine() == -1 || getSourceFile() == null
+				|| getSourceFile().isEmpty() || getProjectName() == null) {
+			return false;
+		}
+		return true;
+	}
+
 }

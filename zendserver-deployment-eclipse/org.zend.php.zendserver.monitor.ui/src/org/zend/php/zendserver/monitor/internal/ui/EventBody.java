@@ -87,23 +87,29 @@ public class EventBody implements IBody {
 			NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
 		createDescription(composite, settings);
-		if ((actionAvailable & MonitorManager.REPEAT) == MonitorManager.REPEAT) {
-			if ((actionAvailable & MonitorManager.CODE_TRACE) == 0) {
-				new Label(composite, SWT.NONE);
-				createRepeatLink(composite, SWT.CENTER);
-			} else {
-				createRepeatLink(composite, SWT.LEFT);
-			}
-
-		} else {
+		boolean isRepeat = (actionAvailable & MonitorManager.REPEAT) == MonitorManager.REPEAT;
+		boolean isCodetrace = (actionAvailable & MonitorManager.CODE_TRACE) == MonitorManager.CODE_TRACE;
+		boolean isSource = eventDetails.isAvailable();
+		int repeatAlign = SWT.LEFT;
+		int codetraceAlign = SWT.CENTER;
+		if (!isCodetrace) {
 			new Label(composite, SWT.NONE);
+			repeatAlign = SWT.CENTER;
 		}
-		if ((actionAvailable & MonitorManager.CODE_TRACE) == MonitorManager.CODE_TRACE) {
-			createTraceLink(composite, SWT.CENTER);
-		} else if ((actionAvailable & MonitorManager.REPEAT) == 0) {
+		if (!isSource) {
 			new Label(composite, SWT.NONE);
+			repeatAlign = repeatAlign == SWT.CENTER ? SWT.RIGHT : SWT.CENTER;
+			codetraceAlign = SWT.RIGHT;
 		}
-		createSourceLink(composite);
+		if (isRepeat) {
+			createRepeatLink(composite, repeatAlign);
+		}
+		if (isCodetrace) {
+			createTraceLink(composite, codetraceAlign);
+		}
+		if (isSource) {
+			createSourceLink(composite);
+		}
 		return composite;
 	}
 
@@ -183,13 +189,6 @@ public class EventBody implements IBody {
 	private void createSourceLink(Composite composite) {
 		Link sourceLink = createLink(composite,
 				getLinkText(Messages.EventBody_SourceLink), SWT.RIGHT);
-		if (eventDetails.getLine() == -1
-				|| eventDetails.getSourceFile() == null
-				|| eventDetails.getSourceFile().isEmpty()
-				|| eventDetails.getProjectName() == null) {
-			sourceLink.setVisible(false);
-		}
-
 		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {

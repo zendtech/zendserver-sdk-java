@@ -54,4 +54,12 @@ public interface IEventDetails {
 	 */
 	EventType getType();
 
+	/**
+	 * Checks source availability.
+	 * 
+	 * @return <code>true</code> if source is available; otherwise return
+	 *         <code>false</code>
+	 */
+	boolean isAvailable();
+
 }
