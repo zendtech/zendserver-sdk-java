@@ -272,7 +272,7 @@ public class ZendMonitor extends ZendConnection {
 			List<Issue> list = doGetIssues(filter, offset);
 			if (list != null) {
 				result.addAll(list);
-				offset += 50;
+				offset += list.size();
 			} else {
 				return result;
 			}
@@ -284,7 +284,7 @@ public class ZendMonitor extends ZendConnection {
 		WebApiClient client = getClient();
 		while (true) {
 			IssueList list = client.monitorGetIssuesListPredefinedFilter(
-					filter.getName(), 50, offset, null, null);
+					filter.getName(), 100, offset, null, null);
 			if (list != null) {
 				return list.getIssues();
 			}
