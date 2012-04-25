@@ -23,7 +23,9 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.service.IRequestListener;
+import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 
 /**
  * Abstract subclass for editing target details.
@@ -266,6 +268,16 @@ public abstract class AbstractTargetDetailsComposite {
 					} catch (WebApiException ex) {
 						// before throwing exception, try out all possible ports
 						catchedException = ex;
+						if (ex instanceof UnexpectedResponseCode) {
+							UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
+							ResponseCode code = codeException.getResponseCode();
+							switch (code) {
+							case UNSUPPORTED_API_VERSION:
+								throw catchedException;
+							default:
+								break;
+							}
+						}
 					}
 				}
 			} else {
