@@ -81,7 +81,10 @@ public abstract class AbstractMonitor extends Job {
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
 								InterruptedException {
-							doStart(monitor);
+							if (!doStart(monitor)) {
+								MonitorManager
+										.removeMonitor(AbstractMonitor.this);
+							}
 						}
 					});
 			return true;
@@ -223,7 +226,7 @@ public abstract class AbstractMonitor extends Job {
 		return date;
 	}
 
-	private void doStart(IProgressMonitor monitor) {
+	private boolean doStart(IProgressMonitor monitor) {
 		monitor.beginTask(MessageFormat.format(
 				Messages.AbstractMonitor_EnablingJobName, targetId),
 				IProgressMonitor.UNKNOWN);
@@ -243,7 +246,7 @@ public abstract class AbstractMonitor extends Job {
 							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
 									targetId);
 					handleError(monitor, m);
-					return;
+					return false;
 				}
 			} catch (WebApiException e) {
 				if (e instanceof WebApiCommunicationError) {
@@ -251,7 +254,7 @@ public abstract class AbstractMonitor extends Job {
 							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
 									targetId);
 					handleError(monitor, m);
-					return;
+					return false;
 				} else {
 					if (e instanceof UnexpectedResponseCode) {
 						UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
@@ -262,7 +265,7 @@ public abstract class AbstractMonitor extends Job {
 									.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
 											targetId);
 							handleError(monitor, m);
-							return;
+							return false;
 						default:
 							break;
 						}
@@ -279,6 +282,7 @@ public abstract class AbstractMonitor extends Job {
 			setSystem(true);
 		}
 		AbstractMonitor.this.run(monitor);
+		return true;
 	}
 
 	private void handleError(IProgressMonitor monitor, String m) {

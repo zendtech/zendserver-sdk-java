@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.zendserver.monitor.internal.core.AbstractMonitor;
 import org.zend.php.zendserver.monitor.internal.core.Startup;
 import org.zend.php.zendserver.monitor.internal.core.TargetMonitor;
 import org.zend.php.zendserver.monitor.internal.core.ZendServerMonitor;
@@ -250,6 +251,30 @@ public class MonitorManager {
 			TargetMonitor monitor = targetMonitors.get(key);
 			monitor.cancel();
 			monitor.flushPreferences();
+		}
+	}
+
+	/**
+	 * Remove concrete monitor.
+	 * 
+	 * @param monitor
+	 */
+	public static void removeMonitor(AbstractMonitor monitor) {
+		Set<String> keys = targetMonitors.keySet();
+		for (String key : keys) {
+			TargetMonitor m = targetMonitors.get(key);
+			if (m == monitor) {
+				removeTargetMonitor(key);
+				return;
+			}
+		}
+		keys = applicationMonitors.keySet();
+		for (String key : keys) {
+			ZendServerMonitor m = applicationMonitors.get(key);
+			if (m == monitor) {
+				removeApplicationMonitor(key);
+				return;
+			}
 		}
 	}
 
