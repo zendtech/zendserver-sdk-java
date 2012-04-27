@@ -80,7 +80,7 @@ public enum EventType {
 	}
 
 	public String getLink() {
-		return "http://files.zend.com/help/Zend-Server/" + link + ".htm"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "http://files.zend.com/help/Zend-Server/zend-server.htm#" + link + ".htm"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }
