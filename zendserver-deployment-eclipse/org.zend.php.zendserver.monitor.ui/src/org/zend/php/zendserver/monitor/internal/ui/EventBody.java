@@ -103,6 +103,8 @@ public class EventBody implements IBody {
 		}
 		if (isRepeat) {
 			createRepeatLink(composite, repeatAlign);
+		} else {
+			new Label(composite, SWT.NONE);
 		}
 		if (isCodetrace) {
 			createTraceLink(composite, codetraceAlign);
