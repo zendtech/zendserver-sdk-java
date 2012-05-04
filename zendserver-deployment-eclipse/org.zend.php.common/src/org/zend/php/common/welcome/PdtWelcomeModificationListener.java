@@ -59,6 +59,9 @@ public class PdtWelcomeModificationListener implements
 		if ((setToAdd != null) && (setToAdd.contains(STUDIO_IU)) && status.getSeverity() == IStatus.OK) {
 			RevertUtil ru = new RevertUtil();
 			ru.setRevertTimestamp();
+			
+			// enforce welcome page on upgraded product start
+			WelcomePageFirstTimeStartup.disableFirstStartup(false);
 		}
 	}
 

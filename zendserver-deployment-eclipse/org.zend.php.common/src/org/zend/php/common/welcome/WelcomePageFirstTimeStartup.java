@@ -32,7 +32,7 @@ public class WelcomePageFirstTimeStartup {
 			try {
 				handlerService.executeCommand(
 						"org.zend.php.common.welcome.openEditorCommand", null);
-				pref.setValue(WAS_FIRST_STARTUP, true);
+				disableFirstStartup(true);
 			} catch (ExecutionException e) {
 				Activator.log(e);
 			} catch (NotDefinedException e) {
@@ -43,5 +43,11 @@ public class WelcomePageFirstTimeStartup {
 				Activator.log(e);
 			}
 		}
+	}
+
+	public static void disableFirstStartup(boolean disable) {
+		IPreferenceStore pref = Activator.getDefault()
+				.getPreferenceStore();
+		pref.setValue(WAS_FIRST_STARTUP, disable);
 	}
 }
