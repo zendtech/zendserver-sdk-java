@@ -1,14 +1,11 @@
 package org.zend.php.common;
 
-import java.net.URL;
-
-import org.eclipse.equinox.internal.p2.discovery.AbstractCatalogSource;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 @SuppressWarnings("restriction")
 public class ZendCheckboxTreeLabelProvider implements ILabelProvider {
@@ -48,6 +45,9 @@ public class ZendCheckboxTreeLabelProvider implements ILabelProvider {
 			return ((CatalogCategory) element).getName();
 		else if (element instanceof CatalogItem) {
 			return ((CatalogItem) element).getName();
+		}
+		else if (element instanceof VirtualTreeCategory) {
+			return ((VirtualTreeCategory) element).parent.getName();
 		}
 		return null;
 	}

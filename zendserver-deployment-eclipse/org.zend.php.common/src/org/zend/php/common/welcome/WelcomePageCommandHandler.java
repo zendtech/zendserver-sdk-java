@@ -48,7 +48,7 @@ public class WelcomePageCommandHandler extends AbstractHandler {
 									.find(Activator.getDefault()
 											.getBundle(),
 											new Path(
-													"/resources/welcome/index.html"),
+													"/resources/welcome/PDT-welcome-page.html"),
 											null);
 
 							final IEditorInput editorInput = new PdtWelcomePageEditorInput(

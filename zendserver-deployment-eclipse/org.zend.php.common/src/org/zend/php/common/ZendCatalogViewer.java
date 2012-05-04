@@ -41,7 +41,9 @@ import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -67,6 +69,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 @SuppressWarnings("restriction")
 public class ZendCatalogViewer extends FilteredViewer {
@@ -264,6 +267,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 			loadingLabel.setLayoutData(ldata);
 		}
 		viewer = new CheckboxTreeViewer(viewerComposite, SWT.BORDER | SWT.FILL);
+		viewer.setAutoExpandLevel(99);
 		GridData data = new GridData();
 		data.exclude = true;
 		viewer.getControl().setLayoutData(data);
@@ -331,7 +335,51 @@ public class ZendCatalogViewer extends FilteredViewer {
 				viewerComposite.getShell());
 		tooltip.activateHoverHelp(viewer.getControl());
 
+		viewer.addCheckStateListener(new ICheckStateListener() {
+			
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				// automatically check/uncheck children
+				Object checkedElement = event.getElement();
+				viewer.setSubtreeChecked(checkedElement, event.getChecked());
+				
+				// if a feature is checked but it's not whole studiocore category, then check studiocore too
+				if (event.getChecked()) {
+					Object element = event.getElement();
+					String id = getId(element);
+					
+					
+					if (! "org.zend.pdt.discovery.studiocore".equals(id)) {
+						Object input = viewer.getInput();
+						Object[] topLevel = contentProvider.getElements(input);
+						for (Object tl : topLevel) {
+							String tlId = getId(tl);
+							if (tlId.equals("org.zend.pdt.discovery.studiocore")) {
+								viewer.setSubtreeChecked(tl, true);
+							}
+						}
+					}
+				}
+			}
+		});
+		
 		return viewer;
+	}
+	
+	private String getId(Object element) {
+		if (element instanceof VirtualTreeCategory) {
+			VirtualTreeCategory vcat = (VirtualTreeCategory) element;
+			return vcat.parent.getId();
+			
+		} else if (element instanceof CatalogCategory) {
+			CatalogCategory cat = (CatalogCategory) element;
+			return cat.getId();
+			
+		} else if (element instanceof CatalogItem) {
+			CatalogItem item = (CatalogItem) element;
+			return item.getId();
+		}
+		
+		return null;
 	}
 
 	protected boolean doFilter(CatalogItem item) {
