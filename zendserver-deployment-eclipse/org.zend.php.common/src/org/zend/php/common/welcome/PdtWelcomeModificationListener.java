@@ -8,6 +8,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.common.IProfileModificationListener;
 import org.zend.php.common.RevertUtil;
 
@@ -62,6 +67,29 @@ public class PdtWelcomeModificationListener implements
 			
 			// enforce welcome page on upgraded product start
 			WelcomePageFirstTimeStartup.disableFirstStartup(false);
+			closeWelcomeEditor();
+		}
+	}
+
+	private void closeWelcomeEditor() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+		
+		IEditorReference[] editorRefs = page.getEditorReferences();
+		for (IEditorReference editorRef : editorRefs) {
+			if (WelcomePageEditor.EDITOR_ID.equals(editorRef.getId())) {
+				IEditorPart editor = editorRef.getEditor(false);
+				if (editor != null) {
+					page.closeEditor(editor, false);
+				}
+			}
 		}
 	}
 
