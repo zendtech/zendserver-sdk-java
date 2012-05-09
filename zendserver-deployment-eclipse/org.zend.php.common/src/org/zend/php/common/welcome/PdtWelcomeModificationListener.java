@@ -1,5 +1,9 @@
 package org.zend.php.common.welcome;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IStatus;
@@ -68,6 +72,26 @@ public class PdtWelcomeModificationListener implements
 			// enforce welcome page on upgraded product start
 			WelcomePageFirstTimeStartup.disableFirstStartup(false);
 			closeWelcomeEditor();
+			
+			pingHome();
+		}
+	}
+
+	/**
+	 * Here we make sure that Zend get's notified about upgrade, for statistics
+	 */
+	private void pingHome() {
+		URL url = null;
+		try {
+			url = new URL("http://www.zend.com/en/community/pdt/upgrade");
+		} catch (MalformedURLException e) {
+			// ignore
+		}
+		try {
+			InputStream stream = url.openStream();
+			stream.close();
+		} catch (IOException e) {
+			// ignore
 		}
 	}
 
