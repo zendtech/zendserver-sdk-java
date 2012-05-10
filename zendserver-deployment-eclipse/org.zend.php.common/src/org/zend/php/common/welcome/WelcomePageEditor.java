@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -113,24 +114,31 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		td.horizontalSpan = 2;
 		composite.setLayoutData(td);
 		composite.setBackgroundMode(SWT.INHERIT_FORCE);
-		Browser br = new Browser(composite, SWT.NONE);
-		br.setLayoutData(new GridData(GridData.FILL_BOTH));
-		br.setUrl(((WebBrowserEditorInput) getEditorInput()).getURL()
-				.toString());
-
-		final WelcomeLinkListenerManager m = new WelcomeLinkListenerManager();
-		br.addStatusTextListener(new StatusTextListener() {
-
-			public void changed(StatusTextEvent event) {
-				if (event.text != null) {
-					final Runnable runnable = m.getRunnable(event.text);
-
-					if (runnable != null) {
-						Display.getDefault().asyncExec(runnable);
+		
+		try {
+			Browser br = new Browser(composite, SWT.NONE);
+			br.setLayoutData(new GridData(GridData.FILL_BOTH));
+			br.setUrl(((WebBrowserEditorInput) getEditorInput()).getURL()
+					.toString());
+	
+			final WelcomeLinkListenerManager m = new WelcomeLinkListenerManager();
+			br.addStatusTextListener(new StatusTextListener() {
+	
+				public void changed(StatusTextEvent event) {
+					if (event.text != null) {
+						final Runnable runnable = m.getRunnable(event.text);
+	
+						if (runnable != null) {
+							Display.getDefault().asyncExec(runnable);
+						}
 					}
 				}
-			}
-		});
+			});
+		} catch (Throwable ex) {
+			Label label = new Label(composite, SWT.NONE);
+			label.setText("An error occured while trying to initialize welcome page. Cannot embed any browser.");
+			Activator.log(ex);
+		}
 		
 		hideWelcome();
 	}
