@@ -9,13 +9,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -135,12 +141,44 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				}
 			});
 		} catch (Throwable ex) {
-			Label label = new Label(composite, SWT.NONE);
-			label.setText("An error occured while trying to initialize welcome page. Cannot embed any browser.");
+			composite.dispose();
+			
+			// recreate composite, because it may contain some leftover after browser
+			composite = new Composite(parent, SWT.TRANSPARENT);
+			layout = new GridLayout(1, true);
+			composite.setLayout(layout);
+			td = new GridData(SWT.FILL, SWT.FILL, true, true);
+			td.horizontalSpan = 2;
+			composite.setLayoutData(td);
+			composite.setBackgroundMode(SWT.INHERIT_FORCE);
+			showStaticWelcomeImage(composite);
 			Activator.log(ex);
 		}
 		
 		hideWelcome();
+	}
+
+	private void showStaticWelcomeImage(Composite composite) {
+		Image img = Activator.getDefault().getImageRegistry().get(Activator.PDT_STATIC_WELCOME);
+		
+		ScrolledComposite sc = new ScrolledComposite(composite, SWT.NONE);
+		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
+		sc.setLayout(new GridLayout());
+		
+		final Label label = new Label(sc, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, true));
+		label.setImage(img);
+		label.setSize(img.getImageData().width, img.getImageData().height);
+		
+		
+		final Cursor cursor = composite.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+		label.setCursor (cursor);
+		
+		label.addListener(SWT.MouseUp, new Listener() {
+			public void handleEvent(Event e) {
+				Program.launch("http://www.zend.com/en/products/studio/features");
+			}
+		});
 	}
 
 	private void createFeatureManager(Composite parent) {

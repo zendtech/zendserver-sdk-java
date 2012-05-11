@@ -2,6 +2,7 @@ package org.zend.php.common;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -19,6 +20,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 
 	// The shared instance
 	private static Activator plugin;
+	public static String PDT_STATIC_WELCOME = "resources/welcome/welcome.png";
 	
 	/**
 	 * The constructor
@@ -70,6 +72,11 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 
 	public void earlyStartup() {
 		// empty, all startup logic in Activator.start
+	}
+	
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		reg.put(PDT_STATIC_WELCOME, imageDescriptorFromPlugin(PLUGIN_ID, PDT_STATIC_WELCOME));
 	}
 
 }
