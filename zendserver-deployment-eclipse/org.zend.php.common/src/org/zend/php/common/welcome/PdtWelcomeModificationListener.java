@@ -95,26 +95,31 @@ public class PdtWelcomeModificationListener implements
 		}
 	}
 
-	private void closeWelcomeEditor() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			return;
-		}
-		
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			return;
-		}
-		
-		IEditorReference[] editorRefs = page.getEditorReferences();
-		for (IEditorReference editorRef : editorRefs) {
-			if (WelcomePageEditor.EDITOR_ID.equals(editorRef.getId())) {
-				IEditorPart editor = editorRef.getEditor(false);
-				if (editor != null) {
-					page.closeEditor(editor, false);
+	public static void closeWelcomeEditor() {
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			public void run() {
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (window == null) {
+					return;
+				}
+				
+				IWorkbenchPage page = window.getActivePage();
+				if (page == null) {
+					return;
+				}
+				
+				IEditorReference[] editorRefs = page.getEditorReferences();
+				for (IEditorReference editorRef : editorRefs) {
+					if (WelcomePageEditor.EDITOR_ID.equals(editorRef.getId())) {
+						IEditorPart editor = editorRef.getEditor(false);
+						if (editor != null) {
+							page.closeEditor(editor, false);
+						}
+					}
 				}
 			}
-		}
+		});
 	}
 
 	private boolean isPDtProduct() {
