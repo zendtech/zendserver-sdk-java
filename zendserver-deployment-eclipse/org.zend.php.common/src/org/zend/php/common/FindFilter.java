@@ -4,6 +4,7 @@ import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
 import org.eclipse.equinox.internal.p2.ui.discovery.util.PatternFilter;
 import org.eclipse.jface.viewers.Viewer;
+import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 public class FindFilter extends PatternFilter {
 
@@ -14,11 +15,12 @@ public class FindFilter extends PatternFilter {
 	private boolean filterMatches(String text) {
 		return text != null && wordMatches(text);
 	}
-
 	
 	protected Object[] getChildren(Object element) {
 		if (element instanceof CatalogCategory) {
 			return ((CatalogCategory) element).getItems().toArray();
+		} else if (element instanceof VirtualTreeCategory) {
+			return ((VirtualTreeCategory) element).children.toArray();
 		}
 		return super.getChildren(element);
 	}
@@ -27,14 +29,16 @@ public class FindFilter extends PatternFilter {
 	protected boolean isLeafMatch(Viewer filteredViewer, Object element) {
 		if (element instanceof CatalogItem) {
 			CatalogItem descriptor = (CatalogItem) element;
-			if (!(filterMatches(descriptor.getName())
+			return (filterMatches(descriptor.getName())
 					|| filterMatches(descriptor.getDescription())
 					|| filterMatches(descriptor.getProvider()) || filterMatches(descriptor
-						.getLicense()))) {
-				return false;
-			}
-			return true;
+						.getLicense()));
 		}
+		return true;
+	}
+	
+	@Override
+	protected boolean isParentMatch(Viewer viewer, Object element) {
 		return false;
 	}
 }
