@@ -255,12 +255,6 @@
                id="org.zend.php.zendserver.deployment.ui.targetsview">
          </viewShortcut>
       </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.zend.php.framework.perspective">
-         <viewShortcut
-               id="org.zend.php.zendserver.deployment.ui.targetsview">
-         </viewShortcut>
-      </perspectiveExtension>
    </extension>
 
 </plugin>
