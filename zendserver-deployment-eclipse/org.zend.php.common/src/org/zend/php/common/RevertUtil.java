@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -39,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.common.welcome.PdtStats;
 
 public class RevertUtil {
 
@@ -82,25 +81,7 @@ public class RevertUtil {
 	
 	protected void postRevertFixes() {
 		revertEclipseProductId();
-		pingHome();
-	}
-	
-	/**
-	 * Here we make sure that Zend get's notified about revert, for statistics
-	 */
-	private void pingHome() {
-		URL url = null;
-		try {
-			url = new URL("http://www.zend.com/en/community/pdt/downgrade");
-		} catch (MalformedURLException e) {
-			// ignore
-		}
-		try {
-			InputStream stream = url.openStream();
-			stream.close();
-		} catch (IOException e) {
-			// ignore
-		}
+		PdtStats.visit("http://www.zend.com/en/community/pdt/downgrade");
 	}
 	
 	private void revertEclipseProductId() {
