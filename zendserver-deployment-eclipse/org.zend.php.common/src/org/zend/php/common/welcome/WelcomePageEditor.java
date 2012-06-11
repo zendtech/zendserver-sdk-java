@@ -48,7 +48,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	private ZendCatalogViewer viewer;
 
 	public WelcomePageEditor() {
-		PdtStats.visit("http://www.zend.com/en/community/pdt/upgrade");
 		// TODO Auto-generated constructor stub
 	}
 
