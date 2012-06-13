@@ -1,6 +1,7 @@
 package org.zend.php.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 	}
 
 	private boolean hasCategories;
+	
+	private boolean flattenTopLevelCategories;
 
 	public boolean hasCategories() {
 		return hasCategories;
@@ -36,6 +39,10 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 
 	public void setHasCategories(boolean hasCategories) {
 		this.hasCategories = hasCategories;
+	}
+	
+	public void setFlattenTopLevelCategories(boolean flatten) {
+		this.flattenTopLevelCategories = flatten;
 	}
 
 	public void dispose() {
@@ -76,7 +83,14 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 			List<Object> elements = new ArrayList<Object>();
 			if (hasCategories()) {
 				List categories = buildCategoriesTree(catalog.getCategories());
-				elements.addAll(categories);	
+				
+				if (! flattenTopLevelCategories) {
+					elements.addAll(categories);
+				} else {
+					for (Object category : categories) {
+						elements.addAll(Arrays.asList(getChildren(category)));
+					}
+				}
 			} else {
 				elements.addAll(catalog.getItems());
 			}

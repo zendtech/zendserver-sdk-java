@@ -736,4 +736,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 		contentProvider.setHasCategories(doShowCategories);
 	}
 	
+	public void setFlattenTopLevelCategories(boolean flatten) {
+		contentProvider.setFlattenTopLevelCategories(flatten);
+	}
+	
 }

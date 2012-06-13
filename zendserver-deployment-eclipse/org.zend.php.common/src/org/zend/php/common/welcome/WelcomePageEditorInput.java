@@ -15,6 +15,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	
 	private String discoveryFile;
 	private boolean showCategories;
+	private boolean doFlattenTopLevelCategories;
 	private String progressDialogMsg;
 
 	public WelcomePageEditorInput() {
@@ -27,11 +28,12 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg) {
+	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg, boolean flatTopLevel) {
 		super(url, style, browserId);
 		this.discoveryFile = discoveryFile;
 		this.showCategories = showCategories;
 		this.progressDialogMsg = progressDialogMsg;
+		this.doFlattenTopLevelCategories = flatTopLevel;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -118,9 +120,13 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		if (showCategories == null) {
 			showCategories = false;
 		}
+		Boolean flatTopLevel =memento.getBoolean("flatTopLevel");
+		if (flatTopLevel == null) {
+			flatTopLevel = true;
+		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
 		
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg);
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg, flatTopLevel);
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
@@ -133,11 +139,16 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	public void initFeaturesViewer(ZendCatalogViewer viewer) {
 		viewer.setDiscoveryDirFileName(getDiscoveryDirFileName());
 		viewer.setShowCategories(doShowCategories());
+		viewer.setFlattenTopLevelCategories(doFlattenTopLevelCategories());
 		viewer.setOperationName(progressDialogMsg);
 	}
 
 	public boolean doShowCategories() {
 		return showCategories;
+	}
+	
+	public boolean doFlattenTopLevelCategories() {
+		return doFlattenTopLevelCategories;
 	}
 
 }
