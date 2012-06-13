@@ -50,7 +50,7 @@ public class StudioFeaturesCheckStateListener implements
 						}
 				}
 				
-				if (! studioSubIds.contains(id)) {
+				if ((studioSubIds != null) && (! studioSubIds.contains(id))) {
 					selectedExtraFeatures.add(id);
 				}
 			}
