@@ -41,6 +41,7 @@ import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -139,6 +140,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 	protected ProfileModificationHelper pm;
 
 	private StudioFeaturesCheckStateListener checkStateListener;
+
+	private int autoExpandLevel;
 	
 	public ZendCatalogViewer(IShellProvider shellProvider,
 			IRunnableContext context) {
@@ -266,7 +269,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 			loadingLabel.setLayoutData(ldata);
 		}
 		viewer = new CheckboxTreeViewer(viewerComposite, SWT.BORDER | SWT.FILL);
-		viewer.setAutoExpandLevel(99);
+		viewer.setAutoExpandLevel(this.autoExpandLevel);
 		GridData data = new GridData();
 		data.exclude = true;
 		viewer.getControl().setLayoutData(data);
@@ -738,6 +741,18 @@ public class ZendCatalogViewer extends FilteredViewer {
 	
 	public void setFlattenTopLevelCategories(boolean flatten) {
 		contentProvider.setFlattenTopLevelCategories(flatten);
+	}
+	
+	public void setAutoExpandCategories(boolean expand) {
+		this.autoExpandLevel = expand ? AbstractTreeViewer.ALL_LEVELS : 0;
+		if (viewer != null) {
+			viewer.setAutoExpandLevel(autoExpandLevel);
+			if (expand) {
+				viewer.expandAll();
+			} else {
+				viewer.collapseAll();
+			}
+		}
 	}
 	
 }

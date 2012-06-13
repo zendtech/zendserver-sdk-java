@@ -16,6 +16,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	private String discoveryFile;
 	private boolean showCategories;
 	private boolean doFlattenTopLevelCategories;
+	private boolean autoExpandCategories;
 	private String progressDialogMsg;
 
 	public WelcomePageEditorInput() {
@@ -28,12 +29,13 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg, boolean flatTopLevel) {
+	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg, boolean flatTopLevel, boolean autoExpandCategories) {
 		super(url, style, browserId);
 		this.discoveryFile = discoveryFile;
 		this.showCategories = showCategories;
 		this.progressDialogMsg = progressDialogMsg;
 		this.doFlattenTopLevelCategories = flatTopLevel;
+		this.autoExpandCategories = autoExpandCategories;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -124,9 +126,13 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		if (flatTopLevel == null) {
 			flatTopLevel = true;
 		}
+		Boolean autoExpandCategories =memento.getBoolean("autoExpandCategories");
+		if (autoExpandCategories == null) {
+			autoExpandCategories = true;
+		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
 		
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg, flatTopLevel);
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg, flatTopLevel, autoExpandCategories);
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
@@ -138,17 +144,9 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 
 	public void initFeaturesViewer(ZendCatalogViewer viewer) {
 		viewer.setDiscoveryDirFileName(getDiscoveryDirFileName());
-		viewer.setShowCategories(doShowCategories());
-		viewer.setFlattenTopLevelCategories(doFlattenTopLevelCategories());
+		viewer.setShowCategories(showCategories);
+		viewer.setFlattenTopLevelCategories(doFlattenTopLevelCategories);
+		viewer.setAutoExpandCategories(autoExpandCategories);
 		viewer.setOperationName(progressDialogMsg);
 	}
-
-	public boolean doShowCategories() {
-		return showCategories;
-	}
-	
-	public boolean doFlattenTopLevelCategories() {
-		return doFlattenTopLevelCategories;
-	}
-
 }
