@@ -46,9 +46,11 @@ public class RevertUtil {
 	
 	public static void revertToPdt() {
 		RevertUtil ru = new RevertUtil();
-		
 		IProfile snapshot = ru.figureOutLastPreStudioSnapshot();
-		ru.revert(snapshot);
+		boolean success = ru.doRevert(snapshot);
+		if (success) {
+			ru.postRevertFixes();
+		}
 	}
 
 	private IProfile figureOutLastPreStudioSnapshot() {
