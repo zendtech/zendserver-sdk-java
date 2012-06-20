@@ -12,7 +12,7 @@ import org.zend.php.common.welcome.WelcomePageFirstTimeStartup;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin implements IStartup {
+public class Activator extends AbstractUIPlugin {
 
 	public static final int INTERNAL_ERROR = 10001;
 	// The plug-in ID
@@ -66,10 +66,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 
 	public static void logErrorMessage(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, null));
-	}
-
-	public void earlyStartup() {
-		// empty, all startup logic in Activator.start
 	}
 	
 	@Override
