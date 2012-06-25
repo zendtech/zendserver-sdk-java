@@ -217,12 +217,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				.getNode(Activator.PLUGIN_ID);
 
 		if (preferences.getBoolean(IS_FIRST_WELCOME_STARTUP, true)) {
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					reopenOutlineView();
-					preferences.putBoolean(IS_FIRST_WELCOME_STARTUP, false);
-				}
-			});
+			preferences.putBoolean(IS_FIRST_WELCOME_STARTUP, false);
 		}
 		super.dispose();
 	}
