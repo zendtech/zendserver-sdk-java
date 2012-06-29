@@ -1,18 +1,23 @@
 package org.zend.php.common.welcome;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
+import org.zend.php.common.Activator;
 import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
-	
+
 	private String discoveryFile;
 	private boolean showCategories;
 	private boolean doFlattenTopLevelCategories;
@@ -29,7 +34,10 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WelcomePageEditorInput(URL url, int style, String browserId, String discoveryFile, boolean showCategories, String progressDialogMsg, boolean flatTopLevel, boolean autoExpandCategories) {
+	public WelcomePageEditorInput(URL url, int style, String browserId,
+			String discoveryFile, boolean showCategories,
+			String progressDialogMsg, boolean flatTopLevel,
+			boolean autoExpandCategories) {
 		super(url, style, browserId);
 		this.discoveryFile = discoveryFile;
 		this.showCategories = showCategories;
@@ -85,7 +93,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 	public String getDiscoveryDirFileName() {
 		return discoveryFile;
 	}
-	
+
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		if (discoveryFile != null) {
@@ -94,7 +102,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		memento.putBoolean("categories", showCategories);
 		memento.putString("progressDialogMsg", progressDialogMsg);
 	}
-	
+
 	public IAdaptable createElement(IMemento memento) {
 		int style = 0;
 		Integer integer = memento.getInteger("style");
@@ -107,8 +115,14 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		if (str != null) {
 			try {
 				url = new URL(str);
-			}
-			catch (MalformedURLException e) {
+				if (!URLExists(url)) {
+					url = FileLocator
+							.find(Activator.getDefault().getBundle(),
+									new Path(
+											"/resources/welcome/PDT-welcome-page.html"),
+									null);
+				}
+			} catch (MalformedURLException e) {
 				String msg = "Malformed URL while initializing browser editor"; //$NON-NLS-1$
 				WebBrowserUIPlugin.logError(msg, e);
 			}
@@ -118,21 +132,24 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		String name = memento.getString("name");
 		String tooltip = memento.getString("tooltip");
 		String discoveryFileName = memento.getString("discoveryFile");
-		Boolean showCategories =memento.getBoolean("categories");
+		Boolean showCategories = memento.getBoolean("categories");
 		if (showCategories == null) {
 			showCategories = false;
 		}
-		Boolean flatTopLevel =memento.getBoolean("flatTopLevel");
+		Boolean flatTopLevel = memento.getBoolean("flatTopLevel");
 		if (flatTopLevel == null) {
 			flatTopLevel = true;
 		}
-		Boolean autoExpandCategories =memento.getBoolean("autoExpandCategories");
+		Boolean autoExpandCategories = memento
+				.getBoolean("autoExpandCategories");
 		if (autoExpandCategories == null) {
 			autoExpandCategories = true;
 		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
-		
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style, id, discoveryFileName, showCategories, progressDialogMsg, flatTopLevel, autoExpandCategories);
+
+		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style,
+				id, discoveryFileName, showCategories, progressDialogMsg,
+				flatTopLevel, autoExpandCategories);
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
@@ -148,5 +165,15 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		viewer.setFlattenTopLevelCategories(doFlattenTopLevelCategories);
 		viewer.setAutoExpandCategories(autoExpandCategories);
 		viewer.setOperationName(progressDialogMsg);
+	}
+
+	Boolean URLExists(URL fileURL) {
+		File f;
+		try {
+			f = new File(FileLocator.toFileURL(fileURL).getPath());
+			return f.exists();
+		} catch (IOException e) {
+		}
+		return false;
 	}
 }
