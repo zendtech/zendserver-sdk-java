@@ -1,10 +1,12 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -23,7 +25,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -31,8 +32,12 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
+import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public class OverviewPage extends DescriptorEditorPage {
+
+	private static final String TESTING_EXTENSION_POINT = Activator.PLUGIN_ID
+			+ ".testingSectionContribution"; //$NON-NLS-1$
 
 	private static final String VIEW = "view:"; //$NON-NLS-1$
 
@@ -53,7 +58,8 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	private IDescriptorContainer fModel;
 
-	public OverviewPage(DeploymentDescriptorEditor editor, IDescriptorContainer model) {
+	public OverviewPage(DeploymentDescriptorEditor editor,
+			IDescriptorContainer model) {
 		super(editor, "overview", Messages.OverviewPage_Overview); //$NON-NLS-1$
 		this.fModel = model;
 	}
@@ -65,30 +71,33 @@ public class OverviewPage extends DescriptorEditorPage {
 		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(
 				FormLayoutFactory.createFormTableWrapLayout(true, 2));
-		
+
 		final FormToolkit toolkit = managedForm.getToolkit();
 		final Composite body = managedForm.getForm().getBody();
-		
+
 		Composite left = toolkit.createComposite(body);
-		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
+		left.setLayout(FormLayoutFactory
+				.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
+
 		createGeneralInformationSection(managedForm, left);
 		createPersistentResourcesSection(managedForm, left);
 
 		Composite right = toolkit.createComposite(body);
-		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
+		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false,
+				1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
+
 		createTestingSection(managedForm, right);
 		createExportingSection(managedForm, right);
-		
+
 		form.reflow(true);
-		
+
 		showMarkers();
 	}
 
-	private void createPersistentResourcesSection(IManagedForm managedForm, Composite left) {
+	private void createPersistentResourcesSection(IManagedForm managedForm,
+			Composite left) {
 		persistent = new ResourceListSection(editor, managedForm,
 				Messages.OverviewPage_PersistentResources,
 				Messages.OverviewPage_PersistentResourcesDescription, left) {
@@ -105,7 +114,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				IProject root = editor.getProject();
 				String[] newPaths = OpenFileDialog.openAny(shell, root,
 						Messages.OverviewPage_AddPath,
-						Messages.OverviewPage_SelectPath, 
+						Messages.OverviewPage_SelectPath,
 						Messages.OverviewPage_2, null);
 				if (newPaths == null) {
 					return;
@@ -198,18 +207,19 @@ public class OverviewPage extends DescriptorEditorPage {
 	private void createTestingSection(IManagedForm managedForm, Composite body) {
 		FormToolkit toolkit = managedForm.getToolkit();
 
-		Section section = toolkit.createSection(body, Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(body, Section.TITLE_BAR
+				| Section.EXPANDED);
 		section.setText(Messages.OverviewPage_Testing);
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
-		
+
 		final Composite sectionClient = toolkit.createComposite(section);
-		
+
 		FormText formText = toolkit.createFormText(sectionClient, true);
 		formText.setText(Messages.OverviewPage_TestingDescr, true, true);
 		formText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
-			
+
 			public void linkActivated(HyperlinkEvent e) {
 				Object obj = e.getHref();
 				String href = (String) obj;
@@ -223,29 +233,47 @@ public class OverviewPage extends DescriptorEditorPage {
 				}
 			}
 		});
-		
+
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
 
-		ContributionManager contributionManager = new ContributionManager() {
-			
-			public void update(boolean force) {
-				updateTestingActions(sectionClient, getItems());
-			}
-		};
-		contributionManager.add(new GroupMarker("testing")); //$NON-NLS-1$
-		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
-		service.populateContributionManager(contributionManager, DeploymentDescriptorEditor.TOOLBAR_LOCATION_URI);
-		contributionManager.update(false);
+		List<ITestingSectionContribution> contributions = getTestingContributions();
+		for (ITestingSectionContribution c : contributions) {
+			ContributionControl control = new ContributionControl(
+					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
+			control.createControl(sectionClient);
+		}
 	}
 
-	protected void updateTestingActions(Composite parent, IContributionItem[] items) {
+	private List<ITestingSectionContribution> getTestingContributions() {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(TESTING_EXTENSION_POINT);
+		List<ITestingSectionContribution> result = new ArrayList<ITestingSectionContribution>();
+		for (IConfigurationElement element : elements) {
+			if ("contribution".equals(element.getName())) { //$NON-NLS-1$
+				try {
+					Object listener = element
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					if (listener instanceof ITestingSectionContribution) {
+						result.add((ITestingSectionContribution) listener);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		return result;
+	}
+
+	protected void updateTestingActions(Composite parent,
+			IContributionItem[] items) {
 		for (IContributionItem item : items) {
 			item.fill(parent);
 		}
 	}
 
-	private void createGeneralInformationSection(IManagedForm managedForm, Composite body) {
+	private void createGeneralInformationSection(IManagedForm managedForm,
+			Composite body) {
 		IDeploymentDescriptor descr = editor.getModel();
 
 		name = addField(new TextField(descr,
@@ -256,7 +284,8 @@ public class OverviewPage extends DescriptorEditorPage {
 				Messages.OverviewPage_Summary));
 		description = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
-				Messages.OverviewPage_Description, SWT.MULTI|SWT.WRAP|SWT.V_SCROLL|SWT.RESIZE, false));
+				Messages.OverviewPage_Description, SWT.MULTI | SWT.WRAP
+						| SWT.V_SCROLL | SWT.RESIZE, false));
 		releaseVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_RELEASE,
 				Messages.OverviewPage_0));
@@ -264,8 +293,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				DeploymentDescriptorPackage.VERSION_API,
 				Messages.OverviewPage_1));
 		healthcheck = addField(new TextField(descr,
-				DeploymentDescriptorPackage.HEALTHCHECK,
-				"Health-check URL"));
+				DeploymentDescriptorPackage.HEALTHCHECK, "Health-check URL"));
 		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
 				"License", editor.getProject())); //$NON-NLS-1$
@@ -279,8 +307,8 @@ public class OverviewPage extends DescriptorEditorPage {
 				Messages.OverviewPage_Appdir));
 
 		FormToolkit toolkit = managedForm.getToolkit();
-		Section section = toolkit.createSection(body,
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(body, Section.DESCRIPTION
+				| Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_GeneralInfo);
 		section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
 		Composite sectionClient = toolkit.createComposite(section);
@@ -295,20 +323,20 @@ public class OverviewPage extends DescriptorEditorPage {
 		name.create(sectionClient, toolkit);
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
-		((GridData)description.getText().getLayoutData()).heightHint = 50;
-		((GridData)description.getText().getLayoutData()).widthHint = 50;
-		
+		((GridData) description.getText().getLayoutData()).heightHint = 50;
+		((GridData) description.getText().getLayoutData()).widthHint = 50;
+
 		releaseVersion.create(sectionClient, toolkit);
 		apiVersion.create(sectionClient, toolkit);
 		healthcheck.create(sectionClient, toolkit);
 
 		appDir.create(sectionClient, toolkit);
 		docRoot.create(sectionClient, toolkit);
-		
+
 		license.create(sectionClient, toolkit);
 
 		icon.create(sectionClient, toolkit);
-		
+
 		toolkit.paintBordersFor(sectionClient);
 	}
 
@@ -345,10 +373,10 @@ public class OverviewPage extends DescriptorEditorPage {
 		appDir.refresh();
 		persistent.refresh();
 	}
-	
+
 	@Override
 	protected String getHelpResource() {
 		return HelpContextIds.OVERVIEW_TAB;
 	}
-	
+
 }
