@@ -4,22 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.menus.IMenuService;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
+import org.zend.php.zendserver.deployment.ui.actions.ToolbarAction;
+import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 /**
- * Descriptor editor form page, capable of auto-refreshing it's contents and handling markers.
+ * Descriptor editor form page, capable of auto-refreshing it's contents and
+ * handling markers.
  */
 public abstract class DescriptorEditorPage extends FormPage {
 
-	private static final String HEAD = "head"; //$NON-NLS-1$
+	private static final String TESTING_EXTENSION_POINT = Activator.PLUGIN_ID
+			+ ".testingSectionContribution"; //$NON-NLS-1$
 
 	private FieldsContainer fields = new FieldsContainer();
 
@@ -28,12 +34,13 @@ public abstract class DescriptorEditorPage extends FormPage {
 	public static class FormDecoration {
 		public String message;
 		public int severity;
+
 		public FormDecoration(String message, int severity) {
 			this.message = message;
 			this.severity = severity;
 		}
 	}
-	
+
 	public DescriptorEditorPage(DeploymentDescriptorEditor editor, String id,
 			String title) {
 		super(editor, id, title);
@@ -46,20 +53,22 @@ public abstract class DescriptorEditorPage extends FormPage {
 	}
 
 	public abstract void refresh();
-	
+
 	public void showMarkers() {
-		Map<Feature, FormDecoration>toShow = editor.getDecorationsForFeatures(fields.keySet());
+		Map<Feature, FormDecoration> toShow = editor
+				.getDecorationsForFeatures(fields.keySet());
 		List<Feature> toRemove = new ArrayList<Feature>(fields.keySet());
 		toRemove.removeAll(toShow.keySet());
 		refreshMarkers(toShow, toRemove);
 	}
-	
+
 	private void refreshMarkers(final Map<Feature, FormDecoration> toShow,
 			final List<Feature> toRemove) {
-		if ((toShow == null || toShow.size() == 0) && (toRemove == null || toRemove.size() == 0)) {
+		if ((toShow == null || toShow.size() == 0)
+				&& (toRemove == null || toRemove.size() == 0)) {
 			return;
 		}
-		
+
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				fields.refreshMarkers(toShow, toRemove);
@@ -75,10 +84,12 @@ public abstract class DescriptorEditorPage extends FormPage {
 		managedForm.getToolkit().decorateFormHeading(form.getForm());
 		form.setText(getTitle());
 		IToolBarManager mgr = form.getToolBarManager();
-		mgr.add(new GroupMarker(HEAD));
-		IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
-		service.populateContributionManager((ContributionManager) mgr, DeploymentDescriptorEditor.TOOLBAR_LOCATION_URI);
-		
+		List<ITestingSectionContribution> contributions = getTestingContributions();
+		for (ITestingSectionContribution c : contributions) {
+			Action action = new ToolbarAction(c.getCommand(), c.getMode(),
+					c.getLabel(), c.getIcon());
+			mgr.add(action);
+		}
 		final String helpContextID = getHelpResource();
 		if (helpContextID != null) {
 			mgr.add(new HelpAction(helpContextID));
@@ -99,4 +110,25 @@ public abstract class DescriptorEditorPage extends FormPage {
 	protected TextField addField(TextField field) {
 		return (TextField) fields.add(field);
 	}
+
+	protected List<ITestingSectionContribution> getTestingContributions() {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(TESTING_EXTENSION_POINT);
+		List<ITestingSectionContribution> result = new ArrayList<ITestingSectionContribution>();
+		for (IConfigurationElement element : elements) {
+			if ("contribution".equals(element.getName())) { //$NON-NLS-1$
+				try {
+					Object listener = element
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					if (listener instanceof ITestingSectionContribution) {
+						result.add((ITestingSectionContribution) listener);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		return result;
+	}
+	
 }

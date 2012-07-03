@@ -1,12 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -35,9 +31,6 @@ import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public class OverviewPage extends DescriptorEditorPage {
-
-	private static final String TESTING_EXTENSION_POINT = Activator.PLUGIN_ID
-			+ ".testingSectionContribution"; //$NON-NLS-1$
 
 	private static final String VIEW = "view:"; //$NON-NLS-1$
 
@@ -243,26 +236,6 @@ public class OverviewPage extends DescriptorEditorPage {
 					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
 			control.createControl(sectionClient);
 		}
-	}
-
-	private List<ITestingSectionContribution> getTestingContributions() {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(TESTING_EXTENSION_POINT);
-		List<ITestingSectionContribution> result = new ArrayList<ITestingSectionContribution>();
-		for (IConfigurationElement element : elements) {
-			if ("contribution".equals(element.getName())) { //$NON-NLS-1$
-				try {
-					Object listener = element
-							.createExecutableExtension("class"); //$NON-NLS-1$
-					if (listener instanceof ITestingSectionContribution) {
-						result.add((ITestingSectionContribution) listener);
-					}
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
-			}
-		}
-		return result;
 	}
 
 	protected void updateTestingActions(Composite parent,

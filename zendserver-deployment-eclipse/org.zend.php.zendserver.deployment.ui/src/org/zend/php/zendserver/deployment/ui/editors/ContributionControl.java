@@ -8,8 +8,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
@@ -21,19 +21,16 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public class ContributionControl {
 
-	public static final String PROJECT_NAME = "projectName"; //$NON-NLS-1$
-	public static final String MODE = "mode"; //$NON-NLS-1$
-	public static final String TARGET_ID = "targetId"; //$NON-NLS-1$
-
 	private String mode;
 	private String message;
-	private Image image;
+	private ImageDescriptor image;
 	private String commandId;
 
-	public ContributionControl(String commandId, String mode, String message, Image image) {
+	public ContributionControl(String commandId, String mode, String message, ImageDescriptor image) {
 		super();
 		this.mode = mode;
 		this.message = message;
@@ -46,18 +43,17 @@ public class ContributionControl {
 
 		ImageHyperlink link = toolkit.createImageHyperlink(parent, SWT.NONE);
 		link.setText(message);
-		link.setImage(image);
+		link.setImage(image.createImage());
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				;
 				IProject project = getProject();
 				if (project != null) {
 					ICommandService service = ((ICommandService) PlatformUI.getWorkbench()
 							.getService(ICommandService.class));
 					Command command = service.getCommand(commandId);
 					Map<String, String> params = new HashMap<String, String>();
-					params.put(PROJECT_NAME, project.getName());
-					params.put(MODE, mode);
+					params.put(ITestingSectionContribution.PROJECT_NAME, project.getName());
+					params.put(ITestingSectionContribution.MODE, mode);
 					ExecutionEvent event = new ExecutionEvent(command, params, null,
 							null);
 					try {
