@@ -212,8 +212,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				LibraryMapping libraryMapping = LibraryMapping.create(
 						entry.getFolder(), mapping.getPath());
 				if (libraryMapping != null) {
-					String mappingFolder = folderName + File.separator
-							+ libraryMapping.getFolder();
+					String mappingFolder = folderName;
+					if (!libraryMapping.getFolder().isEmpty()) {
+						mappingFolder += File.separator
+								+ libraryMapping.getFolder();
+					}
 					String library = libraryMapping.getLibraryPath();
 					File libraryFile = new File(library);
 					if (!libraryFile.isAbsolute()) {
