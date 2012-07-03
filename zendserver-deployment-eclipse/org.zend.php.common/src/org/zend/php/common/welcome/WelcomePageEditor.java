@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -55,8 +56,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	private static final String VIEWS_TO_REOPEN = "viewsToReopen";
 
 	public static final String EDITOR_ID = "org.zend.customization.welcome.welcomePageEditor"; //$NON-NLS-1$
-
-	private static final String IS_FIRST_WELCOME_STARTUP = "isFirstWelcomeStartup"; //$NON-NLS-1$
 
 	private ZendCatalogViewer viewer;
 
@@ -168,8 +167,16 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			showStaticWelcomeImage(composite);
 			Activator.log(ex);
 		}
-
-		hideRightSideViews();
+		
+		Composite editorComp = parent;
+		while(!(editorComp instanceof CTabFolder)&&editorComp!=null){
+			editorComp = editorComp.getParent();
+		}
+		if (editorComp instanceof CTabFolder) {
+			if (editorComp.getSize().x<800) {
+				hideRightSideViews();
+			}
+		}
 	}
 
 	private void showStaticWelcomeImage(Composite composite) {
@@ -227,23 +234,12 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	}
 
 	public void dispose() {
-		final Preferences preferences = ConfigurationScope.INSTANCE
-				.getNode(Activator.PLUGIN_ID);
 
 		Display.getDefault().asyncExec(new Runnable() {//change syncExec to asyncExec,or there is NPE
 				public void run() {
 					reopenRightSideViews();
 				}
 			});
-		
-		if (preferences.getBoolean(IS_FIRST_WELCOME_STARTUP, true)) {
-			preferences.putBoolean(IS_FIRST_WELCOME_STARTUP, false);
-			preferences.putBoolean(IS_FIRST_WELCOME_STARTUP, false);
-			try {
-				preferences.flush();
-			} catch (BackingStoreException e) {
-			}
-		}
 		super.dispose();
 	}
 	
