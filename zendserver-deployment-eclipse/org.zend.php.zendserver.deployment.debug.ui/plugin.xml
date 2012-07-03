@@ -152,11 +152,26 @@
                name="mode"
                optional="false">
          </commandParameter>
+         <commandParameter
+               id="projectName"
+               name="projectName"
+               optional="false">
+         </commandParameter>
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
             name="Deploy PHP Application">
+            <commandParameter
+               id="mode"
+               name="mode"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="projectName"
+               name="projectName"
+               optional="false">
+         </commandParameter>
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenApplicationHandler"
@@ -193,6 +208,18 @@
                type="org.eclipse.jface.viewers.IDoubleClickListener">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.zend.php.zendserver.deployment.ui.testingSectionContribution">
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.RunApplicationContribution">
+      </contribution>
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.DebugApplicationContribution">
+      </contribution>
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployApplicationContribution">
+      </contribution>
    </extension>
 
 </plugin>

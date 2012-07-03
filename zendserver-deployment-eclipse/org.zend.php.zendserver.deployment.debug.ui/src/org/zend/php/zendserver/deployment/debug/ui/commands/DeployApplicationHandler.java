@@ -17,12 +17,12 @@ import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHandler;
-import org.zend.php.zendserver.deployment.debug.ui.contributions.ApplicationContribution;
+import org.zend.php.zendserver.deployment.debug.ui.contributions.TestingSectionContribution;
 
 public class DeployApplicationHandler extends AbstractDeploymentHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String mode = event.getParameter(ApplicationContribution.MODE);
+		String mode = event.getParameter(TestingSectionContribution.MODE);
 
 		Object obj = event.getApplicationContext();
 		IEvaluationContext ctx = null;
@@ -34,11 +34,14 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 		String targetId = null;
 
 		if (ctx != null) {
-			projects = getProjects(ctx.getVariable(ApplicationContribution.PROJECT_NAME));
-			targetId = (String) ctx.getVariable(ApplicationContribution.TARGET_ID);
+			projects = getProjects(ctx.getVariable(TestingSectionContribution.PROJECT_NAME));
+			Object targetIdVariable = ctx.getVariable(TestingSectionContribution.TARGET_ID);
+			if (targetIdVariable instanceof String) {
+				targetId = (String) targetIdVariable;
+			}
 		}
 		if (projects == null) {
-			projects = getProjects(event.getParameter(ApplicationContribution.PROJECT_NAME));
+			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
 		}
 		if (projects == null) {
 			projects = new IProject[] { getProjectFromEditor() };
