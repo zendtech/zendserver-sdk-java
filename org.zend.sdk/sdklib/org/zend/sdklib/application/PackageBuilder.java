@@ -322,7 +322,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private String getContainerRelativePath(String path) {
-		int position = container.getAbsolutePath().length() + 1;
+		String containerPath = container.getAbsolutePath();
+		int position = containerPath.length() + 1;
+		if (!path.startsWith(containerPath) || position >= path.length()) {
+			return path;
+		}
 		return path.substring(position);
 	}
 
