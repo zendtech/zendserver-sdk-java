@@ -1,14 +1,10 @@
 package org.zend.php.zendserver.deployment.debug.ui.contributions;
 
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public class TestingSectionContribution implements ITestingSectionContribution {
-	
-	public static final String PROJECT_NAME = "projectName"; //$NON-NLS-1$
-	public static final String MODE = "mode"; //$NON-NLS-1$
-	public static final String TARGET_ID = "targetId"; //$NON-NLS-1$
 	
 	private String label;
 	private String command;
@@ -28,8 +24,8 @@ public class TestingSectionContribution implements ITestingSectionContribution {
 		return label;
 	}
 
-	public Image getIcon() {
-		return Activator.getImageDescriptor(image).createImage();
+	public ImageDescriptor getIcon() {
+		return Activator.getImageDescriptor(image);
 	}
 
 	public String getCommand() {
