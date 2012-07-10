@@ -9,10 +9,14 @@ public class Messages extends NLS {
 	private static final String CONSTRUCTED_MESSAGES_BUNDLE_ID = "org.zend.php.zendserver.deployment.ui.ConstructedMessages"; //$NON-NLS-1$
 	
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.messages"; //$NON-NLS-1$
+
+	public static String TargetDetailsPage_TargetDetails;
+	public static String TargetDetailsPage_AddTarget;
+	public static String TargetDetailsPage_SpecifyTargetDetails;
 	
 	public static String AddTargetAction_AddNewTarget;
-	public static String AddTargetAction_AddTarget;
 	public static String AddTargetAction_AddTargetMessage;
+	public static String AddTargetAction_AddTarget;
 	public static String AppTreeSection_AppDirMapping;
 	public static String AppTreeSection_InfoAboutAppdirFolder;
 	public static String AutomationPage_Description;
@@ -152,9 +156,12 @@ public class Messages extends NLS {
 	public static String SelectTargetTypePage_SelectTargetFromList;
 	public static String SelectTargetTypePage_SelectTargetType;
 	public static String SelectTargetTypePage_ZendServer;
-	public static String TargetDetailsPage_AddTarget;
-	public static String TargetDetailsPage_SpecifyTargetDetails;
-	public static String TargetDetailsPage_TargetDetails;
+	public static String TargetDetailsPage_1;
+
+	public static String TargetDetailsPage_3;
+
+	public static String TargetDetailsPage_4;
+
 	public static String TargetDialog_Host;
 	public static String TargetDialog_HostTooltip;
 	public static String TargetDialog_Id;

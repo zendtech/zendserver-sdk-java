@@ -24,14 +24,17 @@ public class TargetDetailsPage extends WizardPage {
 	private IZendTarget[] targets;
 
 	private IZendTarget defaultTargetSettings;
+	CreateTargetWizard wizard;
+	private String type;
 	
-	public TargetDetailsPage(Contribution[] elements) {
+	public TargetDetailsPage(Contribution[] elements, CreateTargetWizard createTargetWizard) {
 		super(Messages.TargetDetailsPage_TargetDetails);
 		setTitle(Messages.TargetDetailsPage_AddTarget);
 		setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
 		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 		
 		composite = new TargetDetailsComposite(elements);
+		this.wizard = createTargetWizard;
 	}
 
 	public void createControl(Composite parent) {
@@ -95,7 +98,25 @@ public class TargetDetailsPage extends WizardPage {
 		composite.setType(name);
 		setErrorMessage(null);
 		targets = null;
+		type = name;
 	//	setPageComplete(!composite.hasPage(name));
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		if (visible) {
+			if ("org.zend.php.zendserver.deployment.ui.targets.ZendTargetDetailsComposite".equals(type)) {
+				wizard.setWindowTitle(Messages.TargetDetailsPage_1);
+				setTitle(Messages.TargetDetailsPage_AddTarget);
+				setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
+			} else if ("org.zend.php.zendserver.deployment.ui.targets.DevCloudDetailsComposite".equals(type)) {
+				wizard.setWindowTitle(Messages.TargetDetailsPage_3);
+				setTitle(Messages.TargetDetailsPage_4);
+			}
+		}else{
+			wizard.setWindowTitle(Messages.AddTargetAction_AddTarget);
+		}
+		super.setVisible(visible);
 	}
 	
 	public IZendTarget[] getTarget() {

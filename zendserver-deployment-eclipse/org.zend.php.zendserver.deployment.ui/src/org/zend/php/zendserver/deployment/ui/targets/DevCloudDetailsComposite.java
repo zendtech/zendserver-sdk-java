@@ -20,14 +20,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
@@ -84,38 +79,24 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_Password);
 		passwordText = new Text(composite, SWT.BORDER | SWT.PASSWORD);
+		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		layoutData.horizontalSpan = 2;
 		passwordText.setLayoutData(layoutData);
 		passwordText
 				.setToolTipText(Messages.DevCloudDetailsComposite_PasswordTooltip);
 		passwordText.addModifyListener(modifyListener);
 
-		Composite hyperlinks = new Composite(composite, SWT.NONE);
-		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false, 4, 1);
-		hyperlinks.setLayoutData(gd);
-		hyperlinks.setLayout(new GridLayout(2, false));
-		
-		Hyperlink createAccount = new Hyperlink(hyperlinks, SWT.NONE);
-		createAccount.setUnderlined(true);
-		createAccount.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-		createAccount.setText(Messages.DevCloudDetailsComposite_CreatePHPCloudAccount);
-		createAccount.setHref(HREF_CREATE_ACCOUNT);
-		
-		Hyperlink forgotPassword = new Hyperlink(hyperlinks, SWT.NONE);
-		forgotPassword.setUnderlined(true);
-		forgotPassword.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-		forgotPassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
-		forgotPassword.setHref(HREF_RESTORE_PASSWORD);
-				
-		IHyperlinkListener hrefListener = new HyperlinkAdapter() {
-			
-			public void linkActivated(HyperlinkEvent e) {
-				handleHyperlink(e.getHref());
+		Button restorePassword = new Button(composite, SWT.PUSH);
+		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		restorePassword.setLayoutData(layoutData);
+		restorePassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
+		restorePassword.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(RESTORE_PASSWORD_URL);
 			}
-		};
-		
-		createAccount.addHyperlinkListener(hrefListener);
-		forgotPassword.addHyperlinkListener(hrefListener);
-				
+		});
+
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
 		privateKeyText = new Text(composite, SWT.BORDER);

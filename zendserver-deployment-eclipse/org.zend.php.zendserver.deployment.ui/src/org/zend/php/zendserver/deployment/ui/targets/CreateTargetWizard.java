@@ -57,7 +57,7 @@ public class CreateTargetWizard extends Wizard {
 	public void addPages() {
 		Contribution[] elements = NewTargetContributionsFactory.getElements();
 		
-		detailsPage = new TargetDetailsPage(elements);
+		detailsPage = new TargetDetailsPage(elements,this);
 		if (defaultTarget != null) {
 			detailsPage.setDefaultTargetSettings(defaultTarget);
 		}
