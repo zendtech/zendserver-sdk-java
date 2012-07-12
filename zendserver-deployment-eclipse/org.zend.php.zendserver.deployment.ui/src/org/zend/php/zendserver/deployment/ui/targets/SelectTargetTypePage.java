@@ -9,7 +9,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
@@ -24,7 +23,7 @@ public class SelectTargetTypePage extends WizardPage {
 		super(Messages.SelectTargetTypePage_SelectTargetType);
 		setTitle(Messages.SelectTargetTypePage_AddTarget);
 		setDescription(Messages.SelectTargetTypePage_SelectTargetType);
-		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+//		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 		
 		targetType = new SelectTargetType(elements);
 	}

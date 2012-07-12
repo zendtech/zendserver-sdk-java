@@ -8,7 +8,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -31,7 +30,7 @@ public class TargetDetailsPage extends WizardPage {
 		super(Messages.TargetDetailsPage_TargetDetails);
 		setTitle(Messages.TargetDetailsPage_AddTarget);
 		setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
-		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
+//		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 		
 		composite = new TargetDetailsComposite(elements);
 		this.wizard = createTargetWizard;

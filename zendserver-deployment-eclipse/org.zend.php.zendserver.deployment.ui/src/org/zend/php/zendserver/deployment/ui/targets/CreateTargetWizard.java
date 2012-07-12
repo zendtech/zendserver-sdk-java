@@ -3,14 +3,18 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.php.internal.ui.util.PHPPluginImages;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -47,10 +51,18 @@ public class CreateTargetWizard extends Wizard {
 			currentFocus.setFocus();
 		}
 	}
-	
+
+	public static final String LOCAL_PHP_CREATION_WIZARD = "local_php_creation_wizard"; //$NON-NLS-1$
+	private static URL fgIconBaseURL = Activator.getDefault().getBundle()
+			.getEntry("/icons/");
+
+	private static final ImageDescriptor WIZARD_IMAGE = PHPPluginImages.create(
+			fgIconBaseURL, PHPPluginImages.T_WIZBAN,
+			"addtargetwizard.png");
 	public CreateTargetWizard() {
 		super();
 		setWindowTitle(Messages.AddTargetAction_AddTarget);
+		setDefaultPageImageDescriptor(WIZARD_IMAGE);
 		setNeedsProgressMonitor(true);
 	}
 	
