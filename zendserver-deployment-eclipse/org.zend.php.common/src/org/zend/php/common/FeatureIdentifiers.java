@@ -27,7 +27,11 @@ public enum FeatureIdentifiers {
 
 	GIT(new String[] { "org.eclipse.egit", "org.eclipse.jgit" }), //$NON-NLS-1$
 
-	WSDL(new String[] { "com.zend.wsdl.support.feature" }); //$NON-NLS-1$
+	WSDL(new String[] { "com.zend.wsdl.support.feature" }), //$NON-NLS-1$
+
+	ADT(
+			new String[] {
+					"com.android.ide.eclipse.ddms", "com.android.ide.eclipse.adt", "com.android.ide.eclipse.hierarchyviewer", "com.android.ide.eclipse.traceview", "com.android.ide.eclipse.gldebugger" }); //$NON-NLS-1$
 
 	private static final String POSTFIX = ".feature.group"; //$NON-NLS-1$
 
