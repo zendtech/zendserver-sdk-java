@@ -3,6 +3,8 @@ package org.zend.php.common;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
+
 public enum FeatureIdentifiers {
 
 	CODEGALLERY(new String[] { "com.zend.php.codegallery.feature" }), //$NON-NLS-1$
@@ -38,7 +40,8 @@ public enum FeatureIdentifiers {
 	private FeatureIdentifiers(String[] ids) {
 		this.ids = new HashSet<String>();
 		for (String str : ids) {
-			str = str.concat(POSTFIX);
+			if(!Platform.inDevelopmentMode())
+				str = str.concat(POSTFIX);
 			this.ids.add(str);
 		}
 	}

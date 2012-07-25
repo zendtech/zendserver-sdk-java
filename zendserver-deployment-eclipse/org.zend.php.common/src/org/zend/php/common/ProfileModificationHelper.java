@@ -36,6 +36,7 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.RepositoryTracker;
 import org.eclipse.equinox.p2.query.Collector;
+import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -60,20 +61,21 @@ public class ProfileModificationHelper {
 	public static interface Callback {
 		void runCallback();
 	}
-	
+
 	public IStatus modify(IProgressMonitor monitor,
-			final Collection<CatalogItem> toAdd, final Collection<CatalogItem> toRemove,
-			final int restartPolicy) {
+			final Collection<CatalogItem> toAdd,
+			final Collection<CatalogItem> toRemove, final int restartPolicy) {
 		return modify(monitor, toAdd, toRemove, restartPolicy, "");
 	}
-	
+
 	public IStatus modify(IProgressMonitor monitor,
-			final Collection<CatalogItem> toAdd, final Collection<CatalogItem> toRemove,
-			final int restartPolicy, String jobName) {
-		
+			final Collection<CatalogItem> toAdd,
+			final Collection<CatalogItem> toRemove, final int restartPolicy,
+			String jobName) {
+
 		Set<String> setToAdd = getDescriptorIds(toAdd);
 		Set<String> setToRemove = getDescriptorIds(toRemove);
-		
+
 		List<IProfileModificationListener> listeners = getModificationListeners();
 		for (IProfileModificationListener listener : listeners) {
 			IStatus status = listener.aboutToChange(setToAdd, setToRemove);
@@ -81,9 +83,10 @@ public class ProfileModificationHelper {
 				return status;
 			}
 		}
-		
-		IStatus status = modify(monitor, setToAdd, setToRemove, restartPolicy, jobName);
-		
+
+		IStatus status = modify(monitor, setToAdd, setToRemove, restartPolicy,
+				jobName);
+
 		for (IProfileModificationListener listener : listeners) {
 			listener.profileChanged(setToAdd, setToRemove, status);
 		}
@@ -95,21 +98,23 @@ public class ProfileModificationHelper {
 
 		ProfileElement element = new ProfileElement(null, pui.getProfileId());
 
-		IProfileRegistry pregistry = ProvUI.getProfileRegistry(pui.getSession());
+		IProfileRegistry pregistry = ProvUI
+				.getProfileRegistry(pui.getSession());
 		if (pregistry == null) { // for developers
 			return true;
 		}
-		
+
 		IProfile profile = pregistry.getProfile(pui.getProfileId());
 
 		if (profile == null) { // for developers
 			return true;
 		}
 
+		IQuery<IInstallableUnit> query = Platform.inDevelopmentMode() ? QueryUtil
+				.createIUAnyQuery() : QueryUtil.createIUPatchQuery();
 		ElementQueryDescriptor queryDescriptor = new ElementQueryDescriptor(
 				profile, QueryUtil.createCompoundQuery(pui.getPolicy()
-						.getVisibleInstalledIUQuery(), QueryUtil
-						.createIUPatchQuery(), false),
+						.getVisibleInstalledIUQuery(), query, false),
 				new Collector<IInstallableUnit>(),
 				new InstalledIUElementWrapper(profile, element));
 
@@ -135,9 +140,8 @@ public class ProfileModificationHelper {
 	 *            - ids of InstallableUnit
 	 * @param restartPolicy
 	 */
-	public IStatus modify(IProgressMonitor monitor,
-			final Set<String> toAdd, final Set<String> toRemove,
-			final int restartPolicy, String jobName) {
+	public IStatus modify(IProgressMonitor monitor, final Set<String> toAdd,
+			final Set<String> toRemove, final int restartPolicy, String jobName) {
 		try {
 			if ((toAdd == null || toAdd.isEmpty())
 					&& (toRemove == null || toRemove.isEmpty())) {
@@ -178,8 +182,7 @@ public class ProfileModificationHelper {
 		if (customStatusHandler != null) {
 			customStatusHandler.show(result, result.getMessage());
 		} else {
-			StatusManager.getManager().handle(result,
-					StatusManager.SHOW);
+			StatusManager.getManager().handle(result, StatusManager.SHOW);
 		}
 	}
 
@@ -204,27 +207,27 @@ public class ProfileModificationHelper {
 		}
 	}
 
-	public void requestRestart(final int restartPolicy,final Callback callback) {
+	public void requestRestart(final int restartPolicy, final Callback callback) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				boolean restart=false;
+				boolean restart = false;
 				if (restartPolicy == Policy.RESTART_POLICY_FORCE) {
 					PlatformUI.getWorkbench().restart();
-					restart=true;
-				}else if (restartPolicy == Policy.RESTART_POLICY_FORCE_APPLY) {
+					restart = true;
+				} else if (restartPolicy == Policy.RESTART_POLICY_FORCE_APPLY) {
 					applyProfileChanges();
 					return;
-				}else if (PlatformUI.getWorkbench().isClosing()){
-					restart=true;
+				} else if (PlatformUI.getWorkbench().isClosing()) {
+					restart = true;
 					return;
-				}else{
+				} else {
 					int retCode = ApplyProfileChangesDialog.promptForRestart(
 							ProvUI.getDefaultParentShell(),
 							restartPolicy == Policy.RESTART_POLICY_PROMPT);
 					if (retCode == ApplyProfileChangesDialog.PROFILE_APPLYCHANGES) {
 						applyProfileChanges();
 					} else if (retCode == ApplyProfileChangesDialog.PROFILE_RESTART) {
-						restart=true;
+						restart = true;
 						PlatformUI.getWorkbench().restart();
 					}
 				}
@@ -244,7 +247,8 @@ public class ProfileModificationHelper {
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage());
 	}
 
-	static public Set<String> getDescriptorIds(Collection<CatalogItem> toAddItems) {
+	static public Set<String> getDescriptorIds(
+			Collection<CatalogItem> toAddItems) {
 		Set<String> installableUnits = new HashSet<String>();
 		for (Object connector : toAddItems) {
 			if (connector instanceof CatalogItem) {
@@ -269,17 +273,16 @@ public class ProfileModificationHelper {
 	static private List<IInstallableUnit> queryRepoInstallableUnits(
 			Set<String> installableUnitIds) throws URISyntaxException,
 			MalformedURLException, ProvisionException {
-		
+
 		List<String> toFind = new ArrayList<String>(installableUnitIds);
-		
+
 		URI[] repos = getRepositories();
 		IQueryResult<IInstallableUnit> allIUs = null;
 		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
 		for (URI repo : repos) {
 			IMetadataRepository repository = loadRepository(repo);
-			allIUs = repository.query(
-				QueryUtil.createIUGroupQuery(), null);
-			
+			allIUs = repository.query(QueryUtil.createIUGroupQuery(), null);
+
 			getIUsFromQueryResult(toFind, allIUs, result);
 			if (toFind.isEmpty()) {
 				break;
@@ -296,15 +299,17 @@ public class ProfileModificationHelper {
 				IProfileRegistry.SELF);
 		IQueryResult<IInstallableUnit> queryresult = profile.query(
 				QueryUtil.createIUGroupQuery(), null);
-		
+
 		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
-		getIUsFromQueryResult(new ArrayList(installableUnitIds), queryresult, result);
+		getIUsFromQueryResult(new ArrayList(installableUnitIds), queryresult,
+				result);
 		return result;
 	}
 
 	private static List<IInstallableUnit> getIUsFromQueryResult(
 			List<String> installableUnitIds,
-			IQueryResult<IInstallableUnit> queryResult, List<IInstallableUnit> installableUnits) {
+			IQueryResult<IInstallableUnit> queryResult,
+			List<IInstallableUnit> installableUnits) {
 		for (Iterator<IInstallableUnit> iter = queryResult.iterator(); iter
 				.hasNext();) {
 			IInstallableUnit iu = iter.next();
@@ -313,7 +318,7 @@ public class ProfileModificationHelper {
 				installableUnitIds.remove(id);
 				installableUnits.add(iu);
 			}
-			
+
 			if (installableUnitIds.contains(id.concat(".feature.group"))) {
 				installableUnitIds.remove(id);
 				installableUnits.add(iu);
@@ -333,26 +338,25 @@ public class ProfileModificationHelper {
 					.logErrorMessage("RepositoryTracker or ProvisioningSession was null.");
 			return null;
 		}
-		
+
 		URI[] uris = null;
 		try {
 			uris = Customization.getSiteUris();
 		} catch (URISyntaxException e) {
 			Activator.log(e);
 		}
-		
+
 		if (uris == null || uris.length == 0) {
-			uris = repositoryTracker
-					.getKnownRepositories(session);
+			uris = repositoryTracker.getKnownRepositories(session);
 		}
-		
+
 		for (URI uri : uris) {
 			repositoryTracker.addRepository(uri, null, session);
 		}
-		
+
 		return uris;
 	}
-	
+
 	public static URI getExtraRepository() {
 		URI[] repos = getRepositories();
 		if (repos == null) {
@@ -363,7 +367,7 @@ public class ProfileModificationHelper {
 				return uri;
 			}
 		}
-		
+
 		return null;
 	}
 
