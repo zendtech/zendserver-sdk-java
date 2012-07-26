@@ -21,6 +21,7 @@ public class DeployLaunchJob extends DeploymentLaunchJob {
 	protected ApplicationInfo performOperation(ZendApplication app, String projectPath) {
 		String vHost = helper.getBaseURL().getHost();
 		String basePath = helper.getBaseURL().getPath();
+		DeploymentEventsService.getInstance().fireEvent(new DeploymentEvent(basePath));
 		return app.deploy(projectPath, basePath, helper.getTargetId(),
 				helper.getUserParams(), helper.getAppName(), helper.isIgnoreFailures(), vHost,
 				helper.isDefaultServer());
