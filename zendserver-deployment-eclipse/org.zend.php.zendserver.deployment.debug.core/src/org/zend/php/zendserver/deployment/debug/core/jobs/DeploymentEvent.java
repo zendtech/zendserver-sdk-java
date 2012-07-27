@@ -10,7 +10,7 @@ public class DeploymentEvent {
 		this.basePath = baseUrl;
 	}
 
-	public String getBasePath() {
+	public String getBaseUrl() {
 		return basePath;
 	}
 	
