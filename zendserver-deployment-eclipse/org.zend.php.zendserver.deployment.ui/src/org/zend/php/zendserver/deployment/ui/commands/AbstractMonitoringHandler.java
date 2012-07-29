@@ -12,7 +12,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 
 /**
  * Command handler responsible for disabling event monitoring.
@@ -30,7 +30,7 @@ public abstract class AbstractMonitoringHandler extends AbstractHandler {
 	 * .ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		EvaluationContext ctx = (EvaluationContext) event
+		IEvaluationContext ctx = (IEvaluationContext) event
 				.getApplicationContext();
 		Object element = ctx.getDefaultVariable();
 		if (element instanceof List) {
