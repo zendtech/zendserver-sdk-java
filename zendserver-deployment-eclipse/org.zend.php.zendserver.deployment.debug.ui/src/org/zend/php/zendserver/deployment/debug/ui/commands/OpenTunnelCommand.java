@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -33,7 +33,7 @@ public class OpenTunnelCommand extends AbstractHandler {
 			target = TargetsManagerService.INSTANCE
 					.getContainerByName(containerName);
 		} else {
-			EvaluationContext ctx = (EvaluationContext) event
+			IEvaluationContext ctx = (IEvaluationContext) event
 					.getApplicationContext();
 			Object element = ctx.getDefaultVariable();
 			if (element instanceof List) {
