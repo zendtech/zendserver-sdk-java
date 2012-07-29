@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.zend.php.zendserver.deployment.ui.actions.EditTargetAction;
 import org.zend.sdklib.target.IZendTarget;
@@ -13,7 +13,7 @@ import org.zend.sdklib.target.IZendTarget;
 public class OpenTargetCommand extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		EvaluationContext ctx = (EvaluationContext) event.getApplicationContext();
+		IEvaluationContext ctx = (IEvaluationContext) event.getApplicationContext();
 		
 		Object element = ctx.getDefaultVariable();
 		if (element instanceof List) {
@@ -32,7 +32,7 @@ public class OpenTargetCommand extends AbstractHandler {
 	
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		EvaluationContext ctx = (EvaluationContext) evaluationContext;
+		IEvaluationContext ctx = (IEvaluationContext) evaluationContext;
 		Object obj = ctx.getDefaultVariable();
 		if (obj instanceof List) {
 			List<?> list = (List<?>) obj;
