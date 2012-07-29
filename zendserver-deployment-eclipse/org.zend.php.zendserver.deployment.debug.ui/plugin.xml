@@ -40,8 +40,15 @@
                commandId="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
                label="Open"
                style="push">
-            <visibleWhen
-                  checkEnabled="true">
+           <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="org.eclipse.debug.core.ILaunchConfiguration">
+                  </instanceof>
+               </iterate>
             </visibleWhen>
          </command>
          <command
