@@ -34,6 +34,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public DeploymentHelper() {
 		this.baseURL = null;
 		this.targetId = EMPTY_STRING;
+		this.targetHost = EMPTY_STRING;
 		this.appId = -1;
 		this.projectName = EMPTY_STRING;
 		this.userParams = new HashMap<String, String>();
