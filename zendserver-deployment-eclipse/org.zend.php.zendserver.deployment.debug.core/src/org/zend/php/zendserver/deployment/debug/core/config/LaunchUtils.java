@@ -66,9 +66,6 @@ public class LaunchUtils {
 
 		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
 		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
-		wc.setAttribute(IPHPDebugConstants.USE_SSH_TUNNEL, false);
-		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_USER_NAME, ""); //$NON-NLS-1$
-		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_PASSWORD, ""); //$NON-NLS-1$
 		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
 				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
 		// set true as default
@@ -173,6 +170,9 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
 				helper.isEnabled());
 		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
+		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
+			updatePhpcloudLaunchConfiguration(helper, wc);
+		}
 	}
 	
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
@@ -323,6 +323,23 @@ public class LaunchUtils {
 			}
 		}
 		return true;
+	}
+
+	public static void removeDeploymentSupport(
+			ILaunchConfigurationWorkingCopy wc) {
+		wc.removeAttribute(DeploymentAttributes.APP_ID.getName());
+		wc.removeAttribute(DeploymentAttributes.BASE_URL.getName());
+		wc.removeAttribute(DeploymentAttributes.APPLICATION_NAME.getName());
+		wc.removeAttribute(DeploymentAttributes.DEFAULT_SERVER.getName());
+		wc.removeAttribute(DeploymentAttributes.IGNORE_FAILURES.getName());
+		wc.removeAttribute(DeploymentAttributes.PROJECT_NAME.getName());
+		wc.removeAttribute(DeploymentAttributes.TARGET_ID.getName());
+		wc.removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
+		wc.removeAttribute(DeploymentAttributes.PARAMETERS.getName());
+		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
+		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
+		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
+		wc.removeAttribute(SERVER_ENABLED);
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {
@@ -504,21 +521,20 @@ public class LaunchUtils {
 		wc.setAttribute(SERVER_ENABLED, false);
 	}
 
-	public static void removeDeploymentSupport(
-			ILaunchConfigurationWorkingCopy wc) {
-		wc.removeAttribute(DeploymentAttributes.APP_ID.getName());
-		wc.removeAttribute(DeploymentAttributes.BASE_URL.getName());
-		wc.removeAttribute(DeploymentAttributes.APPLICATION_NAME.getName());
-		wc.removeAttribute(DeploymentAttributes.DEFAULT_SERVER.getName());
-		wc.removeAttribute(DeploymentAttributes.IGNORE_FAILURES.getName());
-		wc.removeAttribute(DeploymentAttributes.PROJECT_NAME.getName());
-		wc.removeAttribute(DeploymentAttributes.TARGET_ID.getName());
-		wc.removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
-		wc.removeAttribute(DeploymentAttributes.PARAMETERS.getName());
-		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
-		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
-		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
-		wc.removeAttribute(SERVER_ENABLED);
+	/**
+	 * Set phpcloud specific attributes in provided launch configuration.
+	 * 
+	 * @param helper
+	 * @param wc
+	 */
+	private static void updatePhpcloudLaunchConfiguration(
+			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) {
+		String host = helper.getTargetHost();
+		wc.setAttribute(IPHPDebugConstants.USE_SSH_TUNNEL, true);
+		String userName = helper.getTargetHost().substring(0,
+				host.indexOf('.'));
+		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_USER_NAME, userName);
+		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_PASSWORD, ""); //$NON-NLS-1$
 	}
 
 }
