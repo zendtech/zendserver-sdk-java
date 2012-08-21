@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
@@ -187,7 +188,13 @@ public abstract class AbstractTargetDetailsComposite {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
 		}
-
+		if (targets == null || targets.length == 0) {
+			return new Status(
+					IStatus.ERROR,
+					Activator.PLUGIN_ID,
+					"Could not find any containers associated with Phpcloud account. "
+							+ "Create at least one container to be able to add Phpcloud target.");
+		}
 		monitor.subTask("Found "+targets.length+" target"+(targets.length == 1 ? "" : "s"));
 		List<IZendTarget> finalTargets = new ArrayList<IZendTarget>(targets.length);
 		IStatus status = null;
