@@ -11,6 +11,8 @@ import java.io.IOException;
 
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
+import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 
 import com.jcraft.jsch.JSch;
@@ -156,8 +158,17 @@ public class ZendDevCloudTunnel {
  	        session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
-			jsch.addIdentity(getPrivateKeyFile());
+			JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();
+			String privateKey = getPrivateKeyFile();
+			String passphrase = decryptor.getPassphase(privateKey);
+			if (passphrase != null && passphrase.length() > 0) {
+				jsch.addIdentity(privateKey, passphrase);
+			} else {
+				jsch.addIdentity(privateKey);
+			}
 		} catch (JSchException e) {
+			throw new IOException(e);
+		} catch (PublicKeyNotFoundException e) {
 			throw new IOException(e);
 		}
 	}

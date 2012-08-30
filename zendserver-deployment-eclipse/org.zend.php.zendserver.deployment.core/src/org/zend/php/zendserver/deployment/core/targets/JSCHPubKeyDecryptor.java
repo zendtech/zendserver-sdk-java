@@ -2,6 +2,8 @@ package org.zend.php.zendserver.deployment.core.targets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jsch.internal.core.IConstants;
@@ -17,6 +19,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
 
 public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
+	
+	private Map<String, String> passphrases = new HashMap<String, String>();
 
 	class PassphrasePrompt implements Runnable {
 		private String message;
@@ -28,10 +32,17 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 
 		public void run() {
 			Display display = Display.getCurrent();
-			Shell shell = new Shell(display);
+			Shell shell = display.getActiveShell();
+			boolean newShell = false;
+			if (shell == null) {
+				newShell = true;
+				shell = new Shell(display);
+			}
 			PassphraseDialog dialog = new PassphraseDialog(shell, message);
 			dialog.open();
-			shell.dispose();
+			if (newShell) {
+				shell.dispose();
+			}
 			passphrase = dialog.getPassphrase();
 		}
 
@@ -67,6 +78,7 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 			if (passphrase == null)
 				break;
 			if (_kpair.decrypt(passphrase)) {
+				passphrases.put(pkeyab, passphrase);
 				break;
 			}
 			MessageDialog.openError(getShell(), "SSH Key Error",
@@ -86,11 +98,38 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 		} catch (IOException e) {
 			// IOException in ByteArrayOutputStream? hmm...
 		}
-
 		String result = out.toString();
-		String fingerprint = kpair.getFingerPrint();
-
 		return result;
+	}
+	
+	public String getPassphase(String privateKey) throws PublicKeyNotFoundException {
+		String passphrase = passphrases.get(privateKey);
+		if (passphrase == null) {
+			KeyPair _kpair;
+			try {
+				_kpair = KeyPair.load(getJSch(), privateKey);
+			} catch (JSchException e) {
+				throw new PublicKeyNotFoundException(e);
+			}
+			PassphrasePrompt prompt = null;
+			while (_kpair.isEncrypted()) {
+				if (prompt == null) {
+					prompt = new PassphrasePrompt(NLS.bind("Passphrase {0}",
+							new String[] { privateKey }));
+				}
+				Display.getDefault().syncExec(prompt);
+				String result = prompt.getPassphrase();
+				if (result == null)
+					break;
+				if (_kpair.decrypt(passphrase)) {
+					passphrases.put(privateKey, result);
+					return result;
+				}
+				MessageDialog.openError(getShell(), "SSH Key Error",
+						NLS.bind("Error {0}", new String[] { privateKey }));
+			}
+		}
+		return passphrase;
 	}
 
 	private Shell getShell() {
