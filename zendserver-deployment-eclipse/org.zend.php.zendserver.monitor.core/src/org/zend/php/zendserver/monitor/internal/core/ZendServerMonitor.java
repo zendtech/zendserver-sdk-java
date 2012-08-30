@@ -119,7 +119,7 @@ public class ZendServerMonitor extends AbstractMonitor {
 	 * @see
 	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
 	 */
-	public void disable() {
+	public void disable(boolean codeTracing) {
 		Set<IProject> keys = preferences.keySet();
 		for (IProject project : keys) {
 			IEclipsePreferences prefs = getPreferences(project);
@@ -129,6 +129,9 @@ public class ZendServerMonitor extends AbstractMonitor {
 				prefs.putBoolean(MonitorManager.ENABLED + targetId, false);
 			}
 			applications.remove(project);
+		}
+		if (codeTracing) {
+			disableCodeTacing();
 		}
 	}
 

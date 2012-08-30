@@ -172,6 +172,7 @@ public class MonitorManager {
 		if (monitor != null) {
 			monitor.disable(projectName);
 			if (!monitor.isEnabled()) {
+				monitor.disable(true);
 				monitor.cancel();
 				try {
 					monitor.flushPreferences();
@@ -293,7 +294,7 @@ public class MonitorManager {
 				ZendServerMonitor appMonitor = applicationMonitors
 						.get(targetId);
 				if (appMonitor != null) {
-					appMonitor.disable();
+					appMonitor.disable(false);
 					removeApplicationMonitor(targetId);
 				}
 			} else {
@@ -315,7 +316,7 @@ public class MonitorManager {
 	public static boolean removeTargetMonitor(String targetId) {
 		TargetMonitor monitor = targetMonitors.get(targetId);
 		if (monitor != null) {
-			monitor.disable();
+			monitor.disable(true);
 			if (!monitor.isEnabled()) {
 				monitor.cancel();
 				try {

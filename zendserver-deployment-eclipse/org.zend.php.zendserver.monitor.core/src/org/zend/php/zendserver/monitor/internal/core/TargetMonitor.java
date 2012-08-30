@@ -55,8 +55,11 @@ public class TargetMonitor extends AbstractMonitor {
 	 * @see
 	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
 	 */
-	public void disable() {
+	public void disable(boolean codeTracing) {
 		getPreferences().putBoolean(targetId, false);
+		if (codeTracing) {
+			disableCodeTacing();
+		}
 	}
 
 	/*

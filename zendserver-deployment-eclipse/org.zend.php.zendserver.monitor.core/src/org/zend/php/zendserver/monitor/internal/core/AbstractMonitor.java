@@ -152,8 +152,11 @@ public abstract class AbstractMonitor extends Job {
 
 	/**
 	 * Disable the whole monitor.
+	 * 
+	 * @param codeTracing
+	 *            - <code>true</code> if code tracing should be disabled
 	 */
-	public abstract void disable();
+	public abstract void disable(boolean codeTracing);
 
 	protected abstract void handleIssues(List<IZendIssue> issues);
 
@@ -226,6 +229,63 @@ public abstract class AbstractMonitor extends Job {
 		return date;
 	}
 
+	protected void disableCodeTacing() {
+		getProvider().showProgress(getName(), 90, new IRunnableWithProgress() {
+
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				monitor.beginTask(MessageFormat.format(
+						Messages.AbstractMonitor_DisablingJobName, targetId),
+						IProgressMonitor.UNKNOWN);
+				ZendCodeTracing codeTracing = new ZendCodeTracing(targetId);
+				PhpcloudContainerListener listener = null;
+				IZendTarget target = TargetsManagerService.INSTANCE
+						.getTargetManager().getTargetById(targetId);
+				if (TargetsManager.isPhpcloud(target)) {
+					listener = new PhpcloudContainerListener(target);
+					WebApiClient.registerPreRequestListener(listener);
+				}
+				try {
+					CodeTracingStatus status = codeTracing.disable(true);
+					if (status == null) {
+						String m = MessageFormat
+								.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+										targetId);
+						handleError(monitor, m);
+						return;
+					}
+				} catch (WebApiException e) {
+					if (e instanceof WebApiCommunicationError) {
+						String m = MessageFormat
+								.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+										targetId);
+						handleError(monitor, m);
+						return;
+					} else {
+						if (e instanceof UnexpectedResponseCode) {
+							UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+							ResponseCode code = codeException.getResponseCode();
+							switch (code) {
+							case UNSUPPORTED_API_VERSION:
+								String m = MessageFormat
+										.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
+												targetId);
+								handleError(monitor, m);
+								return;
+							default:
+								break;
+							}
+						}
+					}
+				} finally {
+					if (listener != null) {
+						WebApiClient.unregisterPreRequestListener(listener);
+					}
+				}
+			}
+		});
+	}
+
 	private boolean doStart(IProgressMonitor monitor) {
 		monitor.beginTask(MessageFormat.format(
 				Messages.AbstractMonitor_EnablingJobName, targetId),
@@ -288,6 +348,6 @@ public abstract class AbstractMonitor extends Job {
 	private void handleError(IProgressMonitor monitor, String m) {
 		getProvider().showErrorMessage(getName(), m);
 		monitor.done();
-		disable();
+		disable(true);
 	}
 }
