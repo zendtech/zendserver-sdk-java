@@ -114,8 +114,8 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 		final File descriptorFile = df;
 
-		d.path.deleteOnExit();
-		final boolean delete2 = descriptorFile.delete();
+		delete(d.path);
+		final boolean delete2 = delete(descriptorFile);
 
 		if (!delete2) {
 			throw new IllegalArgumentException("error deleting data");
@@ -256,6 +256,22 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 		final File file = new File(baseDir, target);
 		return file;
+	}
+
+	protected boolean delete(File file) {
+		if (file == null || !file.exists()) {
+			return true;
+		}
+		if (file.isDirectory()) {
+			String[] children = file.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean result = delete(new File(file, children[i]));
+				if (!result) {
+					return false;
+				}
+			}
+		}
+		return file.delete();
 	}
 
 	/**
