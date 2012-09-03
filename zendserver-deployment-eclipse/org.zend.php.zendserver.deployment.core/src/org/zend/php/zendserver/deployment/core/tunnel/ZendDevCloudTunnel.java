@@ -9,7 +9,6 @@ package org.zend.php.zendserver.deployment.core.tunnel;
 
 import java.io.IOException;
 
-import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -18,7 +17,6 @@ import org.zend.sdklib.internal.target.ZendDevCloud;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxyHTTP;
-import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
 /**
@@ -28,31 +26,11 @@ import com.jcraft.jsch.UserInfo;
  * 
  * @author Roy, 2011
  */
-public class ZendDevCloudTunnel {
-
-	public enum State {
-
-		CONNECTING,
-
-		CONNECTED,
-
-		DISCONNECTING,
-
-		DISCONNECTED,
-
-		ERROR,
-
-		NOT_SUPPORTED;
-	}
+public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 
 	private static int database_port = 13306;
 
 	private String user;
-	private String privateKey;
-
-	private String baseUrl;
-	private UserInfo ui;
-	private Session session;
 
 	/**
 	 * @param user
@@ -64,98 +42,54 @@ public class ZendDevCloudTunnel {
 	 */
 	public ZendDevCloudTunnel(String user, String baseUrl, String privateKey,
 			UserInfo ui) {
+		super(baseUrl, privateKey, ui);
 		if (user == null || privateKey == null || ui == null) {
 			throw new IllegalArgumentException(
 					"error setting user or filename to Ssh Tunnel"); //$NON-NLS-1$
 		}
 		this.user = user;
-		this.baseUrl = baseUrl;
-		this.privateKey = privateKey;
-		this.ui = ui;
 	}
 
 	public ZendDevCloudTunnel(String user, String privateKey) {
 		this(user, ZendDevCloud.DEVPASS_HOST, privateKey, new EmptyUserInfo());
 	}
 
-	public State connect() throws IOException {
-		if (session != null) {
-			if (!session.isConnected()) {
-				try {
-					session.connect();
-					return State.CONNECTING;
-				} catch (JSchException e) {
-					throw new IOException(e);
-				}
-			} else {
-				return State.CONNECTED;
-			}
-		}
-		if (session == null) {
-			try {
-				createSession();
-				session.connect();
-			} catch (JSchException e) {
-				throw new IOException(e);
-			}
-
-			try {
-				session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
-				session.setPortForwardingL(database_port++, user
-						+ "-db." + baseUrl, 3306); //$NON-NLS-1$
-				return State.CONNECTING;
-			} catch (JSchException e) {
-				final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
-						user, baseUrl);
-				throw new IOException(msg);
-			}
-		}
-		return State.ERROR;
-	}
 
 	public String getUser() {
 		return user;
 	}
 
-	public boolean isConnected() {
-		return session != null ? session.isConnected() : false;
-	}
-
-	public void disconnect() {
-		if (isConnected()) {
-			session.disconnect();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel#configureSession
+	 * ()
+	 */
+	protected void configureSession() throws IOException {
+		try {
+			session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
+			session.setPortForwardingL(database_port++,
+					user + "-db." + baseUrl, 3306); //$NON-NLS-1$
+		} catch (JSchException e) {
+			final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
+					user, baseUrl);
+			throw new IOException(msg);
 		}
 	}
 
-	public int getDatabasePort() {
-		int result = -1;
-		if (session != null) {
-			try {
-				String[] locals = session.getPortForwardingL();
-				for (String local : locals) {
-					String[] segments = local.split(":"); //$NON-NLS-1$
-					if (segments.length == 3) {
-						result = Integer.valueOf(segments[0]);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				DeploymentCore.log(e);
-			}
-		}
-		return result;
-	}
-
-	private String getPrivateKeyFile() throws IOException {
-		return privateKey;
-	}
-
-	private void createSession() throws IOException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel#createSession()
+	 */
+	protected void createSession() throws IOException {
 		JSch jsch = new JSch();
 		try {
 			session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
 			session.setUserInfo(ui);
- 	        session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
+			session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
 			JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();

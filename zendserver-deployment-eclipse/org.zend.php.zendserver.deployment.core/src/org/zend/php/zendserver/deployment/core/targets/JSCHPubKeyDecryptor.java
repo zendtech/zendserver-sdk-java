@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.core.targets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,28 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 		}
 	}
 	
+	class ErrorMessage implements Runnable {
+		private String message;
+
+		ErrorMessage(String message) {
+			this.message = message;
+		}
+
+		public void run() {
+			Display display = Display.getCurrent();
+			Shell shell = display.getActiveShell();
+			boolean newShell = false;
+			if (shell == null) {
+				newShell = true;
+				shell = new Shell(display);
+			}
+			MessageDialog.openError(shell, "SSH Key Error", message);
+			if (newShell) {
+				shell.dispose();
+			}
+		}
+	}
+	
 	public void isValidPrivateKey(String pkey) throws PublicKeyNotFoundException {
 		try {
 			KeyPair.load(getJSch(), pkey);
@@ -81,8 +104,9 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 				passphrases.put(pkeyab, passphrase);
 				break;
 			}
-			MessageDialog.openError(getShell(), "SSH Key Error",
-					NLS.bind("Error {0}", new String[] { pkeyab }));
+			Display.getDefault().syncExec(
+					new ErrorMessage(NLS.bind("Error {0}",
+							new String[] { pkeyab })));
 		}
 		if (_kpair.isEncrypted()) {
 			return null;
@@ -102,7 +126,7 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 		return result;
 	}
 	
-	public String getPassphase(String privateKey) throws PublicKeyNotFoundException {
+	public String getPassphase(final String privateKey) throws PublicKeyNotFoundException {
 		String passphrase = passphrases.get(privateKey);
 		if (passphrase == null) {
 			KeyPair _kpair;
@@ -125,15 +149,12 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 					passphrases.put(privateKey, result);
 					return result;
 				}
-				MessageDialog.openError(getShell(), "SSH Key Error",
-						NLS.bind("Error {0}", new String[] { privateKey }));
+				Display.getDefault().syncExec(
+						new ErrorMessage(MessageFormat.format(
+								"Invalid passphrase for {0}", privateKey)));
 			}
 		}
 		return passphrase;
-	}
-
-	private Shell getShell() {
-		return Display.getDefault().getActiveShell();
 	}
 
 	private JSch getJSch() {

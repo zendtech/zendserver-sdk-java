@@ -30,27 +30,52 @@ import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
+import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
-public class TargetDatabase implements ITargetDatabase {
+/**
+ * @author Wojciech Galanciak, 2012
+ *
+ */
+public abstract class TargetDatabase implements ITargetDatabase {
 
-	private static final String PROTOCOL = "jdbc:mysql://"; //$NON-NLS-1$
-	private static final String DEFAULT_HOST = "localhost"; //$NON-NLS-1$
-	private static final String PROVIDER_ID = "org.eclipse.datatools.enablement.mysql.connectionProfile"; //$NON-NLS-1$
+	protected static final String PROTOCOL = "jdbc:mysql://"; //$NON-NLS-1$
+	protected static final String DEFAULT_HOST = "localhost"; //$NON-NLS-1$
+	protected static final String PROVIDER_ID = "org.eclipse.datatools.enablement.mysql.connectionProfile"; //$NON-NLS-1$
 
-	private IZendTarget target;
-	private String profileId;
+	protected IZendTarget target;
+	protected String profileId;
 
-	private TargetsDatabaseManager manager;
-	private IConnectionProfile profile;
+	protected TargetsDatabaseManager manager;
+	protected IConnectionProfile profile;
 
-	public TargetDatabase(IZendTarget target, TargetsDatabaseManager manager) {
+	protected TargetDatabase(IZendTarget target, TargetsDatabaseManager manager) {
 		super();
 		this.target = target;
 		this.manager = manager;
 		init();
+	}
+
+	/**
+	 * Create instance of target database that corresponds to specified target's
+	 * type.
+	 * 
+	 * @param t
+	 *            zend target
+	 * @param m
+	 *            database manager
+	 * @return instance of corresponding target database
+	 */
+	public static ITargetDatabase create(IZendTarget t, TargetsDatabaseManager m) {
+		if (TargetsManager.isOpenShift(t)) {
+			return new OpenShiftDatabase(t, m);
+		}
+		if (TargetsManager.isPhpcloud(t)) {
+			return new PhpcloudDatabase(t, m);
+		}
+		return null;
 	}
 
 	/*
@@ -65,19 +90,14 @@ public class TargetDatabase implements ITargetDatabase {
 			isValid = connectTunnel();
 		}
 		if (isValid) {
-			String containerName = getContainerName();
-			if (containerName == null) {
-				// TODO handle null container name
-				return false;
-			}
-			String url = getURL(containerName);
+			String url = getUrl();
 			if (url == null) {
 				// TODO handle null url
 				return false;
 			}
 			profile = findProfile();
 			if (profile != null) {
-				validatePort(containerName);
+				validatePort();
 				initListener();
 				return true;
 			}
@@ -95,10 +115,10 @@ public class TargetDatabase implements ITargetDatabase {
 						propSet.getID());
 				properties.setProperty(
 						IJDBCDriverDefinitionConstants.DATABASE_NAME_PROP_ID,
-						containerName);
+						getDatabaseName());
 				properties.setProperty(
 						IJDBCDriverDefinitionConstants.USERNAME_PROP_ID,
-						containerName);
+						getUsername());
 				properties.setProperty(
 						IJDBCDriverDefinitionConstants.URL_PROP_ID, url);
 			}
@@ -118,7 +138,7 @@ public class TargetDatabase implements ITargetDatabase {
 							"", false); //$NON-NLS-1$
 				} else {
 					// be sure that port is valid
-					validatePort(containerName);
+					validatePort();
 				}
 				initListener();
 				return true;
@@ -251,10 +271,15 @@ public class TargetDatabase implements ITargetDatabase {
 		return target;
 	}
 
+	protected abstract String getUrl();
+
+	protected abstract String getUsername();
+
+	protected abstract String getDatabaseName();
+
 	private boolean connectTunnel() {
 		try {
-			State result = ZendDevCloudTunnelManager.getManager().connect(
-					target);
+			State result = SSHTunnelManager.getManager().connect(target);
 			switch (result) {
 			case CONNECTING:
 			case CONNECTED:
@@ -322,12 +347,11 @@ public class TargetDatabase implements ITargetDatabase {
 	}
 
 	private boolean isTunnelAvailable() {
-		return ZendDevCloudTunnelManager.getManager().isAvailable(target);
+		return SSHTunnelManager.getManager().isAvailable(target);
 	}
 
-	private void validatePort(String containerName) {
-		int port = ZendDevCloudTunnelManager.getManager().getDatabasePort(
-				target);
+	private void validatePort() {
+		int port = SSHTunnelManager.getManager().getDatabasePort(target);
 		Properties properties = profile.getBaseProperties();
 		String url = properties
 				.getProperty(IJDBCDriverDefinitionConstants.URL_PROP_ID);
@@ -341,29 +365,13 @@ public class TargetDatabase implements ITargetDatabase {
 					if (currentPort != port) {
 						properties.setProperty(
 								IJDBCDriverDefinitionConstants.URL_PROP_ID,
-								getURL(containerName));
+								getUrl());
 						profile.setBaseProperties(properties);
 					}
 				}
 			}
 		}
 
-	}
-
-	private String getURL(String containerName) {
-		int port = ZendDevCloudTunnelManager.getManager().getDatabasePort(
-				target);
-		return PROTOCOL + DEFAULT_HOST + ":" + port + "/" //$NON-NLS-1$ //$NON-NLS-2$
-				+ containerName;
-	}
-
-	private String getContainerName() {
-		String host = target.getHost().getHost();
-		if (host != null && host.length() > 0) {
-			int index = host.indexOf('.');
-			return index != -1 ? host.substring(0, index) : null;
-		}
-		return null;
 	}
 
 }

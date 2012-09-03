@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 
 public class DeploymentCore extends Plugin {
 
@@ -54,7 +54,7 @@ public class DeploymentCore extends Plugin {
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		DeploymentCore.context = null;
-		ZendDevCloudTunnelManager.getManager().disconnectAll();
+		SSHTunnelManager.getManager().disconnectAll();
 	}
 
 	/**

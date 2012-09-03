@@ -19,7 +19,6 @@ import org.eclipse.datatools.connectivity.IConnectionProfile;
 import org.eclipse.datatools.connectivity.IProfileListener;
 import org.eclipse.datatools.connectivity.ProfileManager;
 import org.zend.php.zendserver.deployment.core.internal.database.TargetDatabase;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -29,8 +28,6 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  */
 public class TargetsDatabaseManager {
-
-	public static final String DEVPASS_HOST = ZendDevCloud.DEVPASS_HOST;
 
 	private static TargetsDatabaseManager manager;
 
@@ -70,7 +67,7 @@ public class TargetsDatabaseManager {
 			}
 		}
 		if (connection == null) {
-			connection = new TargetDatabase(target, this);
+			connection = TargetDatabase.create(target, this);
 			connections.put(target, connection);
 		}
 		return connection;
