@@ -19,4 +19,13 @@ public interface PublicKeyBuilder {
 	 */
 	String getPublicKey(String privateKeyPath) throws PublicKeyNotFoundException;
 	
+	/**
+	 * Returns passphrase for provided private key
+	 * 
+	 * @param privateKey
+	 * @return
+	 * @throws PublicKeyNotFoundException
+	 */
+	String getPassphase(String privateKey) throws PublicKeyNotFoundException;;
+
 }
