@@ -62,15 +62,6 @@ public class ApplicationRemoveRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/applicationRemove";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -113,6 +104,16 @@ public class ApplicationRemoveRequest extends AbstractRequest {
 		Representation rep = new MultipartRepresentation(getParameters(),
 				FORM);
 		request.setEntity(rep);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "applicationRemove";
 	}
 
 }

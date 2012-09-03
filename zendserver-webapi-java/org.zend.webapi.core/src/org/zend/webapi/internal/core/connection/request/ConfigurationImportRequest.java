@@ -66,15 +66,6 @@ public class ConfigurationImportRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/configurationImport";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -135,4 +126,15 @@ public class ConfigurationImportRequest extends AbstractRequest {
 				APPLICATION_SERVER_CONFIG);
 		request.setEntity(rep);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "configurationImport";
+	}
+	
 }

@@ -59,10 +59,6 @@ public class RestartPhpRequest extends AbstractRequest {
 		super(version, date, keyName, userAgent, host, secretKey);
 	}
 
-	public String getUri() {
-		return "/ZendServerManager/Api/restartPhp";
-	}
-
 	public Method getMethod() {
 		return Method.POST;
 	}
@@ -100,4 +96,15 @@ public class RestartPhpRequest extends AbstractRequest {
 	public ResponseType getExpectedResponseDataType() {
 		return IResponseData.ResponseType.SERVERS_LIST;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "restartPhp";
+	}
+	
 }

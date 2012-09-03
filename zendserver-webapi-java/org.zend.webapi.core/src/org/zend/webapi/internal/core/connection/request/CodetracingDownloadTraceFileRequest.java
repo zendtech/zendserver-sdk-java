@@ -48,16 +48,7 @@ public class CodetracingDownloadTraceFileRequest extends AbstractRequest {
 			String keyName, String userAgent, String host, String secretKey) {
 		super(version, date, keyName, userAgent, host, secretKey);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/codetracingDownloadTraceFile";
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -100,4 +91,14 @@ public class CodetracingDownloadTraceFileRequest extends AbstractRequest {
 		return ResponseType.CODE_TRACE_FILE;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "codetracingDownloadTraceFile";
+	}
+	
 }

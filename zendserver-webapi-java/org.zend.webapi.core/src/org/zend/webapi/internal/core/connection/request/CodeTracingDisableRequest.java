@@ -65,15 +65,6 @@ public class CodeTracingDisableRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/codetracingDisable";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -118,4 +109,14 @@ public class CodeTracingDisableRequest extends AbstractRequest {
 		request.setEntity(rep);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "codetracingDisable";
+	}
+	
 }

@@ -101,15 +101,6 @@ public class ApplicationDeployRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/applicationDeploy";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -218,6 +209,16 @@ public class ApplicationDeployRequest extends AbstractRequest {
 				getParameters(), APPLICATION_PACKAGE);
 		rep.setNotifier(notifier);
 		request.setEntity(rep);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "applicationDeploy";
 	}
 
 }

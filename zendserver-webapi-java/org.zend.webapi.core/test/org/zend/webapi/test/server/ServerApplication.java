@@ -348,65 +348,65 @@ public class ServerApplication extends Application {
 			}
 		};
 
-		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
-		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
+		router.attach("/ZendServer/Api/getSystemInfo", getSystemInfo);
+		router.attach("/ZendServer/Api/clusterGetServerStatus",
 				clusterGetServerStatus);
-		router.attach("/ZendServerManager/Api/clusterAddServer",
+		router.attach("/ZendServer/Api/clusterAddServer",
 				clusterAddServer);
-		router.attach("/ZendServerManager/Api/clusterRemoveServer",
+		router.attach("/ZendServer/Api/clusterRemoveServer",
 				clusterRemoveServer);
-		router.attach("/ZendServerManager/Api/clusterDisableServer",
+		router.attach("/ZendServer/Api/clusterDisableServer",
 				clusterDisableServer);
-		router.attach("/ZendServerManager/Api/clusterEnableServer",
+		router.attach("/ZendServer/Api/clusterEnableServer",
 				clusterEnableServer);
-		router.attach("/ZendServerManager/Api/clusterReconfigureServer",
+		router.attach("/ZendServer/Api/clusterReconfigureServer",
 				clusterReconfigureServer);
-		router.attach("/ZendServerManager/Api/restartPhp", restartPhp);
-		router.attach("/ZendServerManager/Api/configurationExport",
+		router.attach("/ZendServer/Api/restartPhp", restartPhp);
+		router.attach("/ZendServer/Api/configurationExport",
 				configurationExport);
-		router.attach("/ZendServerManager/Api/configurationImport",
+		router.attach("/ZendServer/Api/configurationImport",
 				configurationImport);
-		router.attach("/ZendServerManager/Api/applicationGetStatus",
+		router.attach("/ZendServer/Api/applicationGetStatus",
 				applicationGetStatus);
-		router.attach("/ZendServerManager/Api/applicationDeploy",
+		router.attach("/ZendServer/Api/applicationDeploy",
 				applicationDeploy);
-		router.attach("/ZendServerManager/Api/applicationUpdate",
+		router.attach("/ZendServer/Api/applicationUpdate",
 				applicationUpdate);
-		router.attach("/ZendServerManager/Api/applicationRemove",
+		router.attach("/ZendServer/Api/applicationRemove",
 				applicationRemove);
-		router.attach("/ZendServerManager/Api/applicationSynchronize",
+		router.attach("/ZendServer/Api/applicationSynchronize",
 				applicationRedeploy);
-		router.attach("/ZendServerManager/Api/applicationRollback",
+		router.attach("/ZendServer/Api/applicationRollback",
 				applicationRollback);
-		router.attach("/ZendServerManager/Api/codetracingDisable",
+		router.attach("/ZendServer/Api/codetracingDisable",
 				codeTracingDisable);
-		router.attach("/ZendServerManager/Api/codetracingEnable",
+		router.attach("/ZendServer/Api/codetracingEnable",
 				codeTracingEnable);
-		router.attach("/ZendServerManager/Api/codetracingIsEnabled",
+		router.attach("/ZendServer/Api/codetracingIsEnabled",
 				codeTracingIsEnabled);
-		router.attach("/ZendServerManager/Api/codetracingCreate",
+		router.attach("/ZendServer/Api/codetracingCreate",
 				codeTracingCreate);
-		router.attach("/ZendServerManager/Api/codetracingDelete",
+		router.attach("/ZendServer/Api/codetracingDelete",
 				codeTracingDelete);
-		router.attach("/ZendServerManager/Api/codetracingList", codeTracingList);
-		router.attach("/ZendServerManager/Api/codetracingDownloadTraceFile",
+		router.attach("/ZendServer/Api/codetracingList", codeTracingList);
+		router.attach("/ZendServer/Api/codetracingDownloadTraceFile",
 				codetracingDownloadTraceFile);
-		router.attach("/ZendServerManager/Api/monitorGetRequestSummary",
+		router.attach("/ZendServer/Api/monitorGetRequestSummary",
 				monitorGetRequestSummary);
 		router.attach(
-				"/ZendServerManager/Api/monitorGetIssuesListPredefinedFilter",
+"/ZendServer/Api/monitorGetIssuesListPredefinedFilter",
 				monitorGetIssuesListPredefinedFilter);
-		router.attach("/ZendServerManager/Api/monitorGetIssueDetails",
+		router.attach("/ZendServer/Api/monitorGetIssueDetails",
 				monitorGetIssueDetails);
-		router.attach("/ZendServerManager/Api/monitorGetEventGroupDetails",
+		router.attach("/ZendServer/Api/monitorGetEventGroupDetails",
 				monitorGetEventGroupDetails);
-		router.attach("/ZendServerManager/Api/monitorExportIssueByEventsGroup",
+		router.attach("/ZendServer/Api/monitorExportIssueByEventsGroup",
 				monitorExportIssueByEventsGroup);
-		router.attach("/ZendServerManager/Api/monitorChangeIssueStatus",
+		router.attach("/ZendServer/Api/monitorChangeIssueStatus",
 				monitorChangeIssueStatus);
-		router.attach("/ZendServerManager/Api/studioStartDebug",
+		router.attach("/ZendServer/Api/studioStartDebug",
 				studioStartDebug);
-		router.attach("/ZendServerManager/Api/studioStartProfile",
+		router.attach("/ZendServer/Api/studioStartProfile",
 				studioStartProfile);
 		return router;
 	}

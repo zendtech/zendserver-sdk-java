@@ -18,6 +18,8 @@ public enum WebApiVersion {
 	V1_1("1.1"),
 
 	V1_2("1.2"),
+	
+	V1_3("1.3"),
 
 	UNKNOWN("UNKNOWN");
 

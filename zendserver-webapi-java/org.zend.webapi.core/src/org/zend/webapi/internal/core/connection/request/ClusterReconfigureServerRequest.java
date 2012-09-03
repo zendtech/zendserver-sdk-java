@@ -59,15 +59,6 @@ public class ClusterReconfigureServerRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/clusterReconfigureServer";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -115,6 +106,16 @@ public class ClusterReconfigureServerRequest extends AbstractRequest {
 	 */
 	public ResponseType getExpectedResponseDataType() {
 		return IResponseData.ResponseType.SERVER_INFO;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "clusterReconfigureServer";
 	}
 
 }

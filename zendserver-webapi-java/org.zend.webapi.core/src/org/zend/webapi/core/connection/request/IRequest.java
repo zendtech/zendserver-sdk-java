@@ -13,6 +13,7 @@ import java.util.List;
 import org.restlet.Request;
 import org.restlet.data.Method;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
@@ -94,6 +95,11 @@ public interface IRequest {
 	 * @return the list of parameters provided in this request
 	 */
 	public abstract List<RequestParameter<?>> getParameters();
+	
+	/**
+	 * @return server type
+	 */
+	public abstract ServerType getServerType();
 
 	/**
 	 * @param code

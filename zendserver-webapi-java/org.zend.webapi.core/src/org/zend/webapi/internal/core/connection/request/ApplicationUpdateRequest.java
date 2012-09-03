@@ -83,16 +83,7 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 			String keyName, String userAgent, String host, String secretKey) {
 		super(version, date, keyName, userAgent, host, secretKey);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/applicationUpdate";
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,6 +164,16 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 				APPLICATION_PACKAGE);
 		rep.setNotifier(notifier);
 		request.setEntity(rep);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "applicationUpdate";
 	}
 
 }

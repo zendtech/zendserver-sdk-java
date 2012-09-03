@@ -58,15 +58,6 @@ public class MonitorGetEventGroupDetailsRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/monitorGetEventGroupDetails";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -111,6 +102,16 @@ public class MonitorGetEventGroupDetailsRequest extends AbstractRequest {
 	 */
 	public ResponseType getExpectedResponseDataType() {
 		return ResponseType.EVENTS_GROUP_DETAILS;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "monitorGetEventGroupDetails";
 	}
 
 }

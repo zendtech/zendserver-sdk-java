@@ -54,13 +54,6 @@ public class ClusterGetServerStatusRequest extends AbstractRequest {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/clusterGetServerStatus";
-	}
-
-	/* (non-Javadoc)
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -92,4 +85,15 @@ public class ClusterGetServerStatusRequest extends AbstractRequest {
 	public ResponseType getExpectedResponseDataType() {
 		return IResponseData.ResponseType.SERVERS_LIST;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "clusterGetServerStatus";
+	}
+	
 }

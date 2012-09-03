@@ -16,6 +16,7 @@ import java.util.List;
 import org.restlet.Request;
 import org.restlet.data.Method;
 import org.restlet.representation.StringRepresentation;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.RequestParameter;
@@ -33,11 +34,18 @@ public abstract class AbstractRequest implements IRequest {
 	private final String host;
 	private final String secretKey;
 	private final String keyName;
+	private final ServerType type;
 	private List<RequestParameter<?>> parameters;
 	protected IChangeNotifier notifier;
-
+	
 	public AbstractRequest(WebApiVersion version, Date date, String keyName,
 			String userAgent, String host, String secretKey) {
+		this(version, date, keyName, userAgent, host, secretKey,
+				ServerType.ZEND_SERVER);
+	}
+
+	public AbstractRequest(WebApiVersion version, Date date, String keyName,
+			String userAgent, String host, String secretKey, ServerType type) {
 		super();
 		this.version = version;
 		this.date = date;
@@ -50,6 +58,7 @@ public abstract class AbstractRequest implements IRequest {
 		}
 		this.host = host;
 		this.secretKey = secretKey;
+		this.type = type;
 		this.parameters = null;
 	}
 
@@ -139,6 +148,25 @@ public abstract class AbstractRequest implements IRequest {
 	public List<RequestParameter<?>> getParameters() {
 		return parameters;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.core.connection.request.IRequest#getServerType()
+	 */
+	public ServerType getServerType() {
+		return type;
+	}
+	
+	
+	public final String getUri() {
+		return "/" + getServerType().getName() + "/Api/" + getRequestName();
+	}
+	
+	/**
+	 * @return particular request name
+	 */
+	protected abstract String getRequestName();
 
 	/**
 	 * @return an unmodifiable list of the given response code

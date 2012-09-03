@@ -80,15 +80,6 @@ public class ClusterAddServerRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/clusterAddServer";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -168,4 +159,15 @@ public class ClusterAddServerRequest extends AbstractRequest {
 	public ResponseType getExpectedResponseDataType() {
 		return IResponseData.ResponseType.SERVER_INFO;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "clusterAddServer";
+	}
+	
 }

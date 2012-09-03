@@ -75,15 +75,6 @@ public class CodeTracingListRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/codetracingList";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -159,6 +150,16 @@ public class CodeTracingListRequest extends AbstractRequest {
 	 */
 	public ResponseType getExpectedResponseDataType() {
 		return ResponseType.CODE_TRACING_LIST;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "codetracingList";
 	}
 
 }

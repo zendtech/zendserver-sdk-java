@@ -46,15 +46,6 @@ public class ConfigurationExportRequest extends AbstractRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/configurationExport";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -82,4 +73,15 @@ public class ConfigurationExportRequest extends AbstractRequest {
 	public ResponseType getExpectedResponseDataType() {
 		return ResponseType.SERVER_CONFIG;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "configurationExport";
+	}
+	
 }

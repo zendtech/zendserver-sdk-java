@@ -36,13 +36,6 @@ public class GetSystemInfoRequest extends AbstractRequest {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.zend.webapi.core.connection.request.IRequest#getUri()
-	 */
-	public String getUri() {
-		return "/ZendServerManager/Api/getSystemInfo";
-	}
-
-	/* (non-Javadoc)
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
@@ -63,4 +56,15 @@ public class GetSystemInfoRequest extends AbstractRequest {
 	public ResponseType getExpectedResponseDataType() {
 		return IResponseData.ResponseType.SYSTEM_INFO;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * getMethodName()
+	 */
+	protected String getRequestName() {
+		return "getSystemInfo";
+	}
+	
 }
