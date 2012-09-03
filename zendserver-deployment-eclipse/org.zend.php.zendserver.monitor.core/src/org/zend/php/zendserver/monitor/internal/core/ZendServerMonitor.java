@@ -188,13 +188,13 @@ public class ZendServerMonitor extends AbstractMonitor {
 		try {
 			URL url = new URL(urlString);
 			String host = url.getHost();
-			String base = url.getPath();
+			String base = removeSlashes(url.getPath());
 			if (host != null && base != null) {
 				Set<IProject> keys = applications.keySet();
 				for (IProject project : keys) {
 					URL appUrl = applications.get(project);
-					if (base.startsWith(appUrl.getPath())
-							&& host.equals(appUrl.getHost())) {
+					String path = removeSlashes(appUrl.getPath());
+					if (base.startsWith(path) && host.equals(appUrl.getHost())) {
 						return project;
 					}
 				}
@@ -276,6 +276,16 @@ public class ZendServerMonitor extends AbstractMonitor {
 				}
 			}
 		}
+	}
+
+	private String removeSlashes(String path) {
+		while (path.startsWith("/")) { //$NON-NLS-1$
+			path = path.substring(1);
+		}
+		while (path.endsWith("/")) { //$NON-NLS-1$
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
 	}
 
 }
