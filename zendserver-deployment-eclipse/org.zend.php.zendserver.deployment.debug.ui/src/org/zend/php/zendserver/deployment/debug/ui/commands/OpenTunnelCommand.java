@@ -10,10 +10,11 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
+import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.monitor.core.Activator;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -56,8 +57,11 @@ public class OpenTunnelCommand extends AbstractHandler {
 
 	private boolean openTunnel(IZendTarget target) {
 		try {
-			State result = ZendDevCloudTunnelManager.getManager().connect(
-					target);
+			State result = null;
+			if (TargetsManager.isPhpcloud(target)
+					|| TargetsManager.isOpenShift(target)) {
+				result = SSHTunnelManager.getManager().connect(target);
+			}
 			switch (result) {
 			case CONNECTED:
 				String message = MessageFormat.format(

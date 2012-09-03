@@ -27,8 +27,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnel.State;
-import org.zend.php.zendserver.deployment.core.tunnel.ZendDevCloudTunnelManager;
+import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
@@ -57,7 +57,7 @@ public class DeploymentHandler {
 	private boolean cancelled;
 
 	private DeployJobChangeListener listener;
-	
+
 	private ILaunchConfiguration config;
 	private String mode;
 
@@ -86,25 +86,28 @@ public class DeploymentHandler {
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
-				final IProject project = LaunchUtils.getProjectFromFilename(config);
+				final IProject project = LaunchUtils
+						.getProjectFromFilename(config);
 				if (!helper.isEnabled()) {
 					return OK;
 				}
 				switch (helper.getOperationType()) {
 				case IDeploymentHelper.DEPLOY:
 					if (helper.getTargetId().isEmpty()) {
-						IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
+						IDeploymentHelper defaultHelper = LaunchUtils
+								.createDefaultHelper(project);
 						if (defaultHelper != null) {
 							try {
 								helper = defaultHelper;
-								LaunchUtils.updateLaunchConfiguration(project, defaultHelper,
-										config.getWorkingCopy());
+								LaunchUtils.updateLaunchConfiguration(project,
+										defaultHelper, config.getWorkingCopy());
 							} catch (CoreException e) {
 								Activator.log(e);
 							}
 						}
 					}
-					if (!helper.getTargetId().isEmpty() && !hasEmptyParameters(project, helper)) {
+					if (!helper.getTargetId().isEmpty()
+							&& !hasEmptyParameters(project, helper)) {
 						job = new DeployLaunchJob(helper, project);
 					} else {
 						setDefaultTarget(helper, project);
@@ -166,7 +169,8 @@ public class DeploymentHandler {
 		return OK;
 	}
 
-	public int openNoConfigDeploymentWizard(IDeploymentHelper helper, IProject project) {
+	public int openNoConfigDeploymentWizard(IDeploymentHelper helper,
+			IProject project) {
 		job = null;
 		try {
 			doOpenDeploymentWizard(helper, project);
@@ -189,7 +193,8 @@ public class DeploymentHandler {
 		try {
 			if (LaunchUtils.getConfigurationType() == config.getType()) {
 				IDeploymentHelper helper = DeploymentHelper.create(config);
-				final IProject project = LaunchUtils.getProjectFromFilename(config);
+				final IProject project = LaunchUtils
+						.getProjectFromFilename(config);
 				doOpenDeploymentWizard(helper, project);
 				if (job == null) {
 					return OK;
@@ -220,11 +225,14 @@ public class DeploymentHandler {
 		}
 	}
 
-	private boolean hasEmptyParameters(IProject project, IDeploymentHelper helper) {
-		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+	private boolean hasEmptyParameters(IProject project,
+			IDeploymentHelper helper) {
+		IResource descriptor = project
+				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		IDescriptorContainer model = DescriptorContainerManager.getService()
 				.openDescriptorContainer((IFile) descriptor);
-		List<IParameter> definedParams = model.getDescriptorModel().getParameters();
+		List<IParameter> definedParams = model.getDescriptorModel()
+				.getParameters();
 		int size = 0;
 		for (IParameter param : definedParams) {
 			ParameterType type = ParameterType.byName(param.getType());
@@ -239,7 +247,8 @@ public class DeploymentHandler {
 		if (params != null && params.size() > 0) {
 			for (IParameter parameter : definedParams) {
 				String value = (String) params.get(parameter.getId());
-				if (parameter.isRequired() && (value == null || value.isEmpty())) {
+				if (parameter.isRequired()
+						&& (value == null || value.isEmpty())) {
 					return true;
 				}
 			}
@@ -267,21 +276,19 @@ public class DeploymentHandler {
 			if (code == null) {
 				if (helper.getOperationType() == IDeploymentHelper.DEPLOY
 						&& LaunchUtils.isAutoDeployAvailable()
-						&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
+						&& (TargetsManager.isPhpcloud(helper.getTargetHost()) || TargetsManager
+								.isOpenShift(helper.getTargetHost()))) {
 					job = getAutoDeployJob(helper, project);
 				}
 				if (config != null) {
-					MonitorManager.createApplicationMonitor(helper.getTargetId(),
-							project.getName(), helper.getBaseURL());
+					MonitorManager.createApplicationMonitor(
+							helper.getTargetId(), project.getName(),
+							helper.getBaseURL());
 				}
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
-				if (LaunchUtils.isAutoDeployAvailable()
-						&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
-					return handleBaseUrlConflictDevCloud(helper, project);
-				}
 				return handleBaseUrlConflict(helper, project);
 			case APPLICATION_CONFLICT:
 				return handleApplicationConflict(helper, project);
@@ -293,8 +300,7 @@ public class DeploymentHandler {
 	}
 
 	private AbstractLaunchJob getAutoDeployJob(IDeploymentHelper helper,
-			IProject project)
-			throws InterruptedException {
+			IProject project) throws InterruptedException {
 		AbstractLaunchJob job = LaunchUtils.getAutoDeployJob();
 		if (job == null) {
 			// if auto deploy is not available then just leave
@@ -322,13 +328,12 @@ public class DeploymentHandler {
 	}
 
 	private int checkSSHTunnel(IDeploymentHelper helper) {
-		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)
-				&& TargetsManager.isPhpcloud(helper.getTargetHost())) {
+		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IZendTarget target = TargetsManagerService.INSTANCE
 					.getTargetManager().getTargetById(helper.getTargetId());
 			try {
-				State result = ZendDevCloudTunnelManager.getManager().connect(
-						target);
+				State result = null;
+				result = SSHTunnelManager.getManager().connect(target);
 				switch (result) {
 				case CONNECTING:
 					String message = MessageFormat.format(
@@ -344,6 +349,8 @@ public class DeploymentHandler {
 							Messages.OpenTunnelCommand_NotSupportedMessage,
 							4000);
 					break;
+				default:
+					return OK;
 				}
 			} catch (Exception e) {
 				Activator.log(e);
@@ -359,8 +366,8 @@ public class DeploymentHandler {
 		return OK;
 	}
 
-	private int handleApplicationConflict(IDeploymentHelper helper, IProject project)
-			throws InterruptedException {
+	private int handleApplicationConflict(IDeploymentHelper helper,
+			IProject project) throws InterruptedException {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
@@ -426,8 +433,8 @@ public class DeploymentHandler {
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
 					&& config != null) {
-				MonitorManager.createApplicationMonitor(helper.getTargetId(), project.getName(),
-						helper.getBaseURL());
+				MonitorManager.createApplicationMonitor(helper.getTargetId(),
+						project.getName(), helper.getBaseURL());
 			}
 			job = getAutoDeployJob(job.getHelper(), project);
 			if (job != null) {
@@ -476,14 +483,26 @@ public class DeploymentHandler {
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
 					&& config != null) {
-				MonitorManager.createApplicationMonitor(helper.getTargetId(), project.getName(),
-						helper.getBaseURL());
+				MonitorManager.createApplicationMonitor(helper.getTargetId(),
+						project.getName(), helper.getBaseURL());
+			}
+			String host = helper.getTargetHost();
+			if (LaunchUtils.isAutoDeployAvailable()
+					&& (TargetsManager.isPhpcloud(host) || TargetsManager
+							.isOpenShift(host))) {
+				job = getAutoDeployJob(job.getHelper(), project);
+				if (job != null) {
+					return checkSSHTunnel(helper);
+				} else {
+					return CANCEL;
+				}
 			}
 			return OK;
 		}
 	}
 
-	private void doOpenDeploymentWizard(final IDeploymentHelper helper, final IProject project) {
+	private void doOpenDeploymentWizard(final IDeploymentHelper helper,
+			final IProject project) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
@@ -499,7 +518,8 @@ public class DeploymentHandler {
 				}
 				DeploymentWizard wizard = new DeploymentWizard(project, helper,
 						wizardMode);
-				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+				Shell shell = PlatformUI.getWorkbench().getDisplay()
+						.getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.setPageSize(550, 350);
 				dialog.create();
@@ -531,7 +551,8 @@ public class DeploymentHandler {
 					case IDeploymentHelper.NO_ACTION:
 						try {
 							if (config != null) {
-								updateLaunchConfiguration(updatedHelper, config, project);
+								updateLaunchConfiguration(updatedHelper,
+										config, project);
 							}
 						} catch (CoreException e) {
 							Activator.log(e);
@@ -547,7 +568,8 @@ public class DeploymentHandler {
 	}
 
 	private void updateLaunchConfiguration(IDeploymentHelper helper,
-			final ILaunchConfiguration config, final IProject project) throws CoreException {
+			final ILaunchConfiguration config, final IProject project)
+			throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			wc = (ILaunchConfigurationWorkingCopy) config;
@@ -569,9 +591,12 @@ public class DeploymentHandler {
 	}
 
 	private MessageDialog getApplicationConflictDialog() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return new MessageDialog(shell, Messages.applicationConflictDialog_Title, null,
-				Messages.applicationConflictDialog_Message, MessageDialog.QUESTION, new String[] {
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell();
+		return new MessageDialog(shell,
+				Messages.applicationConflictDialog_Title, null,
+				Messages.applicationConflictDialog_Message,
+				MessageDialog.QUESTION, new String[] {
 						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 0);
 	}
