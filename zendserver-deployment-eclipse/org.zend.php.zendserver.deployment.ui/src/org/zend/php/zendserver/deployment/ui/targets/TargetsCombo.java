@@ -13,6 +13,14 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 public class TargetsCombo {
+	
+	public enum Type {
+		ALL,
+		
+		PHPCLOUD,
+		
+		OPENSHIFT;
+	}
 
 	private TargetsManager targetsManager = TargetsManagerService.INSTANCE.getTargetManager();
 	
@@ -24,14 +32,14 @@ public class TargetsCombo {
 
 	private String tooltip;
 
-	private boolean phpcloudOnly;
+	private Type type;
 	
 	public TargetsCombo() {
-		this(false);
+		this(Type.ALL);
 	}
 	
-	public TargetsCombo(boolean phpcloudOnly) {
-		this.phpcloudOnly = phpcloudOnly;
+	public TargetsCombo(Type type) {
+		this.type = type;
 	}
 	
 	public void select(String targetId) {
@@ -100,19 +108,19 @@ public class TargetsCombo {
 	}
 	
 	private IZendTarget[] filterTargets(IZendTarget[] targets) {
-		if (phpcloudOnly) {
-			List<IZendTarget> result = new ArrayList<IZendTarget>();
-			if (targets != null && targets.length > 0) {
-				for (IZendTarget target : targets) {
-					if (phpcloudOnly && !TargetsManager.isPhpcloud(target)) {
-						continue;
-					}
-					result.add(target);
+		List<IZendTarget> result = new ArrayList<IZendTarget>();
+		if (targets != null && targets.length > 0) {
+			for (IZendTarget target : targets) {
+				if (type == Type.PHPCLOUD && !TargetsManager.isPhpcloud(target)) {
+					continue;
+				} else if (type == Type.OPENSHIFT
+						&& !TargetsManager.isOpenShift(target)) {
+					continue;
 				}
+				result.add(target);
 			}
-			return result.toArray(new IZendTarget[0]);
 		}
-		return targets;
+		return result.toArray(new IZendTarget[0]);
 	}
 	
 }

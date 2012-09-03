@@ -20,7 +20,7 @@ public class TargetsLabelProvider extends LabelProvider {
 		}
 		if (element instanceof ITargetDatabase) {
 			ConnectionState state = ((ITargetDatabase) element).getState();
-			return "Database Connection (" + state.getLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return "MySQL Connection (" + state.getLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		return super.getText(element);

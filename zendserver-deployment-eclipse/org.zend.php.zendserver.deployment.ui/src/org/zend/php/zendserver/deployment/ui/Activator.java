@@ -82,6 +82,9 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public static final String IMAGE_ZEND = "icons/obj64/zend.gif"; //$NON-NLS-1$
 
 	public static final String IMAGE_CLOUD = "icons/obj64/cloud.gif"; //$NON-NLS-1$
+	
+	public static final String IMAGE_OPENSHIFT = "icons/obj64/openshift.gif"; //$NON-NLS-1$
+	public static final String IMAGE_WIZ_OPENSHIFT = "icons/wizban/openshift_wiz.png"; //$NON-NLS-1$
 
 	public static final String IMAGE_DETECT = "icons/obj64/detect.gif"; //$NON-NLS-1$
 
