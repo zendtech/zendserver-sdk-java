@@ -63,6 +63,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Button updateButton;
 	private Button autoDeployButton;
 	private Button noActionButton;
+	private Button enableMonitoring;
 
 	private IRunnableContext context;
 	private Combo updateCombo;
@@ -136,7 +137,10 @@ public class ConfigurationBlock extends AbstractBlock {
 				Messages.configurationPage_appUserNameTooltip, advancedSection, false);
 		ignoreFailures = createLabelWithCheckbox(Messages.configurationPage_ignoreFailures,
 				Messages.configurationPage_ignoreFailuresTooltip, advancedSection);
-		;
+		enableMonitoring = createLabelWithCheckbox(
+				Messages.ConfigurationBlock_EnableMonitoringButton,
+				Messages.ConfigurationBlock_EnableMonitoringTooltip,
+				advancedSection);
 		expComposite.setClient(advancedSection);
 		return getContainer();
 	}
@@ -170,6 +174,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		}
 		ignoreFailures.setSelection(helper.isIgnoreFailures());
+		enableMonitoring.setSelection(helper.isMonitoringEnabled());
 		userAppName.setText(helper.getAppName());
 		currentAppId = helper.getAppId();
 		initDefaultOperation(helper);
@@ -279,6 +284,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		if (getInstalledLocation() != null) {
 			helper.setInstalledLocation(getInstalledLocation());
 		}
+		helper.setMonitoringEnabled(enableMonitoring.getSelection());
 		return helper;
 	}
 

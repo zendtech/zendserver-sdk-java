@@ -86,9 +86,7 @@ public class ZendServerMonitor extends AbstractMonitor {
 			IEclipsePreferences prefs = getPreferences(res.getProject());
 			if (prefs != null) {
 				String enabledKey = MonitorManager.ENABLED + targetId;
-				if (prefs.get(enabledKey, null) != null) {
-					prefs.putBoolean(enabledKey, enable);
-				}
+				prefs.putBoolean(enabledKey, enable);
 			}
 		}
 	}

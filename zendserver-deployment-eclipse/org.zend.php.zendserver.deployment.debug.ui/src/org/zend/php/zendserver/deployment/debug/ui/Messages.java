@@ -62,6 +62,10 @@ public class Messages extends NLS {
 
 	public static String applicationConflictDialog_Title;
 
+	public static String ConfigurationBlock_EnableMonitoringButton;
+
+	public static String ConfigurationBlock_EnableMonitoringTooltip;
+
 	public static String DeploymentHandler_sshTunnelErrorMessage;
 	public static String DeploymentHandler_sshTunnelErrorTitle;
 

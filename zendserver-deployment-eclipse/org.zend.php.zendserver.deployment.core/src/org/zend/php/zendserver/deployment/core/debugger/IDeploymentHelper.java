@@ -36,6 +36,8 @@ public interface IDeploymentHelper {
 	int getOperationType();
 
 	boolean isEnabled();
+	
+	boolean isMonitoringEnabled();
 
 	void setBaseURL(String baseURL);
 
@@ -60,5 +62,7 @@ public interface IDeploymentHelper {
 	void setInstalledLocation(String location);
 
 	void setEnabled(boolean enabled);
+	
+	void setMonitoringEnabled(boolean enabled);
 
 }

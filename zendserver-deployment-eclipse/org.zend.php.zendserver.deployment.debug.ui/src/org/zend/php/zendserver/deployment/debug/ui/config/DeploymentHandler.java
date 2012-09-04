@@ -280,10 +280,13 @@ public class DeploymentHandler {
 								.isOpenShift(helper.getTargetHost()))) {
 					job = getAutoDeployJob(helper, project);
 				}
-				if (config != null) {
+				if (config != null && helper.isMonitoringEnabled()) {
 					MonitorManager.createApplicationMonitor(
 							helper.getTargetId(), project.getName(),
 							helper.getBaseURL());
+				} else {
+					MonitorManager.setApplicationEnabled(
+							helper.getProjectName(), false);
 				}
 				return checkSSHTunnel(helper);
 			}
@@ -432,9 +435,12 @@ public class DeploymentHandler {
 			job.schedule();
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
-					&& config != null) {
+					&& config != null && helper.isMonitoringEnabled()) {
 				MonitorManager.createApplicationMonitor(helper.getTargetId(),
 						project.getName(), helper.getBaseURL());
+			} else {
+				MonitorManager.setApplicationEnabled(
+						helper.getProjectName(), false);
 			}
 			job = getAutoDeployJob(job.getHelper(), project);
 			if (job != null) {
@@ -482,9 +488,12 @@ public class DeploymentHandler {
 			job.schedule();
 			job.join();
 			if (((DeploymentLaunchJob) job).getResponseCode() == null
-					&& config != null) {
+					&& config != null && helper.isMonitoringEnabled()) {
 				MonitorManager.createApplicationMonitor(helper.getTargetId(),
 						project.getName(), helper.getBaseURL());
+			} else {
+				MonitorManager.setApplicationEnabled(
+						helper.getProjectName(), false);
 			}
 			String host = helper.getTargetHost();
 			if (LaunchUtils.isAutoDeployAvailable()

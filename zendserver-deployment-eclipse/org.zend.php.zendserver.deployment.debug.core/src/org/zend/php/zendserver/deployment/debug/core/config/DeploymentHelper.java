@@ -30,6 +30,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private int operationType;
 	private String installedLocation;
 	private boolean enabled;
+	private boolean monitoringEnabled;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -45,6 +46,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.virtualHost = EMPTY_STRING;
 		this.operationType = IDeploymentHelper.DEPLOY;
 		this.enabled = true;
+		this.monitoringEnabled = true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,6 +79,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.INSTALLED_LOCATION.getName(), EMPTY_STRING));
 			helper.setEnabled(config.getAttribute(
 					DeploymentAttributes.ENABLED.getName(), true));
+			helper.setMonitoringEnabled(config.getAttribute(
+					DeploymentAttributes.MONITORING.getName(), true));
 		} catch (CoreException e) {
 			return null;
 		}
@@ -134,6 +138,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public boolean isEnabled() {
 		return enabled;
 	}
+	
+	public boolean isMonitoringEnabled() {
+		return monitoringEnabled;
+	}
 
 	public void setBaseURL(String baseURL) {
 		try {
@@ -186,6 +194,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	public void setMonitoringEnabled(boolean enabled) {
+		this.monitoringEnabled = enabled;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -231,6 +243,9 @@ public class DeploymentHelper implements IDeploymentHelper {
 				return false;
 			}
 			if (isEnabled() != h.isEnabled()) {
+				return false;
+			}
+			if (isMonitoringEnabled() != h.isMonitoringEnabled()) {
 				return false;
 			}
 		}

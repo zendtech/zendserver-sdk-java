@@ -169,6 +169,8 @@ public class LaunchUtils {
 		}
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
 				helper.isEnabled());
+		wc.setAttribute(DeploymentAttributes.MONITORING.getName(),
+				helper.isMonitoringEnabled());
 		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
 		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
 			updatePhpcloudLaunchConfiguration(helper, wc);
@@ -339,6 +341,7 @@ public class LaunchUtils {
 		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
 		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
+		wc.removeAttribute(DeploymentAttributes.MONITORING.getName());
 		wc.removeAttribute(SERVER_ENABLED);
 	}
 
@@ -518,6 +521,10 @@ public class LaunchUtils {
 				oldConfig.getAttribute(
 						DeploymentAttributes.INSTALLED_LOCATION.getName(),
 						(String) null));
+		wc.setAttribute(
+				DeploymentAttributes.MONITORING.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.MONITORING.getName(), true));
 		wc.setAttribute(SERVER_ENABLED, false);
 	}
 
