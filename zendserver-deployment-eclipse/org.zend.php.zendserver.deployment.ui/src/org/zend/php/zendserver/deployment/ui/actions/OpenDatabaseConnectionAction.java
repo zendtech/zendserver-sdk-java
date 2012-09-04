@@ -104,6 +104,8 @@ public class OpenDatabaseConnectionAction extends Action {
 						if (dialog.open() == Window.OK) {
 							targetConnection.setPassword(dialog.getPassword());
 							targetConnection.setSavePassword(dialog.getSave());
+						} else {
+							
 						}
 					}
 				});
@@ -120,7 +122,8 @@ public class OpenDatabaseConnectionAction extends Action {
 						targetConnection.setPassword(null);
 					}
 				}
-
+				return Status.CANCEL_STATUS;
+			} else {
 				return Status.CANCEL_STATUS;
 			}
 		}
