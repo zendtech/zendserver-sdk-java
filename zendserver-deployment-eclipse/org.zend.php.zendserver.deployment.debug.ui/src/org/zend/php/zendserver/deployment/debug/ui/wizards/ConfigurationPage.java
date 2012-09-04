@@ -38,6 +38,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 		Composite container = block.createContents(parent, true);
 		setControl(container);
 		if (helper != null) {
+			block.setDialogSettings(getDialogSettings());
 			block.initializeFields(helper);
 		}
 		setPageComplete(false);

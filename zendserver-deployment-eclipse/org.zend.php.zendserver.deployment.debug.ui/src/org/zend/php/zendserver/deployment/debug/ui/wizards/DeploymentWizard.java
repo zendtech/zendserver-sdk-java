@@ -15,9 +15,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -41,6 +43,7 @@ public class DeploymentWizard extends Wizard {
 	private String help;
 
 	public DeploymentWizard(ILaunchConfiguration config, Mode mode) {
+		setDialogSettings(Activator.getDefault().getDialogSettings());
 		DeploymentHelper helper = DeploymentHelper.create(config);
 		String projectName = helper.getProjectName();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -49,6 +52,7 @@ public class DeploymentWizard extends Wizard {
 	
 	public DeploymentWizard(IProject project, IDeploymentHelper helper,
 			Mode mode) {
+		setDialogSettings(Activator.getDefault().getDialogSettings());
 		init(project, helper, mode);
 	}
 
@@ -134,6 +138,7 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		helper = createHelper();
+		saveSettings(helper);
 		return true;
 	}
 
@@ -151,6 +156,12 @@ public class DeploymentWizard extends Wizard {
 		helper.setProjectName(project.getName());
 		helper.setUserParams(parametersPage.getHelper().getUserParams());
 		return helper;
+	}
+
+	private void saveSettings(IDeploymentHelper helper) {
+		IDialogSettings settings = getDialogSettings();
+		settings.put(DeploymentAttributes.TARGET_ID.getName(),
+				helper.getTargetId());
 	}
 
 }

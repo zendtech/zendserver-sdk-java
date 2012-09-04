@@ -7,6 +7,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -31,6 +32,7 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
@@ -162,8 +164,17 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	@Override
 	public void initializeFields(IDeploymentHelper helper) {
-		targetsCombo.select(helper.getTargetId());
-		
+		String targetId = helper.getTargetId();
+		if ((targetId == null || targetId.isEmpty())) {
+			IDialogSettings settings = getDialogSettings();
+			if (settings != null) {
+				targetsCombo.select(settings.get(DeploymentAttributes.TARGET_ID
+						.getName()));
+			}
+		} else {
+			targetsCombo.select(targetId);
+		}
+
 		URL newBaseURL = helper.getBaseURL();
 		if (newBaseURL != null) {
 			if (helper.isDefaultServer() && getTarget() != null) {
