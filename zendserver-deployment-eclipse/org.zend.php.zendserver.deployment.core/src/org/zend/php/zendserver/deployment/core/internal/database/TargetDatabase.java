@@ -30,6 +30,7 @@ import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.sdklib.manager.TargetsManager;
@@ -47,7 +48,10 @@ public abstract class TargetDatabase implements ITargetDatabase {
 
 	protected IZendTarget target;
 	protected String profileId;
-
+	
+	protected String password;
+	protected boolean savePassword;
+	
 	protected TargetsDatabaseManager manager;
 	protected IConnectionProfile profile;
 
@@ -162,6 +166,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 				profileId = profile.getInstanceID();
 				IStatus status = profile.connect();
 				if (status.getSeverity() == IStatus.OK) {
+					savePassword();
 					manager.stateChanged(this, ConnectionState.CONNECTED);
 					return true;
 				}
@@ -198,21 +203,17 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	 * 
 	 * @see
 	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#setPassword
-	 * (java.lang.String, boolean)
+	 * (java.lang.String)
 	 */
-	public void setPassword(String password, boolean save) {
+	public void setPassword(String password) {
 		Properties props = profile.getBaseProperties();
 		if (password != null) {
 			props.setProperty(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID,
 					password);
+			this.password = password;
 		} else {
 			props.remove(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID);
 			props.remove(IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID);
-		}
-		if (save) {
-			props.setProperty(
-					IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID,
-					String.valueOf(save));
 		}
 		profile.setBaseProperties(props);
 	}
@@ -247,6 +248,26 @@ public abstract class TargetDatabase implements ITargetDatabase {
 			}
 		}
 		return false;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.deployment.core.database.ITargetDatabase#
+	 * isSavePassword()
+	 */
+	public boolean isSavePassword() {
+		return savePassword;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.php.zendserver.deployment.core.database.ITargetDatabase#
+	 * setSavePassword(boolean)
+	 */
+	public void setSavePassword(boolean save) {
+		this.savePassword = save;
 	}
 
 	/*
@@ -372,6 +393,18 @@ public abstract class TargetDatabase implements ITargetDatabase {
 			}
 		}
 
+	}
+	
+	private void savePassword() {
+		Properties props = profile.getBaseProperties();
+		if (savePassword) {
+			TargetsManagerService.INSTANCE.storeContainerPassword(target,
+					password);
+			props.setProperty(
+					IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID,
+					String.valueOf(savePassword));
+		}
+		profile.setBaseProperties(props);
 	}
 
 }

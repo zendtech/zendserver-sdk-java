@@ -89,7 +89,8 @@ public class OpenDatabaseConnectionAction extends Action {
 				String password = TargetsManagerService.INSTANCE
 						.getContainerPassword(targetConnection.getTarget());
 				if (password != null && password.length() > 0) {
-					targetConnection.setPassword(password, true);
+					targetConnection.setPassword(password);
+					targetConnection.setSavePassword(true);
 					hasPassword = true;
 				}
 			}
@@ -99,11 +100,10 @@ public class OpenDatabaseConnectionAction extends Action {
 
 					public void run() {
 						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
-								Display.getDefault().getActiveShell(),
-								targetConnection.getTarget());
+								Display.getDefault().getActiveShell());
 						if (dialog.open() == Window.OK) {
-							targetConnection.setPassword(dialog.getPassword(),
-									dialog.getSave());
+							targetConnection.setPassword(dialog.getPassword());
+							targetConnection.setSavePassword(dialog.getSave());
 						}
 					}
 				});
@@ -117,7 +117,7 @@ public class OpenDatabaseConnectionAction extends Action {
 					}
 				} finally {
 					if (passwordProvided) {
-						targetConnection.setPassword(null, false);
+						targetConnection.setPassword(null);
 					}
 				}
 

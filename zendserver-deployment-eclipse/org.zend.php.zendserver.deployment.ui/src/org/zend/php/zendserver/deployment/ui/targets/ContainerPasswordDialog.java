@@ -17,8 +17,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Container password dialog for database connection. 
@@ -33,12 +31,9 @@ public class ContainerPasswordDialog extends Dialog {
 	
 	private String password;
 	private boolean save;
-	
-	private IZendTarget target;
 
-	public ContainerPasswordDialog(Shell parentShell, IZendTarget target) {
+	public ContainerPasswordDialog(Shell parentShell) {
 		super(parentShell);
-		this.target = target;
 	}
 
 	public String getPassword() {
@@ -72,9 +67,6 @@ public class ContainerPasswordDialog extends Dialog {
 	protected void okPressed() {
 		password = passwordText.getText();
 		save = saveButton.getSelection();
-		if (password != null && save) {
-			TargetsManagerService.INSTANCE.storeContainerPassword(target, password);
-		}
 		super.okPressed();
 	}
 

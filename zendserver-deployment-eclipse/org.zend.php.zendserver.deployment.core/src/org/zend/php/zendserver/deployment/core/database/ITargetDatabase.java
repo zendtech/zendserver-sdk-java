@@ -35,6 +35,19 @@ public interface ITargetDatabase {
 	 *         <code>false</code>
 	 */
 	boolean hasPassword();
+	
+	/**
+	 * @return <code>true</code> if password should be saved; otherwise return
+	 *         <code>false</code>
+	 */
+	boolean isSavePassword();
+
+	/**
+	 * Sets if password should be saved or not.
+	 * 
+	 * @param save
+	 */
+	void setSavePassword(boolean save);
 
 	/**
 	 * Connect to database using associated connection profile.
@@ -62,11 +75,8 @@ public interface ITargetDatabase {
 	 * 
 	 * @param password
 	 *            container password
-	 * @param save
-	 *            if <code>true</code> then password is stored in connection
-	 *            profile
 	 */
-	void setPassword(String password, boolean save);
+	void setPassword(String password);
 
 	/**
 	 * Remove associated connection profile. After that operation next call of
