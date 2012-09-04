@@ -50,10 +50,10 @@ Bundle-ClassPath: build/libs/org.restlet-2.0.4.jar,
  build/libs/org.restlet.ext.xml-2.0.4.jar,
  build/libs/org.zend.webapi.jar,
  build/libs/registry.jar,
- build/libs/openshift-java-client-2.0.0-SNAPSHOT.jar,
  build/libs/jboss-dmr-1.0.0.Final.jar,
  build/libs/jsch-0.1.44-1.jar,
  build/libs/slf4j-api-1.6.4.jar,
  build/libs/slf4j-log4j12-1.6.4.jar,
- build/libs/log4j-1.2.16.jar
+ build/libs/log4j-1.2.16.jar,
+ build/libs/openshift-java-client-2.0.0.jar
 Eclipse-BundleShape: dir
