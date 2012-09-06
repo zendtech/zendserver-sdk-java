@@ -15,17 +15,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.zend.php.common.Activator;
 
-
 public abstract class AbstractWelcomePageListener implements Runnable {
 
-	public abstract IWizard getWizard(IWorkbench workbench);
+	public abstract void launchWizard(IWorkbench workbench);
 
 	public void run() {
 		IWorkbench w = Activator.getDefault().getWorkbench();
-		IWizard wizard = getWizard(w);
-		WizardDialog dialog = new WizardDialog(w.getActiveWorkbenchWindow()
-				.getShell(), wizard);
-		dialog.open();
+		launchWizard(w);
 	}
 
 	/**
