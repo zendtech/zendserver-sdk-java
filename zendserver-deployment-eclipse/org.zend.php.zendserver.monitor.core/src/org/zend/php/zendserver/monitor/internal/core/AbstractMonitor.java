@@ -348,6 +348,6 @@ public abstract class AbstractMonitor extends Job {
 	private void handleError(IProgressMonitor monitor, String m) {
 		getProvider().showErrorMessage(getName(), m);
 		monitor.done();
-		disable(true);
+		disable(false);
 	}
 }
