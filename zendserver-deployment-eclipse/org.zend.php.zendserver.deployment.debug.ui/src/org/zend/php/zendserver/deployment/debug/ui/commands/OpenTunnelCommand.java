@@ -84,6 +84,13 @@ public class OpenTunnelCommand extends AbstractHandler {
 						Messages.OpenTunnelCommand_OpenTunnelTitle,
 						Messages.OpenTunnelCommand_NotSupportedMessage, 4000);
 				break;
+			case ERROR:
+				message = MessageFormat.format(
+						Messages.DeploymentHandler_sshTunnelErrorTitle,
+						target.getId());
+				NotificationManager.registerError(
+						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
+						4000);
 			default:
 				break;
 			}

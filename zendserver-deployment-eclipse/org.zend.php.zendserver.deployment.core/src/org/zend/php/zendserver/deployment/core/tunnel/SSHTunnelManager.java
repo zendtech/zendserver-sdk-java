@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendDevCloud;
@@ -146,6 +147,7 @@ public class SSHTunnelManager {
 					// If tunnel exists but it is disconnected and failed to
 					// connect it again
 					// try to remove old tunnel and create a new one for it
+					DeploymentCore.log(e);
 					targets.remove(target);
 					return connect(target);
 				}
