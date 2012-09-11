@@ -13,7 +13,7 @@ import org.zend.sdklib.target.IZendTarget;
 
 /**
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
 public class PhpcloudDatabase extends TargetDatabase {
 
@@ -53,6 +53,17 @@ public class PhpcloudDatabase extends TargetDatabase {
 	 */
 	protected String getDatabaseName() {
 		return getContainerName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.internal.database.TargetDatabase
+	 * #getProfilePrefix()
+	 */
+	protected String getProfilePrefix() {
+		return "phpcloud container"; //$NON-NLS-1$
 	}
 
 	private String getContainerName() {

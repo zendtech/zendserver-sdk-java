@@ -14,7 +14,7 @@ import org.zend.sdklib.target.IZendTarget;
 
 /**
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
 public class OpenShiftDatabase extends TargetDatabase {
 
@@ -56,6 +56,17 @@ public class OpenShiftDatabase extends TargetDatabase {
 	 */
 	protected String getDatabaseName() {
 		return target.getProperty(OpenShiftTarget.TARGET_CONTAINER);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.internal.database.TargetDatabase
+	 * #getProfilePrefix()
+	 */
+	protected String getProfilePrefix() {
+		return "openshift target"; //$NON-NLS-1$
 	}
 
 }

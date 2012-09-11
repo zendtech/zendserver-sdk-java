@@ -131,7 +131,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 				return false;
 			}
 			try {
-				String profileName = Messages.TargetDatabase_ProfileName
+				String profileName = getProfilePrefix() + ": " //$NON-NLS-1$
 						+ target.getHost().getHost();
 				String description = Messages.TargetDatabase_1 + target.getId();
 				profile = ProfileManager.getInstance().getProfileByName(
@@ -297,6 +297,8 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	protected abstract String getUsername();
 
 	protected abstract String getDatabaseName();
+	
+	protected abstract String getProfilePrefix();
 
 	private boolean connectTunnel() {
 		try {
