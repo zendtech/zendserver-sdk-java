@@ -29,11 +29,13 @@ public class ContainerPasswordDialog extends Dialog {
 	private Text passwordText;
 	private Button saveButton;
 	
+	private String title;
 	private String password;
 	private boolean save;
 
-	public ContainerPasswordDialog(Shell parentShell) {
+	public ContainerPasswordDialog(Shell parentShell, String title) {
 		super(parentShell);
+		this.title = title;
 	}
 
 	public String getPassword() {
@@ -55,7 +57,7 @@ public class ContainerPasswordDialog extends Dialog {
 		passwordText.setLayoutData(data);
 		saveButton = new Button(comp, SWT.CHECK);
 		saveButton.setText("Save Password"); //$NON-NLS-1$
-		getShell().setText("Container Password"); //$NON-NLS-1$
+		getShell().setText(title);
 		return comp;
 	}
 

@@ -26,6 +26,7 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.ContainerPasswordDialog;
 import org.zend.php.zendserver.monitor.core.Activator;
+import org.zend.sdklib.manager.TargetsManager;
 
 /**
  * Open database action for selected target.
@@ -99,8 +100,15 @@ public class OpenDatabaseConnectionAction extends Action {
 				Display.getDefault().syncExec(new Runnable() {
 
 					public void run() {
+						String title = null;
+						if (TargetsManager.isPhpcloud(targetConnection.getTarget())) {
+							title = "Container Password"; //$NON-NLS-1$
+						}
+						if (TargetsManager.isOpenShift(targetConnection.getTarget())) {
+							title = "Database Password"; //$NON-NLS-1$
+						}
 						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
-								Display.getDefault().getActiveShell());
+								Display.getDefault().getActiveShell(), title);
 						if (dialog.open() == Window.OK) {
 							targetConnection.setPassword(dialog.getPassword());
 							targetConnection.setSavePassword(dialog.getSave());
