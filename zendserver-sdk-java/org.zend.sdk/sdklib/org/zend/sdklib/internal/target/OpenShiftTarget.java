@@ -345,10 +345,14 @@ public class OpenShiftTarget {
 	}
 
 	private List<IApplication> getZendContainers() throws OpenShiftException,
-			FileNotFoundException, IOException {
+			FileNotFoundException, IOException, SdkException {
 		IOpenShiftConnection connection = getConnection();
 		IUser user = connection.getUser();
 		List<IDomain> domains = user.getDomains();
+		if (domains == null || domains.isEmpty()) {
+			throw new SdkException(
+					"Either provided credentials are not valid or specified user has not created any domain yet.");
+		}
 		List<IApplication> result = new ArrayList<IApplication>();
 		if (domains != null && domains.size() > 0) {
 			for (IDomain domain : domains) {
