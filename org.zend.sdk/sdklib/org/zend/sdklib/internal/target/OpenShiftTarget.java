@@ -59,6 +59,9 @@ import com.openshift.client.SSHPublicKey;
  */
 public class OpenShiftTarget {
 
+	public static final String DEFAULT_LIBRA_SERVER = "https://openshift.redhat.com";
+	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer";
+	
 	public static final String OPENSHIFT_HOST = "dev.rhcloud.com";
 
 	public static final String TARGET_CONTAINER = "openshift.container";
@@ -149,7 +152,7 @@ public class OpenShiftTarget {
 				return name;
 			}
 		} catch (OpenShiftException e) {
-			throw new SdkException(e);
+			throw new SdkException(e.getMessage());
 		} catch (IOException e) {
 			throw new SdkException(e);
 		}
@@ -159,7 +162,26 @@ public class OpenShiftTarget {
 	public static boolean hasDatabaseSupport(IZendTarget target) {
 		return target.getProperty(TARGET_MYSQL_SUPPORT) != null;
 	}
+	
+	public static void iniLibraServer(String value) {
+		if (value != null && !value.equals(getLibraServer())) {
+			setLibraServer(value);
+		}
+	}
 
+	public static String getLibraServer() {
+		String val = System.getProperty(LIBRA_SERVER_PROP);
+		return val != null ? val : DEFAULT_LIBRA_SERVER;
+	}
+	
+	public static String getDefaultLibraServer() {
+		return DEFAULT_LIBRA_SERVER;
+	}
+	
+	public static void setLibraServer(String serverURL) {
+		System.setProperty(LIBRA_SERVER_PROP, serverURL);
+	}
+	
 	private String getInternalHost(IApplication container, ZendTarget target,
 			PublicKeyBuilder keyBuilder) throws SdkException {
 		Session session = null;
@@ -373,8 +395,7 @@ public class OpenShiftTarget {
 	private IOpenShiftConnection getConnection() throws OpenShiftException,
 			IOException {
 		IOpenShiftConnection connection = new OpenShiftConnectionFactory()
-				.getConnection("zend_sdk", username, password,
-						"https://ec2-75-101-245-98.compute-1.amazonaws.com");
+				.getConnection("zend_sdk", username, password, getLibraServer());
 		return connection;
 	}
 
@@ -439,4 +460,5 @@ public class OpenShiftTarget {
 		}
 		return builder.toString();
 	}
+
 }
