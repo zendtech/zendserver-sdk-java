@@ -222,9 +222,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		try {
 			uploadedKeyName = detect.uploadPublicKey(privateKey, decryptor);
 		} catch (SdkException ex) {
-			throw new CoreException(
-					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Could not upload new public key.", ex));
+			throw new CoreException(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, ex.getMessage(), ex));
 		}
 
 		monitor.subTask("Detecting targets for " + username);
