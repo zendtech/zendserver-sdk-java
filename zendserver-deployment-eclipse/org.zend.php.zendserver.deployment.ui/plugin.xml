@@ -257,5 +257,19 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferencesPage"
+            id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
+            name="OpenShift">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>
