@@ -24,6 +24,7 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -103,7 +104,7 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 					PackageBuilder builder = new PackageBuilder(container,
 							new EclipseMappingModelLoader());
 					builder.addStatusChangeListener(listener);
-
+					builder.setVariableResolver(new EclipseVariableResolver());
 					if (!parametersPage.isOverwriteWithoutWarning()) {
 						IStatus s = shouldOverwrite(directory, builder);
 						if (!s.isOK()) {
