@@ -19,6 +19,7 @@ import org.zend.sdklib.internal.target.SSLContextInitializer;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMappingLoader;
+import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
@@ -83,11 +84,18 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 		return manager.getTargetById(targetId);
 	}
 	
-	protected PackageBuilder getPackageBuilder(String path) {
+	protected PackageBuilder getPackageBuilder(String path,
+			IVariableResolver variableResolver) {
+		PackageBuilder builder = null;
 		if (mappingLoader == null) {
-			return new PackageBuilder(new File(path));
+			builder = new PackageBuilder(new File(path));
+		} else {
+			builder = new PackageBuilder(new File(path), mappingLoader, this);
 		}
-		return new PackageBuilder(new File(path), mappingLoader, this);
+		if (variableResolver != null) {
+			builder.setVariableResolver(variableResolver);
+		}
+		return builder;
 	}
 
 	protected void closeStream(Closeable stream) {

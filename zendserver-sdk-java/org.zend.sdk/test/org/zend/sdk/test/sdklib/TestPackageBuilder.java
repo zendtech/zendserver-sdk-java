@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.zend.sdk.test.AbstractTest;
 import org.zend.sdklib.application.PackageBuilder;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
+import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.webapi.core.progress.IStatus;
 import org.zend.webapi.core.progress.StatusCode;
 
@@ -181,6 +182,26 @@ public class TestPackageBuilder extends AbstractTest {
 		assertEquals(StatusCode.STOPPING, statuses.get(statuses.size() - 1)
 				.getCode());
 		assertEquals(4, statuses.size() - 2);
+	}
+	
+	@Test
+	public void testCreatePackageVariableResolver() throws IOException {
+		PackageBuilder builder = new PackageBuilder(new File(FOLDER
+				+ "Project9"));
+		builder.setVariableResolver(new IVariableResolver() {
+			
+			public String resolve(String path) {
+				String varToReplace = "testVariable";
+				return path.replaceAll(varToReplace, "a");
+			}
+		});
+		File result = builder.createDeploymentPackage(file.getCanonicalPath());
+		assertNotNull(result);
+		assertTrue(result.exists());
+		unzip(result);
+		File parent = result.getParentFile();
+		assertTrue(new File(parent, "data/include_it").exists());
+		assertTrue(new File(parent, "data/file").exists());
 	}
 
 	public void unzip(File packageFile) {
