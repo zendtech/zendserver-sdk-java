@@ -21,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBException;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
@@ -32,6 +33,7 @@ import org.zend.sdklib.mapping.IMappingEntry;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.project.DeploymentScriptTypes;
 import org.zend.webapi.core.progress.BasicStatus;
@@ -55,6 +57,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private IMappingModel model;
 
 	private Set<String> addedPaths;
+	private IVariableResolver variableResolver;
 
 	public PackageBuilder(File container, IMappingLoader loader,
 			IChangeNotifier notifier) {
@@ -79,6 +82,10 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	public PackageBuilder(File container) {
 		this(container, (IMappingLoader) null);
+	}
+	
+	public void setVariableResolver(IVariableResolver variableResolver) {
+		this.variableResolver = variableResolver;
 	}
 
 	/**
@@ -217,7 +224,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 						mappingFolder += File.separator
 								+ libraryMapping.getFolder();
 					}
-					String library = libraryMapping.getLibraryPath();
+					String library = resolveVariables(libraryMapping
+							.getLibraryPath());
 					File libraryFile = new File(library);
 					if (!libraryFile.isAbsolute()) {
 						libraryFile = new File(container, library);
@@ -229,6 +237,15 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					}
 				}
 			}
+		}
+	}
+
+	private String resolveVariables(String libraryPath) throws IOException {
+		try {
+			return variableResolver != null ? variableResolver
+					.resolve(libraryPath) : libraryPath;
+		} catch (SdkException e) {
+			throw new IOException(e);
 		}
 	}
 

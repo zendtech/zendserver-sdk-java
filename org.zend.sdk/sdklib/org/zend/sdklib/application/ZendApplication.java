@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.mapping.IMappingLoader;
+import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.webapi.core.WebApiClient;
@@ -46,6 +47,8 @@ import org.zend.webapi.core.progress.StatusCode;
 public class ZendApplication extends ZendConnection {
 
 	public static final String TEMP_PREFIX = "ZendStudioDeployment";
+	
+	private IVariableResolver variableResolver;
 
 	public ZendApplication() {
 		super();
@@ -62,6 +65,10 @@ public class ZendApplication extends ZendConnection {
 	public ZendApplication(ITargetLoader loader,
 			IMappingLoader mappingLoader) {
 		super(loader, mappingLoader);
+	}
+	
+	public void setVariableResolver(IVariableResolver variableResolver) {
+		this.variableResolver = variableResolver;
 	}
 
 	/**
@@ -586,7 +593,8 @@ public class ZendApplication extends ZendConnection {
 					return children[0];
 				}
 			}
-			return getPackageBuilder(path).createDeploymentPackage(tempFile);
+			return getPackageBuilder(path, variableResolver)
+					.createDeploymentPackage(tempFile);
 		} else {
 			return file;
 		}
