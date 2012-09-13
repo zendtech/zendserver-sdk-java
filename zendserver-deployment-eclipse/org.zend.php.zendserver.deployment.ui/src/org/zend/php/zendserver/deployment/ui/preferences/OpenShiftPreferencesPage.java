@@ -50,7 +50,7 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		String oldValue = OpenShiftTarget.getLibraServer();
+		String oldValue = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
 		String newValue = serverURL.getText();
 		if (!newValue.equals(oldValue)) {
 			prefs.put(OpenShiftTarget.LIBRA_SERVER_PROP, newValue);
@@ -117,9 +117,13 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 	}
 
 	private void initializeValues() {
-		String value = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP,
-				OpenShiftTarget.getDefaultLibraServer());
-		serverURL.setText(value);
+		String value = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
+		String propertyValue = OpenShiftTarget.getLibraServer();
+		if (value == null) {
+			serverURL.setText(propertyValue);
+		} else {
+			serverURL.setText(value);
+		}
 	}
 
 }
