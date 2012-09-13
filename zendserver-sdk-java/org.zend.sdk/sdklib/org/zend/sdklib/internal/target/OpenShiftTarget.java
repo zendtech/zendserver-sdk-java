@@ -164,7 +164,8 @@ public class OpenShiftTarget {
 	}
 	
 	public static void iniLibraServer(String value) {
-		if (value != null && !value.equals(getLibraServer())) {
+		String val = System.getProperty(LIBRA_SERVER_PROP);
+		if (val == null) {
 			setLibraServer(value);
 		}
 	}
