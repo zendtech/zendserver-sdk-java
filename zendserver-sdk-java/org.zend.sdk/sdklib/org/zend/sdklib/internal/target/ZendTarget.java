@@ -27,6 +27,7 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -282,21 +283,24 @@ public class ZendTarget implements IZendTarget {
 		properties.putAll(this.properties);
 		properties.store(os, "target properties for " + getId());
 	}
-
+	
 	@Override
-	public boolean connect() throws WebApiException {
+	public boolean connect(WebApiVersion version) throws WebApiException {
 		WebApiCredentials credentials = new BasicCredentials(getKey(),
 				getSecretKey());
 		try {
 			String hostname = getHost().toString();
 			WebApiClient client = new WebApiClient(credentials, hostname,
 					SSLContextInitializer.instance.getRestletContext());
+			if (version != WebApiVersion.UNKNOWN) {
+				client.setCustomVersion(version);
+			}
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
 			addProperty("operatingSystem", info.getEdition().name());
 			addProperty("phpVersion", info.getPhpVersion());
 			addProperty("status", info.getStatus().name());
-			addProperty("serverVersion", info.getVersion());
+			addProperty(SERVER_VERSION, info.getVersion().getName());
 			addProperty("supportedApiVersions", info.getSupportedApiVersions()
 					.toString());
 		} catch (MalformedURLException e) {
@@ -323,6 +327,11 @@ public class ZendTarget implements IZendTarget {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean connect() throws WebApiException {
+		return connect(WebApiVersion.UNKNOWN);
 	}
 
 	public boolean equals(Object obj) {

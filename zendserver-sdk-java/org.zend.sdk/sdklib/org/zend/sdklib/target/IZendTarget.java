@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 /**
  * Represents a Zend Server Target environment that can be used for SDK
@@ -21,6 +22,8 @@ import org.zend.webapi.core.WebApiException;
  */
 
 public interface IZendTarget {
+	
+	public static final String SERVER_VERSION = "serverVersion";
 
 	/**
 	 * @return String secret key for this target
@@ -67,6 +70,15 @@ public interface IZendTarget {
 	 * @throws WebApiException
 	 */
 	boolean connect() throws WebApiException;
+	
+	/**
+	 * Try to connect with this target using specified WebAPI version.
+	 * 
+	 * @param webapi version
+	 * @return true if connection success
+	 * @throws WebApiException
+	 */
+	boolean connect(WebApiVersion version) throws WebApiException;
 
 	/**
 	 * @return true if target was not fully initialized and e.g. requires some additional
