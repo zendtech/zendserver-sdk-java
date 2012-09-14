@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
@@ -35,6 +36,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		StatusChangeListener listener = new StatusChangeListener(monitor);
 		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
+		app.setVariableResolver(new EclipseVariableResolver());
 		IRequestListener preListener = new PhpcloudContainerListener(
 				helper.getTargetId());
 		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
