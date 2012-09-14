@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
@@ -24,6 +23,7 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
@@ -269,6 +269,14 @@ public abstract class AbstractTargetDetailsComposite {
 							+ " of detected target "
 							+ target.getHost().getHost());
 					try {
+						// test if this is zend server 6
+						try {
+							if (target.connect(WebApiVersion.V1_3)) {
+								return target;
+							}
+						} catch (WebApiException e) {
+							// means that it is not a zend server 6
+						}
 						if (target.connect()) {
 							return target;
 						}
@@ -288,6 +296,14 @@ public abstract class AbstractTargetDetailsComposite {
 					}
 				}
 			} else {
+				// test if this is zend server 6
+				try {
+					if (target.connect(WebApiVersion.V1_3)) {
+						return target;
+					}
+				} catch (WebApiException e) {
+					// means that it is not a zend server 6
+				}
 				if (target.connect()) {
 					return target;
 				}
