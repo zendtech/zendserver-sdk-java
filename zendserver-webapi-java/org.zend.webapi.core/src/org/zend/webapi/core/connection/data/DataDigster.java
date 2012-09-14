@@ -209,9 +209,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		licenseInfo.setOrderNumber(value);
 
 		value = getValue(currentPath + "/validUntil");
-		final Date parse = DateUtils.parse(value, DateUtils.FORMAT_RFC_1123);
-		licenseInfo.setValidUntil(parse);
-
+		if (value != null) {
+			final Date parse = DateUtils
+					.parse(value, DateUtils.FORMAT_RFC_1123);
+			licenseInfo.setValidUntil(parse);
+		}
 		value = getValue(currentPath + "/serverLimit");
 		licenseInfo.setLimit(Integer.parseInt(value == null ? "0" : value));
 
@@ -270,7 +272,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		List<WebApiVersion> versions = new ArrayList<WebApiVersion>(
 				parsed.length);
 		for (String version : parsed) {
-			versions.add(WebApiVersion.byFullName(version));
+			versions.add(WebApiVersion.byFullName(version.trim()));
 		}
 		return versions;
 	}

@@ -123,6 +123,8 @@ public class WebApiClient {
 	private IChangeNotifier notifier;
 
 	private boolean listenersDisabled;
+	
+	private WebApiVersion customVersion;
 
 	private static Map<IRequestListener, Integer> preListeners;
 	private static Map<IRequestListener, Integer> postListeners;
@@ -238,7 +240,7 @@ public class WebApiClient {
 	 */
 	public SystemInfo getSystemInfo() throws WebApiException {
 		final IResponse handle = this.handle(WebApiMethodType.GET_SYSTEM_INFO,
-				null);
+				getVersion(WebApiVersion.V1_1), null);
 		return (SystemInfo) handle.getData();
 	}
 
@@ -260,7 +262,8 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_GET_SERVER_STATUS,
-				servers.length == 0 ? null : new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), servers.length == 0 ? null
+						: new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((ClusterGetServerStatusRequest) request)
 								.setServers(servers);
@@ -281,7 +284,8 @@ public class WebApiClient {
 			final Boolean propagateSettings, final Boolean doRestart)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CLUSTER_ADD_SERVER, new IRequestInitializer() {
+				WebApiMethodType.CLUSTER_ADD_SERVER,
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						final ClusterAddServerRequest r = ((ClusterAddServerRequest) request)
 								.setServerName(serverName)
@@ -343,7 +347,7 @@ public class WebApiClient {
 			final Boolean force) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_REMOVE_SERVER,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						final ClusterRemoveServerRequest r = ((ClusterRemoveServerRequest) request)
 								.setServerId(serverId);
@@ -386,7 +390,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_DISABLE_SERVER,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((ClusterDisableServerRequest) request)
 								.setServerId(serverId);
@@ -409,7 +413,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_ENABLE_SERVER,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((ClusterEnableServerRequest) request)
 								.setServerId(serverId);
@@ -429,7 +433,7 @@ public class WebApiClient {
 			final Boolean doRestart) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CLUSTER_RECONFIGURE_SERVER,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						final ClusterReconfigureServerRequest r = (ClusterReconfigureServerRequest) request;
 						r.setServerId(serverId);
@@ -468,7 +472,8 @@ public class WebApiClient {
 	public ServersList restartPhp(final Boolean parallelRestart,
 			final String... servers) throws WebApiException {
 		final IResponse handle = this.handle(WebApiMethodType.RESTART_PHP,
-				servers == null ? null : new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), servers == null ? null
+						: new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((RestartPhpRequest) request).setServers(servers)
 								.setParallelRestart(parallelRestart);
@@ -532,7 +537,7 @@ public class WebApiClient {
 			final Boolean ignoreSystemMismatch) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CONFIGURATION_IMPORT,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						((ConfigurationImportRequest) request)
@@ -575,7 +580,8 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_GET_STATUS,
-				applications.length == 0 ? null : new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), applications.length == 0 ? null
+						: new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
 						((ApplicationGetStatusRequest) request)
 								.setApplications(applications);
@@ -602,7 +608,8 @@ public class WebApiClient {
 			final Boolean createVhost, final Boolean defaultServer)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.APPLICATION_DEPLOY, new IRequestInitializer() {
+				WebApiMethodType.APPLICATION_DEPLOY,
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationDeployRequest deployRequest = (ApplicationDeployRequest) request;
@@ -801,7 +808,8 @@ public class WebApiClient {
 			final NamedInputStream appPackage, final Boolean ignoreFailures,
 			final Map<String, String> userParam) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.APPLICATION_UPDATE, new IRequestInitializer() {
+				WebApiMethodType.APPLICATION_UPDATE,
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationUpdateRequest updateRequest = (ApplicationUpdateRequest) request;
@@ -903,7 +911,8 @@ public class WebApiClient {
 	public ApplicationInfo applicationRemove(final int appId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.APPLICATION_REMOVE, new IRequestInitializer() {
+				WebApiMethodType.APPLICATION_REMOVE,
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationRemoveRequest removeRequest = (ApplicationRemoveRequest) request;
@@ -929,7 +938,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_ROLLBACK,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationRollbackRequest removeRequest = (ApplicationRollbackRequest) request;
@@ -956,7 +965,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_SYNCHRONIZE,
-				new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationRedeployRequest deployRequest = (ApplicationRedeployRequest) request;
@@ -1025,8 +1034,8 @@ public class WebApiClient {
 	public CodeTracingStatus codeTracingDisable(final Boolean restartNow)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_DISABLE, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.CODE_TRACING_DISABLE,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodeTracingDisableRequest disableRequest = (CodeTracingDisableRequest) request;
@@ -1075,8 +1084,8 @@ public class WebApiClient {
 	public CodeTracingStatus codeTracingEnable(final Boolean restartNow)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_ENABLE, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.CODE_TRACING_ENABLE,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodeTracingEnableRequest enableRequest = (CodeTracingEnableRequest) request;
@@ -1124,8 +1133,8 @@ public class WebApiClient {
 	 */
 	public CodeTracingStatus codeTracingIsEnabled() throws WebApiException {
 		IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_IS_ENABLED, WebApiVersion.V1_2,
-				null);
+				WebApiMethodType.CODE_TRACING_IS_ENABLED,
+				getVersion(WebApiVersion.V1_2), null);
 		return (CodeTracingStatus) handle.getData();
 	}
 
@@ -1139,8 +1148,8 @@ public class WebApiClient {
 	 */
 	public CodeTrace codeTracingCreate(final String url) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_CREATE, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.CODE_TRACING_CREATE,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodeTracingCreateRequest createRequest = (CodeTracingCreateRequest) request;
@@ -1161,8 +1170,8 @@ public class WebApiClient {
 	public CodeTrace codeTracingDelete(final String traceFile)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_DELETE, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.CODE_TRACING_DELETE,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodeTracingDeleteRequest deleteRequest = (CodeTracingDeleteRequest) request;
@@ -1184,8 +1193,8 @@ public class WebApiClient {
 			final Integer offset, final String orderBy, final String direction,
 			final String... applications) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.CODE_TRACING_LIST, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.CODE_TRACING_LIST,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodeTracingListRequest listRequest = (CodeTracingListRequest) request;
@@ -1224,7 +1233,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.CODE_TRACING_DOWNLOAD_TRACE_FILE,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						CodetracingDownloadTraceFileRequest fileRequest = (CodetracingDownloadTraceFileRequest) request;
@@ -1254,7 +1263,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_REQUEST_SUMMARY,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetRequestSummaryRequest monitorRequest = (MonitorGetRequestSummaryRequest) request;
@@ -1280,7 +1289,7 @@ public class WebApiClient {
 			final String order, final String direction) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_ISSUES_LIST_PREDEFINED_FILTER,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetIssuesListPredefinedFilterRequest filterRequest = (MonitorGetIssuesListPredefinedFilterRequest) request;
@@ -1316,8 +1325,8 @@ public class WebApiClient {
 	public IssueDetails monitorGetIssueDetails(final int issueId)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetIssueDetailsRequest monitorRequest = (MonitorGetIssueDetailsRequest) request;
@@ -1342,7 +1351,7 @@ public class WebApiClient {
 			final int eventGroupId) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_EVENT_GROUP_DETAILS,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetEventGroupDetailsRequest monitorRequest = (MonitorGetEventGroupDetailsRequest) request;
@@ -1368,7 +1377,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorExportIssueByEventsGroupRequest fileRequest = (MonitorExportIssueByEventsGroupRequest) request;
@@ -1390,7 +1399,7 @@ public class WebApiClient {
 			final IssueStatus newStatus) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_CHANGE_ISSUE_STATUS,
-				WebApiVersion.V1_2, new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorChangeIssueStatusRequest changeRequest = (MonitorChangeIssueStatusRequest) request;
@@ -1412,8 +1421,8 @@ public class WebApiClient {
 			final Boolean noRemote, final String overrideHost)
 			throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.STUDIO_START_DEBUG, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.STUDIO_START_DEBUG,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						StudioStartDebugRequest debugRequest = (StudioStartDebugRequest) request;
@@ -1477,8 +1486,8 @@ public class WebApiClient {
 	public ProfileRequest studioStartProfile(final String eventsGroupId,
 			final String overrideHost) throws WebApiException {
 		final IResponse handle = this.handle(
-				WebApiMethodType.STUDIO_START_PROFILE, WebApiVersion.V1_2,
-				new IRequestInitializer() {
+				WebApiMethodType.STUDIO_START_PROFILE,
+				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						StudioStartProfileRequest profileRequest = (StudioStartProfileRequest) request;
@@ -1585,6 +1594,10 @@ public class WebApiClient {
 	public void enableListeners() {
 		listenersDisabled = false;
 	}
+	
+	public void setCustomVersion(WebApiVersion customVersion) {
+		this.customVersion = customVersion;
+	}
 
 	public static void registerPreRequestListener(IRequestListener listener) {
 		synchronized (preListeners) {
@@ -1640,6 +1653,13 @@ public class WebApiClient {
 				}
 			}
 		}
+	}
+	
+	private WebApiVersion getVersion(WebApiVersion preferedVersion) {
+		if (customVersion != null) {
+			return customVersion;
+		}
+		return preferedVersion;
 	}
 
 	private final String getWebApiAddress(URL host) {

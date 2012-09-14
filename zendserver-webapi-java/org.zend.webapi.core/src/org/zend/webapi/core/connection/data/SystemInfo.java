@@ -12,6 +12,7 @@ import java.util.List;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.core.connection.data.values.SystemStatus;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 /**
  * systemInfo Generic information about the system being accessed
@@ -22,7 +23,7 @@ public class SystemInfo extends AbstractResponseData {
 
 	private SystemStatus status;
 	private SystemEdition edition;
-	private String version;
+	private ZendServerVersion version;
 	private List<WebApiVersion> supportedApiVersions;
 	private String phpVersion;
 	private String operatingSystem;
@@ -51,7 +52,7 @@ public class SystemInfo extends AbstractResponseData {
 	/**
 	 * @return Full version of Zend Server
 	 */
-	public String getVersion() {
+	public ZendServerVersion getVersion() {
 		return version;
 	}
 
@@ -136,7 +137,7 @@ public class SystemInfo extends AbstractResponseData {
 	 * @param version the version to set
 	 */
 	protected void setVersion(String version) {
-		this.version = version;
+		this.version = ZendServerVersion.byName(version);
 	}
 
 	/**
