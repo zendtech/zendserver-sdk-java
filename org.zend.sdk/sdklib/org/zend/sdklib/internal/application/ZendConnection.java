@@ -25,6 +25,8 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 /**
  * Abstract class which provides interface to perform WebAPI methods.
@@ -76,8 +78,13 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
 		String hostname = target.getHost().toString();
-		return new WebApiClient(credentials, hostname,
+		WebApiClient client = new WebApiClient(credentials, hostname,
 				SSLContextInitializer.instance.getRestletContext(), notifier);
+		if (ZendServerVersion.v6_0_0 == ZendServerVersion.byName(target
+				.getProperty(IZendTarget.SERVER_VERSION))) {
+			client.setCustomVersion(WebApiVersion.V1_3);
+		}
+		return client;
 	}
 
 	protected IZendTarget getTargetById(String targetId) {
