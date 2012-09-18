@@ -201,6 +201,7 @@ public class MonitorManager {
 			if (monitor != null) {
 				monitor.disable(projectName);
 				if (!monitor.isEnabled()) {
+					monitor.disable(true);
 					toRemove.add(targetId);
 				}
 			}
