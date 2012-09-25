@@ -29,7 +29,7 @@ public class SSHTunnelManager {
 		return manager;
 	}
 
-	public State connect(IZendTarget target) {
+	public State connect(IZendTarget target) throws IOException {
 		if (!isTargetSupported(target)) {
 			return null;
 		}
@@ -131,13 +131,13 @@ public class SSHTunnelManager {
 	}
 
 	private State connect(AbstractSSHTunnel tunnel, IZendTarget target,
-			boolean init) {
+			boolean init) throws IOException {
 		if (init) {
 			try {
 				return tunnel.connect();
 			} catch (IOException e) {
 				targets.remove(target);
-				return State.ERROR;
+				throw e;
 			}
 		} else {
 			if (!tunnel.isConnected()) {
