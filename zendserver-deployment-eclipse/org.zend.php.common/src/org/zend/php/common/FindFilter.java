@@ -15,7 +15,7 @@ public class FindFilter extends PatternFilter {
 	private boolean filterMatches(String text) {
 		return text != null && wordMatches(text);
 	}
-	
+
 	protected Object[] getChildren(Object element) {
 		if (element instanceof CatalogCategory) {
 			return ((CatalogCategory) element).getItems().toArray();
@@ -25,18 +25,31 @@ public class FindFilter extends PatternFilter {
 		return super.getChildren(element);
 	}
 
-	
 	protected boolean isLeafMatch(Viewer filteredViewer, Object element) {
 		if (element instanceof CatalogItem) {
 			CatalogItem descriptor = (CatalogItem) element;
-			return (filterMatches(descriptor.getName())
-					|| filterMatches(descriptor.getDescription())
-					|| filterMatches(descriptor.getProvider()) || filterMatches(descriptor
-						.getLicense()));
+			return filter(descriptor);
+		} else if (element instanceof VirtualTreeCategory) {
+			// only show categories if at least one child is visible
+			CatalogCategory category = ((VirtualTreeCategory) element).parent;
+			for (CatalogItem item : category.getItems()) {
+				if (filter(item)) {
+					return true;
+				}
+			}
+			return false;
 		}
-		return true;
+
+		return false;
 	}
-	
+
+	private boolean filter(CatalogItem descriptor) {
+		return (filterMatches(descriptor.getName())
+				|| filterMatches(descriptor.getDescription())
+				|| filterMatches(descriptor.getProvider()) || filterMatches(descriptor
+					.getLicense()));
+	}
+
 	@Override
 	protected boolean isParentMatch(Viewer viewer, Object element) {
 		return false;

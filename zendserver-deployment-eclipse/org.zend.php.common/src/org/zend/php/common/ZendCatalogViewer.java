@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 @SuppressWarnings("restriction")
 public class ZendCatalogViewer extends FilteredViewer {
@@ -142,10 +143,10 @@ public class ZendCatalogViewer extends FilteredViewer {
 	private StudioFeaturesCheckStateListener checkStateListener;
 
 	private int autoExpandLevel;
-	
+
 	public ZendCatalogViewer(IShellProvider shellProvider,
 			IRunnableContext context) {
-		
+
 		this.pm = new ProfileModificationHelper();
 		this.catalog = new Catalog();
 		catalog.setEnvironment(DiscoveryCore.createEnvironment());
@@ -153,7 +154,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 		// look for descriptors from installed bundles
 		// catalog.getDiscoveryStrategies().add(new BundleDiscoveryStrategy());
-		
+
 		this.configuration = new CatalogConfiguration();
 		configuration.setShowTagFilter(false);
 		configuration.setShowInstalled(true);
@@ -167,12 +168,12 @@ public class ZendCatalogViewer extends FilteredViewer {
 			this.visibleTags = new HashSet<Tag>();
 		}
 	}
-	
+
 	public void setDiscoveryDirFileName(String directoryFileName) {
 		if (directoryFileName == null) {
 			return;
 		}
-		
+
 		// look for remote descriptor
 		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
 		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
@@ -337,50 +338,20 @@ public class ZendCatalogViewer extends FilteredViewer {
 				viewerComposite.getShell());
 		tooltip.activateHoverHelp(viewer.getControl());
 
-		checkStateListener = new StudioFeaturesCheckStateListener(viewer, installedFeatures);
+		checkStateListener = new StudioFeaturesCheckStateListener(viewer,
+				installedFeatures);
 		viewer.addCheckStateListener(checkStateListener);
-		
+
 		return viewer;
-	}
-	
-	protected boolean doFilter(CatalogItem item) {
-		if (!showInstalled && item.isInstalled()) {
-			return false;
-		}
-
-		if (!isTagVisible(item)) {
-			return false;
-		}
-
-		for (CatalogFilter filter : configuration.getFilters()) {
-			if (!filter.select(item)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean isTagVisible(CatalogItem item) {
-		if (!configuration.isShowTagFilter()) {
-			return true;
-		}
-		for (Tag selectedTag : visibleTags) {
-			for (Tag tag : item.getTags()) {
-				if (tag.equals(selectedTag)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	protected Set<String> getInstalledFeatures(IProgressMonitor monitor) {
 		Set<String> features = new HashSet<String>();
-		IProfileRegistry profileReg = ProvUI.getProfileRegistry(
-				ProvisioningUI.getDefaultUI().getSession());
+		IProfileRegistry profileReg = ProvUI.getProfileRegistry(ProvisioningUI
+				.getDefaultUI().getSession());
 		if (profileReg != null) {
-			IProfile profile = profileReg.getProfile(ProvisioningUI.getDefaultUI().getProfileId());
+			IProfile profile = profileReg.getProfile(ProvisioningUI
+					.getDefaultUI().getProfileId());
 			if (profile != null) {
 				IQueryResult<IInstallableUnit> result = profile.available(
 						QueryUtil.createIUGroupQuery(), monitor);
@@ -429,7 +400,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 					if (installedFeatures == null) {
 						installedFeatures = getInstalledFeatures(monitor);
-						checkStateListener.setInstalledFeatures(installedFeatures);
+						checkStateListener
+								.setInstalledFeatures(installedFeatures);
 					}
 					postDiscovery();
 
@@ -500,18 +472,6 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 		public boolean select(Viewer filteredViewer, Object parentElement,
 				Object element) {
-			if (element instanceof CatalogItem) {
-				return doFilter((CatalogItem) element);
-			} else if (element instanceof CatalogCategory) {
-				// only show categories if at least one child is visible
-				CatalogCategory category = (CatalogCategory) element;
-				for (CatalogItem item : category.getItems()) {
-					if (doFilter(item)) {
-						return true;
-					}
-				}
-				return false;
-			}
 			return true;
 		}
 	}
@@ -648,19 +608,19 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	private void applyChanges() {
 		Object[] selection = getCatalogItems();
-		
+
 		List<CatalogItem> toAddItems = new ArrayList<CatalogItem>();
 		List<CatalogItem> toRemoveItems = new ArrayList<CatalogItem>();
 		findFeatureChanges(selection, toAddItems, toRemoveItems);
 		doApplyChanges(toAddItems, toRemoveItems);
 	}
-	
-	protected void doApplyChanges(final List<CatalogItem> toAddItems, final List<CatalogItem> toRemoveItems) {
+
+	protected void doApplyChanges(final List<CatalogItem> toAddItems,
+			final List<CatalogItem> toRemoveItems) {
 		if (!toAddItems.isEmpty() || !toRemoveItems.isEmpty()) {
 			Job job = new Job(Messages.ApplyChanges_JobName) {
 				protected IStatus run(IProgressMonitor monitor) {
-					return pm.modify(monitor,
-							toAddItems, toRemoveItems,
+					return pm.modify(monitor, toAddItems, toRemoveItems,
 							Policy.RESTART_POLICY_PROMPT_RESTART_OR_APPLY,
 							operationName);
 				}
@@ -677,9 +637,9 @@ public class ZendCatalogViewer extends FilteredViewer {
 			job.schedule();
 		}
 	}
-	
 
-	private void findFeatureChanges(Object[] selection, List<CatalogItem> toAddItems, List<CatalogItem> toRemoveItems) {
+	private void findFeatureChanges(Object[] selection,
+			List<CatalogItem> toAddItems, List<CatalogItem> toRemoveItems) {
 		List<Object> selectedConnectors = Arrays.asList(selection);
 		for (Object connector : selectedConnectors) {
 			if (connector instanceof CatalogItem) {
@@ -725,6 +685,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 				if (!previousFilterText.equals(text)) {
 					previousFilterText = text;
 					doFind(text);
+					refresh();
 				}
 				return Status.OK_STATUS;
 			}
@@ -738,11 +699,11 @@ public class ZendCatalogViewer extends FilteredViewer {
 	public void setShowCategories(boolean doShowCategories) {
 		contentProvider.setHasCategories(doShowCategories);
 	}
-	
+
 	public void setFlattenTopLevelCategories(boolean flatten) {
 		contentProvider.setFlattenTopLevelCategories(flatten);
 	}
-	
+
 	public void setAutoExpandCategories(boolean expand) {
 		this.autoExpandLevel = expand ? AbstractTreeViewer.ALL_LEVELS : 0;
 		if (viewer != null) {
@@ -754,5 +715,5 @@ public class ZendCatalogViewer extends FilteredViewer {
 			}
 		}
 	}
-	
+
 }
