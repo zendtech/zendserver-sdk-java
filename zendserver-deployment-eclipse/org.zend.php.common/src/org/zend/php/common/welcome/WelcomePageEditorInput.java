@@ -138,7 +138,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		}
 		Boolean flatTopLevel = memento.getBoolean("flatTopLevel");
 		if (flatTopLevel == null) {
-			flatTopLevel = true;
+			flatTopLevel = false;
 		}
 		Boolean autoExpandCategories = memento
 				.getBoolean("autoExpandCategories");
