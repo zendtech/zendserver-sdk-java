@@ -87,12 +87,14 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
 		layoutData.horizontalSpan = 3;
 		usernameText.setLayoutData(layoutData);
+		usernameText.setToolTipText("Your OpenShift account username.");
 		usernameText.addModifyListener(modifyListener);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText("Password:");
 		passwordText = new Text(composite, SWT.BORDER | SWT.PASSWORD);
 		passwordText.setLayoutData(layoutData);
+		passwordText.setToolTipText("Your OpenShift account password.");
 		passwordText.addModifyListener(modifyListener);
 
 		Composite hyperlinks = new Composite(composite, SWT.NONE);
