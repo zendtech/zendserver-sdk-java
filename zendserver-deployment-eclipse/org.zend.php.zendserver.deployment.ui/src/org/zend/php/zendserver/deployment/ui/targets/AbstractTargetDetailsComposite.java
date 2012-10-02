@@ -244,7 +244,7 @@ public abstract class AbstractTargetDetailsComposite {
 				return new Status(
 						IStatus.WARNING,
 						Activator.PLUGIN_ID,
-						"Cannot connect to at least one of containers on specified phpcloud account. Only valid containers will be added.");
+						"Cannot connect to at least one of containers on specified account. Only valid containers will be added.");
 			}
 		}
 		return Status.OK_STATUS;
