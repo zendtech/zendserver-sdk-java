@@ -104,14 +104,14 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		createAccount.setUnderlined(true);
 		createAccount.setForeground(Display.getDefault().getSystemColor(
 				SWT.COLOR_BLUE));
-		createAccount.setText("Create new OpenShift account");
+		createAccount.setText("Create New OpenShift Account");
 		createAccount.setHref(HREF_CREATE_ACCOUNT);
 
 		Hyperlink createTarget = new Hyperlink(hyperlinks, SWT.NONE);
 		createTarget.setUnderlined(true);
 		createTarget.setForeground(Display.getDefault().getSystemColor(
 				SWT.COLOR_BLUE));
-		createTarget.setText("Create new OpenShift target");
+		createTarget.setText("Create New OpenShift Target");
 		createTarget.setHref(HREF_CREATE_TARGET);
 
 		Hyperlink forgotPassword = new Hyperlink(hyperlinks, SWT.NONE);
