@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -294,19 +294,31 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		final String password = passwordText.getText();
 		if (username == null || username.trim().length() == 0
 				|| password == null || password.trim().length() == 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-
-				public void run() {
-					MessageDialog.openWarning(Display.getDefault()
-							.getActiveShell(), "New OpenShift Target",
-							"Username and password are requried.");
-				}
-			});
+			setErrorMessage("Username and password are requried.");
 			return;
 		}
-		Job getDataJob = new Job("Retrieving data from OpenShift") {
+		try {
+			doOpenTargetWizard(gearProfiles, zendTargets, username, password);
+		} catch (InvocationTargetException e) {
+			Activator.log(e);
+			Throwable a = e.getTargetException();
+			if (a != null) {
+				setErrorMessage(OpenShiftTarget.getOpenShiftMessage(a));
+				return;
+			}
+		} catch (InterruptedException e) {
+			Activator.log(e);
+		}
+	}
 
-			protected IStatus run(IProgressMonitor monitor) {
+	private void doOpenTargetWizard(final List<String> gearProfiles,
+			final List<String> zendTargets, final String username,
+			final String password) throws InvocationTargetException,
+			InterruptedException {
+		runnableContext.run(true, false, new IRunnableWithProgress() {
+
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
 				OpenShiftTarget target = new OpenShiftTarget(username, password);
 				monitor.beginTask("Retrieving data from OpenShift account...",
 						IProgressMonitor.UNKNOWN);
@@ -315,38 +327,33 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 						gearProfiles.addAll(target.getAvaliableGearProfiles());
 						zendTargets.addAll(target.getAllZendTargets());
 					}
-				} catch (SdkException e) {
-					monitor.done();
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getCause() != null ? e.getCause().getMessage()
-									: e.getMessage());
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		getDataJob.addJobChangeListener(new JobChangeAdapter() {
-
-			public void done(IJobChangeEvent event) {
-				if (event.getResult().getSeverity() == IStatus.OK) {
 					Display.getDefault().asyncExec(new Runnable() {
 
 						public void run() {
 							OpenShiftTargetData data = new OpenShiftTargetData();
 							data.setGearProfiles(gearProfiles);
 							data.setZendTargets(zendTargets);
-							Shell shell = Display.getDefault().getActiveShell();
+							Shell shell = PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getShell();
 							WizardDialog dialog = new OpenShiftTargetWizardDialog(
-									shell, new OpenShiftTargetWizard(username,
-											password, data), data);
+									shell, new OpenShiftTargetWizard(
+											username, password, data), data);
 							dialog.open();
 						}
 					});
+				} catch (final SdkException e) {
+					monitor.done();
+					Display.getDefault().asyncExec(new Runnable() {
+
+						public void run() {
+							setErrorMessage(e.getCause() != null ? e.getCause()
+									.getMessage() : e.getMessage());
+						}
+					});
 				}
+				monitor.done();
 			}
 		});
-		getDataJob.setUser(true);
-		getDataJob.schedule();
 	}
 
 	private void generateKey() {

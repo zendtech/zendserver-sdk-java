@@ -216,6 +216,9 @@ public class TargetDetailsComposite {
 
 	public void setRunnableContext(IRunnableContext context) {
 		this.runnableContext = context;
+		for (AbstractTargetDetailsComposite composite : targetComposites) {
+			composite.setRunnableContext(context);
+		}
 	}
 	
 }

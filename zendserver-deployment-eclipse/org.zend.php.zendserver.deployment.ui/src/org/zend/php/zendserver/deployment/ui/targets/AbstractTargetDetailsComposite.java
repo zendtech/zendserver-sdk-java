@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
@@ -54,6 +55,8 @@ public abstract class AbstractTargetDetailsComposite {
 	private String warningMessage;
 
 	protected IZendTarget[] result;
+	
+	protected IRunnableContext runnableContext;
 
 	/**
 	 * Creates composite contents and returns control.
@@ -166,6 +169,10 @@ public abstract class AbstractTargetDetailsComposite {
 		monitor.worked(1);
 
 		return result;
+	}
+
+	public void setRunnableContext(IRunnableContext runnableContext) {
+		this.runnableContext= runnableContext;
 	}
 
 	private IStatus doValidate(String[] data, IProgressMonitor monitor) {

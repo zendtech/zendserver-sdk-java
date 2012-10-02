@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String exportPage_DirectoryDialogTitle;
 	public static String exportPage_TableError;
 	public static String exportPage_DestinationError;
+	public static String MySQLCredentialsDialog_DialogTitle;
 	public static String NewDependencyWizard_0;
 	public static String OpenShiftDomainPage_EnterNameMessage;
 	public static String OpenShiftDomainPage_NameLabel;
