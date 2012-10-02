@@ -2,12 +2,18 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -21,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -33,6 +40,9 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetData;
+import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetWizard;
+import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetWizardDialog;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -46,6 +56,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 
 	private static final String HREF_RESTORE_PASSWORD = "restorePassword"; //$NON-NLS-1$
 	private static final String HREF_CREATE_ACCOUNT = "createAccount"; //$NON-NLS-1$
+	private static final String HREF_CREATE_TARGET = "createTarget"; //$NON-NLS-1$
 
 	private static final String RESTORE_PASSWORD_URL = "https://openshift.redhat.com/app/account/password/new"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "https://openshift.redhat.com/app/account/new"; //$NON-NLS-1$
@@ -87,7 +98,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		Composite hyperlinks = new Composite(composite, SWT.NONE);
 		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false, 4, 1);
 		hyperlinks.setLayoutData(gd);
-		hyperlinks.setLayout(new GridLayout(2, false));
+		hyperlinks.setLayout(new GridLayout(3, false));
 
 		Hyperlink createAccount = new Hyperlink(hyperlinks, SWT.NONE);
 		createAccount.setUnderlined(true);
@@ -95,6 +106,13 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 				SWT.COLOR_BLUE));
 		createAccount.setText("Create new OpenShift account");
 		createAccount.setHref(HREF_CREATE_ACCOUNT);
+
+		Hyperlink createTarget = new Hyperlink(hyperlinks, SWT.NONE);
+		createTarget.setUnderlined(true);
+		createTarget.setForeground(Display.getDefault().getSystemColor(
+				SWT.COLOR_BLUE));
+		createTarget.setText("Create new OpenShift target");
+		createTarget.setHref(HREF_CREATE_TARGET);
 
 		Hyperlink forgotPassword = new Hyperlink(hyperlinks, SWT.NONE);
 		forgotPassword.setUnderlined(true);
@@ -112,6 +130,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		};
 
 		createAccount.addHyperlinkListener(hrefListener);
+		createTarget.addHyperlinkListener(hrefListener);
 		forgotPassword.addHyperlinkListener(hrefListener);
 
 		label = new Label(composite, SWT.NONE);
@@ -243,7 +262,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							IStatus.ERROR,
 							Activator.PLUGIN_ID,
 							"Could not detect any valid targets. "
-									+ "You have to create at least one OpenShift application with zend-5.6 type."));
+									+ "You can create new OpenShift target by using 'Create new OpenShift Target' link below."));
 		}
 		return targets;
 	}
@@ -263,7 +282,71 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			Program.launch(CREATE_ACCOUNT_URL);
 		} else if (HREF_RESTORE_PASSWORD.equals(href)) {
 			Program.launch(RESTORE_PASSWORD_URL);
+		} else if (HREF_CREATE_TARGET.equals(href)) {
+			openTargetWizard();
 		}
+	}
+
+	private void openTargetWizard() {
+		final List<String> gearProfiles = new ArrayList<String>();
+		final List<String> zendTargets = new ArrayList<String>();
+		final String username = usernameText.getText();
+		final String password = passwordText.getText();
+		if (username == null || username.trim().length() == 0
+				|| password == null || password.trim().length() == 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+
+				public void run() {
+					MessageDialog.openWarning(Display.getDefault()
+							.getActiveShell(), "New OpenShift Target",
+							"Username and password are requried.");
+				}
+			});
+			return;
+		}
+		Job getDataJob = new Job("Retrieving data from OpenShift") {
+
+			protected IStatus run(IProgressMonitor monitor) {
+				OpenShiftTarget target = new OpenShiftTarget(username, password);
+				monitor.beginTask("Retrieving data from OpenShift account...",
+						IProgressMonitor.UNKNOWN);
+				try {
+					if (target.hasDomain()) {
+						gearProfiles.addAll(target.getAvaliableGearProfiles());
+						zendTargets.addAll(target.getAllZendTargets());
+					}
+				} catch (SdkException e) {
+					monitor.done();
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getCause() != null ? e.getCause().getMessage()
+									: e.getMessage());
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		getDataJob.addJobChangeListener(new JobChangeAdapter() {
+
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().getSeverity() == IStatus.OK) {
+					Display.getDefault().asyncExec(new Runnable() {
+
+						public void run() {
+							OpenShiftTargetData data = new OpenShiftTargetData();
+							data.setGearProfiles(gearProfiles);
+							data.setZendTargets(zendTargets);
+							Shell shell = Display.getDefault().getActiveShell();
+							WizardDialog dialog = new OpenShiftTargetWizardDialog(
+									shell, new OpenShiftTargetWizard(username,
+											password, data), data);
+							dialog.open();
+						}
+					});
+				}
+			}
+		});
+		getDataJob.setUser(true);
+		getDataJob.schedule();
 	}
 
 	private void generateKey() {

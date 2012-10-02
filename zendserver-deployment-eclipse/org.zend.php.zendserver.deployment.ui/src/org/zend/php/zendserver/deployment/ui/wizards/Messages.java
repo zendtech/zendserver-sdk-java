@@ -26,6 +26,20 @@ public class Messages extends NLS {
 	public static String exportPage_TableError;
 	public static String exportPage_DestinationError;
 	public static String NewDependencyWizard_0;
+	public static String OpenShiftDomainPage_EnterNameMessage;
+	public static String OpenShiftDomainPage_NameLabel;
+	public static String OpenShiftDomainPage_PageDescription;
+	public static String OpenShiftDomainPage_PageTitle;
+	public static String OpenShiftTargetPage_AddMySQLLabel;
+	public static String OpenShiftTargetPage_EnterNameMessage;
+	public static String OpenShiftTargetPage_GearProfileLabel;
+	public static String OpenShiftTargetPage_PageDescription;
+	public static String OpenShiftTargetPage_PageTitle;
+	public static String OpenShiftTargetPage_SameTargetErrorMessage;
+	public static String OpenShiftTargetPage_TargetNameLabel;
+	public static String OpenShiftTargetWizard_Description;
+	public static String OpenShiftTargetWizard_Title;
+	public static String OpenShiftTargetWizardDialog_CreateDomainJobTitle;
 	public static String PackageExportPage_0;
 
 	static {
