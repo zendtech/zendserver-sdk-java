@@ -302,4 +302,12 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(DebugMode debugMode) {
+		return true;
+	}
+
+	public boolean visit(DebugMode debugMode) {
+		return true;
+	}
+
 }

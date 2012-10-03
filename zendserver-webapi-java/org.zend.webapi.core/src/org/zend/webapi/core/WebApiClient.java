@@ -25,6 +25,7 @@ import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTraceFile;
 import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
+import org.zend.webapi.core.connection.data.DebugMode;
 import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.Issue;
@@ -76,6 +77,7 @@ import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRe
 import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartDebugModeRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
 
@@ -1513,7 +1515,64 @@ public class WebApiClient {
 			throws WebApiException {
 		return studioStartProfile(eventsGroupId, null);
 	}
+	
+	/**
+	 * Start debug mode on the target server.
+	 * 
+	 * @return debug mode
+	 * @throws WebApiException
+	 * @since 1.3
+	 */
+	public DebugMode studioStartDebugMode(
+			final String[] filters, final Map<String, String> options)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.STUDIO_START_DEBUG_MODE,
+				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
 
+					public void init(IRequest request) throws WebApiException {
+						StudioStartDebugModeRequest debugModeRequest = (StudioStartDebugModeRequest) request;
+						if (filters != null && filters.length > 0) {
+							debugModeRequest.setFilters(filters);
+						}
+						if (options != null && options.size() > 0) {
+							debugModeRequest.setOptions(options);
+						}
+					}
+				});
+		return (DebugMode) handle.getData();
+	}
+
+	/**
+	 * Stop debug mode on the target server.
+	 * 
+	 * @return debug mode
+	 * @throws WebApiException
+	 * @since 1.3
+	 */
+	public DebugMode studioStopDebugMode()
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.STUDIO_STOP_DEBUG_MODE,
+				getVersion(WebApiVersion.V1_3), null);
+		return (DebugMode) handle.getData();
+	}
+
+	/**
+	 * Return the current debug mode status on the server.
+	 * 
+	 * @return debug mode
+	 * @throws WebApiException
+	 * @since 1.3
+	 */
+	public DebugMode studioIsDebugModeEnabled()
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.STUDIO_IS_DEBUG_MODE_ENABLED,
+				getVersion(WebApiVersion.V1_3), null);
+		return (DebugMode) handle.getData();
+	}
+	
 	/**
 	 * Zend Server Web API is intended to allow automation of the management and
 	 * deployment of Zend Server and Zend Server Cluster Manager, and allow

@@ -944,6 +944,15 @@ public class DataDigster extends GenericResponseDataVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean preVisit(DebugMode debugMode) {
+		String currentPath = debugMode.getPrefix();
+		int occurrence = debugMode.getOccurrence();
+		String value = getValue(currentPath + "/value", occurrence);
+		debugMode.setResult(Integer.valueOf(value));
+		return true;
+	}
+
 	/**
 	 * @param value
 	 * @return
@@ -1009,6 +1018,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new DebugRequest();
 		case PROFILE_REQUEST:
 			return new ProfileRequest();
+		case DEBUG_MODE:
+			return new DebugMode();
 		default:
 			return null;
 		}

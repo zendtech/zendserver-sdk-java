@@ -158,5 +158,9 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(GeneralDetails generalDetails);
 
 	public boolean visit(GeneralDetails generalDetails);
+	
+	public boolean preVisit(DebugMode debugMode);
+
+	public boolean visit(DebugMode debugMode);
 
 }

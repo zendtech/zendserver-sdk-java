@@ -10,6 +10,7 @@ package org.zend.webapi.internal.core.connection.request;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -193,7 +194,9 @@ public class MultipartRepresentation extends OutputRepresentation {
 		final Object value = parameter.getValue();
 		if (value instanceof Map<?, ?>) {
 			writeHashMapParameter(outputStream, parameter, value);
-		} else {
+		} else if (value instanceof String[]) {
+			writeArrayParameter(outputStream, parameter, value);
+		}else {
 			writeNewLine(outputStream, 1);
 			Disposition d = createContentDisposition(outputStream);
 			d.getParameters().add("name", parameter.getKey());
@@ -228,6 +231,30 @@ public class MultipartRepresentation extends OutputRepresentation {
 		// disposition
 		Disposition d = new Disposition("form-data");
 		return d;
+	}
+	
+	private void writeArrayParameter(OutputStream outputStream,
+			RequestParameter<?> parameter, final Object value)
+			throws IOException {
+		writeNewLine(outputStream, 1);
+		List<String> values = new ArrayList<String>();
+		for (Object val : (Object[]) value) {
+			values.add((String) val);
+		}
+		int iterator = values.size();
+		for (String param : values) {
+			Disposition d = createContentDisposition(outputStream);
+			d.getParameters().add("name", parameter.getFirst() + "[]");
+			final String write = DispositionWriter.write(d);
+			outputStream.write(write.getBytes());
+			writeNewLine(outputStream, 2);
+			outputStream.write(param.getBytes());
+			writeNewLine(outputStream, 1);
+			if (--iterator != 0) {
+				writeSeparator(outputStream);
+				writeNewLine(outputStream, 1);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -38,8 +38,11 @@ import org.zend.webapi.internal.core.connection.request.MonitorGetIssueDetailsRe
 import org.zend.webapi.internal.core.connection.request.MonitorGetIssuesListPredefinedFilterRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetRequestSummaryRequest;
 import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
+import org.zend.webapi.internal.core.connection.request.StudioIsDebugModeEnabledRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStartDebugModeRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
+import org.zend.webapi.internal.core.connection.request.StudioStopDebugModeRequest;
 
 /**
  * The Zend Server Web API is intended to allow automation of the management and
@@ -228,8 +231,26 @@ public enum WebApiMethodType {
 	/**
 	 * @see StudioStartProfileRequest
 	 */
-	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class);
+	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class),
+	
+	/**
+	 * @see StudioStartDebugModeRequest
+	 */
+	STUDIO_START_DEBUG_MODE("studioStartDebugMode",
+			StudioStartDebugModeRequest.class),
 
+	/**
+	 * @see StudioStartDebugModeRequest
+	 */
+	STUDIO_STOP_DEBUG_MODE("studioStopDebugMode",
+			StudioStopDebugModeRequest.class),
+
+	/**
+	 * @see StudioStartDebugModeRequest
+	 */
+	STUDIO_IS_DEBUG_MODE_ENABLED("studioIsDebugModeEnabled",
+			StudioIsDebugModeEnabledRequest.class);
+	
 	/**
 	 * Name of the service
 	 */
