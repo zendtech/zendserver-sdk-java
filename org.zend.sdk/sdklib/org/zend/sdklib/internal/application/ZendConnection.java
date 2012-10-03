@@ -25,6 +25,7 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
@@ -83,6 +84,9 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 		if (ZendServerVersion.v6_0_0 == ZendServerVersion.byName(target
 				.getProperty(IZendTarget.SERVER_VERSION))) {
 			client.setCustomVersion(WebApiVersion.V1_3);
+		}
+		if (TargetsManager.isOpenShift(target)) {
+			client.setServerType(ServerType.ZEND_SERVER);
 		}
 		return client;
 	}

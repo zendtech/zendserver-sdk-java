@@ -21,12 +21,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.zend.sdklib.logger.Log;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -294,6 +296,9 @@ public class ZendTarget implements IZendTarget {
 					SSLContextInitializer.instance.getRestletContext());
 			if (version != WebApiVersion.UNKNOWN) {
 				client.setCustomVersion(version);
+			}
+			if (TargetsManager.isOpenShift(this)) {
+				client.setServerType(ServerType.ZEND_SERVER);
 			}
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
