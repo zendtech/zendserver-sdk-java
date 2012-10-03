@@ -41,13 +41,19 @@ import com.openshift.client.IApplicationPortForwarding;
 import com.openshift.client.ICartridge;
 import com.openshift.client.IDomain;
 import com.openshift.client.IEmbeddedCartridge;
+import com.openshift.client.IGearProfile;
 import com.openshift.client.IOpenShiftConnection;
 import com.openshift.client.IOpenShiftSSHKey;
 import com.openshift.client.ISSHPublicKey;
 import com.openshift.client.IUser;
 import com.openshift.client.OpenShiftConnectionFactory;
+import com.openshift.client.OpenShiftEndpointException;
 import com.openshift.client.OpenShiftException;
 import com.openshift.client.SSHPublicKey;
+import com.openshift.internal.client.Cartridge;
+import com.openshift.internal.client.EmbeddableCartridge;
+import com.openshift.internal.client.GearProfile;
+import com.openshift.internal.client.response.Message;
 
 /**
  * Represents OpenShift user account. It allows to detects OpenShift
@@ -79,6 +85,8 @@ public class OpenShiftTarget {
 
 	private String username;
 	private String password;
+
+	private IDomain domain;
 
 	public OpenShiftTarget(String username, String password) {
 		super();
@@ -159,6 +167,79 @@ public class OpenShiftTarget {
 		return null;
 	}
 
+	public List<String> getAvaliableGearProfiles() throws SdkException {
+		try {
+			IDomain d = getDomain();
+			List<String> result = new ArrayList<String>();
+			List<IGearProfile> gearProfiles = d.getAvailableGearProfiles();
+			for (IGearProfile profile : gearProfiles) {
+				result.add(profile.getName());
+			}
+			return result;
+		} catch (OpenShiftException e) {
+			throw new SdkException(e);
+		}
+	}
+
+	public boolean hasDomain() throws SdkException {
+		try {
+			IOpenShiftConnection connection = null;
+			try {
+				connection = getConnection();
+			} catch (IOException e) {
+				throw new SdkException(e);
+			}
+			IUser user = connection.getUser();
+			List<IDomain> domains = user.getDomains();
+			if (domains == null || domains.size() == 0) {
+				return false;
+			}
+		} catch (OpenShiftException e) {
+			throw new SdkException(e);
+		}
+		return true;
+	}
+
+	public List<String> getAllZendTargets() throws SdkException {
+		List<String> result = new ArrayList<String>();
+		List<IApplication> targets = getZendContainers();
+		if (targets != null) {
+			for (IApplication app : targets) {
+				result.add(app.getName());
+			}
+		}
+		return result;
+	}
+
+	public void createDomain(String domainName) throws SdkException {
+		IOpenShiftConnection connection = null;
+		try {
+			connection = getConnection();
+		} catch (IOException e) {
+			throw new SdkException(e);
+		}
+		IUser user = connection.getUser();
+		user.createDomain(domainName);
+	}
+
+	public String create(String targetName, String gearProfile, boolean mySql)
+			throws SdkException {
+		IDomain d = getDomain();
+		if (d != null) {
+			IApplication application = d
+					.createApplication(targetName,
+							new Cartridge(CARTRIDGE_NAME), new GearProfile(
+									gearProfile));
+			if (application != null && mySql) {
+				IEmbeddedCartridge cartridge = application
+						.addEmbeddableCartridge(new EmbeddableCartridge(
+								"mysql-5.1"));
+				return cartridge.getCreationLog();
+			}
+		}
+		return null;
+	}
+
 	public static boolean hasDatabaseSupport(IZendTarget target) {
 		return target.getProperty(TARGET_MYSQL_SUPPORT) != null;
 	}
@@ -182,7 +263,48 @@ public class OpenShiftTarget {
 	public static void setLibraServer(String serverURL) {
 		System.setProperty(LIBRA_SERVER_PROP, serverURL);
 	}
-	
+
+	public static String getOpenShiftMessage(Throwable throwable) {
+		if (throwable instanceof OpenShiftEndpointException) {
+			OpenShiftEndpointException e = (OpenShiftEndpointException) throwable;
+			List<Message> messages = e.getRestResponseMessages();
+			StringBuilder result = new StringBuilder();
+			for (Message message : messages) {
+				result.append(message.getText());
+				result.append(". ");
+			}
+			return result.toString();
+		}
+		return throwable.getMessage();
+	}
+
+	private IDomain getDomain() throws SdkException {
+		if (domain == null) {
+			IOpenShiftConnection connection = null;
+			try {
+				connection = getConnection();
+			} catch (OpenShiftException e) {
+				throw new SdkException(e);
+			} catch (IOException e) {
+				throw new SdkException(e);
+			}
+			IUser user = connection.getUser();
+			List<IDomain> domains = user.getDomains();
+			if (domains == null || domains.isEmpty()) {
+				throw new SdkException(
+						"Domain has not been created yet. "
+								+ "You can create new domain by using 'Create new OpenShift Target' link below.");
+			}
+			if (domains != null && domains.size() > 0) {
+				for (IDomain domain : domains) {
+					this.domain = domain;
+					break;
+				}
+			}
+		}
+		return domain;
+	}
+
 	private String getInternalHost(IApplication container, ZendTarget target,
 			PublicKeyBuilder keyBuilder) throws SdkException {
 		Session session = null;
@@ -367,25 +489,16 @@ public class OpenShiftTarget {
 		return trimQuotes(secretKey);
 	}
 
-	private List<IApplication> getZendContainers() throws OpenShiftException,
-			FileNotFoundException, IOException, SdkException {
-		IOpenShiftConnection connection = getConnection();
-		IUser user = connection.getUser();
-		List<IDomain> domains = user.getDomains();
-		if (domains == null || domains.isEmpty()) {
-			throw new SdkException(
-					"Either provided credentials are not valid or specified user has not created any domain yet.");
-		}
+	private List<IApplication> getZendContainers() throws SdkException {
+		IDomain d = getDomain();
 		List<IApplication> result = new ArrayList<IApplication>();
-		if (domains != null && domains.size() > 0) {
-			for (IDomain domain : domains) {
-				List<IApplication> apps = domain.getApplications();
-				if (apps != null && apps.size() > 0) {
-					for (IApplication app : apps) {
-						ICartridge cartridge = app.getCartridge();
-						if (CARTRIDGE_NAME.equals(cartridge.getName())) {
-							result.add(app);
-						}
+		if (d != null) {
+			List<IApplication> apps = domain.getApplications();
+			if (apps != null && apps.size() > 0) {
+				for (IApplication app : apps) {
+					ICartridge cartridge = app.getCartridge();
+					if (CARTRIDGE_NAME.equals(cartridge.getName())) {
+						result.add(app);
 					}
 				}
 			}
