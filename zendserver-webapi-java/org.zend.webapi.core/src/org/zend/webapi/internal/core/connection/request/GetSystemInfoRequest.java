@@ -12,6 +12,7 @@ import java.util.Date;
 import org.restlet.data.Method;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -31,8 +32,9 @@ public class GetSystemInfoRequest extends AbstractRequest {
 	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.OK };
 
 	public GetSystemInfoRequest(WebApiVersion version, Date date,
-			String keyName, String userAgent, String host, String secretKey) {
-		super(version, date, keyName, userAgent, host, secretKey);
+			String keyName, String userAgent, String host, String secretKey,
+			ServerType type) {
+		super(version, date, keyName, userAgent, host, secretKey, type);
 	}
 
 	/* (non-Javadoc)

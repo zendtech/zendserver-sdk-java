@@ -14,6 +14,7 @@ import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -80,8 +81,9 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.ACCEPTED };
 
 	public ApplicationUpdateRequest(WebApiVersion version, Date date,
-			String keyName, String userAgent, String host, String secretKey) {
-		super(version, date, keyName, userAgent, host, secretKey);
+			String keyName, String userAgent, String host, String secretKey,
+			ServerType type) {
+		super(version, date, keyName, userAgent, host, secretKey, type);
 	}
 	
 	/*

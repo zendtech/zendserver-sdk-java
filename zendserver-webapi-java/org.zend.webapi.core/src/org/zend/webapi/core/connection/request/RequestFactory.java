@@ -10,6 +10,7 @@ package org.zend.webapi.core.connection.request;
 import java.lang.reflect.Constructor;
 import java.util.Date;
 
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.service.WebApiMethodType;
 
@@ -23,16 +24,16 @@ public class RequestFactory {
 
 	public static final IRequest createRequest(WebApiMethodType type,
 			WebApiVersion version, Date date, String keyName, String userAgent,
-			String host, String secretKey) {
+			String host, String secretKey, ServerType serverType) {
 
 		final Class<? extends IRequest> requestClass = type.getRequestClass();
 		Constructor<? extends IRequest> constructor = null;
 		try {
 			constructor = requestClass.getConstructor(WebApiVersion.class,
 					Date.class, String.class, String.class, String.class,
-					String.class);
+					String.class, ServerType.class);
 			return constructor.newInstance(version, date, keyName, userAgent,
-					host, secretKey);
+					host, secretKey, serverType);
 		} catch (Exception e) {
 			throw new IllegalStateException("Couldn't instantiate class "
 					+ requestClass.toString(), e);
