@@ -15,6 +15,18 @@ public class Messages extends NLS {
 
 	public static String deploymentJob_Title;
 
+	public static String DebugModeManager_AlreadyStartedWarning;
+
+	public static String DebugModeManager_AlreadyStoppedWarning;
+
+	public static String DebugModeManager_CannotStartError;
+
+	public static String DebugModeManager_CannotStopError;
+
+	public static String DebugModeManager_StartSuccess;
+
+	public static String DebugModeManager_StopSuccess;
+
 	public static String DeploymentLaunchJob_ConnectionRefusedMessage;
 	public static String statusJob_Title;
 	public static String updateJob_Title;

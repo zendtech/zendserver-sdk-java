@@ -66,6 +66,8 @@ public class Messages extends NLS {
 
 	public static String ConfigurationBlock_EnableMonitoringTooltip;
 
+	public static String DebugModeHandler_DebugModeLabel;
+
 	public static String DeploymentHandler_sshTunnelErrorMessage;
 	public static String DeploymentHandler_sshTunnelErrorTitle;
 
@@ -98,6 +100,14 @@ public class Messages extends NLS {
 	public static String ParametersBlock_ImportDialogDescription;
 	public static String ParametersBlock_ExportDialogDescription;
 	public static String ParametersBlock_ImportDialogTitle;
+	
+	public static String DebugModePreferencesPage_AddButton;
+	public static String DebugModePreferencesPage_AddDesc;
+	public static String DebugModePreferencesPage_EdiotButton;
+	public static String DebugModePreferencesPage_FilterSectionLabel;
+	public static String DebugModePreferencesPage_ModifyDesc;
+	public static String DebugModePreferencesPage_RemoveButton;
+	public static String DebugModePreferencesPage_TargetLabel;
 
 	static {
 		// initialize resource bundle
