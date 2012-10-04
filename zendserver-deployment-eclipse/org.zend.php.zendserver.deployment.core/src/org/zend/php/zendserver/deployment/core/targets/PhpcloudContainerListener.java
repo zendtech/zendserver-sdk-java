@@ -11,11 +11,15 @@ import java.net.MalformedURLException;
 
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.internal.target.SSLContextInitializer;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.values.ServerType;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
@@ -27,8 +31,9 @@ import org.zend.webapi.internal.core.connection.exception.InvalidResponseExcepti
  * 
  */
 public class PhpcloudContainerListener implements IRequestListener {
-	
-	private static final String ID = DeploymentCore.PLUGIN_ID + ".phpCloudContainer"; //$NON-NLS-1$
+
+	private static final String ID = DeploymentCore.PLUGIN_ID
+			+ ".phpCloudContainer"; //$NON-NLS-1$
 
 	private IZendTarget target;
 
@@ -43,23 +48,25 @@ public class PhpcloudContainerListener implements IRequestListener {
 	}
 
 	public boolean perform() {
-		try {
-			WebApiClient client = getClient(target);
+		if (TargetsManager.isPhpcloud(target)) {
+			try {
+				WebApiClient client = getClient(target);
 
-			while (true) {
-				try {
-					client.getSystemInfo();
-					return true;
-				} catch (InvalidResponseException e) {
-					// container is sleeping
-					continue;
-				} catch (WebApiException e) {
-					DeploymentCore.log(e);
-					break;
+				while (true) {
+					try {
+						client.getSystemInfo();
+						return true;
+					} catch (InvalidResponseException e) {
+						// container is sleeping
+						continue;
+					} catch (WebApiException e) {
+						DeploymentCore.log(e);
+						break;
+					}
 				}
+			} catch (MalformedURLException e) {
+				DeploymentCore.log(e);
 			}
-		} catch (MalformedURLException e) {
-			DeploymentCore.log(e);
 		}
 		return true;
 	}
@@ -89,9 +96,16 @@ public class PhpcloudContainerListener implements IRequestListener {
 		WebApiClient client = new WebApiClient(credentials, hostname,
 				SSLContextInitializer.instance.getRestletContext());
 		client.disableListeners();
+		if (ZendServerVersion.v6_0_0 == ZendServerVersion.byName(target
+				.getProperty(IZendTarget.SERVER_VERSION))) {
+			client.setCustomVersion(WebApiVersion.V1_3);
+		}
+		if (TargetsManager.isOpenShift(target)) {
+			client.setServerType(ServerType.ZEND_SERVER);
+		}
 		return client;
 	}
-	
+
 	public String getId() {
 		return ID + '.' + target.getId();
 	}
