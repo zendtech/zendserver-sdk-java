@@ -278,6 +278,14 @@ public class OpenShiftTarget {
 		return throwable.getMessage();
 	}
 
+	public String getDomainName() throws SdkException {
+		IDomain domain = getDomain();
+		if (domain != null) {
+			return domain.getId();
+		}
+		return null;
+	}
+	
 	private IDomain getDomain() throws SdkException {
 		if (domain == null) {
 			IOpenShiftConnection connection = null;
