@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -67,6 +68,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	private Text passwordText;
 	private Text privateKeyText;
 	private String uploadedKeyName;
+	
+	private IStatus status;
 
 	public Composite create(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -340,7 +343,15 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							WizardDialog dialog = new OpenShiftTargetWizardDialog(
 									shell, new OpenShiftTargetWizard(
 											username, password, data), data);
-							dialog.open();
+							if (dialog.open() == Window.OK) {
+								try {
+									validate();
+								} catch (InvocationTargetException e) {
+									Activator.log(e);
+								} catch (InterruptedException e) {
+									Activator.log(e);
+								}
+							}
 						}
 					});
 				} catch (final SdkException e) {
@@ -356,6 +367,30 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 				monitor.done();
 			}
 		});
+	}
+
+	private void validate() throws InvocationTargetException,
+			InterruptedException {
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				status = validate(monitor);
+			}
+		};
+		runnableContext.run(true, true, runnable);
+		MessageTranslator messageTranslator = new MessageTranslator();
+		switch (status.getSeverity()) {
+		case IStatus.OK:
+			setErrorMessage(null);
+			break;
+		case IStatus.WARNING:
+			setWarningMessage(messageTranslator.translate(status.getMessage()));
+			break;
+		case IStatus.ERROR:
+			setErrorMessage(messageTranslator.translate(status.getMessage()));
+			break;
+		}
 	}
 
 	private void generateKey() {
