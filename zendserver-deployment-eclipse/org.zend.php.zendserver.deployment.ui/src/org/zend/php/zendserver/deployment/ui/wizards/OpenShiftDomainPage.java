@@ -29,7 +29,8 @@ public class OpenShiftDomainPage extends WizardPage {
 	private Text domainNameText;
 	private OpenShiftTarget target;
 
-	protected OpenShiftDomainPage(OpenShiftTargetWizard wizard, OpenShiftTargetData data) {
+	protected OpenShiftDomainPage(OpenShiftTargetWizard wizard,
+			OpenShiftTargetData data) {
 		super(Messages.OpenShiftDomainPage_PageTitle);
 		setDescription(Messages.OpenShiftDomainPage_EnterNameMessage);
 		setTitle(Messages.OpenShiftDomainPage_PageDescription);

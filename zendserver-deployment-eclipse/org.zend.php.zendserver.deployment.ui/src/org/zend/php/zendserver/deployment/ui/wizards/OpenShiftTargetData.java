@@ -1,9 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Zend Technologies Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *    Zend Technologies Ltd. - initial API and implementation
+ *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.util.List;
 
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 
+/**
+ * New OpenShift target wizard data.
+ * 
+ * @author Wojciech Galanciak, 2012
+ *
+ */
 public class OpenShiftTargetData {
 
 	private String name;
@@ -12,6 +28,9 @@ public class OpenShiftTargetData {
 	private OpenShiftTarget target;
 	private List<String> gearProfiles;
 	private List<String> zendTargets;
+	private boolean eula;
+	private String password;
+	private String confirmPassword;
 
 	public String getName() {
 		return name;
@@ -61,4 +80,28 @@ public class OpenShiftTargetData {
 		this.zendTargets = zendTargets;
 	}
 
+	public boolean isEula() {
+		return eula;
+	}
+
+	public void setEula(boolean eula) {
+		this.eula = eula;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+	
 }

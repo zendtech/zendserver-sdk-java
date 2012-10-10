@@ -31,6 +31,7 @@ import org.zend.sdklib.internal.target.OpenShiftTarget;
 public class OpenShiftTargetWizardDialog extends WizardDialog {
 
 	private OpenShiftTargetData data;
+	private boolean init;
 
 	public OpenShiftTargetWizardDialog(Shell parentShell, IWizard newWizard,
 			OpenShiftTargetData data) {
@@ -45,7 +46,7 @@ public class OpenShiftTargetWizardDialog extends WizardDialog {
 	 */
 	protected void nextPressed() {
 		final IWizardPage page = getWizard().getStartingPage();
-		if (page instanceof OpenShiftDomainPage) {
+		if (!init && page instanceof OpenShiftDomainPage) {
 			final OpenShiftDomainPage domainPage = (OpenShiftDomainPage) page;
 			final String domainName = domainPage.getDomainName();
 			final OpenShiftTarget target = domainPage.getTarget();
@@ -60,6 +61,7 @@ public class OpenShiftTargetWizardDialog extends WizardDialog {
 									Messages.OpenShiftTargetWizardDialog_CreateDomainJobTitle,
 									IProgressMonitor.UNKNOWN);
 							target.createDomain(domainName);
+							init = true;
 							final List<String> gearProfiles = new ArrayList<String>();
 							final List<String> zendTargets = new ArrayList<String>();
 							gearProfiles.addAll(target

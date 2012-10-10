@@ -14,39 +14,32 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.core.targets.OpenShiftTargetInitializer;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
- * OpenShift target creation wizard.
+ * Zend Server initialization wizard for OpenShift targets.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class OpenShiftTargetWizard extends Wizard {
+public class OpenShiftInitializationWizard extends Wizard {
 
-	private String username;
-	private String password;
 	private OpenShiftTargetData data;
 
 	private OpenShiftTargetPage osPage;
-	private OpenShiftDomainPage domainPage;
 	private OpenShiftEulaPage eulaPage;
+	private IZendTarget target;
 
-	public OpenShiftTargetWizard(String username, String password,
-			OpenShiftTargetData data) {
+	public OpenShiftInitializationWizard(IZendTarget target) {
 		super();
-		this.username = username;
-		this.password = password;
-		this.data = data;
-		if (data.getGearProfiles().isEmpty()) {
-			this.domainPage = new OpenShiftDomainPage(this, data);
-		}
-		this.osPage = new OpenShiftTargetPage(this, data);
-		this.eulaPage = new OpenShiftEulaPage(data);
+		this.target = target;
+		this.data = new OpenShiftTargetData();
+		this.osPage = new OpenShiftTargetPage(data, target.getHost().getHost(),
+				true);
+		this.eulaPage = new OpenShiftEulaPage(data, true);
 	}
 
 	/*
@@ -58,7 +51,7 @@ public class OpenShiftTargetWizard extends Wizard {
 	 */
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
-		setWindowTitle(Messages.OpenShiftTargetWizard_Title);
+		setWindowTitle(Messages.OpenShiftInitializationWizard_WizardTitle);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(Activator
 				.getImageDescriptor(Activator.IMAGE_WIZ_OPENSHIFT));
@@ -70,10 +63,6 @@ public class OpenShiftTargetWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		super.addPages();
-		if (domainPage != null) {
-			addPage(domainPage);
-		}
 		addPage(osPage);
 		addPage(eulaPage);
 	}
@@ -91,46 +80,26 @@ public class OpenShiftTargetWizard extends Wizard {
 
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(
-								Messages.OpenShiftTargetWizard_Description,
-								IProgressMonitor.UNKNOWN);
-						final String message = data.getTarget().create(
-								data.getName(), data.getGearProfile(),
-								data.hasMySQLSupport());
-						String domain = data.getTarget().getDomainName();
-						String libraDomain = data.getTarget().getLibraDomain();
-						OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(
-								data.getName(), domain, libraDomain, data.getPassword(),
-								data.getConfirmPassword());
-						IStatus status = initializer.initialize();
-						if (status.getSeverity() == IStatus.ERROR) {
-							throw new InvocationTargetException(new Exception(
-									status.getMessage()));
-						}
-						if (message != null) {
-							Display.getDefault().asyncExec(new Runnable() {
-
-								public void run() {
-									MySQLCredentialsDialog dialog = new MySQLCredentialsDialog(
-											Display.getDefault()
-													.getActiveShell(), message);
-									dialog.open();
-								}
-							});
-						}
-						monitor.done();
-					} catch (SdkException e) {
-						Activator.log(e);
-						throw new InvocationTargetException(e.getCause());
+					monitor.beginTask(
+							Messages.OpenShiftInitializationWizard_JobTitle,
+							IProgressMonitor.UNKNOWN);
+					OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(
+							getName(), getDomain(), data.getTarget()
+									.getLibraDomain(), data.getPassword(), data
+									.getConfirmPassword());
+					IStatus status = initializer.initialize();
+					if (status.getSeverity() == IStatus.ERROR) {
+						throw new InvocationTargetException(new Exception(
+								status.getMessage()));
 					}
+					monitor.done();
 				}
 			});
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 			Throwable a = e.getTargetException();
 			if (a != null) {
-				eulaPage.setErrorMessage(OpenShiftTarget.getOpenShiftMessage(a));
+				osPage.setErrorMessage(OpenShiftTarget.getOpenShiftMessage(a));
 				return false;
 			}
 		} catch (InterruptedException e) {
@@ -139,12 +108,18 @@ public class OpenShiftTargetWizard extends Wizard {
 		return true;
 	}
 
-	public String getUsername() {
-		return username;
+	private String getDomain() {
+		String host = target.getHost().getHost();
+		int index = host.indexOf('-');
+		host = host.substring(index + 1);
+		index = host.indexOf('.');
+		return host.substring(0, index);
 	}
 
-	public String getPassword() {
-		return password;
+	private String getName() {
+		String host = target.getHost().getHost();
+		int index = host.indexOf('-');
+		return host.substring(0, index);
 	}
 
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.wizards;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -15,11 +17,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 
@@ -36,17 +41,34 @@ public class OpenShiftTargetPage extends WizardPage {
 	private Combo gearProfileCombo;
 	private OpenShiftTarget target;
 	private Button mySqlButton;
-	
-	private OpenShiftTargetData data;
-	
 
-	protected OpenShiftTargetPage(OpenShiftTargetWizard wizard, OpenShiftTargetData data) {
+	private OpenShiftTargetData data;
+	private Text zsPassword;
+	private Text zsConfirmPassword;
+
+	private boolean init;
+	private String description;
+
+	protected OpenShiftTargetPage(OpenShiftTargetWizard wizard,
+			OpenShiftTargetData data) {
 		super(Messages.OpenShiftTargetPage_PageTitle);
+		this.description = Messages.OpenShiftTargetPage_PageDescription;
 		setDescription(Messages.OpenShiftTargetPage_EnterNameMessage);
-		setTitle(Messages.OpenShiftTargetPage_PageDescription);
+		setTitle(Messages.OpenShiftTargetPage_PageTitle);
 		this.target = new OpenShiftTarget(wizard.getUsername(),
 				wizard.getPassword());
 		this.data = data;
+	}
+
+	protected OpenShiftTargetPage(OpenShiftTargetData data, String host,
+			boolean init) {
+		super(Messages.OpenShiftInitializationWizard_WizardTitle);
+		this.description = MessageFormat.format(
+				Messages.OpenShiftTargetPage_InitDescription, host);
+		setDescription(description);
+		setTitle(Messages.OpenShiftInitializationWizard_WizardTitle);
+		this.data = data;
+		this.init = init;
 	}
 
 	public void createControl(Composite parent) {
@@ -54,11 +76,10 @@ public class OpenShiftTargetPage extends WizardPage {
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
 		container.setLayout(layout);
-		targetNameText = createLabelWithText(
-				Messages.OpenShiftTargetPage_TargetNameLabel, container);
-		gearProfileCombo = createLabelWithCombo(
-				Messages.OpenShiftTargetPage_GearProfileLabel, container);
-		mySqlButton = createMySqlSection(container);
+		if (!init) {
+			createTargetGroup(container);
+		}
+		createPasswordGroup(container);
 		// platformsViewer = createPlatformsSection(container);
 		setControl(container);
 		initializeValues();
@@ -66,7 +87,7 @@ public class OpenShiftTargetPage extends WizardPage {
 	}
 
 	public void initializeValues() {
-		if (data.getGearProfiles().size() > 0) {
+		if (data.getGearProfiles() != null && data.getGearProfiles().size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {
@@ -78,8 +99,8 @@ public class OpenShiftTargetPage extends WizardPage {
 			});
 		}
 	}
-	
-	public void updateData(){
+
+	public void updateData() {
 		if (targetNameText != null) {
 			data.setName(targetNameText.getText());
 		}
@@ -89,28 +110,103 @@ public class OpenShiftTargetPage extends WizardPage {
 		if (mySqlButton != null) {
 			data.setMySQLSupport(mySqlButton.getSelection());
 		}
+		if (zsPassword != null) {
+			data.setPassword(zsPassword.getText());
+		}
+		if (zsConfirmPassword != null) {
+			data.setConfirmPassword(zsConfirmPassword.getText());
+		}
 		data.setTarget(target);
 	}
 
 	private boolean validatePage() {
 		setErrorMessage(null);
-		if (targetNameText == null || targetNameText.getText().isEmpty()) {
-			setMessage(Messages.OpenShiftTargetPage_EnterNameMessage);
-			return false;
+		if (targetNameText != null) {
+			if (targetNameText.getText().isEmpty()) {
+				setMessage(Messages.OpenShiftTargetPage_EnterNameMessage);
+				return false;
+			}
+			String name = targetNameText.getText();
+			for (String existingTarget : data.getZendTargets()) {
+				if (existingTarget.equalsIgnoreCase(name)) {
+					setErrorMessage(Messages.OpenShiftTargetPage_SameTargetErrorMessage);
+					return false;
+				}
+			}
 		}
-		String name = targetNameText.getText();
-		for (String existingTarget : data.getZendTargets()) {
-			if (existingTarget.equalsIgnoreCase(name)) {
-				setErrorMessage(Messages.OpenShiftTargetPage_SameTargetErrorMessage);
+		if (zsPassword != null && zsConfirmPassword != null) {
+			String password = zsPassword.getText().trim();
+			String confirmPassword = zsConfirmPassword.getText().trim();
+			if (password.isEmpty()) {
+				setMessage(Messages.OpenShiftTargetPage_EnterPasswordMessage);
+				return false;
+			}
+			if (password.indexOf(' ') > -1) {
+				setErrorMessage(Messages.OpenShiftTargetPage_ContainSpacesError);
+				return false;
+			}
+			if (password.length() > 20) {
+				setErrorMessage(Messages.OpenShiftTargetPage_TooLongError);
+				return false;
+			}
+			if (password.length() < 4) {
+				setErrorMessage(Messages.OpenShiftTargetPage_TooShortError);
+				return false;
+			}
+			if (confirmPassword.isEmpty()) {
+				setMessage(Messages.OpenShiftTargetPage_ConfirmationMessage);
+				return false;
+			}
+			if (!password.equals(confirmPassword)) {
+				setErrorMessage(Messages.OpenShiftTargetPage_DoNotMatchError);
 				return false;
 			}
 		}
 		setErrorMessage(null);
-		setMessage(Messages.OpenShiftTargetPage_PageDescription);
+		setMessage(description);
 		return true;
 	}
 
-	private Text createLabelWithText(String labelText, Composite container) {
+	private void createTargetGroup(Composite container) {
+		Group targetGroup = new Group(container, SWT.NONE);
+		targetGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
+				2, 1));
+		targetGroup.setLayout(new GridLayout(2, false));
+		targetGroup.setText(Messages.OpenShiftTargetPage_TargetGroupLabel);
+		targetNameText = createLabelWithText(
+				Messages.OpenShiftTargetPage_TargetNameLabel, false,
+				targetGroup);
+		gearProfileCombo = createLabelWithCombo(
+				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup);
+		mySqlButton = createMySqlSection(targetGroup);
+	}
+
+	private void createPasswordGroup(Composite container) {
+		Group zendServerGroup = new Group(container, SWT.NONE);
+		zendServerGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
+				false, 2, 1));
+		zendServerGroup.setLayout(new GridLayout(2, false));
+		zendServerGroup
+				.setText(Messages.OpenShiftTargetPage_ZendServerGroupLabel);
+		zsPassword = createLabelWithText(
+				Messages.OpenShiftTargetPage_PasswordLabel, true,
+				zendServerGroup);
+		zsPassword.setToolTipText(Messages.OpenShiftTargetPage_PasswordTooltip);
+		zsConfirmPassword = createLabelWithText(
+				Messages.OpenShiftTargetPage_ConfirmLabel, true,
+				zendServerGroup);
+		Link description = new Link(zendServerGroup, SWT.NONE);
+		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		description.setText(Messages.OpenShiftTargetPage_PasswordDescription);
+		description.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(Messages.OpenShiftTargetPage_12);
+			}
+		});
+	}
+
+	private Text createLabelWithText(String labelText, boolean isPassword,
+			Composite container) {
 		Composite parent = new Composite(container, SWT.NONE);
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 		GridLayout layout = new GridLayout(2, false);
@@ -122,7 +218,11 @@ public class OpenShiftTargetPage extends WizardPage {
 		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);
-		Text text = new Text(parent, SWT.BORDER | SWT.SINGLE);
+		int style = SWT.BORDER | SWT.SINGLE;
+		if (isPassword) {
+			style |= SWT.PASSWORD;
+		}
+		Text text = new Text(parent, style);
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				setPageComplete(validatePage());
