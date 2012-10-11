@@ -19,6 +19,9 @@ public class EclipseTargetsManager extends TargetsManager {
 		OpenShiftTarget.iniLibraServer(prefs.get(
 				OpenShiftTarget.LIBRA_SERVER_PROP,
 				OpenShiftTarget.getDefaultLibraServer()));
+		OpenShiftTarget.iniLibraDomain(prefs.get(
+				OpenShiftTarget.LIBRA_DOMAIN_PROP,
+				OpenShiftTarget.getDefaultLibraDomain()));
 		// TODO on startup check if there are targets added from command-line
 
 	}

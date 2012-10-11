@@ -22,7 +22,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
 
 /**
  * OpenShift target initializer. It should be called for newly created OpenShift
@@ -42,14 +41,16 @@ public class OpenShiftTargetInitializer {
 
 	private String name;
 	private String domain;
+	private String libraDomain;
 	private String password;
 	private String confirmPassword;
 
-	public OpenShiftTargetInitializer(String name, String domain,
+	public OpenShiftTargetInitializer(String name, String domain, String libraDomain,
 			String password, String confirmPassword) {
 		super();
 		this.name = name;
 		this.domain = domain;
+		this.libraDomain = libraDomain;
 		this.password = password;
 		this.confirmPassword = confirmPassword;
 	}
@@ -61,11 +62,19 @@ public class OpenShiftTargetInitializer {
 			if (setPassword(sessionId) == 302) {
 				if (acceptLicense(sessionId) == 302) {
 					return Status.OK_STATUS;
-				}
+				} else
+					return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
+							"Cannot initialize an OpenShift target. Accepting license failed.");
+			} else {
+				return new Status(
+						IStatus.ERROR,
+						DeploymentCore.PLUGIN_ID,
+						"Cannot initialize an OpenShift target. Setting ZendServer GUI password failed.");
 			}
+		} else {
+			return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
+					"Cannot initialize an OpenShift target. Initializing ZendServer session failed.");
 		}
-		return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
-				"Cannot initialize an OpenShift target.");
 	}
 
 	private void init() {
@@ -77,7 +86,7 @@ public class OpenShiftTargetInitializer {
 		HttpClient client = new HttpClient();
 		HttpMethodBase method = createGetRequest(
 				"http://" + name + "-" + domain + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ OpenShiftTarget.OPENSHIFT_HOST,
+						+ libraDomain,
 				new HashMap<String, String>());
 		try {
 			client.executeMethod(method);
@@ -122,7 +131,7 @@ public class OpenShiftTargetInitializer {
 
 	private String getURL() {
 		return "http://" + name + "-" + domain + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				+ OpenShiftTarget.OPENSHIFT_HOST + "/ZendServer/Registration/"; //$NON-NLS-1$
+				+ libraDomain + "/ZendServer/Registration/"; //$NON-NLS-1$
 	}
 
 	private Map<String, String> parseLicense(String responseContent) {
