@@ -5,15 +5,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Calendar;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
-import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
@@ -50,13 +48,17 @@ public class TestServiceDispatcher extends AbstractTestServer {
 	@Test
 	public void testDispatch() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest = null;/*new GetSystemInfoRequest(WebApiVersion.V1,
-				Calendar.getInstance().getTime(), Configuration.getKeyName(),
-				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());*/
-//		ServiceDispatcher dispatcher = new ServiceDispatcher();
-//		IResponse response = dispatcher.dispatch(simpleRequest);
-//		Assert.assertNotNull(response);
+		IRequest simpleRequest = null;/*
+									 * new
+									 * GetSystemInfoRequest(WebApiVersion.V1,
+									 * Calendar.getInstance().getTime(),
+									 * Configuration.getKeyName(), "userAgent",
+									 * Configuration.getHost(),
+									 * Configuration.getSecretKey());
+									 */
+		// ServiceDispatcher dispatcher = new ServiceDispatcher();
+		// IResponse response = dispatcher.dispatch(simpleRequest);
+		// Assert.assertNotNull(response);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -68,23 +70,23 @@ public class TestServiceDispatcher extends AbstractTestServer {
 	@Test(expected = WebApiCommunicationError.class)
 	public void testDispatchNullResource() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest = null;/*new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());*/
-//		ServiceDispatcher dispatcher = new SimpleServiceDispatcher();
-//		dispatcher.dispatch(simpleRequest);
+				Configuration.getSecretKey(), ServerType.ZEND_SERVER_MANAGER);
+		ServiceDispatcher dispatcher = new SimpleServiceDispatcher();
+		dispatcher.dispatch(simpleRequest);
 	}
 
 	@Test(expected = InternalWebApiException.class)
 	public void testDispatchResourceException() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest =null;/* new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());*/
-//		ServiceDispatcher dispatcher = new SimpleServiceDispatcher2();
-//		dispatcher.dispatch(simpleRequest);
+				Configuration.getSecretKey(), ServerType.ZEND_SERVER_MANAGER);
+		ServiceDispatcher dispatcher = new SimpleServiceDispatcher2();
+		dispatcher.dispatch(simpleRequest);
 	}
 
 }

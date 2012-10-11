@@ -13,6 +13,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.restlet.data.Parameter;
 import org.restlet.util.Series;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.request.RequestFactory;
@@ -33,20 +34,23 @@ public class TestRequest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateRequestNullParameter() {
-		ConfigurationImportRequest request = null;/*(ConfigurationImportRequest) RequestFactory
+		ConfigurationImportRequest request = (ConfigurationImportRequest) RequestFactory
 				.createRequest(WebApiMethodType.CONFIGURATION_IMPORT,
 						WebApiVersion.V1, new Date(), "keyName", "userAgent",
-						"http://localhost:10081", "123");*/
-//		request.setConfigStream(null);
+						"http://localhost:10081", "123",
+						ServerType.ZEND_SERVER_MANAGER);
+		request.setConfigStream(null);
 	}
 
 	@Test
 	public void testCreateRequestContentType() {
-		GetSystemInfoRequest request = null;/*(GetSystemInfoRequest) RequestFactory
+		GetSystemInfoRequest request = (GetSystemInfoRequest) RequestFactory
 				.createRequest(WebApiMethodType.GET_SYSTEM_INFO,
 						WebApiVersion.V1, new Date(), "keyName", "userAgent",
-						"http://localhost:10081", "123");*/
-//		Assert.assertNull(request.getContentType());
+						"http://localhost:10081", "123",
+						ServerType.ZEND_SERVER_MANAGER);
+
+		Assert.assertNull(request.getContentType());
 	}
 
 	@Test
