@@ -17,7 +17,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
@@ -76,12 +79,43 @@ public class StartDebugModeHandler extends AbstractHandler {
 				return null;
 			}
 		}
+		startDebugMode(target);
+		return null;
+	}
+
+	private void startDebugMode(IZendTarget target) {
 		IStatus status = DebugModeManager.getManager().startDebugMode(target);
 		switch (status.getSeverity()) {
 		case IStatus.OK:
 			NotificationManager.registerInfo(
 					Messages.DebugModeHandler_DebugModeLabel,
 					status.getMessage(), 4000);
+			break;
+		case IStatus.WARNING:
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getShell();
+			boolean shouldRestart = MessageDialog.openQuestion(shell,
+					Messages.DebugModeHandler_DebugModeLabel,
+					Messages.StartDebugModeHandler_DebugStartedQuestionMessage);
+			if (shouldRestart) {
+				restartDebugMode(target);
+			}
+			break;
+		case IStatus.ERROR:
+			NotificationManager.registerError(
+					Messages.DebugModeHandler_DebugModeLabel,
+					status.getMessage(), 4000);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void restartDebugMode(IZendTarget target) {
+		IStatus status = DebugModeManager.getManager().stopDebugMode(target);
+		switch (status.getSeverity()) {
+		case IStatus.OK:
+			startDebugMode(target);
 			break;
 		case IStatus.WARNING:
 			NotificationManager.registerWarning(
@@ -96,7 +130,6 @@ public class StartDebugModeHandler extends AbstractHandler {
 		default:
 			break;
 		}
-		return null;
 	}
 
 }
