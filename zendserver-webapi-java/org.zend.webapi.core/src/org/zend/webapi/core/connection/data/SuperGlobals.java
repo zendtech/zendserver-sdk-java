@@ -9,7 +9,7 @@ package org.zend.webapi.core.connection.data;
 
 
 /**
- * List of parameter elements grouped by source Ð get, post, cookie, session and
+ * List of parameter elements grouped by source get, post, cookie, session and
  * server.
  * 
  * @author Wojciech Galanciak, 2012

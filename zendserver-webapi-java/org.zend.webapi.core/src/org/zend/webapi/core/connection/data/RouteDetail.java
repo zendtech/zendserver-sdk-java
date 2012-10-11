@@ -10,7 +10,7 @@ package org.zend.webapi.core.connection.data;
 
 
 /**
- * Issue Route details Ð hints provided by the monitor to indicate where or how
+ * Issue Route details hints provided by the monitor to indicate where or how
  * the issue was produced in a more modular and application-aware display.
  * 
  * @author Wojciech Galanciak, 2012

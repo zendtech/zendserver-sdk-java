@@ -20,7 +20,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
  * Rollback an existing application to its previous version. This process is
- * asynchronous Ð the initial request will start the rollback process and the
+ * asynchronous the initial request will start the rollback process and the
  * initial response will show information about the application being rolled
  * back. The user is expected to continue checking the application status using
  * the applicationGetStatus method until the process is complete.

@@ -37,7 +37,7 @@ public class TestRequest {
 				.createRequest(WebApiMethodType.CONFIGURATION_IMPORT,
 						WebApiVersion.V1, new Date(), "keyName", "userAgent",
 						"http://localhost:10081", "123");*/
-		request.setConfigStream(null);
+//		request.setConfigStream(null);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class TestRequest {
 				.createRequest(WebApiMethodType.GET_SYSTEM_INFO,
 						WebApiVersion.V1, new Date(), "keyName", "userAgent",
 						"http://localhost:10081", "123");*/
-		Assert.assertNull(request.getContentType());
+//		Assert.assertNull(request.getContentType());
 	}
 
 	@Test

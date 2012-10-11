@@ -54,9 +54,9 @@ public class TestServiceDispatcher extends AbstractTestServer {
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
 				Configuration.getSecretKey());*/
-		ServiceDispatcher dispatcher = new ServiceDispatcher();
-		IResponse response = dispatcher.dispatch(simpleRequest);
-		Assert.assertNotNull(response);
+//		ServiceDispatcher dispatcher = new ServiceDispatcher();
+//		IResponse response = dispatcher.dispatch(simpleRequest);
+//		Assert.assertNotNull(response);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -72,8 +72,8 @@ public class TestServiceDispatcher extends AbstractTestServer {
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
 				Configuration.getSecretKey());*/
-		ServiceDispatcher dispatcher = new SimpleServiceDispatcher();
-		dispatcher.dispatch(simpleRequest);
+//		ServiceDispatcher dispatcher = new SimpleServiceDispatcher();
+//		dispatcher.dispatch(simpleRequest);
 	}
 
 	@Test(expected = InternalWebApiException.class)
@@ -83,8 +83,8 @@ public class TestServiceDispatcher extends AbstractTestServer {
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
 				Configuration.getSecretKey());*/
-		ServiceDispatcher dispatcher = new SimpleServiceDispatcher2();
-		dispatcher.dispatch(simpleRequest);
+//		ServiceDispatcher dispatcher = new SimpleServiceDispatcher2();
+//		dispatcher.dispatch(simpleRequest);
 	}
 
 }
