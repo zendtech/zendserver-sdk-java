@@ -50,10 +50,10 @@ public class TestServiceDispatcher extends AbstractTestServer {
 	@Test
 	public void testDispatch() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest = null;/*new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());
+				Configuration.getSecretKey());*/
 		ServiceDispatcher dispatcher = new ServiceDispatcher();
 		IResponse response = dispatcher.dispatch(simpleRequest);
 		Assert.assertNotNull(response);
@@ -68,10 +68,10 @@ public class TestServiceDispatcher extends AbstractTestServer {
 	@Test(expected = WebApiCommunicationError.class)
 	public void testDispatchNullResource() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest = null;/*new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());
+				Configuration.getSecretKey());*/
 		ServiceDispatcher dispatcher = new SimpleServiceDispatcher();
 		dispatcher.dispatch(simpleRequest);
 	}
@@ -79,10 +79,10 @@ public class TestServiceDispatcher extends AbstractTestServer {
 	@Test(expected = InternalWebApiException.class)
 	public void testDispatchResourceException() throws WebApiException {
 		initMock(handler.getSystemInfo(), "getSystemInfo", ResponseCode.OK);
-		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest =null;/* new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), Configuration.getKeyName(),
 				"userAgent", Configuration.getHost(),
-				Configuration.getSecretKey());
+				Configuration.getSecretKey());*/
 		ServiceDispatcher dispatcher = new SimpleServiceDispatcher2();
 		dispatcher.dispatch(simpleRequest);
 	}

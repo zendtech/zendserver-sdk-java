@@ -42,9 +42,9 @@ public class TestResponse {
 	@Test
 	public void testResponseFactory() throws FileNotFoundException,
 			MalformedURLException {
-		IRequest simpleRequest = new GetSystemInfoRequest(WebApiVersion.V1,
+		IRequest simpleRequest = null; /*new GetSystemInfoRequest(WebApiVersion.V1,
 				Calendar.getInstance().getTime(), "key", "userAgent",
-				"http://localhost", "secretKey");
+				"http://localhost", "secretKey");*/
 		IResponseData data = new SimpleResponseData(ResponseType.SYSTEM_INFO,
 				"prefix");
 		IResponse response = ResponseFactory.createResponse(simpleRequest,
