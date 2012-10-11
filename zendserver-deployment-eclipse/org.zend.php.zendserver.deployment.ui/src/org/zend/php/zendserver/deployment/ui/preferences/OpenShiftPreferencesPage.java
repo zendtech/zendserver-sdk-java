@@ -37,6 +37,7 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private Text serverURL;
+	private Text domain;
 
 	private IEclipsePreferences prefs;
 
@@ -50,16 +51,23 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		String oldValue = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
-		String newValue = serverURL.getText();
-		if (!newValue.equals(oldValue)) {
-			prefs.put(OpenShiftTarget.LIBRA_SERVER_PROP, newValue);
-			OpenShiftTarget.setLibraServer(newValue);
-			try {
-				prefs.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
-			}
+		String serverOldValue = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
+		String serverNewValue = serverURL.getText();
+		String domainOldValue = prefs.get(OpenShiftTarget.LIBRA_DOMAIN_PROP, (String) null);
+		String domainNewValue = domain.getText();
+		if (!serverNewValue.equals(serverOldValue)) {
+			prefs.put(OpenShiftTarget.LIBRA_SERVER_PROP, serverNewValue);
+			OpenShiftTarget.setLibraServer(serverNewValue);
+		}
+		if (!domainNewValue.equals(domainOldValue)) {
+			prefs.put(OpenShiftTarget.LIBRA_DOMAIN_PROP, domainNewValue);
+			OpenShiftTarget.setLibraDomain(domainNewValue);
+		}
+		
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
 		}
 		return super.performOk();
 	}
@@ -80,6 +88,7 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 	 */
 	protected void performDefaults() {
 		serverURL.setText(OpenShiftTarget.getDefaultLibraServer());
+		domain.setText(OpenShiftTarget.getDefaultLibraDomain());
 		super.performDefaults();
 	}
 
@@ -114,15 +123,29 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 		serverURL
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		serverURL.setEditable(true);
+		Label labelDomain = new Label(composite, SWT.NONE);
+		labelDomain.setText("Domain:"); //$NON-NLS-1$
+		labelDomain.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
+		domain = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		domain
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		domain.setEditable(true);
 	}
 
 	private void initializeValues() {
-		String value = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
-		String propertyValue = OpenShiftTarget.getLibraServer();
-		if (value == null) {
-			serverURL.setText(propertyValue);
+		String serverValue = prefs.get(OpenShiftTarget.LIBRA_SERVER_PROP, (String) null);
+		String defaultServerValue = OpenShiftTarget.getLibraServer();
+		if (serverValue == null) {
+			serverURL.setText(defaultServerValue);
 		} else {
-			serverURL.setText(value);
+			serverURL.setText(serverValue);
+		}
+		String domainValue = prefs.get(OpenShiftTarget.LIBRA_DOMAIN_PROP, (String) null);
+		String defaultDomainValue = OpenShiftTarget.getLibraDomain();
+		if (domainValue == null) {
+			domain.setText(defaultDomainValue);
+		} else {
+			domain.setText(domainValue);
 		}
 	}
 
