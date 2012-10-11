@@ -39,6 +39,7 @@ public class Activator extends Plugin {
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 		plugin = null;
+		DebugModeManager.stopAll();
 	}
 
 	/**

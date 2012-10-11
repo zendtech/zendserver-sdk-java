@@ -245,6 +245,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="org.eclipse.php.debug.ui.preferences.PhpDebugPreferencePage"
             class="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModePreferencesPage"
             id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
             name="Debug Mode">

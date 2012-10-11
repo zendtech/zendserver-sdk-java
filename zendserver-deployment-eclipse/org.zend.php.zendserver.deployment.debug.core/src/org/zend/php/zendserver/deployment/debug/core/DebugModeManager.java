@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -67,6 +68,7 @@ public class DebugModeManager {
 			options.put(DEBUG_PORT, String.valueOf(port));
 			options.put(DEBUG_HOST, getDebugHosts(target));
 			options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
+			options.put("use_remote", "1");
 			debugMode.setOptions(options);
 		}
 		State result = State.ERROR;
@@ -121,6 +123,16 @@ public class DebugModeManager {
 		return true;
 	}
 
+	public static void stopAll() {
+		DebugModeManager manager = getManager();
+		Set<IZendTarget> keys = manager.targets.keySet();
+		for (IZendTarget target : keys) {
+			if (manager.isInDebugMode(target)) {
+				manager.stopDebugMode(target);
+			}
+		}
+	}
+	
 	@SuppressWarnings("restriction")
 	public static Server findExistingServer(IZendTarget target) {
 		try {
