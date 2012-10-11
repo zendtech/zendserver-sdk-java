@@ -37,7 +37,7 @@ public class StudioIsDebugModeEnabledRequest extends AbstractRequest {
 	 * @see org.zend.webapi.core.connection.request.IRequest#getMethod()
 	 */
 	public Method getMethod() {
-		return Method.POST;
+		return Method.GET;
 	}
 
 	/*
