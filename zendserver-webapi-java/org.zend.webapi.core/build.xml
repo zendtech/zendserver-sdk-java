@@ -20,7 +20,7 @@
 			<arg value="createTestJar"/>
 			<arg value="eclipseClasspath"/>
 			<arg value="-x"/>
-			<arg value="test"/>
+<!-- 			<arg value="test"/> -->
 			<arg value="--daemon"/>
 		</exec>
 	</target>
@@ -29,7 +29,7 @@
 			<isset property="env.GRADLE_HOME"/>
 		</condition>
 		<property name="home" value="${gradle.home}"/>
-		<exec executable="${home}/bin/gradle.bat" dir=".">
+		<exec executable="${home}/gradle.bat" dir=".">
 			<arg value="build"/>
 			<arg value="createTestJar"/>
 			<arg value="eclipseClasspath"/>
