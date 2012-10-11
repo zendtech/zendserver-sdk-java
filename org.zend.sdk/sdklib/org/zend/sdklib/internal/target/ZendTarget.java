@@ -297,6 +297,9 @@ public class ZendTarget implements IZendTarget {
 			if (version != WebApiVersion.UNKNOWN) {
 				client.setCustomVersion(version);
 			}
+			if (version == WebApiVersion.V1_3) { //$NON-NLS-1$
+				client.setServerType(ServerType.ZEND_SERVER);
+			}
 			if (TargetsManager.isOpenShift(this)) {
 				client.setServerType(ServerType.ZEND_SERVER);
 			}

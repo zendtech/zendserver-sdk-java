@@ -82,8 +82,7 @@ public class ZendDebugMode extends ZendConnection {
 	public State start() throws SdkException {
 		try {
 			WebApiClient client = getClient(targetId);
-			// TODO change it when isEnabled webapi method will be available
-			if (false) {
+			if (isStarted()) {
 				return State.STARTED;
 			} else {
 				DebugMode result = client
@@ -115,8 +114,7 @@ public class ZendDebugMode extends ZendConnection {
 	public State stop() throws SdkException {
 		try {
 			WebApiClient client = getClient(targetId);
-			// TODO change it when isEnabled webapi method will be available
-			if (false) {
+			if (!isStarted()) {
 				return State.STOPPED;
 			} else {
 				DebugMode result = client.studioStopDebugMode();

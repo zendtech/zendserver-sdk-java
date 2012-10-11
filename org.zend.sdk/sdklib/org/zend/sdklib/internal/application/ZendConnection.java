@@ -81,9 +81,11 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 		String hostname = target.getHost().toString();
 		WebApiClient client = new WebApiClient(credentials, hostname,
 				SSLContextInitializer.instance.getRestletContext(), notifier);
-		if (ZendServerVersion.v6_0_0 == ZendServerVersion.byName(target
-				.getProperty(IZendTarget.SERVER_VERSION))) {
+		if (ZendServerVersion
+				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
+				.getName().startsWith("6")) { //$NON-NLS-1$
 			client.setCustomVersion(WebApiVersion.V1_3);
+			client.setServerType(ServerType.ZEND_SERVER);
 		}
 		if (TargetsManager.isOpenShift(target)) {
 			client.setServerType(ServerType.ZEND_SERVER);
