@@ -537,7 +537,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public static boolean isOpenShift(String targetHost) {
 		return targetHost != null
-				&& targetHost.contains(OpenShiftTarget.OPENSHIFT_HOST);
+				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
 	}
 
 	private boolean isIdAvailable(String id) {

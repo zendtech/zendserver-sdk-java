@@ -65,10 +65,11 @@ import com.openshift.internal.client.response.Message;
  */
 public class OpenShiftTarget {
 
-	public static final String DEFAULT_LIBRA_SERVER = "https://openshift.redhat.com";
 	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer";
-	
-	public static final String OPENSHIFT_HOST = "dev.rhcloud.com";
+	public static final String LIBRA_DOMAIN_PROP = "org.zend.sdk.openshift.libraDomain";
+
+	public static final String DEFAULT_LIBRA_SERVER = "https://openshift.redhat.com";
+	public static final String DEFAULT_LIBRA_DOMAIN = "rhcloud.com";
 
 	public static final String TARGET_CONTAINER = "openshift.container";
 	public static final String TARGET_USERNAME = "openshift.username";
@@ -243,11 +244,18 @@ public class OpenShiftTarget {
 	public static boolean hasDatabaseSupport(IZendTarget target) {
 		return target.getProperty(TARGET_MYSQL_SUPPORT) != null;
 	}
-	
+
 	public static void iniLibraServer(String value) {
 		String val = System.getProperty(LIBRA_SERVER_PROP);
 		if (val == null) {
 			setLibraServer(value);
+		}
+	}
+	
+	public static void iniLibraDomain(String value) {
+		String val = System.getProperty(LIBRA_DOMAIN_PROP);
+		if (val == null) {
+			setLibraDomain(value);
 		}
 	}
 
@@ -255,13 +263,26 @@ public class OpenShiftTarget {
 		String val = System.getProperty(LIBRA_SERVER_PROP);
 		return val != null ? val : DEFAULT_LIBRA_SERVER;
 	}
-	
+
+	public static String getLibraDomain() {
+		String val = System.getProperty(LIBRA_DOMAIN_PROP);
+		return val != null ? val : DEFAULT_LIBRA_DOMAIN;
+	}
+
 	public static String getDefaultLibraServer() {
 		return DEFAULT_LIBRA_SERVER;
 	}
-	
+
+	public static String getDefaultLibraDomain() {
+		return DEFAULT_LIBRA_DOMAIN;
+	}
+
 	public static void setLibraServer(String serverURL) {
 		System.setProperty(LIBRA_SERVER_PROP, serverURL);
+	}
+
+	public static void setLibraDomain(String domain) {
+		System.setProperty(LIBRA_DOMAIN_PROP, domain);
 	}
 
 	public static String getOpenShiftMessage(Throwable throwable) {
@@ -285,7 +306,7 @@ public class OpenShiftTarget {
 		}
 		return null;
 	}
-	
+
 	private IDomain getDomain() throws SdkException {
 		if (domain == null) {
 			IOpenShiftConnection connection = null;
