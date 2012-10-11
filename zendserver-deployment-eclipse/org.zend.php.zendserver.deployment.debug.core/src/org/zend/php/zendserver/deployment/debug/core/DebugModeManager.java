@@ -68,7 +68,6 @@ public class DebugModeManager {
 			options.put(DEBUG_PORT, String.valueOf(port));
 			options.put(DEBUG_HOST, getDebugHosts(target));
 			options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
-			options.put("use_remote", "1");
 			debugMode.setOptions(options);
 		}
 		State result = State.ERROR;
@@ -108,6 +107,9 @@ public class DebugModeManager {
 					Messages.DebugModeManager_StopSuccess);
 		}
 		if (result == State.STOPPED) {
+			if (isInDebugMode(target)) {
+				targets.put(target, false);
+			}
 			return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
 					Messages.DebugModeManager_AlreadyStoppedWarning);
 		}
