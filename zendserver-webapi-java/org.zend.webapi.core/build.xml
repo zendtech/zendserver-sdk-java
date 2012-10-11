@@ -1,5 +1,5 @@
 <project name="runGradle" default="gradle">
-	<property environment="env"/>
+	<property environment="env" />
 	<target name="gradle" description="run gradle script">
 		<condition property="isUnix">
 			<os family="unix" />
@@ -12,30 +12,30 @@
 	</target>
 	<target name="gradle_unix" if="isUnix">
 		<condition property="home" value="${env.GRADLE_HOME}">
-			<isset property="env.GRADLE_HOME"/>
+			<isset property="env.GRADLE_HOME" />
 		</condition>
-		<property name="home" value="${gradle.home}"/>
+		<property name="home" value="${gradle.home}" />
 		<exec executable="${home}/bin/gradle" dir=".">
-			<arg value="build"/>
-			<arg value="createTestJar"/>
-			<arg value="eclipseClasspath"/>
-			<arg value="-x"/>
-<!-- 			<arg value="test"/> -->
-			<arg value="--daemon"/>
+			<arg value="build" />
+			<arg value="createTestJar" />
+			<arg value="eclipseClasspath" />
+			<arg value="-x" />
+			<arg value="test" />
+			<arg value="--daemon" />
 		</exec>
 	</target>
 	<target name="gradle_windows" if="isWindows">
 		<condition property="home" value="${env.GRADLE_HOME}">
-			<isset property="env.GRADLE_HOME"/>
+			<isset property="env.GRADLE_HOME" />
 		</condition>
-		<property name="home" value="${gradle.home}"/>
+		<property name="home" value="${gradle.home}" />
 		<exec executable="${home}/gradle.bat" dir=".">
-			<arg value="build"/>
-			<arg value="createTestJar"/>
-			<arg value="eclipseClasspath"/>
-			<arg value="-x"/>
-			<arg value="test"/>
-			<arg value="--daemon"/>
+			<arg value="build" />
+			<arg value="createTestJar" />
+			<arg value="eclipseClasspath" />
+			<arg value="-x" />
+			<arg value="test" />
+			<arg value="--daemon" />
 		</exec>
 	</target>
 </project>
