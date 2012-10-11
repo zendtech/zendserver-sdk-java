@@ -143,7 +143,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		Boolean autoExpandCategories = memento
 				.getBoolean("autoExpandCategories");
 		if (autoExpandCategories == null) {
-			autoExpandCategories = true;
+			autoExpandCategories = false;
 		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
 

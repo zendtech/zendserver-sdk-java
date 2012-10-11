@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.equinox.internal.p2.discovery.Catalog;
+import org.eclipse.equinox.internal.p2.discovery.model.AbstractCatalogItem;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -123,6 +124,8 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 				return true;
 			if (obj == null)
 				return false;
+			if(obj instanceof CatalogCategory)
+				return parent.equals(obj);
 			if (getClass() != obj.getClass())
 				return false;
 			VirtualTreeCategory other = (VirtualTreeCategory) obj;
