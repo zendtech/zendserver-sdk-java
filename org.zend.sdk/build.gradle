@@ -18,7 +18,7 @@ repositories {
 	flatDir { name 'localRepository' }
 	localRepository { dirs 'lib' }
 	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.webapi/build/libs/' }
-	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi/workspace/org.zend.webapi/build/libs/' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi.HEAD/workspace/org.zend.webapi/build/libs/' }
 }
 
 sourceSets {
