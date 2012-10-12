@@ -336,10 +336,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 		viewer.addFilter(new Filter());
 		final ToolTipHandler tooltip = new ToolTipHandler(
 				viewerComposite.getShell());
-		tooltip.activateHoverHelp(viewer.getControl());
-
-		checkStateListener = new StudioFeaturesCheckStateListener(viewer,
-				installedFeatures);
+		tooltip.activateHoverHelp(viewer.getControl());	
+		checkStateListener = new StudioFeaturesCheckStateListener(viewer);
 		viewer.addCheckStateListener(checkStateListener);
 
 		return viewer;
@@ -401,7 +399,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 					if (installedFeatures == null) {
 						installedFeatures = getInstalledFeatures(monitor);
 						checkStateListener
-								.setInstalledFeatures(installedFeatures);
+								.setInstalledFeatures(installedConectors);
 					}
 					postDiscovery();
 
@@ -657,7 +655,12 @@ public class ZendCatalogViewer extends FilteredViewer {
 
 	private void showInstalled() {
 		viewer.setCheckedElements(installedConectors);
+		checkStateListener.setInstalledFeatures(installedConectors);
+		
 	}
+	
+	
+	
 
 	/**
 	 * Invoked whenever the filter text is changed or the user otherwise causes

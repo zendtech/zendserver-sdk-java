@@ -16,15 +16,12 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 
 	public static final String STUDIO_CORE_IU = "org.zend.pdt.discovery.studiocore";
 	private CheckboxTreeViewer viewer;
-	private Set<String> initiallyChecked;
+	private CatalogItem[] initiallyChecked;
 	private List<String> studioSubIds;
 	private List<String> selectedExtraFeatures = new ArrayList<String>();
 
-	public StudioFeaturesCheckStateListener(CheckboxTreeViewer viewer,
-			Set<String> installedFeatures) {
+	public StudioFeaturesCheckStateListener(CheckboxTreeViewer viewer) {
 		this.viewer = viewer;
-
-		initiallyChecked = installedFeatures;
 	}
 
 	public void checkStateChanged(CheckStateChangedEvent event) {
@@ -138,7 +135,6 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 	}
 
 	private Object[] getChildren(Object o) {
-		Object input = viewer.getInput();
 		return ((ZendCatalogContentProvider) viewer.getContentProvider())
 				.getChildren(o);
 	}
@@ -165,7 +161,11 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 		return null;
 	}
 
-	public void setInstalledFeatures(Set<String> installedFeatures) {
+	public void setInstalledFeatures(CatalogItem[] installedFeatures) {
 		initiallyChecked = installedFeatures;
+		if (initiallyChecked != null)
+			for (CatalogItem item : initiallyChecked) {
+				updateParentState(item, true);
+			}
 	}
 }
