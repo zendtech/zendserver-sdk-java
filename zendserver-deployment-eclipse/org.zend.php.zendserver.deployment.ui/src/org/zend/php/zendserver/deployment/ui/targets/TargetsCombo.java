@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Label;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 public class TargetsCombo {
 
