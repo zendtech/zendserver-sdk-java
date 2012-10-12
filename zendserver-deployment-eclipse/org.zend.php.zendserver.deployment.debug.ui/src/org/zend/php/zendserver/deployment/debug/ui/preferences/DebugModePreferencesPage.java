@@ -44,6 +44,7 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
+import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo.Type;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -54,6 +55,8 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class DebugModePreferencesPage extends PreferencePage implements
 		IWorkbenchPreferencePage {
+
+	public static final String ID = "org.zend.php.zendserver.deployment.ui.DebugModePreferencePage"; //$NON-NLS-1$
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -74,6 +77,21 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		this.defaultPrefs = DefaultScope.INSTANCE
 				.getNode(DebugModeManager.DEBUG_MODE_NODE);
 		this.input = new HashMap<String, List<String>>();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+	 */
+	public void applyData(Object data) {
+		if (data instanceof IZendTarget) {
+			IZendTarget target = (IZendTarget) data;
+			if (targetsCombo != null) {
+				targetsCombo.select(target.getId());
+			}
+		}
 	}
 
 	/*
@@ -247,12 +265,15 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				removeElement(viewer.getSelection());
 			}
 		});
+		if (targetsCombo.getSelected() == null) {
+			addButton.setEnabled(false);
+		}
 		removeButton.setEnabled(false);
 		modifyButton.setEnabled(false);
 	}
 
 	private void createTargetSelection(Composite container) {
-		targetsCombo = new TargetsCombo();
+		targetsCombo = new TargetsCombo(Type.ZEND_SERVER_6);
 		targetsCombo.setLabel(Messages.DebugModePreferencesPage_TargetLabel);
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
@@ -260,6 +281,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				String id = targetsCombo.getSelected().getId();
 				viewer.setInput(input.get(id));
+				addButton.setEnabled(true);
 			}
 
 		});

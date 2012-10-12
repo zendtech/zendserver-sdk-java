@@ -140,6 +140,11 @@
                </iterate>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.debugModePreferences"
+               label="Debug Mode Preferences..."
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -194,6 +199,11 @@
             id="org.zend.php.zendserver.deployment.debug.ui.stopDebugMode"
             name="Stop Debug Mode">
       </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DebugModePreferencesHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.debugModePreferences"
+            name="Debug Mode Preferences...">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
@@ -247,7 +257,7 @@
       <page
             category="org.eclipse.php.debug.ui.preferences.PhpDebugPreferencePage"
             class="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModePreferencesPage"
-            id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
+            id="org.zend.php.zendserver.deployment.ui.DebugModePreferencePage"
             name="Debug Mode">
       </page>
    </extension>
