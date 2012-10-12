@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.internal.validation.DescriptorValidator;
+import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.sdklib.mapping.MappingModelFactory;
 import org.zend.sdklib.mapping.validator.IMappingValidator;
 import org.zend.sdklib.mapping.validator.MappingParseException;
@@ -70,6 +71,7 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 
 	protected void validateMapping(IFile file) {
 		IMappingValidator validator = new MappingValidator(file.getParent().getLocation().toFile());
+		validator.setVariableResolver(new EclipseVariableResolver());
 		try {
 			try {
 				if (file.exists()) {
