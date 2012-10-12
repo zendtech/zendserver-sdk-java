@@ -30,10 +30,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
@@ -54,10 +50,6 @@ import org.zend.sdklib.target.IZendTarget;
  * DevCloud details editing composite: username and password.
  */
 public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
-
-	private static final String HREF_RESTORE_PASSWORD = "restorePassword"; //$NON-NLS-1$
-	private static final String HREF_CREATE_ACCOUNT = "createAccount"; //$NON-NLS-1$
-	private static final String HREF_CREATE_TARGET = "createTarget"; //$NON-NLS-1$
 
 	private static final String RESTORE_PASSWORD_URL = "https://openshift.redhat.com/app/account/password/new"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "https://openshift.redhat.com/app/account/new"; //$NON-NLS-1$
@@ -96,47 +88,44 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		label = new Label(composite, SWT.NONE);
 		label.setText("Password:");
 		passwordText = new Text(composite, SWT.BORDER | SWT.PASSWORD);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.horizontalSpan = 2;
 		passwordText.setLayoutData(layoutData);
 		passwordText.setToolTipText("Your OpenShift account password.");
 		passwordText.addModifyListener(modifyListener);
-
-		Composite hyperlinks = new Composite(composite, SWT.NONE);
-		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false, 4, 1);
-		hyperlinks.setLayoutData(gd);
-		hyperlinks.setLayout(new GridLayout(3, false));
-
-		Hyperlink createAccount = new Hyperlink(hyperlinks, SWT.NONE);
-		createAccount.setUnderlined(true);
-		createAccount.setForeground(Display.getDefault().getSystemColor(
-				SWT.COLOR_BLUE));
-		createAccount.setText("Create New OpenShift Account");
-		createAccount.setHref(HREF_CREATE_ACCOUNT);
-
-		Hyperlink createTarget = new Hyperlink(hyperlinks, SWT.NONE);
-		createTarget.setUnderlined(true);
-		createTarget.setForeground(Display.getDefault().getSystemColor(
-				SWT.COLOR_BLUE));
-		createTarget.setText("Create New OpenShift Target");
-		createTarget.setHref(HREF_CREATE_TARGET);
-
-		Hyperlink forgotPassword = new Hyperlink(hyperlinks, SWT.NONE);
-		forgotPassword.setUnderlined(true);
-		forgotPassword.setForeground(Display.getDefault().getSystemColor(
-				SWT.COLOR_BLUE));
-		forgotPassword
-				.setText(Messages.DevCloudDetailsComposite_RestorePassword);
-		forgotPassword.setHref(HREF_RESTORE_PASSWORD);
-
-		IHyperlinkListener hrefListener = new HyperlinkAdapter() {
-
-			public void linkActivated(HyperlinkEvent e) {
-				handleHyperlink(e.getHref());
+		
+		Button restorePassword = new Button(composite, SWT.PUSH);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		restorePassword.setLayoutData(layoutData);
+		restorePassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
+		restorePassword.addSelectionListener(new SelectionAdapter() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(RESTORE_PASSWORD_URL);
 			}
-		};
-
-		createAccount.addHyperlinkListener(hrefListener);
-		createTarget.addHyperlinkListener(hrefListener);
-		forgotPassword.addHyperlinkListener(hrefListener);
+		});
+		
+		Button createAccount = new Button(composite, SWT.PUSH);
+		layoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		createAccount.setLayoutData(layoutData);
+		createAccount.setText("Create New OpenShift Account");
+		createAccount.addSelectionListener(new SelectionAdapter() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(CREATE_ACCOUNT_URL);
+			}
+		});
+		
+		Button createTarget = new Button(composite, SWT.PUSH);
+		layoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		createTarget.setLayoutData(layoutData);
+		createTarget.setText("Create New OpenShift Target");
+		createTarget.addSelectionListener(new SelectionAdapter() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				openTargetWizard();
+			}
+		});
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
@@ -152,9 +141,13 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		privateKeyText.addModifyListener(modifyListener);
 
 		Button btnBrowse = new Button(composite, SWT.PUSH);
+		btnBrowse
+		.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
 		Button btnGenerate = new Button(composite, SWT.PUSH);
 		btnGenerate.setText(Messages.DevCloudDetailsComposite_3);
+		btnGenerate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false));
 		btnBrowse.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -280,16 +273,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	@Override
 	protected String getHelpResource() {
 		return HelpContextIds.CREATING_A_ZEND_DEVELOPER_CLOUD_TARGET;
-	}
-
-	protected void handleHyperlink(Object href) {
-		if (HREF_CREATE_ACCOUNT.equals(href)) {
-			Program.launch(CREATE_ACCOUNT_URL);
-		} else if (HREF_RESTORE_PASSWORD.equals(href)) {
-			Program.launch(RESTORE_PASSWORD_URL);
-		} else if (HREF_CREATE_TARGET.equals(href)) {
-			openTargetWizard();
-		}
 	}
 
 	private void openTargetWizard() {
