@@ -9,6 +9,8 @@ package org.zend.sdklib.mapping.validator;
 
 import java.io.InputStream;
 
+import org.zend.sdklib.mapping.IVariableResolver;
+
 /**
  * Interface for parsing and validating resource mapping properites file.
  * 
@@ -27,5 +29,7 @@ public interface IMappingValidator {
 	 * @throws MappingParseException
 	 */
 	boolean parse(InputStream stream) throws MappingParseException;
+
+	public void setVariableResolver(IVariableResolver variableResolver);
 
 }
