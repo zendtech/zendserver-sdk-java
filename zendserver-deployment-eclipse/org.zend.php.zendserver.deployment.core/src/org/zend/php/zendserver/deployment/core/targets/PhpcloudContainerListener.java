@@ -57,7 +57,11 @@ public class PhpcloudContainerListener implements IRequestListener {
 						client.getSystemInfo();
 						return true;
 					} catch (InvalidResponseException e) {
-						// container is sleeping
+						// container is sleeping or it is zs6
+						boolean isZS6 = testZendServer6(client);
+						if (isZS6) {
+							return true;
+						}
 						continue;
 					} catch (WebApiException e) {
 						DeploymentCore.log(e);
@@ -70,23 +74,21 @@ public class PhpcloudContainerListener implements IRequestListener {
 		}
 		return true;
 	}
-
-	/*
-	 * public boolean statusChanged() { ZendDevCloud cloud = new ZendDevCloud();
-	 * try { if (target.getProperty(ZendDevCloud.TARGET_PASSWORD) == null) {
-	 * Display.getDefault().syncExec(new Runnable() {
-	 * 
-	 * public void run() { PhpcloudPasswordDialog dialog = new
-	 * PhpcloudPasswordDialog( Display.getDefault().getActiveShell(), target);
-	 * dialog.open(); } });
-	 * 
-	 * } if (target.getProperty(ZendDevCloud.TARGET_PASSWORD) == null) { return
-	 * false; } if (!cloud.isSleeping(target)) { return true; }
-	 * monitor.beginTask("Container is waking up...", IProgressMonitor.UNKNOWN);
-	 * while (cloud.isSleeping(target)) { monitor.worked(1); } monitor.done(); }
-	 * catch (SdkException e) { return false; } catch (IOException e) { return
-	 * false; } return true; }
-	 */
+	
+	private boolean testZendServer6(WebApiClient client) {
+		client.setCustomVersion(WebApiVersion.V1_3);
+		client.setServerType(ServerType.ZEND_SERVER);
+		try {
+			client.getSystemInfo();
+			return true;
+		} catch (InvalidResponseException e) {
+		} catch (WebApiException e) {
+			DeploymentCore.log(e);
+		}
+		client.setCustomVersion(null);
+		client.setServerType(ServerType.ZEND_SERVER_MANAGER);
+		return false;
+	}
 
 	public WebApiClient getClient(IZendTarget target)
 			throws MalformedURLException {
