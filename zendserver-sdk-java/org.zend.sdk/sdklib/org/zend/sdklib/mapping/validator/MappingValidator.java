@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.mapping.LibraryMapping;
+import org.zend.sdklib.mapping.IVariableResolver;
 
 /**
  * Default implementation of {@link IMappingValidator}.
@@ -43,6 +45,8 @@ public class MappingValidator implements IMappingValidator {
 	private boolean hasAppdir;
 	private int buffer;
 
+	private IVariableResolver variableResolver;
+
 	public MappingValidator(File container) {
 		super();
 		this.container = container;
@@ -58,7 +62,8 @@ public class MappingValidator implements IMappingValidator {
 	@Override
 	public boolean parse(InputStream stream) throws MappingParseException {
 		List<MappingParseStatus> result = new ArrayList<MappingParseStatus>();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(stream));
 		String line = null;
 		String previousLastChar = null;
 		int i = 0;
@@ -68,7 +73,8 @@ public class MappingValidator implements IMappingValidator {
 				i++;
 				String[] parts = line.split(KEY_VALUE_SEPARATOR);
 				if (parts.length == 2) {
-					MappingParseStatus keyStatus = checkValidKey(parts[0], i, line);
+					MappingParseStatus keyStatus = checkValidKey(parts[0], i,
+							line);
 					if (keyStatus != null) {
 						result.add(keyStatus);
 					}
@@ -83,7 +89,8 @@ public class MappingValidator implements IMappingValidator {
 						if (LINE_SEPARATOR.equals(previousLastChar)) {
 							String entry = line.trim();
 							if (entry.endsWith(LINE_SEPARATOR)) {
-								entry = entry.substring(0, line.trim().length() - 1);
+								entry = entry.substring(0,
+										line.trim().length() - 1);
 							}
 							List<MappingParseStatus> valueStatus = checkValidValues(
 									entry, i, line, lastKey);
@@ -99,23 +106,30 @@ public class MappingValidator implements IMappingValidator {
 					}
 				}
 				buffer += line.length() + 1;
-				previousLastChar = line.trim().isEmpty() ? null : line.trim().substring(
-						line.trim().length() - 1);
+				previousLastChar = line.trim().isEmpty() ? null : line.trim()
+						.substring(line.trim().length() - 1);
 			}
 			if (i == 0) {
-				result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.EMPTY_FILE));
+				result.add(new MappingParseStatus(0, 0, 0,
+						MappingParseMessage.EMPTY_FILE));
 			} else if (!hasAppdir) {
-				result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.NO_APPDIR));
+				result.add(new MappingParseStatus(0, 0, 0,
+						MappingParseMessage.NO_APPDIR));
 			}
 			stream.close();
 		} catch (IOException e) {
-			result.add(new MappingParseStatus(0, 0, 0, MappingParseMessage.CANNOT_READ));
+			result.add(new MappingParseStatus(0, 0, 0,
+					MappingParseMessage.CANNOT_READ));
 		}
 		if (result.isEmpty()) {
 			return true;
 		} else {
 			throw new MappingParseException(result);
 		}
+	}
+
+	public void setVariableResolver(IVariableResolver variableResolver) {
+		this.variableResolver = variableResolver;
 	}
 
 	private List<MappingParseStatus> checkValidValues(String value, int lineNo,
@@ -145,7 +159,7 @@ public class MappingValidator implements IMappingValidator {
 								MappingParseMessage.INVALID_LIBRARY));
 					} else {
 						String lib = mapping.getLibraryPath();
-						File libraryFile = new File(lib);
+						File libraryFile = resolveVariables(lib);
 						if (!libraryFile.isAbsolute()) {
 							libraryFile = new File(container, lib);
 						}
@@ -162,7 +176,10 @@ public class MappingValidator implements IMappingValidator {
 				if (isGlobal) {
 					entry = entry.substring(GLOBAL.length());
 				} else {
-					File file = new File(container, entry);
+					File file = resolveVariables(entry);
+					if (!file.isAbsolute()) {
+						file = new File(container, entry);
+					}
 					if (!file.exists()) {
 						int offset = line.indexOf(entry);
 						result.add(new MappingParseStatus(lineNo, offset
@@ -174,6 +191,19 @@ public class MappingValidator implements IMappingValidator {
 			}
 		}
 		return result;
+	}
+
+	private File resolveVariables(String lib) {
+		File file = new File(lib);
+		try {
+			if (variableResolver != null) {
+				String path = variableResolver.resolve(lib);
+				file = new File(path);
+			}
+		} catch (SdkException e) {
+			return new File(lib);
+		}
+		return file;
 	}
 
 	private MappingParseStatus checkValidKey(String key, int lineNo, String line) {
@@ -191,7 +221,8 @@ public class MappingValidator implements IMappingValidator {
 			if (parts.length != 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
 				int start = line.indexOf(key) + buffer;
 				int end = start + key.length();
-				return new MappingParseStatus(lineNo, start, end, MappingParseMessage.INVALID_KEY);
+				return new MappingParseStatus(lineNo, start, end,
+						MappingParseMessage.INVALID_KEY);
 			}
 			String folder = parts[0];
 			if (APPDIR.equals(folder) || SCRIPTSDIR.equals(folder)) {
@@ -199,7 +230,8 @@ public class MappingValidator implements IMappingValidator {
 				if (INCLUDES.equals(suffix) || EXCLUDES.equals(suffix)) {
 					return null;
 				} else {
-					int start = line.indexOf(key) + folder.length() + buffer + 1;
+					int start = line.indexOf(key) + folder.length() + buffer
+							+ 1;
 					int end = line.indexOf(key) + key.length() + buffer;
 					return new MappingParseStatus(lineNo, start, end,
 							MappingParseMessage.INVALID_SUFFIX);
