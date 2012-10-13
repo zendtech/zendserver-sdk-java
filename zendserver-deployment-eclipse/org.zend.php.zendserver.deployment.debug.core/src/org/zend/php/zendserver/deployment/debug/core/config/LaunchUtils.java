@@ -187,7 +187,7 @@ public class LaunchUtils {
 					.getLaunchConfigurations(getConfigurationType());
 
 			int numConfigs = configs == null ? 0 : configs.length;
-			for (int i = 0; i < numConfigs; i++) {
+			for (int i = numConfigs - 1; i >= 0; i--) {
 				String projectName = configs[i].getAttribute(
 						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 				
