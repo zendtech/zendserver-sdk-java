@@ -72,7 +72,8 @@ public class StartDebugModeHandler extends AbstractHandler {
 					Messages.OpenTunnelCommand_UnknownContainer, containerName));
 		}
 		if (TargetsManager.isOpenShift(target)
-				|| TargetsManager.isPhpcloud(target)) {
+				|| TargetsManager.isPhpcloud(target)
+				&& !SSHTunnelManager.getManager().isAvailable(target)) {
 			OpenTunnelCommand openTunnelCommand = new OpenTunnelCommand();
 			openTunnelCommand.execute(event);
 			if (!SSHTunnelManager.getManager().isAvailable(target)) {

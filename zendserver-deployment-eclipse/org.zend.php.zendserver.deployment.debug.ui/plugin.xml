@@ -144,6 +144,18 @@
                commandId="org.zend.php.zendserver.deployment.debug.ui.debugModePreferences"
                label="Debug Mode Preferences..."
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <test
+                        forcePluginActivation="true"
+                        property="propertyTester.debugModePreferences.visible"
+                        value="true">
+                  </test>
+               </iterate>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -248,6 +260,13 @@
             class="org.zend.php.zendserver.deployment.debug.ui.commands.DebugModeTester"
             id="org.zend.php.zendserver.deployment.debug.ui.debugModeTester"
             namespace="propertyTester.debugMode"
+            properties="visible"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.zend.php.zendserver.deployment.debug.ui.commands.DebugModePreferencesTester"
+            id="org.zend.php.zendserver.deployment.debug.ui.debugModePreferencesTester"
+            namespace="propertyTester.debugModePreferences"
             properties="visible"
             type="java.lang.Object">
       </propertyTester>
