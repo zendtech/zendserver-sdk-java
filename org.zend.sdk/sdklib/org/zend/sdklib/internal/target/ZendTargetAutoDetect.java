@@ -20,9 +20,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
+import org.zend.sdklib.internal.utils.json.JSONArray;
+import org.zend.sdklib.internal.utils.json.JSONException;
+import org.zend.sdklib.internal.utils.json.JSONObject;
 import org.zend.sdklib.target.IZendTarget;
 
 import com.ice.jni.registry.NoSuchKeyException;
@@ -72,7 +78,7 @@ public class ZendTargetAutoDetect {
 	private Process macElevatedWrite;
 	static {
 		try {
-			localhost = new URL("http://localhost");
+			localhost = new URL("http://localhost:10081");
 		} catch (MalformedURLException e) {
 			// ignore localhost is a valid URL
 		}
@@ -110,6 +116,18 @@ public class ZendTargetAutoDetect {
 			secretKey = applySecretKey(key, generateSecretKey());
 		}
 
+		return createLocalhostTarget(targetId, key, secretKey);
+	}
+	
+	/**
+	 * 
+	 * @param targetId
+	 * @param key
+	 * @return the new target
+	 * @throws IOException
+	 */
+	public IZendTarget createLocalhostTarget(String targetId, String key, String secretKey)
+			throws IOException {
 		// create the target
 		return new ZendTarget(targetId, localhost, getDefaultServerURL(), key, secretKey);
 	}
@@ -247,6 +265,27 @@ public class ZendTargetAutoDetect {
 		}
 
 		return properties;
+	}
+	
+	public static Map<String, String> parseApiKey(String input) throws SdkException {
+		Map<String, String> result = new HashMap<String, String>();
+		try {
+			JSONObject json = new JSONObject(input);
+			json = ((JSONObject) json.get("responseData"));
+			JSONArray keys = ((JSONArray) json.get("keys"));
+			if (keys != null && keys.length() > 0) {
+				int size = keys.length();
+				for (int i = 0; i < size; i++) {
+					json = (JSONObject) keys.get(i);
+					String name = (String) json.get("name");
+					String secretKey = (String) json.get("hash");
+					result.put(name, secretKey);
+				}
+			}
+		} catch (JSONException e) {
+			throw new SdkException(e);
+		}
+		return result;
 	}
 
 	/**
@@ -469,7 +508,7 @@ public class ZendTargetAutoDetect {
 				}
 			}
 			if (port != -1) {
-				return new URL(localhost.toString() + ":" + port);
+				return new URL(localhost.getProtocol(), localhost.getHost(), port, "");
 			}
 		} catch (Exception e) {
 			// if any exception occurs ignore it and return localhost
