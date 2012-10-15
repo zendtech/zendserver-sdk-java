@@ -6,6 +6,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -15,8 +17,11 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
+import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 import swt.elevate.ElevatedProgram;
@@ -29,6 +34,9 @@ import swt.elevate.ElevatedProgramFactory;
 public class DetectTargetAction extends Action {
 	
 	private IZendTarget target;
+	
+	private String username;
+	private String password;
 
 	public DetectTargetAction() {
 		super(Messages.DetectTargetAction_DetectTarget, Activator.getImageDescriptor(Activator.IMAGE_DETECT_TARGET));
@@ -55,7 +63,32 @@ public class DetectTargetAction extends Action {
 				throw new PrivilegesException("Target detection on Windows must always be run by privileged user.");
 			}
 			
+			try {
 			target = tm.detectLocalhostTarget(null, null);
+			} catch (IllegalArgumentException e) {
+				Display.getDefault().syncExec(new Runnable() {
+
+					public void run() {
+						ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
+								Display.getDefault().getActiveShell(), "Zend Server Credentials");
+						if (dialog.open() == Window.OK) {
+							username = dialog.getUsername();
+							password = dialog.getPassword();
+						}
+					}
+				});
+				if (username == null || username.trim().isEmpty()
+						|| password == null || password.trim().isEmpty()) {
+					return;
+				}
+				ApiKeyDetector manager = new ApiKeyDetector(username, password);
+				IStatus status = manager.createApiKey();
+				if (status.getSeverity() != IStatus.OK) {
+					StatusManager.getManager().handle(status);
+					return;
+				}
+				target = tm.detectLocalhostTarget(null, manager.getKey(), manager.getSecretKey());
+			}
 		} catch (PrivilegesException e1) {
 			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
 			if (prog != null) {
@@ -65,6 +98,13 @@ public class DetectTargetAction extends Action {
 			}
 		} catch (DetectionException e) {
 			Throwable cause = e.getCause();
+			if (e instanceof ServerVersionException) {
+				try {
+					target.connect(WebApiVersion.V1_3);
+				} catch (WebApiException ex) {
+					cause = ex.getCause();
+				}
+			}
 			if (cause instanceof InvalidResponseException) {
 				Shell shell = PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow().getShell();
