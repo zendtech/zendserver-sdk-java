@@ -41,6 +41,7 @@ import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
@@ -218,7 +219,23 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected Date getTime(String time) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
+		SimpleDateFormat formatter = null;
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		if (ZendServerVersion
+				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
+				.getName().startsWith("6")) { //$NON-NLS-1$
+			int index = time.indexOf("T"); //$NON-NLS-1$
+			String prefix = time.substring(0, index);
+			String suffix = time.substring(index + 1, time.length());
+			time = prefix + suffix;
+			index = time.indexOf("+"); //$NON-NLS-1$
+			time = time.substring(0, index);
+			formatter = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss"); //$NON-NLS-1$
+			
+		} else {
+			formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
+		}
 		Date date = null;
 		try {
 			date = formatter.parse(time);
