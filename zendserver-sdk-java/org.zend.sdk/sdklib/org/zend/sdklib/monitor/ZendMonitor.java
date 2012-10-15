@@ -284,7 +284,7 @@ public class ZendMonitor extends ZendConnection {
 		WebApiClient client = getClient();
 		while (true) {
 			IssueList list = client.monitorGetIssuesListPredefinedFilter(
-					filter.getName(), 100, offset, null, null);
+					filter.getName(), 100, offset, "id", "ASC");
 			if (list != null) {
 				return list.getIssues();
 			}
