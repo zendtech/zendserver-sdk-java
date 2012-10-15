@@ -164,7 +164,12 @@ public class MonitorGetIssuesListPredefinedFilterRequest extends
 	 * getMethodName()
 	 */
 	protected String getRequestName() {
-		return "monitorGetIssuesListPredefinedFilter";
+		switch (getVersion()) {
+		case V1_3:
+			return "monitorGetIssuesByPredefinedFilter";
+		default:
+			return "monitorGetIssuesListPredefinedFilter";
+		}
 	}
 
 }
