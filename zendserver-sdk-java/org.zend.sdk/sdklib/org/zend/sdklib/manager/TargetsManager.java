@@ -27,9 +27,11 @@ import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.progress.BasicStatus;
 import org.zend.webapi.core.progress.StatusCode;
+import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
@@ -188,6 +190,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
+	public synchronized IZendTarget detectLocalhostTarget(String targetId, String key,
+			String secretKey) throws DetectionException {
+		return detectLocalhostTarget(targetId, key, secretKey, true, true);
+	}
+	
 	/**
 	 * Returns a target that represents the localhost zend server.
 	 * Returned target may be not fully initialized, requiring some extra commands.
@@ -216,6 +223,20 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key, boolean add, boolean createKey) throws DetectionException {
+		return detectLocalhostTarget(targetId, key, null, add, createKey);
+	}
+	
+	/**
+	 * 
+	 * @param targetId target id to use
+	 * @param key key name to use
+	 * @param add whether to add found target to targets list
+	 * @param createKey whether to attempt to automatically generate key secret in server config file
+	 * @return
+	 * @throws DetectionException
+	 */
+	public synchronized IZendTarget detectLocalhostTarget(String targetId,
+			String key, String secretKey, boolean add, boolean createKey) throws DetectionException {
 
 		if (targetId == null) {
 			targetId = createUniqueId(null);
@@ -232,9 +253,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 		
 		String existingSecret = null;
-		try {
-			existingSecret = detection.findExistingSecretKey(key);
-		} catch (IOException e) {
+		if (secretKey != null) {
+			existingSecret = secretKey;
+		} else {
+			try {
+				existingSecret = detection.findExistingSecretKey(key);
+			} catch (IOException e) {
+			}
 		}
 		
 		// only return existing, if it's key still exists and is valid
@@ -246,11 +271,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if ((existingSecret == null) && (!createKey)) {
 			throw new DetectionException("Key entry '"+key+"' not found.");
 		}
-		
+		IZendTarget local = null;
 		try {
 			// localhost not found - create one
-			final IZendTarget local = detection.createLocalhostTarget(targetId,
-					key);
+			if (secretKey != null) {
+				local = detection.createLocalhostTarget(targetId, key,
+						secretKey);
+			} else {
+				local = detection.createLocalhostTarget(targetId, key);
+			}
 
 			if (add) {
 				return add(local);
@@ -265,6 +294,26 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		} catch (TargetException e) {
 			Throwable cause = e.getCause();
+			if (cause instanceof InvalidResponseException && local != null) {
+				// try to repeat for zs6
+				try {
+					local.connect(WebApiVersion.V1_3);
+					if (add) {
+						return add(local, true);
+					} else {
+						return local;
+					}
+				} catch (WebApiException e1) {
+					WebApiException webE = (WebApiException) cause;
+					final ResponseCode responseCode = webE.getResponseCode();
+					int code = (responseCode != null) ? responseCode.getCode()
+							: -1;
+					final String message = webE.getMessage();
+					throw new ServerVersionException(code, message);
+				} catch (TargetException e1) {
+					// do nothing, cannot occur when suppress connection
+				}
+			}
 			if (cause instanceof WebApiException) {
 				WebApiException webE = (WebApiException) cause;
 				final ResponseCode responseCode = webE.getResponseCode();
@@ -293,7 +342,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 	private IZendTarget getExistingLocalhost() {
 		final IZendTarget[] list = getTargets();
 		for (IZendTarget t : list) {
-			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
+			if (ZendTargetAutoDetect.localhost.getHost().equals(
+					t.getHost().getHost())) {
 				log.info(MessageFormat
 						.format("Local server {0} has been already detected with id {1}. ",
 								t.getHost(), t.getId()));
