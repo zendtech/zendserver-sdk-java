@@ -90,6 +90,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			IZendTarget target = (IZendTarget) data;
 			if (targetsCombo != null) {
 				targetsCombo.select(target.getId());
+				viewer.setInput(input.get(target.getId()));
 			}
 		}
 	}
