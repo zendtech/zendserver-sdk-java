@@ -36,10 +36,11 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class ZendDevCloud {
 
+	private static final String CUSTOM_HOST_PROPERTY = "org.zend.sdk.phpcloud_host";
 	private static final String UPLOAD_KEY_TOKEN = "ff9e0274b11cd48d1edd7b9706394908";
 	// devpass baseurl
-	public static final String DEVPASS_HOST = "my.phpcloud.com";
-	public static final String INTERNAL_DEVPASS_URL = "https://" + DEVPASS_HOST;
+	public static final String DEVPASS_HOST;
+	public static final String INTERNAL_DEVPASS_URL;
 
 	// user login
 	private static final String USER_LOGIN = "/user/login";
@@ -61,6 +62,16 @@ public class ZendDevCloud {
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
 	private PublicKeyBuilder pubKeyProvider;
+	
+	static {
+		String val = System.getProperty(CUSTOM_HOST_PROPERTY);
+		if (val != null) {
+			DEVPASS_HOST = val;
+		} else {
+			DEVPASS_HOST = "my.phpcloud.com";
+		}
+		INTERNAL_DEVPASS_URL = "https://" + DEVPASS_HOST;
+	}
 
 	/**
 	 * Use {@link ZendDevCloud#INTERNAL_DEVPASS_URL} as basepath
