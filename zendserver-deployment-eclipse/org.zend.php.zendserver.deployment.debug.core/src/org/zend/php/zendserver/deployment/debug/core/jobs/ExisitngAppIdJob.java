@@ -37,10 +37,13 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 		List<ApplicationInfo> infos = list.getApplicationsInfo();
 		if (infos != null) {
 			URL url = helper.getBaseURL();
+			URL urlZs6 = helper.getBaseURL();
 			if (helper.isDefaultServer()) {
 				try {
 					url = new URL(url.getProtocol(),
 							IDeploymentHelper.DEFAULT_SERVER, url.getFile());
+					urlZs6 = new URL(url.getProtocol(),
+							IDeploymentHelper.DEFAULT_SERVER, 80, url.getFile());
 				} catch (MalformedURLException e) {
 					// ignore
 				}
@@ -53,7 +56,7 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 				} catch (MalformedURLException e) {
 					// / ignore
 				}
-				if (compareURLs(url, baseUrl)) {
+				if (compareURLs(url, baseUrl) || compareURLs(urlZs6, baseUrl)) {
 					helper.setAppId(info.getId());
 					helper.setInstalledLocation(info.getInstalledLocation());
 					break;
