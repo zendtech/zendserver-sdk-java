@@ -67,28 +67,7 @@ public class DetectTargetAction extends Action {
 			try {
 			target = tm.detectLocalhostTarget(null, null);
 			} catch (IllegalArgumentException e) {
-				Display.getDefault().syncExec(new Runnable() {
-
-					public void run() {
-						ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
-								Display.getDefault().getActiveShell(), "Zend Server Credentials");
-						if (dialog.open() == Window.OK) {
-							username = dialog.getUsername();
-							password = dialog.getPassword();
-						}
-					}
-				});
-				if (username == null || username.trim().isEmpty()
-						|| password == null || password.trim().isEmpty()) {
-					return;
-				}
-				ApiKeyDetector manager = new ApiKeyDetector(username, password);
-				IStatus status = manager.createApiKey();
-				if (status.getSeverity() != IStatus.OK) {
-					StatusManager.getManager().handle(status);
-					return;
-				}
-				target = tm.detectLocalhostTarget(null, manager.getKey(), manager.getSecretKey());
+				detectZendServer6();
 			}
 		} catch (PrivilegesException e1) {
 			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
@@ -166,12 +145,43 @@ public class DetectTargetAction extends Action {
 					}
 				}
 				try {
-					target = tm.detectLocalhostTarget(id, key, true, false);
+					try {
+						target = tm.detectLocalhostTarget(id, key, true, false);
+					} catch (IllegalArgumentException e) {
+						detectZendServer6();
+					}
 				} catch (DetectionException e) {
 					// ignore
 				}
 			} while (target == null && (tries-- > 0));
 		}
+	}
+	
+	private void detectZendServer6() throws DetectionException {
+		Display.getDefault().syncExec(new Runnable() {
+
+			public void run() {
+				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
+						Display.getDefault().getActiveShell(), "Zend Server Credentials"); //$NON-NLS-1$
+				if (dialog.open() == Window.OK) {
+					username = dialog.getUsername();
+					password = dialog.getPassword();
+				}
+			}
+		});
+		if (username == null || username.trim().isEmpty()
+				|| password == null || password.trim().isEmpty()) {
+			return;
+		}
+		ApiKeyDetector manager = new ApiKeyDetector(username, password);
+		IStatus status = manager.createApiKey();
+		if (status.getSeverity() != IStatus.OK) {
+			StatusManager.getManager().handle(status);
+			return;
+		}
+		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		target = tm.detectLocalhostTarget(null, manager.getKey(),
+				manager.getSecretKey());
 	}
 
 	public IZendTarget getDetectedTarget() {
