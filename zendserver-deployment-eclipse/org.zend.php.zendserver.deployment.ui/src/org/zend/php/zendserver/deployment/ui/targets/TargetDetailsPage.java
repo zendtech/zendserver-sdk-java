@@ -104,15 +104,21 @@ public class TargetDetailsPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
-			if ("org.zend.php.zendserver.deployment.ui.targets.ZendTargetDetailsComposite".equals(type)) {
+			if (ZendTargetDetailsComposite.class.getName().equals(type)) {
 				wizard.setWindowTitle(Messages.TargetDetailsPage_1);
 				setTitle(Messages.TargetDetailsPage_AddTarget);
 				setDescription(Messages.TargetDetailsPage_SpecifyTargetDetails);
-			} else if ("org.zend.php.zendserver.deployment.ui.targets.DevCloudDetailsComposite".equals(type)) {
+			} else if (DevCloudDetailsComposite.class.getName().equals(type)) {
 				wizard.setWindowTitle(Messages.TargetDetailsPage_3);
 				setTitle(Messages.TargetDetailsPage_4);
+			} else if (OpenshiftDetailsComposite.class.getName().equals(type)) {
+				wizard.setWindowTitle("Add OpenShift Target");
+				setTitle("OpenShift Target Details");
+			} else if (DetectLocal.class.getName().equals(type)) {
+				wizard.setWindowTitle("Detect Localhost Target");
+				setTitle("Localhost Target Details");
 			}
-		}else{
+		} else {
 			wizard.setWindowTitle(Messages.AddTargetAction_AddTarget);
 		}
 		super.setVisible(visible);
