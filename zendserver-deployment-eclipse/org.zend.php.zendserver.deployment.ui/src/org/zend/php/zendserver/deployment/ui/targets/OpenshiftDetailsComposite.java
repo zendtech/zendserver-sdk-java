@@ -105,10 +105,19 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			}
 		});
 		
-		Button createAccount = new Button(composite, SWT.PUSH);
-		layoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		Composite newButtonsGroup = new Composite(composite, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
+		newButtonsGroup.setLayoutData(layoutData);
+		GridLayout gd = new GridLayout(2, false);
+		gd.marginWidth = 0;
+		gd.marginHeight = 0;
+		gd.horizontalSpacing = 0;
+		newButtonsGroup.setLayout(gd);
+		
+		Button createAccount = new Button(newButtonsGroup, SWT.PUSH);
+		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		createAccount.setLayoutData(layoutData);
-		createAccount.setText("Create New OpenShift Account");
+		createAccount.setText("Create New Account");
 		createAccount.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent e) {
@@ -116,10 +125,10 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			}
 		});
 		
-		Button createTarget = new Button(composite, SWT.PUSH);
-		layoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		Button createTarget = new Button(newButtonsGroup, SWT.PUSH);
+		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		createTarget.setLayoutData(layoutData);
-		createTarget.setText("Create New OpenShift Target");
+		createTarget.setText("Create New Target");
 		createTarget.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent e) {
