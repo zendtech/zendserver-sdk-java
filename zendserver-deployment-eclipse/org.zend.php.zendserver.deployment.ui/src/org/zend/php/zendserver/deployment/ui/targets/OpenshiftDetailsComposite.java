@@ -269,7 +269,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							IStatus.ERROR,
 							Activator.PLUGIN_ID,
 							"Could not detect any valid targets. "
-									+ "You can create new OpenShift target by using 'Create new OpenShift Target' link below."));
+									+ "You can create new OpenShift target by using 'Create new OpenShift Target' button below."));
 		}
 		return targets;
 	}
