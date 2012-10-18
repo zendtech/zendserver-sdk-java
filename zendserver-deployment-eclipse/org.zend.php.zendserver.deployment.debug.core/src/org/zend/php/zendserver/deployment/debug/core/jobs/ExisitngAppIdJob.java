@@ -11,10 +11,14 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
+import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 public class ExisitngAppIdJob extends AbstractLaunchJob {
 
@@ -40,10 +44,13 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 			URL urlZs6 = helper.getBaseURL();
 			if (helper.isDefaultServer()) {
 				try {
-					url = new URL(url.getProtocol(),
-							IDeploymentHelper.DEFAULT_SERVER, url.getFile());
-					urlZs6 = new URL(url.getProtocol(),
-							IDeploymentHelper.DEFAULT_SERVER, 80, url.getFile());
+					String defaultHost = IDeploymentHelper.DEFAULT_SERVER;
+					if (checkTargetVersion(helper.getTargetId())) {
+						defaultHost = helper.getBaseURL().getHost();
+					}
+					url = new URL(url.getProtocol(), defaultHost, url.getFile());
+					urlZs6 = new URL(url.getProtocol(), defaultHost, 80,
+							url.getFile());
 				} catch (MalformedURLException e) {
 					// ignore
 				}
@@ -64,6 +71,15 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 			}
 		}
 		return new SdkStatus(listener.getStatus());
+	}
+
+	private boolean checkTargetVersion(String targetId) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		return TargetsManager.isPhpcloud(target)
+				&& ZendServerVersion
+						.byName(target.getProperty(IZendTarget.SERVER_VERSION))
+						.getName().startsWith("6"); //$NON-NLS-1$
 	}
 
 	private boolean compareURLs(URL current, URL url) {
