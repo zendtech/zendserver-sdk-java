@@ -217,7 +217,11 @@ public class DebugModeManager {
 				.getNode(DEBUG_MODE_NODE);
 		String val = prefs.get(target.getId(),
 				defaultPrefs.get(target.getId(), target.getHost().toString()));
-		return val.split(FILTER_SEPARATOR);
+		if (val != null && val.length() > 0) {
+			return val.split(FILTER_SEPARATOR);
+		} else {
+			return new String[] { target.getDefaultServerURL().toString() };
+		}
 	}
 
 }
