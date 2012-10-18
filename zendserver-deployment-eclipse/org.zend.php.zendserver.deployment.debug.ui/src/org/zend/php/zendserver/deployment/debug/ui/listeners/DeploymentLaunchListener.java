@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.php.debug.core.debugger.launching.ILaunchDelegateListener;
 import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
@@ -25,8 +26,8 @@ import org.zend.sdklib.target.IZendTarget;
 
 public class DeploymentLaunchListener implements ILaunchDelegateListener {
 
-	private static final String CLIENT_HOST_KEY = "org.eclipse.php.debug.coreclient_ip";
-	private static final String DEBUG_PLUGIN_ID = "org.eclipse.php.debug.core";
+	private static final String CLIENT_HOST_KEY = "org.eclipse.php.debug.coreclient_ip"; //$NON-NLS-1$
+	private static final String DEBUG_PLUGIN_ID = "org.eclipse.php.debug.core"; //$NON-NLS-1$
 
 	public int preLaunch(ILaunchConfiguration configuration, String mode,
 			ILaunch launch, IProgressMonitor monitor) {
@@ -42,23 +43,27 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 			if (result == DeploymentHandler.CANCEL) {
 				configuration.delete();
 			}
-			AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
-					.getDebuggerConfiguration(DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID);
-			String targetHost = configuration.getAttribute(
-					DeploymentAttributes.TARGET_HOST.getName(), (String) null);
-			if (debuggerConfiguration != null && targetHost != null) {
-				if (TargetsManager.isOpenShift(targetHost)) {
-					String targetId = configuration.getAttribute(
-							DeploymentAttributes.TARGET_ID.getName(),
-							(String) null);
-					addInternalHost(TargetsManagerService.INSTANCE
-							.getTargetManager().getTargetById(targetId));
-					debuggerConfiguration.setPort(17000);
-					debuggerConfiguration.save();
-				}
-				if (TargetsManager.isPhpcloud(targetHost)) {
-					debuggerConfiguration.setPort(10137);
-					debuggerConfiguration.save();
+			
+			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+				AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
+						.getDebuggerConfiguration(DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID);
+				String targetHost = configuration.getAttribute(
+						DeploymentAttributes.TARGET_HOST.getName(),
+						(String) null);
+				if (debuggerConfiguration != null && targetHost != null) {
+					if (TargetsManager.isOpenShift(targetHost)) {
+						String targetId = configuration.getAttribute(
+								DeploymentAttributes.TARGET_ID.getName(),
+								(String) null);
+						addInternalHost(TargetsManagerService.INSTANCE
+								.getTargetManager().getTargetById(targetId));
+						debuggerConfiguration.setPort(17000);
+						debuggerConfiguration.save();
+					}
+					if (TargetsManager.isPhpcloud(targetHost)) {
+						debuggerConfiguration.setPort(10137);
+						debuggerConfiguration.save();
+					}
 				}
 			}
 			return result;
