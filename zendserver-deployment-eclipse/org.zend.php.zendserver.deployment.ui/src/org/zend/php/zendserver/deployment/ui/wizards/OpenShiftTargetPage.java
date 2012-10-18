@@ -86,6 +86,13 @@ public class OpenShiftTargetPage extends WizardPage {
 		setPageComplete(validatePage());
 	}
 
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			targetNameText.setFocus();
+		}
+	}
+
 	public void initializeValues() {
 		if (data.getGearProfiles() != null && data.getGearProfiles().size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
