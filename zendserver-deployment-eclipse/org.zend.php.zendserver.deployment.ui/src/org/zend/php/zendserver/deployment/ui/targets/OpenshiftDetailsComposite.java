@@ -291,7 +291,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		final String password = passwordText.getText();
 		if (username == null || username.trim().length() == 0
 				|| password == null || password.trim().length() == 0) {
-			setErrorMessage("Username and password are requried.");
+			setErrorMessage("Username and password are required.");
 			return;
 		}
 		try {
