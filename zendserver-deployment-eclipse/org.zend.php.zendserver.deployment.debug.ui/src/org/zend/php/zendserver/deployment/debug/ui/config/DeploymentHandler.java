@@ -337,23 +337,25 @@ public class DeploymentHandler {
 			try {
 				State result = null;
 				result = SSHTunnelManager.getManager().connect(target);
-				switch (result) {
-				case CONNECTING:
-					String message = MessageFormat.format(
-							Messages.OpenTunnelCommand_SuccessMessage,
-							target.getId());
-					NotificationManager.registerInfo(
-							Messages.OpenTunnelCommand_OpenTunnelTitle,
-							message, 4000);
-					break;
-				case NOT_SUPPORTED:
-					NotificationManager.registerWarning(
-							Messages.OpenTunnelCommand_OpenTunnelTitle,
-							Messages.OpenTunnelCommand_NotSupportedMessage,
-							4000);
-					break;
-				default:
-					return OK;
+				if (result != null) {
+					switch (result) {
+					case CONNECTING:
+						String message = MessageFormat.format(
+								Messages.OpenTunnelCommand_SuccessMessage,
+								target.getId());
+						NotificationManager.registerInfo(
+								Messages.OpenTunnelCommand_OpenTunnelTitle,
+								message, 4000);
+						break;
+					case NOT_SUPPORTED:
+						NotificationManager.registerWarning(
+								Messages.OpenTunnelCommand_OpenTunnelTitle,
+								Messages.OpenTunnelCommand_NotSupportedMessage,
+								4000);
+						break;
+					default:
+						return OK;
+					}
 				}
 			} catch (Exception e) {
 				Activator.log(e);
