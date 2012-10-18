@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.php.internal.server.core.Server;
+import org.zend.php.zendserver.deployment.core.targets.EclipseTargetsManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -33,7 +34,7 @@ public class DebugModePreferenceInitializer extends
 		IZendTarget[] targets = TargetsManagerService.INSTANCE
 				.getTargetManager().getTargets();
 		for (IZendTarget target : targets) {
-			Server server = DebugModeManager.findExistingServer(target);
+			Server server = EclipseTargetsManager.findExistingServer(target);
 			if (server != null) {
 				String baseURL = server.getBaseURL();
 				prefs.put(target.getId(), baseURL);

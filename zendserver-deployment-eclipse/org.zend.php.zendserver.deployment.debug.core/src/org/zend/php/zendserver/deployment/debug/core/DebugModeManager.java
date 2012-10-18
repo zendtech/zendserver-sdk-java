@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.core;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,8 +12,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
-import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.application.ZendDebugMode;
 import org.zend.sdklib.application.ZendDebugMode.State;
@@ -37,7 +33,6 @@ public class DebugModeManager {
 
 	public static final String FILTER_SEPARATOR = ","; //$NON-NLS-1$
 
-	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
 	private static final String CLIENT_HOST_KEY = "org.eclipse.php.debug.coreclient_ip"; //$NON-NLS-1$
 	private static final String DEBUG_PLUGIN_ID = "org.eclipse.php.debug.core"; //$NON-NLS-1$
 
@@ -135,61 +130,6 @@ public class DebugModeManager {
 		}
 	}
 	
-	@SuppressWarnings("restriction")
-	public static Server findExistingServer(IZendTarget target) {
-		try {
-			URL baseURL = target.getDefaultServerURL();
-			Server[] servers = ServersManager.getServers();
-			for (Server server : servers) {
-				URL serverBaseURL = new URL(server.getBaseURL());
-				if (serverBaseURL.getHost().equals(baseURL.getHost())) {
-					if ((serverBaseURL.getPort() == baseURL.getPort())
-							|| (isDefaultPort(serverBaseURL) && isDefaultPort(baseURL))) {
-						return server;
-					} else {
-						String zsPort = server.getAttribute(
-								ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
-						if (Integer.valueOf(zsPort) == baseURL.getPort()) {
-							return server;
-						}
-					}
-				}
-			}
-			return createPHPServer(target.getDefaultServerURL(), target.getId());
-		} catch (MalformedURLException e) {
-			Activator.log(e);
-			// do nothing and return null
-		}
-		return null;
-	}
-
-	protected static boolean isDefaultPort(URL url) {
-		int port = url.getPort();
-		if (port == -1 || port == 80) {
-			return true;
-		}
-		return false;
-	}
-
-	@SuppressWarnings("restriction")
-	protected static Server createPHPServer(URL baseURL, String targetId) {
-		try {
-			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(),
-					baseURL.getPort(), ""); //$NON-NLS-1$
-			String urlString = url.toString();
-			Server server = new Server(
-					"Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
-							+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
-			ServersManager.addServer(server);
-			ServersManager.save();
-			return server;
-		} catch (MalformedURLException e) {
-			Activator.log(e);
-			// ignore, verified earlier
-		}
-		return null;
-	}
-
 	private String getDebugHosts(IZendTarget target) {
 		if (TargetsManager.isOpenShift(target)
 				|| TargetsManager.isPhpcloud(target)) {
