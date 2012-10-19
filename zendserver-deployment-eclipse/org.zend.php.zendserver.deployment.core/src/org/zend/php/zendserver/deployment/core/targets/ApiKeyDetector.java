@@ -189,7 +189,6 @@ public class ApiKeyDetector {
 			int statusCode = -1;
 			try {
 				statusCode = client.executeMethod(method);
-				System.out.println(new String(method.getResponseBody()));
 				if (statusCode == 200) {
 					String responseContent = new String(
 							method.getResponseBody());
@@ -220,7 +219,6 @@ public class ApiKeyDetector {
 			int statusCode = -1;
 			try {
 				statusCode = client.executeMethod(method);
-				System.out.println(new String(method.getResponseBody()));
 				if (statusCode == 200) {
 					String responseContent = new String(
 							method.getResponseBody());
