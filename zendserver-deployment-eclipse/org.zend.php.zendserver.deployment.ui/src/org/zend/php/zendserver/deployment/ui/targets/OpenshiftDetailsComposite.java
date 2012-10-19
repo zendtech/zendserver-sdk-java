@@ -392,7 +392,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			protected IStatus run(IProgressMonitor monitor) {
 				while (validation.getStatus() == null) {
 					try {
-						System.out.println("going to sleep");
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// ignore and just repeat a loop
