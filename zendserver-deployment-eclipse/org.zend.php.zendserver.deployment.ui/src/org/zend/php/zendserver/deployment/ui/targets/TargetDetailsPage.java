@@ -77,6 +77,27 @@ public class TargetDetailsPage extends WizardPage {
 		};
 		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_WARNING_MESSAGE, warningListener);
 		
+		PropertyChangeListener messageListener = new PropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent evt) {
+				AbstractTargetDetailsComposite src = (AbstractTargetDetailsComposite) evt
+						.getSource();
+				targets = src.getTarget();
+				final Object newVal = evt.getNewValue();
+				Display.getDefault().syncExec(new Runnable() {
+
+					public void run() {
+						setErrorMessage(null);
+						if (newVal != null) {
+							setMessage((String) newVal);
+						}
+						setPageComplete(true);
+					}
+				});
+			}
+		};
+		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_MESSAGE, messageListener);
+		
 		PropertyChangeListener modifyListener = new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent evt) {

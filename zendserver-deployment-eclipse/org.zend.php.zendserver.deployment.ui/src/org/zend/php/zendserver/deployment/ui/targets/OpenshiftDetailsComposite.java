@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
@@ -50,6 +51,26 @@ import org.zend.sdklib.target.IZendTarget;
  * DevCloud details editing composite: username and password.
  */
 public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
+	
+	private class AutoValidation implements IRunnableWithProgress {
+		
+		private IStatus status;
+
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			IStatus result = validate(monitor);
+			setStatus(result);
+		}
+		
+		public synchronized IStatus getStatus() {
+			return status;
+		}
+		
+		private synchronized void setStatus(IStatus status) {
+			this.status = status;
+		}
+		
+	}
 
 	private static final String RESTORE_PASSWORD_URL = "https://openshift.redhat.com/app/account/password/new"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "https://openshift.redhat.com/app/account/new"; //$NON-NLS-1$
@@ -363,26 +384,40 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 
 	private void validate() throws InvocationTargetException,
 			InterruptedException {
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+		final AutoValidation validation = new AutoValidation();
+		runnableContext.run(true, true, validation);
+		Job updateUIJob = new Job("Validating...") {
 
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				status = validate(monitor);
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				while (validation.getStatus() == null) {
+					try {
+						System.out.println("going to sleep");
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// ignore and just repeat a loop
+					}
+				}
+				MessageTranslator messageTranslator = new MessageTranslator();
+				IStatus status = validation.getStatus();
+				switch (status.getSeverity()) {
+				case IStatus.OK:
+					setMessage(null);
+					break;
+				case IStatus.WARNING:
+					setWarningMessage(messageTranslator.translate(status
+							.getMessage()));
+					break;
+				case IStatus.ERROR:
+					setErrorMessage(messageTranslator.translate(status
+							.getMessage()));
+					break;
+				}
+				return Status.OK_STATUS;
 			}
 		};
-		runnableContext.run(true, true, runnable);
-		MessageTranslator messageTranslator = new MessageTranslator();
-		switch (status.getSeverity()) {
-		case IStatus.OK:
-			setErrorMessage(null);
-			break;
-		case IStatus.WARNING:
-			setWarningMessage(messageTranslator.translate(status.getMessage()));
-			break;
-		case IStatus.ERROR:
-			setErrorMessage(messageTranslator.translate(status.getMessage()));
-			break;
-		}
+		updateUIJob.setSystem(true);
+		updateUIJob.schedule();
 	}
 
 	private void generateKey() {

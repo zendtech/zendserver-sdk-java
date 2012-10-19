@@ -43,6 +43,7 @@ public abstract class AbstractTargetDetailsComposite {
 	 */
 	public static final String PROP_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
 	public static final String PROP_WARNING_MESSAGE = "warningMessage"; //$NON-NLS-1$
+	public static final String PROP_MESSAGE = "message"; //$NON-NLS-1$
 	public static final String PROP_MODIFY = "modify"; //$NON-NLS-1$
 
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(
@@ -129,6 +130,11 @@ public abstract class AbstractTargetDetailsComposite {
 		this.warningMessage = warningMessage;
 		changeSupport.firePropertyChange(PROP_WARNING_MESSAGE, oldMessage,
 				warningMessage);
+	}
+	
+	public void setMessage(String message) {
+		changeSupport.firePropertyChange(PROP_MESSAGE, null,
+				message);
 	}
 
 	public String getWarningMessage() {
