@@ -84,6 +84,7 @@ public class PhpcloudContainerListener implements IRequestListener {
 		} catch (InvalidResponseException e) {
 		} catch (WebApiException e) {
 			DeploymentCore.log(e);
+			return true;
 		}
 		client.setCustomVersion(null);
 		client.setServerType(ServerType.ZEND_SERVER_MANAGER);
