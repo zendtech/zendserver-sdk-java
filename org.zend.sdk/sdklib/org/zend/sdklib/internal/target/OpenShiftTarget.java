@@ -322,7 +322,7 @@ public class OpenShiftTarget {
 			if (domains == null || domains.isEmpty()) {
 				throw new SdkException(
 						"Domain has not been created yet. "
-								+ "You can create new domain by using 'Create new OpenShift Target' link below.");
+								+ "You can create new domain by using 'Create new OpenShift Target' button below.");
 			}
 			if (domains != null && domains.size() > 0) {
 				for (IDomain domain : domains) {
