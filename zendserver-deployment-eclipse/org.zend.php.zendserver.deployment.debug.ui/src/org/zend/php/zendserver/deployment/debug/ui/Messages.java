@@ -105,8 +105,14 @@ public class Messages extends NLS {
 	public static String DebugModePreferencesPage_AddDesc;
 	public static String DebugModePreferencesPage_EdiotButton;
 	public static String DebugModePreferencesPage_FilterSectionLabel;
+	public static String DebugModePreferencesPage_JobDescription;
+
+	public static String DebugModePreferencesPage_JobTitle;
+
 	public static String DebugModePreferencesPage_ModifyDesc;
 	public static String DebugModePreferencesPage_RemoveButton;
+
+	public static String DebugModePreferencesPage_RestartMessage;
 	public static String DebugModePreferencesPage_TargetLabel;
 
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;

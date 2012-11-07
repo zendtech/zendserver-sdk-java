@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.preferences;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -40,6 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
@@ -104,6 +111,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		boolean dirty = false;
 		IZendTarget[] targets = TargetsManagerService.INSTANCE
 				.getTargetManager().getTargets();
+		final List<IZendTarget> toRestart = new ArrayList<IZendTarget>();
 		for (IZendTarget target : targets) {
 			String id = target.getId();
 			String oldValue = prefs
@@ -112,6 +120,9 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			if (oldValue == null || !oldValue.equals(newValue)) {
 				prefs.put(id, newValue);
 				dirty = true;
+				if (askForRestart(target)) {
+					toRestart.add(target);
+				}
 			}
 		}
 		if (dirty) {
@@ -121,7 +132,54 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				org.zend.php.zendserver.deployment.debug.ui.Activator.log(e);
 			}
 		}
+		if (!toRestart.isEmpty()) {
+			Job restartJob = new Job(Messages.DebugModePreferencesPage_JobTitle) {
+
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(
+							Messages.DebugModePreferencesPage_JobDescription,
+							IProgressMonitor.UNKNOWN);
+					for (IZendTarget target : toRestart) {
+						IStatus status = DebugModeManager.getManager()
+								.restartDebugMode(target);
+						switch (status.getSeverity()) {
+						case IStatus.OK:
+							NotificationManager.registerInfo(
+									Messages.DebugModeHandler_DebugModeLabel,
+									status.getMessage(), 4000);
+							break;
+						case IStatus.WARNING:
+							NotificationManager.registerWarning(
+									Messages.DebugModeHandler_DebugModeLabel,
+									status.getMessage(), 4000);
+							break;
+						case IStatus.ERROR:
+							NotificationManager.registerError(
+									Messages.DebugModeHandler_DebugModeLabel,
+									status.getMessage(), 4000);
+							break;
+						default:
+							break;
+						}
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			restartJob.setUser(true);
+			restartJob.schedule();
+		}
 		return super.performOk();
+	}
+
+	private boolean askForRestart(IZendTarget target) {
+		if (DebugModeManager.getManager().isInDebugMode(target)) {
+			return MessageDialog.openQuestion(getShell(),
+					Messages.DebugModeHandler_DebugModeLabel,
+					MessageFormat.format(
+							Messages.DebugModePreferencesPage_RestartMessage,
+							target.getHost().getHost()));
+		}
+		return false;
 	}
 
 	/*
