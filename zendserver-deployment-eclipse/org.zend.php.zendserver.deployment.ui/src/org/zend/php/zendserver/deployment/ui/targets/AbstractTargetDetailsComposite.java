@@ -288,10 +288,20 @@ public abstract class AbstractTargetDetailsComposite {
 								return target;
 							}
 						} catch (WebApiException e) {
-							// means that it is not a zend server 6
-						}
-						if (target.connect()) {
-							return target;
+							catchedException = e;
+							if (e instanceof UnexpectedResponseCode) {
+								UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+								ResponseCode code = codeException
+										.getResponseCode();
+								switch (code) {
+								case UNSUPPORTED_API_VERSION:
+									if (target.connect()) {
+										return target;
+									}
+								default:
+									break;
+								}
+							}
 						}
 					} catch (WebApiException ex) {
 						// before throwing exception, try out all possible ports
@@ -315,10 +325,21 @@ public abstract class AbstractTargetDetailsComposite {
 						return target;
 					}
 				} catch (WebApiException e) {
-					// means that it is not a zend server 6
-				}
-				if (target.connect()) {
-					return target;
+					if (e instanceof UnexpectedResponseCode) {
+						UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+						ResponseCode code = codeException
+								.getResponseCode();
+						switch (code) {
+						case UNSUPPORTED_API_VERSION:
+							if (target.connect()) {
+								return target;
+							}
+						default:
+							throw e;
+						}
+					} else {
+						throw e;
+					}
 				}
 			}
 		} finally {
