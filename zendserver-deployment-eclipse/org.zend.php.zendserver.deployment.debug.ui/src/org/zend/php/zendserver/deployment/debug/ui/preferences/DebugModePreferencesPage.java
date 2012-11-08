@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.preferences;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -62,6 +65,19 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class DebugModePreferencesPage extends PreferencePage implements
 		IWorkbenchPreferencePage {
+
+	private class URLInputValidator implements IInputValidator {
+
+		public String isValid(String newText) {
+			try {
+				new URL(newText);
+			} catch (MalformedURLException e) {
+				return Messages.DebugModePreferencesPage_URLValidationError;
+			}
+			return null;
+		}
+
+	}
 
 	public static final String ID = "org.zend.php.zendserver.deployment.ui.DebugModePreferencePage"; //$NON-NLS-1$
 
@@ -171,17 +187,6 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		return super.performOk();
 	}
 
-	private boolean askForRestart(IZendTarget target) {
-		if (DebugModeManager.getManager().isInDebugMode(target)) {
-			return MessageDialog.openQuestion(getShell(),
-					Messages.DebugModeHandler_DebugModeLabel,
-					MessageFormat.format(
-							Messages.DebugModePreferencesPage_RestartMessage,
-							target.getHost().getHost()));
-		}
-		return false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -280,7 +285,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
 						Messages.DebugModePreferencesPage_AddDesc,
-						EMPTY_STRING, null);
+						EMPTY_STRING, new URLInputValidator());
 				if (dlg.open() == Window.OK) {
 					String id = targetsCombo.getSelected().getId();
 					List<String> values = input.get(id);
@@ -302,7 +307,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				if (selected.length > 0) {
 					InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
 							Messages.DebugModePreferencesPage_ModifyDesc,
-							(String) selected[0], null);
+							(String) selected[0], new URLInputValidator());
 					if (dlg.open() == Window.OK) {
 						String id = targetsCombo.getSelected().getId();
 						List<String> values = input.get(id);
@@ -384,6 +389,17 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			builder.append(val).append(DebugModeManager.FILTER_SEPARATOR);
 		}
 		return builder.substring(0, builder.length() - 1);
+	}
+
+	private boolean askForRestart(IZendTarget target) {
+		if (DebugModeManager.getManager().isInDebugMode(target)) {
+			return MessageDialog.openQuestion(getShell(),
+					Messages.DebugModeHandler_DebugModeLabel,
+					MessageFormat.format(
+							Messages.DebugModePreferencesPage_RestartMessage,
+							target.getHost().getHost()));
+		}
+		return false;
 	}
 
 }

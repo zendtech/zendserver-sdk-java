@@ -115,6 +115,8 @@ public class Messages extends NLS {
 	public static String DebugModePreferencesPage_RestartMessage;
 	public static String DebugModePreferencesPage_TargetLabel;
 
+	public static String DebugModePreferencesPage_URLValidationError;
+
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;
 
 	static {
