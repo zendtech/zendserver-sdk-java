@@ -453,8 +453,14 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (secretKey != null) {
 				target.setSecretKey(secretKey);
 			}
-			if (!target.connect()) {
-				return null;
+			try {
+				if (!target.connect()) {
+					return null;
+				}
+			} catch (WebApiException e) {
+				if (!target.connect(WebApiVersion.V1_3)) {
+					return null;
+				}
 			}
 			IZendTarget updated = loader.update(target);
 			if (updated != null) {
