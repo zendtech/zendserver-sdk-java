@@ -88,6 +88,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 
 		Button restorePassword = new Button(composite, SWT.PUSH);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.minimumWidth = 80;
 		restorePassword.setLayoutData(layoutData);
 		restorePassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
 		restorePassword.addSelectionListener(new SelectionAdapter() {
@@ -111,13 +112,15 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		privateKeyText.addModifyListener(modifyListener);
 		
 		Button btnBrowse = new Button(composite, SWT.PUSH);
-		btnBrowse
-				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.minimumWidth = 80;
+		btnBrowse.setLayoutData(layoutData);
 		btnBrowse.setText(Messages.DevCloudDetailsComposite_2);
 		Button btnGenerate = new Button(composite, SWT.PUSH);
 		btnGenerate.setText(Messages.DevCloudDetailsComposite_3);
-		btnGenerate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.minimumWidth = 80;
+		btnGenerate.setLayoutData(layoutData);
 		btnBrowse.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
