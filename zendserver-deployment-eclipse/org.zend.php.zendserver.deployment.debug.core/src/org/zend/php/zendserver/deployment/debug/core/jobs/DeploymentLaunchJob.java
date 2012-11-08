@@ -98,11 +98,18 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 									+ result.getName()
 									+ "\nTo get more details, see Zend Server log file."); //$NON-NLS-1$
 				}
-				monitor.subTask("Current status is: " + result.getName()); //$NON-NLS-1$
+				monitor.subTask(getStateLabel(result.getName()));
 			}
 		}
 		monitor.done();
 		return new SdkStatus(listener.getStatus());
+	}
+
+	private String getStateLabel(String name) {
+		String firstLetter = name.substring(0, 1);
+		firstLetter = firstLetter.toUpperCase();
+		name = firstLetter + name.substring(1) + "..."; //$NON-NLS-1$
+		return name;
 	}
 
 	private boolean isErrorStatus(ApplicationStatus result) {
