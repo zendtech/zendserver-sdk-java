@@ -111,6 +111,15 @@ public class DebugModeManager {
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 				Messages.DebugModeManager_CannotStopError);
 	}
+	
+	public IStatus restartDebugMode(IZendTarget target) {
+		IStatus stopStatus = stopDebugMode(target);
+		if (stopStatus.getSeverity() != IStatus.ERROR) {
+			return startDebugMode(target);
+		} else {
+			return stopStatus;
+		}
+	}
 
 	public boolean isInDebugMode(IZendTarget target) {
 		Boolean value = targets.get(target);
