@@ -103,6 +103,11 @@
                  <instanceof
                        value="org.zend.sdklib.target.IZendTarget">
                  </instanceof>
+                 <test
+                       forcePluginActivation="true"
+                       property="propertyTester.openSSHTunnel.visible"
+                       value="false">
+                 </test>
               </iterate>
             </visibleWhen>
          </command>
@@ -267,6 +272,13 @@
             class="org.zend.php.zendserver.deployment.debug.ui.commands.DebugModePreferencesTester"
             id="org.zend.php.zendserver.deployment.debug.ui.debugModePreferencesTester"
             namespace="propertyTester.debugModePreferences"
+            properties="visible"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.zend.php.zendserver.deployment.debug.ui.commands.OpenTunnelPropertyTester"
+            id="org.zend.php.zendserver.deployment.debug.ui.openSSHTester"
+            namespace="propertyTester.openSSHTunnel"
             properties="visible"
             type="java.lang.Object">
       </propertyTester>
