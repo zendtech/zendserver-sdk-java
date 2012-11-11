@@ -20,7 +20,6 @@ public class StatusChangeListener implements IStatusChangeListener {
 		switch (status.getCode()) {
 		case STARTING:
 			currentTask = status.getTitle();
-			monitor.setTaskName(currentTask);
 			monitor.beginTask(status.getMessage(), status.getTotalWork());
 			break;
 		case STOPPING:
