@@ -228,11 +228,13 @@ public abstract class AbstractMonitor extends Job {
 			int index = time.indexOf("T"); //$NON-NLS-1$
 			String prefix = time.substring(0, index);
 			String suffix = time.substring(index + 1, time.length());
-			time = prefix + suffix;
-			index = time.indexOf("+"); //$NON-NLS-1$
+			time = prefix + ' ' + suffix;
+			index = time.lastIndexOf('+');
+			if (index == -1) {
+				index = time.lastIndexOf('-');
+			}
 			time = time.substring(0, index);
-			formatter = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss"); //$NON-NLS-1$
-			
+			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 		} else {
 			formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
 		}
