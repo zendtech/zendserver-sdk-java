@@ -51,7 +51,8 @@ public class AddTargetAction extends Action {
 		Exception lastException = null;
 		for (IZendTarget t : newTarget) {
 			try {
-				if (tm.add(t, true) != null) {
+				if (tm.getTargetById(t.getId()) != null
+						|| tm.add(t, true) != null) {
 					addedTarget = t;
 				}
 			} catch (TargetException e) {
