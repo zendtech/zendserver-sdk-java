@@ -2,18 +2,23 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.php.internal.ui.util.PHPPluginImages;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
@@ -50,6 +55,36 @@ public class CreateTargetWizard extends Wizard {
 			super.run(fork, cancelable, runnable);
 			currentFocus.setFocus();
 		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.wizard.WizardDialog#nextPressed()
+		 */
+		protected void nextPressed() {
+			IWizardPage page = getCurrentPage().getNextPage();
+			if (page instanceof TargetDetailsPage) {
+				SelectTargetTypePage targetPage = (SelectTargetTypePage) getCurrentPage();
+				SelectTargetType type = targetPage.getSelectTargetType();
+				if (type.getType().equals(DetectLocal.class.getName())) {
+					((WizardPage) page).setPageComplete(true);
+				}
+			}
+			super.nextPressed();
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.wizard.WizardDialog#backPressed()
+		 */
+		protected void backPressed() {
+			if (getCurrentPage() instanceof TargetDetailsPage) {
+				((WizardPage) getCurrentPage()).setPageComplete(false);
+			}
+			super.backPressed();
+		}
+		
 	}
 
 	public static final String LOCAL_PHP_CREATION_WIZARD = "local_php_creation_wizard"; //$NON-NLS-1$
@@ -102,13 +137,12 @@ public class CreateTargetWizard extends Wizard {
 	
 	@Override
 	public boolean performFinish() {
-		IZendTarget[] targets = detailsPage.getTarget();
-		if(targets != null && targets.length != 0) {
-			return true;
-		}
-		
 		try {
-			detailsPage.validate();
+			IStatus status = detailsPage.validate();
+			if (status.getSeverity() == IStatus.WARNING) {
+				NotificationManager.registerWarning("Add Target", //$NON-NLS-1$
+						status.getMessage(), 6000);
+			}
 		} catch (InvocationTargetException e) {
 			// errored
 			return false;

@@ -14,10 +14,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
@@ -34,6 +38,49 @@ import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode
  * 
  */
 public abstract class AbstractTargetDetailsComposite {
+
+	private class OpenShiftInitializer {
+
+		private IZendTarget target;
+		private IProgressMonitor monitor;
+		private IStatus status;
+
+		public OpenShiftInitializer(IZendTarget target, IProgressMonitor monitor) {
+			super();
+			this.target = target;
+		}
+
+		public IZendTarget getTarget() {
+			return target;
+		}
+
+		public IStatus getStatus() {
+			return status;
+		}
+
+		public void init() {
+			Display.getDefault().syncExec(new Runnable() {
+
+				public void run() {
+					Shell shell = PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getShell();
+					WizardDialog dialog = new WizardDialog(shell,
+							new OpenShiftInitializationWizard(target));
+					dialog.open();
+				}
+			});
+			try {
+				target = testConnectAndDetectPort(target, monitor);
+			} catch (WebApiException ex) {
+				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						ex.getMessage(), ex);
+			} catch (RuntimeException e) {
+				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						e.getMessage(), e);
+			}
+		}
+
+	}
 
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
 	private static final int[] possiblePhpcloudPorts = new int[] { 10082 };
@@ -228,9 +275,24 @@ public abstract class AbstractTargetDetailsComposite {
 				try {
 					target = testConnectAndDetectPort(target, monitor);
 				} catch (WebApiException ex) {
-					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							ex.getMessage(), ex);
-					continue;
+					if (TargetsManager.isOpenShift(target)
+							&& ex instanceof UnexpectedResponseCode) {
+						UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
+						if (codeException.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
+							OpenShiftInitializer initializer = new OpenShiftInitializer(
+									target, monitor);
+							initializer.init();
+							if (status == null) {
+								target = initializer.getTarget();
+							} else {
+								status = initializer.getStatus();
+							}
+						}
+					} else {
+						status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								ex.getMessage(), ex);
+						continue;
+					}
 				} catch (RuntimeException e) {
 					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e);
@@ -364,4 +426,7 @@ public abstract class AbstractTargetDetailsComposite {
 	 * @return
 	 */
 	abstract public boolean hasPage();
+	
+	abstract protected boolean validatePage();
+	
 }

@@ -8,15 +8,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -99,23 +95,7 @@ public class TargetDetailsComposite {
 				composites[i].setVisible(currentComposite == i);
 				((GridData)composites[i].getLayoutData()).exclude = !(currentComposite == i);
 			}
-		}
-		
-		Button validateButton = new Button(clientArea, SWT.NONE);
-		validateButton.setText(Messages.TargetDialog_validate);
-		validateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					validate();
-				} catch (InvocationTargetException e1) {
-					// empty, ignore validate exception
-				} catch (InterruptedException e1) {
-					// empty, cancel pressed
-				}
-			}
-		});
-		
+		}	
 		return clientArea;
 	}
 	
@@ -178,7 +158,7 @@ public class TargetDetailsComposite {
 	 * @throws InterruptedException 
 	 * @throws InvocationTargetException 
 	 */
-	public void validate() throws InvocationTargetException, InterruptedException {
+	public IStatus validate() throws InvocationTargetException, InterruptedException {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				
 			public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -204,6 +184,7 @@ public class TargetDetailsComposite {
 							.getMessage()));
 			break;
 		}
+		return result;
 	}
 
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {

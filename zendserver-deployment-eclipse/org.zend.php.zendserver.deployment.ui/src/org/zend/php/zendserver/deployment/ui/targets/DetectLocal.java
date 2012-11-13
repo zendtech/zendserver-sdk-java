@@ -44,5 +44,10 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	protected String getHelpResource() {
 		return HelpContextIds.CREATING_A_LOCAL_ZEND_SERVER_TARGET;
 	}
+	
+	@Override
+	protected boolean validatePage() {
+		return true;
+	}
 
 }

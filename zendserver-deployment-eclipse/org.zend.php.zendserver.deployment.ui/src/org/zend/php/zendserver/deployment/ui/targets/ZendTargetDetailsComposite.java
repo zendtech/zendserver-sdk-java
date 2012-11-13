@@ -41,7 +41,7 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 
 			public void modifyText(ModifyEvent e) {
 				changeSupport.firePropertyChange(PROP_MODIFY, null,
-						((Text) e.getSource()).getText());
+						validatePage());
 			}
 		};
 
@@ -109,6 +109,20 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	@Override
 	protected String getHelpResource() {
 		return HelpContextIds.CREATING_A_REMOTE_ZEND_SERVER_TARGET;
+	}
+	
+	@Override
+	protected boolean validatePage() {
+		if (hostText != null && hostText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (keyText != null && keyText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (secretText != null && secretText.getText().trim().isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -62,7 +62,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		ModifyListener modifyListener = new ModifyListener() {
 			
 			public void modifyText(ModifyEvent e) {
-				changeSupport.firePropertyChange(PROP_MODIFY, null, ((Text)e.getSource()).getText());
+				changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
 			}
 		};
 		
@@ -302,6 +302,20 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	@Override
 	protected String getHelpResource() {
 		return HelpContextIds.CREATING_A_ZEND_DEVELOPER_CLOUD_TARGET;
+	}
+	
+	@Override
+	protected boolean validatePage() {
+		if (usernameText != null && usernameText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (passwordText != null && passwordText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (privateKeyText != null && privateKeyText.getText().trim().isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 }

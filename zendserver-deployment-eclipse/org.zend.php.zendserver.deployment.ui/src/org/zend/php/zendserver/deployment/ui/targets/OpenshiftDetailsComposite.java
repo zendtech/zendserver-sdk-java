@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
@@ -51,26 +50,6 @@ import org.zend.sdklib.target.IZendTarget;
  * DevCloud details editing composite: username and password.
  */
 public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
-	
-	private class AutoValidation implements IRunnableWithProgress {
-		
-		private IStatus status;
-
-		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
-			IStatus result = validate(monitor);
-			setStatus(result);
-		}
-		
-		public synchronized IStatus getStatus() {
-			return status;
-		}
-		
-		private synchronized void setStatus(IStatus status) {
-			this.status = status;
-		}
-		
-	}
 
 	private static final String RESTORE_PASSWORD_URL = "https://openshift.redhat.com/app/account/password/new"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "https://openshift.redhat.com/app/account/new"; //$NON-NLS-1$
@@ -93,7 +72,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 
 			public void modifyText(ModifyEvent e) {
 				changeSupport.firePropertyChange(PROP_MODIFY, null,
-						((Text) e.getSource()).getText());
+						validatePage());
 			}
 		};
 
@@ -360,13 +339,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 									shell, new OpenShiftTargetWizard(
 											username, password, data), data);
 							if (dialog.open() == Window.OK) {
-								try {
-									validate();
-								} catch (InvocationTargetException e) {
-									Activator.log(e);
-								} catch (InterruptedException e) {
-									Activator.log(e);
-								}
+								setMessage("New OpenShift target has been created. Press Finish button to complete the process.");
+								changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
 							}
 						}
 					});
@@ -383,43 +357,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 				monitor.done();
 			}
 		});
-	}
-
-	private void validate() throws InvocationTargetException,
-			InterruptedException {
-		final AutoValidation validation = new AutoValidation();
-		runnableContext.run(true, true, validation);
-		Job updateUIJob = new Job("Validating...") {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				while (validation.getStatus() == null) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// ignore and just repeat a loop
-					}
-				}
-				MessageTranslator messageTranslator = new MessageTranslator();
-				IStatus status = validation.getStatus();
-				switch (status.getSeverity()) {
-				case IStatus.OK:
-					setMessage(null);
-					break;
-				case IStatus.WARNING:
-					setWarningMessage(messageTranslator.translate(status
-							.getMessage()));
-					break;
-				case IStatus.ERROR:
-					setErrorMessage(messageTranslator.translate(status
-							.getMessage()));
-					break;
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		updateUIJob.setSystem(true);
-		updateUIJob.schedule();
 	}
 
 	private void generateKey() {
@@ -463,6 +400,20 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e), StatusManager.SHOW);
 		}
+	}
+	
+	@Override
+	protected boolean validatePage() {
+		if (usernameText != null && usernameText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (passwordText != null && passwordText.getText().trim().isEmpty()) {
+			return false;
+		}
+		if (privateKeyText != null && privateKeyText.getText().trim().isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 }

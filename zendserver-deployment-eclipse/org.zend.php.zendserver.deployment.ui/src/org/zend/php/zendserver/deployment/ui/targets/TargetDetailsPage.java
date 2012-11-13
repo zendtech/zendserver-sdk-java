@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
@@ -102,6 +103,7 @@ public class TargetDetailsPage extends WizardPage {
 
 			public void propertyChange(PropertyChangeEvent evt) {
 				targets = null;
+				setPageComplete((Boolean) evt.getNewValue());
 			}
 			
 		};
@@ -149,10 +151,12 @@ public class TargetDetailsPage extends WizardPage {
 		return targets;
 	}
 	
-	public void validate() throws InvocationTargetException, InterruptedException {
+	public IStatus validate() throws InvocationTargetException,
+			InterruptedException {
 		targets = null;
-		composite.validate();
-		setPageComplete(targets != null);
+		IStatus status = composite.validate();
+		setPageComplete(targets != null && targets.length > 0);
+		return status;
 	}
 
 	public void setDefaultTargetSettings(IZendTarget target) {
