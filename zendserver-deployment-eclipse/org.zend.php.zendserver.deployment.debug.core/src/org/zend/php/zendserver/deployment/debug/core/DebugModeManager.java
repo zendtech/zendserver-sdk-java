@@ -25,7 +25,7 @@ import org.zend.sdklib.target.IZendTarget;
 
 public class DebugModeManager {
 	
-	private static final int[] prohibitedPorts = new int[] { 10081, 10082 };
+	public static final int[] prohibitedPorts = new int[] { 10081, 10082 };
 
 	private static final String DEBUG_STOP = "debug_stop"; //$NON-NLS-1$
 

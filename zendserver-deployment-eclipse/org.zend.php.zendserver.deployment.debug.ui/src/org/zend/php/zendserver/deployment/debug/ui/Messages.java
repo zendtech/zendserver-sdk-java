@@ -117,6 +117,8 @@ public class Messages extends NLS {
 
 	public static String DebugModePreferencesPage_URLValidationError;
 
+	public static String DebugModePreferencesPage_URLValidationPortError;
+
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;
 
 	static {

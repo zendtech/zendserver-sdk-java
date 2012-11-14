@@ -70,7 +70,14 @@ public class DebugModePreferencesPage extends PreferencePage implements
 
 		public String isValid(String newText) {
 			try {
-				new URL(newText);
+				URL url = new URL(newText);
+				IZendTarget target = targetsCombo.getSelected();
+				int port = target.getHost().getPort();
+				if (port != -1 && port == url.getPort()) {
+					return MessageFormat
+							.format(Messages.DebugModePreferencesPage_URLValidationPortError,
+									String.valueOf(port));
+				}
 			} catch (MalformedURLException e) {
 				return Messages.DebugModePreferencesPage_URLValidationError;
 			}
