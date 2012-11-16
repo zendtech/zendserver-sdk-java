@@ -15,13 +15,18 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.CloseWindowListener;
+import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.VisibilityWindowListener;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -152,6 +157,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 					}
 				}
 			});
+			initialize(br.getDisplay(), br);
 		} catch (Throwable ex) {
 			composite.dispose();
 
@@ -179,6 +185,45 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		}
 	}
 
+	/* register WindowEvent listeners */
+	static void initialize(final Display display, Browser browser) {
+		browser.addOpenWindowListener(new OpenWindowListener() {
+			public void open(WindowEvent event) {
+				if (!event.required) return;	/* only do it if necessary */
+				Shell shell = new Shell(display);
+				shell.setText("Welcome");
+				shell.setLayout(new FillLayout());
+				Browser browser = new Browser(shell, SWT.NONE);
+				initialize(display, browser);
+				event.browser = browser;
+			}
+		});
+		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
+			public void hide(WindowEvent event) {
+				Browser browser = (Browser)event.widget;
+				Shell shell = browser.getShell();
+				shell.setVisible(false);
+			}
+			public void show(WindowEvent event) {
+				Browser browser = (Browser)event.widget;
+				final Shell shell = browser.getShell();
+				if (event.location != null) shell.setLocation(event.location);
+				if (event.size != null) {
+					Point size = event.size;
+					shell.setSize(shell.computeSize(size.x, size.y));
+				}
+				shell.open();
+			}
+		});
+		browser.addCloseWindowListener(new CloseWindowListener() {
+			public void close(WindowEvent event) {
+				Browser browser = (Browser)event.widget;
+				Shell shell = browser.getShell();
+				shell.close();
+			}
+		});
+	}
+	
 	private void showStaticWelcomeImage(Composite composite) {
 		Image img = Activator.getDefault().getImageRegistry()
 				.get(Activator.PDT_STATIC_WELCOME);
