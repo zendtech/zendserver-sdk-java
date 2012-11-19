@@ -56,7 +56,9 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		if (getDefault() != null) {
+			getDefault().getLog().log(status);
+		}
 	}
 
 	public static void log(Throwable e) {
