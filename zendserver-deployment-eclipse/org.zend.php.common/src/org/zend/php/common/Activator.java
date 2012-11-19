@@ -61,7 +61,7 @@ public class Activator extends AbstractUIPlugin {
 
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR,
-				"Customization plugin internal error", e)); //$NON-NLS-1$
+				e.getMessage(), e)); //$NON-NLS-1$
 	}
 
 	public static void logErrorMessage(String message) {
