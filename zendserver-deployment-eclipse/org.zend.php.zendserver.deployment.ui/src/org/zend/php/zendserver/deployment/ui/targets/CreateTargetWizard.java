@@ -2,12 +2,13 @@ package org.zend.php.zendserver.deployment.ui.targets;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
@@ -35,6 +36,20 @@ public class CreateTargetWizard extends Wizard {
 
 		public NewTargetWizardDialog(Shell parentShell, IWizard newWizard) {
 			super(parentShell, newWizard);
+			
+			addPageChangedListener(new IPageChangedListener() {
+				
+				public void pageChanged(PageChangedEvent event) {
+					IWizardPage page = (IWizardPage) event
+							.getSelectedPage();
+					if (page instanceof TargetDetailsPage) {
+						if (((TargetDetailsPage) page).getType().equals(
+								DetectLocal.class.getName())) {
+							((WizardPage) page).setPageComplete(true);
+						}
+					}
+				}
+			});
 		}
 		
 		/* 
@@ -54,23 +69,6 @@ public class CreateTargetWizard extends Wizard {
 			getButton(IDialogConstants.CANCEL_ID).setFocus();
 			super.run(fork, cancelable, runnable);
 			currentFocus.setFocus();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.WizardDialog#nextPressed()
-		 */
-		protected void nextPressed() {
-			IWizardPage page = getCurrentPage().getNextPage();
-			if (page instanceof TargetDetailsPage) {
-				SelectTargetTypePage targetPage = (SelectTargetTypePage) getCurrentPage();
-				SelectTargetType type = targetPage.getSelectTargetType();
-				if (type.getType().equals(DetectLocal.class.getName())) {
-					((WizardPage) page).setPageComplete(true);
-				}
-			}
-			super.nextPressed();
 		}
 		
 		/*

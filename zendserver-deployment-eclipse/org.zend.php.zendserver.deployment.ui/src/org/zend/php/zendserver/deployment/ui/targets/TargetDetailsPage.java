@@ -166,4 +166,9 @@ public class TargetDetailsPage extends WizardPage {
 	public boolean hasPage(String type) {
 		return composite.hasPage(type);
 	}
+	
+	public String getType() {
+		return type;
+	}
+	
 }

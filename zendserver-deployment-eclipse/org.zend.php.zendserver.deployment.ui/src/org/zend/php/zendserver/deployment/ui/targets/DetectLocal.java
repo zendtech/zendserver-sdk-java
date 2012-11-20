@@ -3,7 +3,11 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.actions.DetectTargetAction;
 import org.zend.sdklib.SdkException;
@@ -13,7 +17,13 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 
 	@Override
 	public Composite create(Composite parent) {
-		return null;
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayout(new GridLayout(1, false));
+		Label descLabel = new Label(composite, SWT.NONE);
+		descLabel.setText("Press finish to detect local Zend Server target."); //$NON-NLS-1$
+		descLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true));
+		return composite;
 	}
 
 	@Override
