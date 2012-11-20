@@ -202,6 +202,12 @@ public class MonitorManager {
 				monitor.disable(projectName);
 				if (!monitor.isEnabled()) {
 					monitor.disable(true);
+					monitor.cancel();
+					try {
+						monitor.flushPreferences();
+					} catch (BackingStoreException e) {
+						Activator.log(e);
+					}
 					toRemove.add(targetId);
 				}
 			}
