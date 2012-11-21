@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.zend.sdklib.target.ITargetLoader;
@@ -170,7 +171,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 	 */
 	@Override
 	public IZendTarget[] loadAll() {
-		final File[] targets = baseDir.listFiles(new FileFilter() {
+		File[] targets = baseDir.listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File file) {
@@ -181,6 +182,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 
 		final ArrayList<IZendTarget> arrayList = new ArrayList<IZendTarget>(
 				targets.length);
+		targets = sortTargets(targets);
 		for (File file : targets) {
 			final TargetDescriptor d = loadTargetDescriptor(file);
 			if (d.isValid()) {
@@ -292,6 +294,52 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		public boolean isValid() {
 			return this.target != null && this.path.exists();
 		}
+	}
+	
+	private File[] sortTargets(File[] targets) {
+		try {
+			List<File> result = new ArrayList<File>();
+			for (File file : targets) {
+				int[] fileId = getId(file);
+				if (result.size() == 0) {
+					result.add(file);
+				} else {
+					int index = -1;
+					for (File sorted : result) {
+						int[] sortedId = getId(sorted);
+						if (sortedId[0] > fileId[0]) {
+							index = result.indexOf(sorted);
+							break;
+						} else if (sortedId[0] == fileId[0]
+								&& sortedId[1] > fileId[1]) {
+							index = result.indexOf(sorted);
+							break;
+						}
+					}
+					if (index == -1) {
+						result.add(file);
+					} else {
+						result.add(index, file);
+					}
+				}
+			}
+			return result.toArray(new File[0]);
+		} catch (Exception e) {
+			return targets;
+		}
+	}
+
+	private int[] getId(File file) {
+		String name = file.getName();
+		int index = name.lastIndexOf('.');
+		name = name.substring(0, index);
+		index = name.lastIndexOf('_');
+		if (index != -1) {
+			String[] segments = name.split("_");
+			return new int[] { Integer.valueOf(segments[0]),
+					Integer.valueOf(segments[1]) };
+		}
+		return new int[] { Integer.valueOf(name), 0 };
 	}
 
 }
