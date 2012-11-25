@@ -340,8 +340,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 											username, password, data), data);
 							if (dialog.open() == Window.OK) {
 								setMessage("New OpenShift target has been created. Press Finish button to complete the process.");
-								changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
 							}
+							changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
 						}
 					});
 				} catch (final SdkException e) {
