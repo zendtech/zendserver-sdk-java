@@ -89,7 +89,11 @@ public class OpenShiftTargetPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			targetNameText.setFocus();
+			if (init) {
+				zsPassword.setFocus();
+			} else {
+				targetNameText.setFocus();
+			}
 		}
 	}
 
