@@ -51,6 +51,7 @@ public class UninstallApplicationHandler extends AbstractHandler {
 						int appId = cfg.getAttribute(DeploymentAttributes.APP_ID.getName(), -1);
 						String targetId = cfg.getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String) null);
 						String targetHost = cfg.getAttribute(DeploymentAttributes.TARGET_HOST.getName(), (String) null);
+						String baseURL = cfg.getAttribute(DeploymentAttributes.BASE_URL.getName(), (String) null);
 						if (TargetsManager.isPhpcloud(targetHost)) {
 							preListener = new PhpcloudContainerListener(targetId);
 							WebApiClient.registerPreRequestListener(preListener);
@@ -62,7 +63,7 @@ public class UninstallApplicationHandler extends AbstractHandler {
 								DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 						cfg.delete();
 						if (targetId != null && projectName != null) {
-							MonitorManager.removeApplicationMonitor(targetId, projectName);
+							MonitorManager.removeFilter(targetId, baseURL);
 						}
 					} catch (CoreException e) {
 						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);

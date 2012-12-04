@@ -43,9 +43,11 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 						DeploymentAttributes.TARGET_ID.getName(), (String) null);
 				String projectName = cfg.getAttribute(
 						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
+				String baseURL = cfg.getAttribute(
+						DeploymentAttributes.BASE_URL.getName(), (String) null);
 				cfg.delete();
 				if (targetId != null && projectName != null) {
-					MonitorManager.removeApplicationMonitor(targetId, projectName);
+					MonitorManager.removeFilter(targetId, baseURL);
 				}
 			} catch (CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
@@ -53,7 +55,6 @@ public class RemoveLaunchOrTarget extends AbstractHandler {
 		} else if (element instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) element;
 			TargetsManagerService.INSTANCE.removeTarget(target);
-			MonitorManager.removeApplicationMonitor(target.getId());
 			MonitorManager.removeTargetMonitor(target.getId());
 		}
 		

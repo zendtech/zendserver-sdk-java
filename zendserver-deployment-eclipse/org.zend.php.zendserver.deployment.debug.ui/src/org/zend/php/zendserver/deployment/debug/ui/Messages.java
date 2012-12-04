@@ -62,9 +62,17 @@ public class Messages extends NLS {
 
 	public static String applicationConflictDialog_Title;
 
+	public static String ConfigurationBlock_ApplicationNameLabel;
+
+	public static String ConfigurationBlock_DevelopmentModeLabel;
+
 	public static String ConfigurationBlock_EnableMonitoringButton;
 
 	public static String ConfigurationBlock_EnableMonitoringTooltip;
+
+	public static String ConfigurationBlock_RefreshLabel;
+
+	public static String ConfigurationBlock_WarnUpdatingLabel;
 
 	public static String DebugModeHandler_DebugModeLabel;
 

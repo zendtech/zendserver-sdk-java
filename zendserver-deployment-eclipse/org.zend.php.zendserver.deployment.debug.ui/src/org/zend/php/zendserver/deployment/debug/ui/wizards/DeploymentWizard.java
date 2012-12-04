@@ -114,7 +114,7 @@ public class DeploymentWizard extends Wizard {
 	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
-		getShell().setMinimumSize(550, 350);
+		getShell().setMinimumSize(550, 380);
 		getShell().setSize(getShell().getMinimumSize());
 		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
 		Rectangle shellArea = getShell().getBounds();
@@ -162,6 +162,12 @@ public class DeploymentWizard extends Wizard {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(DeploymentAttributes.TARGET_ID.getName(),
 				helper.getTargetId());
+		settings.put(DeploymentAttributes.WARN_UPDATE.getName(),
+				helper.isWarnUpdate());
+		settings.put(DeploymentAttributes.IGNORE_FAILURES.getName(),
+				helper.isIgnoreFailures());
+		settings.put(DeploymentAttributes.DEVELOPMENT_MODE.getName(),
+				helper.isDevelopmentModeEnabled());
 	}
 
 }

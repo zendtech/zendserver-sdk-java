@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,8 +37,11 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
  */
 public class TargetMonitor extends AbstractMonitor {
 
+	private List<String> filters;
+
 	public TargetMonitor(String targetId) {
 		super(targetId, Messages.TargetMonitor_JobName);
+		this.filters = getFilters(targetId);
 	}
 
 	/**
@@ -82,6 +87,31 @@ public class TargetMonitor extends AbstractMonitor {
 		getPreferences().flush();
 	}
 
+	public void updateFilters() {
+		setFilters(getFilters(targetId));
+	}
+
+	public List<String> getFilters(String targetId) {
+		String val = getPreferences().get(
+				MonitorManager.getFiltersKey(targetId), null);
+		if (val != null) {
+			return new ArrayList<String>(Arrays.asList(val
+					.split(MonitorManager.FILTER_SEPARATOR)));
+		} else
+			return new ArrayList<String>();
+	}
+
+	public String getValue(List<String> list) {
+		StringBuilder builder = new StringBuilder();
+		if (list != null && !list.isEmpty()) {
+			for (String val : list) {
+				builder.append(val).append(MonitorManager.FILTER_SEPARATOR);
+			}
+			return builder.substring(0, builder.length() - 1);
+		}
+		return ""; //$NON-NLS-1$
+	}
+
 	protected void handleIssues(List<IZendIssue> issues) {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
@@ -89,27 +119,36 @@ public class TargetMonitor extends AbstractMonitor {
 			int actionsAvailable = checkActions(zendIssue);
 			Date date = getTime(issue.getLastOccurance());
 			if (date != null && date.getTime() >= lastTime) {
-				String baseURL = issue.getGeneralDetails().getUrl();
+				final String baseURL = issue.getGeneralDetails().getUrl();
 				IProject project = getProject(baseURL);
 				String basePath = null;
 				if (project != null) {
-					int index = baseURL.indexOf(project.getName());
+					String toFind = MonitorManager.SLASH + project.getName(); 
+					int index = baseURL.indexOf(toFind);
 					if (index != -1) {
-						basePath = baseURL.substring(index
-								+ project.getName().length(), baseURL.length());
+						if (index + toFind.length() == baseURL.length()
+								|| baseURL.endsWith(toFind + MonitorManager.SLASH)) {
+							basePath = MonitorManager.SLASH; 
+						} else {
+							basePath = baseURL.substring(
+									index + toFind.length(), baseURL.length());
+						}
 					}
 				}
-				if (shouldNotify(issue.getSeverity())) {
+				if (shouldNotify(issue.getSeverity(), baseURL)) {
 					// handle case when have not found a corresponding project
 					if (project != null) {
 						int delay = 0;
 						IPreferenceStore store = Activator.getDefault()
 								.getPreferenceStore();
-						if (store.getBoolean(MonitorManager.HIDE_KEY)) {
-							delay = store.getInt(MonitorManager.HIDE_TIME_KEY) * 1000;
+						if (store.getBoolean(MonitorManager
+								.getHideKey(targetId))) {
+							delay = store.getInt(MonitorManager
+									.getHideTimeKey(targetId)) * 1000;
+							if (delay == 0) {
+								delay = MonitorManager.DELAY_DEFAULT;
+							}
 						}
-						Activator.getDefault().getPreferenceStore()
-								.getBoolean(targetId);
 						showNonification(zendIssue, project.getName(),
 								basePath, delay, actionsAvailable);
 					}
@@ -148,11 +187,28 @@ public class TargetMonitor extends AbstractMonitor {
 	private IEclipsePreferences getPreferences() {
 		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 	}
-
-	private boolean shouldNotify(IssueSeverity severity) {
+	
+	private boolean shouldNotify(IssueSeverity severity, String baseURL) {
 		IEclipsePreferences prefs = getPreferences();
 		String nodeName = severity.getName().toLowerCase();
-		return prefs.getBoolean(nodeName, true);
+		if (prefs.getBoolean(nodeName, true)) {
+			for (String filter : filters) {
+				if (filter.endsWith(MonitorManager.SLASH)) { 
+					filter = filter.substring(0, filter.length() - 1);
+				}
+				if (baseURL.startsWith(filter)) {
+					baseURL = baseURL.substring(filter.length());
+					if (baseURL.startsWith(MonitorManager.SLASH) || baseURL.isEmpty()) { 
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private void setFilters(List<String> filters) {
+		this.filters = filters;
 	}
 
 }

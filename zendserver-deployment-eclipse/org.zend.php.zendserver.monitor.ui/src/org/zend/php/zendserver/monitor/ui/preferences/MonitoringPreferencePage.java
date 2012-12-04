@@ -8,27 +8,18 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.debug.ui.preferences;
+package org.zend.php.zendserver.monitor.ui.preferences;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -38,6 +29,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -45,25 +38,27 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.osgi.service.prefs.BackingStoreException;
-import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
-import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo.Type;
+import org.zend.php.zendserver.monitor.core.Activator;
+import org.zend.php.zendserver.monitor.core.MonitorManager;
+import org.zend.php.zendserver.monitor.internal.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
 /**
- * Debug Mode preferences.
+ * Preference page for targets monitoring customization.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class DebugModePreferencesPage extends PreferencePage implements
+public class MonitoringPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private class URLInputValidator implements IInputValidator {
@@ -74,19 +69,27 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				IZendTarget target = targetsCombo.getSelected();
 				int port = target.getHost().getPort();
 				if (port != -1 && port == url.getPort()) {
-					return MessageFormat
-							.format(Messages.DebugModePreferencesPage_URLValidationPortError,
-									String.valueOf(port));
+					// TODO add validation message
+					return MessageFormat.format("", null);
 				}
 			} catch (MalformedURLException e) {
-				return Messages.DebugModePreferencesPage_URLValidationError;
+				// TODO add validation message
+				return "";
 			}
 			return null;
 		}
 
 	}
 
-	public static final String ID = "org.zend.php.zendserver.deployment.ui.DebugModePreferencePage"; //$NON-NLS-1$
+	private class TargetParams {
+
+		private boolean[] severities;
+		private boolean hide;
+		private int delay;
+
+	}
+
+	public static final String ID = "org.zend.php.zendserver.monitor.ui.targetsMonitoring"; //$NON-NLS-1$
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -95,18 +98,18 @@ public class DebugModePreferencesPage extends PreferencePage implements
 	private Button removeButton;
 	private Button modifyButton;
 	private Button addButton;
-
-	private IEclipsePreferences prefs;
-	private IEclipsePreferences defaultPrefs;
+	private Button[] severityButtons;
+	private Button hideButton;
+	private Text delayText;
 
 	private Map<String, List<String>> input;
+	private Map<String, TargetParams> params;
 
-	public DebugModePreferencesPage() {
-		this.prefs = InstanceScope.INSTANCE
-				.getNode(DebugModeManager.DEBUG_MODE_NODE);
-		this.defaultPrefs = DefaultScope.INSTANCE
-				.getNode(DebugModeManager.DEBUG_MODE_NODE);
+	public MonitoringPreferencePage() {
+		setDescription(Messages.TargetsMonitoringPreferencePage_PreferencePageDescription);
+		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		this.input = new HashMap<String, List<String>>();
+		this.params = new HashMap<String, TargetParams>();
 	}
 
 	/*
@@ -118,10 +121,12 @@ public class DebugModePreferencesPage extends PreferencePage implements
 	public void applyData(Object data) {
 		if (data instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) data;
+			String targetId = target.getId();
 			if (targetsCombo != null) {
 				targetsCombo.select(target.getId());
-				viewer.setInput(input.get(target.getId()));
+				viewer.setInput(input.get(targetId));
 			}
+			initializetTargetParams(targetId);
 		}
 	}
 
@@ -131,65 +136,28 @@ public class DebugModePreferencesPage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		boolean dirty = false;
+		// TODO implement
 		IZendTarget[] targets = TargetsManagerService.INSTANCE
 				.getTargetManager().getTargets();
-		final List<IZendTarget> toRestart = new ArrayList<IZendTarget>();
 		for (IZendTarget target : targets) {
 			String id = target.getId();
-			String oldValue = prefs
-					.get(id, defaultPrefs.get(id, (String) null));
+			String oldValue = getValue(MonitorManager.getFilters(id));
 			String newValue = getValue(input.get(id));
 			if (oldValue == null || !oldValue.equals(newValue)) {
-				prefs.put(id, newValue);
-				dirty = true;
-				if (askForRestart(target)) {
-					toRestart.add(target);
-				}
+				getPreferenceStore().setValue(MonitorManager.getFiltersKey(id),
+						newValue);
+				MonitorManager.updateFilters(id);
 			}
-		}
-		if (dirty) {
-			try {
-				prefs.flush();
-			} catch (BackingStoreException e) {
-				org.zend.php.zendserver.deployment.debug.ui.Activator.log(e);
+			TargetParams p = params.get(id);
+			for (int i = 0; i < severityButtons.length; i++) {
+				String nodeName = getNodeName(severityButtons[i]);
+				getPreferenceStore().setValue(id + '.' + nodeName,
+						p.severities[i]);
 			}
-		}
-		if (!toRestart.isEmpty()) {
-			Job restartJob = new Job(Messages.DebugModePreferencesPage_JobTitle) {
-
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask(
-							Messages.DebugModePreferencesPage_JobDescription,
-							IProgressMonitor.UNKNOWN);
-					for (IZendTarget target : toRestart) {
-						IStatus status = DebugModeManager.getManager()
-								.restartDebugMode(target);
-						switch (status.getSeverity()) {
-						case IStatus.OK:
-							NotificationManager.registerInfo(
-									Messages.DebugModeHandler_DebugModeLabel,
-									status.getMessage(), 4000);
-							break;
-						case IStatus.WARNING:
-							NotificationManager.registerWarning(
-									Messages.DebugModeHandler_DebugModeLabel,
-									status.getMessage(), 4000);
-							break;
-						case IStatus.ERROR:
-							NotificationManager.registerError(
-									Messages.DebugModeHandler_DebugModeLabel,
-									status.getMessage(), 4000);
-							break;
-						default:
-							break;
-						}
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			restartJob.setUser(true);
-			restartJob.schedule();
+			getPreferenceStore()
+					.setValue(MonitorManager.getHideKey(id), p.hide);
+			getPreferenceStore().setValue(MonitorManager.getHideTimeKey(id),
+					p.delay);
 		}
 		return super.performOk();
 	}
@@ -212,8 +180,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		IZendTarget[] targets = TargetsManagerService.INSTANCE
 				.getTargetManager().getTargets();
 		for (IZendTarget target : targets) {
-			String id = target.getId();
-			prefs.remove(id);
+			MonitorManager.removePreferences(target);
 		}
 		initializeValues();
 		super.performDefaults();
@@ -230,9 +197,10 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		composite.setLayout(new GridLayout(2, false));
-
 		createTargetSelection(composite);
 		createFiltersSection(composite);
+		createSeveritySection(composite);
+		createDelaySection(composite);
 		initializeValues();
 
 		return composite;
@@ -249,8 +217,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		Label filtersLabel = new Label(filtersSection, SWT.NONE);
 		filtersLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
 				2, 1));
-		filtersLabel
-				.setText(Messages.DebugModePreferencesPage_FilterSectionLabel);
+		filtersLabel.setText("Filters:");
 		viewer = new TableViewer(filtersSection, SWT.SINGLE | SWT.BORDER);
 		viewer.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -285,14 +252,13 @@ public class DebugModePreferencesPage extends PreferencePage implements
 		layout.marginHeight = 0;
 		buttonsSection.setLayout(layout);
 		addButton = new Button(buttonsSection, SWT.PUSH);
-		addButton.setText(Messages.DebugModePreferencesPage_AddButton);
+		addButton.setText("Add");
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		addButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
-						Messages.DebugModePreferencesPage_AddDesc,
-						EMPTY_STRING, new URLInputValidator());
+						"Add desc", EMPTY_STRING, new URLInputValidator());
 				if (dlg.open() == Window.OK) {
 					String id = targetsCombo.getSelected().getId();
 					List<String> values = input.get(id);
@@ -302,7 +268,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			}
 		});
 		modifyButton = new Button(buttonsSection, SWT.PUSH);
-		modifyButton.setText(Messages.DebugModePreferencesPage_EdiotButton);
+		modifyButton.setText("Modify");
 		modifyButton
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		modifyButton.addSelectionListener(new SelectionAdapter() {
@@ -313,8 +279,8 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				Object[] selected = sel.toArray();
 				if (selected.length > 0) {
 					InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
-							Messages.DebugModePreferencesPage_ModifyDesc,
-							(String) selected[0], new URLInputValidator());
+							"Modify desc", (String) selected[0],
+							new URLInputValidator());
 					if (dlg.open() == Window.OK) {
 						String id = targetsCombo.getSelected().getId();
 						List<String> values = input.get(id);
@@ -327,7 +293,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			}
 		});
 		removeButton = new Button(buttonsSection, SWT.PUSH);
-		removeButton.setText(Messages.DebugModePreferencesPage_RemoveButton);
+		removeButton.setText("Remove");
 		removeButton
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		removeButton.addSelectionListener(new SelectionAdapter() {
@@ -345,7 +311,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 
 	private void createTargetSelection(Composite container) {
 		targetsCombo = new TargetsCombo(Type.ZEND_SERVER_6, false);
-		targetsCombo.setLabel(Messages.DebugModePreferencesPage_TargetLabel);
+		targetsCombo.setLabel("Targets:");
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 
@@ -353,6 +319,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				String id = targetsCombo.getSelected().getId();
 				viewer.setInput(input.get(id));
 				addButton.setEnabled(true);
+				initializetTargetParams(id);
 			}
 
 		});
@@ -363,17 +330,56 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				.getTargetManager().getTargets();
 		for (IZendTarget target : targets) {
 			String id = target.getId();
-			String value = prefs.get(id, defaultPrefs.get(id, (String) null));
-			if (value != null && !value.trim().isEmpty()) {
-				String[] segments = value.split(","); //$NON-NLS-1$
-				input.put(id, new ArrayList<String>(Arrays.asList(segments)));
+			List<String> value = MonitorManager.getFilters(id);
+			if (value != null && !value.isEmpty()) {
+				input.put(id, value);
 			} else {
 				input.put(id, new ArrayList<String>());
 			}
+			TargetParams p = new TargetParams();
+			String key = MonitorManager.getHideKey(id);
+			if (getPreferenceStore().isDefault(key)) {
+				p.hide = getPreferenceStore().getDefaultBoolean(key);
+			} else {
+				p.hide = getPreferenceStore().getBoolean(key);
+			}
+			key = MonitorManager.getHideTimeKey(id);
+			if (getPreferenceStore().isDefault(key)) {
+				p.delay = getPreferenceStore().getDefaultInt(key);
+			} else {
+				p.delay = getPreferenceStore().getInt(key);
+			}
+			p.severities = new boolean[3];
+			for (int i = 0; i < severityButtons.length; i++) {
+				String nodeName = getNodeName(severityButtons[i]);
+				key = id + '.' + nodeName;
+				if (getPreferenceStore().isDefault(key)) {
+					p.severities[i] = getPreferenceStore().getDefaultBoolean(
+							key);
+				} else {
+					p.severities[i] = getPreferenceStore().getBoolean(key);
+				}
+			}
+			params.put(id, p);
 		}
 		String id = targetsCombo.getSelected().getId();
 		viewer.setInput(input.get(id));
 		viewer.refresh();
+		initializetTargetParams(id);
+	}
+
+	private void initializetTargetParams(String id) {
+		TargetParams p = params.get(id);
+		for (int i = 0; i < severityButtons.length; i++) {
+			severityButtons[i].setSelection(p.severities[i]);
+		}
+		hideButton.setSelection(p.hide);
+		delayText.setEnabled(hideButton.getSelection());
+		int delay = p.delay;
+		if (delay == 0) {
+			delay = 10;
+		}
+		delayText.setText(String.valueOf(delay));
 	}
 
 	private void removeElement(ISelection selection) {
@@ -392,21 +398,110 @@ public class DebugModePreferencesPage extends PreferencePage implements
 
 	private String getValue(List<String> list) {
 		StringBuilder builder = new StringBuilder();
-		for (String val : list) {
-			builder.append(val).append(DebugModeManager.FILTER_SEPARATOR);
+		if (list != null && !list.isEmpty()) {
+			for (String val : list) {
+				builder.append(val).append(MonitorManager.FILTER_SEPARATOR);
+			}
+			return builder.substring(0, builder.length() - 1);
 		}
-		return builder.substring(0, builder.length() - 1);
+		return ""; //$NON-NLS-1$
 	}
 
-	private boolean askForRestart(IZendTarget target) {
-		if (DebugModeManager.getManager().isInDebugMode(target)) {
-			return MessageDialog.openQuestion(getShell(),
-					Messages.DebugModeHandler_DebugModeLabel,
-					MessageFormat.format(
-							Messages.DebugModePreferencesPage_RestartMessage,
-							target.getHost().getHost()));
+	private void createSeveritySection(Composite composite) {
+		Composite container = new Composite(composite, SWT.NONE);
+		container.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, false,
+				2, 1));
+		container.setLayout(new GridLayout(1, true));
+		Label label = new Label(container, SWT.WRAP);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		label.setText(Messages.ServerMonitoringPropertyPage_Description);
+		Group group = new Group(container, SWT.NONE);
+		group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		group.setLayout(new GridLayout(1, false));
+		IssueSeverity[] severityValues = IssueSeverity.values();
+		severityButtons = new Button[severityValues.length];
+		for (int i = 0; i < severityValues.length; i++) {
+			severityButtons[i] = createCheckBox(group, severityValues[i]);
+			severityButtons[i].addSelectionListener(new SelectionAdapter() {
+
+				public void widgetSelected(SelectionEvent e) {
+					String id = targetsCombo.getSelected().getId();
+					TargetParams p = params.get(id);
+					for (int i = 0; i < severityButtons.length; i++) {
+						p.severities[i] = severityButtons[i].getSelection();
+					}
+				}
+			});
 		}
-		return false;
+	}
+
+	private void createDelaySection(Composite composite) {
+		Composite container = new Composite(composite, SWT.NONE);
+		container.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, false,
+				2, 1));
+		container.setLayout(new GridLayout(1, true));
+		hideButton = new Button(container, SWT.CHECK);
+		hideButton.setText(Messages.ServerMonitoringPropertyPage_HideLabel);
+		hideButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				String id = targetsCombo.getSelected().getId();
+				TargetParams p = params.get(id);
+				p.hide = hideButton.getSelection();
+				delayText.setEnabled(p.hide);
+			}
+		});
+		hideButton.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, false));
+		Group group = new Group(container, SWT.NONE);
+		group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		group.setLayout(new GridLayout(1, false));
+		Composite labelComposite = new Composite(group, SWT.NONE);
+		labelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		labelComposite.setLayout(layout);
+		Label label = new Label(labelComposite, SWT.NONE);
+		label.setText(Messages.ServerMonitoringPropertyPage_DelayLabel);
+		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+		gd.minimumWidth = 100;
+		label.setLayoutData(gd);
+		delayText = new Text(labelComposite, SWT.BORDER | SWT.SINGLE);
+		delayText.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				try {
+					String val = delayText.getText();
+					int delay = Integer.valueOf(val);
+					String id = targetsCombo.getSelected().getId();
+					TargetParams p = params.get(id);
+					p.delay = delay;
+				} catch (NumberFormatException ex) {
+					setErrorMessage(Messages.ServerMonitoringPropertyPage_InvalidDelayMessage);
+					setValid(false);
+					return;
+				}
+				setErrorMessage(null);
+				setValid(true);
+			}
+		});
+		delayText.setText(String.valueOf(MonitorManager.DELAY_DEFAULT));
+		delayText
+				.setToolTipText(Messages.ServerMonitoringPropertyPage_DelayTooltip);
+		GridData data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+		data.minimumWidth = 100;
+		delayText.setLayoutData(data);
+	}
+
+	private Button createCheckBox(Composite parent, IssueSeverity severity) {
+		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(severity.getName());
+		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		return button;
+	}
+
+	private String getNodeName(Button button) {
+		return button.getText();
 	}
 
 }

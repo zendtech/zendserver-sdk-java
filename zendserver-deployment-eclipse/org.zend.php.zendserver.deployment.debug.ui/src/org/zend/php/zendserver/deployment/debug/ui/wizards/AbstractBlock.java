@@ -68,12 +68,21 @@ public abstract class AbstractBlock {
 		return listener;
 	}
 
-	protected Combo createLabelWithCombo(String labelText, String tooltip, Composite container) {
+	protected Combo createLabelWithCombo(String labelText, String tooltip, Composite container, boolean readOnly) {
 		Label label = new Label(container, SWT.NULL);
 		label.setText(labelText);
-		Combo combo = new Combo(container, SWT.SIMPLE | SWT.DROP_DOWN | SWT.READ_ONLY);
+		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		gd.widthHint = 120;
+		label.setLayoutData(gd);
+		Combo combo = null;
+		if (readOnly) {
+			combo = new Combo(container, SWT.SIMPLE | SWT.DROP_DOWN
+					| SWT.READ_ONLY);
+		} else {
+			combo = new Combo(container, SWT.SIMPLE | SWT.DROP_DOWN);
+		}
 		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
+
 			public void widgetSelected(SelectionEvent e) {
 				listener.statusChanged(validatePage());
 			}
@@ -84,19 +93,13 @@ public abstract class AbstractBlock {
 	}
 
 	protected Text createLabelWithText(String labelText, String tooltip, Composite container, boolean required) {
-		Composite labelComposite = new Composite(container, SWT.NONE);
-		labelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		labelComposite.setLayout(layout);
-		Label label = new Label(labelComposite, SWT.NONE);
+		Label label = new Label(container, SWT.NONE);
 		label.setText(labelText);
-		GridData gd = new GridData(SWT.LEFT, SWT.FILL, true, true);
-		gd.minimumWidth = 100;
+		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		gd.widthHint = 110;
 		label.setLayoutData(gd);
 		if (required) {
-			Label asteriks = new Label(labelComposite, SWT.NONE);
+			Label asteriks = new Label(container, SWT.NONE);
 			asteriks.setText("*"); //$NON-NLS-1$
 			asteriks.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
 		}

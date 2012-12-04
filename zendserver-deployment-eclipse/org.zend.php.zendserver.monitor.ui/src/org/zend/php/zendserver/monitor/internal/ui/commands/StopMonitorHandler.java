@@ -5,25 +5,25 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.commands;
+package org.zend.php.zendserver.monitor.internal.ui.commands;
 
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
- * Command handler responsible for enabling event monitoring for selected
+ * Command handler responsible for disabling event monitoring for selected
  * target.
  * 
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class EnableTargetMonitorHandler extends AbstractMonitoringHandler {
+public class StopMonitorHandler extends AbstractMonitoringHandler {
 
-	protected void enableMonitoring(Object element) {
+	protected void executeAction(Object element) {
 		if (element instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) element;
-			MonitorManager.setTargetEnabled(target.getId(), true);
-			MonitorManager.createTargetMonitor(target.getId());
+			MonitorManager.setTargetEnabled(target.getId(), false);
+			MonitorManager.removeTargetMonitor(target.getId());
 		}
 	}
 

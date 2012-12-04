@@ -186,6 +186,20 @@ public class DeploymentHandler {
 		}
 		return OK;
 	}
+	
+	public int noWizardDeploy(IDeploymentHelper helper,
+			IProject project) {
+		try {
+			job = new DeployLaunchJob(helper, project);
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(job.getHelper(), project);
+		} catch (InterruptedException e) {
+			Activator.log(e);
+		}
+		return OK;
+	}
 
 	public int openDeploymentWizard() {
 		job = null;
@@ -274,19 +288,16 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
-				if (helper.getOperationType() == IDeploymentHelper.DEPLOY
-						&& LaunchUtils.isAutoDeployAvailable()
-						&& (TargetsManager.isPhpcloud(helper.getTargetHost()) || TargetsManager
-								.isOpenShift(helper.getTargetHost()))) {
-					job = getAutoDeployJob(helper, project);
-				}
-				if (config != null && helper.isMonitoringEnabled()) {
-					MonitorManager.createApplicationMonitor(
-							helper.getTargetId(), project.getName(),
-							helper.getBaseURL());
-				} else {
-					MonitorManager.setApplicationEnabled(
-							helper.getProjectName(), false);
+				if (helper.isDevelopmentModeEnabled()) {
+					MonitorManager.addFilter(helper.getTargetId(), helper
+							.getBaseURL().toString());
+					if (helper.getOperationType() == IDeploymentHelper.DEPLOY
+							&& LaunchUtils.isAutoDeployAvailable()
+							&& (TargetsManager.isPhpcloud(helper
+									.getTargetHost()) || TargetsManager
+									.isOpenShift(helper.getTargetHost()))) {
+						job = getAutoDeployJob(helper, project);
+					}
 				}
 				return checkSSHTunnel(helper);
 			}
@@ -373,15 +384,19 @@ public class DeploymentHandler {
 
 	private int handleApplicationConflict(IDeploymentHelper helper,
 			IProject project) throws InterruptedException {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+		if (helper.isWarnUpdate()) {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-			public void run() {
-				MessageDialog dialog = getApplicationConflictDialog();
-				if (dialog.open() != 0) {
-					dialogResult = true;
+				public void run() {
+					MessageDialog dialog = getApplicationConflictDialog();
+					if (dialog.open() != 0) {
+						dialogResult = true;
+					}
 				}
-			}
-		});
+			});
+		} else {
+			dialogResult = true;
+		}
 		if (!dialogResult) {
 			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
@@ -400,70 +415,21 @@ public class DeploymentHandler {
 		}
 	}
 
-	private int handleBaseUrlConflictDevCloud(IDeploymentHelper helper,
-			IProject project) throws InterruptedException {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			public void run() {
-				MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingAppDevCloudDialog_Message);
-				if (dialog.open() == 0) {
-					dialogResult = true;
-				}
-			}
-		});
-		if (!dialogResult) {
-			doOpenDeploymentWizard(helper, project);
-			if (job == null) {
-				return CANCEL;
-			}
-			if (listener != null) {
-				job.addJobChangeListener(listener);
-			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
-		} else {
-			dialogResult = false;
-			job = new ExisitngAppIdJob(helper, project);
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			job = new UpdateLaunchJob(job.getHelper(), project);
-			if (listener != null) {
-				job.addJobChangeListener(listener);
-			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			if (((DeploymentLaunchJob) job).getResponseCode() == null
-					&& config != null && helper.isMonitoringEnabled()) {
-				MonitorManager.createApplicationMonitor(helper.getTargetId(),
-						project.getName(), helper.getBaseURL());
-			} else {
-				MonitorManager.setApplicationEnabled(
-						helper.getProjectName(), false);
-			}
-			job = getAutoDeployJob(job.getHelper(), project);
-			if (job != null) {
-				return checkSSHTunnel(helper);
-			} else {
-				return CANCEL;
-			}
-		}
-	}
-
 	private int handleBaseUrlConflict(IDeploymentHelper helper, IProject project)
 			throws InterruptedException {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+		if (helper.isWarnUpdate()) {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-			public void run() {
-				MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
-				if (dialog.open() == 0) {
-					dialogResult = true;
+				public void run() {
+					MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
+					if (dialog.open() == 0) {
+						dialogResult = true;
+					}
 				}
-			}
-		});
+			});
+		} else {
+			dialogResult = true;
+		}
 		if (!dialogResult) {
 			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
@@ -489,23 +455,19 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			if (((DeploymentLaunchJob) job).getResponseCode() == null
-					&& config != null && helper.isMonitoringEnabled()) {
-				MonitorManager.createApplicationMonitor(helper.getTargetId(),
-						project.getName(), helper.getBaseURL());
-			} else {
-				MonitorManager.setApplicationEnabled(
-						helper.getProjectName(), false);
-			}
-			String host = helper.getTargetHost();
-			if (LaunchUtils.isAutoDeployAvailable()
-					&& (TargetsManager.isPhpcloud(host) || TargetsManager
-							.isOpenShift(host))) {
-				job = getAutoDeployJob(job.getHelper(), project);
-				if (job != null) {
-					return checkSSHTunnel(helper);
-				} else {
-					return CANCEL;
+			if (helper.isDevelopmentModeEnabled()) {
+				MonitorManager.addFilter(helper.getTargetId(), helper
+						.getBaseURL().toString());
+				String host = helper.getTargetHost();
+				if (LaunchUtils.isAutoDeployAvailable()
+						&& (TargetsManager.isPhpcloud(host) || TargetsManager
+								.isOpenShift(host))) {
+					job = getAutoDeployJob(job.getHelper(), project);
+					if (job != null) {
+						return checkSSHTunnel(helper);
+					} else {
+						return CANCEL;
+					}
 				}
 			}
 			return OK;

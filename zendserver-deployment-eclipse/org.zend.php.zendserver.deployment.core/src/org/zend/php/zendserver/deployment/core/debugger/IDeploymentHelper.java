@@ -37,7 +37,9 @@ public interface IDeploymentHelper {
 
 	boolean isEnabled();
 	
-	boolean isMonitoringEnabled();
+	boolean isDevelopmentModeEnabled();
+	
+	boolean isWarnUpdate();
 
 	void setBaseURL(String baseURL);
 
@@ -63,6 +65,8 @@ public interface IDeploymentHelper {
 
 	void setEnabled(boolean enabled);
 	
-	void setMonitoringEnabled(boolean enabled);
+	void setDevelopmentMode(boolean enabled);
+	
+	void setWarnUpdate(boolean enabled);
 
 }

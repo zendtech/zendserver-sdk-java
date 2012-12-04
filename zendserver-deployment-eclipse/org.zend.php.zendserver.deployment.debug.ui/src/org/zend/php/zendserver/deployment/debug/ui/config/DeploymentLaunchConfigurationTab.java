@@ -220,7 +220,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	private void setDeploymentPageEnablement(boolean value) {
 		configBlock.setDeployComboEnabled(value);
 		configBlock.setBaseURLEnabled(value);
-		configBlock.setUserAppNameEnabled(value);
+		configBlock.setApplicationNameEnabled(value);
 	}
 
 	private Map<String, String> getUserParameters() {

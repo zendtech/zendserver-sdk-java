@@ -26,7 +26,9 @@ public enum DeploymentAttributes {
 	
 	INSTALLED_LOCATION("installedLocation"), //$NON-NLS-1$
 	
-	MONITORING("monitoring"); //$NON-NLS-1$
+	DEVELOPMENT_MODE("developmentMode"), //$NON-NLS-1$
+	
+	WARN_UPDATE("warnUpdate"); //$NON-NLS-1$
 	
 	private static final String PREFIX = "org.zend.php.zendserver.deployment."; //$NON-NLS-1$
 	

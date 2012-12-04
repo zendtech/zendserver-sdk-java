@@ -51,8 +51,11 @@ public class LaunchUtils {
 	public static ILaunchConfiguration createConfiguration(IProject project,
 			IDeploymentHelper helper) throws CoreException {
 		ILaunchConfiguration config = null;
-		ILaunchConfigurationWorkingCopy wc = getConfigurationType().newInstance(null,
-				getNewConfigurationName(project.getName(), helper.getTargetHost()));
+		ILaunchConfigurationWorkingCopy wc = getConfigurationType()
+				.newInstance(
+						null,
+						getNewConfigurationName(project.getName(),
+								helper.getTargetHost()));
 
 		// Set the debugger ID and the configuration delegate for this launch
 		// configuration
@@ -61,11 +64,14 @@ public class LaunchUtils {
 
 		AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
 				.getDebuggerConfiguration(debuggerID);
-		wc.setAttribute(PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
+		wc.setAttribute(
+				PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
 				debuggerConfiguration.getWebLaunchDelegateClass());
 
-		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO, PHPDebugPlugin.getDebugInfoOption());
-		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER, PHPDebugPlugin.getOpenInBrowserOption());
+		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO,
+				PHPDebugPlugin.getDebugInfoOption());
+		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER,
+				PHPDebugPlugin.getOpenInBrowserOption());
 		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
 				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
 		// set true as default
@@ -77,8 +83,10 @@ public class LaunchUtils {
 		return config;
 	}
 
-	public static IDeploymentHelper createDefaultHelper(String targetId, IProject project) {
-		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
+	public static IDeploymentHelper createDefaultHelper(String targetId,
+			IProject project) {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
 		IZendTarget target = manager.getTargetById(targetId);
 		return createDefaultHelper(project, target);
 	}
@@ -89,7 +97,8 @@ public class LaunchUtils {
 	}
 
 	public static void updateLaunchConfiguration(IProject project,
-			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) throws CoreException {
+			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc)
+			throws CoreException {
 		IResource resource = getFile(project);
 
 		String pathToFile = null;
@@ -148,52 +157,68 @@ public class LaunchUtils {
 				wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
 			}
 		}
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
-		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper.getBaseURL().toString());
-		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());
-		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());
-		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
-		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), project.getName());
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(),
+				helper.getAppId());
+		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper
+				.getBaseURL().toString());
+		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
+				helper.getAppName());
+		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(),
+				helper.isDefaultServer());
+		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(),
+				helper.isIgnoreFailures());
+		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
+				project.getName());
 		if (helper.getTargetId() != null && !helper.getTargetId().isEmpty()) {
 			wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(),
 					helper.getTargetId());
 			wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(),
 					helper.getTargetHost());
 		}
-		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
-		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
+		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(),
+				helper.getUserParams());
+		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
+				helper.getOperationType());
 		String location = helper.getInstalledLocation();
 		if (location != null && !location.isEmpty()) {
-		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
-				helper.getInstalledLocation());
+			wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
+					helper.getInstalledLocation());
 		}
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
 				helper.isEnabled());
-		wc.setAttribute(DeploymentAttributes.MONITORING.getName(),
-				helper.isMonitoringEnabled());
+		wc.setAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName(),
+				helper.isDevelopmentModeEnabled());
+		wc.setAttribute(DeploymentAttributes.WARN_UPDATE.getName(),
+				helper.isWarnUpdate());
 		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
 		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
 			updatePhpcloudLaunchConfiguration(helper, wc);
 		}
 	}
-	
+
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
 		return findLaunchConfiguration(project, null);
 	}
-	
-	public static ILaunchConfiguration findLaunchConfiguration(IProject project, String targetId) {
+
+	public static ILaunchConfiguration findLaunchConfiguration(
+			IProject project, String targetId) {
 		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager()
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault()
+					.getLaunchManager()
 					.getLaunchConfigurations(getConfigurationType());
 
 			int numConfigs = configs == null ? 0 : configs.length;
 			for (int i = numConfigs - 1; i >= 0; i--) {
 				String projectName = configs[i].getAttribute(
-						DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
-				
-				String configTargetId = configs[i].getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String)null);
-				boolean targetIdMatches = (targetId == null) || (targetId.equals(configTargetId)); 
-						
+						DeploymentAttributes.PROJECT_NAME.getName(),
+						(String) null);
+
+				String configTargetId = configs[i]
+						.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
+								(String) null);
+				boolean targetIdMatches = (targetId == null)
+						|| (targetId.equals(configTargetId));
+
 				if (project.getName().equals(projectName) && targetIdMatches) {
 					return configs[i].getWorkingCopy();
 				}
@@ -206,10 +231,12 @@ public class LaunchUtils {
 
 	public static ILaunchConfigurationType getConfigurationType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(PHPLaunchConfigs.LAUNCH_CONFIG_TYPE);
+		return lm
+				.getLaunchConfigurationType(PHPLaunchConfigs.LAUNCH_CONFIG_TYPE);
 	}
 
-	public static IProject getProjectFromFilename(ILaunchConfiguration config) throws CoreException {
+	public static IProject getProjectFromFilename(ILaunchConfiguration config)
+			throws CoreException {
 		String fileName = config.getAttribute(Server.FILE_NAME, (String) null);
 		String projectName = null;
 		if (fileName != null) {
@@ -218,16 +245,17 @@ public class LaunchUtils {
 				projectName = filePath.segment(0);
 			}
 		}
-		
+
 		if (projectName == null) {
-			projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
+			projectName = config.getAttribute(
+					DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
 		}
-		
+
 		if (projectName != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			return root.getProject(projectName);
 		}
-		
+
 		return null;
 	}
 
@@ -341,7 +369,8 @@ public class LaunchUtils {
 		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
 		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
 		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
-		wc.removeAttribute(DeploymentAttributes.MONITORING.getName());
+		wc.removeAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName());
+		wc.removeAttribute(DeploymentAttributes.WARN_UPDATE.getName());
 		wc.removeAttribute(SERVER_ENABLED);
 	}
 
@@ -349,7 +378,8 @@ public class LaunchUtils {
 		return project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 	}
 
-	private static String getNewConfigurationName(String fileName, String targetHost) {
+	private static String getNewConfigurationName(String fileName,
+			String targetHost) {
 		String configurationName = "New_configuration"; //$NON-NLS-1$
 		try {
 			IPath path = Path.fromOSString(fileName);
@@ -357,7 +387,8 @@ public class LaunchUtils {
 			String lastSegment = path.lastSegment();
 			if (lastSegment != null) {
 				if (fileExtention != null) {
-					lastSegment = lastSegment.replaceFirst("." + fileExtention, ""); //$NON-NLS-1$ //$NON-NLS-2$
+					lastSegment = lastSegment.replaceFirst(
+							"." + fileExtention, ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				configurationName = lastSegment;
 			}
@@ -368,13 +399,15 @@ public class LaunchUtils {
 				.generateLaunchConfigurationName(configurationName)
 				+ "_" + targetHost; //$NON-NLS-1$
 	}
-	
+
 	private static Server createPHPServer(URL baseURL, String targetId) {
 		try {
-			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), ""); //$NON-NLS-1$
+			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(),
+					baseURL.getPort(), ""); //$NON-NLS-1$
 			String urlString = url.toString();
-			Server server = new Server("Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
-					+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			Server server = new Server(
+					"Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
+							+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			ServersManager.addServer(server);
 			ServersManager.save();
 			return server;
@@ -413,13 +446,15 @@ public class LaunchUtils {
 		return false;
 	}
 
-	private static IDeploymentHelper createDefaultHelper(IProject project, IZendTarget target) {
+	private static IDeploymentHelper createDefaultHelper(IProject project,
+			IZendTarget target) {
 		if (target != null) {
 			try {
 				IDeploymentHelper helper = new DeploymentHelper();
 				URL targetUrl = target.getDefaultServerURL();
-				URL baseUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(),
-						targetUrl.getPort(), "/" + project.getName()); //$NON-NLS-1$
+				URL baseUrl = new URL(targetUrl.getProtocol(),
+						targetUrl.getHost(), targetUrl.getPort(),
+						"/" + project.getName()); //$NON-NLS-1$
 				helper.setBaseURL(baseUrl.toString());
 				helper.setDefaultServer(true);
 				helper.setTargetId(target.getId());
@@ -437,13 +472,16 @@ public class LaunchUtils {
 	}
 
 	private static IZendTarget getTargetFromPreferences(IProject project) {
-		IEclipsePreferences pref = new ProjectScope(project).getNode(DeploymentCore.PLUGIN_ID);
+		IEclipsePreferences pref = new ProjectScope(project)
+				.getNode(DeploymentCore.PLUGIN_ID);
 		String targetId = pref.get("targetId", null); //$NON-NLS-1$
 		String targetHost = pref.get("targetHost", null); //$NON-NLS-1$
 		if (targetId != null) {
-			TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
+			TargetsManager manager = TargetsManagerService.INSTANCE
+					.getTargetManager();
 			IZendTarget target = manager.getTargetById(targetId);
-			if (target != null && target.getHost().toString().equals(targetHost)) {
+			if (target != null
+					&& target.getHost().toString().equals(targetHost)) {
 				return target;
 			}
 		}
@@ -494,10 +532,12 @@ public class LaunchUtils {
 				oldConfig.getAttribute(
 						DeploymentAttributes.APPLICATION_NAME.getName(),
 						(String) null));
-		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(),
+		wc.setAttribute(
+				DeploymentAttributes.DEFAULT_SERVER.getName(),
 				oldConfig.getAttribute(
 						DeploymentAttributes.DEFAULT_SERVER.getName(), true));
-		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(),
+		wc.setAttribute(
+				DeploymentAttributes.IGNORE_FAILURES.getName(),
 				oldConfig.getAttribute(
 						DeploymentAttributes.IGNORE_FAILURES.getName(), false));
 		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
@@ -522,9 +562,13 @@ public class LaunchUtils {
 						DeploymentAttributes.INSTALLED_LOCATION.getName(),
 						(String) null));
 		wc.setAttribute(
-				DeploymentAttributes.MONITORING.getName(),
+				DeploymentAttributes.DEVELOPMENT_MODE.getName(),
 				oldConfig.getAttribute(
-						DeploymentAttributes.MONITORING.getName(), true));
+						DeploymentAttributes.DEVELOPMENT_MODE.getName(), true));
+		wc.setAttribute(
+				DeploymentAttributes.WARN_UPDATE.getName(),
+				oldConfig.getAttribute(
+						DeploymentAttributes.WARN_UPDATE.getName(), true));
 		wc.setAttribute(SERVER_ENABLED, false);
 	}
 
@@ -538,8 +582,8 @@ public class LaunchUtils {
 			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) {
 		String host = helper.getTargetHost();
 		wc.setAttribute(IPHPDebugConstants.USE_SSH_TUNNEL, true);
-		String userName = helper.getTargetHost().substring(0,
-				host.indexOf('.'));
+		String userName = helper.getTargetHost()
+				.substring(0, host.indexOf('.'));
 		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_USER_NAME, userName);
 		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_PASSWORD, ""); //$NON-NLS-1$
 	}

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.commands;
+package org.zend.php.zendserver.monitor.internal.ui.commands;
 
 import java.util.List;
 
@@ -36,12 +36,12 @@ public abstract class AbstractMonitoringHandler extends AbstractHandler {
 		if (element instanceof List) {
 			List<?> list = (List<?>) element;
 			for (Object o : list) {
-				enableMonitoring(o);
+				executeAction(o);
 			}
 		}
 		return null;
 	}
 
-	protected abstract void enableMonitoring(Object element);
+	protected abstract void executeAction(Object element);
 
 }

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.commands;
+package org.zend.php.zendserver.monitor.internal.ui.commands;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import org.zend.sdklib.target.IZendTarget;
  * @author Wojciech Galanciak, 2012
  * 
  */
-public class TargetMonitorStateTester extends PropertyTester {
+public class MonitorStateTester extends PropertyTester {
 
 	/*
 	 * (non-Javadoc)

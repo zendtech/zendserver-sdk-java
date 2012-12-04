@@ -30,7 +30,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private int operationType;
 	private String installedLocation;
 	private boolean enabled;
-	private boolean monitoringEnabled;
+
+	private boolean developmentMode;
+
+	private boolean warnUpdate;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -46,41 +49,49 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.virtualHost = EMPTY_STRING;
 		this.operationType = IDeploymentHelper.DEPLOY;
 		this.enabled = true;
-		this.monitoringEnabled = true;
+		this.developmentMode = true;
+		this.warnUpdate = false;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static DeploymentHelper create(ILaunchConfiguration config) {
 		DeploymentHelper helper = new DeploymentHelper();
 		try {
-			String baseURL = config.getAttribute(DeploymentAttributes.BASE_URL.getName(),
-					EMPTY_STRING);
+			String baseURL = config.getAttribute(
+					DeploymentAttributes.BASE_URL.getName(), EMPTY_STRING);
 			if (!baseURL.isEmpty()) {
 				helper.setBaseURL(baseURL);
 			}
-			helper.setTargetId(config.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
-					EMPTY_STRING));
-			helper.setTargetHost(config.getAttribute(DeploymentAttributes.TARGET_HOST.getName(),
-					EMPTY_STRING));
-			helper.setAppId(config.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
-			helper.setProjectName(config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
-					EMPTY_STRING));
-			helper.setUserParams(config.getAttribute(DeploymentAttributes.PARAMETERS.getName(),
+			helper.setTargetId(config.getAttribute(
+					DeploymentAttributes.TARGET_ID.getName(), EMPTY_STRING));
+			helper.setTargetHost(config.getAttribute(
+					DeploymentAttributes.TARGET_HOST.getName(), EMPTY_STRING));
+			helper.setAppId(config.getAttribute(
+					DeploymentAttributes.APP_ID.getName(), -1));
+			helper.setProjectName(config.getAttribute(
+					DeploymentAttributes.PROJECT_NAME.getName(), EMPTY_STRING));
+			helper.setUserParams(config.getAttribute(
+					DeploymentAttributes.PARAMETERS.getName(),
 					Collections.emptyMap()));
-			helper.setAppName(config.getAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
+			helper.setAppName(config.getAttribute(
+					DeploymentAttributes.APPLICATION_NAME.getName(),
 					EMPTY_STRING));
 			helper.setIgnoreFailures(config.getAttribute(
-					DeploymentAttributes.IGNORE_FAILURES.getName(), true));
+					DeploymentAttributes.IGNORE_FAILURES.getName(), false));
 			helper.setDefaultServer(config.getAttribute(
 					DeploymentAttributes.DEFAULT_SERVER.getName(), true));
 			helper.setOperationType(config.getAttribute(
-					DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.DEPLOY));
+					DeploymentAttributes.OPERATION_TYPE.getName(),
+					IDeploymentHelper.DEPLOY));
 			helper.setInstalledLocation(config.getAttribute(
-					DeploymentAttributes.INSTALLED_LOCATION.getName(), EMPTY_STRING));
+					DeploymentAttributes.INSTALLED_LOCATION.getName(),
+					EMPTY_STRING));
 			helper.setEnabled(config.getAttribute(
 					DeploymentAttributes.ENABLED.getName(), true));
-			helper.setMonitoringEnabled(config.getAttribute(
-					DeploymentAttributes.MONITORING.getName(), true));
+			helper.setDevelopmentMode(config.getAttribute(
+					DeploymentAttributes.DEVELOPMENT_MODE.getName(), true));
+			helper.setWarnUpdate(config.getAttribute(
+					DeploymentAttributes.WARN_UPDATE.getName(), false));
 		} catch (CoreException e) {
 			return null;
 		}
@@ -138,9 +149,13 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
-	public boolean isMonitoringEnabled() {
-		return monitoringEnabled;
+
+	public boolean isDevelopmentModeEnabled() {
+		return developmentMode;
+	}
+
+	public boolean isWarnUpdate() {
+		return warnUpdate;
 	}
 
 	public void setBaseURL(String baseURL) {
@@ -194,9 +209,13 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
-	public void setMonitoringEnabled(boolean enabled) {
-		this.monitoringEnabled = enabled;
+
+	public void setDevelopmentMode(boolean enabled) {
+		this.developmentMode = enabled;
+	}
+
+	public void setWarnUpdate(boolean enabled) {
+		this.warnUpdate = enabled;
 	}
 
 	@Override
@@ -245,7 +264,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 			if (isEnabled() != h.isEnabled()) {
 				return false;
 			}
-			if (isMonitoringEnabled() != h.isMonitoringEnabled()) {
+			if (isDevelopmentModeEnabled() != h.isDevelopmentModeEnabled()) {
+				return false;
+			}
+			if (isWarnUpdate() != h.isWarnUpdate()) {
 				return false;
 			}
 		}

@@ -12,7 +12,6 @@ import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -40,13 +39,11 @@ public class RemoveTargetAction extends Action implements ISelectionChangedListe
 		
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		
-		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		for (Iterator i = ssel.iterator(); i.hasNext(); ) {
 			Object obj = i.next();
 			if (obj instanceof IZendTarget) {
 				IZendTarget target = (IZendTarget) obj;
 				TargetsManagerService.INSTANCE.removeTarget(target);
-				MonitorManager.removeApplicationMonitor(target.getId());
 				MonitorManager.removeTargetMonitor(target.getId());
 			}
 		}

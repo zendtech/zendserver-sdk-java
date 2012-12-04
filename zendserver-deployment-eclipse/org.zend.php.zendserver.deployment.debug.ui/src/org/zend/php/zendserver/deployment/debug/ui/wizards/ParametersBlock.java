@@ -137,14 +137,14 @@ public class ParametersBlock extends AbstractBlock {
 			case HOSTNAME:
 			case NUMBER:
 			case EMAIL:
-				control = createLabelWithText(name, tooltip, composite,
+				control = createLabelWithText(getName(name), tooltip, composite,
 						parameter.isRequired());
 				if (parameter.getDefaultValue() != null) {
 					((Text) control).setText(parameter.getDefaultValue());
 				}
 				break;
 			case PASSWORD:
-				control = createLabelWithText(name, tooltip, composite,
+				control = createLabelWithText(getName(name), tooltip, composite,
 						parameter.isRequired());
 				((Text) control).setEchoChar('*');
 				if (parameter.getDefaultValue() != null) {
@@ -152,7 +152,7 @@ public class ParametersBlock extends AbstractBlock {
 				}
 				break;
 			case CHOICE:
-				control = createLabelWithCombo(name, tooltip, composite);
+				control = createLabelWithCombo(getName(name), tooltip, composite, true);
 				List<String> values = parameter.getValidValues();
 				((Combo) control).setItems(values.toArray(new String[values.size()]));
 				if (parameter.getDefaultValue() != null) {
@@ -183,6 +183,10 @@ public class ParametersBlock extends AbstractBlock {
 				return validator.validate(getName(), getValue());
 			}
 			return Status.OK_STATUS;
+		}
+
+		private String getName(String name) {
+			return name + ":"; //$NON-NLS-1$
 		}
 
 	}

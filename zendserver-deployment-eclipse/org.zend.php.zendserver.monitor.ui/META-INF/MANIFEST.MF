@@ -16,7 +16,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.zend.php.zendserver.monitor.core,
  org.apache.commons.httpclient;bundle-version="3.1.0",
- org.apache.commons.lang;bundle-version="2.4.0"
+ org.apache.commons.lang;bundle-version="2.4.0",
+ org.eclipse.core.expressions,
+ org.zend.php.zendserver.deployment.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.monitor.ui

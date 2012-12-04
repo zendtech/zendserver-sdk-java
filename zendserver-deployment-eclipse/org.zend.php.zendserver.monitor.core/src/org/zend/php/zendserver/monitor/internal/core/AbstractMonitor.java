@@ -176,6 +176,14 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected int checkActions(IZendIssue issue) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		ZendServerVersion version = ZendServerVersion.byName(target
+				.getProperty(IZendTarget.SERVER_VERSION));
+		if (ZendServerVersion.v5_6_0 == version
+				|| version.getName().startsWith("6")) { //$NON-NLS-1$
+			return MonitorManager.REPEAT + MonitorManager.CODE_TRACE;
+		}
 		int result = 0;
 		try {
 			List<EventsGroupDetails> groups = issue.getGroupDetails();
@@ -187,6 +195,7 @@ public abstract class AbstractMonitor extends Job {
 				}
 			}
 		} catch (Exception e) {
+			Activator.log(e);
 			return 0;
 		}
 		return result;
