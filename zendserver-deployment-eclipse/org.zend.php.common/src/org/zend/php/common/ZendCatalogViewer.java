@@ -130,6 +130,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 	Button applyChangesButton;
 
 	Button restoreButton;
+	
+	boolean expandAll;
 
 	/**
 	 * Whether to show the header on top of the search bar of the catalog
@@ -671,6 +673,9 @@ public class ZendCatalogViewer extends FilteredViewer {
 			refreshJob = doCreateRefreshJob();
 		} else {
 			refreshJob.cancel();
+		}
+		if(filterText.getTextControl().getText().trim().length()>0){
+			setAutoExpandCategories(true);
 		}
 		refreshJob.schedule(refreshJobDelay);
 	}
