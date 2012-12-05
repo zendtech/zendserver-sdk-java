@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
@@ -54,6 +55,46 @@ public class DeploymentWizard extends Wizard {
 			Mode mode) {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
 		init(project, helper, mode);
+	}
+
+	@Override
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		getShell().setMinimumSize(550, 380);
+		getShell().setSize(getShell().getMinimumSize());
+		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
+		Rectangle shellArea = getShell().getBounds();
+		int x = monitorArea.x + (monitorArea.width - shellArea.width) / 2;
+		int y = monitorArea.y + (monitorArea.height - shellArea.height) / 3;
+		getShell().setLocation(x, y);
+	}
+
+	@Override
+	public void addPages() {
+		super.addPages();
+		this.configPage = new ConfigurationPage(helper, getContainer(),
+				getWindowTitle(), help);
+		addPage(configPage);
+		List<IParameter> parameters = model.getDescriptorModel().getParameters();
+		if (parameters != null && parameters.size() > 0) {
+			addPage(parametersPage);
+		}
+	}
+
+	@Override
+	public boolean performFinish() {
+		helper = createHelper();
+		saveSettings(helper);
+		return true;
+	}
+
+	@Override
+	public boolean performCancel() {
+		return true;
+	}
+
+	public IDeploymentHelper getHelper() {
+		return helper;
 	}
 
 	private void init(IProject project, IDeploymentHelper helper, Mode mode) {
@@ -105,49 +146,15 @@ public class DeploymentWizard extends Wizard {
 
 	private IDeploymentHelper createDefaultHelper() {
 		IDeploymentHelper helper = new DeploymentHelper();
-		helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
-		helper.setDefaultServer(true);
-		helper.setAppName(project.getName());
-		return helper;
-	}
-
-	@Override
-	public void createPageControls(Composite pageContainer) {
-		super.createPageControls(pageContainer);
-		getShell().setMinimumSize(550, 380);
-		getShell().setSize(getShell().getMinimumSize());
-		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
-		Rectangle shellArea = getShell().getBounds();
-		int x = monitorArea.x + (monitorArea.width - shellArea.width) / 2;
-		int y = monitorArea.y + (monitorArea.height - shellArea.height) / 3;
-		getShell().setLocation(x, y);
-	}
-
-	@Override
-	public void addPages() {
-		super.addPages();
-		this.configPage = new ConfigurationPage(helper, getContainer(),
-				getWindowTitle(), help);
-		addPage(configPage);
-		List<IParameter> parameters = model.getDescriptorModel().getParameters();
-		if (parameters != null && parameters.size() > 0) {
-			addPage(parametersPage);
+		IDescriptorContainer descContainer = DescriptorContainerManager.getService().openDescriptorContainer(project);
+		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
+		String name = descModel.getName();
+		if (name == null || name.isEmpty()) {
+			name = project.getName();
 		}
-	}
-
-	@Override
-	public boolean performFinish() {
-		helper = createHelper();
-		saveSettings(helper);
-		return true;
-	}
-
-	@Override
-	public boolean performCancel() {
-		return true;
-	}
-
-	public IDeploymentHelper getHelper() {
+		helper.setBaseURL("http://default/" + name); //$NON-NLS-1$
+		helper.setDefaultServer(true);
+		helper.setAppName(name);
 		return helper;
 	}
 
