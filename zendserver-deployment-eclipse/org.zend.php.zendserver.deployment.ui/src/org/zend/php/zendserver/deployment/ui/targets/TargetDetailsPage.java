@@ -108,11 +108,10 @@ public class TargetDetailsPage extends WizardPage {
 			
 		};
 		composite.addPropertyChangeListener(AbstractTargetDetailsComposite.PROP_MODIFY, modifyListener);
-		
+		setPageComplete(false);
 		if (defaultTargetSettings != null) {
 			composite.setDefaultTargetSettings(defaultTargetSettings);
 		}
-		setPageComplete(false);
 		setControl(newControl);
 	}
 
