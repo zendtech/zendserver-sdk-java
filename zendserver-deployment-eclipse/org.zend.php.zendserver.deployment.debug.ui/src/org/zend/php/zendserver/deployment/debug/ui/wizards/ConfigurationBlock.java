@@ -120,8 +120,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		} else {
 			targetsCombo.select(targetId);
 		}
-		if (helper.getAppId() == -1) {
-			IDialogSettings settings = getDialogSettings();
+		IDialogSettings settings = getDialogSettings();
+		if (helper.getAppId() == -1 && settings != null) {
 			String developerModeVal = settings
 					.get(DeploymentAttributes.DEVELOPMENT_MODE.getName());
 			if (developerModeVal != null) {
@@ -215,8 +215,6 @@ public class ConfigurationBlock extends AbstractBlock {
 			helper.setTargetId(getTarget().getId());
 			helper.setTargetHost(getTarget().getHost().getHost());
 		}
-		// TODO set application id if any is selected
-		// in such case set operation to update
 		ApplicationInfo selectedInfo = getAppicationNameSelection();
 		if (selectedInfo != null) {
 			helper.setAppId(selectedInfo.getId());
@@ -224,8 +222,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		helper.setAppName(applicationNameCombo.getText());
 		helper.setIgnoreFailures(ignoreFailures.getSelection());
 		helper.setDefaultServer(isDefaultServer());
-		// TODO use something instead, e.g. interpret base on other settings
-		// helper.setOperationType(getOperationType());
 		if (selectedInfo != null && !warnUpdate.getSelection()) {
 			helper.setOperationType(IDeploymentHelper.UPDATE);
 		} else {
@@ -234,7 +230,11 @@ public class ConfigurationBlock extends AbstractBlock {
 		if (getInstalledLocation() != null) {
 			helper.setInstalledLocation(getInstalledLocation());
 		}
-		helper.setWarnUpdate(warnUpdate.getSelection());
+		if (warnUpdate.isEnabled()) {
+			helper.setWarnUpdate(warnUpdate.getSelection());
+		} else {
+			helper.setWarnUpdate(false);
+		}
 		helper.setDevelopmentMode(developmentMode.getSelection());
 		return helper;
 	}
@@ -395,11 +395,9 @@ public class ConfigurationBlock extends AbstractBlock {
 								.getSelectionIndex()) {
 					applicationNameCombo.select(matchIndex);
 					fillFieldsByAppInfo(applicationNameCombo);
-					warnUpdate.setSelection(false);
 					warnUpdate.setEnabled(false);
 					setBaseURLEnabled(false);
 				} else {
-					warnUpdate.setSelection(true);
 					warnUpdate.setEnabled(true);
 					setBaseURLEnabled(true);
 				}

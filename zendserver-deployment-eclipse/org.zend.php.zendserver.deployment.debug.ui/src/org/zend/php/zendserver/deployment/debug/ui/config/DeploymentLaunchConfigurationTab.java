@@ -27,6 +27,7 @@ import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
@@ -66,6 +67,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			public void widgetSelected(SelectionEvent e) {
 				configBlock.setEnabled(enableDeployment.getSelection());
 				parametersButton.setEnabled(enableDeployment.getSelection());
+				if (enableDeployment.getSelection()) {
+					setDefaultValues();
+				}
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -94,7 +98,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
-
+	
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy configuration) {
 		configBlock.setEnabled(false);
@@ -105,22 +109,8 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			project = getProject(configuration);
 			if (project == null) {
 				configBlock.clear();
-				configBlock.initializeFields(helper);
 				project = LaunchUtils.getProjectFromFilename(configuration);
-				if (project != null && hasDeplymentSupport(project)) {
-					enableDeployment.setSelection(helper.isEnabled());
-					helper.setProjectName(project.getName());
-					helper.setDefaultServer(true);
-					helper.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
-					helper.setUserParams(getUserParameters());
-					helper.setAppName(project.getName());
-					configBlock.initializeFields(helper);
-					if (helper.isEnabled()) {
-						configBlock.setEnabled(true);
-						setParametersButtonEnabled();
-					}
-				}
-			} else if (hasDeplymentSupport(project)) {
+			} else if (hasDeploymentSupport(project)) {
 				enableDeployment.setSelection(true);
 				configBlock.clear();
 				configBlock.initializeFields(helper);
@@ -196,6 +186,27 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
+	private void setDefaultValues() {
+		IDeploymentHelper helper = new DeploymentHelper();
+		IDescriptorContainer descContainer = DescriptorContainerManager.getService().openDescriptorContainer(project);
+		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
+		String name = descModel.getName();
+		if (name == null || name.isEmpty()) {
+			name = project.getName();
+		}
+		enableDeployment.setSelection(helper.isEnabled());
+		helper.setProjectName(project.getName());
+		helper.setDefaultServer(true);
+		helper.setBaseURL("http://default/" + name); //$NON-NLS-1$
+		helper.setUserParams(getUserParameters());
+		helper.setAppName(name);
+		configBlock.initializeFields(helper);
+		if (helper.isEnabled()) {
+			configBlock.setEnabled(true);
+			setParametersButtonEnabled();
+		}
+	}
+
 	private void setMessages(IStatus status) {
 		if (status.getSeverity() == IStatus.OK) {
 			setMessage(status.getMessage());
@@ -243,7 +254,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 	}
 
-	private boolean hasDeplymentSupport(IProject project) {
+	private boolean hasDeploymentSupport(IProject project) {
 		IResource descriptor = project
 				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		return descriptor != null;
