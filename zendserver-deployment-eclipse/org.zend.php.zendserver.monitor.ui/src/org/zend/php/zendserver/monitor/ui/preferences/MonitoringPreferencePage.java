@@ -45,7 +45,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
-import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo.Type;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.internal.ui.Messages;
@@ -136,7 +135,6 @@ public class MonitoringPreferencePage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		// TODO implement
 		IZendTarget[] targets = TargetsManagerService.INSTANCE
 				.getTargetManager().getTargets();
 		for (IZendTarget target : targets) {
@@ -310,7 +308,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 	}
 
 	private void createTargetSelection(Composite container) {
-		targetsCombo = new TargetsCombo(Type.ZEND_SERVER_6, false);
+		targetsCombo = new TargetsCombo(false);
 		targetsCombo.setLabel("Targets:");
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
