@@ -12,7 +12,6 @@ package org.zend.php.zendserver.monitor.ui.preferences;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,16 +63,9 @@ public class MonitoringPreferencePage extends PreferencePage implements
 
 		public String isValid(String newText) {
 			try {
-				URL url = new URL(newText);
-				IZendTarget target = targetsCombo.getSelected();
-				int port = target.getHost().getPort();
-				if (port != -1 && port == url.getPort()) {
-					// TODO add validation message
-					return MessageFormat.format("", null);
-				}
+				new URL(newText);
 			} catch (MalformedURLException e) {
-				// TODO add validation message
-				return "";
+				return Messages.MonitoringPreferencePage_InvalidUrlMessage;
 			}
 			return null;
 		}
@@ -215,7 +207,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 		Label filtersLabel = new Label(filtersSection, SWT.NONE);
 		filtersLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
 				2, 1));
-		filtersLabel.setText("Filters:");
+		filtersLabel.setText(Messages.MonitoringPreferencePage_FiltersLabel);
 		viewer = new TableViewer(filtersSection, SWT.SINGLE | SWT.BORDER);
 		viewer.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -250,13 +242,15 @@ public class MonitoringPreferencePage extends PreferencePage implements
 		layout.marginHeight = 0;
 		buttonsSection.setLayout(layout);
 		addButton = new Button(buttonsSection, SWT.PUSH);
-		addButton.setText("Add");
+		addButton.setText(Messages.MonitoringPreferencePage_AddLabel);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		addButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
-						"Add desc", EMPTY_STRING, new URLInputValidator());
+				InputDialog dlg = new InputDialog(getShell(),
+						Messages.MonitoringPreferencePage_AddFilterTitle,
+						Messages.MonitoringPreferencePage_AddTilterDesc,
+						EMPTY_STRING, new URLInputValidator());
 				if (dlg.open() == Window.OK) {
 					String id = targetsCombo.getSelected().getId();
 					List<String> values = input.get(id);
@@ -266,7 +260,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 			}
 		});
 		modifyButton = new Button(buttonsSection, SWT.PUSH);
-		modifyButton.setText("Modify");
+		modifyButton.setText(Messages.MonitoringPreferencePage_ModifyLabel);
 		modifyButton
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		modifyButton.addSelectionListener(new SelectionAdapter() {
@@ -276,9 +270,11 @@ public class MonitoringPreferencePage extends PreferencePage implements
 						.getSelection();
 				Object[] selected = sel.toArray();
 				if (selected.length > 0) {
-					InputDialog dlg = new InputDialog(getShell(), EMPTY_STRING,
-							"Modify desc", (String) selected[0],
-							new URLInputValidator());
+					InputDialog dlg = new InputDialog(
+							getShell(),
+							Messages.MonitoringPreferencePage_ModifyFilterTitle,
+							Messages.MonitoringPreferencePage_ModifyFilterDesc,
+							(String) selected[0], new URLInputValidator());
 					if (dlg.open() == Window.OK) {
 						String id = targetsCombo.getSelected().getId();
 						List<String> values = input.get(id);
@@ -291,7 +287,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 			}
 		});
 		removeButton = new Button(buttonsSection, SWT.PUSH);
-		removeButton.setText("Remove");
+		removeButton.setText(Messages.MonitoringPreferencePage_RemoveLabel);
 		removeButton
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		removeButton.addSelectionListener(new SelectionAdapter() {
@@ -309,7 +305,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 
 	private void createTargetSelection(Composite container) {
 		targetsCombo = new TargetsCombo(false);
-		targetsCombo.setLabel("Targets:");
+		targetsCombo.setLabel(Messages.MonitoringPreferencePage_TargetsLabel);
 		targetsCombo.createControl(container);
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 

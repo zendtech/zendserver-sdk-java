@@ -37,6 +37,16 @@ public class Messages extends NLS {
 	public static String EventDetailsDialog_Title;
 	public static String EventDetailsDialog_TraceTooltip;
 	public static String EventDetailsDialog_TypeLabel;
+	public static String MonitoringPreferencePage_AddFilterTitle;
+	public static String MonitoringPreferencePage_AddLabel;
+	public static String MonitoringPreferencePage_AddTilterDesc;
+	public static String MonitoringPreferencePage_FiltersLabel;
+	public static String MonitoringPreferencePage_InvalidUrlMessage;
+	public static String MonitoringPreferencePage_ModifyFilterDesc;
+	public static String MonitoringPreferencePage_ModifyFilterTitle;
+	public static String MonitoringPreferencePage_ModifyLabel;
+	public static String MonitoringPreferencePage_RemoveLabel;
+	public static String MonitoringPreferencePage_TargetsLabel;
 	public static String OpenInEditorJob_0;
 	public static String OpenInEditorJob_UnavailableMessage;
 	public static String OpenInEditorJob_UnavailableTitle;
