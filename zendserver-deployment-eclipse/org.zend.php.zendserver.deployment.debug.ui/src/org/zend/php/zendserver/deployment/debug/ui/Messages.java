@@ -23,7 +23,6 @@ public class Messages extends NLS {
 
 	public static String deploymentTab_Title;
 
-	public static String configurationPage_Description;
 	public static String configurationPage_Name;
 	public static String configurationPage_Title;
 	public static String configurationPage_AddTarget;
@@ -84,6 +83,12 @@ public class Messages extends NLS {
 	public static String DeploymentLaunchConfigurationTab_EnableDeployment;
 
 	public static String DeploymentParameters_Title;
+
+	public static String DeploymentWizard_DebugDesc;
+
+	public static String DeploymentWizard_DeployDesc;
+
+	public static String DeploymentWizard_LaunchDesc;
 
 	public static String EmailValidator_InvalidEmail;
 

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
@@ -49,9 +48,8 @@ import org.zend.webapi.core.service.IRequestListener;
 public class ConfigurationBlock extends AbstractBlock {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
+
 	private TargetsCombo targetsCombo = new TargetsCombo(true);
-	private Link newTargetLink;
 	private Text baseUrl;
 	private Button ignoreFailures;
 	private Button developmentMode;
@@ -63,14 +61,13 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
-	public ConfigurationBlock(IStatusChangeListener listener) {
-		this(listener, null);
-	}
+	private String description;
 
 	public ConfigurationBlock(IStatusChangeListener listener,
-			IRunnableContext context) {
+			IRunnableContext context, String description) {
 		super(listener);
 		this.context = context;
+		this.description = description;
 		// this.autoDeploy = LaunchUtils.isAutoDeployAvailable();
 	}
 
@@ -189,8 +186,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
 					"URL is empty."); //$NON-NLS-1$
 		}
-		return new Status(IStatus.OK, Activator.PLUGIN_ID,
-				Messages.configurationPage_Description);
+		return new Status(IStatus.OK, Activator.PLUGIN_ID, description);
 	}
 
 	/*
@@ -250,12 +246,12 @@ public class ConfigurationBlock extends AbstractBlock {
 	public void setIgnoreFailuresEnabled(boolean value) {
 		ignoreFailures.setEnabled(value);
 	}
-	
+
 	public void setApplicationNameEnabled(boolean value) {
 		applicationNameCombo.setEnabled(value);
 		refreshButton.setEnabled(value);
 	}
-	
+
 	public void setWarnUpdateEnabled(boolean value) {
 		warnUpdate.setEnabled(value);
 	}
@@ -263,7 +259,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	public void setDevelopmentModeEnabled(boolean value) {
 		developmentMode.setEnabled(value);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -343,7 +339,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		});
 		targetsCombo.setAddTargetListener(new SelectionAdapter() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				AddTargetAction addTarget = new AddTargetAction();
 				addTarget.run();

@@ -42,6 +42,7 @@ public class DeploymentWizard extends Wizard {
 	private IProject project;
 	private IDeploymentHelper helper;
 	private String help;
+	private String description;
 
 	public DeploymentWizard(ILaunchConfiguration config, Mode mode) {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
@@ -73,7 +74,7 @@ public class DeploymentWizard extends Wizard {
 	public void addPages() {
 		super.addPages();
 		this.configPage = new ConfigurationPage(helper, getContainer(),
-				getWindowTitle(), help);
+				getWindowTitle(), description, help);
 		addPage(configPage);
 		List<IParameter> parameters = model.getDescriptorModel().getParameters();
 		if (parameters != null && parameters.size() > 0) {
@@ -108,16 +109,19 @@ public class DeploymentWizard extends Wizard {
 		switch (mode) {
 		case RUN:
 			title = Messages.deploymentWizard_LaunchTitle;
+			description = Messages.DeploymentWizard_LaunchDesc;
 			image = Activator.IMAGE_WIZBAN_DEP;
 			help = HelpContextIds.LAUNCHING_AN_APPLICATION;
 			break;
 		case DEBUG:
 			title = Messages.deploymentWizard_DebugTitle;
+			description = Messages.DeploymentWizard_DebugDesc;
 			image = Activator.IMAGE_WIZBAN_DEBUG;
 			help = HelpContextIds.DEBUGGING_AN_APPLICAITON;
 			break;
 		case DEPLOY:
 			title = Messages.deploymentWizard_DeployTitle;
+			description = Messages.DeploymentWizard_DeployDesc;
 			image = Activator.IMAGE_WIZBAN_DEPLOY;
 			help = HelpContextIds.DEPLOYING_AN_APPLICATION;
 			break;

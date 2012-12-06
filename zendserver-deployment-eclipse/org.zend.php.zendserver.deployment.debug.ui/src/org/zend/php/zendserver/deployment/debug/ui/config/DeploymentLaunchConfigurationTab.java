@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -73,7 +74,15 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				updateLaunchConfigurationDialog();
 			}
 		});
-		configBlock = new ConfigurationBlock(this, getLaunchConfigurationDialog());
+		String description = null;
+		if (ILaunchManager.RUN_MODE.equals(getLaunchConfigurationDialog()
+				.getMode())) {
+			description = Messages.DeploymentWizard_LaunchDesc;
+		} else {
+			description = Messages.DeploymentWizard_DebugDesc;
+		}
+		configBlock = new ConfigurationBlock(this,
+				getLaunchConfigurationDialog(), description);
 		configBlock.createContents(container, false);
 		configBlock.setEnabled(false);
 		parametersButton = new Button(container, SWT.PUSH);

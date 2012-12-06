@@ -15,20 +15,20 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 public class ConfigurationPage extends DeploymentWizardPage {
 
 	protected ConfigurationPage(IDeploymentHelper helper,
-			IRunnableContext context, String title, String help) {
+			IRunnableContext context, String title, String description, String help) {
 		super(Messages.configurationPage_Name, helper, help);
-		setDescription(Messages.configurationPage_Description);
+		setDescription(description);
 		setTitle(title);
-		this.block = new ConfigurationBlock(this, context);
+		this.block = new ConfigurationBlock(this, context, description);
 	}
 
-	protected ConfigurationPage(IDeploymentHelper helper,
+	protected ConfigurationPage(IDeploymentHelper helper, String description,
 			IRunnableContext context) {
-		this(helper, context, Messages.configurationPage_Title, null);
+		this(helper, context, Messages.configurationPage_Title, description, null);
 	}
 
 	protected ConfigurationPage() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	private ConfigurationBlock block;
