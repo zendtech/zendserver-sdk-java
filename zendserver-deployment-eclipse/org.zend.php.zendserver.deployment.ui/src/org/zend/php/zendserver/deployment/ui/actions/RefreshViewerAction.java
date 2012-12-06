@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.ui.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.Viewer;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
@@ -19,6 +20,8 @@ public class RefreshViewerAction extends Action {
 	
 	@Override
 	public void run() {
+		// reload targets
+		TargetsManagerService.INSTANCE.getTargetManager().reload();
 		viewer.refresh();
 	}
 }
