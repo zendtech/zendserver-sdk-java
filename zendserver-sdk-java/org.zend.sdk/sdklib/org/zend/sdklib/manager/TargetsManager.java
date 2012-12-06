@@ -77,6 +77,22 @@ public class TargetsManager extends AbstractChangeNotifier {
 			defaultId = this.all.get(0).getId();
 		}
 	}
+	
+	public void reload() {
+		this.all.clear();
+		final IZendTarget[] loadAll = loader.loadAll();
+		for (IZendTarget zTarget : loadAll) {
+			if (!validTarget(zTarget)) {
+				log.error(new IllegalArgumentException(
+						"Conflict found when adding " + zTarget.getId()));
+			} else {
+				this.all.add(zTarget);
+			}
+		}
+		if (this.all.size() > 0) {
+			defaultId = this.all.get(0).getId();
+		}
+	}
 
 	/**
 	 * @param target
