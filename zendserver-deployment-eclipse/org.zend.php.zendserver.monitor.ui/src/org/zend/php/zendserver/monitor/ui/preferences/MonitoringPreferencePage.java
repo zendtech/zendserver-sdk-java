@@ -188,6 +188,7 @@ public class MonitoringPreferencePage extends PreferencePage implements
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		composite.setLayout(new GridLayout(2, false));
 		createTargetSelection(composite);
+		new Label(composite, SWT.NONE);
 		createFiltersSection(composite);
 		createSeveritySection(composite);
 		createDelaySection(composite);
