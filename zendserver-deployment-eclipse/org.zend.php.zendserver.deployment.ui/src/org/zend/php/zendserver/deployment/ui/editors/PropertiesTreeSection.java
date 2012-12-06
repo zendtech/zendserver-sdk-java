@@ -87,7 +87,7 @@ public abstract class PropertiesTreeSection implements IResourceChangeListener,
 			List<IResource> filteredMembers = new ArrayList<IResource>();
 			IResource[] members = ((IContainer) parent).members();
 			for (IResource res : members) {
-				if (!excluded.contains(res.getName())) {
+				if (!excluded.contains(res.getName()) && !res.isLinked()) {
 					filteredMembers.add(res);
 				}
 			}
