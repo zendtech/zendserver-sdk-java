@@ -142,12 +142,13 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 							new String[] { privateKey }));
 				}
 				Display.getDefault().syncExec(prompt);
-				String result = prompt.getPassphrase();
-				if (result == null)
+				passphrase = prompt.getPassphrase();
+				if (passphrase == null) {
 					break;
+				}
 				if (_kpair.decrypt(passphrase)) {
-					passphrases.put(privateKey, result);
-					return result;
+					passphrases.put(privateKey, passphrase);
+					return passphrase;
 				}
 				Display.getDefault().syncExec(
 						new ErrorMessage(MessageFormat.format(
