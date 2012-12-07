@@ -14,7 +14,7 @@
             category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
             class="org.zend.php.zendserver.monitor.ui.preferences.MonitoringPreferencePage"
             id="org.zend.php.zendserver.monitor.ui.targetsMonitoring"
-            name="Targets Monitoring">
+            name="Target Monitoring">
       </page>
    </extension>
 <extension
