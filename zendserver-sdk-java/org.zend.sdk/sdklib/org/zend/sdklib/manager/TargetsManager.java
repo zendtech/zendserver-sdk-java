@@ -64,34 +64,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 	public TargetsManager(ITargetLoader loader) {
 		this.loader = loader;
-		final IZendTarget[] loadAll = loader.loadAll();
-		for (IZendTarget zTarget : loadAll) {
-			if (!validTarget(zTarget)) {
-				log.error(new IllegalArgumentException(
-						"Conflict found when adding " + zTarget.getId()));
-			} else {
-				this.all.add(zTarget);
-			}
-		}
-		if (this.all.size() > 0) {
-			defaultId = this.all.get(0).getId();
-		}
+		load();
 	}
 	
 	public void reload() {
 		this.all.clear();
-		final IZendTarget[] loadAll = loader.loadAll();
-		for (IZendTarget zTarget : loadAll) {
-			if (!validTarget(zTarget)) {
-				log.error(new IllegalArgumentException(
-						"Conflict found when adding " + zTarget.getId()));
-			} else {
-				this.all.add(zTarget);
-			}
-		}
-		if (this.all.size() > 0) {
-			defaultId = this.all.get(0).getId();
-		}
+		load();
 	}
 
 	/**
@@ -493,9 +471,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 	
-	public IZendTarget updateTarget(IZendTarget target) {
+	public IZendTarget updateTarget(IZendTarget target, boolean suppressConnect) {
 		try {
-			if (!target.connect()) {
+			if (!suppressConnect && !target.connect()) {
 				return null;
 			}
 			IZendTarget updated = loader.update(target);
@@ -509,6 +487,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 			log.error("\tPossible error: " + e.getMessage());
 		}
 		return null;
+	}
+	
+	public IZendTarget updateTarget(IZendTarget target) {
+		return updateTarget(target, false);
 	}
 
 	/**
@@ -610,6 +592,21 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public static boolean isOpenShift(String targetHost) {
 		return targetHost != null
 				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
+	}
+
+	protected void load() {
+		final IZendTarget[] loadAll = loader.loadAll();
+		for (IZendTarget zTarget : loadAll) {
+			if (!validTarget(zTarget)) {
+				log.error(new IllegalArgumentException(
+						"Conflict found when adding " + zTarget.getId()));
+			} else {
+				this.all.add(zTarget);
+			}
+		}
+		if (this.all.size() > 0) {
+			defaultId = this.all.get(0).getId();
+		}
 	}
 
 	private boolean isIdAvailable(String id) {
