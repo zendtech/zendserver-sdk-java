@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 
 public class DetectNoResponse {
@@ -18,6 +19,7 @@ public class DetectNoResponse {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				displayThreadResponse = System.currentTimeMillis();
+				try {
 				while ((!Display.getDefault().isDisposed()) && isRunning) {
 					pingDisplayThread();
 					long now = System.currentTimeMillis();
@@ -34,6 +36,9 @@ public class DetectNoResponse {
 						message += captureThreadDump();
 						Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message));
 					}
+				}
+				} catch (SWTException ex) {
+					// ignore SWTExceptions here, they might be happening in border cases such as terminating the app
 				}
 			}
 		});
