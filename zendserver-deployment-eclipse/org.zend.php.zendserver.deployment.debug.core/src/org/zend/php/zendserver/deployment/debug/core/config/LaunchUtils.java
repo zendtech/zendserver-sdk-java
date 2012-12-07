@@ -34,6 +34,7 @@ import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -447,11 +448,18 @@ public class LaunchUtils {
 			IZendTarget target) {
 		if (target != null) {
 			try {
+				IDescriptorContainer descContainer = DescriptorContainerManager
+						.getService().openDescriptorContainer(project);
+				IDeploymentDescriptor descModel = descContainer
+						.getDescriptorModel();
+				String name = descModel.getName();
+				if (name == null || name.isEmpty()) {
+					name = project.getName();
+				}
 				IDeploymentHelper helper = new DeploymentHelper();
 				URL targetUrl = target.getDefaultServerURL();
 				URL baseUrl = new URL(targetUrl.getProtocol(),
-						targetUrl.getHost(), targetUrl.getPort(),
-						"/" + project.getName()); //$NON-NLS-1$
+						targetUrl.getHost(), targetUrl.getPort(), "/" + name); //$NON-NLS-1$
 				helper.setBaseURL(baseUrl.toString());
 				helper.setDefaultServer(true);
 				helper.setTargetId(target.getId());
@@ -459,7 +467,7 @@ public class LaunchUtils {
 				helper.setIgnoreFailures(false);
 				helper.setOperationType(IDeploymentHelper.DEPLOY);
 				helper.setProjectName(project.getName());
-				helper.setAppName(project.getName());
+				helper.setAppName(name);
 				return helper;
 			} catch (MalformedURLException e) {
 				return null;
