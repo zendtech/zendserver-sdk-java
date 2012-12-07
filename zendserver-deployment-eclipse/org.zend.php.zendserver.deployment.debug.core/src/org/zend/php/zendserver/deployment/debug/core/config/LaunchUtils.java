@@ -191,9 +191,6 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.WARN_UPDATE.getName(),
 				helper.isWarnUpdate());
 		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
-		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
-			updatePhpcloudLaunchConfiguration(helper, wc);
-		}
 	}
 
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
@@ -570,22 +567,6 @@ public class LaunchUtils {
 				oldConfig.getAttribute(
 						DeploymentAttributes.WARN_UPDATE.getName(), true));
 		wc.setAttribute(SERVER_ENABLED, false);
-	}
-
-	/**
-	 * Set phpcloud specific attributes in provided launch configuration.
-	 * 
-	 * @param helper
-	 * @param wc
-	 */
-	private static void updatePhpcloudLaunchConfiguration(
-			IDeploymentHelper helper, ILaunchConfigurationWorkingCopy wc) {
-		String host = helper.getTargetHost();
-		wc.setAttribute(IPHPDebugConstants.USE_SSH_TUNNEL, true);
-		String userName = helper.getTargetHost()
-				.substring(0, host.indexOf('.'));
-		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_USER_NAME, userName);
-		wc.setAttribute(IPHPDebugConstants.SSH_TUNNEL_PASSWORD, ""); //$NON-NLS-1$
 	}
 
 }
