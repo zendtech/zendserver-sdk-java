@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.core;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 public class DebugModeManager {
-	
+
 	public static final int[] prohibitedPorts = new int[] { 10081, 10082 };
 
 	private static final String DEBUG_STOP = "debug_stop"; //$NON-NLS-1$
@@ -118,7 +116,7 @@ public class DebugModeManager {
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 				Messages.DebugModeManager_CannotStopError);
 	}
-	
+
 	public IStatus restartDebugMode(IZendTarget target) {
 		IStatus stopStatus = stopDebugMode(target);
 		if (stopStatus.getSeverity() != IStatus.ERROR) {
@@ -145,7 +143,7 @@ public class DebugModeManager {
 			}
 		}
 	}
-	
+
 	private String getDebugHosts(IZendTarget target) {
 		if (TargetsManager.isOpenShift(target)
 				|| TargetsManager.isPhpcloud(target)) {
@@ -169,38 +167,15 @@ public class DebugModeManager {
 	private String[] getFilters(IZendTarget target) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(DEBUG_MODE_NODE);
-		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
-				.getNode(DEBUG_MODE_NODE);
-		String defaultValue = "http://" + target.getHost().getHost() + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-		String val = prefs.get(target.getId(),
-				defaultPrefs.get(target.getId(), defaultValue));
+		String val = prefs.get(target.getId(), null);
 		List<String> filters = null;
 		if (val != null && val.length() > 0) {
 			filters = new ArrayList<String>(Arrays.asList(val
 					.split(FILTER_SEPARATOR)));
 		} else {
-			filters = new ArrayList<String>(Arrays.asList(new String[] { target
-					.getDefaultServerURL().toString() }));
+			filters = new ArrayList<String>();
 		}
-		List<String> result = new ArrayList<String>();
-		for (String filter : filters) {
-			try {
-				URL url = new URL(filter);
-				if (url.getPort() != -1) {
-					for (int i = 0; i < prohibitedPorts.length; i++) {
-						if (url.getPort() == prohibitedPorts[i]) {
-							url = new URL(url.getProtocol(), url.getHost(),
-									url.getFile());
-							break;
-						}
-					}
-				}
-				result.add(url.toString());
-			} catch (MalformedURLException e) {
-				// skip this filter as it is not a valid URL
-			}
-		}
-		return result.toArray(new String[0]);
+		return filters.toArray(new String[0]);
 	}
 
 }

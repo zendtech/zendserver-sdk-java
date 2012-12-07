@@ -140,12 +140,17 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			String oldValue = prefs
 					.get(id, defaultPrefs.get(id, (String) null));
 			String newValue = getValue(input.get(id));
-			if (oldValue == null || !oldValue.equals(newValue)) {
+			if (newValue == null && oldValue != null) {
+				prefs.remove(id);
+				dirty = true;
+			}
+			if (newValue != null
+					&& (oldValue == null || !oldValue.equals(newValue))) {
 				prefs.put(id, newValue);
 				dirty = true;
-				if (askForRestart(target)) {
-					toRestart.add(target);
-				}
+			}
+			if (dirty && askForRestart(target)) {
+				toRestart.add(target);
 			}
 		}
 		if (dirty) {
@@ -392,6 +397,9 @@ public class DebugModePreferencesPage extends PreferencePage implements
 
 	private String getValue(List<String> list) {
 		StringBuilder builder = new StringBuilder();
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
 		for (String val : list) {
 			builder.append(val).append(DebugModeManager.FILTER_SEPARATOR);
 		}

@@ -2,11 +2,5 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="org.zend.php.zendserver.deployment.autoDeploy" name="Auto Deploy" schema="schema/org.zend.php.zendserver.deployment.autoDeploy.exsd"/>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.zend.php.zendserver.deployment.debug.core.preferences.DebugModePreferenceInitializer">
-      </initializer>
-   </extension>
 
 </plugin>
