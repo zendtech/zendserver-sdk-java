@@ -42,6 +42,19 @@ public class EclipseTargetsManager extends TargetsManager {
 		this.listeners = getManagerListeners();
 		// TODO on startup check if there are targets added from command-line
 	}
+	
+	@Override
+	protected void load() {
+		super.load();
+		IZendTarget[] targets = getTargets();
+		for (IZendTarget target : targets) {
+			if (isPhpcloud(target)) {
+				if (EclipseSSH2Settings.registerDevCloudTarget(target, false)) {
+					updateTarget(target, true);
+				}
+			}
+		}
+	}
 
 	@Override
 	public synchronized IZendTarget add(IZendTarget target,
@@ -60,8 +73,9 @@ public class EclipseTargetsManager extends TargetsManager {
 
 		IZendTarget result = super.add(target, suppressConnect);
 
-		if (result != null) {
-			EclipseSSH2Settings.registerDevCloudTarget(result, false);
+		if (result != null
+				&& EclipseSSH2Settings.registerDevCloudTarget(result, false)) {
+			updateTarget(result, true);
 		}
 
 		ZendDevCloud cloud = new ZendDevCloud();

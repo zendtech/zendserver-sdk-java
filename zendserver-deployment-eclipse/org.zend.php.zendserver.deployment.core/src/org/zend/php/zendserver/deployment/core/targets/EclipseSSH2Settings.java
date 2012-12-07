@@ -30,11 +30,11 @@ public class EclipseSSH2Settings {
 	private static final String PEM = ".pem";
 	private static final String KEY_NAME_SEPARATOR = ","; //$NON-NLS-1$
 
-	public static void registerDevCloudTarget(IZendTarget target, boolean overwrite) {
+	public static boolean registerDevCloudTarget(IZendTarget target, boolean overwrite) {
 		String keyPath = target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		
 		if (keyPath == null) {
-			return;
+			return false;
 		}
 		
 		try {
@@ -42,10 +42,12 @@ public class EclipseSSH2Settings {
 			if (!keyPath.equals(newPath)) {
 				ZendTarget zsTarget = (ZendTarget) target;
 				zsTarget.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, newPath);
+				return true;
 			}
 		} catch (IOException e) {
 			// TODO handle error adding key
 		}
+		return false;
 	}
 	
 	public static File getPrivateKey(String type) {
