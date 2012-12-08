@@ -355,19 +355,18 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void createApplicationSelection(Composite container) {
+		Label label = new Label(container, SWT.NONE);
+		label.setText(Messages.ConfigurationBlock_ApplicationNameLabel);
+		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		label.setLayoutData(data);
 		Composite appsComposite = new Composite(container, SWT.NULL);
 		appsComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				false, 2, 1));
-		GridLayout layout = new GridLayout(3, false);
+				false));
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.horizontalSpacing = 0;
 		appsComposite.setLayout(layout);
-		Label label = new Label(appsComposite, SWT.NONE);
-		label.setText(Messages.ConfigurationBlock_ApplicationNameLabel);
-		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		data.widthHint = 110;
-		label.setLayoutData(data);
 		applicationNameCombo = new Combo(appsComposite, SWT.SIMPLE
 				| SWT.DROP_DOWN);
 		applicationNameCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
@@ -402,7 +401,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 		refreshButton = new Button(appsComposite, SWT.PUSH);
 		refreshButton.setText(Messages.ConfigurationBlock_RefreshLabel);
-		refreshButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+		refreshButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		refreshButton.addSelectionListener(new SelectionAdapter() {
 

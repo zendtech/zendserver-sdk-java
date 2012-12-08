@@ -43,7 +43,6 @@ public abstract class AbstractBlock {
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
 		container.setLayout(layout);
 		return container;
 	}
@@ -72,7 +71,6 @@ public abstract class AbstractBlock {
 		Label label = new Label(container, SWT.NULL);
 		label.setText(labelText);
 		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		gd.widthHint = 120;
 		label.setLayoutData(gd);
 		Combo combo = null;
 		if (readOnly) {
@@ -96,7 +94,6 @@ public abstract class AbstractBlock {
 		Label label = new Label(container, SWT.NONE);
 		label.setText(labelText);
 		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		gd.widthHint = 110;
 		label.setLayoutData(gd);
 		if (required) {
 			Label asteriks = new Label(container, SWT.NONE);
