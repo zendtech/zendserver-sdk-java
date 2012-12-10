@@ -52,9 +52,9 @@ public class NotificationProvider implements INotificationProvider {
 	 * (java.lang.String, int,
 	 * org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void showProgress(String title, int height,
+	public void showProgress(String title, String message,
 			IRunnableWithProgress runnable) {
-		NotificationManager.registerProgress(title, height, runnable, false);
+		NotificationManager.registerProgress(title, message, runnable, false);
 	}
 
 	/*

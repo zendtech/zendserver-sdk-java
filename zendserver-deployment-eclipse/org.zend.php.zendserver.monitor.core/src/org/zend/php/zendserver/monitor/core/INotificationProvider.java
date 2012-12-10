@@ -43,12 +43,12 @@ public interface INotificationProvider {
 	 * 
 	 * @param title
 	 *            notification title
-	 * @param height
-	 *            notification height
+	 * @param message
+	 *            initial notification message
 	 * @param runnable
 	 *            process which should be run
 	 */
-	void showProgress(String title, int height, IRunnableWithProgress runnable);
+	void showProgress(String title, String message, IRunnableWithProgress runnable);
 
 	/**
 	 * Displays error message when something goes wrong during monitoring

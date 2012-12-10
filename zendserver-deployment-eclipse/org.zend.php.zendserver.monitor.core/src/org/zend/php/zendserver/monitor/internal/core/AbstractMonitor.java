@@ -76,8 +76,10 @@ public abstract class AbstractMonitor extends Job {
 	 */
 	public boolean start() {
 		if (shouldStart()) {
-			getProvider().showProgress(getName(), 90,
-					new IRunnableWithProgress() {
+			getProvider().showProgress(
+					getName(),
+					MessageFormat.format(Messages.ZendServerMonitor_TaskTitle,
+							targetId), new IRunnableWithProgress() {
 
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
@@ -258,13 +260,17 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected void disableCodeTacing() {
-		getProvider().showProgress(getName(), 90, new IRunnableWithProgress() {
+		getProvider().showProgress(
+				getName(),
+				MessageFormat.format(Messages.AbstractMonitor_DisablingJobName,
+						targetId), new IRunnableWithProgress() {
 
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				monitor.beginTask(MessageFormat.format(
-						Messages.AbstractMonitor_DisablingJobName, targetId),
-						IProgressMonitor.UNKNOWN);
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						monitor.beginTask(MessageFormat.format(
+								Messages.AbstractMonitor_DisablingJobName,
+								targetId), IProgressMonitor.UNKNOWN);
 				ZendCodeTracing codeTracing = new ZendCodeTracing(targetId);
 				PhpcloudContainerListener listener = null;
 				IZendTarget target = TargetsManagerService.INSTANCE

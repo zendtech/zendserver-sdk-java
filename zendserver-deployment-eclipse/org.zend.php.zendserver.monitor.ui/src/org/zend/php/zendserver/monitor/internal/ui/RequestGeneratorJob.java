@@ -52,7 +52,8 @@ public class RequestGeneratorJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		NotificationManager.registerProgress(
-				Messages.RequestGeneratorJob_NotificationTitle, 60,
+				Messages.RequestGeneratorJob_NotificationTitle,
+				Messages.RequestGeneratorJob_RepeatTaskTitle,
 				new IRunnableWithProgress() {
 
 					public void run(IProgressMonitor monitor)

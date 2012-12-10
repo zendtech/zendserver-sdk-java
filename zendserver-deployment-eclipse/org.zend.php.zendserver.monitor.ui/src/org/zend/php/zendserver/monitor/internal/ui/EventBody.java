@@ -224,7 +224,8 @@ public class EventBody implements IBody {
 	private Link createLink(Composite parent, String text, int align) {
 		Link link = new Link(parent, SWT.NO_FOCUS | align);
 		link.setText(text);
-		link.setLayoutData(new GridData(align, SWT.FILL, false, true));
+		GridData gd = new GridData(align, SWT.FILL, true, true);
+		link.setLayoutData(gd);
 		return link;
 	}
 
@@ -301,7 +302,7 @@ public class EventBody implements IBody {
 
 	private Composite createEntryComposite(Composite container) {
 		Composite composite = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout(3, true);
+		GridLayout layout = new GridLayout(3, false);
 		layout.horizontalSpacing = layout.verticalSpacing = 2;
 		composite.setLayout(layout);
 		return composite;
