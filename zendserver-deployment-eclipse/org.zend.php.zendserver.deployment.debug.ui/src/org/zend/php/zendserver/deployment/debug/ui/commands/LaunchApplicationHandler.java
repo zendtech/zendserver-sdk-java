@@ -1,7 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
-import java.util.List;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -38,35 +36,20 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		String targetId = null;
 
 		if (ctx != null) {
-			projects = getProjects(ctx.getVariable(TestingSectionContribution.PROJECT_NAME));
-			Object targetIdVariable = ctx.getVariable(TestingSectionContribution.TARGET_ID);
+			projects = getProjects(ctx
+					.getVariable(TestingSectionContribution.PROJECT_NAME));
+			Object targetIdVariable = ctx
+					.getVariable(TestingSectionContribution.TARGET_ID);
 			if (targetIdVariable instanceof String) {
 				targetId = (String) targetIdVariable;
 			}
 		}
 		if (projects == null) {
-			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
+			projects = getProjects(event
+					.getParameter(TestingSectionContribution.PROJECT_NAME));
 		}
 		if (projects == null) {
 			projects = new IProject[] { getProjectFromEditor() };
-		}
-		
-		ILaunchConfiguration config = null;
-		if (ctx != null) {
-			obj = ctx.getDefaultVariable();
-			if (obj instanceof List<?>) {
-				List<?> list = (List<?>) obj;
-				if (list.size() > 0) {
-					obj = list.get(0);
-					if (obj instanceof ILaunchConfiguration) {
-						config = (ILaunchConfiguration) obj;
-					}
-				}
-			}
-		}
-		if (config != null) {
-			DebugUITools.launch(config, mode);
-			return null;
 		}
 
 		for (IProject project : projects) {
@@ -79,8 +62,12 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 	private void execute(final String mode, IProject project, String targetId) {
 		try {
 			if (!hasDeploymentNature(project)) {
-				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-				if (MessageDialog.openConfirm(shell, Messages.LaunchApplicationHandler_0, Messages.bind(Messages.LaunchApplicationHandler_1, project.getName()))) {
+				Shell shell = PlatformUI.getWorkbench().getDisplay()
+						.getActiveShell();
+				if (MessageDialog.openConfirm(shell,
+						Messages.LaunchApplicationHandler_0, Messages.bind(
+								Messages.LaunchApplicationHandler_1,
+								project.getName()))) {
 					enableDeployment(project);
 				} else {
 					return;
@@ -89,29 +76,28 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		} catch (CoreException ex) {
 			Activator.log(ex);
 		}
-		
-		ILaunchConfiguration config = LaunchUtils.findLaunchConfiguration(project, targetId);
-		if (config == null) {
-			IDeploymentHelper defaultHelper = null;
-			if (targetId != null) {
-				defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
-			} else {
-				defaultHelper = LaunchUtils.createDefaultHelper(project);
-			}
-			Mode wizardMode = ILaunchManager.RUN_MODE.equals(mode) ? Mode.RUN
-					: Mode.DEBUG;
-			DeploymentWizard wizard = new DeploymentWizard(project,
-					defaultHelper, wizardMode);
-			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-			WizardDialog dialog = new WizardDialog(shell, wizard);
-			dialog.setPageSize(550, 350);
-			dialog.create();
-			if (dialog.open() == Window.OK) {
-				try {
-					config = LaunchUtils.createConfiguration(project, wizard.getHelper());
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
+
+		ILaunchConfiguration config = null;
+		IDeploymentHelper defaultHelper = null;
+		if (targetId != null) {
+			defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
+		} else {
+			defaultHelper = LaunchUtils.createDefaultHelper(project);
+		}
+		Mode wizardMode = ILaunchManager.RUN_MODE.equals(mode) ? Mode.RUN
+				: Mode.DEBUG;
+		DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper,
+				wizardMode);
+		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		WizardDialog dialog = new WizardDialog(shell, wizard);
+		dialog.setPageSize(550, 350);
+		dialog.create();
+		if (dialog.open() == Window.OK) {
+			try {
+				config = LaunchUtils.createConfiguration(project,
+						wizard.getHelper());
+			} catch (CoreException e) {
+				Activator.log(e);
 			}
 		}
 		if (config != null) {
