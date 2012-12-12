@@ -75,8 +75,6 @@ public class DebugModeManager {
 			result = debugMode.start();
 		} catch (SdkException e) {
 			Activator.log(e);
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getCause()
-					.getMessage());
 		}
 		if (result == State.STARTING) {
 			targets.put(target, true);
