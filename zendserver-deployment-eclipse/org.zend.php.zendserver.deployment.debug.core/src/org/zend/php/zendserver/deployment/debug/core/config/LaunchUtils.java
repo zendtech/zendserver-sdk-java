@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -110,7 +111,10 @@ public class LaunchUtils {
 				IPath relativePath = resource.getProjectRelativePath();
 				IPath currentRelativePath = currentPath
 						.makeRelativeTo(new Path(project.getName()));
-				if (relativePath.equals(currentRelativePath)) {
+				IResource currentSelection = resource.getProject().findMember(
+						currentPath.removeFirstSegments(1));
+				if (relativePath.equals(currentRelativePath)
+						|| currentSelection instanceof IContainer) {
 					wc.setAttribute(Server.FILE_NAME, resource.getFullPath()
 							.toString());
 					wc.setMappedResources(new IResource[] { resource });

@@ -15,7 +15,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.window.Window;
+import org.eclipse.php.internal.server.ui.ServerLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,7 +50,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	private IDeploymentHelper helper;
 	private Map<String, String> currentParameters;
 	private Button parametersButton;
-	Button enableDeployment;
+	private Button enableDeployment;
+	
+	private ILaunchConfiguration config;
 
 	public void createControl(Composite parent) {
 		final SharedScrolledComposite scrolledComposite = new SharedScrolledComposite(parent,
@@ -70,6 +74,12 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				parametersButton.setEnabled(enableDeployment.getSelection());
 				if (enableDeployment.getSelection()) {
 					setDefaultValues();
+					ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
+					for (ILaunchConfigurationTab tab : tabs) {
+						if (tab instanceof ServerLaunchConfigurationTab) {
+							tab.initializeFrom(config);
+						}
+					}
 				}
 				updateLaunchConfigurationDialog();
 			}
@@ -132,6 +142,7 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		this.config = configuration;
 		if (getLaunchConfigurationDialog().getActiveTab() == this) {
 			try {
 				activated(configuration.getWorkingCopy());
