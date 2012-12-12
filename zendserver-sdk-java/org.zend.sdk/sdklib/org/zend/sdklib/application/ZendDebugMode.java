@@ -100,7 +100,7 @@ public class ZendDebugMode extends ZendConnection {
 					"Starting Debug Mode", message, e));
 			log.error(e);
 		} catch (WebApiException e) {
-			new SdkException(e);
+			throw new SdkException(e);
 		}
 		return State.ERROR;
 	}
