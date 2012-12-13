@@ -30,6 +30,7 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
@@ -374,6 +375,31 @@ public class LaunchUtils {
 		wc.removeAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName());
 		wc.removeAttribute(DeploymentAttributes.WARN_UPDATE.getName());
 		wc.removeAttribute(SERVER_ENABLED);
+	}
+	
+	public static IZendTarget updatePreferences(IProject project,
+			String targetId, String applicationURL) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		IEclipsePreferences pref = new ProjectScope(project)
+				.getNode(DeploymentCore.PLUGIN_ID);
+		pref.put("targetId", targetId); //$NON-NLS-1$
+		pref.put("targetHost", target.getHost().toString()); //$NON-NLS-1$
+		pref.put("applicationURL", applicationURL); //$NON-NLS-1$
+		try {
+			pref.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+		return null;
+	}
+	
+	public static String getURLFromPreferences(String projectName) {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectName);
+		IEclipsePreferences pref = new ProjectScope(project)
+				.getNode(DeploymentCore.PLUGIN_ID);
+		return pref.get("applicationURL", null); //$NON-NLS-1$
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {

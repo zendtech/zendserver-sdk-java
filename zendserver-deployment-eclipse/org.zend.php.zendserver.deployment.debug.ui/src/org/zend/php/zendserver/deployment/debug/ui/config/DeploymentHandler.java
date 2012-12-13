@@ -299,6 +299,8 @@ public class DeploymentHandler {
 						job = getAutoDeployJob(helper, project);
 					}
 				}
+				LaunchUtils.updatePreferences(project,
+						helper.getTargetId(), helper.getBaseURL().toString());
 				return checkSSHTunnel(helper);
 			}
 			switch (deploymentJob.getResponseCode()) {
@@ -455,22 +457,7 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			if (helper.isDevelopmentModeEnabled()) {
-				MonitorManager.addFilter(helper.getTargetId(), helper
-						.getBaseURL().toString());
-				String host = helper.getTargetHost();
-				if (LaunchUtils.isAutoDeployAvailable()
-						&& (TargetsManager.isPhpcloud(host) || TargetsManager
-								.isOpenShift(host))) {
-					job = getAutoDeployJob(job.getHelper(), project);
-					if (job != null) {
-						return checkSSHTunnel(helper);
-					} else {
-						return CANCEL;
-					}
-				}
-			}
-			return OK;
+			return verifyJobResult(job.getHelper(), project);
 		}
 	}
 

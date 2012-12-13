@@ -31,6 +31,7 @@ import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
@@ -116,6 +117,11 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		} else {
 			targetsCombo.select(targetId);
+			String applicationURL = LaunchUtils.getURLFromPreferences(helper
+					.getProjectName());
+			if (applicationURL != null) {
+				baseUrl.setText(applicationURL);
+			}
 		}
 		IDialogSettings settings = getDialogSettings();
 		if (helper.getAppId() == -1 && settings != null) {
@@ -146,7 +152,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			ignoreFailures.setSelection(helper.isIgnoreFailures());
 		}
 		URL newBaseURL = helper.getBaseURL();
-		if (newBaseURL != null) {
+		if (baseUrl.getText().isEmpty() && newBaseURL != null) {
 			if (helper.isDefaultServer() && getTarget() != null) {
 				String targetHost = getTarget().getDefaultServerURL()
 						.toString();
