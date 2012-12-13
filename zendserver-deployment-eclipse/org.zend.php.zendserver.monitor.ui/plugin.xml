@@ -24,7 +24,7 @@
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
          <command
                commandId="org.zend.php.zendserver.monitor.ui.startMonitoring"
-               label="Start Monitoring"
+               label="Start Application Monitoring"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -37,7 +37,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.monitor.ui.stopMonitoring"
-               label="Stop Monitoring"
+               label="Stop Application Monitoring"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -50,7 +50,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.monitor.ui.monitoringPreferences"
-               label="Monitoring Preferences..."
+               label="Application Monitoring Preferences..."
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -89,12 +89,12 @@
    <command
          defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.StartMonitorHandler"
          id="org.zend.php.zendserver.monitor.ui.startMonitoring"
-         name="Start Monitoring">
+         name="Start Application Monitoring">
    </command>
    <command
          defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.StopMonitorHandler"
          id="org.zend.php.zendserver.monitor.ui.stopMonitoring"
-         name="Stop Monitoring">
+         name="Stop Application Monitoring">
    </command>
    <command
          defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.MonitoringPreferencesHandler"
