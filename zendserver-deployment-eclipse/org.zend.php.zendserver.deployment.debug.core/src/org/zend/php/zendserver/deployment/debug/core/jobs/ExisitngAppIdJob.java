@@ -41,7 +41,6 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 		List<ApplicationInfo> infos = list.getApplicationsInfo();
 		if (infos != null) {
 			URL url = helper.getBaseURL();
-			URL urlZs6 = helper.getBaseURL();
 			if (helper.isDefaultServer()) {
 				try {
 					String defaultHost = IDeploymentHelper.DEFAULT_SERVER;
@@ -49,8 +48,6 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 						defaultHost = helper.getBaseURL().getHost();
 					}
 					url = new URL(url.getProtocol(), defaultHost, url.getFile());
-					urlZs6 = new URL(url.getProtocol(), defaultHost, 80,
-							url.getFile());
 				} catch (MalformedURLException e) {
 					// ignore
 				}
@@ -63,7 +60,7 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 				} catch (MalformedURLException e) {
 					// / ignore
 				}
-				if (compareURLs(url, baseUrl) || compareURLs(urlZs6, baseUrl)) {
+				if (compareURLs(url, baseUrl)) {
 					helper.setAppId(info.getId());
 					helper.setInstalledLocation(info.getInstalledLocation());
 					break;
@@ -86,9 +83,9 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 		if (current == null || url == null) {
 			return false;
 		}
-		if (current.getHost().equals(url.getHost())
-				&& current.getFile().equals(url.getFile())
-				&& current.getPort() == url.getPort()) {
+		if (current.getProtocol().equals(url.getProtocol())
+				&& current.getHost().equals(url.getHost())
+				&& current.getFile().equals(url.getFile())) {
 			return true;
 		}
 		return false;
