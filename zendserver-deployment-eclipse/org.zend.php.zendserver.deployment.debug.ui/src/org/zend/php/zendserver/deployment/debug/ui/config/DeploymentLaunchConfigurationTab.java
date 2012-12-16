@@ -155,6 +155,9 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		if (project != null) {
 			IDeploymentHelper updatedHelper = configBlock.getHelper();
 			updatedHelper.setProjectName(project.getName());
+			updatedHelper.setAppId(helper.getAppId());
+			updatedHelper.setInstalledLocation(helper.getInstalledLocation());
+			updatedHelper.setOperationType(helper.getOperationType());
 			if (currentParameters == null) {
 				updatedHelper.setUserParams(helper.getUserParams());
 			} else {
