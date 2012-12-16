@@ -38,26 +38,24 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		String targetId = null;
 
 		if (ctx != null) {
-			Object element = ctx.getDefaultVariable();
-			if (element instanceof List) {
-				List<?> list = (List<?>) element;
-				if (list.size() > 0) {
-					element = list.get(0);
+			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
+			targetId = event.getParameter(TestingSectionContribution.TARGET_ID);
+			// if projects is null them command is not executed from descriptor editor 
+			if (projects == null) {
+				Object element = ctx.getDefaultVariable();
+				if (element instanceof List) {
+					List<?> list = (List<?>) element;
+					if (list.size() > 0) {
+						element = list.get(0);
+					}
 				}
-			}
-			if (element instanceof ILaunchConfiguration) {
-				ILaunchConfiguration config = (ILaunchConfiguration) element;
-				if (config != null) {
-					DebugUITools.launch(config, mode);
-					return null;
+				if (element instanceof ILaunchConfiguration) {
+					ILaunchConfiguration config = (ILaunchConfiguration) element;
+					if (config != null) {
+						DebugUITools.launch(config, mode);
+						return null;
+					}
 				}
-			}
-			projects = getProjects(ctx
-					.getVariable(TestingSectionContribution.PROJECT_NAME));
-			Object targetIdVariable = ctx
-					.getVariable(TestingSectionContribution.TARGET_ID);
-			if (targetIdVariable instanceof String) {
-				targetId = (String) targetIdVariable;
 			}
 		}
 		if (projects == null) {
