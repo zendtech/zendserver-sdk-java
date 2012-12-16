@@ -29,8 +29,6 @@ public class Messages extends NLS {
 	public static String configurationPage_DeployTo;
 	public static String configurationPage_DeployToTooltip;
 	public static String configurationPage_baseURL;
-	public static String configurationPage_appUserName;
-	public static String configurationPage_appUserNameTooltip;
 	public static String configurationPage_ignoreFailures;
 	public static String configurationPage_ignoreFailuresTooltip;
 	public static String configurationPage_ValidationError_TargetLocation;
@@ -64,10 +62,6 @@ public class Messages extends NLS {
 	public static String ConfigurationBlock_ApplicationNameLabel;
 
 	public static String ConfigurationBlock_DevelopmentModeLabel;
-
-	public static String ConfigurationBlock_EnableMonitoringButton;
-
-	public static String ConfigurationBlock_EnableMonitoringTooltip;
 
 	public static String ConfigurationBlock_RefreshLabel;
 
