@@ -59,29 +59,7 @@ public class LaunchUtils {
 						null,
 						getNewConfigurationName(project.getName(),
 								helper.getTargetHost()));
-
-		// Set the debugger ID and the configuration delegate for this launch
-		// configuration
-		String debuggerID = PHPProjectPreferences.getDefaultDebuggerID(project);
-		wc.setAttribute(PHPDebugCorePreferenceNames.PHP_DEBUGGER_ID, debuggerID);
-
-		AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
-				.getDebuggerConfiguration(debuggerID);
-		wc.setAttribute(
-				PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
-				debuggerConfiguration.getWebLaunchDelegateClass());
-
-		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO,
-				PHPDebugPlugin.getDebugInfoOption());
-		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER,
-				PHPDebugPlugin.getOpenInBrowserOption());
-		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
-				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
-		// set true as default
-		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
-
 		updateLaunchConfiguration(project, helper, wc);
-
 		config = wc.doSave();
 		return config;
 	}
@@ -197,6 +175,26 @@ public class LaunchUtils {
 		wc.setAttribute(DeploymentAttributes.WARN_UPDATE.getName(),
 				helper.isWarnUpdate());
 		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
+		
+		// Set the debugger ID and the configuration delegate for this launch
+		// configuration
+		String debuggerID = PHPProjectPreferences.getDefaultDebuggerID(project);
+		wc.setAttribute(PHPDebugCorePreferenceNames.PHP_DEBUGGER_ID, debuggerID);
+
+		AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
+				.getDebuggerConfiguration(debuggerID);
+		wc.setAttribute(
+				PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
+				debuggerConfiguration.getWebLaunchDelegateClass());
+
+		wc.setAttribute(IPHPDebugConstants.RUN_WITH_DEBUG_INFO,
+				PHPDebugPlugin.getDebugInfoOption());
+		wc.setAttribute(IPHPDebugConstants.OPEN_IN_BROWSER,
+				PHPDebugPlugin.getOpenInBrowserOption());
+		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
+				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
+		// set true as default
+		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
 	}
 
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
