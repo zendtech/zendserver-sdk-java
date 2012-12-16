@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -36,6 +38,20 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		String targetId = null;
 
 		if (ctx != null) {
+			Object element = ctx.getDefaultVariable();
+			if (element instanceof List) {
+				List<?> list = (List<?>) element;
+				if (list.size() > 0) {
+					element = list.get(0);
+				}
+			}
+			if (element instanceof ILaunchConfiguration) {
+				ILaunchConfiguration config = (ILaunchConfiguration) element;
+				if (config != null) {
+					DebugUITools.launch(config, mode);
+					return null;
+				}
+			}
 			projects = getProjects(ctx
 					.getVariable(TestingSectionContribution.PROJECT_NAME));
 			Object targetIdVariable = ctx
