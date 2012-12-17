@@ -10,13 +10,24 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui.commands;
 
+import java.util.List;
+
 import org.eclipse.core.expressions.PropertyTester;
+import org.zend.sdklib.target.IZendTarget;
 
 public class MonitoringPrefsPropertyTester extends PropertyTester {
 
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		return true;
+		if (receiver instanceof List<?>) {
+			List<?> list = (List<?>) receiver;
+			for (Object object : list) {
+				if (object instanceof IZendTarget) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
