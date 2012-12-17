@@ -26,6 +26,8 @@ public class MonitoringPrefsPropertyTester extends PropertyTester {
 					return true;
 				}
 			}
+		} else if (receiver instanceof IZendTarget) {
+			return true;
 		}
 		return false;
 	}
