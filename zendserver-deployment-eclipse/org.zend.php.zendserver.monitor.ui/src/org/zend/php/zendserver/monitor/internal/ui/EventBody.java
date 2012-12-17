@@ -163,7 +163,11 @@ public class EventBody implements IBody {
 								return Status.OK_STATUS;
 							}
 							if (groups != null && groups.size() == 1) {
-								String traceId = groups.get(0).getCodeTracing();
+								EventsGroupDetails group = groups.get(0);
+								String traceId = group.getCodeTracing();
+								if (traceId == null) {
+									traceId = group.getEvent().getCodeTracing();
+								}
 								if (traceId != null) {
 									ZendCodeTracing tracing = new ZendCodeTracing(
 											targetId);

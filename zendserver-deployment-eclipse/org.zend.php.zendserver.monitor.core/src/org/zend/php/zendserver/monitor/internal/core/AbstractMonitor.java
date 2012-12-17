@@ -191,7 +191,11 @@ public abstract class AbstractMonitor extends Job {
 			List<EventsGroupDetails> groups = issue.getGroupDetails();
 			result += MonitorManager.REPEAT;
 			if (groups != null && groups.size() == 1) {
-				String traceId = groups.get(0).getCodeTracing();
+				EventsGroupDetails group = groups.get(0);
+				String traceId = group.getCodeTracing();
+				if (traceId == null) {
+					traceId = group.getEvent().getCodeTracing();
+				}
 				if (traceId != null && !traceId.isEmpty()) {
 					result += MonitorManager.CODE_TRACE;
 				}
