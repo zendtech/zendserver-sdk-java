@@ -73,7 +73,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	}
 	
 	/**
-	 * Validate XML representation.
+	 * Validate XML or amf file representation.
 	 * 
 	 * @return validation result
 	 */
@@ -82,7 +82,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 			MediaType mediaType = representation.getMediaType();
 			if (mediaType != null) {
 				String mtName = mediaType.getName();
-				if (mtName != null && mtName.startsWith("application/vnd.zend")) {
+				if (mtName != null
+						&& (mtName.startsWith("application/vnd.zend") || mtName
+								.startsWith("application/x-amf"))) {
 					return true;
 				}
 			}
@@ -639,6 +641,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 		event.setSeverity(value);
 		value = getValue(currentPath + "/description", occurrence);
 		event.setDescription(value);
+		value = getValue(currentPath + "/codeTracing", occurrence);
+		event.setCodeTracing(value);
 		SuperGlobals superGlobals = new SuperGlobals(currentPath
 				+ "/superGlobals", occurrence);
 		event.setSuperGlobals(superGlobals);

@@ -81,7 +81,12 @@ public class MonitorGetEventGroupDetailsRequest extends AbstractRequest {
 	 * @param uid
 	 */
 	public void setEventGroupId(int eventGroupId) {
-		addParameter("eventGroupId", eventGroupId);
+		switch (getVersion()) {
+		case V1_3:
+			addParameter("eventsGroupId", eventGroupId);
+		default:
+			addParameter("eventGroupId", eventGroupId);
+		}
 	}
 
 	/*

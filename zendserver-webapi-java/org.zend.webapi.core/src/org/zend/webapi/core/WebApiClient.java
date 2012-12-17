@@ -1329,6 +1329,35 @@ public class WebApiClient {
 	 */
 	public IssueDetails monitorGetIssueDetails(final int issueId)
 			throws WebApiException {
+		final WebApiVersion version = getVersion(WebApiVersion.V1_2);
+		final IResponse handle = this.handle(
+				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
+				version, new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						MonitorGetIssueDetailsRequest monitorRequest = (MonitorGetIssueDetailsRequest) request;
+						monitorRequest.setIssueId(issueId);
+						if (version != WebApiVersion.V1_2) {
+							monitorRequest.setLimit(1);
+						}
+					}
+				});
+		return (IssueDetails) handle.getData();
+	}
+	
+	/**
+	 * Retrieve an issue's details according to the issueId passed as a
+	 * parameter. Additional information about event groups is also displayed.
+	 * The response is a list of issue elements with their general details and
+	 * event-groups identifiers.
+	 * 
+	 * 
+	 * @return issue details
+	 * @throws WebApiException
+	 * @since 1.2
+	 */
+	public IssueDetails monitorGetIssueDetails(final int issueId, final int limit)
+			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
 				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
@@ -1336,6 +1365,7 @@ public class WebApiClient {
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetIssueDetailsRequest monitorRequest = (MonitorGetIssueDetailsRequest) request;
 						monitorRequest.setIssueId(issueId);
+						monitorRequest.setLimit(limit);
 					}
 				});
 		return (IssueDetails) handle.getData();

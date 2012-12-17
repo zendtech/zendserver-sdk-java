@@ -387,7 +387,7 @@ public class DataUtils {
 		Assert.assertNotNull(details);
 		Assert.assertEquals(ResponseType.EVENTS_GROUP_DETAILS,
 				details.getType());
-		Assert.assertNotNull(details.getCodeTracing());
+		// Assert.assertNotNull(details.getCodeTracing());
 		checkValidEvent(details.getEvent());
 		checValidEventsGroup(details.getEventsGroup());
 	}

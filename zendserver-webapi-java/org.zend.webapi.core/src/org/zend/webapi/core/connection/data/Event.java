@@ -21,6 +21,7 @@ public class Event extends AbstractResponseData {
 	private SuperGlobals superGlobals;
 	private String severity;
 	private Backtrace backtrace;
+	private String codeTracing;
 
 	protected Event() {
 		super(ResponseType.EVENT, BASE_PATH + "/event");
@@ -86,6 +87,13 @@ public class Event extends AbstractResponseData {
 	public Backtrace getBacktrace() {
 		return backtrace;
 	}
+	
+	/**
+	 * @return Associated code tracing identifier
+	 */
+	public String getCodeTracing() {
+		return codeTracing;
+	}
 
 	protected void setEventsGroupId(String eventsGroupId) {
 		this.eventsGroupId = eventsGroupId;
@@ -109,6 +117,10 @@ public class Event extends AbstractResponseData {
 
 	protected void setBacktrace(Backtrace backtrace) {
 		this.backtrace = backtrace;
+	}
+	
+	protected void setCodeTracing(String codeTracing) {
+		this.codeTracing = codeTracing;
 	}
 
 }

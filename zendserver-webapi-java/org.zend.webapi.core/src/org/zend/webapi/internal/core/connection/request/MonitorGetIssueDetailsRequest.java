@@ -71,6 +71,15 @@ public class MonitorGetIssueDetailsRequest extends AbstractRequest {
 	public void setIssueId(int issueId) {
 		addParameter("issueId", issueId);
 	}
+	
+	/**
+	 * Limits the number of eventsGroups returned with the issue details.
+	 *
+	 * @param limit
+	 */
+	public void setLimit(int limit) {
+		addParameter("limit", limit);
+	}
 
 	/*
 	 * (non-Javadoc)
