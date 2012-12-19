@@ -38,6 +38,8 @@ public class DetectTargetAction extends Action {
 	
 	private String username;
 	private String password;
+	
+	private IStatus status;
 
 	public DetectTargetAction() {
 		super(Messages.DetectTargetAction_DetectTarget, Activator.getImageDescriptor(Activator.IMAGE_DETECT_TARGET));
@@ -50,6 +52,10 @@ public class DetectTargetAction extends Action {
 		} catch (Throwable ex) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage()), StatusManager.SHOW);
 		}
+	}
+	
+	public IStatus getStatus() {
+		return status;
 	}
 	
 	public void doRun() throws PrivilegesException {
@@ -67,7 +73,7 @@ public class DetectTargetAction extends Action {
 			try {
 			target = tm.detectLocalhostTarget(null, null);
 			} catch (IllegalArgumentException e) {
-				detectZendServer6();
+				detectZendServer6(null);
 			}
 		} catch (PrivilegesException e1) {
 			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
@@ -148,7 +154,7 @@ public class DetectTargetAction extends Action {
 					try {
 						target = tm.detectLocalhostTarget(id, key, true, false);
 					} catch (IllegalArgumentException e) {
-						detectZendServer6();
+						detectZendServer6(null);
 					}
 				} catch (DetectionException e) {
 					// ignore
@@ -157,15 +163,20 @@ public class DetectTargetAction extends Action {
 		}
 	}
 	
-	private void detectZendServer6() throws DetectionException {
+	private void detectZendServer6(final String message) throws DetectionException {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
 				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
-						Display.getDefault().getActiveShell(), "Zend Server Credentials"); //$NON-NLS-1$
+						Display.getDefault().getActiveShell(),
+						"Zend Server Credentials", message); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					username = dialog.getUsername();
 					password = dialog.getPassword();
+				} else {
+					username = null;
+					password = null;
+					status = new Status(IStatus.CANCEL, Activator.PLUGIN_ID, "");
 				}
 			}
 		});
@@ -175,13 +186,20 @@ public class DetectTargetAction extends Action {
 		}
 		ApiKeyDetector manager = new ApiKeyDetector(username, password);
 		IStatus status = manager.createApiKey();
-		if (status.getSeverity() != IStatus.OK) {
-			StatusManager.getManager().handle(status);
-			return;
+		if (status.getSeverity() == IStatus.INFO) {
+			detectZendServer6("Provided credentials are not valid.");
+		} else {
+			if (status.getSeverity() != IStatus.OK) {
+				this.status = status;
+				StatusManager.getManager().handle(status);
+				return;
+			}
+			TargetsManager tm = TargetsManagerService.INSTANCE
+					.getTargetManager();
+			this.status = status;
+			target = tm.detectLocalhostTarget(null, manager.getKey(),
+					manager.getSecretKey());
 		}
-		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		target = tm.detectLocalhostTarget(null, manager.getKey(),
-				manager.getSecretKey());
 	}
 
 	public IZendTarget getDetectedTarget() {

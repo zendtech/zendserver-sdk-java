@@ -38,6 +38,16 @@ import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode
  * 
  */
 public abstract class AbstractTargetDetailsComposite {
+	
+	protected class CancelCreationException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+		
+		public CancelCreationException(String message) {
+			super(message);
+		}
+		
+	}
 
 	private class OpenShiftInitializer {
 
@@ -147,9 +157,10 @@ public abstract class AbstractTargetDetailsComposite {
 	 * 
 	 * @throws SdkException
 	 * @throws IOException
+	 * @throws CancelCreationException 
 	 */
 	abstract protected IZendTarget[] createTarget(String[] data, IProgressMonitor monitor)
-			throws SdkException, IOException, CoreException;
+			throws SdkException, IOException, CoreException, CancelCreationException;
 
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
@@ -247,6 +258,9 @@ public abstract class AbstractTargetDetailsComposite {
 		} catch (RuntimeException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
+		} catch (CancelCreationException e) {
+			return new Status(IStatus.CANCEL, Activator.PLUGIN_ID,
+					e.getMessage());
 		}
 		if (targets == null || targets.length == 0) {
 			return new Status(

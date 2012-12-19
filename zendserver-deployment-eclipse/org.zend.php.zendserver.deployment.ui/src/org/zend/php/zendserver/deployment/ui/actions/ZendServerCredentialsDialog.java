@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -31,10 +32,17 @@ public class ZendServerCredentialsDialog extends Dialog {
 	private String title;
 	private String password;
 	private String username;
-
-	public ZendServerCredentialsDialog(Shell parentShell, String title) {
+	private String message;
+	
+	public ZendServerCredentialsDialog(Shell parentShell, String title,
+			String message) {
 		super(parentShell);
 		this.title = title;
+		this.message = message;
+	}
+
+	public ZendServerCredentialsDialog(Shell parentShell, String title) {
+		this(parentShell, title, null);
 	}
 
 	public String getPassword() {
@@ -69,6 +77,14 @@ public class ZendServerCredentialsDialog extends Dialog {
 		gd.widthHint = 250;
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 2;
+		if (message != null) {
+			Label messageLabel = new Label(comp, SWT.NONE);
+			messageLabel.setText(message);
+			messageLabel.setForeground(Display.getDefault().getSystemColor(
+					SWT.COLOR_RED));
+			messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
+					false, 2, 1));
+		}
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
 		usernameLabel.setText("Username: "); //$NON-NLS-1$
 		usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);

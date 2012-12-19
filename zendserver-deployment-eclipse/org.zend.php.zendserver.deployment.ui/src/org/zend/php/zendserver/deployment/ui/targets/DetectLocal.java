@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.targets;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,11 +38,15 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 	}
 
 	@Override
-	protected IZendTarget[] createTarget(String[] data, IProgressMonitor monitor) throws SdkException,
-			IOException {
+	protected IZendTarget[] createTarget(String[] data, IProgressMonitor monitor)
+			throws SdkException, IOException, CancelCreationException {
 
 		DetectTargetAction detectTargetAction = new DetectTargetAction();
 		detectTargetAction.run();
+		IStatus status = detectTargetAction.getStatus();
+		if (status != null && status.getSeverity() == IStatus.CANCEL) {
+			throw new CancelCreationException(status.getMessage());
+		}
 		return new IZendTarget[] { detectTargetAction.getDetectedTarget() };
 	}
 

@@ -154,7 +154,11 @@ public class TargetDetailsPage extends WizardPage {
 			InterruptedException {
 		targets = null;
 		IStatus status = composite.validate();
-		setPageComplete(targets != null && targets.length > 0);
+		if (status.getSeverity() == IStatus.CANCEL) {
+			setPageComplete(true);
+		} else {
+			setPageComplete(targets != null && targets.length > 0);
+		}
 		return status;
 	}
 
