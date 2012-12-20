@@ -13,6 +13,7 @@ public class DetectNoResponse {
 	protected long timeout = 2000;
 	protected long displayThreadResponse;
 	private boolean isRunning;
+	private boolean isNotResponding;
 
 	public void start() {
 		isRunning = true;
@@ -20,6 +21,7 @@ public class DetectNoResponse {
 			public void run() {
 				displayThreadResponse = System.currentTimeMillis();
 				try {
+					String message = null;
 				while ((!Display.getDefault().isDisposed()) && isRunning) {
 					pingDisplayThread();
 					long now = System.currentTimeMillis();
@@ -32,9 +34,14 @@ public class DetectNoResponse {
 
 					long responseTime = Math.abs(now - displayThreadResponse);
 					if (responseTime > timeout) {
-						String message = "No response for "+responseTime+"msec\n";
+						isNotResponding = true;
+						message = "No response for "+responseTime+"msec\n";
 						message += captureThreadDump();
-						Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message));
+					} else {
+						if (isNotResponding) {
+							isNotResponding = false;
+							Activator.log(new Status(IStatus.INFO, Activator.PLUGIN_ID, message));
+						}
 					}
 				}
 				} catch (SWTException ex) {
@@ -52,6 +59,10 @@ public class DetectNoResponse {
 		StringBuffer stringBuffer = new StringBuffer();
 		while (iterator.hasNext()) {
 			Thread key = (Thread) iterator.next();
+			if (key != Display.getDefault().getThread()) {
+				continue;
+			}
+			
 			StackTraceElement[] trace = (StackTraceElement[]) allThreads
 					.get(key);
 			stringBuffer.append(key + "\r\n");
