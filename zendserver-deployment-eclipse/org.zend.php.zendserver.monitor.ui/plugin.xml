@@ -29,7 +29,7 @@
             <visibleWhen
                   checkEnabled="true">
                <test
-                     forcePluginActivation="false"
+                     forcePluginActivation="true"
                      property="propertyTester.targetMonitor.visible"
                      value="false">
                </test>
@@ -42,7 +42,7 @@
             <visibleWhen
                   checkEnabled="true">
                <test
-                     forcePluginActivation="false"
+                     forcePluginActivation="true"
                      property="propertyTester.targetMonitor.visible"
                      value="true">
                </test>
