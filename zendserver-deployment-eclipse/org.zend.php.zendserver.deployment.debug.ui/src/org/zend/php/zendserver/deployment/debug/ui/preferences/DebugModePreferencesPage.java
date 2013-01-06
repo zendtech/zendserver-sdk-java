@@ -136,6 +136,7 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				.getTargetManager().getTargets();
 		final List<IZendTarget> toRestart = new ArrayList<IZendTarget>();
 		for (IZendTarget target : targets) {
+			boolean dirtyTarget = false;
 			String id = target.getId();
 			String oldValue = prefs
 					.get(id, defaultPrefs.get(id, (String) null));
@@ -143,13 +144,15 @@ public class DebugModePreferencesPage extends PreferencePage implements
 			if (newValue == null && oldValue != null) {
 				prefs.remove(id);
 				dirty = true;
+				dirtyTarget = true;
 			}
 			if (newValue != null
 					&& (oldValue == null || !oldValue.equals(newValue))) {
 				prefs.put(id, newValue);
 				dirty = true;
+				dirtyTarget = true;
 			}
-			if (dirty && askForRestart(target)) {
+			if (dirtyTarget && askForRestart(target)) {
 				toRestart.add(target);
 			}
 		}
