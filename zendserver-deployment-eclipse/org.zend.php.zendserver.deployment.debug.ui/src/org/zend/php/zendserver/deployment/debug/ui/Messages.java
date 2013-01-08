@@ -65,6 +65,10 @@ public class Messages extends NLS {
 
 	public static String ConfigurationBlock_RefreshLabel;
 
+	public static String ConfigurationBlock_UrlEmptyError;
+
+	public static String ConfigurationBlock_UrlWhitespacesError;
+
 	public static String ConfigurationBlock_WarnUpdatingLabel;
 
 	public static String DebugModeHandler_DebugModeLabel;

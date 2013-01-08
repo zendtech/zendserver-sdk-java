@@ -159,7 +159,8 @@ public class DeploymentWizard extends Wizard {
 		if (name == null || name.isEmpty()) {
 			name = project.getName();
 		}
-		helper.setBaseURL("http://default/" + name); //$NON-NLS-1$
+		String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		helper.setBaseURL("http://default/" + trimmedName); //$NON-NLS-1$
 		helper.setDefaultServer(true);
 		helper.setAppName(name);
 		return helper;

@@ -486,8 +486,10 @@ public class LaunchUtils {
 				}
 				IDeploymentHelper helper = new DeploymentHelper();
 				URL targetUrl = target.getDefaultServerURL();
+				String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				URL baseUrl = new URL(targetUrl.getProtocol(),
-						targetUrl.getHost(), targetUrl.getPort(), "/" + name); //$NON-NLS-1$
+						targetUrl.getHost(), targetUrl.getPort(),
+						"/" + trimmedName); //$NON-NLS-1$
 				helper.setBaseURL(baseUrl.toString());
 				helper.setDefaultServer(true);
 				helper.setTargetId(target.getId());

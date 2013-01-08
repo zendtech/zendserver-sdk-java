@@ -181,16 +181,21 @@ public class ConfigurationBlock extends AbstractBlock {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.configurationPage_ValidationError_TargetLocation);
 		}
+		if (baseUrl != null && baseUrl.getText().isEmpty()) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					Messages.ConfigurationBlock_UrlEmptyError);
+		}
 		URL baseUrl = null;
 		try {
 			baseUrl = getBaseURL();
+			String url = baseUrl.toString();
+			if (url.contains(" ") || url.contains("\t")) { //$NON-NLS-1$ //$NON-NLS-2$
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						Messages.ConfigurationBlock_UrlWhitespacesError);
+			}
 		} catch (MalformedURLException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.configurationPage_ValidationError_BaseUrl);
-		}
-		if (baseUrl == null) {
-			return new Status(IStatus.WARNING, Activator.PLUGIN_ID,
-					"URL is empty."); //$NON-NLS-1$
 		}
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, description);
 	}
