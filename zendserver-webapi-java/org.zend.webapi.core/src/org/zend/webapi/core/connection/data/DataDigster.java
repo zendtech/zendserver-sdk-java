@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.webapi.core.connection.data;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -87,6 +88,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 								.startsWith("application/x-amf"))) {
 					return true;
 				}
+			} else if (data instanceof CodeTraceFile) {
+				return true;
 			}
 		}
 		return false;
@@ -864,18 +867,23 @@ public class DataDigster extends GenericResponseDataVisitor {
 		Disposition disposition = representation.getDisposition();
 		if (disposition != null) {
 			codeTraceFile.setFilename(disposition.getFilename());
+		} else {
+			codeTraceFile.setFilename("default.amf");
 		}
 		int size = (int) representation.getSize();
 		codeTraceFile.setFileSize(size);
 
 		try {
-			byte[] content = new byte[size];
 			InputStream reader = representation.getStream();
-			int offset = 0;
-			while (offset < size) {
-				offset += reader.read(content, offset, size - offset);
+			byte[] buffer = new byte[8192];
+			int count = 0;
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			while ((count = reader.read(buffer)) > 0)
+			{
+				out.write(buffer, 0, count);
 			}
-			codeTraceFile.setFileContent(content);
+			codeTraceFile.setFileSize(out.size());
+			codeTraceFile.setFileContent(out.toByteArray());
 		} catch (IOException e) {
 			return false;
 		}
