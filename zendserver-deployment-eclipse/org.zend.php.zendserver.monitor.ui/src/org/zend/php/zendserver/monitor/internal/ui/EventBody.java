@@ -165,7 +165,7 @@ public class EventBody implements IBody {
 							if (groups != null && groups.size() == 1) {
 								EventsGroupDetails group = groups.get(0);
 								String traceId = group.getCodeTracing();
-								if (traceId == null) {
+								if (traceId == null || traceId.isEmpty()) {
 									traceId = group.getEvent().getCodeTracing();
 								}
 								if (traceId != null) {
@@ -175,12 +175,12 @@ public class EventBody implements IBody {
 									if (codeTrace != null) {
 										getProvider().openInEditor(
 												codeTrace.getAbsolutePath());
-									} else {
-										showMessage(
-												Messages.EventBody_CodeTraceTitle,
-												Messages.EventBody_CodetraceJobErrorMessage);
+										return Status.OK_STATUS;
 									}
 								}
+								showMessage(
+										Messages.EventBody_CodeTraceTitle,
+										Messages.EventBody_CodetraceJobErrorMessage);
 							}
 							return Status.OK_STATUS;
 						}
