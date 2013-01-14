@@ -177,13 +177,21 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			throws IOException, JAXBException {
 		File exisitngMapping = new File(container,
 				MappingModelFactory.DEPLOYMENT_PROPERTIES);
-		if (exisitngMapping.exists()) {
+		if (exisitngMapping.exists() && !isUpdate) {
 			return;
 		}
-		IMappingModel model = loader == null ? MappingModelFactory.createDefaultModel(container)
-				: MappingModelFactory.createModel(loader, container);
-		notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Update",
-				"Creating default deployment.properites file...", -1));
+		IMappingModel model = loader == null ? MappingModelFactory
+				.createDefaultModel(container) : MappingModelFactory
+				.createModel(loader, container);
+		if (!isUpdate) {
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Application Update",
+					"Creating default deployment.properites file...", -1));
+		} else {
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Application Update",
+					"Updating deployment.properites file...", -1));
+		}
 		if (container.isDirectory()) {
 			String scriptdir = getScriptsDirectory(container).getName();
 			File[] files = container.listFiles();
@@ -251,7 +259,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			}
 		}
 		String scriptFolder = pkg.getScriptsdir();
-		if (scriptFolder == null) {
+		if (scriptFolder == null || scriptFolder.isEmpty()) {
 			scriptFolder = "scripts";
 		}
 		return new File(container, scriptFolder);
