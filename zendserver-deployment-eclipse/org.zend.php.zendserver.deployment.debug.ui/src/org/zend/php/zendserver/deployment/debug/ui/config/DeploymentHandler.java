@@ -48,9 +48,6 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 
 public class DeploymentHandler {
 
-	public static final int OK = 0;
-	public static final int CANCEL = -1;
-
 	private AbstractLaunchJob job;
 
 	private boolean dialogResult;
@@ -76,11 +73,11 @@ public class DeploymentHandler {
 		try {
 			boolean isRunAs = LaunchUtils.updateConfigForRunAs(config);
 			if (isRunAs) {
-				return OK;
+				return IStatus.OK;
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
-			return CANCEL;
+			return IStatus.ERROR;
 		}
 		listener = new DeployJobChangeListener(config);
 		try {
@@ -89,7 +86,7 @@ public class DeploymentHandler {
 				final IProject project = LaunchUtils
 						.getProjectFromFilename(config);
 				if (!helper.isEnabled()) {
-					return OK;
+					return IStatus.OK;
 				}
 				switch (helper.getOperationType()) {
 				case IDeploymentHelper.DEPLOY:
@@ -118,7 +115,7 @@ public class DeploymentHandler {
 						doOpenDeploymentWizard(helper, project);
 					}
 					if (job == null) {
-						return CANCEL;
+						return IStatus.CANCEL;
 					}
 					break;
 				case IDeploymentHelper.UPDATE:
@@ -136,7 +133,7 @@ public class DeploymentHandler {
 				case IDeploymentHelper.AUTO_DEPLOY:
 					job = LaunchUtils.getAutoDeployJob();
 					if (job == null) {
-						return CANCEL;
+						return IStatus.CANCEL;
 					}
 					job.setHelper(helper);
 					job.setProjectPath(project);
@@ -151,9 +148,9 @@ public class DeploymentHandler {
 					break;
 				case IDeploymentHelper.NO_ACTION:
 					updateLaunchConfiguration(helper, config, project);
-					return OK;
+					return IStatus.OK;
 				default:
-					return CANCEL;
+					return IStatus.CANCEL;
 				}
 				job.addJobChangeListener(listener);
 				job.setUser(true);
@@ -166,7 +163,7 @@ public class DeploymentHandler {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
-		return OK;
+		return IStatus.OK;
 	}
 
 	public int openNoConfigDeploymentWizard(IDeploymentHelper helper,
@@ -175,7 +172,7 @@ public class DeploymentHandler {
 		try {
 			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
-				return OK;
+				return IStatus.OK;
 			}
 			job.setUser(true);
 			job.schedule();
@@ -184,7 +181,7 @@ public class DeploymentHandler {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
-		return OK;
+		return IStatus.OK;
 	}
 	
 	public int noWizardDeploy(IDeploymentHelper helper,
@@ -198,7 +195,7 @@ public class DeploymentHandler {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
-		return OK;
+		return IStatus.OK;
 	}
 
 	public int openDeploymentWizard() {
@@ -211,7 +208,7 @@ public class DeploymentHandler {
 						.getProjectFromFilename(config);
 				doOpenDeploymentWizard(helper, project);
 				if (job == null) {
-					return OK;
+					return IStatus.OK;
 				}
 				job.addJobChangeListener(listener);
 				job.setUser(true);
@@ -224,7 +221,7 @@ public class DeploymentHandler {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
-		return OK;
+		return IStatus.OK;
 	}
 
 	private void setDefaultTarget(IDeploymentHelper helper,
@@ -282,7 +279,7 @@ public class DeploymentHandler {
 	private int verifyJobResult(final IDeploymentHelper helper, IProject project)
 			throws InterruptedException {
 		if (isCancelled()) {
-			return CANCEL;
+			return IStatus.CANCEL;
 		}
 		if (job instanceof DeploymentLaunchJob) {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
@@ -367,7 +364,7 @@ public class DeploymentHandler {
 								4000);
 						break;
 					default:
-						return OK;
+						return IStatus.OK;
 					}
 				}
 			} catch (Exception e) {
@@ -378,10 +375,10 @@ public class DeploymentHandler {
 				NotificationManager.registerError(
 						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
 						4000);
-				return CANCEL;
+				return IStatus.ERROR;
 			}
 		}
-		return OK;
+		return IStatus.OK;
 	}
 
 	private int handleApplicationConflict(IDeploymentHelper helper,
@@ -402,7 +399,7 @@ public class DeploymentHandler {
 		if (!dialogResult) {
 			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
-				return CANCEL;
+				return IStatus.CANCEL;
 			}
 			if (listener != null) {
 				job.addJobChangeListener(listener);
@@ -413,7 +410,7 @@ public class DeploymentHandler {
 			return verifyJobResult(job.getHelper(), project);
 		} else {
 			dialogResult = false;
-			return CANCEL;
+			return IStatus.CANCEL;
 		}
 	}
 
@@ -435,7 +432,7 @@ public class DeploymentHandler {
 		if (!dialogResult) {
 			doOpenDeploymentWizard(helper, project);
 			if (job == null) {
-				return CANCEL;
+				return IStatus.CANCEL;
 			}
 			if (listener != null) {
 				job.addJobChangeListener(listener);

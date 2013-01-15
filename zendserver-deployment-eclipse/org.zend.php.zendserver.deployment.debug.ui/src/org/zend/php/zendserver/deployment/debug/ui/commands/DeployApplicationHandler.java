@@ -82,7 +82,7 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 				} else {
 					defaultHelper = LaunchUtils.createDefaultHelper(project);
 				}
-				if (handler.openNoConfigDeploymentWizard(defaultHelper, project) == DeploymentHandler.OK) {
+				if (handler.openNoConfigDeploymentWizard(defaultHelper, project) == IStatus.OK) {
 					return Status.OK_STATUS;
 				} else {
 					return Status.CANCEL_STATUS;

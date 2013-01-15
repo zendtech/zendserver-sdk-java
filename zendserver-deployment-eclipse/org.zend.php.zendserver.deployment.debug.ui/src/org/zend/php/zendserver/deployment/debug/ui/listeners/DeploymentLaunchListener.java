@@ -40,7 +40,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 
 			DeploymentHandler handler = new DeploymentHandler(configuration);
 			int result = handler.executeDeployment(mode);
-			if (result == DeploymentHandler.CANCEL) {
+			if (result == IStatus.CANCEL) {
 				configuration.delete();
 			}
 			

@@ -12,10 +12,13 @@ import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
+import org.zend.php.zendserver.deployment.core.tunnel.TunnelException;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+
+import com.jcraft.jsch.JSchException;
 
 /**
  * Opens SSH tunnel. Expects single String parameter OpenTunnelCommand.CONTAINER
@@ -95,13 +98,18 @@ public class OpenTunnelCommand extends AbstractHandler {
 				break;
 			}
 			return true;
-		} catch (Exception e) {
+		} catch (TunnelException e) {
+			Activator.log(e);
+			String message = e.getMessage();
+			NotificationManager.registerError(
+					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 5000);
+		} catch (JSchException e) {
 			Activator.log(e);
 			String message = MessageFormat.format(
 					Messages.DeploymentHandler_sshTunnelErrorTitle,
 					target.getId());
 			NotificationManager.registerError(
-					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 4000);
+					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 5000);
 		}
 		return false;
 	}
