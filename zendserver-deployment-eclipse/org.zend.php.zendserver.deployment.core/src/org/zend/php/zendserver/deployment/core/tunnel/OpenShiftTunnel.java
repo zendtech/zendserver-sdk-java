@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
-import java.io.IOException;
-
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -46,21 +44,21 @@ public class OpenShiftTunnel extends AbstractSSHTunnel {
 	/* (non-Javadoc)
 	 * @see org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel#configureSession()
 	 */
-	protected void configureSession() throws IOException {
+	protected void configureSession() throws TunnelException {
 		try {
 			session.setPortForwardingR(internalHost, 17000, "127.0.0.1", 17000); //$NON-NLS-1$
 			session.setPortForwardingL(database_port++, internalHost, 3306);
 		} catch (JSchException e) {
 			final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
-					uuid, baseUrl);
-			throw new IOException(msg);
+					baseUrl);
+			throw new TunnelException(msg);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel#createSession()
 	 */
-	protected void createSession() throws IOException {
+	protected void createSession() throws TunnelException, JSchException {
 		JSch jsch = new JSch();
 		try {
 			session = jsch.getSession(uuid, baseUrl, 22);
@@ -74,9 +72,10 @@ public class OpenShiftTunnel extends AbstractSSHTunnel {
 				jsch.addIdentity(privateKey);
 			}
 		} catch (JSchException e) {
-			throw new IOException(e);
+			throw e;
 		} catch (PublicKeyNotFoundException e) {
-			throw new IOException(e);
+			// TODO add better message here
+			throw new TunnelException("Cannot find private SSH key for seleted target.");
 		}
 	}
 

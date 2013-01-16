@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
-import java.io.IOException;
-
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 
 import com.jcraft.jsch.JSchException;
@@ -60,26 +58,18 @@ public abstract class AbstractSSHTunnel {
 		this(baseUrl, privateKey, new EmptyUserInfo());
 	}
 
-	public State connect() throws IOException {
+	public State connect() throws TunnelException, JSchException {
 		if (session != null) {
 			if (!session.isConnected()) {
-				try {
-					session.connect();
-					return State.CONNECTING;
-				} catch (JSchException e) {
-					throw new IOException(e);
-				}
+				session.connect();
+				return State.CONNECTING;
 			} else {
 				return State.CONNECTED;
 			}
 		}
 		if (session == null) {
-			try {
-				createSession();
-				session.connect();
-			} catch (JSchException e) {
-				throw new IOException(e);
-			}
+			createSession();
+			session.connect();
 			configureSession();
 			return State.CONNECTING;
 		}
@@ -115,11 +105,11 @@ public abstract class AbstractSSHTunnel {
 		return result;
 	}
 
-	protected abstract void configureSession() throws IOException;
+	protected abstract void configureSession() throws TunnelException;
 
-	protected abstract void createSession() throws IOException;
+	protected abstract void createSession() throws TunnelException, JSchException;
 
-	protected String getPrivateKeyFile() throws IOException {
+	protected String getPrivateKeyFile() {
 		return privateKey;
 	}
 

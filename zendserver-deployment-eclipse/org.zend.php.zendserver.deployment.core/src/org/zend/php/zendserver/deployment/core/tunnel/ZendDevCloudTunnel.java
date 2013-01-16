@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
-import java.io.IOException;
-
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -66,7 +64,7 @@ public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 	 * org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel#configureSession
 	 * ()
 	 */
-	protected void configureSession() throws IOException {
+	protected void configureSession() throws TunnelException {
 		try {
 			session.setPortForwardingR(10137, "127.0.0.1", 10137); //$NON-NLS-1$
 			session.setPortForwardingL(database_port++,
@@ -74,7 +72,7 @@ public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 		} catch (JSchException e) {
 			final String msg = Messages.bind(Messages.ZendDevCloudTunnel_1,
 					user, baseUrl);
-			throw new IOException(msg);
+			throw new TunnelException(msg);
 		}
 	}
 
@@ -84,12 +82,13 @@ public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 	 * @see
 	 * org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel#createSession()
 	 */
-	protected void createSession() throws IOException {
+	protected void createSession() throws TunnelException, JSchException {
 		JSch jsch = new JSch();
 		try {
 			session = jsch.getSession(user, user + "." + baseUrl, 22); //$NON-NLS-1$
 			session.setUserInfo(ui);
 			session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
+			//session.setConfig("StrictHostKeyChecking", "no"); //$NON-NLS-1$ //$NON-NLS-2$
 			final ProxyHTTP proxy = new ProxyHTTP(user + "." + baseUrl, 21653); //$NON-NLS-1$
 			session.setProxy(proxy);
 			JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();
@@ -101,9 +100,10 @@ public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 				jsch.addIdentity(privateKey);
 			}
 		} catch (JSchException e) {
-			throw new IOException(e);
+			throw e;
 		} catch (PublicKeyNotFoundException e) {
-			throw new IOException(e);
+			// TODO add better message here
+			throw new TunnelException("Cannot find private SSH key for seleted target.");
 		}
 	}
 

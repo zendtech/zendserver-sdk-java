@@ -1,16 +1,16 @@
 package org.zend.php.zendserver.deployment.core.tunnel;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+
+import com.jcraft.jsch.JSchException;
 
 public class SSHTunnelManager {
 
@@ -29,7 +29,7 @@ public class SSHTunnelManager {
 		return manager;
 	}
 
-	public State connect(IZendTarget target) throws IOException {
+	public State connect(IZendTarget target) throws TunnelException, JSchException {
 		if (!isTargetSupported(target)) {
 			return null;
 		}
@@ -131,11 +131,12 @@ public class SSHTunnelManager {
 	}
 
 	private State connect(AbstractSSHTunnel tunnel, IZendTarget target,
-			boolean init) throws IOException {
+			boolean init) throws TunnelException, JSchException {
 		if (init) {
 			try {
 				return tunnel.connect();
-			} catch (IOException e) {
+			} catch (TunnelException e) {
+				tunnel.disconnect();
 				targets.remove(target);
 				throw e;
 			}
@@ -143,11 +144,10 @@ public class SSHTunnelManager {
 			if (!tunnel.isConnected()) {
 				try {
 					return tunnel.connect();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// If tunnel exists but it is disconnected and failed to
 					// connect it again
 					// try to remove old tunnel and create a new one for it
-					DeploymentCore.log(e);
 					targets.remove(target);
 					return connect(target);
 				}
