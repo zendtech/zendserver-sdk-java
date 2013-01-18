@@ -9,7 +9,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/run_exc.gif"
-               label="Launch a PHP Application"
+               label="Launch application"
                style="push">
             <parameter
                   name="mode"
@@ -19,7 +19,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/debug_exc.gif"
-               label="Launch a PHP Application in Debug Mode"
+               label="Debug application"
                style="push">
             <parameter
                   name="mode"
@@ -29,7 +29,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
                icon="icons/obj16/deploy_exc.png"
-               label="Deploy a PHP Application"
+               label="Deploy application"
                style="push">
          </command>
       </menuContribution>
