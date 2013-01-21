@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.window.IShellProvider;
@@ -42,15 +39,14 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.browser.WebBrowserEditor;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 import org.zend.php.common.Activator;
 import org.zend.php.common.ZendCatalogViewer;
 
@@ -287,8 +283,6 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			});
 		super.dispose();
 	}
-	
-	
 
 	private void hideRightSideViews() {
 		IWorkbench wb = null;
@@ -307,40 +301,32 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			return;
 		}
 
-		if (page instanceof WorkbenchPage) {
-			WorkbenchPage workbenchPage = (WorkbenchPage) page;
-			IViewReference[] viewReferences = page.getViewReferences();
-			EModelService modelService = (EModelService) getSite().getService(
-					EModelService.class);
-			List<String> viewIds = new ArrayList<String>();
-			if (modelService != null) {
-				List<MPlaceholder> placeholders = modelService.findElements(
-						workbenchPage.getWindowModel(), null,
-						MPlaceholder.class, null, EModelService.PRESENTATION);
-				List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
-				for (IViewReference reference : viewReferences) {
-					for (MPlaceholder placeholder : placeholders) {
-						if (((ViewReference) reference).getModel() == placeholder
-								.getRef()
-								&& placeholder.isToBeRendered()
-								&& placeholder.getParent().getElementId()
-										.equals("right")) {
-							// only rendered placeholders are valid view
-							// references
-							visibleReferences.add(reference);
-							viewIds.add(reference.getId());
-							page.hideView(reference);
-						}
-					}
-				}
-			}
-			
-			if (viewIds.size() > 0) {
-				saveState(viewIds);
-			}
+		
+		IViewReference outlineView = page
+				.findViewReference(OUTLINE_VIEW);
+		
+		if (outlineView != null) {
+			page.hideView(outlineView);
 		}
 	}
 
+	protected void reopenOutlineView() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+		
+		try {
+			page.showView(OUTLINE_VIEW);
+		} catch (PartInitException e) {
+			Activator.log(e);
+		}
+	}
 	protected void reopenRightSideViews() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
