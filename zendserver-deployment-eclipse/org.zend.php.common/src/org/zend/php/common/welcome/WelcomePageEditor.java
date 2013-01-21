@@ -178,6 +178,10 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			if (editorComp.getSize().x<800) {
 				hideRightSideViews();
 			}
+		}else if(editorComp==null){
+			if (parent.getParent().getParent().getParent().getSize().x<800) {//FIXME This is hard coded
+				hideRightSideViews();
+			}
 		}
 	}
 
@@ -275,12 +279,16 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	}
 
 	public void dispose() {
-
-		Display.getDefault().asyncExec(new Runnable() {//change syncExec to asyncExec,or there is NPE
-				public void run() {
-					reopenRightSideViews();
-				}
-			});
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				reopenRightSideViews();
+			}
+		});
+//		Display.getDefault().asyncExec(new Runnable() {//change syncExec to asyncExec,or there is NPE
+//				public void run() {
+//					reopenRightSideViews();
+//				}
+//			});
 		super.dispose();
 	}
 
@@ -304,9 +312,14 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		
 		IViewReference outlineView = page
 				.findViewReference(OUTLINE_VIEW);
-		
+
+		List<String> viewIds = new ArrayList<String>();
 		if (outlineView != null) {
 			page.hideView(outlineView);
+			viewIds.add(OUTLINE_VIEW);
+		}
+		if (viewIds.size() > 0) {
+			saveState(viewIds);
 		}
 	}
 
@@ -320,7 +333,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		if (page == null) {
 			return;
 		}
-		
+
 		try {
 			page.showView(OUTLINE_VIEW);
 		} catch (PartInitException e) {
