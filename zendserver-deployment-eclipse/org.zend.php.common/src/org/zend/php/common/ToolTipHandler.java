@@ -54,13 +54,16 @@ public class ToolTipHandler {
 	 *            the parent Shell
 	 */
 	public ToolTipHandler(Shell parent) {
-		final Display display = parent.getDisplay();
+		createTooltip(parent);
+	}
 
-		tipShell = new Shell(parent, SWT.ON_TOP | SWT.TOOL);
+	private void createTooltip(Shell parent) {
+		Display display = parent.getDisplay();
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.marginWidth = 2;
 		gridLayout.marginHeight = 2;
+		tipShell = new Shell(parent, SWT.ON_TOP | SWT.TOOL);
 		tipShell.setLayout(gridLayout);
 		GridData gds = new GridData();
 		gds.widthHint = tipWidth;
@@ -124,7 +127,6 @@ public class ToolTipHandler {
 				widgetSelected(e);
 			}
 		});
-
 	}
 
 	/**
@@ -181,7 +183,8 @@ public class ToolTipHandler {
 					return;
 				if (widget.getData() instanceof CatalogItem) {
 					tipWidget = widget;
-					showToolTip(control, pt, (CatalogItem) widget.getData());
+					if (control != null && !control.isDisposed())
+						showToolTip(control, pt, (CatalogItem) widget.getData());
 				}
 			}
 		});
@@ -190,6 +193,12 @@ public class ToolTipHandler {
 
 	private void showToolTip(final Control control, Point pt,
 			final CatalogItem ci) {
+		if (control == null || control.isDisposed() || tipLabelName == null
+				|| tipLabelName.isDisposed() || tipLabelText == null
+				|| tipLabelText.isDisposed()) {
+			createTooltip(control.getShell());
+		}
+
 		tipPosition = control.toDisplay(pt);
 		tipLabelName.setText(ci.getName().toString());
 		tipLabelText.setText(ci.getDescription());
@@ -247,4 +256,5 @@ public class ToolTipHandler {
 						- shellBounds.height), 0);
 		shell.setBounds(shellBounds);
 	}
+
 }
