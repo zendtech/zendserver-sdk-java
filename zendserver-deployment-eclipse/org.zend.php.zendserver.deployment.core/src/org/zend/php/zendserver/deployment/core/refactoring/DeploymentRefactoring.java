@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
@@ -32,7 +33,17 @@ public class DeploymentRefactoring {
 	public DeploymentRefactoring(String name) {
 		this.name = name;
 	}
-	
+
+	public Change createDescriptorPHPTextChange(IFile fileToChange, IFile newFile, IDescriptorContainer container) {
+		int origLength = container.getModelSerializer().getDocumentLength();
+		IDocument resultDocument = new Document();
+		container.connect(resultDocument);
+		container.save();
+		
+		PHPTextFileChange change = new PHPTextFileChange(name, fileToChange,newFile);
+		change.setEdit(new ReplaceEdit(0, origLength, resultDocument.get()));
+		return change;
+	}
 	public TextFileChange createDescriptorTextChange(IFile fileToChange, IDescriptorContainer container) {
 		int origLength = container.getModelSerializer().getDocumentLength();
 		IDocument resultDocument = new Document();

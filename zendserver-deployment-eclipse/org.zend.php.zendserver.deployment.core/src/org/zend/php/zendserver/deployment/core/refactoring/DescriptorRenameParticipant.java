@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
@@ -83,7 +82,8 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 			return null;
 		}
 		
-		TextFileChange change = r.createDescriptorTextChange(fileToChange, container);
+		Change change = r.createDescriptorPHPTextChange(container.getFile(),fileToChange, container);
+//		Change change = r.createDescriptorTextChange(fileToChange, container);
 		
 		return change;
 	}
