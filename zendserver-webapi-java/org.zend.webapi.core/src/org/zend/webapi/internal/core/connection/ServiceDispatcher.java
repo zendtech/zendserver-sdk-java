@@ -83,9 +83,9 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-			if (!dataDigster.validateResponse()) {
+			if (responseCode == 200 && !dataDigster.validateResponse()) {
 				throw new InvalidResponseException(new Exception(
-						"Invalid response media type for XML response"));
+						"Target is in sleep or hibernate mode."));
 			}
 			if (!request.isExpectedResponseCode(responseCode)) {
 				throw new UnexpectedResponseCode(responseCode, handle);
