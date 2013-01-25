@@ -10,6 +10,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IZendFramework2Dependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 
@@ -44,6 +45,7 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
 				DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT,
 				DeploymentDescriptorPackage.PARAMETERS,
@@ -200,6 +202,11 @@ public class DeploymentDescriptor extends ModelContainer implements
 	public List<IZendFrameworkDependency> getZendFrameworkDependencies() {
 		return super
 				.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK);
+	}
+	
+	public List<IZendFramework2Dependency> getZendFramework2Dependencies() {
+		return super
+				.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2);
 	}
 
 	public List<String> getPersistentResources() {

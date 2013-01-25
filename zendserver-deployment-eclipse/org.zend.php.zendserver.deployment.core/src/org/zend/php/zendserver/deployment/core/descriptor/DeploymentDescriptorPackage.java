@@ -72,6 +72,10 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final Feature DEPENDENCIES_ZENDFRAMEWORK = new Feature("dependencies/required/zendframework", null, IModelObject.class, DEPENDENCIES_ZENDFRAMEWORK_ID); //$NON-NLS-1$
 	
+	public static final int DEPENDENCIES_ZENDFRAMEWORK2_ID = 161;
+	
+	public static final Feature DEPENDENCIES_ZENDFRAMEWORK2 = new Feature("dependencies/required/zendframework2", null, IModelObject.class, DEPENDENCIES_ZENDFRAMEWORK2_ID); //$NON-NLS-1$
+	
 	public static final int DEPENDENCIES_ZSCOMPONENT_ID = 17;
 	
 	public static final Feature DEPENDENCIES_ZSCOMPONENT = new Feature("dependencies/required/zendservercomponent", null, IModelObject.class, DEPENDENCIES_ZSCOMPONENT_ID); //$NON-NLS-1$

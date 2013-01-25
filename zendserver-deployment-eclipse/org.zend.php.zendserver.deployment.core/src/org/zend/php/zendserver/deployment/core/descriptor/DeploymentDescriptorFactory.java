@@ -13,6 +13,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.PHPDependency
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Parameter;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendComponentDependency;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendFramework2Dependency;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendServerDependency;
 
@@ -37,6 +38,8 @@ public class DeploymentDescriptorFactory {
 				return new PHPDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK_ID:
 				return new ZendFrameworkDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2_ID:
+				return new ZendFramework2Dependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER_ID:
 				return new ZendServerDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT_ID:
@@ -60,6 +63,8 @@ public class DeploymentDescriptorFactory {
 			return DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION;
 		} else if (result instanceof IPHPDependency) {
 			return DeploymentDescriptorPackage.DEPENDENCIES_PHP;
+		} else if (result instanceof IZendFramework2Dependency) {
+			return DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2;
 		} else if (result instanceof IZendFrameworkDependency) {
 			return DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK;
 		} else if (result instanceof IZendServerDependency) {
