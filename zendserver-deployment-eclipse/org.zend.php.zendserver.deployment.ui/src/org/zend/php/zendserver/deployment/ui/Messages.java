@@ -44,7 +44,9 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_Required;
 	public static String DeploymentDescriptorLabelProvider_To;
 	public static String DeploymentDescriptorLabelProvider_ZendFramework;
+	public static String DeploymentDescriptorLabelProvider_ZendFramework2;
 	public static String DeploymentDescriptorLabelProvider_ZendFrameworkVersion;
+	public static String DeploymentDescriptorLabelProvider_ZendFramework2Version;
 	public static String DeploymentDescriptorLabelProvider_ZendServer;
 	public static String DeploymentDescriptorLabelProvider_ZendServerComponent;
 	public static String DeploymentDescriptorLabelProvider_ZendServerVersion;
@@ -200,7 +202,9 @@ public class Messages extends NLS {
 	public static String ZendComponentDependencyDetailsPage_Name;
 	public static String ZendComponentDependencyDetailsPage_SpecifyDetails;
 	public static String ZendFrameworkDependencyDetailsPage_ZFDepDetails;
+	public static String ZendFrameworkDependencyDetailsPage_ZF2DepDetails;
 	public static String ZendFrameworkDependencyDetailsPage_ZFDepVersion;
+	public static String ZendFrameworkDependencyDetailsPage_ZF2DepVersion;
 	public static String ZendServerDependencyDetailsPage_Details;
 	public static String ZendServerDependencyDetailsPage_Version;
 	static {

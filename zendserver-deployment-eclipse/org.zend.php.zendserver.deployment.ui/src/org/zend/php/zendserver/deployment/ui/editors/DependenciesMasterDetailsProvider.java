@@ -31,6 +31,7 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 			all.addAll(descr.getDirectiveDependencies());
 			all.addAll(descr.getExtensionDependencies());
 			all.addAll(descr.getZendFrameworkDependencies());
+			all.addAll(descr.getZendFramework2Dependencies());
 			all.addAll(descr.getZendServerDependencies());
 			all.addAll(descr.getZendComponentDependencies());
 			return all.toArray();
@@ -54,6 +55,8 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION),
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK),
+				DeploymentDescriptorFactory
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2),
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER),
 				DeploymentDescriptorFactory

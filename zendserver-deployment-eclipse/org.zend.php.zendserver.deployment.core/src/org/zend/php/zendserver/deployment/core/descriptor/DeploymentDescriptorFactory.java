@@ -36,10 +36,10 @@ public class DeploymentDescriptorFactory {
 				return new ExtensionDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_PHP_ID:
 				return new PHPDependency();
-			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK_ID:
-				return new ZendFrameworkDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2_ID:
 				return new ZendFramework2Dependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK_ID:
+				return new ZendFrameworkDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER_ID:
 				return new ZendServerDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT_ID:
