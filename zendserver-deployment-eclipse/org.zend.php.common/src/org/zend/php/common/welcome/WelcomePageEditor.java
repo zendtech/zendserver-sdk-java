@@ -359,6 +359,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				// ignore
 			}
 		}
+		saveState(new ArrayList<String>());
 
 	}
 
