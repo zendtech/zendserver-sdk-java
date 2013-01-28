@@ -83,7 +83,8 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-			if (responseCode == 200 && !dataDigster.validateResponse()) {
+			if ((responseCode == 200 || responseCode == 404)
+					&& !dataDigster.validateResponse()) {
 				throw new InvalidResponseException(new Exception(
 						"Target is in sleep or hibernate mode."));
 			}
