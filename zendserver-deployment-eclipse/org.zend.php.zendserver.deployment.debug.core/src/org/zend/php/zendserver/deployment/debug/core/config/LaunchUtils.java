@@ -1,8 +1,11 @@
 package org.zend.php.zendserver.deployment.debug.core.config;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -398,6 +401,24 @@ public class LaunchUtils {
 		IEclipsePreferences pref = new ProjectScope(project)
 				.getNode(DeploymentCore.PLUGIN_ID);
 		return pref.get("applicationURL", null); //$NON-NLS-1$
+	}
+
+	public static List<String> getBannedNames() {
+		List<String> result = new ArrayList<String>();
+		Server server = ServersManager.getDefaultServer(null);
+		if (server != null) {
+			String docRoot = server.getDocumentRoot();
+			if (docRoot != null && !docRoot.isEmpty()) {
+				File root = new File(docRoot);
+				File[] files = root.listFiles();
+				for (File file : files) {
+					if (file.isDirectory()) {
+						result.add(file.getName());
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	private static IResource getFile(IProject project) throws CoreException {

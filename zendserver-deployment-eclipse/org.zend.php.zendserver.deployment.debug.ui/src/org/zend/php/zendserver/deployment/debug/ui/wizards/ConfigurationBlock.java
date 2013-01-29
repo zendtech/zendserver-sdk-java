@@ -3,9 +3,12 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -63,13 +66,15 @@ public class ConfigurationBlock extends AbstractBlock {
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
 	private String description;
+	
+	private List<String> bannedNames;
 
 	public ConfigurationBlock(IStatusChangeListener listener,
 			IRunnableContext context, String description) {
 		super(listener);
 		this.context = context;
 		this.description = description;
-		// this.autoDeploy = LaunchUtils.isAutoDeployAvailable();
+		this.bannedNames = LaunchUtils.getBannedNames();
 	}
 
 	/*
@@ -188,6 +193,15 @@ public class ConfigurationBlock extends AbstractBlock {
 		URL baseUrl = null;
 		try {
 			baseUrl = getBaseURL();
+			if (baseUrl.getHost().equals("localhost")) { //$NON-NLS-1$
+				IPath file = new Path(baseUrl.getFile());
+				if (file.segmentCount() > 0) {
+					if (bannedNames.contains(file.segment(0))) {
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								Messages.ConfigurationBlock_LocalAppConflictErrorMessage);
+					}
+				}
+			}
 			String url = baseUrl.toString();
 			if (url.contains(" ") || url.contains("\t")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,

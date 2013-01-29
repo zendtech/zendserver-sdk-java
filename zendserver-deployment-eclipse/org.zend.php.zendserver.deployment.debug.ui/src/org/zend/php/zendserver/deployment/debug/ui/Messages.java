@@ -63,6 +63,8 @@ public class Messages extends NLS {
 
 	public static String ConfigurationBlock_DevelopmentModeLabel;
 
+	public static String ConfigurationBlock_LocalAppConflictErrorMessage;
+
 	public static String ConfigurationBlock_RefreshLabel;
 
 	public static String ConfigurationBlock_UrlEmptyError;
