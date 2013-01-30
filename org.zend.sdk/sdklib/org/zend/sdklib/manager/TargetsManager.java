@@ -288,36 +288,39 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		} catch (TargetException e) {
 			Throwable cause = e.getCause();
-			if (cause instanceof InvalidResponseException && local != null) {
-				// try to repeat for zs6
-				try {
-					local.connect(WebApiVersion.V1_3);
-					if (add) {
-						return add(local, true);
-					} else {
-						return local;
-					}
-				} catch (WebApiException e1) {
-					WebApiException webE = (WebApiException) cause;
-					final ResponseCode responseCode = webE.getResponseCode();
-					int code = (responseCode != null) ? responseCode.getCode()
-							: -1;
-					final String message = webE.getMessage();
-					throw new ServerVersionException(code, message);
-				} catch (TargetException e1) {
-					// do nothing, cannot occur when suppress connection
-				}
-			}
 			if (cause instanceof WebApiException) {
 				WebApiException webE = (WebApiException) cause;
 				final ResponseCode responseCode = webE.getResponseCode();
-				int code = (responseCode != null) ? responseCode.getCode() : -1;
-				final String message = webE.getMessage();
-				
-				throw new ServerVersionException(code, message);
-			} else {
-				throw new DetectionException(e);
+				if ((responseCode == ResponseCode.UNKNOWN_METHOD || cause instanceof InvalidResponseException)
+						&& local != null) {
+					// try to repeat for zs6
+					try {
+						local.connect(WebApiVersion.V1_3);
+						if (add) {
+							return add(local, true);
+						} else {
+							return local;
+						}
+					} catch (WebApiException e1) {
+						final ResponseCode rCode = e1.getResponseCode();
+						int code = (rCode != null) ? rCode.getCode() : -1;
+						final String message = e1.getMessage();
+						throw new ServerVersionException(code, message);
+					} catch (TargetException e1) {
+						// do nothing, cannot occur when suppress connection
+					}
+				}
+				if (cause instanceof WebApiException) {
+					int code = (responseCode != null) ? responseCode.getCode()
+							: -1;
+					final String message = webE.getMessage();
+
+					throw new ServerVersionException(code, message);
+				} else {
+					throw new DetectionException(e);
+				}
 			}
+			return null;
 		}
 	}
 
