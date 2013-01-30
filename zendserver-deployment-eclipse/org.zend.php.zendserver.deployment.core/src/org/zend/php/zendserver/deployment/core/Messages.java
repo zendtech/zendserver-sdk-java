@@ -14,6 +14,8 @@ public class Messages extends NLS {
 	public static String TargetDatabase_ProfileName;
 	public static String VersionTester_IsNotValidVersionNumber;
 
+	public static String PreviewWizardPage_changeElementLabelProvider_textFormat;
+
 	public static String ZendDevCloudTunnel_1;
 	
 	static {

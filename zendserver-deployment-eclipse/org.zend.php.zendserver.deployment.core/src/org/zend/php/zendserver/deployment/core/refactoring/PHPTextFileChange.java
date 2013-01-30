@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.core.refactoring;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -18,6 +20,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ContentStamp;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
@@ -25,6 +28,7 @@ import org.eclipse.ltk.internal.core.refactoring.Lock;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.UndoEdit;
+import org.zend.php.zendserver.deployment.core.Messages;
 
 public class PHPTextFileChange extends TextChange{
 	IFile oldFile;
@@ -341,5 +345,15 @@ public class PHPTextFileChange extends TextChange{
 			return fValidationState == null || !fValidationState.wasDirty();
 		}
 		return false;
+	}
+	
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+//		return super.getName();
+		IFile file= getFile();
+		return MessageFormat.format(
+				Messages.PreviewWizardPage_changeElementLabelProvider_textFormat,
+			new String[] { BasicElementLabels.getResourceName(file), BasicElementLabels.getPathLabel(file.getParent().getFullPath(), false)});
 	}
 }
