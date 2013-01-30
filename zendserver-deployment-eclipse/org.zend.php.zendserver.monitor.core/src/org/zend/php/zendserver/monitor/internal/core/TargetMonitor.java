@@ -190,7 +190,7 @@ public class TargetMonitor extends AbstractMonitor {
 	
 	private boolean shouldNotify(IssueSeverity severity, String baseURL) {
 		IEclipsePreferences prefs = getPreferences();
-		String nodeName = severity.getName().toLowerCase();
+		String nodeName = targetId + '.' + severity.getName();
 		if (prefs.getBoolean(nodeName, true)) {
 			for (String filter : filters) {
 				if (filter.endsWith(MonitorManager.SLASH)) { 
