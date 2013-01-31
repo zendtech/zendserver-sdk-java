@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.monitor.IZendIssue;
@@ -123,17 +124,7 @@ public class TargetMonitor extends AbstractMonitor {
 				IProject project = getProject(baseURL);
 				String basePath = null;
 				if (project != null) {
-					String toFind = MonitorManager.SLASH + project.getName(); 
-					int index = baseURL.indexOf(toFind);
-					if (index != -1) {
-						if (index + toFind.length() == baseURL.length()
-								|| baseURL.endsWith(toFind + MonitorManager.SLASH)) {
-							basePath = MonitorManager.SLASH; 
-						} else {
-							basePath = baseURL.substring(
-									index + toFind.length(), baseURL.length());
-						}
-					}
+					basePath = getBasePath(baseURL, project);
 				}
 				if (shouldNotify(issue.getSeverity(), baseURL)) {
 					// handle case when have not found a corresponding project
@@ -158,30 +149,69 @@ public class TargetMonitor extends AbstractMonitor {
 	}
 
 	protected IProject getProject(String urlString) {
-		IPath path = new Path(urlString);
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
-		String host = target.getHost().getHost();
-		String[] segments = path.segments();
-		for (int i = 0; i < segments.length; i++) {
-			if (segments[i].startsWith(host)) {
-				path = path.removeFirstSegments(i + 1);
-				break;
+		IProject project = null;
+		if (urlString != null) {
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+					.getProjects();
+			int maxLength = 0;
+			for (IProject p : projects) {
+				String url = LaunchUtils.getURLFromPreferences(p.getName());
+				if (url != null && urlString.startsWith(url)) {
+					int length = url.length();
+					if (maxLength < length) {
+						project = p;
+						maxLength = url.length();
+					}
+				}
 			}
 		}
-		if (path.segmentCount() > 0) {
-			String projectName = path.segment(0);
-			IProject project = ResourcesPlugin.getWorkspace().getRoot()
-					.getProject(projectName);
-			if (project != null) {
-				return project;
+		if (project == null) {
+			IPath path = new Path(urlString);
+			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+					.getTargetById(targetId);
+			String host = target.getHost().getHost();
+			String[] segments = path.segments();
+			for (int i = 0; i < segments.length; i++) {
+				if (segments[i].startsWith(host)) {
+					path = path.removeFirstSegments(i + 1);
+					break;
+				}
 			}
+			if (path.segmentCount() > 0) {
+				String projectName = path.segment(0);
+				project = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(projectName);
+			}	
 		}
-		return null;
+		return project;
 	}
 
 	protected boolean shouldStart() {
 		return isEnabled();
+	}
+
+	private String getBasePath(final String baseURL, IProject project) {
+		String basePath = MonitorManager.SLASH;
+		String url = LaunchUtils.getURLFromPreferences(project.getName());
+		if (url != null) {
+			if (url.endsWith(MonitorManager.SLASH)) {
+				url = url.substring(0, url.length() - 1);
+			}
+			basePath = baseURL.substring(url.length());
+		} else {
+			String toFind = MonitorManager.SLASH + project.getName();
+			int index = baseURL.indexOf(toFind);
+			if (index != -1) {
+				if (index + toFind.length() == baseURL.length()
+						|| baseURL.endsWith(toFind + MonitorManager.SLASH)) {
+					basePath = MonitorManager.SLASH;
+				} else {
+					basePath = baseURL.substring(index + toFind.length(),
+							baseURL.length());
+				}
+			}
+		}
+		return basePath;
 	}
 
 	private IEclipsePreferences getPreferences() {
@@ -198,6 +228,10 @@ public class TargetMonitor extends AbstractMonitor {
 				}
 				if (baseURL.startsWith(filter)) {
 					baseURL = baseURL.substring(filter.length());
+					if (!baseURL.isEmpty() && baseURL.startsWith(":")) { //$NON-NLS-1$
+						int index = baseURL.indexOf(MonitorManager.SLASH);
+						baseURL = baseURL.substring(index);
+					}
 					if (baseURL.startsWith(MonitorManager.SLASH) || baseURL.isEmpty()) { 
 						return true;
 					}

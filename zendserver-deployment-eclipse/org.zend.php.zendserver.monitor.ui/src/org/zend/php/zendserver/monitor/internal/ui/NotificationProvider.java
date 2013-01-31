@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
@@ -73,7 +75,9 @@ public class NotificationProvider implements INotificationProvider {
 		IBody eventBody = new EventBody(targetId, eventSource, issue,
 				actionsAvailable);
 		NotificationSettings settings = new NotificationSettings();
-		settings.setTitle(issue.getIssue().getRule()).setClosable(true)
+		String title = MessageFormat.format("{0} (target: {1})", issue //$NON-NLS-1$
+				.getIssue().getRule(), targetId);
+		settings.setTitle(title).setClosable(true)
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);
 		if (eventSource != null && eventSource.getSourceFile() != null) {

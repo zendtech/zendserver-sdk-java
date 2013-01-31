@@ -169,7 +169,8 @@ public abstract class AbstractMonitor extends Job {
 		Display.getDefault().asyncExec(new Runnable() {
 
 			public void run() {
-				IEventDetails eventSource = EventDetails.create(projectName,
+				IEventDetails eventSource = EventDetails.create(issue
+						.getIssue().getGeneralDetails().getUrl(), projectName,
 						basePath, issue.getIssue());
 				getProvider().showNonification(issue, targetId, eventSource,
 						delay, actionsAvailable);
@@ -275,53 +276,57 @@ public abstract class AbstractMonitor extends Job {
 						monitor.beginTask(MessageFormat.format(
 								Messages.AbstractMonitor_DisablingJobName,
 								targetId), IProgressMonitor.UNKNOWN);
-				ZendCodeTracing codeTracing = new ZendCodeTracing(targetId);
-				PhpcloudContainerListener listener = null;
-				IZendTarget target = TargetsManagerService.INSTANCE
-						.getTargetManager().getTargetById(targetId);
-				if (TargetsManager.isPhpcloud(target)) {
-					listener = new PhpcloudContainerListener(target);
-					WebApiClient.registerPreRequestListener(listener);
-				}
-				try {
-					CodeTracingStatus status = codeTracing.disable(true);
-					if (status == null) {
-						String m = MessageFormat
-								.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-										targetId);
-						handleError(monitor, m);
-						return;
-					}
-				} catch (WebApiException e) {
-					if (e instanceof WebApiCommunicationError) {
-						String m = MessageFormat
-								.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-										targetId);
-						handleError(monitor, m);
-						return;
-					} else {
-						if (e instanceof UnexpectedResponseCode) {
-							UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
-							ResponseCode code = codeException.getResponseCode();
-							switch (code) {
-							case UNSUPPORTED_API_VERSION:
+						ZendCodeTracing codeTracing = new ZendCodeTracing(
+								targetId);
+						PhpcloudContainerListener listener = null;
+						IZendTarget target = TargetsManagerService.INSTANCE
+								.getTargetManager().getTargetById(targetId);
+						if (TargetsManager.isPhpcloud(target)) {
+							listener = new PhpcloudContainerListener(target);
+							WebApiClient.registerPreRequestListener(listener);
+						}
+						try {
+							CodeTracingStatus status = codeTracing
+									.disable(true);
+							if (status == null) {
 								String m = MessageFormat
-										.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
+										.format(Messages.AbstractMonitor_InitializationJobConnectionError,
 												targetId);
 								handleError(monitor, m);
 								return;
-							default:
-								break;
+							}
+						} catch (WebApiException e) {
+							if (e instanceof WebApiCommunicationError) {
+								String m = MessageFormat
+										.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+												targetId);
+								handleError(monitor, m);
+								return;
+							} else {
+								if (e instanceof UnexpectedResponseCode) {
+									UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+									ResponseCode code = codeException
+											.getResponseCode();
+									switch (code) {
+									case UNSUPPORTED_API_VERSION:
+										String m = MessageFormat
+												.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
+														targetId);
+										handleError(monitor, m);
+										return;
+									default:
+										break;
+									}
+								}
+							}
+						} finally {
+							if (listener != null) {
+								WebApiClient
+										.unregisterPreRequestListener(listener);
 							}
 						}
 					}
-				} finally {
-					if (listener != null) {
-						WebApiClient.unregisterPreRequestListener(listener);
-					}
-				}
-			}
-		});
+				});
 	}
 
 	private boolean doStart(IProgressMonitor monitor) {

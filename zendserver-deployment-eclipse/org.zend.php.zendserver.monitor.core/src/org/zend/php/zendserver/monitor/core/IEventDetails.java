@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.core;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * Represents event details provided by Zend Server. It provides interface to
@@ -32,21 +31,13 @@ public interface IEventDetails {
 	 * @return line number
 	 */
 	long getLine();
-
+	
 	/**
-	 * Creates project relative path based on source file path and project name.
+	 * Returns file path for a source file.
 	 * 
-	 * @return project relative path to the source file
+	 * @return file path
 	 */
-	String getProjectRelativePath();
-
-	/**
-	 * Returns resource for a source file for particular project in the
-	 * workspace.
-	 * 
-	 * @return workspace resource
-	 */
-	IFile getResource();
+	String getLocalFile();
 
 	/**
 	 * @return event's type

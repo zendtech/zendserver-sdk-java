@@ -7,9 +7,16 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
@@ -27,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -73,16 +81,26 @@ public class OpenInEditorJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void openEditor() {
+	private void openEditor() throws CoreException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
 			return;
 		}
-		IFile file = eventSource.getResource();
-		if (file != null) {
-			IEditorInput input = new FileEditorInput(file);
-			String editorId = getEditorId(file);
+		IEditorInput input = null;
+		String localPath = eventSource.getLocalFile();
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(localPath);
+		if (resource instanceof IFile) {
+			input = new FileEditorInput((IFile) resource);
+		} else {
+			input = new FileStoreEditorInput(getFileStore(localPath));
+		}
+		if (input != null) {
+			IPath path = new Path(localPath);
+			String fileName = path.removeFirstSegments(path.segmentCount() - 1)
+					.toString();
+			String editorId = getEditorId(fileName);
 			try {
 				IEditorPart editor = window.getActivePage().openEditor(input,
 						editorId);
@@ -94,6 +112,24 @@ public class OpenInEditorJob extends Job {
 				Activator.log(e);
 			}
 		}
+	}
+
+	private IFileStore getFileStore(String pathName) throws CoreException {
+		IFileStore store = null;
+		Path location = new Path(pathName);
+		// see if there is an existing resource at that location that might have
+		// a different file store
+		IFile file = ResourcesPlugin.getWorkspace().getRoot()
+				.getFileForLocation(location);
+		if (file != null) {
+			store = EFS.getStore(file.getLocationURI());
+		} else {
+			store = EFS.getStore(location.toFile().toURI());
+		}
+		if (store == null) {
+			return null;
+		}
+		return store;
 	}
 
 	private void gotoLine(ITextEditor editor) {
@@ -113,33 +149,31 @@ public class OpenInEditorJob extends Job {
 		page.activate(editor);
 	}
 
-	private IContentType getContentType(IFile fileStore) {
-		if (fileStore == null)
+	private IContentType getContentType(String fileName) {
+		if (fileName == null) {
 			return null;
-		return Platform.getContentTypeManager().findContentTypeFor(
-				fileStore.getName());
+		}
+		return Platform.getContentTypeManager().findContentTypeFor(fileName);
 	}
 
-	private String getEditorId(IFile fileStore) {
+	private String getEditorId(String fileName) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IWorkbench workbench = window.getWorkbench();
 		IEditorRegistry editorRegistry = workbench.getEditorRegistry();
 		IEditorDescriptor descriptor = editorRegistry.getDefaultEditor(
-				fileStore.getName(), getContentType(fileStore));
+				fileName, getContentType(fileName));
 
 		// check the OS for in-place editor (OLE on Win32)
 		if (descriptor == null
-				&& editorRegistry.isSystemInPlaceEditorAvailable(fileStore
-						.getName())) {
+				&& editorRegistry.isSystemInPlaceEditorAvailable(fileName)) {
 			descriptor = editorRegistry
 					.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
 		}
 
 		// check the OS for external editor
 		if (descriptor == null
-				&& editorRegistry.isSystemExternalEditorAvailable(fileStore
-						.getName())) {
+				&& editorRegistry.isSystemExternalEditorAvailable(fileName)) {
 			descriptor = editorRegistry
 					.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		}
