@@ -402,6 +402,16 @@ public class LaunchUtils {
 				.getNode(DeploymentCore.PLUGIN_ID);
 		return pref.get("applicationURL", null); //$NON-NLS-1$
 	}
+	
+	public static IZendTarget getTargetFromPreferences(String projectName) {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectName);
+		IEclipsePreferences pref = new ProjectScope(project)
+				.getNode(DeploymentCore.PLUGIN_ID);
+		String targetId = pref.get("targetId", null); //$NON-NLS-1$
+		return TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
+				targetId);
+	}
 
 	public static List<String> getBannedNames() {
 		List<String> result = new ArrayList<String>();
