@@ -8,11 +8,16 @@
 package org.zend.sdklib.manager;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -595,6 +600,34 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public static boolean isOpenShift(String targetHost) {
 		return targetHost != null
 				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
+	}
+	
+	public static boolean isLocalhost(IZendTarget target) {
+		return isLocalhost(target.getHost().getHost());
+	}
+	
+	public static boolean isLocalhost(String host) {
+		if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
+			return true;
+		}
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface
+					.getNetworkInterfaces();
+			ArrayList<NetworkInterface> interfacesList = Collections
+					.list(interfaces);
+			for (NetworkInterface netInterface : interfacesList) {
+				Enumeration<InetAddress> inetAddresses = netInterface
+						.getInetAddresses();
+				for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+					if (host.equals(inetAddress.getHostName())) {
+						return true;
+					}
+				}
+			}
+		} catch (SocketException e) {
+			// just ignore and continue
+		}
+		return false;
 	}
 
 	protected void load() {
