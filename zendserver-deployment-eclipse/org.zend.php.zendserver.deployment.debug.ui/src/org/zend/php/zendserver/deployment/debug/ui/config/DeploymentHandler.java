@@ -322,7 +322,7 @@ public class DeploymentHandler {
 			// configuration without changes
 			return null;
 		}
-		helper.setOperationType(IDeploymentHelper.AUTO_DEPLOY);
+		helper.setOperationType(IDeploymentHelper.NO_ACTION);
 		job.setHelper(helper);
 		job.setProjectPath(project);
 		job.addJobChangeListener(new JobChangeAdapter() {

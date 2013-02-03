@@ -59,16 +59,11 @@ public class PHPLaunchConfigs {
 	public static IStatus preLaunchConfigurationRemoval(ILaunchConfiguration config) {
 		try {
 			String projectName = config.getAttribute(DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
-			int operationType = config.getAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), -1);
-			if (operationType != IDeploymentHelper.AUTO_DEPLOY) {
-				return Status.OK_STATUS;
-			}
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IProject project = root.getProject(projectName);
 			if (project != null) {
 				ProjectScope projectScope = new ProjectScope(project);
 				IEclipsePreferences remoteNode = projectScope.getNode(REMOTE_PROJECT);
-				System.out.println();
 				if (remoteNode != null
 						&& remoteNode.getBoolean(
 								REMOTE_PROJECT_ENABLED, false)) {
