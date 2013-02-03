@@ -289,11 +289,13 @@ public class DeploymentHandler {
 					MonitorManager.addFilter(helper.getTargetId(), helper
 							.getBaseURL().toString());
 					if (helper.getOperationType() == IDeploymentHelper.DEPLOY
-							&& LaunchUtils.isAutoDeployAvailable()
-							&& (TargetsManager.isPhpcloud(helper
-									.getTargetHost()) || TargetsManager
-									.isOpenShift(helper.getTargetHost()))) {
-						job = getAutoDeployJob(helper, project);
+							&& LaunchUtils.isAutoDeployAvailable()) {
+						String host = helper.getTargetHost();
+						if (TargetsManager.isPhpcloud(host)
+								|| TargetsManager.isOpenShift(host)
+								|| TargetsManager.isLocalhost(host)) {
+							job = getAutoDeployJob(helper, project);
+						}
 					}
 				}
 				LaunchUtils.updatePreferences(project,
