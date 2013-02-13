@@ -374,6 +374,10 @@ public abstract class AbstractTargetDetailsComposite {
 									if (target.connect()) {
 										return target;
 									}
+									break;
+								case AUTH_ERROR:
+								case INSUFFICIENT_ACCESS_LEVEL:
+									throw e;
 								default:
 									break;
 								}
@@ -387,6 +391,8 @@ public abstract class AbstractTargetDetailsComposite {
 							ResponseCode code = codeException.getResponseCode();
 							switch (code) {
 							case UNSUPPORTED_API_VERSION:
+							case AUTH_ERROR:
+							case INSUFFICIENT_ACCESS_LEVEL:
 								throw catchedException;
 							default:
 								break;
