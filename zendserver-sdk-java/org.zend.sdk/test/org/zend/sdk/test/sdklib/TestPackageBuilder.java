@@ -181,7 +181,7 @@ public class TestPackageBuilder extends AbstractTest {
 		assertEquals(StatusCode.STARTING, statuses.get(0).getCode());
 		assertEquals(StatusCode.STOPPING, statuses.get(statuses.size() - 1)
 				.getCode());
-		assertEquals(4, statuses.size() - 2);
+		assertEquals(5, statuses.size() - 2);
 	}
 	
 	@Test

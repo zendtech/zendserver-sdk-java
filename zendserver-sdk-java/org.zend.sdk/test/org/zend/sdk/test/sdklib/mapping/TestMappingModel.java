@@ -274,6 +274,19 @@ public class TestMappingModel {
 		assertTrue(model.getPackagePath(IMappingModel.APPDIR, "public//inner_public").startsWith(
 				"appdir"));
 	}
+	
+	@Test
+	public void testGetPackagePathLongPath() throws IOException {
+		IMappingModel model = MappingModelFactory.createDefaultModel(new File(FOLDER, "Project1"));
+		assertTrue(model.getPackagePath(IMappingModel.APPDIR, "public//a//inner_public").startsWith(
+				"appdir"));
+	}
+	
+	@Test
+	public void testGetPackagePathInvalid() throws IOException {
+		IMappingModel model = MappingModelFactory.createDefaultModel(new File(FOLDER, "Project1"));
+		assertNull(model.getPackagePath(IMappingModel.APPDIR, "c//public//inner_public"));
+	}
 
 	private int getSize(IMappingModel model, String folder, Type type) {
 		return model.getEntry(folder, type).getMappings().size();
