@@ -407,10 +407,15 @@ public class MappingModel implements IMappingModel {
 					if (includePath.equals(path)) {
 						return new File(entry.getFolder(), path).getPath();
 					} else {
-						int index = path.lastIndexOf(File.separator);
-						String fileName = index != -1 ? path.substring(0, index) : path;
-						if (includePath.equals(fileName)) {
-							return new File(entry.getFolder(), path).getPath();
+						String fileName = path;
+						while (fileName != null && fileName.length() > 0) {
+							int index = fileName.lastIndexOf(File.separator);
+							fileName = index != -1 ? fileName.substring(0,
+									index) : "";
+							if (includePath.equals(fileName)) {
+								return new File(entry.getFolder(), path)
+										.getPath();
+							}
 						}
 					}
 				}
