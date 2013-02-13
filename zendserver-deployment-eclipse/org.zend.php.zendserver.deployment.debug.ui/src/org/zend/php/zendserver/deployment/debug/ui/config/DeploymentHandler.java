@@ -285,6 +285,10 @@ public class DeploymentHandler {
 			DeploymentLaunchJob deploymentJob = (DeploymentLaunchJob) job;
 			ResponseCode code = deploymentJob.getResponseCode();
 			if (code == null) {
+				if (helper.getInstalledLocation() == null
+						|| helper.getInstalledLocation().trim().isEmpty()) {
+					return IStatus.CANCEL;
+				}
 				if (helper.isDevelopmentModeEnabled()) {
 					MonitorManager.addFilter(helper.getTargetId(), helper
 							.getBaseURL().toString());
