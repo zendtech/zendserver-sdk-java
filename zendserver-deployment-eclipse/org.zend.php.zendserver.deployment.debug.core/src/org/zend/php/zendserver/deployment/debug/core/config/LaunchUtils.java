@@ -196,8 +196,8 @@ public class LaunchUtils {
 				PHPDebugPlugin.getOpenInBrowserOption());
 		wc.setAttribute(IPHPDebugConstants.DEBUGGING_PAGES,
 				IPHPDebugConstants.DEBUGGING_ALL_PAGES);
-		// set true as default
-		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true);
+		wc.setAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, wc
+				.getAttribute(IDebugParametersKeys.FIRST_LINE_BREAKPOINT, true));
 	}
 
 	public static ILaunchConfiguration findLaunchConfiguration(IProject project) {
