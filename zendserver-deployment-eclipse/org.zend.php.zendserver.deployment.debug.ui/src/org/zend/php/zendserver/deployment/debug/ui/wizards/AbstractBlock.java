@@ -67,11 +67,14 @@ public abstract class AbstractBlock {
 		return listener;
 	}
 
-	protected Combo createLabelWithCombo(String labelText, String tooltip, Composite container, boolean readOnly) {
-		Label label = new Label(container, SWT.NULL);
+	protected Combo createLabelWithCombo(String labelText, String tooltip,
+			Composite container, boolean required, boolean readOnly) {
+		Label label = new Label(container, SWT.NONE);
+		if (required) {
+			labelText += " * "; //$NON-NLS-1$
+		}
 		label.setText(labelText);
-		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		Combo combo = null;
 		if (readOnly) {
 			combo = new Combo(container, SWT.SIMPLE | SWT.DROP_DOWN
@@ -90,16 +93,14 @@ public abstract class AbstractBlock {
 		return combo;
 	}
 
-	protected Text createLabelWithText(String labelText, String tooltip, Composite container, boolean required) {
+	protected Text createLabelWithText(String labelText, String tooltip,
+			Composite container, boolean required) {
 		Label label = new Label(container, SWT.NONE);
-		label.setText(labelText);
-		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		label.setLayoutData(gd);
 		if (required) {
-			Label asteriks = new Label(container, SWT.NONE);
-			asteriks.setText("*"); //$NON-NLS-1$
-			asteriks.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
+			labelText += " * "; //$NON-NLS-1$
 		}
+		label.setText(labelText);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {

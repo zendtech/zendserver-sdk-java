@@ -152,7 +152,9 @@ public class ParametersBlock extends AbstractBlock {
 				}
 				break;
 			case CHOICE:
-				control = createLabelWithCombo(getName(name), tooltip, composite, true);
+				control = createLabelWithCombo(getName(name), tooltip,
+						composite, parameter.isRequired(),
+						parameter.isReadOnly());
 				List<String> values = parameter.getValidValues();
 				((Combo) control).setItems(values.toArray(new String[values.size()]));
 				if (parameter.getDefaultValue() != null) {
