@@ -246,7 +246,7 @@ public class ModelSerializer {
 					}
 					
 					if (node != null) {
-						lastAddedNode = getDirectChild(doc, node);
+						lastAddedNode = node;
 					}
 				}
 				for (int j = children.size(); j < nodes.length; j++) {
@@ -315,6 +315,8 @@ public class ModelSerializer {
 			
 			if (sameLevelAfter != null) {
 				before = sameLevelAfter.getNextSibling();
+			} else {
+				before = parent.getFirstChild();
 			}
 		}
 		
