@@ -308,7 +308,7 @@ public class ModelSerializer {
 		
 		// handle node order
 		Node before = null;
-		if (after == null) { // by default insert at the beginning
+		if ((after == null) || (after == parent)) { // by default insert at the beginning
 			before = parent.getFirstChild();
 		} else { // otherwise add after provided 'after' node
 			Node sameLevelAfter = getDirectChild(parent, after);
