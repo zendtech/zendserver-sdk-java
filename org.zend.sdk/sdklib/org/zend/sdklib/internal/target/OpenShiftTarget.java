@@ -65,6 +65,39 @@ import com.openshift.internal.client.response.Message;
  */
 public class OpenShiftTarget {
 
+	public enum Type {
+
+		zs6_0_0("zend-server-6"),
+
+		zs5_6_0("zend-5.6"),
+		
+		UNKNOWN("");
+
+		private String name;
+
+		private Type(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+		
+		public static Type create(String name) {
+			if (name == null) {
+				return UNKNOWN;
+			}
+			Type[] values = values();
+			for (Type type: values) {
+				if (name.equals(type.getName())) {
+					return type;
+				}
+			}
+			return UNKNOWN;
+		}
+		
+	}
+
 	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer";
 	public static final String LIBRA_DOMAIN_PROP = "org.zend.sdk.openshift.libraDomain";
 
@@ -79,20 +112,26 @@ public class OpenShiftTarget {
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
 
 	private static final String SSHKEY_DEFAULT_NAME = "zendStudio";
-	private static final String CARTRIDGE_NAME = "zend-5.6";
 	private static final String DEFAULT_KEY_NAME = "ZendStudioClient";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String ZEND_SERVER_USER_INI_PATH = "zend-5.6/gui/application/data/zend-server-user.ini";
 
 	private String username;
 	private String password;
+	private ApiKeyDetector apiKeyDetector;
 
 	private IDomain domain;
 
-	public OpenShiftTarget(String username, String password) {
+	public OpenShiftTarget(String username, String password,
+			ApiKeyDetector apiKeyDetector) {
 		super();
 		this.username = username;
 		this.password = password;
+		this.apiKeyDetector = apiKeyDetector;
+	}
+	
+	public OpenShiftTarget(String username, String password) {
+		this(username, password, null);
 	}
 
 	/**
@@ -181,6 +220,22 @@ public class OpenShiftTarget {
 			throw new SdkException(e);
 		}
 	}
+	
+	public List<String> getZendCartridges() throws SdkException {
+		try {
+			IDomain d = getDomain();
+			List<String> result = new ArrayList<String>();
+			List<ICartridge> cartridges = d.getUser().getConnection().getStandaloneCartridges();
+			for (ICartridge c : cartridges) {
+				if (Type.create(c.getName()) != Type.UNKNOWN) {
+					result.add(c.getName());
+				}
+			}
+			return result;
+		} catch (OpenShiftException e) {
+			throw new SdkException(e);
+		}
+	}
 
 	public boolean hasDomain() throws SdkException {
 		try {
@@ -223,14 +278,12 @@ public class OpenShiftTarget {
 		user.createDomain(domainName);
 	}
 
-	public String create(String targetName, String gearProfile, boolean mySql)
-			throws SdkException {
+	public String create(String targetName, String gearProfile, boolean mySql,
+			String cartridgeName) throws SdkException {
 		IDomain d = getDomain();
 		if (d != null) {
-			IApplication application = d
-					.createApplication(targetName,
-							new Cartridge(CARTRIDGE_NAME), new GearProfile(
-									gearProfile));
+			IApplication application = d.createApplication(targetName,
+					new Cartridge(cartridgeName), new GearProfile(gearProfile));
 			if (application != null && mySql) {
 				IEmbeddedCartridge cartridge = application
 						.addEmbeddableCartridge(new EmbeddableCartridge(
@@ -251,7 +304,7 @@ public class OpenShiftTarget {
 			setLibraServer(value);
 		}
 	}
-	
+
 	public static void iniLibraDomain(String value) {
 		String val = System.getProperty(LIBRA_DOMAIN_PROP);
 		if (val == null) {
@@ -447,15 +500,44 @@ public class OpenShiftTarget {
 			if (hasMySqlSupport(container)) {
 				target.addProperty(TARGET_MYSQL_SUPPORT, "true");
 			}
+			ICartridge cartridge = container.getCartridge();
+			Type type = Type.create(cartridge.getName());
+			String keyName = null;
 			String secretKey = null;
-			secretKey = getApiKey(uuid, url.getHost(), privateKey, keyBuilder);
+			switch (type) {
+			case zs5_6_0:
+				keyName = DEFAULT_KEY_NAME;
+				secretKey = getApiKey(uuid, url.getHost(), privateKey,
+						keyBuilder);
+				break;
+			case zs6_0_0:
+				if (getApiKeyZS6(null)) {
+					keyName = apiKeyDetector.getKey();
+					secretKey = apiKeyDetector.getSecretKey();
+				}
+				break;
+			default:
+				break;
+			}
 			if (secretKey != null) {
-				target.setKey(DEFAULT_KEY_NAME);
+				target.setKey(keyName);
 				target.setSecretKey(secretKey);
 				result.add(target);
 			}
 		}
 		return (IZendTarget[]) result.toArray(new IZendTarget[result.size()]);
+	}
+
+	private boolean getApiKeyZS6(String message) throws SdkException {
+		try {
+			return apiKeyDetector.createApiKey(message);
+		} catch (SdkException e) {
+			if ("invalid credentials".equals(e.getMessage())) { //$NON-NLS-1$
+				return getApiKeyZS6("Provided credentials are not valid."); //$NON-NLS-1$
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	private String getApiKey(String uuid, String host, String privateKey,
@@ -526,7 +608,8 @@ public class OpenShiftTarget {
 			if (apps != null && apps.size() > 0) {
 				for (IApplication app : apps) {
 					ICartridge cartridge = app.getCartridge();
-					if (CARTRIDGE_NAME.equals(cartridge.getName())) {
+					String name = cartridge.getName();
+					if (Type.create(name) != Type.UNKNOWN) {
 						result.add(app);
 					}
 				}
