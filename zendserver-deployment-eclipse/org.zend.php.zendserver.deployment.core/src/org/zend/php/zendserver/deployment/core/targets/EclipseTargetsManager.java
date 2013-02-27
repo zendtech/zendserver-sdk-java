@@ -100,8 +100,8 @@ public class EclipseTargetsManager extends TargetsManager {
 		for (ITargetsManagerListener listener : listeners) {
 			listener.targetRemoved(target);
 		}
+		EclipseSSH2Settings.unregisterDevCloudTarget(target);
 		return super.remove(target);
-		// TODO remove SSH keys for removed targets
 	}
 
 	@Override

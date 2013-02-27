@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
+import org.zend.sdklib.internal.target.OpenShiftTarget.Type;
 
 /**
  * Target attributes page.
@@ -37,8 +38,8 @@ import org.zend.sdklib.internal.target.OpenShiftTarget;
 public class OpenShiftTargetPage extends WizardPage {
 
 	private Text targetNameText;
-	// private TableViewer platformsViewer;
 	private Combo gearProfileCombo;
+	private Combo cartridgesCombo;
 	private OpenShiftTarget target;
 	private Button mySqlButton;
 
@@ -106,6 +107,10 @@ public class OpenShiftTargetPage extends WizardPage {
 						gearProfileCombo.add(profile);
 					}
 					gearProfileCombo.select(0);
+					for (String name : data.getZendCartridges()) {
+						cartridgesCombo.add(name);
+					}
+					cartridgesCombo.select(data.getZendCartridges().size() - 1);
 				}
 			});
 		}
@@ -117,6 +122,9 @@ public class OpenShiftTargetPage extends WizardPage {
 		}
 		if (gearProfileCombo != null) {
 			data.setGearProfile(gearProfileCombo.getText());
+		}
+		if (cartridgesCombo != null) {
+			data.setCartridge(Type.create(cartridgesCombo.getText()));
 		}
 		if (mySqlButton != null) {
 			data.setMySQLSupport(mySqlButton.getSelection());
@@ -187,6 +195,8 @@ public class OpenShiftTargetPage extends WizardPage {
 		targetNameText = createLabelWithText(
 				Messages.OpenShiftTargetPage_TargetNameLabel, false,
 				targetGroup);
+		cartridgesCombo = createLabelWithCombo(
+				"Cartridge:", targetGroup);
 		gearProfileCombo = createLabelWithCombo(
 				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup);
 		mySqlButton = createMySqlSection(targetGroup);

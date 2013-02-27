@@ -97,7 +97,8 @@ public class OpenShiftTargetWizard extends Wizard {
 								IProgressMonitor.UNKNOWN);
 						final String message = data.getTarget().create(
 								data.getName(), data.getGearProfile(),
-								data.hasMySQLSupport());
+								data.hasMySQLSupport(),
+								data.getCartridge().getName());
 						String domain = data.getTarget().getDomainName();
 						String libraDomain = data.getTarget().getLibraDomain();
 						OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(

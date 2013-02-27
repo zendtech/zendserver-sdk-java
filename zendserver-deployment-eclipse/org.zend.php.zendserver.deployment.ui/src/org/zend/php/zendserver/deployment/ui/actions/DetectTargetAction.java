@@ -6,15 +6,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.zend.php.zendserver.deployment.core.targets.ApiKeyDetector;
+import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
+import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.ApiKeyDetector;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
@@ -164,41 +164,27 @@ public class DetectTargetAction extends Action {
 	}
 	
 	private void detectZendServer6(final String message) throws DetectionException {
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
-						Display.getDefault().getActiveShell(),
-						"Zend Server Credentials", message); //$NON-NLS-1$
-				if (dialog.open() == Window.OK) {
-					username = dialog.getUsername();
-					password = dialog.getPassword();
-				} else {
-					username = null;
-					password = null;
-					status = new Status(IStatus.CANCEL, Activator.PLUGIN_ID, "");
+		ApiKeyDetector manager = new EclipseApiKeyDetector(username, password);
+		try {
+			manager.createApiKey(message);
+			TargetsManager tm = TargetsManagerService.INSTANCE
+					.getTargetManager();
+			this.status = Status.OK_STATUS;
+			target = tm.detectLocalhostTarget(null, manager.getKey(),
+					manager.getSecretKey());
+		} catch (SdkException e) {
+			if ("invalid credentials".equals(e.getMessage())) { //$NON-NLS-1$
+				detectZendServer6("Provided credentials are not valid."); //$NON-NLS-1$
+			} else {
+				String msg = e.getMessage();
+				if (e.getCause() != null) {
+					msg = e.getCause().getMessage();
 				}
-			}
-		});
-		if (username == null || username.trim().isEmpty()
-				|| password == null || password.trim().isEmpty()) {
-			return;
-		}
-		ApiKeyDetector manager = new ApiKeyDetector(username, password);
-		IStatus status = manager.createApiKey();
-		if (status.getSeverity() == IStatus.INFO) {
-			detectZendServer6("Provided credentials are not valid.");
-		} else {
-			if (status.getSeverity() != IStatus.OK) {
-				this.status = status;
+				this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						msg);
 				StatusManager.getManager().handle(status);
 				return;
 			}
-			TargetsManager tm = TargetsManagerService.INSTANCE
-					.getTargetManager();
-			this.status = status;
-			target = tm.detectLocalhostTarget(null, manager.getKey(),
-					manager.getSecretKey());
 		}
 	}
 

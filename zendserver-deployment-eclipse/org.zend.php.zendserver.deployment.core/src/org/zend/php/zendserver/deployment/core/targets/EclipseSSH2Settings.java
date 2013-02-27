@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,6 +49,47 @@ public class EclipseSSH2Settings {
 			// TODO handle error adding key
 		}
 		return false;
+	}
+	
+	public static void unregisterDevCloudTarget(IZendTarget target) {
+		String keyPath = target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
+		if (keyPath == null) {
+			return;
+		}
+		Preferences preferences = JSchCorePlugin.getPlugin()
+				.getPluginPreferences();
+		String ssh2Home = preferences.getString(IConstants.KEY_SSH2HOME);
+		String existingPrivateKeys = preferences
+				.getString(IConstants.KEY_PRIVATEKEY);
+		List<String> existingKeys = new ArrayList<String>(Arrays.asList(existingPrivateKeys
+				.split(KEY_NAME_SEPARATOR)));
+
+		File keyFile = new File(keyPath);
+		String keyName = keyFile.getName();
+		String parent = keyFile.getParent();
+
+		if (parent != null && parent.equals(ssh2Home)) {
+			if (existingKeys.contains(keyName)) {
+				existingKeys.remove(keyName);
+				StringBuilder updatedKey = new StringBuilder();
+				for (String key : existingKeys) {
+					updatedKey.append(key);
+					updatedKey.append(KEY_NAME_SEPARATOR);
+				}
+				if (updatedKey.toString().endsWith(KEY_NAME_SEPARATOR)) {
+					existingPrivateKeys = updatedKey.substring(0,
+							updatedKey.length() - 1);
+				} else {
+					existingPrivateKeys = updatedKey.toString();
+				}
+				preferences.setValue(IConstants.KEY_PRIVATEKEY,
+						existingPrivateKeys);
+
+				JSchCorePlugin.getPlugin().setNeedToLoadKnownHosts(true);
+				JSchCorePlugin.getPlugin().setNeedToLoadKeys(true);
+				JSchCorePlugin.getPlugin().savePluginPreferences();
+			}
+		}
 	}
 	
 	public static File getPrivateKey(String type) {
