@@ -25,13 +25,13 @@ public enum FeatureIdentifiers {
 
 	SVN(
 			new String[] {
-					"org.eclipse.team.svn", "org.polarion.eclipse.team.svn.connector", "org.polarion.eclipse.team.svn.connector.svnkit16" }), //$NON-NLS-1$
+					"org.eclipse.team.svn", "org.polarion.eclipse.team.svn.connector", "org.polarion.eclipse.team.svn.connector.svnkit16", "org.polarion.eclipse.team.svn.connector.svnkit16" }), //$NON-NLS-1$
 
 	GIT(new String[] { "org.eclipse.egit", "org.eclipse.jgit" }), //$NON-NLS-1$
 
 	WSDL(new String[] { "com.zend.wsdl.support.feature" }), //$NON-NLS-1$
 
-	ADT(new String[] { "com.android.ide.eclipse.adt"}); //$NON-NLS-1$
+	ADT(new String[] { "com.android.ide.eclipse.adt" }); //$NON-NLS-1$
 
 	private static final String POSTFIX = ".feature.group"; //$NON-NLS-1$
 
@@ -40,7 +40,7 @@ public enum FeatureIdentifiers {
 	private FeatureIdentifiers(String[] ids) {
 		this.ids = new HashSet<String>();
 		for (String str : ids) {
-			if(!Platform.inDevelopmentMode())
+			if (!Platform.inDevelopmentMode())
 				str = str.concat(POSTFIX);
 			this.ids.add(str);
 		}
