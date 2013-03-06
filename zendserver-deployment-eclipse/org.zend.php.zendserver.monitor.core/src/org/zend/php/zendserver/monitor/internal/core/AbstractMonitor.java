@@ -57,12 +57,18 @@ public abstract class AbstractMonitor extends Job {
 
 	private static final String PROVIDER_EXTENSION = "org.zend.php.zendserver.monitor.core.notificationProvider"; //$NON-NLS-1$
 
+	private static final int JOB_DELAY_MIN = 2000;
+	private static final int JOB_DELAY_MAX = 4 * JOB_DELAY_MIN;
+	private static final int STEP = 30;
+	
 	private static INotificationProvider provider;
-
+	
 	protected String targetId;
 	private ZendMonitor monitor;
 	protected long lastTime;
-	private int jobDelay = 2000;
+	
+	private int jobDelay = JOB_DELAY_MIN;
+	private int counter;
 	private int offset;
 	private ZendCodeTracing codeTracing;
 
@@ -115,7 +121,13 @@ public abstract class AbstractMonitor extends Job {
 			} else {
 				issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
 				if (issues != null && issues.size() > 0) {
+					counter = 0;
+					if (jobDelay > JOB_DELAY_MIN) {
+						jobDelay /= 2;
+					}
 					handleIssues(issues);
+				} else {
+					counter++;
 				}
 			}
 			if (issues != null && issues.size() > 0) {
@@ -128,6 +140,10 @@ public abstract class AbstractMonitor extends Job {
 			}
 			if (!monitor.isCanceled()) {
 				monitor.done();
+				if (counter > STEP && jobDelay < JOB_DELAY_MAX) {
+					jobDelay *= 2;
+					counter = 0;
+				}
 				this.schedule(jobDelay);
 				return Status.OK_STATUS;
 			}
