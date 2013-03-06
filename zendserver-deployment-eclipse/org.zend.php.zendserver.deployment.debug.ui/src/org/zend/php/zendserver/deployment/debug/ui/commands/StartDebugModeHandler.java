@@ -10,24 +10,29 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
 
 /**
  * Start debug mode handler.
@@ -84,7 +89,40 @@ public class StartDebugModeHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void startDebugMode(IZendTarget target) {
+	private void startDebugMode(final IZendTarget target) {
+		final Shell shell = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell();
+		NotificationManager.registerProgress(
+				Messages.DebugModeHandler_DebugModeLabel,
+				Messages.DebugModeHandler_StartingDebugMode,
+				new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						monitor.beginTask(
+								Messages.DebugModeHandler_StartingDebugMode,
+								IProgressMonitor.UNKNOWN);
+						PhpcloudContainerListener listener = null;
+						if (TargetsManager.isPhpcloud(target)) {
+							listener = new PhpcloudContainerListener(target);
+							WebApiClient.registerPreRequestListener(listener);
+						}
+						try {
+							doStartDebugMode(target, shell);
+						} finally {
+							if (listener != null) {
+								WebApiClient
+										.unregisterPreRequestListener(listener);
+							}
+						}
+						monitor.done();
+					}
+
+				}, false);
+	}
+
+	private void doStartDebugMode(final IZendTarget target, final Shell shell) {
 		IStatus status = DebugModeManager.getManager().startDebugMode(target);
 		switch (status.getSeverity()) {
 		case IStatus.OK:
@@ -93,14 +131,19 @@ public class StartDebugModeHandler extends AbstractHandler {
 					status.getMessage(), 4000);
 			break;
 		case IStatus.WARNING:
-			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getShell();
-			boolean shouldRestart = MessageDialog.openQuestion(shell,
-					Messages.DebugModeHandler_DebugModeLabel,
-					Messages.StartDebugModeHandler_DebugStartedQuestionMessage);
-			if (shouldRestart) {
-				restartDebugMode(target);
-			}
+			shell.getDisplay().asyncExec(new Runnable() {
+
+				public void run() {
+					boolean shouldRestart = MessageDialog
+							.openQuestion(
+									shell,
+									Messages.DebugModeHandler_DebugModeLabel,
+									Messages.StartDebugModeHandler_DebugStartedQuestionMessage);
+					if (shouldRestart) {
+						restartDebugMode(target);
+					}
+				}
+			});
 			break;
 		case IStatus.ERROR:
 			NotificationManager.registerError(

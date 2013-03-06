@@ -134,6 +134,10 @@ public class Messages extends NLS {
 
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;
 
+	public static String DebugModeHandler_StartingDebugMode;
+
+	public static String DebugModeHandler_StoppingDebugMode;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

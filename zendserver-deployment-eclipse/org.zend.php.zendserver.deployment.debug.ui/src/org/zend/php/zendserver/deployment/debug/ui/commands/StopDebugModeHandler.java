@@ -10,19 +10,25 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
 
 /**
  * Stop debug mode handler.
@@ -34,6 +40,8 @@ public class StopDebugModeHandler extends AbstractHandler {
 
 	private static final String CONTAINER = "container"; //$NON-NLS-1$
 
+	private IZendTarget target;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -43,7 +51,6 @@ public class StopDebugModeHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String containerName = event.getParameter(CONTAINER);
-		IZendTarget target = null;
 
 		if (containerName != null) {
 			target = TargetsManagerService.INSTANCE
@@ -66,6 +73,38 @@ public class StopDebugModeHandler extends AbstractHandler {
 			throw new ExecutionException(NLS.bind(
 					Messages.OpenTunnelCommand_UnknownContainer, containerName));
 		}
+		NotificationManager.registerProgress(
+				Messages.DebugModeHandler_DebugModeLabel,
+				Messages.DebugModeHandler_StoppingDebugMode,
+				new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						monitor.beginTask(
+								Messages.DebugModeHandler_StoppingDebugMode,
+								IProgressMonitor.UNKNOWN);
+						PhpcloudContainerListener listener = null;
+						if (TargetsManager.isPhpcloud(target)) {
+							listener = new PhpcloudContainerListener(target);
+							WebApiClient.registerPreRequestListener(listener);
+						}
+						try {
+							doStopDebugMode();
+						} finally {
+							if (listener != null) {
+								WebApiClient
+										.unregisterPreRequestListener(listener);
+							}
+						}
+						monitor.done();
+					}
+				}, false);
+
+		return null;
+	}
+
+	private void doStopDebugMode() {
 		IStatus status = DebugModeManager.getManager().stopDebugMode(target);
 		switch (status.getSeverity()) {
 		case IStatus.OK:
@@ -86,7 +125,6 @@ public class StopDebugModeHandler extends AbstractHandler {
 		default:
 			break;
 		}
-		return null;
 	}
 
 }
