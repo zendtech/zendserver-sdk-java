@@ -21,14 +21,18 @@ public enum ZendServerVersion {
 
 	v5_6_0("5.6.0"),
 	
-	v6_0_0("6.0"),
+	v6_0_0("6.0.0"),
+	
+	v6_0("6.0"),
+	
+	v6("6"),
 
 	UNKNOWN("Unknown");
 
 	private final String name;
 
 	private ZendServerVersion(String name) {
-		this.name = name;
+		this.name = name;  
 	}
 	
 	public String getName() {
@@ -41,13 +45,16 @@ public enum ZendServerVersion {
 		}
 
 		ZendServerVersion[] values = values();
+		ZendServerVersion result = null;
+		int length = 0;
 		for (int i = 0; i < values.length; i++) {
 			ZendServerVersion version = values[i];
-			if (name.startsWith(version.name)) {
-				return version;
+			if (name.startsWith(version.name) && length < version.name.length()) {
+				length = version.name.length();
+				result = version;
 			}
 		}
-		return UNKNOWN;
+		return result != null ? result : UNKNOWN;
 	}
 
 }
