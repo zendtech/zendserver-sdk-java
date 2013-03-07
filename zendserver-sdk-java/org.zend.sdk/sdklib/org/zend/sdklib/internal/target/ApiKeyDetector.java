@@ -42,10 +42,8 @@ public abstract class ApiKeyDetector {
 	private String name;
 	private String secretKey;
 
-	public ApiKeyDetector(String username, String password, String serverUrl) {
+	public ApiKeyDetector(String serverUrl) {
 		super();
-		this.username = username;
-		this.password = password;
 		this.serverUrl = serverUrl;
 	}
 
