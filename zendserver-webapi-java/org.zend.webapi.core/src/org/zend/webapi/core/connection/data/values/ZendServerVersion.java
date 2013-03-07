@@ -21,7 +21,7 @@ public enum ZendServerVersion {
 
 	v5_6_0("5.6.0"),
 	
-	v6_0_0("6.0.0"),
+	v6_0_0("6.0"),
 
 	UNKNOWN("Unknown");
 
@@ -43,7 +43,7 @@ public enum ZendServerVersion {
 		ZendServerVersion[] values = values();
 		for (int i = 0; i < values.length; i++) {
 			ZendServerVersion version = values[i];
-			if (name.equals(version.name)) {
+			if (name.startsWith(version.name)) {
 				return version;
 			}
 		}
