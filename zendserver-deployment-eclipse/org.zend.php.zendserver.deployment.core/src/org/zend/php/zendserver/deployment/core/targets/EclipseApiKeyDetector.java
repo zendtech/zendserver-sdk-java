@@ -28,8 +28,8 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 	private String username;
 	private String password;
 
-	public EclipseApiKeyDetector(String username, String password) {
-		super(username, password, getLocalServerUrl());
+	public EclipseApiKeyDetector() {
+		super(getLocalServerUrl());
 	}
 
 	@SuppressWarnings("restriction")

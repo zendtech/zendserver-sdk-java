@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -214,7 +215,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		String password = data[1];
 		String privateKey = data[2];
 
-		OpenShiftTarget detect = new OpenShiftTarget(username, password);
+		OpenShiftTarget detect = new OpenShiftTarget(username, password, new EclipseApiKeyDetector());
 		monitor.subTask("Validating account information");
 
 		if (username == null || username.trim().length() == 0) {

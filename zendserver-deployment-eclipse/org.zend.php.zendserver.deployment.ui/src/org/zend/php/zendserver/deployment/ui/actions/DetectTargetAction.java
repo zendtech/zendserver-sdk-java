@@ -164,7 +164,7 @@ public class DetectTargetAction extends Action {
 	}
 	
 	private void detectZendServer6(final String message) throws DetectionException {
-		ApiKeyDetector manager = new EclipseApiKeyDetector(username, password);
+		ApiKeyDetector manager = new EclipseApiKeyDetector();
 		try {
 			manager.createApiKey(message);
 			TargetsManager tm = TargetsManagerService.INSTANCE
