@@ -55,5 +55,8 @@ Bundle-ClassPath: build/libs/org.restlet-2.0.4.jar,
  build/libs/slf4j-api-1.6.4.jar,
  build/libs/slf4j-log4j12-1.6.4.jar,
  build/libs/log4j-1.2.16.jar,
- build/libs/openshift-java-client-2.0.1.jar
+ build/libs/openshift-java-client-2.0.1.jar,
+ build/libs/commons-codec-1.2.jar,
+ build/libs/commons-httpclient-3.1.jar,
+ build/libs/commons-logging-1.0.4.jar
 Eclipse-BundleShape: dir
