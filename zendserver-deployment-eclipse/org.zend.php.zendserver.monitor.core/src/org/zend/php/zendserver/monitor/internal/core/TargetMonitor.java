@@ -113,36 +113,39 @@ public class TargetMonitor extends AbstractMonitor {
 		return ""; //$NON-NLS-1$
 	}
 
-	protected void handleIssues(List<IZendIssue> issues) {
+	protected void handleIssues(List<IZendIssue> issues, IZendTarget target) {
 		for (int i = issues.size() - 1; i >= 0; i--) {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
 			int actionsAvailable = checkActions(zendIssue);
-			Date date = getTime(issue.getLastOccurance());
-			if (date != null && date.getTime() >= lastTime) {
-				final String baseURL = issue.getGeneralDetails().getUrl();
-				IProject project = getProject(baseURL);
-				String basePath = null;
-				if (project != null) {
-					basePath = getBasePath(baseURL, project);
+			if (!isZS6(target)) {
+				Date date = monitor.getTime(issue.getLastOccurance(), target);
+				if (date == null || date.getTime() < lastTime) {
+					continue;
 				}
-				if (shouldNotify(issue.getSeverity(), baseURL)) {
-					// handle case when have not found a corresponding project
-					if (project != null) {
-						int delay = 0;
-						IPreferenceStore store = Activator.getDefault()
-								.getPreferenceStore();
-						if (store.getBoolean(MonitorManager
-								.getHideKey(targetId))) {
-							delay = store.getInt(MonitorManager
-									.getHideTimeKey(targetId)) * 1000;
-							if (delay == 0) {
-								delay = MonitorManager.DELAY_DEFAULT;
-							}
+			}
+			final String baseURL = issue.getGeneralDetails().getUrl();
+			IProject project = getProject(baseURL);
+			String basePath = null;
+			if (project != null) {
+				basePath = getBasePath(baseURL, project);
+			}
+			if (shouldNotify(issue.getSeverity(), baseURL)) {
+				// handle case when have not found a corresponding project
+				if (project != null) {
+					int delay = 0;
+					IPreferenceStore store = Activator.getDefault()
+							.getPreferenceStore();
+					if (store.getBoolean(MonitorManager
+							.getHideKey(targetId))) {
+						delay = store.getInt(MonitorManager
+								.getHideTimeKey(targetId)) * 1000;
+						if (delay == 0) {
+							delay = MonitorManager.DELAY_DEFAULT;
 						}
-						showNonification(zendIssue, project.getName(),
-								basePath, delay, actionsAvailable);
 					}
+					showNonification(zendIssue, project.getName(),
+							basePath, delay, actionsAvailable);
 				}
 			}
 		}

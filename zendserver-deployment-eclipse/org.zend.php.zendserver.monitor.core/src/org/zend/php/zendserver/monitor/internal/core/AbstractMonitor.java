@@ -9,9 +9,6 @@ package org.zend.php.zendserver.monitor.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -64,7 +61,7 @@ public abstract class AbstractMonitor extends Job {
 	private static INotificationProvider provider;
 	
 	protected String targetId;
-	private ZendMonitor monitor;
+	protected ZendMonitor monitor;
 	protected long lastTime;
 	
 	private int jobDelay = JOB_DELAY_MIN;
@@ -114,29 +111,10 @@ public abstract class AbstractMonitor extends Job {
 			WebApiClient.registerPreRequestListener(listener);
 		}
 		try {
-			List<IZendIssue> issues = null;
-			if (this.monitor == null) {
-				this.monitor = new ZendMonitor(targetId);
-				issues = this.monitor.getOpenIssues();
+			if (isZS6(target)) {
+				doRunZS6(target);
 			} else {
-				issues = this.monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
-				if (issues != null && issues.size() > 0) {
-					counter = 0;
-					if (jobDelay > JOB_DELAY_MIN) {
-						jobDelay /= 2;
-					}
-					handleIssues(issues);
-				} else {
-					counter++;
-				}
-			}
-			if (issues != null && issues.size() > 0) {
-				offset += issues.size();
-				Date lastDate = getTime(issues.get(issues.size() - 1)
-						.getIssue().getLastOccurance());
-				if (lastDate != null) {
-					lastTime = lastDate.getTime();
-				}
+				doRunOld(target);
 			}
 			if (!monitor.isCanceled()) {
 				monitor.done();
@@ -177,7 +155,7 @@ public abstract class AbstractMonitor extends Job {
 	 */
 	public abstract void disable(boolean codeTracing);
 
-	protected abstract void handleIssues(List<IZendIssue> issues);
+	protected abstract void handleIssues(List<IZendIssue> issues, IZendTarget target);
 
 	protected void showNonification(final IZendIssue issue,
 			final String projectName, final String basePath, final int delay,
@@ -250,36 +228,6 @@ public abstract class AbstractMonitor extends Job {
 		return provider;
 	}
 
-	protected Date getTime(String time) {
-		SimpleDateFormat formatter = null;
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
-		if (ZendServerVersion
-				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
-				.getName().startsWith("6")) { //$NON-NLS-1$
-			int index = time.indexOf("T"); //$NON-NLS-1$
-			String prefix = time.substring(0, index);
-			String suffix = time.substring(index + 1, time.length());
-			time = prefix + ' ' + suffix;
-			index = time.lastIndexOf('+');
-			if (index == -1) {
-				index = time.lastIndexOf('-');
-			}
-			time = time.substring(0, index);
-			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
-		} else {
-			formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
-		}
-		Date date = null;
-		try {
-			date = formatter.parse(time);
-		} catch (ParseException e) {
-			Activator.log(e);
-			return null;
-		}
-		return date;
-	}
-
 	protected void disableCodeTacing() {
 		getProvider().showProgress(
 				getName(),
@@ -343,6 +291,53 @@ public abstract class AbstractMonitor extends Job {
 						}
 					}
 				});
+	}
+
+	protected boolean isZS6(IZendTarget target) {
+		ZendServerVersion version = ZendServerVersion.byName(target
+				.getProperty(IZendTarget.SERVER_VERSION));
+		return version.getName().startsWith("6"); //$NON-NLS-1$
+	}
+
+	private void doRunZS6(IZendTarget target) {
+		List<IZendIssue> issues = null;
+		if (monitor == null) {
+			monitor = new ZendMonitor(targetId);
+			lastTime = System.currentTimeMillis();
+		} else {
+			issues = monitor
+					.getIssues(Filter.ALL_OPEN_EVENTS, lastTime, target);
+			if (issues != null && issues.size() > 0) {
+				counter = 0;
+				if (jobDelay > JOB_DELAY_MIN) {
+					jobDelay /= 2;
+				}
+				handleIssues(issues, target);
+				lastTime = monitor.getLastEventTime(issues, target);
+			} else {
+				counter++;
+			}
+		}
+	}
+
+	private void doRunOld(IZendTarget target) {
+		List<IZendIssue> issues = null;
+		if (monitor == null) {
+			monitor = new ZendMonitor(targetId);
+			issues = monitor.getOpenIssues();
+		} else {
+			issues = monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
+			if (issues != null && issues.size() > 0) {
+				counter = 0;
+				if (jobDelay > JOB_DELAY_MIN) {
+					jobDelay /= 2;
+				}
+				handleIssues(issues, target);
+				lastTime = monitor.getLastEventTime(issues, target);
+			} else {
+				counter++;
+			}
+		}
 	}
 
 	private boolean doStart(IProgressMonitor monitor) {
