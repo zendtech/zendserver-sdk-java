@@ -213,7 +213,7 @@ public class ZendMonitor extends ZendConnection {
 			while (true) {
 				IssueList list = client.monitorGetIssuesListPredefinedFilter(
 						filter.getName(), 20, offset, "id", "DESC");
-				if (list != null) {
+				if (list != null && list.getIssues() != null) {
 					List<IZendIssue> issues = ZendIssue.create(
 							list.getIssues(), this);
 					if (issues != null && issues.size() > 0) {
