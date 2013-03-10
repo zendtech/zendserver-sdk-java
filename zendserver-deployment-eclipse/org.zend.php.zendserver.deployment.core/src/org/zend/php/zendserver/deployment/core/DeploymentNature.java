@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,13 +11,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.dltk.core.IBuildpathEntry;
+import org.eclipse.php.internal.core.includepath.IncludePath;
+import org.eclipse.php.internal.core.includepath.IncludePathManager;
 import org.zend.sdklib.application.ZendProject;
+import org.zend.sdklib.mapping.IMappingEntry;
+import org.zend.sdklib.mapping.IMappingModel;
+import org.zend.sdklib.mapping.MappingModelFactory;
 
 public class DeploymentNature implements IProjectNature {
 
 	public static final String ID = DeploymentCore.PLUGIN_ID + ".DeploymentNature"; //$NON-NLS-1$
-	
+
+	private static final String ZF_NATURE_ID = "org.zend.php.framework.ZendFrameworkNature"; //$NON-NLS-1$
+
 	private IProject project;
 	
 	public void configure() throws CoreException {
@@ -67,10 +78,39 @@ public class DeploymentNature implements IProjectNature {
 		}
 	}
 	
+	@SuppressWarnings("restriction")
 	public void updateProject() throws CoreException {
 		File projectLocation = project.getLocation().toFile();
 		ZendProject zp = new ZendProject(projectLocation);
 		zp.update(null);
+		if (project.hasNature(ZF_NATURE_ID)) {
+			IncludePath[] paths = IncludePathManager.getInstance()
+					.getIncludePaths(project);
+			for (IncludePath includePath : paths) {
+				if (includePath.getEntry() instanceof IBuildpathEntry) {
+					IBuildpathEntry bPath = (IBuildpathEntry) includePath
+							.getEntry();
+					if (bPath.getEntryKind() == IBuildpathEntry.BPE_CONTAINER
+							&& bPath.getPath()
+									.toString()
+									.equals("org.zend.php.framework.v2.CONTAINER")) { //$NON-NLS-1$
+						IMappingModel model = MappingModelFactory
+								.createDefaultModel(project.getLocation()
+										.toFile());
+						model.addMapping(IMappingModel.APPDIR,
+								IMappingEntry.Type.EXCLUDE, "vendor" //$NON-NLS-1$
+										+ File.separator + "ZF2", false); //$NON-NLS-1$
+						try {
+							model.store();
+						} catch (IOException e) {
+							throw new CoreException(new Status(IStatus.ERROR,
+									DeploymentCore.PLUGIN_ID, "Error occured", //$NON-NLS-1$
+									e));
+						}
+					}
+				}
+			}
+		}
 		project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
 	}
 
