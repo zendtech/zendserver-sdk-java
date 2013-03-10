@@ -98,8 +98,7 @@ public class DeploymentNature implements IProjectNature {
 								.createDefaultModel(project.getLocation()
 										.toFile());
 						model.addMapping(IMappingModel.APPDIR,
-								IMappingEntry.Type.EXCLUDE, "vendor" //$NON-NLS-1$
-										+ File.separator + "ZF2", false); //$NON-NLS-1$
+								IMappingEntry.Type.EXCLUDE, "vendor/ZF2", false); //$NON-NLS-1$
 						try {
 							model.store();
 						} catch (IOException e) {
