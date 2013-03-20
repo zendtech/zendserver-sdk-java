@@ -24,7 +24,10 @@ public enum ResponseCode {
 	UNEXPECTED_HTTP_METHOD(400, "unexpectedHttpMethod",
 			"Unexpected HTTP method, GET used but POST expected"),
 
-	INVALID_PARAMETER(400, "invalidParam",
+	INVALID_PARAM(400, "invalidParam",
+			"One or more request parameter contains invalid data"),
+			
+	INVALID_PARAMETER(400, "invalidParameter",
 			"One or more request parameter contains invalid data"),
 
 	MISSING_PARAMETER(400, "missingParam", "Request is missing a required parameter"),
