@@ -75,6 +75,8 @@ public class Messages extends NLS {
 
 	public static String DebugModeHandler_DebugModeLabel;
 
+	public static String DeploymentHandler_ApplicationNameErrorMessage;
+
 	public static String DeploymentHandler_sshTunnelErrorMessage;
 	public static String DeploymentHandler_sshTunnelErrorTitle;
 

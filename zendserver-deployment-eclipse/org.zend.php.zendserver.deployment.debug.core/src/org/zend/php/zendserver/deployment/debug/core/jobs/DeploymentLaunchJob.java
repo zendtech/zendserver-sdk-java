@@ -60,6 +60,17 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 				case BASE_URL_CONFLICT:
 				case APPLICATION_CONFLICT:
 					return Status.OK_STATUS;
+				case INVALID_PARAMETER:
+					String message = codeException.getMessage();
+					if (message != null) {
+						message = message.trim();
+						if (message
+								.startsWith("Invalid userAppName parameter: Application name") //$NON-NLS-1$
+								&& message.endsWith("already exists")) { //$NON-NLS-1$
+							return new Status(IStatus.INFO,
+									Activator.PLUGIN_ID, message);
+						}
+					}
 				default:
 					break;
 				}

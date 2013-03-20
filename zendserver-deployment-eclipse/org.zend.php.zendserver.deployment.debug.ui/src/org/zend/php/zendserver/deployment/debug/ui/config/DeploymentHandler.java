@@ -308,9 +308,15 @@ public class DeploymentHandler {
 			}
 			switch (deploymentJob.getResponseCode()) {
 			case BASE_URL_CONFLICT:
-				return handleBaseUrlConflict(helper, project);
 			case APPLICATION_CONFLICT:
-				return handleApplicationConflict(helper, project);
+				return handleConflict(helper, project,
+						deploymentJob.getResponseCode());
+			case INVALID_PARAMETER:
+				IStatus result = job.getResult();
+				if (result.getSeverity() == IStatus.INFO) {
+					return handleConflict(helper, project,
+							deploymentJob.getResponseCode());
+				}
 			default:
 				break;
 			}
@@ -387,51 +393,50 @@ public class DeploymentHandler {
 		return IStatus.OK;
 	}
 
-	private int handleApplicationConflict(IDeploymentHelper helper,
-			IProject project) throws InterruptedException {
+	private int handleConflict(IDeploymentHelper helper,
+			IProject project, ResponseCode code) throws InterruptedException {
 		if (helper.isWarnUpdate()) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			switch (code) {
+			case BASE_URL_CONFLICT:
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-				public void run() {
-					MessageDialog dialog = getApplicationConflictDialog();
-					if (dialog.open() != 0) {
-						dialogResult = true;
+					public void run() {
+						MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
+						if (dialog.open() == 0) {
+							dialogResult = true;
+						}
 					}
-				}
-			});
-		} else {
-			dialogResult = true;
-		}
-		if (!dialogResult) {
-			doOpenDeploymentWizard(helper, project);
-			if (job == null) {
-				return IStatus.CANCEL;
-			}
-			if (listener != null) {
-				job.addJobChangeListener(listener);
-			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
-		} else {
-			dialogResult = false;
-			return IStatus.CANCEL;
-		}
-	}
+				});
+				break;
+			case APPLICATION_CONFLICT:
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-	private int handleBaseUrlConflict(IDeploymentHelper helper, IProject project)
-			throws InterruptedException {
-		if (helper.isWarnUpdate()) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-				public void run() {
-					MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
-					if (dialog.open() == 0) {
-						dialogResult = true;
+					public void run() {
+						MessageDialog dialog = getApplicationConflictDialog();
+						if (dialog.open() != 0) {
+							dialogResult = true;
+						}
 					}
+				});
+				break;
+			case INVALID_PARAMETER:
+				IStatus result = job.getResult();
+				if (result.getSeverity() == IStatus.INFO) {
+					PlatformUI.getWorkbench().getDisplay()
+							.syncExec(new Runnable() {
+
+								public void run() {
+									MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.DeploymentHandler_ApplicationNameErrorMessage);
+									if (dialog.open() == 0) {
+										dialogResult = true;
+									}
+								}
+							});
 				}
-			});
+				break;
+			default:
+				break;
+			}
 		} else {
 			dialogResult = true;
 		}
