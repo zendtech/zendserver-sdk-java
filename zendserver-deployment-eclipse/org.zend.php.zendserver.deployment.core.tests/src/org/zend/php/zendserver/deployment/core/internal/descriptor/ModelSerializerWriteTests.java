@@ -526,12 +526,12 @@ public class ModelSerializerWriteTests extends TestCase {
 "      <php>\n" +
 "        <equals>1.2.3</equals>\n" +
 "      </php>\n" +
-"      <directive>\n" +
-"        <name>log_errors</name>\n" +
-"      </directive>\n" +
 "      <extension>\n" +
 "        <name>ctype</name>\n" +
 "      </extension>\n" +
+"      <directive>\n" +
+"        <name>log_errors</name>\n" +
+"      </directive>\n" +
 "      <zendserver>\n" +
 "        <equals>1.2.3</equals>\n" +
 "      </zendserver>\n" +
