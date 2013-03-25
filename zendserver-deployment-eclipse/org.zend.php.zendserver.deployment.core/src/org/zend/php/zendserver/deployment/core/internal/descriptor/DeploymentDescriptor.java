@@ -42,12 +42,12 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.SCRIPTSDIR,
 				DeploymentDescriptorPackage.HEALTHCHECK}, new Feature[] {
 				DeploymentDescriptorPackage.DEPENDENCIES_PHP,
-				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
 				DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION,
-				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK,
-				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2,
+				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK,
+				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2,
 				DeploymentDescriptorPackage.PARAMETERS,
 				DeploymentDescriptorPackage.VARIABLES,
 				DeploymentDescriptorPackage.PERSISTENT_RESOURCES });

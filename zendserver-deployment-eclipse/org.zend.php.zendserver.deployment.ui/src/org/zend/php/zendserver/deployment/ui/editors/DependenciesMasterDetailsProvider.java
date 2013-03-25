@@ -15,7 +15,6 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
 
-
 	public DependenciesMasterDetailsProvider() {
 	}
 
@@ -28,12 +27,13 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 			IDeploymentDescriptor descr = (IDeploymentDescriptor) input;
 			List<IModelObject> all = new ArrayList<IModelObject>();
 			all.addAll(descr.getPHPDependencies());
-			all.addAll(descr.getDirectiveDependencies());
 			all.addAll(descr.getExtensionDependencies());
-			all.addAll(descr.getZendFrameworkDependencies());
-			all.addAll(descr.getZendFramework2Dependencies());
+			all.addAll(descr.getDirectiveDependencies());
 			all.addAll(descr.getZendServerDependencies());
 			all.addAll(descr.getZendComponentDependencies());
+			all.addAll(descr.getZendFrameworkDependencies());
+			all.addAll(descr.getZendFramework2Dependencies());
+			
 			return all.toArray();
 		}
 
@@ -50,17 +50,17 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_PHP),
 				DeploymentDescriptorFactory
-						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE),
-				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION),
 				DeploymentDescriptorFactory
-						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK),
-				DeploymentDescriptorFactory
-						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2),
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE),
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER),
 				DeploymentDescriptorFactory
-						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT), };
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT),
+				DeploymentDescriptorFactory
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK),
+				DeploymentDescriptorFactory
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2) };
 
 		final Control control = block.viewer.getControl();
 		final ListDialog sd = new ListDialog(control.getShell());
