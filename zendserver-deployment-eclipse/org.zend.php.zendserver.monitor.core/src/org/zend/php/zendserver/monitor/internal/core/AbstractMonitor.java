@@ -9,6 +9,7 @@ package org.zend.php.zendserver.monitor.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -312,12 +313,23 @@ public abstract class AbstractMonitor extends Job {
 				if (jobDelay > JOB_DELAY_MIN) {
 					jobDelay /= 2;
 				}
+				issues = removeDuplicates(issues);
 				handleIssues(issues, target);
-				lastTime = monitor.getLastEventTime(issues, target);
+				lastTime = monitor.getLastEventTime(issues.get(0), target);
 			} else {
 				counter++;
 			}
 		}
+	}
+
+	private List<IZendIssue> removeDuplicates(List<IZendIssue> issues) {
+		List<IZendIssue> result = new ArrayList<IZendIssue>();
+		for (IZendIssue issue : issues) {
+			if (!result.contains(issue)) {
+				result.add(issue);
+			}
+		}
+		return result;
 	}
 
 	private void doRunOld(IZendTarget target) {
@@ -327,16 +339,19 @@ public abstract class AbstractMonitor extends Job {
 			issues = monitor.getOpenIssues();
 		} else {
 			issues = monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
-			if (issues != null && issues.size() > 0) {
-				counter = 0;
-				if (jobDelay > JOB_DELAY_MIN) {
-					jobDelay /= 2;
-				}
-				handleIssues(issues, target);
-				lastTime = monitor.getLastEventTime(issues, target);
-			} else {
-				counter++;
+		}
+		if (issues != null && issues.size() > 0) {
+			counter = 0;
+			if (jobDelay > JOB_DELAY_MIN) {
+				jobDelay /= 2;
 			}
+			issues = removeDuplicates(issues);
+			handleIssues(issues, target);
+			offset += issues.size();
+			lastTime = monitor.getLastEventTime(
+					issues.get(issues.size() - 1), target);
+		} else {
+			counter++;
 		}
 	}
 

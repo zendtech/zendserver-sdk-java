@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.core;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -118,11 +119,9 @@ public class TargetMonitor extends AbstractMonitor {
 			IZendIssue zendIssue = issues.get(i);
 			Issue issue = zendIssue.getIssue();
 			int actionsAvailable = checkActions(zendIssue);
-			if (!isZS6(target)) {
-				Date date = monitor.getTime(issue.getLastOccurance(), target);
-				if (date == null || date.getTime() < lastTime) {
-					continue;
-				}
+			if (!isZS6(target)
+					&& monitor.getTime(issue.getLastOccurance(), target) <= lastTime) {
+				continue;
 			}
 			final String baseURL = issue.getGeneralDetails().getUrl();
 			IProject project = getProject(baseURL);
@@ -196,11 +195,19 @@ public class TargetMonitor extends AbstractMonitor {
 	private String getBasePath(final String baseURL, IProject project) {
 		String basePath = MonitorManager.SLASH;
 		String url = LaunchUtils.getURLFromPreferences(project.getName());
-		if (url != null) {
-			if (url.endsWith(MonitorManager.SLASH)) {
-				url = url.substring(0, url.length() - 1);
+		if (url != null && url.length() <= baseURL.length()) {
+			try {
+				URL base = new URL(baseURL);
+				URL urlPrefs = new URL(url);
+				if (base.getHost().equals(urlPrefs.getHost())) {
+					if (url.endsWith(MonitorManager.SLASH)) {
+						url = url.substring(0, url.length() - 1);
+					}
+					basePath = baseURL.substring(url.length());
+				}
+			} catch (MalformedURLException e) {
+				// should not appear
 			}
-			basePath = baseURL.substring(url.length());
 		} else {
 			String toFind = MonitorManager.SLASH + project.getName();
 			int index = baseURL.indexOf(toFind);
