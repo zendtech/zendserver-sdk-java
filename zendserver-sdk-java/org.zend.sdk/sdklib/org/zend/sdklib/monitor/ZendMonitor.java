@@ -218,15 +218,12 @@ public class ZendMonitor extends ZendConnection {
 							list.getIssues(), this);
 					if (issues != null && issues.size() > 0) {
 						for (IZendIssue issue : issues) {
-							Date lastDate = getTime(issue.getIssue()
+							long time = getTime(issue.getIssue()
 									.getLastOccurance(), target);
-							if (lastDate != null) {
-								long time = lastDate.getTime();
-								if (time > lastTime) {
-									result.add(issue);
-								} else {
-									return result;
-								}
+							if (time > lastTime) {
+								result.add(issue);
+							} else {
+								return result;
 							}
 						}
 						offset += 20;
@@ -315,46 +312,46 @@ public class ZendMonitor extends ZendConnection {
 		return null;
 	}
 
-	public long getLastEventTime(List<IZendIssue> issues, IZendTarget target) {
-		if (issues != null && issues.size() > 0) {
-			Date lastDate = getTime(issues.get(issues.size() - 1).getIssue()
-					.getLastOccurance(), target);
-			if (lastDate != null) {
-				return lastDate.getTime();
-			}
-		}
-		return -1;
+	public long getLastEventTime(IZendIssue issue, IZendTarget target) {
+		return getTime(issue.getIssue().getLastOccurance(), target);
 	}
 
 	public WebApiClient getClient() throws MalformedURLException {
 		return getClient(targetId);
 	}
 
-	public Date getTime(String time, IZendTarget target) {
-		SimpleDateFormat formatter = null;
-		if (ZendServerVersion
-				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
-				.getName().startsWith("6")) { //$NON-NLS-1$
-			int index = time.indexOf("T"); //$NON-NLS-1$
-			String prefix = time.substring(0, index);
-			String suffix = time.substring(index + 1, time.length());
-			time = prefix + ' ' + suffix;
-			index = time.lastIndexOf('+');
-			if (index == -1) {
-				index = time.lastIndexOf('-');
-			}
-			time = time.substring(0, index);
-			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
-		} else {
-			formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
-		}
+	public long getTime(String time, IZendTarget target) {
 		Date date = null;
 		try {
-			date = formatter.parse(time);
+			if (ZendServerVersion
+					.byName(target.getProperty(IZendTarget.SERVER_VERSION))
+					.getName().startsWith("6")) { //$NON-NLS-1$
+				date = parseISO8601(time);
+			} else {
+				SimpleDateFormat formatter = new SimpleDateFormat(
+						"dd-MMM-yyyy HH:mm"); //$NON-NLS-1$
+
+				date = formatter.parse(time);
+			}
 		} catch (ParseException e) {
-			return null;
+			return 0;
 		}
-		return date;
+		return date.getTime();
+	}
+
+	private Date parseISO8601(String input) throws ParseException {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+		if (input.endsWith("Z")) {
+			input = input.substring(0, input.length() - 1) + "GMT-00:00";
+		} else {
+			int position = 6;
+			String begin = input.substring(0, input.length() - position);
+			String end = input.substring(input.length() - position,
+					input.length());
+			input = begin + "GMT" + end;
+		}
+		return df.parse(input);
+
 	}
 
 	private List<Issue> doGetIssues(Filter filter)

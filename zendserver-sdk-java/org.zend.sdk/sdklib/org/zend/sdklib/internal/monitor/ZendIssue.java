@@ -25,6 +25,7 @@ import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.EventsGroup;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.GeneralDetails;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueFile;
@@ -191,6 +192,31 @@ public class ZendIssue implements IZendIssue {
 			log.error(e);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object input) {
+		if (input instanceof IZendIssue) {
+			Issue i = ((IZendIssue) input).getIssue();
+			if (i.getId() == issue.getId()) {
+				return true;
+			}
+			GeneralDetails iDetails = i.getGeneralDetails();
+			GeneralDetails details = issue.getGeneralDetails();
+			if (iDetails.getSourceFile() != null
+					&& iDetails.getSourceFile().equals(details.getSourceFile())
+					&& iDetails.getSourceLine() == details.getSourceLine()) {
+				if (iDetails.getUrl() != null
+						&& iDetails.getUrl().equals(details.getUrl())) {
+					if (iDetails.getFunction() != null
+							&& iDetails.getFunction().equals(
+									details.getFunction())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private File store(IssueFile issueFile, File destination)
