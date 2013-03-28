@@ -148,6 +148,9 @@ public class EventBody implements IBody {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
+							monitor.beginTask(
+									Messages.EventBody_CodetraceJobTitle,
+									IProgressMonitor.UNKNOWN);
 							List<EventsGroupDetails> groups;
 							try {
 								groups = zendIssue.getGroupDetails();
@@ -185,7 +188,7 @@ public class EventBody implements IBody {
 							return Status.OK_STATUS;
 						}
 					};
-					showCodeTraceJob.setSystem(true);
+					showCodeTraceJob.setUser(true);
 					showCodeTraceJob.schedule();
 				}
 			});
