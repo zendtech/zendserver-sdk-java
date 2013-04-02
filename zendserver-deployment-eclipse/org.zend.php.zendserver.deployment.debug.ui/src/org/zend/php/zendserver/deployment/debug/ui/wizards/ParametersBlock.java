@@ -93,7 +93,7 @@ public class ParametersBlock extends AbstractBlock {
 			case CHOICE:
 				return ((Combo) control).getText();
 			case CHECKBOX:
-				return String.valueOf(((Button) control).getSelection());
+				return ((Button) control).getSelection() ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
 			default:
 				return ""; //$NON-NLS-1$
 			}
