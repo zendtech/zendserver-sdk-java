@@ -1,8 +1,14 @@
 package org.zend.php.zendserver.deployment.debug.core.jobs;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -41,6 +47,7 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 		if (infos != null) {
 			URL baseURL = helper.getBaseURL();
 			possibleURLs.add(baseURL);
+			initLocalUrls(baseURL);
 			if (helper.isDefaultServer()) {
 				try {
 					possibleURLs
@@ -71,6 +78,36 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 			}
 		}
 		return new SdkStatus(listener.getStatus());
+	}
+
+	private void initLocalUrls(URL baseURL) {
+		try {
+			Enumeration<NetworkInterface> nets = NetworkInterface
+					.getNetworkInterfaces();
+			if (nets != null) {
+				for (NetworkInterface netInterface : Collections.list(nets)) {
+					Enumeration<InetAddress> inetAddresses = netInterface
+							.getInetAddresses();
+					if (inetAddresses != null) {
+						for (InetAddress address : Collections
+								.list(inetAddresses)) {
+							if (address instanceof Inet4Address) {
+								try {
+									possibleURLs.add(new URL(baseURL
+											.getProtocol(), address
+											.getHostAddress(), baseURL
+											.getFile()));
+								} catch (MalformedURLException e) {
+									// just continue
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (SocketException e) {
+			// just continue
+		}
 	}
 
 	private boolean compareURLs(URL current, URL url) {
