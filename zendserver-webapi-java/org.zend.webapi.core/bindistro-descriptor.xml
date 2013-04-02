@@ -21,7 +21,7 @@
         <include>org.restlet.ext.xml-*.jar</include>
         <include>org.restlet-*.jar</include>
         <include>org.zend.webapi.jar</include>
-        <include>org.zend.webapi.test.jar</include>
+        <include>org.zend.webapi-test.jar</include>
       </includes>
     </fileSet>
   </fileSets>
