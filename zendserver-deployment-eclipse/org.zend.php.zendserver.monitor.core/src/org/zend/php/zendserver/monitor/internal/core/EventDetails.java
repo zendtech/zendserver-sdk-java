@@ -119,7 +119,11 @@ public class EventDetails implements IEventDetails {
 	public String getLocalFile() {
 		String local = convertToLocalFilename();
 		if (local != null) {
-			return local;
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(local);
+			if (resource != null) {
+				return local;
+			}
 		}
 		if (basePath != null && sourceFile != null) {
 			int index = sourceFile.indexOf(basePath);

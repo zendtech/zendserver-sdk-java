@@ -58,21 +58,24 @@ public abstract class AbstractMonitor extends Job {
 	private static final int JOB_DELAY_MIN = 2000;
 	private static final int JOB_DELAY_MAX = 4 * JOB_DELAY_MIN;
 	private static final int STEP = 30;
-	
+
 	private static INotificationProvider provider;
-	
+
 	protected String targetId;
 	protected ZendMonitor monitor;
 	protected long lastTime;
-	
+
 	private int jobDelay = JOB_DELAY_MIN;
 	private int counter;
 	private int offset;
 	private ZendCodeTracing codeTracing;
 
+	private boolean codeTracingEnabled;
+
 	public AbstractMonitor(String targetId, String jobTitle) {
 		super(jobTitle);
 		this.targetId = targetId;
+		this.codeTracingEnabled = true;
 	}
 
 	/**
@@ -156,7 +159,8 @@ public abstract class AbstractMonitor extends Job {
 	 */
 	public abstract void disable(boolean codeTracing);
 
-	protected abstract void handleIssues(List<IZendIssue> issues, IZendTarget target);
+	protected abstract void handleIssues(List<IZendIssue> issues,
+			IZendTarget target);
 
 	protected void showNonification(final IZendIssue issue,
 			final String projectName, final String basePath, final int delay,
@@ -180,13 +184,14 @@ public abstract class AbstractMonitor extends Job {
 				.getProperty(IZendTarget.SERVER_VERSION));
 		if (ZendServerVersion.v5_6_0 == version
 				|| version.getName().startsWith("6")) { //$NON-NLS-1$
-			return MonitorManager.REPEAT + MonitorManager.CODE_TRACE;
+			return codeTracingEnabled ? MonitorManager.REPEAT
+					+ MonitorManager.CODE_TRACE : MonitorManager.REPEAT;
 		}
 		int result = 0;
 		try {
 			List<EventsGroupDetails> groups = issue.getGroupDetails();
 			result += MonitorManager.REPEAT;
-			if (groups != null && groups.size() == 1) {
+			if (codeTracingEnabled && groups != null && groups.size() == 1) {
 				EventsGroupDetails group = groups.get(0);
 				String traceId = group.getCodeTracing();
 				if (traceId == null) {
@@ -348,8 +353,8 @@ public abstract class AbstractMonitor extends Job {
 			issues = removeDuplicates(issues);
 			handleIssues(issues, target);
 			offset += issues.size();
-			lastTime = monitor.getLastEventTime(
-					issues.get(issues.size() - 1), target);
+			lastTime = monitor.getLastEventTime(issues.get(issues.size() - 1),
+					target);
 		} else {
 			counter++;
 		}
@@ -378,6 +383,7 @@ public abstract class AbstractMonitor extends Job {
 					return false;
 				}
 			} catch (WebApiException e) {
+				Activator.log(e);
 				if (e instanceof WebApiCommunicationError) {
 					String m = MessageFormat
 							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
@@ -399,6 +405,7 @@ public abstract class AbstractMonitor extends Job {
 							break;
 						}
 					}
+					codeTracingEnabled = false;
 				}
 			} finally {
 				if (listener != null) {
