@@ -28,6 +28,8 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 
 public abstract class AbstractRequest implements IRequest {
 
+	public static final int DEFAULT_TIMEOUT = 40000;
+	
 	private final WebApiVersion version;
 	private final Date date;
 	private final String userAgent;
@@ -156,6 +158,10 @@ public abstract class AbstractRequest implements IRequest {
 	 */
 	public ServerType getServerType() {
 		return type;
+	}
+	
+	public long getTimeout() {
+		return DEFAULT_TIMEOUT;
 	}
 	
 	

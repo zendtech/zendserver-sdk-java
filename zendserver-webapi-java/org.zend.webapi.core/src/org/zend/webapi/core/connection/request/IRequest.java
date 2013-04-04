@@ -24,6 +24,8 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
  * 
  */
 public interface IRequest {
+	
+	public static final String TIMEOUT = "org.zend.webapi.timeout";
 
 	/**
 	 * @return supported API version
@@ -120,4 +122,12 @@ public interface IRequest {
 	 *            (low level request object)
 	 */
 	public abstract void applyParameters(Request request);
+	
+	/**
+	 * Returns default timeout value specific for this request.
+	 * 
+	 * @return timeout
+	 */
+	long getTimeout();
+	
 }

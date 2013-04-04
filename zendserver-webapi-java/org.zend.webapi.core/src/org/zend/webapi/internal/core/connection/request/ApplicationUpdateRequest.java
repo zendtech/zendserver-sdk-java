@@ -159,13 +159,28 @@ public class ApplicationUpdateRequest extends AbstractRequest {
 		return ResponseType.APPLICATION_INFO;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * applyParameters(org.restlet.Request)
+	 */
 	public void applyParameters(Request request) {
 		MultipartRepresentation rep = new MultipartRepresentation(
-				getParameters(),
-				APPLICATION_PACKAGE);
+				getParameters(), APPLICATION_PACKAGE);
 		rep.setNotifier(notifier);
 		request.setEntity(rep);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.webapi.internal.core.connection.request.AbstractRequest#getTimeout
+	 * ()
+	 */
+	public long getTimeout() {
+		return Long.MAX_VALUE;
 	}
 	
 	/*

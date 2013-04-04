@@ -86,6 +86,10 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * @author Wojtek, 2011
  * 
  */
+/**
+ * @author Wojciech Galanciak, 2013
+ *
+ */
 public class ApplicationDeployRequest extends AbstractRequest {
 
 	public static final MediaType APPLICATION_PACKAGE = MediaType.register(
@@ -205,7 +209,12 @@ public class ApplicationDeployRequest extends AbstractRequest {
 		return ResponseType.APPLICATION_INFO;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * applyParameters(org.restlet.Request)
+	 */
 	public void applyParameters(Request request) {
 		MultipartRepresentation rep = new MultipartRepresentation(
 				getParameters(), APPLICATION_PACKAGE);
@@ -213,6 +222,17 @@ public class ApplicationDeployRequest extends AbstractRequest {
 		request.setEntity(rep);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.webapi.internal.core.connection.request.AbstractRequest#getTimeout
+	 * ()
+	 */
+	public long getTimeout() {
+		return Long.MAX_VALUE;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

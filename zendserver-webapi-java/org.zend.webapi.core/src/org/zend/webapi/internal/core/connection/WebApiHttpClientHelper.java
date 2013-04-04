@@ -9,6 +9,7 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
 import org.restlet.engine.http.connector.HttpClientHelper;
+import org.zend.webapi.core.connection.request.IRequest;
 
 public class WebApiHttpClientHelper extends HttpClientHelper {
 
@@ -28,9 +29,12 @@ public class WebApiHttpClientHelper extends HttpClientHelper {
 
 				// Add the message to the outbound queue for processing
 				getOutboundMessages().add(response);
+				
+				long timeout = (Long) request.getAttributes().get(
+						IRequest.TIMEOUT);
 
 				// Await on the latch
-				if (!latch.await(Long.MAX_VALUE, TimeUnit.MILLISECONDS)) {
+				if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
 					// Timeout detected
 					response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,
 							"The calling thread timed out while waiting for a response to unblock it.");

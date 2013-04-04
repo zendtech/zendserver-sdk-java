@@ -170,7 +170,11 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		b.append(webApiRequest.getSignature());
 		s.add("X-Zend-Signature", b.toString());
 		request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, s);
-
+		
+		//timeout
+		request.getAttributes().put(IRequest.TIMEOUT,
+				webApiRequest.getTimeout());
+		
 		// host
 		request.setHostRef(baseRef.getAuthority());
 

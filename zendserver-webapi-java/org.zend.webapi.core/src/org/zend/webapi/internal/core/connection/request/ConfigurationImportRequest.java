@@ -122,11 +122,27 @@ public class ConfigurationImportRequest extends AbstractRequest {
 		return this;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.webapi.internal.core.connection.request.AbstractRequest#
+	 * applyParameters(org.restlet.Request)
+	 */
 	public void applyParameters(Request request) {
 		Representation rep = new MultipartRepresentation(getParameters(),
 				APPLICATION_SERVER_CONFIG);
 		request.setEntity(rep);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.webapi.internal.core.connection.request.AbstractRequest#getTimeout
+	 * ()
+	 */
+	public long getTimeout() {
+		return Long.MAX_VALUE;
 	}
 	
 	/*
