@@ -65,7 +65,7 @@ public class ZendTarget implements IZendTarget {
 	 * @param secretKey
 	 */
 	public ZendTarget(String id, URL host, String key, String secretKey) {
-		this(id, host, host, key, secretKey);
+		this(id, host, null, key, secretKey);
 	}
 
 	/**
@@ -144,6 +144,9 @@ public class ZendTarget implements IZendTarget {
 	 */
 	@Override
 	public URL getDefaultServerURL() {
+		if (defaultServerURL == null) {
+			defaultServerURL = generateDefaultUrl();
+		}
 		return defaultServerURL;
 	}
 
@@ -285,7 +288,7 @@ public class ZendTarget implements IZendTarget {
 		properties.putAll(this.properties);
 		properties.store(os, "target properties for " + getId());
 	}
-	
+
 	@Override
 	public boolean connect(WebApiVersion version) throws WebApiException {
 		WebApiCredentials credentials = new BasicCredentials(getKey(),
@@ -305,7 +308,7 @@ public class ZendTarget implements IZendTarget {
 			}
 			final SystemInfo info = client.getSystemInfo();
 			addProperty("edition", info.getEdition().name());
-			addProperty("operatingSystem", info.getEdition().name());
+			addProperty(OPERATING_SYSTEM, info.getOperatingSystem());
 			addProperty("phpVersion", info.getPhpVersion());
 			addProperty("status", info.getStatus().name());
 			addProperty(SERVER_VERSION, info.getVersion().getName());
@@ -425,6 +428,29 @@ public class ZendTarget implements IZendTarget {
 			result[j++] = (byte) decimal;
 		}
 		return result;
+	}
+	
+	private URL generateDefaultUrl() {
+		String system = getProperty(OPERATING_SYSTEM);
+		if (system != null) {
+			system = system.toLowerCase();
+			try {
+				if ("darwin".equals(system)) {
+					return new URL("http", host.getHost(), 10088, "");
+				}
+				if ("os400".equals(system)) {
+					String version = getProperty(IZendTarget.SERVER_VERSION);
+					if (version != null && !version.startsWith("6")) { //$NON-NLS-1$
+						return new URL("http", host.getHost(), 10088, "");
+					} else {
+						return new URL("http", host.getHost(), 10080, "");
+					}
+				}
+			} catch (MalformedURLException e) {
+	
+			}
+		}
+		return host;
 	}
 
 }
