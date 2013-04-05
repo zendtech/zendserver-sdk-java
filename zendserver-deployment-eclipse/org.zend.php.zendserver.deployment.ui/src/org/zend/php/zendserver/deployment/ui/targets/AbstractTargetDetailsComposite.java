@@ -22,17 +22,13 @@ import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
-import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.manager.TargetsManager;
-import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
-import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.data.values.ServerType;
-import org.zend.webapi.core.connection.data.values.WebApiVersion;
-import org.zend.webapi.core.connection.response.ResponseCode;
-import org.zend.webapi.core.service.IRequestListener;
-import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
+
+import src.org.zend.webapi.core.WebApiClient;
+import src.org.zend.webapi.core.WebApiException;
+import src.org.zend.webapi.core.connection.data.values.WebApiVersion;
+import src.org.zend.webapi.core.connection.response.ResponseCode;
+import src.org.zend.webapi.core.service.IRequestListener;
+import src.org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 
 /**
  * Abstract subclass for editing target details.
@@ -373,8 +369,15 @@ public abstract class AbstractTargetDetailsComposite {
 										.getResponseCode();
 								switch (code) {
 								case UNSUPPORTED_API_VERSION:
-									if (target.connect()) {
-										return target;
+									try {
+										if (target.connect(WebApiVersion.UNKNOWN,
+												ServerType.ZEND_SERVER)) {
+											return target;
+										}
+									} catch (WebApiException ex) {
+										if (target.connect()) {
+											return target;
+										}
 									}
 									break;
 								case AUTH_ERROR:
