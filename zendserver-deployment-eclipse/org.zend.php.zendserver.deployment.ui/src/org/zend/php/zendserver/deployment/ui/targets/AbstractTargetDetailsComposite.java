@@ -23,12 +23,12 @@ import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
 
-import src.org.zend.webapi.core.WebApiClient;
-import src.org.zend.webapi.core.WebApiException;
-import src.org.zend.webapi.core.connection.data.values.WebApiVersion;
-import src.org.zend.webapi.core.connection.response.ResponseCode;
-import src.org.zend.webapi.core.service.IRequestListener;
-import src.org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.core.service.IRequestListener;
+import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 
 /**
  * Abstract subclass for editing target details.
