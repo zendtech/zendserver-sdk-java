@@ -51,7 +51,8 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
 		hostText.setToolTipText(Messages.TargetDialog_HostTooltip);
 		hostText.addModifyListener(modifyListener);
-
+		hostText.setText("http://");
+		hostText.setSelection(hostText.getText().length());
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.TargetDialog_KeyName);
 		keyText = new Text(composite, SWT.BORDER);
