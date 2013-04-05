@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 /**
@@ -24,6 +25,7 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
 public interface IZendTarget {
 	
 	public static final String SERVER_VERSION = "serverVersion";
+	public static final String OPERATING_SYSTEM = "operatingSystem";
 
 	/**
 	 * @return String secret key for this target
@@ -75,14 +77,20 @@ public interface IZendTarget {
 	 * Try to connect with this target using specified WebAPI version.
 	 * 
 	 * @param webapi version
+	 * @param serverType
 	 * @return true if connection success
 	 * @throws WebApiException
 	 */
-	boolean connect(WebApiVersion version) throws WebApiException;
+	boolean connect(WebApiVersion version, ServerType serverType) throws WebApiException;
 
 	/**
 	 * @return true if target was not fully initialized and e.g. requires some additional
 	 * operations before connecting to. False otherwise
 	 */
 	boolean isTemporary();
+	
+	ServerType getServerType();
+	
+	WebApiVersion getWebApiVersion();
+	
 }

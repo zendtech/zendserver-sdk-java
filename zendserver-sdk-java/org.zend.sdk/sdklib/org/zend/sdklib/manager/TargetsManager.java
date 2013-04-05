@@ -32,6 +32,7 @@ import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.progress.BasicStatus;
@@ -300,7 +301,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 						&& local != null) {
 					// try to repeat for zs6
 					try {
-						local.connect(WebApiVersion.V1_3);
+						local.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
 						if (add) {
 							return add(local, true);
 						} else {
@@ -456,12 +457,19 @@ public class TargetsManager extends AbstractChangeNotifier {
 				target.setSecretKey(secretKey);
 			}
 			try {
-				if (!target.connect()) {
+				if (!target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER)) {
 					return null;
 				}
 			} catch (WebApiException e) {
-				if (!target.connect(WebApiVersion.V1_3)) {
-					return null;
+				try {
+					if (!target.connect(WebApiVersion.UNKNOWN,
+							ServerType.ZEND_SERVER)) {
+						return null;
+					}
+				} catch (WebApiException ex) {
+					if (!target.connect()) {
+						return null;
+					}
 				}
 			}
 			IZendTarget updated = loader.update(target);

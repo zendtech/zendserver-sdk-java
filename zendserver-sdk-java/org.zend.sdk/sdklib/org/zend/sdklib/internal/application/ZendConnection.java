@@ -25,9 +25,6 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
-import org.zend.webapi.core.connection.data.values.ServerType;
-import org.zend.webapi.core.connection.data.values.WebApiVersion;
-import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 /**
  * Abstract class which provides interface to perform WebAPI methods.
@@ -77,19 +74,12 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 			throw new IllegalArgumentException(er);
 		}
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
-				target.getSecretKey());
+				target.getSecretKey()); 
 		String hostname = target.getHost().toString();
 		WebApiClient client = new WebApiClient(credentials, hostname,
 				SSLContextInitializer.instance.getRestletContext(), notifier);
-		if (ZendServerVersion
-				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
-				.getName().startsWith("6")) { //$NON-NLS-1$
-			client.setCustomVersion(WebApiVersion.V1_3);
-			client.setServerType(ServerType.ZEND_SERVER);
-		}
-		if (TargetsManager.isOpenShift(target)) {
-			client.setServerType(ServerType.ZEND_SERVER);
-		}
+		client.setCustomVersion(target.getWebApiVersion());
+		client.setServerType(target.getServerType());
 		return client;
 	}
 
