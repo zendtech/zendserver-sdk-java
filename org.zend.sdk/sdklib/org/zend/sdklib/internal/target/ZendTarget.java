@@ -30,6 +30,7 @@ import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.SystemInfo;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -291,7 +292,7 @@ public class ZendTarget implements IZendTarget {
 	}
 
 	@Override
-	public boolean connect(WebApiVersion version) throws WebApiException {
+	public boolean connect(WebApiVersion version, ServerType serverType) throws WebApiException {
 		WebApiCredentials credentials = new BasicCredentials(getKey(),
 				getSecretKey());
 		try {
@@ -301,9 +302,7 @@ public class ZendTarget implements IZendTarget {
 			if (version != WebApiVersion.UNKNOWN) {
 				client.setCustomVersion(version);
 			}
-			if (version == WebApiVersion.V1_3) { //$NON-NLS-1$
-				client.setServerType(ServerType.ZEND_SERVER);
-			}
+			client.setServerType(serverType);
 			if (TargetsManager.isOpenShift(this)) {
 				client.setServerType(ServerType.ZEND_SERVER);
 			}
@@ -343,7 +342,34 @@ public class ZendTarget implements IZendTarget {
 
 	@Override
 	public boolean connect() throws WebApiException {
-		return connect(WebApiVersion.UNKNOWN);
+		return connect(WebApiVersion.UNKNOWN, ServerType.ZEND_SERVER_MANAGER);
+	}
+	
+	@Override
+	public ServerType getServerType() {
+		String version = ZendServerVersion.byName(
+				getProperty(IZendTarget.SERVER_VERSION)).getName();
+		if (version.startsWith("6")) { //$NON-NLS-1$
+			return ServerType.ZEND_SERVER;
+		} else {
+			String system = getProperty(OPERATING_SYSTEM);
+			if (system != null) {
+				system = system.toLowerCase();
+				if ("os400".equals(system) || "aix".equals(system)) {
+					return ServerType.ZEND_SERVER;
+				}
+			}
+		}
+		return ServerType.ZEND_SERVER_MANAGER;
+	}
+	
+	@Override
+	public WebApiVersion getWebApiVersion() {
+		if (ZendServerVersion.byName(getProperty(IZendTarget.SERVER_VERSION))
+				.getName().startsWith("6")) { //$NON-NLS-1$
+			return WebApiVersion.V1_3;
+		}
+		return WebApiVersion.UNKNOWN;
 	}
 
 	public boolean equals(Object obj) {
@@ -439,7 +465,10 @@ public class ZendTarget implements IZendTarget {
 				if ("darwin".equals(system)) {
 					return new URL("http", host.getHost(), 10088, "");
 				}
-				if ("os400".equals(system)) {
+				if ("linux".equals(system)) {
+					return new URL("http", host.getHost(), 80, "");
+				}
+				if ("os400".equals(system) || "AIX".equals(system)) {
 					String version = getProperty(IZendTarget.SERVER_VERSION);
 					if (version != null && !version.startsWith("6")) { //$NON-NLS-1$
 						return new URL("http", host.getHost(), 10088, "");
