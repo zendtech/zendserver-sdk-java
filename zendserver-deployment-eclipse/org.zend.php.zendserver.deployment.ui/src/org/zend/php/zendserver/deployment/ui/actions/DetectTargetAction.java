@@ -22,6 +22,7 @@ import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
@@ -86,7 +87,7 @@ public class DetectTargetAction extends Action {
 			Throwable cause = e.getCause();
 			if (e instanceof ServerVersionException) {
 				try {
-					target.connect(WebApiVersion.V1_3);
+					target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
 				} catch (WebApiException ex) {
 					cause = ex.getCause();
 				}

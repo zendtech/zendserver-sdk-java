@@ -28,6 +28,7 @@ import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.service.IRequestListener;
@@ -360,7 +361,8 @@ public abstract class AbstractTargetDetailsComposite {
 					try {
 						// test if this is zend server 6
 						try {
-							if (target.connect(WebApiVersion.V1_3)) {
+							if (target.connect(WebApiVersion.V1_3,
+									ServerType.ZEND_SERVER)) {
 								return target;
 							}
 						} catch (WebApiException e) {
@@ -403,24 +405,20 @@ public abstract class AbstractTargetDetailsComposite {
 			} else {
 				// test if this is zend server 6
 				try {
-					if (target.connect(WebApiVersion.V1_3)) {
+					if (target.connect(WebApiVersion.V1_3,
+							ServerType.ZEND_SERVER)) {
 						return target;
 					}
 				} catch (WebApiException e) {
-					if (e instanceof UnexpectedResponseCode) {
-						UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
-						ResponseCode code = codeException
-								.getResponseCode();
-						switch (code) {
-						case UNSUPPORTED_API_VERSION:
-							if (target.connect()) {
-								return target;
-							}
-						default:
-							throw e;
+					try {
+						if (target.connect(WebApiVersion.UNKNOWN,
+								ServerType.ZEND_SERVER)) {
+							return target;
 						}
-					} else {
-						throw e;
+					} catch (WebApiException ex) {
+						if (target.connect()) {
+							return target;
+						}
 					}
 				}
 			}
