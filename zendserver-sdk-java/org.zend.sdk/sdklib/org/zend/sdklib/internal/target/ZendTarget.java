@@ -40,6 +40,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 public class ZendTarget implements IZendTarget {
 
 	public static final String ENCRYPT = "encrypt.";
+	public static final String OPERATING_SYSTEM = "operatingSystem";
 
 	private static final String EXTRA = "extra.";
 	private String id;
