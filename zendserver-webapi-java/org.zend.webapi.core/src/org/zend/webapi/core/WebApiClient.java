@@ -1752,7 +1752,7 @@ public class WebApiClient {
 	}
 	
 	private WebApiVersion getVersion(WebApiVersion preferedVersion) {
-		if (customVersion != null) {
+		if (customVersion != null && customVersion != WebApiVersion.UNKNOWN) {
 			return customVersion;
 		}
 		return preferedVersion;
