@@ -372,23 +372,21 @@ public abstract class AbstractTargetDetailsComposite {
 								ResponseCode code = codeException
 										.getResponseCode();
 								switch (code) {
-								case UNSUPPORTED_API_VERSION:
-									try {
-										if (target.connect(WebApiVersion.UNKNOWN,
-												ServerType.ZEND_SERVER)) {
-											return target;
-										}
-									} catch (WebApiException ex) {
-										if (target.connect()) {
-											return target;
-										}
-									}
-									break;
 								case AUTH_ERROR:
 								case INSUFFICIENT_ACCESS_LEVEL:
 									throw e;
 								default:
 									break;
+								}
+							}
+							try {
+								if (target.connect(WebApiVersion.UNKNOWN,
+										ServerType.ZEND_SERVER)) {
+									return target;
+								}
+							} catch (WebApiException ex) {
+								if (target.connect()) {
+									return target;
 								}
 							}
 						}
