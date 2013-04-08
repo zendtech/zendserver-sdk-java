@@ -352,15 +352,15 @@ public class ZendTarget implements IZendTarget {
 		if (version.startsWith("6")) { //$NON-NLS-1$
 			return ServerType.ZEND_SERVER;
 		} else {
+			if (TargetsManager.isOpenShift(this)) {
+				return ServerType.ZEND_SERVER;
+			}
 			String system = getProperty(OPERATING_SYSTEM);
 			if (system != null) {
 				system = system.toLowerCase();
 				if ("os400".equals(system) || "aix".equals(system)) {
 					return ServerType.ZEND_SERVER;
 				}
-			}
-			if (TargetsManager.isOpenShift(this)) {
-				return ServerType.ZEND_SERVER;
 			}
 		}
 		return ServerType.ZEND_SERVER_MANAGER;
