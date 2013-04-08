@@ -359,6 +359,9 @@ public class ZendTarget implements IZendTarget {
 					return ServerType.ZEND_SERVER;
 				}
 			}
+			if (TargetsManager.isOpenShift(this)) {
+				return ServerType.ZEND_SERVER;
+			}
 		}
 		return ServerType.ZEND_SERVER_MANAGER;
 	}
