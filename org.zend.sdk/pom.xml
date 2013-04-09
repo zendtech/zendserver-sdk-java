@@ -77,6 +77,22 @@
         <sourceDirectory>${project.basedir}/sdklib</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
         <finalName>${project.name}</finalName>
+	<testResources>
+		<testResource>
+          	<directory>${project.basedir}/test</directory>
+          	<includes>
+                	<include>**/**</include>
+	        </includes>
+              </testResource>
+	</testResources>
+	<resources>
+		<resource>
+          	<directory>${project.basedir}/sdklib</directory>
+          	<includes>
+                	<include>**/**</include>
+	        </includes>
+              </resource>
+	</resources>
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
