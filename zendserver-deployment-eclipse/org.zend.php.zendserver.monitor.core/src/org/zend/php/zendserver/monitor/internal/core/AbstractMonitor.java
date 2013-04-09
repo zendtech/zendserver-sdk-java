@@ -342,21 +342,24 @@ public abstract class AbstractMonitor extends Job {
 		if (monitor == null) {
 			monitor = new ZendMonitor(targetId);
 			issues = monitor.getOpenIssues();
-		} else {
-			issues = monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
-		}
-		if (issues != null && issues.size() > 0) {
-			counter = 0;
-			if (jobDelay > JOB_DELAY_MIN) {
-				jobDelay /= 2;
-			}
-			issues = removeDuplicates(issues);
-			handleIssues(issues, target);
 			offset += issues.size();
 			lastTime = monitor.getLastEventTime(issues.get(issues.size() - 1),
 					target);
 		} else {
-			counter++;
+			issues = monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
+			if (issues != null && issues.size() > 0) {
+				counter = 0;
+				if (jobDelay > JOB_DELAY_MIN) {
+					jobDelay /= 2;
+				}
+				issues = removeDuplicates(issues);
+				handleIssues(issues, target);
+				offset += issues.size();
+				lastTime = monitor.getLastEventTime(issues.get(issues.size() - 1),
+						target);
+			} else {
+				counter++;
+			}
 		}
 	}
 

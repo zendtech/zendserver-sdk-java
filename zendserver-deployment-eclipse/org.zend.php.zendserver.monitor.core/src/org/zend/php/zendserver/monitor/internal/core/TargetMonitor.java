@@ -120,7 +120,7 @@ public class TargetMonitor extends AbstractMonitor {
 			Issue issue = zendIssue.getIssue();
 			int actionsAvailable = checkActions(zendIssue);
 			if (!isZS6(target)
-					&& monitor.getTime(issue.getLastOccurance(), target) <= lastTime) {
+					&& monitor.getTime(issue.getLastOccurance(), target) < lastTime) {
 				continue;
 			}
 			final String baseURL = issue.getGeneralDetails().getUrl();
