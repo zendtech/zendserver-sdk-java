@@ -14,10 +14,12 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
+import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
@@ -60,7 +62,6 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 					// ignore
 				}
 			}
-
 			for (ApplicationInfo info : infos) {
 				URL baseUrl = null;
 				try {
@@ -72,12 +73,13 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 					if (compareURLs(url, baseUrl)) {
 						helper.setAppId(info.getId());
 						helper.setInstalledLocation(info.getInstalledLocation());
-						break;
+						return new SdkStatus(listener.getStatus());
 					}
 				}
 			}
 		}
-		return new SdkStatus(listener.getStatus());
+		return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+				Messages.ExisitngAppIdJob_AppNameConflictMessage, null);
 	}
 
 	private void initLocalUrls(URL baseURL) {
