@@ -458,14 +458,18 @@ public class DeploymentHandler {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			job = new UpdateLaunchJob(job.getHelper(), project);
-			if (listener != null) {
-				job.addJobChangeListener(listener);
+			if (job.getHelper().getAppId() != -1) {
+				job = new UpdateLaunchJob(job.getHelper(), project);
+				if (listener != null) {
+					job.addJobChangeListener(listener);
+				}
+				job.setUser(true);
+				job.schedule();
+				job.join();
+				return verifyJobResult(job.getHelper(), project);
+			} else {
+				return IStatus.CANCEL;
 			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
 		}
 	}
 
