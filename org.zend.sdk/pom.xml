@@ -69,6 +69,8 @@
             <groupId>com.zend</groupId>
             <artifactId>registry</artifactId>
             <version>0.0.1</version>
+	    <systemPath>${basedir}/lib/registry.jar</systemPath>
+            <scope>system</scope>
         </dependency>
     </dependencies>
     <build>
