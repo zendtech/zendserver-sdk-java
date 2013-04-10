@@ -35,9 +35,9 @@ import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.RequestParameter;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseFactory;
+import org.zend.webapi.internal.core.Utils;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
-import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 import org.zend.webapi.internal.core.connection.request.HeaderParameters;
@@ -79,17 +79,18 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			}
 
 			final DataDigster dataDigster = new DataDigster(request, handle);
-			
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-			if ((responseCode == 200 || responseCode == 404)
-					&& !dataDigster.validateResponse()) {
-				throw new InvalidResponseException(new Exception(
-						"Target is in sleep or hibernate mode."));
-			}
+			
+			Utils.log("sent " + request.getClass().getSimpleName());
+			Utils.log("resposne code  = " + responseCode);
+		
 			if (!request.isExpectedResponseCode(responseCode)) {
-				throw new UnexpectedResponseCode(responseCode, handle);
+				UnexpectedResponseCode ex = new UnexpectedResponseCode(responseCode, handle);
+				Utils.log(ex.getResponseCode().getErrorCode() + " = "
+						+ ex.getResponseCode().getDescription());
+				throw ex;
 			}
 			
 			dataDigster.digest();

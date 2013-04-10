@@ -50,6 +50,7 @@ import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.progress.IChangeNotifier;
 import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.core.service.WebApiMethodType;
+import org.zend.webapi.internal.core.Utils;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.WebApiEngine;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
@@ -124,13 +125,12 @@ public class WebApiClient {
 	 * Progress notifier
 	 */
 	private IChangeNotifier notifier;
-
-	private boolean listenersDisabled;
 	
 	private WebApiVersion customVersion;
 	
 	private ServerType serverType;
 
+	private static boolean listenersDisabled;
 	private static Map<IRequestListener, Integer> preListeners;
 	private static Map<IRequestListener, Integer> postListeners;
 
@@ -1652,12 +1652,14 @@ public class WebApiClient {
 		if (initializer != null) {
 			initializer.init(request);
 		}
+		
+		Utils.log("sending " + request.getClass().getSimpleName());
 
 		if (!listenersDisabled) {
 			synchronized (preListeners) {
 				Set<IRequestListener> keys = preListeners.keySet();
 				for (IRequestListener listener : keys) {
-					listener.perform();
+					listener.perform(request);
 				}
 			}
 		}
@@ -1670,21 +1672,13 @@ public class WebApiClient {
 			synchronized (postListeners) {
 				Set<IRequestListener> keys = postListeners.keySet();
 				for (IRequestListener listener : keys) {
-					listener.perform();
+					listener.perform(request);
 				}
 			}
 		}
 
 		// return response data to caller
 		return response;
-	}
-
-	public void disableListeners() {
-		listenersDisabled = true;
-	}
-
-	public void enableListeners() {
-		listenersDisabled = false;
 	}
 	
 	public void setServerType(ServerType serverType) {
@@ -1693,6 +1687,14 @@ public class WebApiClient {
 	
 	public void setCustomVersion(WebApiVersion customVersion) {
 		this.customVersion = customVersion;
+	}
+	
+	public static synchronized void disableListeners() {
+		listenersDisabled = true;
+	}
+
+	public static synchronized void enableListeners() {
+		listenersDisabled = false;
 	}
 
 	public static void registerPreRequestListener(IRequestListener listener) {
