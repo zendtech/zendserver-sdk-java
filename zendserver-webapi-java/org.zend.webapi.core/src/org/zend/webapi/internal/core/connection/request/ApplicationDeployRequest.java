@@ -86,10 +86,6 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * @author Wojtek, 2011
  * 
  */
-/**
- * @author Wojciech Galanciak, 2013
- *
- */
 public class ApplicationDeployRequest extends AbstractRequest {
 
 	public static final MediaType APPLICATION_PACKAGE = MediaType.register(
