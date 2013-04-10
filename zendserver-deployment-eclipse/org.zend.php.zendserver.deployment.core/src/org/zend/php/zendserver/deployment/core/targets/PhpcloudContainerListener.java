@@ -120,17 +120,15 @@ public class PhpcloudContainerListener implements IRequestListener {
 		WebApiClient.disableListeners();
 		try {
 			return target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
+		} catch (WebApiCommunicationError e) {
+			throw e;
 		} catch (WebApiException e) {
-			if (e instanceof WebApiCommunicationError) {
-				throw e;
-			}
 			try {
 				return target.connect(WebApiVersion.UNKNOWN,
 						ServerType.ZEND_SERVER);
+			} catch (WebApiCommunicationError ex) {
+				throw e;
 			} catch (WebApiException ex) {
-				if (e instanceof WebApiCommunicationError) {
-					throw e;
-				}
 				return target.connect();
 			}
 		} finally {

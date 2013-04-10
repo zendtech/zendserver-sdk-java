@@ -188,19 +188,16 @@ public class DetectTargetAction extends Action {
 			this.status = Status.OK_STATUS;
 			target = tm.detectLocalhostTarget(null, manager.getKey(),
 					manager.getSecretKey());
+		} catch (InvalidCredentialsException e) {
+			detectZendServer6("Provided credentials are not valid."); //$NON-NLS-1$
 		} catch (SdkException e) {
-			if (e instanceof InvalidCredentialsException) {
-				detectZendServer6("Provided credentials are not valid."); //$NON-NLS-1$
-			} else {
-				String msg = e.getMessage();
-				if (e.getCause() != null) {
-					msg = e.getCause().getMessage();
-				}
-				this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						msg);
-				StatusManager.getManager().handle(status);
-				return;
+			String msg = e.getMessage();
+			if (e.getCause() != null) {
+				msg = e.getCause().getMessage();
 			}
+			this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg);
+			StatusManager.getManager().handle(status);
+			return;
 		}
 	}
 }

@@ -243,6 +243,20 @@ public abstract class AbstractTargetDetailsComposite {
 		this.runnableContext= runnableContext;
 	}
 
+	public IZendTarget[] getTarget() {
+		return result;
+	}
+
+	/**
+	 * Early checking if create() returns any GUI, or not. Some target types
+	 * don't need GUI - e.g. local target detection.
+	 * 
+	 * @return
+	 */
+	abstract public boolean hasPage();
+
+	abstract protected boolean validatePage();
+
 	private IStatus doValidate(String[] data, IProgressMonitor monitor) {
 		IZendTarget[] targets;
 		monitor.subTask("Creating targets");
@@ -293,11 +307,9 @@ public abstract class AbstractTargetDetailsComposite {
 			if (target.isTemporary()) {
 				try {
 					target = testConnectAndDetectPort(target, monitor);
-				} catch (WebApiException ex) {
-					if (TargetsManager.isOpenShift(target)
-							&& ex instanceof UnexpectedResponseCode) {
-						UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
-						if (codeException.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
+				} catch (UnexpectedResponseCode e) {
+					if (TargetsManager.isOpenShift(target)) {
+						if (e.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
 							OpenShiftInitializer initializer = new OpenShiftInitializer(
 									target, monitor);
 							initializer.init();
@@ -307,11 +319,11 @@ public abstract class AbstractTargetDetailsComposite {
 								status = initializer.getStatus();
 							}
 						}
-					} else {
-						status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-								ex.getMessage(), ex);
-						continue;
 					}
+				} catch (WebApiException e) {
+					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
+					continue;
 				} catch (RuntimeException e) {
 					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e);
@@ -359,19 +371,15 @@ public abstract class AbstractTargetDetailsComposite {
 						+ target.getHost().getHost());
 				try {
 					return testTargetConnection(target);
-				} catch (Exception e) {
-					if (e instanceof WebApiException) {
-						catchedException = (WebApiException) e;
-					}
+				} catch (WebApiException e) {
+					catchedException = e;
 				}
 			}
 		} else {
 			try {
 				return testTargetConnection(target);
-			} catch (Exception e) {
-				if (e instanceof WebApiException) {
-					catchedException = (WebApiException) e;
-				}
+			} catch (WebApiException e) {
+				catchedException = e;
 			}
 		}
 		if (catchedException != null) {
@@ -380,51 +388,32 @@ public abstract class AbstractTargetDetailsComposite {
 		return null;
 	}
 
-	private IZendTarget testTargetConnection(IZendTarget target) throws WebApiException {
+	private IZendTarget testTargetConnection(IZendTarget target)
+			throws WebApiException {
 		try {
+			if (target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER)) {
+				return target;
+			}
+		} catch (WebApiCommunicationError e) {
+			throw e;
+		} catch (UnexpectedResponseCode e) {
+			ResponseCode code = e.getResponseCode();
+			switch (code) {
+			case AUTH_ERROR:
+			case INSUFFICIENT_ACCESS_LEVEL:
+				throw e;
+			default:
+				break;
+			}
+		} catch (WebApiException e) {
 			try {
-				if (target.connect(WebApiVersion.V1_3,
+				if (target.connect(WebApiVersion.UNKNOWN,
 						ServerType.ZEND_SERVER)) {
 					return target;
 				}
-			} catch (WebApiException e) {
-				if (e instanceof WebApiCommunicationError) {
-					throw e;
-				}
-				if (e instanceof UnexpectedResponseCode) {
-					UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
-					ResponseCode code = codeException
-							.getResponseCode();
-					switch (code) {
-					case AUTH_ERROR:
-					case INSUFFICIENT_ACCESS_LEVEL:
-						throw e;
-					default:
-						break;
-					}
-				}
-				try {
-					if (target.connect(WebApiVersion.UNKNOWN,
-							ServerType.ZEND_SERVER)) {
-						return target;
-					}
-				} catch (WebApiException ex) {
-					if (target.connect()) {
-						return target;
-					}
-				}
-			}
-		} catch (WebApiException ex) {
-			if (ex instanceof UnexpectedResponseCode) {
-				UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
-				ResponseCode code = codeException.getResponseCode();
-				switch (code) {
-				case UNSUPPORTED_API_VERSION:
-				case AUTH_ERROR:
-				case INSUFFICIENT_ACCESS_LEVEL:
-					throw ex;
-				default:
-					break;
+			} catch (WebApiException ex) {
+				if (target.connect()) {
+					return target;
 				}
 			}
 		}
@@ -440,19 +429,5 @@ public abstract class AbstractTargetDetailsComposite {
 		}
 		return target;
 	}
-
-	public IZendTarget[] getTarget() {
-		return result;
-	}
-
-	/**
-	 * Early checking if create() returns any GUI, or not. Some target types
-	 * don't need GUI - e.g. local target detection.
-	 * 
-	 * @return
-	 */
-	abstract public boolean hasPage();
-	
-	abstract protected boolean validatePage();
 	
 }

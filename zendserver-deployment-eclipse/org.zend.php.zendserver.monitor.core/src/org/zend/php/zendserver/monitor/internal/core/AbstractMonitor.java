@@ -246,30 +246,26 @@ public abstract class AbstractMonitor extends Job {
 								handleError(monitor, m);
 								return;
 							}
-						} catch (WebApiException e) {
-							if (e instanceof WebApiCommunicationError) {
+						} catch (WebApiCommunicationError e) {
+							String m = MessageFormat
+									.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+											targetId);
+							handleError(monitor, m);
+							return;
+						} catch (UnexpectedResponseCode e) {
+							ResponseCode code = e.getResponseCode();
+							switch (code) {
+							case UNSUPPORTED_API_VERSION:
 								String m = MessageFormat
-										.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+										.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
 												targetId);
 								handleError(monitor, m);
 								return;
-							} else {
-								if (e instanceof UnexpectedResponseCode) {
-									UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
-									ResponseCode code = codeException
-											.getResponseCode();
-									switch (code) {
-									case UNSUPPORTED_API_VERSION:
-										String m = MessageFormat
-												.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
-														targetId);
-										handleError(monitor, m);
-										return;
-									default:
-										break;
-									}
-								}
+							default:
+								break;
 							}
+						} catch (WebApiException e) {
+							handleError(monitor, e.getMessage());
 						}
 					}
 				});
