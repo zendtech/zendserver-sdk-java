@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection.exception;
 
+import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.w3c.dom.Node;
@@ -30,13 +31,18 @@ public class UnexpectedResponseCode extends WebApiException {
 
 	public UnexpectedResponseCode(int httpCode, Representation handle) {
 		this.httpCode = httpCode;
-		final DomRepresentation domRepresentation = new DomRepresentation(
-				handle);
-		Node node = domRepresentation
-				.getNode("/zendServerAPIResponse/errorData/errorMessage");
-		this.message = node == null ? null : node.getTextContent().trim();
-		node = domRepresentation.getNode("/zendServerAPIResponse/errorData/errorCode");
-		this.errorCode = node == null ? null : node.getTextContent().trim();
+		if (MediaType.TEXT_HTML.equals(handle.getMediaType())) {
+			this.errorCode = "pageNotFound";
+			this.message = ResponseCode.byErrorCode(errorCode).getDescription();
+		} else {
+			final DomRepresentation domRepresentation = new DomRepresentation(
+					handle);
+			Node node = domRepresentation
+					.getNode("/zendServerAPIResponse/errorData/errorMessage");
+			this.message = node == null ? null : node.getTextContent().trim();
+			node = domRepresentation.getNode("/zendServerAPIResponse/errorData/errorCode");
+			this.errorCode = node == null ? null : node.getTextContent().trim();
+		}
 	}
 
 	@Override

@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.zend.webapi.core.service;
 
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.request.IRequest;
+
 /**
  * Request listener. It may be pre or post listener for request handling.
  * 
@@ -18,10 +21,11 @@ public interface IRequestListener {
 	/**
 	 * Perform actions provided by {@link IRequestListener} implementation
 	 * before or after request is handled.
+	 * @param request 
 	 * 
 	 * @return processing result
 	 */
-	boolean perform();
+	boolean perform(IRequest request) throws WebApiException;
 
 	/**
 	 * Return listener id. Id is used to recognize the same listeners registered

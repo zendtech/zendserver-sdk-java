@@ -60,6 +60,8 @@ public enum ResponseCode {
 			"The application does not have a version to rollback to"),
 			
 	NO_SUCH_TRACE(404, "noSuchTrace", "The requested trace could not be found"),
+	
+	PAGE_NOT_FOUND(404, "pageNotFound", "Cannot connect with specified URL"),
 
 	NOT_IMPLEMENTED_BY_EDITION(405, "notImplementedByEdition",
 			"Method is not implemented by this edition of Zend Server (e.g. cluster related methods on Zend Server)"),
