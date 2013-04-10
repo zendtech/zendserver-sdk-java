@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zend</groupId>
     <artifactId>org.zend.sdk</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <repositories>
         <repository>
-            <id>maven2</id>
-            <url>http://snapshots.jboss.org/maven2</url>
+            <id>jboss</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>restlet</id>
@@ -19,7 +19,6 @@
             <url>http://il-studiodev2.zend.net:8080/plugin/repository/everything/</url>
         </repository>
     </repositories>
-    <!--TODO: all local deps should go here -->
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -61,6 +60,51 @@
             <version>3.1</version>
         </dependency>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-dmr</artifactId>
+            <version>1.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.44-1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
             <groupId>com.zend</groupId>
             <artifactId>org.zend.webapi</artifactId>
             <version>0.0.22</version>
@@ -69,7 +113,7 @@
             <groupId>com.zend</groupId>
             <artifactId>registry</artifactId>
             <version>0.0.1</version>
-	    <systemPath>${basedir}/lib/registry.jar</systemPath>
+            <systemPath>${basedir}/lib/registry.jar</systemPath>
             <scope>system</scope>
         </dependency>
     </dependencies>
@@ -77,23 +121,32 @@
         <sourceDirectory>${project.basedir}/sdklib</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
         <finalName>${project.name}</finalName>
-	<testResources>
-		<testResource>
-          	<directory>${project.basedir}/test</directory>
-          	<includes>
-                	<include>**/**</include>
-	        </includes>
-              </testResource>
-	</testResources>
-	<resources>
-		<resource>
-          	<directory>${project.basedir}/sdklib</directory>
-          	<includes>
-                	<include>**/**</include>
-	        </includes>
-              </resource>
-	</resources>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/test</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/sdklib</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
@@ -113,14 +166,22 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.7</version>
                 <executions>
                     <execution>
-                        <id>a2</id>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -130,8 +191,9 @@
                 <version>2.2</version>
                 <executions>
                     <execution>
-                        <id>a1</id>
+                        <id>a2</id>
                         <goals>
+                            <goal>jar</goal>
                             <goal>test-jar</goal>
                         </goals>
                     </execution>
@@ -146,6 +208,27 @@
                         <include>**/*AllLibTests.class</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>bin-distro-descriptor.xml</descriptor>
+                        <descriptor>src-distro-descriptor.xml</descriptor>
+                    </descriptors>
+                    <outputDirectory>${project.build.directory}/output/distro</outputDirectory>
+                    <workDirectory>target/assembly/work</workDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
