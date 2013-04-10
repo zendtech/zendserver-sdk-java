@@ -7,7 +7,10 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
+import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.service.IRequestListener;
 
 public class DeploymentCore extends Plugin {
 
@@ -20,6 +23,8 @@ public class DeploymentCore extends Plugin {
 	private static DeploymentCore plugin;
 
 	private SdkManager sdkManager;
+	
+	private IRequestListener containerListener;
 
 	public DeploymentCore() {
 		super();
@@ -40,9 +45,9 @@ public class DeploymentCore extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DeploymentCore.context = context;
-		
-		
 		sdkManager = new SdkManager();
+		containerListener = new PhpcloudContainerListener();
+		WebApiClient.registerPreRequestListener(containerListener);
 	}
 
 	/*
@@ -55,6 +60,7 @@ public class DeploymentCore extends Plugin {
 		super.stop(bundleContext);
 		DeploymentCore.context = null;
 		SSHTunnelManager.getManager().disconnectAll();
+		WebApiClient.unregisterPreRequestListener(containerListener);
 	}
 
 	/**

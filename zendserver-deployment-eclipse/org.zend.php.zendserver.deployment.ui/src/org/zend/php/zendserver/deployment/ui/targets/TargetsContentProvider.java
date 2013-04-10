@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -22,9 +25,15 @@ public class TargetsContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof TargetsManager) {
 			TargetsManager mgr = (TargetsManager) inputElement;
-			return mgr.getTargets();
+			IZendTarget[] targets = mgr.getTargets();
+			List<IZendTarget> result = new ArrayList<IZendTarget>();
+			for (IZendTarget target : targets) {
+				if (!target.isTemporary()) {
+					result.add(target);
+				}
+			}
+			return result.toArray(new IZendTarget[result.size()]);
 		}
-
 		return new Object[0];
 	}
 

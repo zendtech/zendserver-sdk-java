@@ -32,7 +32,6 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
@@ -41,13 +40,10 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.progress.StatusCode;
-import org.zend.webapi.core.service.IRequestListener;
 
 public class ConfigurationBlock extends AbstractBlock {
 
@@ -491,31 +487,16 @@ public class ConfigurationBlock extends AbstractBlock {
 								new EclipseMappingModelLoader());
 						app.addStatusChangeListener(listener);
 						applicationInfos = new ApplicationInfo[0];
-						IRequestListener preListener = null;
-						if (TargetsManager.isPhpcloud(selectedTarget)) {
-							preListener = new PhpcloudContainerListener(
-									selectedTarget);
-							WebApiClient
-									.registerPreRequestListener(preListener);
-						}
-						try {
-							ApplicationsList info = app
-									.getStatus(selectedTarget.getId());
-							org.zend.webapi.core.progress.IStatus status = listener
-									.getStatus();
-							StatusCode code = status.getCode();
-							if (code == StatusCode.ERROR) {
-								StatusManager.getManager().handle(
-										new SdkStatus(status),
-										StatusManager.SHOW);
-							} else {
-								setApplicationsInfos(info);
-							}
-						} finally {
-							if (preListener != null) {
-								WebApiClient
-										.unregisterPreRequestListener(preListener);
-							}
+						ApplicationsList info = app.getStatus(selectedTarget
+								.getId());
+						org.zend.webapi.core.progress.IStatus status = listener
+								.getStatus();
+						StatusCode code = status.getCode();
+						if (code == StatusCode.ERROR) {
+							StatusManager.getManager().handle(
+									new SdkStatus(status), StatusManager.SHOW);
+						} else {
+							setApplicationsInfos(info);
 						}
 					}
 				});

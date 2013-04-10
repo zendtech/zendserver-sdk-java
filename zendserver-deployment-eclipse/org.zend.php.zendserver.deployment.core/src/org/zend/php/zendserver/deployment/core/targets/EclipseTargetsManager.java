@@ -70,21 +70,23 @@ public class EclipseTargetsManager extends TargetsManager {
 				// should not occur
 			}
 		}
-
 		IZendTarget result = super.add(target, suppressConnect);
-
-		if (result != null
-				&& EclipseSSH2Settings.registerDevCloudTarget(result, false)) {
-			updateTarget(result, true);
-		}
-
-		ZendDevCloud cloud = new ZendDevCloud();
-		if (cloud.isCloudTarget(target)) {
+		if (TargetsManager.isPhpcloud(result)) {
+			if (EclipseSSH2Settings.registerDevCloudTarget(result, false)) {
+				updateTarget(result, true);
+			}
+			ZendDevCloud cloud = new ZendDevCloud();
 			cloud.setPublicKeyBuilder(new JSCHPubKeyDecryptor());
 			try {
-				cloud.uploadPublicKey(target);
+				cloud.uploadPublicKey(result);
 			} catch (SdkException e) {
 				throw new TargetException(e);
+			}
+			String shouldStore = result
+					.getProperty(ZendDevCloud.STORE_PASSWORD);
+			if (shouldStore != null && Boolean.valueOf(shouldStore)) {
+				TargetsManagerService.INSTANCE.storeContainerPassword(result,
+						result.getProperty(ZendDevCloud.TARGET_PASSWORD));
 			}
 		}
 		

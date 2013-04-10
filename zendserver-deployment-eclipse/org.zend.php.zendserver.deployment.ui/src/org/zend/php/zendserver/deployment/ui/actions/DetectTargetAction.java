@@ -21,6 +21,7 @@ import org.zend.sdklib.manager.PrivilegesException;
 import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.InvalidCredentialsException;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
@@ -31,19 +32,17 @@ import swt.elevate.ElevatedProgramFactory;
 
 /**
  * Detects localhost target
- *
+ * 
  */
 public class DetectTargetAction extends Action {
-	
+
 	private IZendTarget target;
-	
-	private String username;
-	private String password;
-	
+
 	private IStatus status;
 
 	public DetectTargetAction() {
-		super(Messages.DetectTargetAction_DetectTarget, Activator.getImageDescriptor(Activator.IMAGE_DETECT_TARGET));
+		super(Messages.DetectTargetAction_DetectTarget, Activator
+				.getImageDescriptor(Activator.IMAGE_DETECT_TARGET));
 	}
 
 	@Override
@@ -51,37 +50,41 @@ public class DetectTargetAction extends Action {
 		try {
 			doRun();
 		} catch (Throwable ex) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage()), StatusManager.SHOW);
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							ex.getMessage()), StatusManager.SHOW);
 		}
 	}
-	
+
 	public IStatus getStatus() {
 		return status;
 	}
-	
+
 	public void doRun() throws PrivilegesException {
 		target = null;
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		
 		try {
-			// test if VirtualStore is enabled, and enforce elevated target creation, 
-			// because non-elevated writes ZendServer configuration to VirtualStore,
+			// test if VirtualStore is enabled, and enforce elevated target
+			// creation,
+			// because non-elevated writes ZendServer configuration to
+			// VirtualStore,
 			// where it's never read by ZendServer
-			if (EnvironmentUtils.isUnderWindows() && EnvironmentUtils.isUACEnabled()) {
-				throw new PrivilegesException("Target detection on Windows must always be run by privileged user.");
+			if (EnvironmentUtils.isUnderWindows()
+					&& EnvironmentUtils.isUACEnabled()) {
+				throw new PrivilegesException(
+						"Target detection on Windows must always be run by privileged user.");
 			}
-			
 			try {
-			target = tm.detectLocalhostTarget(null, null);
+				target = tm.detectLocalhostTarget(null, null);
 			} catch (IllegalArgumentException e) {
 				detectZendServer6(null);
 			}
-		} catch (PrivilegesException e1) {
+		} catch (PrivilegesException e) {
 			ElevatedProgram prog = ElevatedProgramFactory.getElevatedProgram();
 			if (prog != null) {
 				runElevated();
 			} else {
-				throw e1;
+				throw e;
 			}
 		} catch (DetectionException e) {
 			Throwable cause = e.getCause();
@@ -100,13 +103,14 @@ public class DetectTargetAction extends Action {
 						Messages.DetectTargetAction_DetectUnsupportedDesc);
 			}
 		}
-		
+
 		if (target == null) {
 			return;
 		}
-		
+
 		if ((target.isTemporary()) && (EnvironmentUtils.isUnderLinux())) {
-			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getShell();
 			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
 			String msg;
 			try {
@@ -114,8 +118,14 @@ public class DetectTargetAction extends Action {
 			} catch (IOException e) {
 				msg = e.getMessage() + Messages.DetectTargetAction_SeeDocs;
 			}
-			MessageDialog.openInformation(shell, Messages.DetectTargetAction_TargetDetected, Messages.DetectTargetAction_ToComplete+msg);
+			MessageDialog.openInformation(shell,
+					Messages.DetectTargetAction_TargetDetected,
+					Messages.DetectTargetAction_ToComplete + msg);
 		}
+	}
+
+	public IZendTarget getDetectedTarget() {
+		return target;
 	}
 
 	private void runElevated() {
@@ -124,23 +134,27 @@ public class DetectTargetAction extends Action {
 		if (prog != null) {
 			String id = tm.createUniqueId("local"); //$NON-NLS-1$
 			ZendDetectTargetCmdLine zcmd = new ZendDetectTargetCmdLine();
-			
-			String key = TargetsManager.DEFAULT_KEY + "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			String key = TargetsManager.DEFAULT_KEY
+					+ "." + System.getProperty("user.name"); //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				if (! zcmd.runElevated(id, key)) {
+				if (!zcmd.runElevated(id, key)) {
 					return;
 				}
 			} catch (IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e), StatusManager.LOG|StatusManager.SHOW);
+				StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								e.getMessage(), e),
+						StatusManager.LOG | StatusManager.SHOW);
 				return;
 			}
-			
-			/* 
-			 * Elevated target detection may add new target to elevated user targets list, but
-			 * all operations that required extra privileges should be done now, so let's try
-			 * again to detect target.
-			 */ 
-			
+
+			/*
+			 * Elevated target detection may add new target to elevated user
+			 * targets list, but all operations that required extra privileges
+			 * should be done now, so let's try again to detect target.
+			 */
+
 			int maxtries = 3;
 			int tries = maxtries;
 			do {
@@ -154,7 +168,7 @@ public class DetectTargetAction extends Action {
 				try {
 					try {
 						target = tm.detectLocalhostTarget(id, key, true, false);
-					} catch (IllegalArgumentException e) {
+					} catch (DetectionException e) {
 						detectZendServer6(null);
 					}
 				} catch (DetectionException e) {
@@ -163,8 +177,9 @@ public class DetectTargetAction extends Action {
 			} while (target == null && (tries-- > 0));
 		}
 	}
-	
-	private void detectZendServer6(final String message) throws DetectionException {
+
+	private void detectZendServer6(final String message)
+			throws DetectionException {
 		ApiKeyDetector manager = new EclipseApiKeyDetector();
 		try {
 			manager.createApiKey(message);
@@ -174,7 +189,7 @@ public class DetectTargetAction extends Action {
 			target = tm.detectLocalhostTarget(null, manager.getKey(),
 					manager.getSecretKey());
 		} catch (SdkException e) {
-			if ("invalid credentials".equals(e.getMessage())) { //$NON-NLS-1$
+			if (e instanceof InvalidCredentialsException) {
 				detectZendServer6("Provided credentials are not valid."); //$NON-NLS-1$
 			} else {
 				String msg = e.getMessage();
@@ -187,9 +202,5 @@ public class DetectTargetAction extends Action {
 				return;
 			}
 		}
-	}
-
-	public IZendTarget getDetectedTarget() {
-		return target;
 	}
 }

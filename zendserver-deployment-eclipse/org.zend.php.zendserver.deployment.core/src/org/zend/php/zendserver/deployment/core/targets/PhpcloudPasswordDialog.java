@@ -17,7 +17,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -53,23 +55,29 @@ public class PhpcloudPasswordDialog extends Dialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
+		GridData gd = (GridData) comp.getLayoutData();
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 20;
+		layout.marginHeight = 20;
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
-		usernameLabel.setText("Username: "); //$NON-NLS-1$
+		usernameLabel.setText(Messages.PhpcloudPasswordDialog_Username);
 		Text usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER
 				| SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		usernameText.setLayoutData(gd);
 		usernameText.setText(username);
+		usernameText.setEnabled(false);
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
-		passwordLabel.setText("Password: "); //$NON-NLS-1$
+		passwordLabel.setText(Messages.PhpcloudPasswordDialog_Password);
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		passwordText.setLayoutData(data);
 		saveButton = new Button(comp, SWT.CHECK);
-		saveButton.setText("Save Password"); //$NON-NLS-1$
-		getShell().setText("Phpcloud Account Password"); //$NON-NLS-1$
+		saveButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 2, 1));
+		saveButton.setText(Messages.PhpcloudPasswordDialog_SavePassword);
+		getShell().setText(Messages.PhpcloudPasswordDialog_Title);
 		return comp;
 	}
 
@@ -81,9 +89,13 @@ public class PhpcloudPasswordDialog extends Dialog {
 	protected void okPressed() {
 		password = passwordText.getText();
 		save = saveButton.getSelection();
-		if (password != null && save) {
-			ZendDevCloud cloud = new ZendDevCloud();
-			cloud.setPassword(target, password);
+		if (password != null) {
+			if (save) {
+			TargetsManagerService.INSTANCE.storeContainerPassword(target,
+					password);
+			}
+			((ZendTarget) target).addProperty(ZendDevCloud.TARGET_PASSWORD,
+					password);
 		}
 		super.okPressed();
 	}

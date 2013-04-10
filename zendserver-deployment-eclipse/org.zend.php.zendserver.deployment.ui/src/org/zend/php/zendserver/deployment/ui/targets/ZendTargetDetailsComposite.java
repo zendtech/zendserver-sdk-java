@@ -20,6 +20,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -99,7 +100,13 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		String id = tm.createUniqueId(null);
-		return new IZendTarget[] { new ZendTarget(id, host, data[1], data[2]) };
+		IZendTarget target = new ZendTarget(id, host, data[1], data[2], true); 
+		try {
+			tm.add(target, true);
+		} catch (TargetException e) {
+			// should not appear cause we do not try to connect to it
+		}
+		return new IZendTarget[] { target };
 	}
 
 	@Override

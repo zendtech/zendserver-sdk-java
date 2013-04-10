@@ -14,14 +14,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.PHPLaunchConfigs;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.manager.TargetsManager;
-import org.zend.webapi.core.WebApiClient;
-import org.zend.webapi.core.service.IRequestListener;
 
 public class UninstallApplicationHandler extends AbstractHandler {
 
@@ -46,31 +42,28 @@ public class UninstallApplicationHandler extends AbstractHandler {
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					IRequestListener preListener = null;
 					try {
-						int appId = cfg.getAttribute(DeploymentAttributes.APP_ID.getName(), -1);
-						String targetId = cfg.getAttribute(DeploymentAttributes.TARGET_ID.getName(), (String) null);
-						String targetHost = cfg.getAttribute(DeploymentAttributes.TARGET_HOST.getName(), (String) null);
-						String baseURL = cfg.getAttribute(DeploymentAttributes.BASE_URL.getName(), (String) null);
-						if (TargetsManager.isPhpcloud(targetHost)) {
-							preListener = new PhpcloudContainerListener(targetId);
-							WebApiClient.registerPreRequestListener(preListener);
-						}
+						int appId = cfg.getAttribute(
+								DeploymentAttributes.APP_ID.getName(), -1);
+						String targetId = cfg.getAttribute(
+								DeploymentAttributes.TARGET_ID.getName(),
+								(String) null);
+						String baseURL = cfg.getAttribute(
+								DeploymentAttributes.BASE_URL.getName(),
+								(String) null);
 						ZendApplication za = new ZendApplication();
 						za.remove(targetId, Integer.toString(appId));
 						PHPLaunchConfigs.preLaunchConfigurationRemoval(cfg);
 						String projectName = cfg.getAttribute(
-								DeploymentAttributes.PROJECT_NAME.getName(), (String) null);
+								DeploymentAttributes.PROJECT_NAME.getName(),
+								(String) null);
 						cfg.delete();
 						if (targetId != null && projectName != null) {
 							MonitorManager.removeFilter(targetId, baseURL);
 						}
 					} catch (CoreException e) {
-						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
-					} finally {
-						if (preListener != null) {
-							WebApiClient.unregisterPreRequestListener(preListener);
-						}
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								e.getMessage(), e);
 					}
 					return Status.OK_STATUS;
 				}

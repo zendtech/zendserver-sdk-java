@@ -25,14 +25,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 
 /**
  * Start debug mode handler.
@@ -103,19 +101,7 @@ public class StartDebugModeHandler extends AbstractHandler {
 						monitor.beginTask(
 								Messages.DebugModeHandler_StartingDebugMode,
 								IProgressMonitor.UNKNOWN);
-						PhpcloudContainerListener listener = null;
-						if (TargetsManager.isPhpcloud(target)) {
-							listener = new PhpcloudContainerListener(target);
-							WebApiClient.registerPreRequestListener(listener);
-						}
-						try {
-							doStartDebugMode(target, shell);
-						} finally {
-							if (listener != null) {
-								WebApiClient
-										.unregisterPreRequestListener(listener);
-							}
-						}
+						doStartDebugMode(target, shell);
 						monitor.done();
 					}
 

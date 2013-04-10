@@ -45,6 +45,8 @@ import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
+import org.zend.sdklib.manager.TargetException;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -273,6 +275,14 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							Activator.PLUGIN_ID,
 							"Could not detect any valid targets. "
 									+ "You can create new OpenShift target by using 'Create New Target' button below."));
+		}
+		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		for (IZendTarget target : targets) {
+			try {
+				tm.add(target, true);
+			} catch (TargetException e) {
+				// should not appear cause we do not try to connect to it
+			}
 		}
 		return targets;
 	}

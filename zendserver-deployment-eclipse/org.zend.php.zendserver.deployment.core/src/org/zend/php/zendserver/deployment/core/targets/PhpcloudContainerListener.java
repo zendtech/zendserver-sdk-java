@@ -8,20 +8,25 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.sdklib.internal.target.SSLContextInitializer;
+import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.auth.BasicCredentials;
-import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
-import org.zend.webapi.core.connection.data.values.ZendServerVersion;
+import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.service.IRequestListener;
-import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
+import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
  * Phpcloud container listener which allows to detect if container is in
@@ -32,87 +37,131 @@ import org.zend.webapi.internal.core.connection.exception.InvalidResponseExcepti
  */
 public class PhpcloudContainerListener implements IRequestListener {
 
+	// 30 minutes
+	private static final int SKIP_TIME = 1800000;
+
 	private static final String ID = DeploymentCore.PLUGIN_ID
 			+ ".phpCloudContainer"; //$NON-NLS-1$
-
-	private IZendTarget target;
-
-	public PhpcloudContainerListener(String targetId) {
-		this.target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
+	
+	private static Map<String, Long> timestamps = new HashMap<String, Long>();
+	
+	static {
+		timestamps = Collections
+				.synchronizedMap(new HashMap<String, Long>());
 	}
 
-	public PhpcloudContainerListener(IZendTarget target) {
-		super();
-		this.target = target;
-	}
+	private class PasswordProvider implements Runnable {
 
-	public boolean perform() {
-		if (TargetsManager.isPhpcloud(target)) {
-			try {
-				WebApiClient client = getClient(target);
+		private String password;
+		private IZendTarget target;
 
-				while (true) {
-					try {
-						client.getSystemInfo();
-						return true;
-					} catch (InvalidResponseException e) {
-						// container is sleeping or it is zs6
-						boolean isZS6 = testZendServer6(client);
-						if (isZS6) {
-							return true;
-						}
-						continue;
-					} catch (WebApiException e) {
-						DeploymentCore.log(e);
-						break;
-					}
-				}
-			} catch (MalformedURLException e) {
-				DeploymentCore.log(e);
+		public PasswordProvider(IZendTarget target) {
+			super();
+			this.target = target;
+		}
+
+		public void run() {
+			PhpcloudPasswordDialog dialog = new PhpcloudPasswordDialog(Display
+					.getDefault().getActiveShell(), target);
+			if (dialog.open() == Window.OK) {
+				this.password = dialog.getPassword();
 			}
 		}
-		return true;
-	}
-	
-	private boolean testZendServer6(WebApiClient client) {
-		client.setCustomVersion(WebApiVersion.V1_3);
-		client.setServerType(ServerType.ZEND_SERVER);
-		try {
-			client.getSystemInfo();
-			return true;
-		} catch (InvalidResponseException e) {
-		} catch (WebApiException e) {
-			DeploymentCore.log(e);
-			return true;
+
+		public String getPassword() {
+			return password;
 		}
-		client.setCustomVersion(null);
-		client.setServerType(ServerType.ZEND_SERVER_MANAGER);
+
+	}
+
+	public boolean perform(IRequest request) throws WebApiException {
+		URL url = null;
+		try {
+			url = new URL(request.getHost());
+		} catch (MalformedURLException e) {
+			return false;
+		}
+		String host = url.getHost();
+		if (TargetsManager.isPhpcloud(host)) {
+			IZendTarget target = getTarget(host);
+			Long timestamp = timestamps.get(target.getId());
+			if (timestamp != null) {
+				Long currentTime = System.currentTimeMillis();
+				if (currentTime - timestamp < SKIP_TIME) {
+					addTimestamp(target.getId(), currentTime);
+					return true;
+				}
+			}
+			ZendDevCloud devcloud = new ZendDevCloud();
+			String container = target
+					.getProperty(ZendDevCloud.TARGET_CONTAINER);
+			String username = target.getProperty(ZendDevCloud.TARGET_USERNAME);
+			String password = target.getProperty(ZendDevCloud.TARGET_PASSWORD);
+			if (password == null) {
+				password = TargetsManagerService.INSTANCE
+						.getContainerPassword(target);
+			}
+			if (password == null) {
+				password = getPassword(target);
+			}
+			try {
+				if (password != null && container != null && username != null
+						&& devcloud.wakeUp(container, username, password)) {
+					addTimestamp(target.getId(), System.currentTimeMillis());
+				}
+			} catch (SdkException e) {
+				new ContainerAwakeningException();
+			}
+		}
 		return false;
 	}
 
-	public WebApiClient getClient(IZendTarget target)
-			throws MalformedURLException {
-		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
-				target.getSecretKey());
-		String hostname = target.getHost().toString();
-		WebApiClient client = new WebApiClient(credentials, hostname,
-				SSLContextInitializer.instance.getRestletContext());
-		client.disableListeners();
-		if (ZendServerVersion
-				.byName(target.getProperty(IZendTarget.SERVER_VERSION))
-				.getName().startsWith("6")) { //$NON-NLS-1$
-			client.setCustomVersion(WebApiVersion.V1_3);
-			client.setServerType(ServerType.ZEND_SERVER);
+	public boolean testConnection(IZendTarget target) throws WebApiException {
+		WebApiClient.disableListeners();
+		try {
+			return target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
+		} catch (WebApiException e) {
+			if (e instanceof WebApiCommunicationError) {
+				throw e;
+			}
+			try {
+				return target.connect(WebApiVersion.UNKNOWN,
+						ServerType.ZEND_SERVER);
+			} catch (WebApiException ex) {
+				if (e instanceof WebApiCommunicationError) {
+					throw e;
+				}
+				return target.connect();
+			}
+		} finally {
+			WebApiClient.enableListeners();
 		}
-		if (TargetsManager.isOpenShift(target)) {
-			client.setServerType(ServerType.ZEND_SERVER);
-		}
-		return client;
 	}
 
 	public String getId() {
-		return ID + '.' + target.getId();
+		return ID;
+	}
+
+	private IZendTarget getTarget(String host) {
+		IZendTarget[] targets = TargetsManagerService.INSTANCE
+				.getTargetManager().getTargets();
+		for (IZendTarget target : targets) {
+			if (host.equals(target.getHost().getHost())) {
+				return target;
+			}
+		}
+		return null;
+	}
+
+	private String getPassword(IZendTarget target) {
+		PasswordProvider provider = new PasswordProvider(target);
+		Display.getDefault().syncExec(provider);
+		return provider.getPassword();
+	}
+	
+	private static synchronized void addTimestamp(String targetId,
+			Long timestamp) {
+		timestamps.put(targetId, timestamp);
 	}
 
 }

@@ -19,20 +19,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
-import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
+import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
  * Abstract subclass for editing target details.
@@ -230,10 +229,14 @@ public abstract class AbstractTargetDetailsComposite {
 
 		});
 		cancelThread.start();
-		IStatus result = doValidate(data, monitor);
-		monitor.worked(1);
-
-		return result;
+		try {
+			IStatus result = doValidate(data, monitor);
+			monitor.worked(1);
+			return result;
+		} finally {
+			TargetsManagerService.INSTANCE.getTargetManager()
+					.removeAllTemporary();
+		}
 	}
 
 	public void setRunnableContext(IRunnableContext runnableContext) {
@@ -270,7 +273,8 @@ public abstract class AbstractTargetDetailsComposite {
 					"Could not find any containers associated with Phpcloud account. "
 							+ "Create at least one container to be able to add Phpcloud target.");
 		}
-		monitor.subTask("Found "+targets.length+" target"+(targets.length == 1 ? "" : "s"));
+		monitor.subTask("Found " + targets.length + " target"
+				+ (targets.length == 1 ? "" : "s"));
 		List<IZendTarget> finalTargets = new ArrayList<IZendTarget>(targets.length);
 		IStatus status = null;
 		for (IZendTarget target : targets) {
@@ -286,7 +290,7 @@ public abstract class AbstractTargetDetailsComposite {
 				continue;
 			}
 
-			if (!target.isTemporary()) {
+			if (target.isTemporary()) {
 				try {
 					target = testConnectAndDetectPort(target, monitor);
 				} catch (WebApiException ex) {
@@ -316,7 +320,7 @@ public abstract class AbstractTargetDetailsComposite {
 			}
 			
 			if (target != null) {
-				finalTargets.add(target);
+				finalTargets.add(copy((ZendTarget) target));
 			}
 		}
 		result = finalTargets.toArray(new IZendTarget[finalTargets.size()]);
@@ -336,106 +340,105 @@ public abstract class AbstractTargetDetailsComposite {
 	private IZendTarget testConnectAndDetectPort(IZendTarget target,
 			IProgressMonitor monitor) throws WebApiException {
 		WebApiException catchedException = null;
-		IRequestListener preListener = null;
 		int[] portToTest = possiblePorts;
-		try {
-			if (TargetsManager.isPhpcloud(target)) {
-				preListener = new PhpcloudContainerListener(target);
-				WebApiClient.registerPreRequestListener(preListener);
-				portToTest = possiblePhpcloudPorts;
-			}
-			if (target.getHost().getPort() == -1) {
-				for (int port : portToTest) {
-					URL old = target.getHost();
-					URL host;
-					try {
-						host = new URL(old.getProtocol(), old.getHost(), port,
-								old.getFile());
-						((ZendTarget) target).setHost(host);
-					} catch (MalformedURLException e) {
-						// should never happen
-					}
-					monitor.subTask("Testing port " + port
-							+ " of detected target "
-							+ target.getHost().getHost());
-					try {
-						// test if this is zend server 6
-						try {
-							if (target.connect(WebApiVersion.V1_3,
-									ServerType.ZEND_SERVER)) {
-								return target;
-							}
-						} catch (WebApiException e) {
-							catchedException = e;
-							if (e instanceof UnexpectedResponseCode) {
-								UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
-								ResponseCode code = codeException
-										.getResponseCode();
-								switch (code) {
-								case AUTH_ERROR:
-								case INSUFFICIENT_ACCESS_LEVEL:
-									throw e;
-								default:
-									break;
-								}
-							}
-							try {
-								if (target.connect(WebApiVersion.UNKNOWN,
-										ServerType.ZEND_SERVER)) {
-									return target;
-								}
-							} catch (WebApiException ex) {
-								if (target.connect()) {
-									return target;
-								}
-							}
-						}
-					} catch (WebApiException ex) {
-						// before throwing exception, try out all possible ports
-						catchedException = ex;
-						if (ex instanceof UnexpectedResponseCode) {
-							UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
-							ResponseCode code = codeException.getResponseCode();
-							switch (code) {
-							case UNSUPPORTED_API_VERSION:
-							case AUTH_ERROR:
-							case INSUFFICIENT_ACCESS_LEVEL:
-								throw catchedException;
-							default:
-								break;
-							}
-						}
-					}
-				}
-			} else {
-				// test if this is zend server 6
+		if (TargetsManager.isPhpcloud(target)) {
+			portToTest = possiblePhpcloudPorts;
+		}
+		if (target.getHost().getPort() == -1) {
+			for (int port : portToTest) {
+				URL old = target.getHost();
+				URL host;
 				try {
-					if (target.connect(WebApiVersion.V1_3,
-							ServerType.ZEND_SERVER)) {
-						return target;
-					}
-				} catch (WebApiException e) {
-					try {
-						if (target.connect(WebApiVersion.UNKNOWN,
-								ServerType.ZEND_SERVER)) {
-							return target;
-						}
-					} catch (WebApiException ex) {
-						if (target.connect()) {
-							return target;
-						}
+					host = new URL(old.getProtocol(), old.getHost(), port,
+							old.getFile());
+					((ZendTarget) target).setHost(host);
+				} catch (MalformedURLException e) {
+					// should never happen
+				}
+				monitor.subTask("Testing port " + port + " of detected target "
+						+ target.getHost().getHost());
+				try {
+					return testTargetConnection(target);
+				} catch (Exception e) {
+					if (e instanceof WebApiException) {
+						catchedException = (WebApiException) e;
 					}
 				}
 			}
-		} finally {
-			if (preListener != null) {
-				WebApiClient.unregisterPreRequestListener(preListener);
+		} else {
+			try {
+				return testTargetConnection(target);
+			} catch (Exception e) {
+				if (e instanceof WebApiException) {
+					catchedException = (WebApiException) e;
+				}
 			}
 		}
 		if (catchedException != null) {
 			throw catchedException;
 		}
 		return null;
+	}
+
+	private IZendTarget testTargetConnection(IZendTarget target) throws WebApiException {
+		try {
+			try {
+				if (target.connect(WebApiVersion.V1_3,
+						ServerType.ZEND_SERVER)) {
+					return target;
+				}
+			} catch (WebApiException e) {
+				if (e instanceof WebApiCommunicationError) {
+					throw e;
+				}
+				if (e instanceof UnexpectedResponseCode) {
+					UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
+					ResponseCode code = codeException
+							.getResponseCode();
+					switch (code) {
+					case AUTH_ERROR:
+					case INSUFFICIENT_ACCESS_LEVEL:
+						throw e;
+					default:
+						break;
+					}
+				}
+				try {
+					if (target.connect(WebApiVersion.UNKNOWN,
+							ServerType.ZEND_SERVER)) {
+						return target;
+					}
+				} catch (WebApiException ex) {
+					if (target.connect()) {
+						return target;
+					}
+				}
+			}
+		} catch (WebApiException ex) {
+			if (ex instanceof UnexpectedResponseCode) {
+				UnexpectedResponseCode codeException = (UnexpectedResponseCode) ex;
+				ResponseCode code = codeException.getResponseCode();
+				switch (code) {
+				case UNSUPPORTED_API_VERSION:
+				case AUTH_ERROR:
+				case INSUFFICIENT_ACCESS_LEVEL:
+					throw ex;
+				default:
+					break;
+				}
+			}
+		}
+		return null;
+	}
+
+	private IZendTarget copy(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey());
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
 	}
 
 	public IZendTarget[] getTarget() {

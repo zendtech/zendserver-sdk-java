@@ -1,8 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.targets;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +32,7 @@ import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -53,6 +52,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	private Text usernameText;
 	private Text passwordText;
 	private Text privateKeyText;
+	private Button shouldStoreButton;
 
 	public Composite create(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -85,7 +85,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		passwordText
 				.setToolTipText(Messages.DevCloudDetailsComposite_PasswordTooltip);
 		passwordText.addModifyListener(modifyListener);
-
+		
 		Button restorePassword = new Button(composite, SWT.PUSH);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		layoutData.minimumWidth = 80;
@@ -97,7 +97,15 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 				Program.launch(RESTORE_PASSWORD_URL);
 			}
 		});
-
+		
+		new Label(composite, SWT.NONE);
+		
+		shouldStoreButton = new Button(composite, SWT.CHECK);
+		layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 3;
+		shouldStoreButton.setText("Save password (could trigger secure storage login)");
+		shouldStoreButton.setLayoutData(layoutData);
+		
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
 		privateKeyText = new Text(composite, SWT.BORDER);
@@ -199,7 +207,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		if (username != null) {
 			usernameText.setText(username);
 		}
-		String password = defaultTarget.getProperty(ZendDevCloud.TARGET_PASSWORD);
+		String password = defaultTarget.getProperty(ZendDevCloud.STORE_PASSWORD);
 		if (password != null) {
 			passwordText.setText(password);
 		}
@@ -210,7 +218,9 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public String[] getData() {
-		return new String[] { usernameText.getText(), passwordText.getText(), privateKeyText.getText() };
+		return new String[] { usernameText.getText(), passwordText.getText(),
+				privateKeyText.getText(),
+				String.valueOf(shouldStoreButton.getSelection()) };
 	}
 
 	public IZendTarget[] createTarget(String[] data, IProgressMonitor monitor) throws CoreException,
@@ -219,6 +229,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		String username = data[0];
 		String password = data[1];
 		String privateKeyPath = data[2];
+		String shouldStore = data[3];
 		
 		monitor.subTask("Validating account information");
 		
@@ -266,32 +277,20 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		String uniqueId = tm.createUniqueId(null);
 		for (int i = 0; i < target.length; i++) {
 			zts[i] = new ZendTarget(uniqueId + "_" + i, target[i].getHost(), //$NON-NLS-1$
-					target[i].getDefaultServerURL(), target[i].getKey(), target[i].getSecretKey());
-			
+					target[i].getDefaultServerURL(), target[i].getKey(), target[i].getSecretKey(), true);
 			zts[i].addProperty(ZendDevCloud.TARGET_USERNAME, username);
+			zts[i].addProperty(ZendDevCloud.STORE_PASSWORD, shouldStore);
 			zts[i].addProperty(ZendDevCloud.TARGET_PASSWORD, password);
 			zts[i].addProperty(ZendDevCloud.TARGET_CONTAINER, target[i].getProperty(ZendDevCloud.TARGET_CONTAINER));
 			zts[i].addProperty(ZendDevCloud.TARGET_TOKEN, target[i].getProperty(ZendDevCloud.TARGET_TOKEN));
 			zts[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKeyPath);
+			try {
+				tm.add(zts[i], true);
+			} catch (TargetException e) {
+				// should not appear cause we do not try to connect to it
+			}
 		}
-		
 		return zts;
-	}
-
-	/*
-	 * @param fname The filename
-	 * 
-	 * @return The filled InputStream
-	 * 
-	 * @exception IOException, if the Streams couldn't be created.
-	 */
-	private static String fullStream(String fname) throws IOException {
-		FileInputStream fis = new FileInputStream(fname);
-		DataInputStream dis = new DataInputStream(fis);
-		byte[] bytes = new byte[dis.available()];
-		dis.readFully(bytes);
-		dis.close();
-		return new String(bytes);
 	}
 
 	@Override

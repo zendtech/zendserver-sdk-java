@@ -22,13 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 
 /**
  * Stop debug mode handler.
@@ -84,19 +81,7 @@ public class StopDebugModeHandler extends AbstractHandler {
 						monitor.beginTask(
 								Messages.DebugModeHandler_StoppingDebugMode,
 								IProgressMonitor.UNKNOWN);
-						PhpcloudContainerListener listener = null;
-						if (TargetsManager.isPhpcloud(target)) {
-							listener = new PhpcloudContainerListener(target);
-							WebApiClient.registerPreRequestListener(listener);
-						}
-						try {
-							doStopDebugMode();
-						} finally {
-							if (listener != null) {
-								WebApiClient
-										.unregisterPreRequestListener(listener);
-							}
-						}
+						doStopDebugMode();
 						monitor.done();
 					}
 				}, false);

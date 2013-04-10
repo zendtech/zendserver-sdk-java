@@ -8,17 +8,13 @@ import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
-import org.zend.sdklib.manager.TargetsManager;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
 import org.zend.webapi.core.connection.data.values.ApplicationStatus;
 import org.zend.webapi.core.connection.response.ResponseCode;
-import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
@@ -37,51 +33,42 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
 		app.setVariableResolver(new EclipseVariableResolver());
-		IRequestListener preListener = new PhpcloudContainerListener(
-				helper.getTargetId());
-		if (TargetsManager.isPhpcloud(helper.getTargetHost())) {
-			WebApiClient.registerPreRequestListener(preListener);
+		ApplicationInfo info = performOperation(app, projectPath);
+		if (monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
 		}
-		try {
-			ApplicationInfo info = performOperation(app, projectPath);
-			if (monitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
-			if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
-				helper.setAppId(info.getId());
-				return monitorApplicationStatus(listener, helper.getTargetId(),
-						info.getId(), app, monitor);
-			}
-			Throwable exception = listener.getStatus().getThrowable();
-			if (exception instanceof UnexpectedResponseCode) {
-				UnexpectedResponseCode codeException = (UnexpectedResponseCode) exception;
-				responseCode = codeException.getResponseCode();
-				switch (responseCode) {
-				case BASE_URL_CONFLICT:
-				case APPLICATION_CONFLICT:
-					return Status.OK_STATUS;
-				case INVALID_PARAMETER:
-					String message = codeException.getMessage();
-					if (message != null) {
-						message = message.trim();
-						if (message
-								.startsWith("Invalid userAppName parameter: Application name") //$NON-NLS-1$
-								&& message.endsWith("already exists")) { //$NON-NLS-1$
-							return new Status(IStatus.INFO,
-									Activator.PLUGIN_ID, message);
-						}
+		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
+			helper.setAppId(info.getId());
+			return monitorApplicationStatus(listener, helper.getTargetId(),
+					info.getId(), app, monitor);
+		}
+		Throwable exception = listener.getStatus().getThrowable();
+		if (exception instanceof UnexpectedResponseCode) {
+			UnexpectedResponseCode codeException = (UnexpectedResponseCode) exception;
+			responseCode = codeException.getResponseCode();
+			switch (responseCode) {
+			case BASE_URL_CONFLICT:
+			case APPLICATION_CONFLICT:
+				return Status.OK_STATUS;
+			case INVALID_PARAMETER:
+				String message = codeException.getMessage();
+				if (message != null) {
+					message = message.trim();
+					if (message
+							.startsWith("Invalid userAppName parameter: Application name") //$NON-NLS-1$
+							&& message.endsWith("already exists")) { //$NON-NLS-1$
+						return new Status(IStatus.INFO, Activator.PLUGIN_ID,
+								message);
 					}
-				default:
-					break;
 				}
-			} else if (exception instanceof WebApiCommunicationError) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						Messages.DeploymentLaunchJob_ConnectionRefusedMessage);
+			default:
+				break;
 			}
-			return new SdkStatus(listener.getStatus());
-		} finally {
-			WebApiClient.unregisterPreRequestListener(preListener);
+		} else if (exception instanceof WebApiCommunicationError) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					Messages.DeploymentLaunchJob_ConnectionRefusedMessage);
 		}
+		return new SdkStatus(listener.getStatus());
 	}
 
 	public ResponseCode getResponseCode() {

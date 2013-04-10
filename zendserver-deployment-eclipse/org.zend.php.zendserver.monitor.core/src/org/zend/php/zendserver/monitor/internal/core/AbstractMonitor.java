@@ -30,12 +30,10 @@ import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
@@ -110,32 +108,22 @@ public abstract class AbstractMonitor extends Job {
 		PhpcloudContainerListener listener = null;
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 				.getTargetById(targetId);
-		if (TargetsManager.isPhpcloud(target)) {
-			listener = new PhpcloudContainerListener(target);
-			WebApiClient.registerPreRequestListener(listener);
+		if (isZS6(target)) {
+			doRunZS6(target);
+		} else {
+			doRunOld(target);
 		}
-		try {
-			if (isZS6(target)) {
-				doRunZS6(target);
-			} else {
-				doRunOld(target);
-			}
-			if (!monitor.isCanceled()) {
-				monitor.done();
-				if (counter > STEP && jobDelay < JOB_DELAY_MAX) {
-					jobDelay *= 2;
-					counter = 0;
-				}
-				this.schedule(jobDelay);
-				return Status.OK_STATUS;
-			}
+		if (!monitor.isCanceled()) {
 			monitor.done();
-			return Status.CANCEL_STATUS;
-		} finally {
-			if (listener != null) {
-				WebApiClient.unregisterPreRequestListener(listener);
+			if (counter > STEP && jobDelay < JOB_DELAY_MAX) {
+				jobDelay *= 2;
+				counter = 0;
 			}
+			this.schedule(jobDelay);
+			return Status.OK_STATUS;
 		}
+		monitor.done();
+		return Status.CANCEL_STATUS;
 	}
 
 	/**
@@ -248,13 +236,6 @@ public abstract class AbstractMonitor extends Job {
 								targetId), IProgressMonitor.UNKNOWN);
 						ZendCodeTracing codeTracing = new ZendCodeTracing(
 								targetId);
-						PhpcloudContainerListener listener = null;
-						IZendTarget target = TargetsManagerService.INSTANCE
-								.getTargetManager().getTargetById(targetId);
-						if (TargetsManager.isPhpcloud(target)) {
-							listener = new PhpcloudContainerListener(target);
-							WebApiClient.registerPreRequestListener(listener);
-						}
 						try {
 							CodeTracingStatus status = codeTracing
 									.disable(true);
@@ -288,11 +269,6 @@ public abstract class AbstractMonitor extends Job {
 										break;
 									}
 								}
-							}
-						} finally {
-							if (listener != null) {
-								WebApiClient
-										.unregisterPreRequestListener(listener);
 							}
 						}
 					}
@@ -369,13 +345,6 @@ public abstract class AbstractMonitor extends Job {
 				IProgressMonitor.UNKNOWN);
 		if (codeTracing == null) {
 			codeTracing = new ZendCodeTracing(targetId);
-			PhpcloudContainerListener listener = null;
-			IZendTarget target = TargetsManagerService.INSTANCE
-					.getTargetManager().getTargetById(targetId);
-			if (TargetsManager.isPhpcloud(target)) {
-				listener = new PhpcloudContainerListener(target);
-				WebApiClient.registerPreRequestListener(listener);
-			}
 			try {
 				CodeTracingStatus status = codeTracing.enable(true);
 				if (status == null) {
@@ -409,10 +378,6 @@ public abstract class AbstractMonitor extends Job {
 						}
 					}
 					codeTracingEnabled = false;
-				}
-			} finally {
-				if (listener != null) {
-					WebApiClient.unregisterPreRequestListener(listener);
 				}
 			}
 		}
