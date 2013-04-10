@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.target.InvalidCredentialsException;
 
 /**
  * @author Wojciech Galanciak, 2012
@@ -137,7 +138,7 @@ public abstract class ApiKeyDetector {
 						}
 					}
 				} else if (statusCode == 200) {
-					throw new SdkException("invalid credentials");
+					throw new InvalidCredentialsException();
 				}
 			} catch (IOException e) {
 				throw new SdkException(e);

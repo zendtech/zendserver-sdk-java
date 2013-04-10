@@ -19,12 +19,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.utils.json.JSONArray;
 import org.zend.sdklib.internal.utils.json.JSONException;
 import org.zend.sdklib.internal.utils.json.JSONObject;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.PhpcloudContainerStatus;
 
 /**
  * Imports devpass containers as an array of {@link IZendTarget}.
@@ -50,15 +52,16 @@ public class ZendDevCloud {
 	public static final String KEY_TYPE = "RSA";
 	
 	// target properties
-	public static final String TARGET_TOKEN = "devcloud.token";
+	public static final String TARGET_TOKEN = ZendTarget.TEMP
+			+ "devcloud.token";
 	public static final String TARGET_CONTAINER = "devcloud.container";
-	public static final String TARGET_CONTAINER_PASSWORD = ZendTarget.ENCRYPT
-			+ "devcloud.container.password";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
 	public static final String TARGET_USERNAME = "devcloud.username";
-	public static final String TARGET_PASSWORD = ZendTarget.ENCRYPT
+	public static final String TARGET_PASSWORD = ZendTarget.TEMP
 			+ "devcloud.password";
-	
+	public static final String STORE_PASSWORD = ZendTarget.TEMP
+			+ "devcloud.storePassword";
+
 	// base url of the devpaas (for now we use an internal one)
 	private final String baseUrl;
 	private PublicKeyBuilder pubKeyProvider;
@@ -185,7 +188,7 @@ public class ZendDevCloud {
 			SSLContextInitializer.instance.restoreDefaultSSLFactory();
 		}
 	}
-
+	
 	/**
 	 * @param username
 	 * @param password
@@ -198,71 +201,41 @@ public class ZendDevCloud {
 		return detectTarget(username, password, null);
 	}
 
-	public void setContainerPassword(String containerName, String password) {
-		TargetsManager manager = new TargetsManager();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget target : targets) {
-			String container = target
-					.getProperty(ZendDevCloud.TARGET_CONTAINER);
-			if (containerName.equals(container)) {
-				setContainerPassword(target, password);
-			}
-		}
-	}
-
-	public void setContainerPassword(IZendTarget target, String password) {
-		if (target instanceof ZendTarget) {
-			((ZendTarget) target).addProperty(TARGET_CONTAINER_PASSWORD,
-					password);
-			TargetsManager manager = new TargetsManager();
-			manager.updateTarget(target);
-		}
-	}
-
-	public String getContainerPassword(String containerName) {
-		TargetsManager manager = new TargetsManager();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget target : targets) {
-			String container = target
-					.getProperty(ZendDevCloud.TARGET_CONTAINER);
-			if (containerName.equals(container)) {
-				return getContainerPassword(target);
-			}
-		}
-		return null;
-	}
-
-	public String getContainerPassword(IZendTarget target) {
-		return target.getProperty(TARGET_CONTAINER_PASSWORD);
-	}
-
-	public void setPassword(IZendTarget target, String password) {
-		if (target instanceof ZendTarget) {
-			((ZendTarget) target).addProperty(TARGET_PASSWORD, password);
-			TargetsManager manager = new TargetsManager();
-			manager.updateTarget(target);
-		}
-	}
-
-	public boolean isSleeping(IZendTarget target) throws SdkException,
-			IOException {
-		String username = target.getProperty(TARGET_USERNAME);
-		String password = target.getProperty(TARGET_PASSWORD);
-		String containerName = target.getProperty(TARGET_CONTAINER);
+	/**
+	 * Wake up a Phpcloud container with specified name.
+	 * 
+	 * @param containerName
+	 * @param username phpcloud account username
+	 * @param password phpcloud account password
+	 * @return <code>true</code> if container is awake
+	 */
+	public boolean wakeUp(String containerName, String username, String password)
+			throws SdkException {
 		boolean orginal = setFollowRedirect();
 		SSLContextInitializer.instance.setDefaultSSLFactory();
-
 		try {
-			String token = authenticate(username, password);
-			String json = getJson(token, CONTAINER_LIST);
-			System.out.println("json: " + json);
-			String[] names = resolveSubKey(json, "containers", "name");
-			String[] statuses = resolveSubKey(json, "containers", "status");
-			for (int i = 0; i < names.length; i++) {
-				if (names[i].equals(containerName)) {
-					return "S".equals(statuses[i]) ? true : false;
+			String json = getJson(authenticate(username, password),
+					CONTAINER_LIST);
+			while (true) {
+				PhpcloudContainerStatus status = PhpcloudContainerStatus
+						.byName(getStatus(json, containerName));
+				if (status == null) {
+					break;
+				}
+				if (status == PhpcloudContainerStatus.RUNNING) {
+					return true;
+				}
+				if (status == PhpcloudContainerStatus.SLEEPING) {
+					Thread.sleep(5000);
+				}
+				if (status == PhpcloudContainerStatus.FROZEN) {
+					Thread.sleep(10000);
 				}
 			}
+		} catch (InterruptedException e) {
+			return wakeUp(containerName, username, password);
+		} catch (IOException e) {
+			throw new SdkException(e);
 		} finally {
 			HttpURLConnection.setFollowRedirects(orginal);
 			SSLContextInitializer.instance.restoreDefaultSSLFactory();
@@ -361,28 +334,44 @@ public class ZendDevCloud {
 
 		return json;
 	}
-
-	private String getJson(String token, String header) throws SdkException,
-			IOException {
-		URL url = new URL(baseUrl + header);
-		HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		urlConn.setRequestProperty("Cookie", token);
-		final int responseCode = urlConn.getResponseCode();
-		if (responseCode != 200) {
-			throw new IOException("Response code Error accessing "
-					+ url.toString());
+	
+	private String getJson(String sessionId, String procedure)
+			throws IOException {
+		String url = baseUrl + procedure;
+		HttpClient client = new HttpClient();
+		GetMethod method = new GetMethod(baseUrl + procedure);
+		method.setRequestHeader("Cookie", sessionId); //$NON-NLS-1$
+		int statusCode = -1;
+		try {
+			statusCode = client.executeMethod(method);
+			if (statusCode == 200) {
+				String responseContent = new String(method.getResponseBody());
+				return responseContent;
+			} else {
+				throw new IOException("Response code Error accessing "
+						+ url.toString());
+			}
+		} finally {
+			method.releaseConnection();
 		}
-		BufferedReader is = new BufferedReader(new InputStreamReader(
-				urlConn.getInputStream()));
-
-		String json = is.readLine();
-		if (json == null) {
-			// TODO: error
-			return null;
+	}
+	
+	private String getStatus(String text, String name) throws IOException {
+		try {
+			final JSONObject json = new JSONObject(text);
+			final Object object = json.get("containers");
+			final JSONArray array = (JSONArray) object;
+			for (int i = 0; i < array.length(); i++) {
+				final JSONObject jsonObject = array.getJSONObject(i);
+				if (name.equals((String) jsonObject.get("name"))) {
+					return (String) jsonObject.get("status");
+				}
+			}
+		} catch (JSONException e) {
+			throw new IOException("Internal Error: error parsing json "
+					+ e.getMessage());
 		}
-		is.close();
-
-		return json;
+		return null;
 	}
 
 	private String[] resolveSubKey(String text, String key, String subkey)
@@ -414,8 +403,7 @@ public class ZendDevCloud {
 	}
 
 	private String authenticate(String username, String password)
-			throws SdkException, IOException {
-
+			throws IOException {
 		URL url = new URL(baseUrl + USER_LOGIN);
 		final String content = MessageFormat.format(
 				"username={0}&password={1}&Submit={2}",
@@ -436,7 +424,7 @@ public class ZendDevCloud {
 
 		final int responseCode = urlConn.getResponseCode();
 		if (responseCode != 302) {
-			throw new SdkException("Authentication error to: " + baseUrl);
+			throw new IOException("Authentication error to: " + baseUrl);
 		}
 
 		String headerName;
@@ -456,10 +444,6 @@ public class ZendDevCloud {
 		final boolean orginal = HttpURLConnection.getFollowRedirects();
 		HttpURLConnection.setFollowRedirects(false);
 		return orginal;
-	}
-
-	public boolean isCloudTarget(IZendTarget result) {
-		return result.getProperty(TARGET_TOKEN) != null;
 	}
 	
 	public void setPublicKeyBuilder(PublicKeyBuilder provider) {
