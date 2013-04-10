@@ -37,7 +37,6 @@ import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.progress.BasicStatus;
 import org.zend.webapi.core.progress.StatusCode;
-import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 /**
  * Target environments manager for the This is a thread-safe class that can be
@@ -171,6 +170,22 @@ public class TargetsManager extends AbstractChangeNotifier {
 	}
 
 	/**
+	 * Remove all temporary targets. Target is temporary when
+	 * {@link IZendTarget#isTemporary()} returns <code>true</code>.
+	 */
+	public void removeAllTemporary() {
+		List<IZendTarget> toRemove = new ArrayList<IZendTarget>();
+		for (IZendTarget target : all) {
+			if (target.isTemporary()) {
+				toRemove.add(target);
+			}
+		}
+		for (IZendTarget target : toRemove) {
+			remove(target);
+		}
+	}
+
+	/**
 	 * Finds a target given target id
 	 * 
 	 * @param i
@@ -297,8 +312,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (cause instanceof WebApiException) {
 				WebApiException webE = (WebApiException) cause;
 				final ResponseCode responseCode = webE.getResponseCode();
-				if ((responseCode == ResponseCode.UNKNOWN_METHOD || cause instanceof InvalidResponseException)
-						&& local != null) {
+				if (local != null
+						&& (responseCode == ResponseCode.UNKNOWN_METHOD || responseCode == ResponseCode.PAGE_NOT_FOUND)) {
 					// try to repeat for zs6
 					try {
 						local.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
@@ -525,11 +540,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 					"Target is not valid. Target id cannot be null."));
 			return false;
 		}
-		if (getTargetById(target.getId()) != null) {
-			log.error("Target with id '" + target.getId() + "' already exists.");
-			return false;
-		}
-		
+		IZendTarget dupTarget = getTargetById(target.getId());
+		if (dupTarget != null) {
+			if (!dupTarget.isTemporary()) {
+				log.error("Target with id '" + target.getId() + "' already exists.");
+				return false;
+			} else {
+				remove(dupTarget);
+			}
+		}		
 		return true;
 	}
 

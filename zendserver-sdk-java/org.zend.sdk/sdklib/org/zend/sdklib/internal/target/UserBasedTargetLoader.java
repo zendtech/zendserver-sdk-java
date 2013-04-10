@@ -75,7 +75,12 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		final File df = getDescriptorFile(target.getId());
 		TargetDescriptor descriptor = loadTargetDescriptor(df);
 		if (descriptor != null) {
-			throw new IllegalArgumentException("target already exists");
+			File conf = new File(descriptor.path, CONF_FILENAME);
+			if (conf.exists() && conf.length() == 0) {
+				return target;
+			} else {
+				throw new IllegalArgumentException("target already exists");
+			}
 		}
 
 		// create descriptor

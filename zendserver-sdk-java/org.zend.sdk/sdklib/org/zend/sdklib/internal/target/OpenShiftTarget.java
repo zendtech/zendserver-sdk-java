@@ -480,7 +480,7 @@ public class OpenShiftTarget {
 						url.getFile());
 			}
 			String id = uniqueId + '_' + i++;
-			ZendTarget target = new ZendTarget(id, url, new URL(host), "", "");
+ 			ZendTarget target = new ZendTarget(id, url, new URL(host), "", "", true);
 			String name = container.getName();
 			if (name != null && name.length() > 0) {
 				target.addProperty(TARGET_CONTAINER, name);

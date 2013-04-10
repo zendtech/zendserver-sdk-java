@@ -41,6 +41,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
 public class ZendTarget implements IZendTarget {
 
 	public static final String ENCRYPT = "encrypt.";
+	public static final String TEMP = "temp.";
 	public static final String OPERATING_SYSTEM = "operatingSystem";
 
 	private static final String EXTRA = "extra.";
@@ -68,6 +69,18 @@ public class ZendTarget implements IZendTarget {
 	 */
 	public ZendTarget(String id, URL host, String key, String secretKey) {
 		this(id, host, null, key, secretKey);
+	}
+	
+	/**
+	 * @param id
+	 * @param host
+	 * @param key
+	 * @param secretKey
+	 * @param temporary
+	 */
+	public ZendTarget(String id, URL host, String key, String secretKey,
+			boolean temporary) {
+		this(id, host, null, key, secretKey, temporary);
 	}
 
 	/**
@@ -274,21 +287,24 @@ public class ZendTarget implements IZendTarget {
 	 */
 	@Override
 	public synchronized void store(OutputStream os) throws IOException {
-		Properties properties = new Properties();
-		properties.put("_id", getId());
-		properties.put("_key", getKey());
-		byte[] encryptedKey = encrypt(getSecretKey());
-		if (encryptedKey != null) {
-			properties.put("_encrypted", "true");
-			properties.put("_secretKey", convertByteToHex(encryptedKey));
-		} else {
-			properties.put("_encrypted", "false");
-			properties.put("_secretKey", getSecretKey());
+		if (!isTemporary) {
+			Properties properties = new Properties();
+			properties.put("_id", getId());
+			properties.put("_key", getKey());
+			byte[] encryptedKey = encrypt(getSecretKey());
+			if (encryptedKey != null) {
+				properties.put("_encrypted", "true");
+				properties.put("_secretKey", convertByteToHex(encryptedKey));
+			} else {
+				properties.put("_encrypted", "false");
+				properties.put("_secretKey", getSecretKey());
+			}
+			properties.put("_host", getHost().toString());
+			properties.put("_defaultServerURL", getDefaultServerURL()
+					.toString());
+			properties.putAll(removeTempProperites(this.properties));
+			properties.store(os, "target properties for " + getId());
 		}
-		properties.put("_host", getHost().toString());
-		properties.put("_defaultServerURL", getDefaultServerURL().toString());
-		properties.putAll(this.properties);
-		properties.store(os, "target properties for " + getId());
 	}
 
 	@Override
@@ -484,6 +500,18 @@ public class ZendTarget implements IZendTarget {
 			}
 		}
 		return host;
+	}
+	
+	private Properties removeTempProperites(Properties input) {
+		Properties result = new Properties();
+		Set<Object> keys = input.keySet();
+		for (Object key : keys) {
+			if (!((String) key).startsWith(EXTRA + TEMP)) {
+				String value = (String) input.get(key);
+				result.put(key, value);
+			}
+		}
+		return result;
 	}
 
 }
