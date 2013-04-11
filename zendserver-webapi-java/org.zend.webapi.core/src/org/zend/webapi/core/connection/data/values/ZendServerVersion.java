@@ -11,50 +11,105 @@ package org.zend.webapi.core.connection.data.values;
  * Zend Server version.
  * 
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
-public enum ZendServerVersion {
+public class ZendServerVersion implements Comparable<ZendServerVersion> {
 
-	v5_0_0("5.0.0"),
+	public final static ZendServerVersion V5_0_0 = new ZendServerVersion(5, 0,
+			0);
 
-	v5_5_0("5.5.0"),
+	public final static ZendServerVersion v5_5_0 = new ZendServerVersion(5, 5,
+			0);
 
-	v5_6_0("5.6.0"),
-	
-	v6_0_0("6.0.0"),
-	
-	v6_0("6.0"),
-	
-	v6("6"),
+	public final static ZendServerVersion v5_6_0 = new ZendServerVersion(5, 6,
+			0);
 
-	UNKNOWN("Unknown");
+	public final static ZendServerVersion v6_0_0 = new ZendServerVersion(6, 0,
+			0);
 
-	private final String name;
+	public final static ZendServerVersion v6_0_X = new ZendServerVersion(6, 0,
+			-1);
 
-	private ZendServerVersion(String name) {
-		this.name = name;  
+	public final static ZendServerVersion v6_X_X = new ZendServerVersion(6, -1,
+			-1);
+
+	public final static ZendServerVersion UNKNOWN = new ZendServerVersion(-1,
+			-1, -1);
+
+	private int major;
+	private int minor;
+	private int build;
+
+	private ZendServerVersion(int major, int minor, int build) {
+		this.major = major;
+		this.minor = minor;
+		this.build = build;
 	}
-	
+
 	public String getName() {
-		return name;
+		return major + "." + minor + "." + build;
+	}
+
+	public int getMajor() {
+		return major;
+	}
+
+	public int getMinor() {
+		return minor;
+	}
+
+	public int getBuild() {
+		return build;
+	}
+
+	public int compareTo(ZendServerVersion v) {
+		if (getMajor() < v.getMajor()) {
+			return -1;
+		}
+		if (getMajor() > v.getMajor()) {
+			return 1;
+		}
+		if (getMinor() != -1 && v.getMinor() != -1) {
+			if (getMinor() < v.getMinor()) {
+				return -1;
+			}
+			if (getMinor() > v.getMinor()) {
+				return 1;
+			}
+		}
+		if (getBuild() != -1 && v.getBuild() != -1) {
+			if (getBuild() < v.getBuild()) {
+				return -1;
+			}
+			if (getBuild() > v.getBuild()) {
+				return 1;
+			}
+		}
+		return 0;
 	}
 
 	public static ZendServerVersion byName(String name) {
 		if (name == null) {
 			return UNKNOWN;
 		}
+		int[] parsedValues = parse(name);
+		int major = parsedValues[0];
+		int minor = parsedValues[1];
+		int build = parsedValues[2];
+		return new ZendServerVersion(major, minor, build);
+	}
 
-		ZendServerVersion[] values = values();
-		ZendServerVersion result = null;
-		int length = 0;
-		for (int i = 0; i < values.length; i++) {
-			ZendServerVersion version = values[i];
-			if (name.startsWith(version.name) && length < version.name.length()) {
-				length = version.name.length();
-				result = version;
+	private static int[] parse(String name) {
+		String[] segments = name.split("\\.");
+		int[] result = new int[3];
+		for (int i = 0; i < result.length; i++) {
+			if (segments.length > i) {
+				result[i] = Integer.valueOf(segments[i]);
+			} else {
+				result[i] = -1;
 			}
 		}
-		return result != null ? result : UNKNOWN;
+		return result;
 	}
 
 }
