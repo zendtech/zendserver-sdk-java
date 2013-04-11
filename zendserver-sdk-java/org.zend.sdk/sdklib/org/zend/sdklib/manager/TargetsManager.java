@@ -34,6 +34,7 @@ import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.core.progress.BasicStatus;
 import org.zend.webapi.core.progress.StatusCode;
@@ -629,6 +630,59 @@ public class TargetsManager extends AbstractChangeNotifier {
 				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
 	}
 	
+	/**
+	 * Allows to check if specified target has exact Zend Server version.
+	 * 
+	 * @param target
+	 * @return <code>true</code> version matches; otherwise return
+	 *         <code>false</code>
+	 */
+	public static boolean checkExactVersion(IZendTarget target,
+			ZendServerVersion expectedVersion) {
+		if (target != null) {
+			ZendServerVersion version = ZendServerVersion.byName(target
+					.getProperty(IZendTarget.SERVER_VERSION));
+			return version.compareTo(expectedVersion) == 0;
+		}
+		return false;
+	}
+
+	/**
+	 * Allows to check if specified target has minimal accepted Zend Server
+	 * version.
+	 * 
+	 * @param target
+	 * @return <code>true</code> version matches; otherwise return
+	 *         <code>false</code>
+	 */
+	public static boolean checkMinVersion(IZendTarget target,
+			ZendServerVersion minVersion) {
+		if (target != null) {
+			ZendServerVersion version = ZendServerVersion.byName(target
+					.getProperty(IZendTarget.SERVER_VERSION));
+			return version.compareTo(minVersion) >= 0;
+		}
+		return false;
+	}
+
+	/**
+	 * Allows to check if specified target has maximal accepted Zend Server
+	 * version.
+	 * 
+	 * @param target
+	 * @return <code>true</code> version matches; otherwise return
+	 *         <code>false</code>
+	 */
+	public static boolean checkMaxVersion(IZendTarget target,
+			ZendServerVersion maxVersion) {
+		if (target != null) {
+			ZendServerVersion version = ZendServerVersion.byName(target
+					.getProperty(IZendTarget.SERVER_VERSION));
+			return version.compareTo(maxVersion) <= 0;
+		}
+		return false;
+	}
+
 	public static boolean isLocalhost(IZendTarget target) {
 		return isLocalhost(target.getHost().getHost());
 	}
