@@ -207,9 +207,11 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		if (username != null) {
 			usernameText.setText(username);
 		}
-		String password = defaultTarget.getProperty(ZendDevCloud.STORE_PASSWORD);
+		String password = TargetsManagerService.INSTANCE
+				.getContainerPassword(defaultTarget);
 		if (password != null) {
 			passwordText.setText(password);
+			shouldStoreButton.setSelection(true);
 		}
 		String privateKey = defaultTarget.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
 		if (privateKey != null) {
