@@ -37,8 +37,8 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
  */
 public class PhpcloudContainerListener implements IRequestListener {
 
-	// 30 minutes
-	private static final int SKIP_TIME = 1800000;
+	// 3h 30 minutes
+	private static final int UPTIME = 12600000;
 
 	private static final String ID = DeploymentCore.PLUGIN_ID
 			+ ".phpCloudContainer"; //$NON-NLS-1$
@@ -87,7 +87,7 @@ public class PhpcloudContainerListener implements IRequestListener {
 			Long timestamp = timestamps.get(target.getId());
 			if (timestamp != null) {
 				Long currentTime = System.currentTimeMillis();
-				if (currentTime - timestamp < SKIP_TIME) {
+				if (currentTime - timestamp < UPTIME) {
 					addTimestamp(target.getId(), currentTime);
 					return true;
 				}
