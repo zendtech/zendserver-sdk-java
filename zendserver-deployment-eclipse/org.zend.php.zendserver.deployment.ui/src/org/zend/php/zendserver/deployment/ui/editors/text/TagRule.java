@@ -1,11 +1,13 @@
 package org.zend.php.zendserver.deployment.ui.editors.text;
 
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.ICharacterScanner;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.MultiLineRule;
 
 public class TagRule extends MultiLineRule {
 
 	public TagRule(IToken token) {
-		super("<", ">", token);
+		super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	protected boolean sequenceDetected(
 		ICharacterScanner scanner,
