@@ -363,9 +363,7 @@ public class ZendTarget implements IZendTarget {
 	
 	@Override
 	public ServerType getServerType() {
-		String version = ZendServerVersion.byName(
-				getProperty(IZendTarget.SERVER_VERSION)).getName();
-		if (version.startsWith("6")) { //$NON-NLS-1$
+		if (TargetsManager.checkMinVersion(this, ZendServerVersion.v6_0_0)) {
 			return ServerType.ZEND_SERVER;
 		} else {
 			if (TargetsManager.isOpenShift(this)) {
@@ -384,8 +382,7 @@ public class ZendTarget implements IZendTarget {
 	
 	@Override
 	public WebApiVersion getWebApiVersion() {
-		if (ZendServerVersion.byName(getProperty(IZendTarget.SERVER_VERSION))
-				.getName().startsWith("6")) { //$NON-NLS-1$
+		if (TargetsManager.checkMinVersion(this, ZendServerVersion.v6_0_0)) {
 			return WebApiVersion.V1_3;
 		}
 		return WebApiVersion.UNKNOWN;

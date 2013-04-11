@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.internal.monitor.ZendIssue;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
@@ -323,9 +324,8 @@ public class ZendMonitor extends ZendConnection {
 	public long getTime(String time, IZendTarget target) {
 		Date date = null;
 		try {
-			if (ZendServerVersion
-					.byName(target.getProperty(IZendTarget.SERVER_VERSION))
-					.getName().startsWith("6")) { //$NON-NLS-1$
+			if (TargetsManager
+					.checkMinVersion(target, ZendServerVersion.v6_0_0)) {
 				date = parseISO8601(time);
 			} else {
 				SimpleDateFormat formatter = new SimpleDateFormat(
