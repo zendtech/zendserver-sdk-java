@@ -12,6 +12,7 @@ import org.eclipse.jsch.internal.core.JSchCorePlugin;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.sdklib.internal.target.PublicKeyBuilder;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
 
@@ -67,7 +68,7 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 				newShell = true;
 				shell = new Shell(display);
 			}
-			MessageDialog.openError(shell, "SSH Key Error", message);
+			MessageDialog.openError(shell, Messages.JSCHPubKeyDecryptor_SshErrorTitle, message);
 			if (newShell) {
 				shell.dispose();
 			}
@@ -93,8 +94,8 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 		PassphrasePrompt prompt = null;
 		while (_kpair.isEncrypted()) {
 			if (prompt == null) {
-				prompt = new PassphrasePrompt(NLS.bind("Passphrase {0}",
-						new String[] { pkeyab }));
+				prompt = new PassphrasePrompt(MessageFormat.format(
+						Messages.JSCHPubKeyDecryptor_PassphrasePrompt, pkeyab));
 			}
 			Display.getDefault().syncExec(prompt);
 			String passphrase = prompt.getPassphrase();
@@ -105,7 +106,7 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 				break;
 			}
 			Display.getDefault().syncExec(
-					new ErrorMessage(NLS.bind("Error {0}",
+					new ErrorMessage(NLS.bind(Messages.JSCHPubKeyDecryptor_SshError,
 							new String[] { pkeyab })));
 		}
 		if (_kpair.isEncrypted()) {
@@ -138,8 +139,9 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 			PassphrasePrompt prompt = null;
 			while (_kpair.isEncrypted()) {
 				if (prompt == null) {
-					prompt = new PassphrasePrompt(NLS.bind("Passphrase {0}",
-							new String[] { privateKey }));
+					prompt = new PassphrasePrompt(MessageFormat.format(
+							Messages.JSCHPubKeyDecryptor_PassphrasePrompt,
+							privateKey));
 				}
 				Display.getDefault().syncExec(prompt);
 				passphrase = prompt.getPassphrase();
@@ -152,7 +154,7 @@ public class JSCHPubKeyDecryptor implements PublicKeyBuilder {
 				}
 				Display.getDefault().syncExec(
 						new ErrorMessage(MessageFormat.format(
-								"Invalid passphrase for {0}", privateKey)));
+								Messages.JSCHPubKeyDecryptor_InvalidPassphrase, privateKey)));
 			}
 		}
 		return passphrase;

@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -92,23 +94,24 @@ public class ExtensionDependency extends ModelContainer implements IExtensionDep
 
 	public void set(Feature key, String value) {
 		switch (key.id) {
-			case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
-				setName(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
-				setEquals(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
-				setMin(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
-				setMax(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
-				setConflicts(value);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+		case DeploymentDescriptorPackage.DEPENDENCY_NAME_ID:
+			setName(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
+			setEquals(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
+			setMin(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
+			setMax(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
+			setConflicts(value);
+			break;
+		default:
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownSetDependency, key));
 		}
 	}
 
@@ -125,7 +128,9 @@ public class ExtensionDependency extends ModelContainer implements IExtensionDep
 		case DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS_ID:
 			return fConflicts;
 		default:
-			throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownGetDependency, key));
 		}
 	}
+	
 }

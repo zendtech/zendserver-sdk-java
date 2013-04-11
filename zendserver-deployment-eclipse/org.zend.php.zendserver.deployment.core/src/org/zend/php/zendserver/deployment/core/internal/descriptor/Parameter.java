@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
@@ -131,17 +133,18 @@ public class Parameter  extends ModelContainer implements IParameter {
 
 	public void set(Feature key, boolean value) {
 		switch (key.id) {
-		case DeploymentDescriptorPackage.REQUIRED_ID: 
+		case DeploymentDescriptorPackage.REQUIRED_ID:
 			setRequired(value);
 			break;
-		case DeploymentDescriptorPackage.READONLY_ID: 
+		case DeploymentDescriptorPackage.READONLY_ID:
 			setReadOnly(value);
 			break;
 		default:
-			throw new IllegalArgumentException("Unknown parametery property to set: "+key);
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownSetDependency, key));
 		}
 	}
-	
+
 	public void set(Feature key, String value) {
 		switch (key.id) {
 			case DeploymentDescriptorPackage.DISPLAY_ID: 
@@ -174,7 +177,8 @@ public class Parameter  extends ModelContainer implements IParameter {
 			case DeploymentDescriptorPackage.READONLY_ID: 
 				return readOnly;
 			default:
-				throw new IllegalArgumentException("Unknown parametery property to set: "+key);
+				throw new IllegalArgumentException(MessageFormat.format(
+						Messages.ZendServerDependency_UnknownGetDependency, key));
 		}
 	}
 	
@@ -199,10 +203,10 @@ public class Parameter  extends ModelContainer implements IParameter {
 	
 	@Override
 	public String toString() {
-		return "Parameter [id=" + id + ", type=" + type + ", required="
-				+ required + ", readOnly=" + readOnly + ", display=" + display
-				+ ", defaultValue=" + defaultValue + ", description="
-				+ description + ", identical=" + identical + "]";
+		return "Parameter [id=" + id + ", type=" + type + ", required=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ required + ", readOnly=" + readOnly + ", display=" + display //$NON-NLS-1$ //$NON-NLS-2$
+				+ ", defaultValue=" + defaultValue + ", description=" //$NON-NLS-1$ //$NON-NLS-2$
+				+ description + ", identical=" + identical + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

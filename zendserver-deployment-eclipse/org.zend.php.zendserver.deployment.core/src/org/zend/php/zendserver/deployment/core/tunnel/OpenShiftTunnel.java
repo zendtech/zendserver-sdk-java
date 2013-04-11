@@ -74,8 +74,7 @@ public class OpenShiftTunnel extends AbstractSSHTunnel {
 		} catch (JSchException e) {
 			throw e;
 		} catch (PublicKeyNotFoundException e) {
-			// TODO add better message here
-			throw new TunnelException("Cannot find private SSH key for seleted target.");
+			throw new TunnelException(Messages.OpenShiftTunnel_CannotFindKey);
 		}
 	}
 

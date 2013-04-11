@@ -1,6 +1,7 @@
 package org.zend.php.zendserver.deployment.core.sdk;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -8,6 +9,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.Messages;
 
 
 public class Sdk {
@@ -85,10 +87,11 @@ public class Sdk {
 	public String validate() {
 		for (int i = 0; i < BUNDLES.length; i++) {
 			if (!new File(location, BUNDLES[i].sdkLocation).exists()) {
-				return "SDK Location is not valid. Missing file " + BUNDLES[i];
+				return MessageFormat.format(Messages.Sdk_InvalidLocation,
+						BUNDLES[i]);
 			}
 		}
-		
+
 		return null;
 	}
 	

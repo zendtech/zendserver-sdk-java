@@ -30,7 +30,7 @@ public class MappingRenameParticipant extends RenameParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment";
+		return "Application Deployment"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class MappingRenameParticipant extends RenameParticipant {
 			return null;
 		}
 		
-		DeploymentRefactoring r = new DeploymentRefactoring("rename");
+		DeploymentRefactoring r = new DeploymentRefactoring("rename"); //$NON-NLS-1$
 		boolean hasChanged = r.updatePathInMapping(oldFullPath, newFullPath, mapping);
 		
 		if (! hasChanged) {

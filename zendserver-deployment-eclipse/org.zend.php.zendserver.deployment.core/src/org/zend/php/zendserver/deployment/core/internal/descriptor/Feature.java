@@ -30,8 +30,8 @@ public class Feature {
 
 	@Override
 	public String toString() {
-		return "Feature [xpath=" + xpath + ", attrName=" + attrName
-				+ ", type=" + type + "]";
+		return "Feature [xpath=" + xpath + ", attrName=" + attrName //$NON-NLS-1$ //$NON-NLS-2$
+				+ ", type=" + type + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

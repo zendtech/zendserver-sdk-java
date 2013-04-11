@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,17 +25,19 @@ public abstract class ModelObject implements IModelObject {
 	}
 	
 	public void copy(IModelObject source) {
-		throw new UnsupportedOperationException("Can't copy "+this);
+		throw new UnsupportedOperationException(MessageFormat.format(
+				"Can't copy {0}", this)); //$NON-NLS-1$
 	}
 
 	public void set(Feature key, boolean value) {
-		throw new IllegalArgumentException("Can't set feature "+key+" to value "+value+" in "+this);
+		throw new IllegalArgumentException(MessageFormat.format(
+				"Can't set feature {0} to value {1} in {2}", key, value, this)); //$NON-NLS-1$
 	}
 
 	public boolean getBoolean(Feature key) {
-		throw new IllegalArgumentException("Can't get feature "+key+" from "+this);
+		throw new IllegalArgumentException(MessageFormat.format("Can't get feature {0} from {1}", key, this)); //$NON-NLS-1$
 	}
-	
+
 	public Feature[] getPropertyNames() {
 		return properties;
 	}

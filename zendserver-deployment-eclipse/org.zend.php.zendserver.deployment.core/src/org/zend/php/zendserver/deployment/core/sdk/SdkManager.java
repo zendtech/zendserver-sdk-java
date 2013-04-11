@@ -2,6 +2,7 @@ package org.zend.php.zendserver.deployment.core.sdk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -12,6 +13,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.osgi.framework.BundleException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.Messages;
 
 
 
@@ -45,22 +47,29 @@ public class SdkManager implements IPreferenceChangeListener {
 		Sdk newSdk = new Sdk(path);
 		String error = newSdk.validate();
 		if (error != null) {
-			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, error));
+			throw new CoreException(new Status(IStatus.ERROR,
+					DeploymentCore.PLUGIN_ID, error));
 		}
-		
+
 		if (currentSdk != null) {
 			try {
 				currentSdk.uninstall();
 			} catch (BundleException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, "An error occured during uninstalling current SDK: "+e.getMessage(), e));
+				throw new CoreException(new Status(IStatus.ERROR,
+						DeploymentCore.PLUGIN_ID, MessageFormat.format(
+								Messages.SdkManager_UninstallError,
+								e.getMessage()), e));
 			}
 		}
-		
+
 		try {
 			newSdk.install();
 			currentSdk = newSdk;
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, "An error occured during installing new SDK: "+e.getMessage(), e));
+			throw new CoreException(new Status(IStatus.ERROR,
+					DeploymentCore.PLUGIN_ID, MessageFormat.format(
+							Messages.SdkManager_InstallError, e.getMessage()),
+					e));
 		}
 	}
 

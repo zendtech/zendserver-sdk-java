@@ -29,7 +29,7 @@ public class MappingDeleteParticipant extends DeleteParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment";
+		return "Application Deployment"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class MappingDeleteParticipant extends DeleteParticipant {
 			return null;
 		}
 		
-		DeploymentRefactoring r = new DeploymentRefactoring("remove");
+		DeploymentRefactoring r = new DeploymentRefactoring("remove"); //$NON-NLS-1$
 		boolean hasChanged = r.removePathFromMapping(oldFullPath, mapping);
 		
 		if (! hasChanged) {

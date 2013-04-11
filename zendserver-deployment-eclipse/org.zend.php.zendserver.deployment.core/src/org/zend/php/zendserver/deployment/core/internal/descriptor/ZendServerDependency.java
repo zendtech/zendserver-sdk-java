@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
@@ -66,19 +68,20 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 
 	public void set(Feature key, String value) {
 		switch (key.id) {
-			case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
-				setEquals(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
-				setMin(value);
-				break;
-			case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
-				setMax(value);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+		case DeploymentDescriptorPackage.DEPENDENCY_EQUALS_ID:
+			setEquals(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_MIN_ID:
+			setMin(value);
+			break;
+		case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
+			setMax(value);
+			break;
+		default:
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownSetDependency, key));
 		}
-		
+
 	}
 
 	public String get(Feature key) {
@@ -90,7 +93,8 @@ public class ZendServerDependency extends ModelContainer implements IZendServerD
 		case DeploymentDescriptorPackage.DEPENDENCY_MAX_ID:
 			return fMax;
 		default: 
-			throw new IllegalArgumentException("Unknown dependency property to set: "+key); 
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownGetDependency, key));
 		}
 		
 	}

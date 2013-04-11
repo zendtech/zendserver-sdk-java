@@ -31,7 +31,7 @@ public class DescriptorRenameParticipant extends RenameParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment";
+		return "Application Deployment"; //$NON-NLS-1$
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
@@ -249,8 +251,8 @@ public class DeploymentDescriptor extends ModelContainer implements
 			setApplicationDir(value);
 			break;
 		default:
-			throw new IllegalArgumentException("Can't set unknown property "
-					+ key);
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.DeploymentDescriptor_CannotSetProperty, key));
 		}
 
 	}
@@ -280,8 +282,8 @@ public class DeploymentDescriptor extends ModelContainer implements
 		case DeploymentDescriptorPackage.APPDIR_ID:
 			return appDir;
 		default:
-			throw new IllegalArgumentException("Can't get unknown property "
-					+ key);
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.DeploymentDescriptor_CannotSetProperty, key));
 		}
 	}
 }

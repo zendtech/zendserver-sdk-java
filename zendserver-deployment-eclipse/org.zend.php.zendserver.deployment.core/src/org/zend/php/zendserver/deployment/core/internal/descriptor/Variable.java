@@ -1,5 +1,8 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
+
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
@@ -45,25 +48,28 @@ public class Variable extends ModelObject implements IVariable {
 
 	public void set(Feature key, String value) {
 		switch (key.id) {
-			case DeploymentDescriptorPackage.VAR_NAME_ID:
-				setName(value);
-				break;
-			case DeploymentDescriptorPackage.VALUE_ID:
-				setValue(value);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown Variable property to set: "+key);
+		case DeploymentDescriptorPackage.VAR_NAME_ID:
+			setName(value);
+			break;
+		case DeploymentDescriptorPackage.VALUE_ID:
+			setValue(value);
+			break;
+		default:
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownSetDependency, key));
 		}
 	}
 
 	public String get(Feature key) {
 		switch (key.id) {
-			case DeploymentDescriptorPackage.VAR_NAME_ID:
-				return name;
-			case DeploymentDescriptorPackage.VALUE_ID:
-				return value;
-			default:
-				throw new IllegalArgumentException("Unknown Variable property to get: "+key);
+		case DeploymentDescriptorPackage.VAR_NAME_ID:
+			return name;
+		case DeploymentDescriptorPackage.VALUE_ID:
+			return value;
+		default:
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ZendServerDependency_UnknownGetDependency, key));
 		}
 	}
+	
 }

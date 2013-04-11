@@ -81,12 +81,12 @@ public class DeploymentDescriptorFactory {
 	public static Document createEmptyDocument(DocumentBuilder builder) {
 		Document document = builder.newDocument();
 		Element rootElement = document.createElement(DeploymentDescriptorPackage.PACKAGE.xpath);
-		rootElement.setAttribute("packagerversion", "1.4.11");
-		rootElement.setAttribute("version", "2.0");
-		rootElement.setAttribute("xmlns:xsi",
-				"http://www.w3.org/2001/XMLSchema-instance");
-		rootElement.setAttribute("xsi:schemaLocation",
-				"http://www.zend.com packageDescriptor.xsd");
+		rootElement.setAttribute("packagerversion", "1.4.11"); //$NON-NLS-1$ //$NON-NLS-2$
+		rootElement.setAttribute("version", "2.0"); //$NON-NLS-1$ //$NON-NLS-2$
+		rootElement.setAttribute("xmlns:xsi", //$NON-NLS-1$
+				"http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$
+		rootElement.setAttribute("xsi:schemaLocation", //$NON-NLS-1$
+				"http://www.zend.com packageDescriptor.xsd"); //$NON-NLS-1$
 		document.appendChild(rootElement);
 		
 		return document;

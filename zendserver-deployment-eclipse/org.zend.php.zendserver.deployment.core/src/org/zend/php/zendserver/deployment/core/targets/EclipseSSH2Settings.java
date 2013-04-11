@@ -28,7 +28,7 @@ import com.jcraft.jsch.KeyPairRSA;
 
 public class EclipseSSH2Settings {
 
-	private static final String PEM = ".pem";
+	private static final String PEM = ".pem"; //$NON-NLS-1$
 	private static final String KEY_NAME_SEPARATOR = ","; //$NON-NLS-1$
 
 	public static boolean registerDevCloudTarget(IZendTarget target, boolean overwrite) {
@@ -96,7 +96,7 @@ public class EclipseSSH2Settings {
 		Preferences preferences = JSchCorePlugin.getPlugin()
 				.getPluginPreferences();
 		String ssh2Home = preferences.getString(IConstants.KEY_SSH2HOME);
-		return new File(ssh2Home, "id_rsa");
+		return new File(ssh2Home, "id_rsa"); //$NON-NLS-1$
 	}
 	
 	public static void createPrivateKey(String type, String path) throws CoreException {
@@ -112,10 +112,13 @@ public class EclipseSSH2Settings {
 		}
 		
 		File dir = new File(path).getParentFile();
-		if (! dir.exists()) {
+		if (!dir.exists()) {
 			boolean success = dir.mkdirs();
 			if (!success) {
-				throw new CoreException(new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID, Messages.bind("Failed to create file '{0}'. Unable to create directory '{1}'.", new Object[] {path, dir})));
+				throw new CoreException(new Status(IStatus.ERROR,
+						DeploymentCore.PLUGIN_ID, Messages.bind(
+								Messages.EclipseSSH2Settings_CreateFileError,
+								new Object[] { path, dir })));
 			}
 		}
 		
@@ -141,7 +144,7 @@ public class EclipseSSH2Settings {
 				.getPluginPreferences();
 		String ssh2Home = preferences.getString(IConstants.KEY_SSH2HOME);
 		String existingPrivateKeys = preferences.getString(IConstants.KEY_PRIVATEKEY);
-		List<String> existingKeys = Arrays.asList(existingPrivateKeys.split(KEY_NAME_SEPARATOR)); //$NON-NLS-1$
+		List<String> existingKeys = Arrays.asList(existingPrivateKeys.split(KEY_NAME_SEPARATOR));
 		
 		File keyFile;
 		
@@ -185,15 +188,18 @@ public class EclipseSSH2Settings {
 		return keyFile.toString();
 	}
 
-	private static void copyFile(File srcFile, File destFile) throws IOException {
+	private static void copyFile(File srcFile, File destFile)
+			throws IOException {
 		File dir = destFile.getParentFile();
-		if (! dir.exists()) {
+		if (!dir.exists()) {
 			boolean success = dir.mkdirs();
 			if (!success) {
-				throw new IOException(Messages.bind("Failed to copy '{0}' to '{1}'. Unable to create directory '{2}'.", new Object[] {srcFile, destFile, dir}));
+				throw new IOException(Messages.bind(
+						Messages.EclipseSSH2Settings_CopyFileError,
+						new Object[] { srcFile, destFile, dir }));
 			}
 		}
-		
+
 		FileOutputStream fos = new FileOutputStream(destFile);
 		FileInputStream fis = new FileInputStream(srcFile);
 		

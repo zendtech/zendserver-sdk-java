@@ -1,9 +1,11 @@
 package org.zend.php.zendserver.deployment.core.internal.descriptor;
 
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelContainer;
@@ -57,9 +59,10 @@ public abstract class ModelContainer extends ModelObject implements IModelContai
 	public List getList(Feature key) {
 		List list = mmap.get(key);
 		if (list == null) {
-			throw new IllegalArgumentException("Unknown list property name "+key);
+			throw new IllegalArgumentException(MessageFormat.format(
+					Messages.ModelContainer_UnknownList, key));
 		}
-		
+
 		return list;
 	}
 

@@ -22,6 +22,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.Messages;
 
 /**
  * OpenShift target initializer. It should be called for newly created OpenShift
@@ -63,17 +64,19 @@ public class OpenShiftTargetInitializer {
 				if (acceptLicense(sessionId) == 302) {
 					return Status.OK_STATUS;
 				} else
-					return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
-							"Cannot initialize an OpenShift target. Accepting license failed.");
+					return new Status(
+							IStatus.ERROR,
+							DeploymentCore.PLUGIN_ID,
+							Messages.OpenShiftTargetInitializer_AcceptLicenseFailed);
 			} else {
 				return new Status(
 						IStatus.ERROR,
 						DeploymentCore.PLUGIN_ID,
-						"Cannot initialize an OpenShift target. Setting ZendServer GUI password failed.");
+						Messages.OpenShiftTargetInitializer_SettingPasswordFailed);
 			}
 		} else {
 			return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
-					"Cannot initialize an OpenShift target. Initializing ZendServer session failed.");
+					Messages.OpenShiftTargetInitializer_InitSessionFailed);
 		}
 	}
 

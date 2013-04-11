@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.zendserver.deployment.core.Messages;
 
 
 class PassphraseDialog extends Dialog{
@@ -59,7 +60,7 @@ class PassphraseDialog extends Dialog{
   }
 
   protected void createPassphraseFields(Composite parent){
-    new Label(parent, SWT.NONE).setText("Passphrase");
+    new Label(parent, SWT.NONE).setText(Messages.PassphraseDialog_Passphrase);
     passphraseField=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);
     data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
