@@ -12,6 +12,7 @@ package org.zend.php.zendserver.deployment.debug.ui.commands;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
@@ -21,19 +22,8 @@ public class DebugModeTester extends PropertyTester {
 			Object expectedValue) {
 		if (receiver instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) receiver;
-			if (isCompatible(target)) {
+			if (TargetsManager.checkMinVersion(target, ZendServerVersion.v6_0_0)) {
 				return DebugModeManager.getManager().isInDebugMode(target) == (Boolean) expectedValue;
-			}
-		}
-		return false;
-	}
-
-	private boolean isCompatible(IZendTarget target) {
-		ZendServerVersion version = ZendServerVersion.byName(target
-				.getProperty(IZendTarget.SERVER_VERSION));
-		if (version != ZendServerVersion.UNKNOWN) {
-			if (version.getName().startsWith("6")) { //$NON-NLS-1$
-				return true;
 			}
 		}
 		return false;

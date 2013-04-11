@@ -163,10 +163,8 @@ public class TargetsCombo {
 						&& !TargetsManager.isOpenShift(target)) {
 					continue;
 				} else if (type == Type.ZEND_SERVER_6) {
-					if (!ZendServerVersion
-							.byName(target
-									.getProperty(IZendTarget.SERVER_VERSION))
-							.getName().startsWith("6")) { //$NON-NLS-1$
+					if (!TargetsManager.checkExactVersion(target,
+							ZendServerVersion.v6_X_X)) {
 						continue;
 					}
 				}

@@ -30,6 +30,7 @@ import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.application.ZendCodeTracing;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.monitor.ZendMonitor;
 import org.zend.sdklib.monitor.ZendMonitor.Filter;
@@ -168,10 +169,7 @@ public abstract class AbstractMonitor extends Job {
 	protected int checkActions(IZendIssue issue) {
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 				.getTargetById(targetId);
-		ZendServerVersion version = ZendServerVersion.byName(target
-				.getProperty(IZendTarget.SERVER_VERSION));
-		if (ZendServerVersion.v5_6_0 == version
-				|| version.getName().startsWith("6")) { //$NON-NLS-1$
+		if (TargetsManager.checkMinVersion(target, ZendServerVersion.v5_6_0)) {
 			return codeTracingEnabled ? MonitorManager.REPEAT
 					+ MonitorManager.CODE_TRACE : MonitorManager.REPEAT;
 		}
