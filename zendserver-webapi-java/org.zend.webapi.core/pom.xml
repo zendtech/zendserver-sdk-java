@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.zend</groupId>
     <artifactId>org.zend.webapi</artifactId>
-    <version>0.0.22</version>
+    <version>0.0.23-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>restlet</id>
