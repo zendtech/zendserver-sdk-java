@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Zend SDK
-Bundle-SymbolicName: org.zend.sdk
-Bundle-Version: 1.0.0.0
+Bundle-Name: org.zend.sdk
+Bundle-SymbolicName: org.zend.sdk;singleton:=true
+Bundle-Version: 0.6.0.qualifier
 Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.apache.commons.cli,
@@ -17,7 +17,6 @@ Export-Package: org.apache.commons.cli,
  org.zend.sdklib.internal.repository.local,
  org.zend.sdklib.internal.target,
  org.zend.sdklib.internal.utils,
- org.zend.sdklib.library,
  org.zend.sdklib.logger,
  org.zend.sdklib.manager,
  org.zend.sdklib.mapping,
@@ -46,17 +45,23 @@ Export-Package: org.apache.commons.cli,
  org.zend.webapi.internal.core.connection.response
 Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
     lib/x86_64/ICE_JNIRegistry.dll; processor=x86_64; osname=win32, *
-Bundle-ClassPath: build/libs/org.restlet-2.0.4.jar,
- build/libs/org.restlet.ext.xml-2.0.4.jar,
- build/libs/org.zend.webapi.jar,
- build/libs/registry.jar,
- build/libs/jboss-dmr-1.0.0.Final.jar,
- build/libs/jsch-0.1.44-1.jar,
- build/libs/slf4j-api-1.6.4.jar,
- build/libs/slf4j-log4j12-1.6.4.jar,
- build/libs/log4j-1.2.16.jar,
- build/libs/openshift-java-client-2.0.1.jar,
- build/libs/commons-codec-1.2.jar,
- build/libs/commons-httpclient-3.1.jar,
- build/libs/commons-logging-1.0.4.jar
 Eclipse-BundleShape: dir
+Bundle-ClassPath: .,
+ lib/commons-codec-1.2.jar,
+ lib/commons-httpclient-3.1.jar,
+ lib/commons-logging-1.0.4.jar,
+ lib/jboss-dmr-1.0.0.Final.jar,
+ lib/jsch-0.1.44-1.jar,
+ lib/log4j-1.2.16.jar,
+ lib/openshift-java-client-2.0.1.jar,
+ lib/org.osgi.core-4.0.0.jar,
+ lib/org.restlet-2.0.4.jar,
+ lib/org.restlet.ext.xml-2.0.4.jar,
+ lib/org.zend.webapi-0.0.22.jar,
+ lib/registry.jar,
+ lib/slf4j-api-1.6.4.jar,
+ lib/slf4j-log4j12-1.6.4.jar,
+ resources/generator/jaxb/jaxb-api.jar,
+ resources/generator/jaxb/jaxb-impl.jar,
+ resources/generator/jaxb/jaxb-xjc.jar,
+ resources/generator/jaxb/xerces.jar
