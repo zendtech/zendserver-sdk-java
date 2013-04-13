@@ -165,6 +165,27 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/lib</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>0.17.0</version>
@@ -187,49 +208,18 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- plugin>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<lifecycleMappingMetadata>
-						<pluginExecutions>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>org.apache.maven.plugins</groupId>
-									<artifactId>maven-antrun-plugin</artifactId>
-									<versionRange>[1.7,)</versionRange>
-									<goals>
-										<goal>run</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<execute>
-										<runOnIncremental>true</runOnIncremental>
-										<runOnConfiguration>false</runOnConfiguration>
-									</execute>
-								</action>
-							</pluginExecution>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>org.apache.maven.plugins</groupId>
-									<artifactId>maven-dependency-plugin</artifactId>
-									<versionRange>[2.7,)</versionRange>
-									<goals>
-										<goal>copy-dependencies</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<execute>
-										<runOnIncremental>false</runOnIncremental>
-										<runOnConfiguration>false</runOnConfiguration>
-									</execute>
-								</action>
-							</pluginExecution>
-						</pluginExecutions>
-					</lifecycleMappingMetadata>
-				</configuration>
-			</plugin -->
+			<!-- plugin> <groupId>org.eclipse.m2e</groupId> <artifactId>lifecycle-mapping</artifactId> 
+				<version>1.0.0</version> <configuration> <lifecycleMappingMetadata> <pluginExecutions> 
+				<pluginExecution> <pluginExecutionFilter> <groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-antrun-plugin</artifactId> <versionRange>[1.7,)</versionRange> 
+				<goals> <goal>run</goal> </goals> </pluginExecutionFilter> <action> <execute> 
+				<runOnIncremental>true</runOnIncremental> <runOnConfiguration>false</runOnConfiguration> 
+				</execute> </action> </pluginExecution> <pluginExecution> <pluginExecutionFilter> 
+				<groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
+				<versionRange>[2.7,)</versionRange> <goals> <goal>copy-dependencies</goal> 
+				</goals> </pluginExecutionFilter> <action> <execute> <runOnIncremental>false</runOnIncremental> 
+				<runOnConfiguration>false</runOnConfiguration> </execute> </action> </pluginExecution> 
+				</pluginExecutions> </lifecycleMappingMetadata> </configuration> </plugin -->
 		</plugins>
 	</build>
 
@@ -251,27 +241,6 @@
 							<source>1.6</source>
 							<target>1.5</target>
 						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.7</version>
-						<executions>
-							<execution>
-								<id>copy-dependencies</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.basedir}/lib</outputDirectory>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>false</overWriteIfNewer>
-									<includeScope>runtime</includeScope>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
