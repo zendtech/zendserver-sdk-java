@@ -182,6 +182,11 @@ public class DeploymentUtils {
 		return null;
 	}
 	
+	/**
+	 * @param target
+	 * @return base URL of PHP server associated with specified target
+	 */
+	@SuppressWarnings("restriction")
 	public static URL getServerBaseURL(IZendTarget target) {
 		Server server = findExistingServer(target);
 		try {
@@ -190,6 +195,25 @@ public class DeploymentUtils {
 			DeploymentCore.log(e);
 		}
 		return null;
+	}
+
+	/**
+	 * Sets base URL of PHP server associated with specified target.
+	 * 
+	 * @param target
+	 * @param baseUrl
+	 */
+	@SuppressWarnings("restriction")
+	public static void setServerBaseURL(IZendTarget target, String baseUrl) {
+		Server server = findExistingServer(target);
+		if (server != null) {
+			try {
+				server.setBaseURL(baseUrl);
+				ServersManager.save();
+			} catch (MalformedURLException e) {
+				DeploymentCore.log(e);
+			}
+		}
 	}
 
 	@SuppressWarnings("restriction")

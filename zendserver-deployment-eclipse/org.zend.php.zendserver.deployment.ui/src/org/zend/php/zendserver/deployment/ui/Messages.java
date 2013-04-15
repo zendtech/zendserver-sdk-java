@@ -164,6 +164,8 @@ public class Messages extends NLS {
 
 	public static String TargetDetailsPage_4;
 
+	public static String TargetDialog_BaseUrl;
+	public static String TargetDialog_ConfigureBaseUrl;
 	public static String TargetDialog_Host;
 	public static String TargetDialog_HostTooltip;
 	public static String TargetDialog_Id;
