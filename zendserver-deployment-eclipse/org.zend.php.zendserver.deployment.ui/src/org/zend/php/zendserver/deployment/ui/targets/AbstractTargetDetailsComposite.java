@@ -405,16 +405,14 @@ public abstract class AbstractTargetDetailsComposite {
 			default:
 				break;
 			}
-		} catch (WebApiException e) {
-			try {
-				if (target.connect(WebApiVersion.UNKNOWN,
-						ServerType.ZEND_SERVER)) {
-					return target;
-				}
-			} catch (WebApiException ex) {
-				if (target.connect()) {
-					return target;
-				}
+		}
+		try {
+			if (target.connect(WebApiVersion.UNKNOWN, ServerType.ZEND_SERVER)) {
+				return target;
+			}
+		} catch (WebApiException ex) {
+			if (target.connect()) {
+				return target;
 			}
 		}
 		return null;

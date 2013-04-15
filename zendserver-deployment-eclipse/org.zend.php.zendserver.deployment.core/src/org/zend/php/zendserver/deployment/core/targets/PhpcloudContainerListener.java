@@ -20,13 +20,9 @@ import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
-import org.zend.webapi.core.connection.data.values.ServerType;
-import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.service.IRequestListener;
-import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
  * Phpcloud container listener which allows to detect if container is in
@@ -108,32 +104,13 @@ public class PhpcloudContainerListener implements IRequestListener {
 				if (password != null && container != null && username != null
 						&& devcloud.wakeUp(container, username, password)) {
 					addTimestamp(target.getId(), System.currentTimeMillis());
+					return true;
 				}
 			} catch (SdkException e) {
 				new ContainerAwakeningException();
 			}
 		}
 		return false;
-	}
-
-	public boolean testConnection(IZendTarget target) throws WebApiException {
-		WebApiClient.disableListeners();
-		try {
-			return target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
-		} catch (WebApiCommunicationError e) {
-			throw e;
-		} catch (WebApiException e) {
-			try {
-				return target.connect(WebApiVersion.UNKNOWN,
-						ServerType.ZEND_SERVER);
-			} catch (WebApiCommunicationError ex) {
-				throw e;
-			} catch (WebApiException ex) {
-				return target.connect();
-			}
-		} finally {
-			WebApiClient.enableListeners();
-		}
 	}
 
 	public String getId() {
