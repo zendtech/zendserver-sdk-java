@@ -56,6 +56,11 @@ public interface IZendTarget {
 	 * @return the value of the given extra property key
 	 */
 	String getProperty(String key);
+	
+	/**
+	 * @return associated PHP server name
+	 */
+	String getServerName();
 
 	/**
 	 * @return the value of the given extra property key
