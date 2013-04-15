@@ -214,18 +214,19 @@ public class ZendDevCloud {
 		boolean orginal = setFollowRedirect();
 		SSLContextInitializer.instance.setDefaultSSLFactory();
 		try {
-			String json = getJson(authenticate(username, password),
-					CONTAINER_LIST);
 			while (true) {
+				String json = getJson(authenticate(username, password),
+						"/container/" + containerName + "/overview?format=json");
 				PhpcloudContainerStatus status = PhpcloudContainerStatus
-						.byName(getStatus(json, containerName));
+						.byName(getStatus(json, ""));
 				if (status == null) {
 					break;
 				}
 				if (status == PhpcloudContainerStatus.RUNNING) {
 					return true;
 				}
-				if (status == PhpcloudContainerStatus.SLEEPING) {
+				if (status == PhpcloudContainerStatus.SLEEPING
+						|| status == PhpcloudContainerStatus.PROVISIONED) {
 					Thread.sleep(5000);
 				}
 				if (status == PhpcloudContainerStatus.FROZEN) {
@@ -341,6 +342,7 @@ public class ZendDevCloud {
 		HttpClient client = new HttpClient();
 		GetMethod method = new GetMethod(baseUrl + procedure);
 		method.setRequestHeader("Cookie", sessionId); //$NON-NLS-1$
+		method.setRequestHeader("Pragma", "no-cache"); //$NON-NLS-1$
 		int statusCode = -1;
 		try {
 			statusCode = client.executeMethod(method);
@@ -359,19 +361,13 @@ public class ZendDevCloud {
 	private String getStatus(String text, String name) throws IOException {
 		try {
 			final JSONObject json = new JSONObject(text);
-			final Object object = json.get("containers");
-			final JSONArray array = (JSONArray) object;
-			for (int i = 0; i < array.length(); i++) {
-				final JSONObject jsonObject = array.getJSONObject(i);
-				if (name.equals((String) jsonObject.get("name"))) {
-					return (String) jsonObject.get("status");
-				}
-			}
+			final Object object = json.get("container");
+			final JSONObject container = (JSONObject) object;
+			return (String) container.get("status");
 		} catch (JSONException e) {
 			throw new IOException("Internal Error: error parsing json "
 					+ e.getMessage());
 		}
-		return null;
 	}
 
 	private String[] resolveSubKey(String text, String key, String subkey)
