@@ -88,8 +88,6 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 
 		baseUrlLabel = new Label(composite, SWT.NONE);
 		baseUrlLabel.setText(Messages.TargetDialog_BaseUrl);
-		baseUrlLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
 		baseUrlLabel.setVisible(false);
 		baseUrlText = new Text(composite, SWT.BORDER);
 		baseUrlText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
