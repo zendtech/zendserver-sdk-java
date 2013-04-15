@@ -43,6 +43,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.sdklib.manager.TargetsManager;
@@ -126,10 +127,9 @@ public class LaunchUtils {
 			}
 		}
 
-		Server server = findExistingServer(helper.getBaseURL());
-		if (server == null) {
-			server = createPHPServer(helper.getBaseURL(), helper.getTargetId());
-		}
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(helper.getTargetId());
+		Server server = DeploymentUtils.findExistingServer(target);
 		wc.setAttribute(Server.NAME, server.getName());
 		ServersManager.setDefaultServer(project, server);
 
@@ -455,52 +455,6 @@ public class LaunchUtils {
 		return DebugPlugin.getDefault().getLaunchManager()
 				.generateLaunchConfigurationName(configurationName)
 				+ "_" + targetHost; //$NON-NLS-1$
-	}
-
-	private static Server createPHPServer(URL baseURL, String targetId) {
-		try {
-			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(),
-					baseURL.getPort(), ""); //$NON-NLS-1$
-			String urlString = url.toString();
-			Server server = new Server(
-					"Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
-							+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
-			ServersManager.addServer(server);
-			ServersManager.save();
-			return server;
-		} catch (MalformedURLException e) {
-			// ignore, verified earlier
-		}
-		return null;
-	}
-
-	private static Server findExistingServer(URL baseURL) {
-		if (baseURL == null) {
-			return null;
-		}
-		Server[] servers = ServersManager.getServers();
-		for (Server server : servers) {
-			try {
-				URL serverBaseURL = new URL(server.getBaseURL());
-				if (serverBaseURL.getHost().equals(baseURL.getHost())) {
-					if ((serverBaseURL.getPort() == baseURL.getPort())
-							|| (isDefaultPort(serverBaseURL) && isDefaultPort(baseURL))) {
-						return server;
-					}
-				}
-			} catch (MalformedURLException e) {
-				// ignore and continue searching
-			}
-		}
-		return null;
-	}
-
-	private static boolean isDefaultPort(URL url) {
-		int port = url.getPort();
-		if (port == -1 || port == 80) {
-			return true;
-		}
-		return false;
 	}
 
 	private static IDeploymentHelper createDefaultHelper(IProject project,

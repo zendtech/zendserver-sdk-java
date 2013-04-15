@@ -32,6 +32,7 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
+import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
@@ -110,6 +111,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	 */
 	public void initializeFields(IDeploymentHelper helper) {
 		String targetId = helper.getTargetId();
+		IZendTarget target = null;
 		if ((targetId == null || targetId.isEmpty())) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
@@ -120,8 +122,9 @@ public class ConfigurationBlock extends AbstractBlock {
 			targetsCombo.select(targetId);
 			String applicationURL = LaunchUtils.getURLFromPreferences(helper
 					.getProjectName());
-			if (applicationURL != null) {
-				baseUrl.setText(applicationURL);
+			target = targetsCombo.getSelected();
+			if (target != null && applicationURL != null) {
+				baseUrl.setText(updateURL(target, applicationURL));
 			}
 		}
 		IDialogSettings settings = getDialogSettings();
@@ -154,13 +157,13 @@ public class ConfigurationBlock extends AbstractBlock {
 		}
 		URL newBaseURL = helper.getBaseURL();
 		if (baseUrl.getText().isEmpty() && newBaseURL != null) {
-			if (helper.isDefaultServer() && getTarget() != null) {
-				String targetHost = getTarget().getDefaultServerURL()
-						.toString();
-				baseUrl.setText(targetHost + newBaseURL.getPath());
-			} else {
-				baseUrl.setText(newBaseURL.toString());
+			if (target == null) {
+				target = targetsCombo.getSelected();
+				if (target != null) {
+					baseUrl.setText(updateURL(target, newBaseURL.toString()));
+				}
 			}
+
 		}
 		applicationNameCombo.setText(helper.getAppName());
 	}
@@ -552,7 +555,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private void changeHost(IZendTarget target) {
-		URL targetHost = target.getDefaultServerURL();
+		URL serverBaseUrl = DeploymentUtils.getServerBaseURL(target);
 		URL oldUrl = null;
 		try {
 			oldUrl = getBaseURL();
@@ -562,17 +565,31 @@ public class ConfigurationBlock extends AbstractBlock {
 		try {
 			URL updatedUrl = null;
 			if (oldUrl == null) {
-				updatedUrl = new URL(targetHost.getProtocol(),
-						targetHost.getHost(), targetHost.getPort(), "/"); //$NON-NLS-1$
+				updatedUrl = new URL(serverBaseUrl.getProtocol(),
+						serverBaseUrl.getHost(), serverBaseUrl.getPort(), "/"); //$NON-NLS-1$
 			} else {
-				updatedUrl = new URL(targetHost.getProtocol(),
-						targetHost.getHost(), targetHost.getPort(),
+				updatedUrl = new URL(serverBaseUrl.getProtocol(),
+						serverBaseUrl.getHost(), serverBaseUrl.getPort(),
 						oldUrl.getFile());
 			}
 			baseUrl.setText(updatedUrl.toString());
 		} catch (MalformedURLException e) {
 			Activator.log(e);
 		}
+	}
+
+	private String updateURL(IZendTarget target, String applicationUrl) {
+		try {
+			URL serverBaseUrl = DeploymentUtils.getServerBaseURL(target);
+			URL oldUrl = new URL(applicationUrl);
+			URL updatedUrl = new URL(serverBaseUrl.getProtocol(),
+					serverBaseUrl.getHost(), serverBaseUrl.getPort(),
+					oldUrl.getFile());
+			return updatedUrl.toString();
+		} catch (MalformedURLException e) {
+			Activator.log(e);
+		}
+		return applicationUrl;
 	}
 
 }

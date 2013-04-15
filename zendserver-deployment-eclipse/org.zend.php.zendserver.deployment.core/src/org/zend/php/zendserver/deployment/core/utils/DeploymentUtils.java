@@ -23,6 +23,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -33,6 +34,10 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  */
 public class DeploymentUtils {
+	
+	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
+	private static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
+	private static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1
 
 	/**
 	 * Returns application URL used for last deployment.
@@ -150,60 +155,67 @@ public class DeploymentUtils {
 		EclipseSSH2Settings.registerDevCloudTarget(target, true);
 		return true;
 	}
-
-	/**
-	 * Creates new PHP server for specified target.
-	 * 
-	 * @param baseURL
-	 * @param targetId
-	 * @return {@link Server} instance
-	 */
 	@SuppressWarnings("restriction")
-	public static Server createPHPServer(URL baseURL, String targetId) {
+	public static Server findExistingServer(IZendTarget target) {
+		try {
+			Server existingServer = ServersManager.getServer(target
+					.getServerName());
+			if (existingServer != null) {
+				return existingServer;
+			}
+			URL baseURL = target.getDefaultServerURL();
+			Server[] servers = ServersManager.getServers();
+			for (Server server : servers) {
+				
+				String zsPort = server.getAttribute(ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
+				URL serverBaseURL = new URL(server.getBaseURL());
+				if (serverBaseURL.getHost().equals(baseURL.getHost())
+						&& Integer.valueOf(zsPort) != -1) {
+					return server;
+				}
+			}
+			return createPHPServer(target.getDefaultServerURL(), target);
+		} catch (MalformedURLException e) {
+			DeploymentCore.log(e);
+			// do nothing and return null
+		}
+		return null;
+	}
+	
+	public static URL getServerBaseURL(IZendTarget target) {
+		Server server = findExistingServer(target);
+		try {
+			return new URL(server.getBaseURL());
+		} catch (MalformedURLException e) {
+			DeploymentCore.log(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("restriction")
+	protected static Server createPHPServer(URL baseURL, IZendTarget target) {
 		try {
 			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(),
 					baseURL.getPort(), ""); //$NON-NLS-1$
 			String urlString = url.toString();
 			Server server = new Server(
-					"Zend Target (id: " + targetId + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
+					"Zend Target (id: " + target.getId() + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
 							+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			int zsPort = 10081;
+			if (TargetsManager.isOpenShift(target)) {
+				zsPort = 80;
+			}
+			server.setAttribute(ZENDSERVER_PORT_KEY, String.valueOf(zsPort));
+			server.setAttribute(ZENDSERVER_ENABLED_KEY, "true"); //$NON-NLS-1$
+			server.setAttribute(DEFAULT_URL_KEY, "/ZendServer"); //$NON-NLS-1$
 			ServersManager.addServer(server);
 			ServersManager.save();
 			return server;
 		} catch (MalformedURLException e) {
+			DeploymentCore.log(e);
 			// ignore, verified earlier
 		}
 		return null;
-	}
-
-	@SuppressWarnings("restriction")
-	public static Server findExistingServer(URL baseURL) {
-		if (baseURL == null) {
-			return null;
-		}
-		Server[] servers = ServersManager.getServers();
-		for (Server server : servers) {
-			try {
-				URL serverBaseURL = new URL(server.getBaseURL());
-				if (serverBaseURL.getHost().equals(baseURL.getHost())) {
-					if ((serverBaseURL.getPort() == baseURL.getPort())
-							|| (isDefaultPort(serverBaseURL) && isDefaultPort(baseURL))) {
-						return server;
-					}
-				}
-			} catch (MalformedURLException e) {
-				// ignore and continue searching
-			}
-		}
-		return null;
-	}
-
-	private static boolean isDefaultPort(URL url) {
-		int port = url.getPort();
-		if (port == -1 || port == 80) {
-			return true;
-		}
-		return false;
 	}
 
 }

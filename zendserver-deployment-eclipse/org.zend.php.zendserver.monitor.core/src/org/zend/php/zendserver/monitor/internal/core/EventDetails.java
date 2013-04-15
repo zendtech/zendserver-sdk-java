@@ -33,7 +33,7 @@ import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.php.zendserver.deployment.core.targets.EclipseTargetsManager;
+import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.EventType;
@@ -187,7 +187,7 @@ public class EventDetails implements IEventDetails {
 		if (target == null) {
 			server = getServerFromUrl();
 		} else {
-			server = EclipseTargetsManager.findExistingServer(target);
+			server = DeploymentUtils.findExistingServer(target);
 		}
 		String localFile = null;
 		if (server != null) {
