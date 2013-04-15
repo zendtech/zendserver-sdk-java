@@ -43,6 +43,7 @@ public class ZendTarget implements IZendTarget {
 	public static final String ENCRYPT = "encrypt.";
 	public static final String TEMP = "temp.";
 	public static final String OPERATING_SYSTEM = "operatingSystem";
+	public static final String SERVER_NAME = "serverName";
 
 	private static final String EXTRA = "extra.";
 	private String id;
@@ -52,7 +53,7 @@ public class ZendTarget implements IZendTarget {
 	private String secretKey;
 	private Properties properties;
 	private boolean isTemporary;
-
+	
 	/**
 	 * Mainly used for loading
 	 */
@@ -184,6 +185,15 @@ public class ZendTarget implements IZendTarget {
 	public String getSecretKey() {
 		return secretKey;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.zend.sdklib.target.IZendTarget#getServerName()
+	 */
+	public String getServerName() {
+		return getProperty(SERVER_NAME);
+	}
 
 	/**
 	 * Set target host
@@ -220,7 +230,11 @@ public class ZendTarget implements IZendTarget {
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
 	}
-
+	
+	public void setServerName(String name) {
+		addProperty(SERVER_NAME, name);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
