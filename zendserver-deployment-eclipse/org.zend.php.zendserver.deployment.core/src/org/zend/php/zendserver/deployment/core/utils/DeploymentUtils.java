@@ -34,7 +34,7 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  */
 public class DeploymentUtils {
-	
+
 	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
 	private static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
 	private static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1
@@ -155,6 +155,7 @@ public class DeploymentUtils {
 		EclipseSSH2Settings.registerDevCloudTarget(target, true);
 		return true;
 	}
+
 	@SuppressWarnings("restriction")
 	public static Server findExistingServer(IZendTarget target) {
 		try {
@@ -166,7 +167,7 @@ public class DeploymentUtils {
 			URL baseURL = target.getDefaultServerURL();
 			Server[] servers = ServersManager.getServers();
 			for (Server server : servers) {
-				
+
 				String zsPort = server.getAttribute(ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
 				URL serverBaseURL = new URL(server.getBaseURL());
 				if (serverBaseURL.getHost().equals(baseURL.getHost())
@@ -181,7 +182,7 @@ public class DeploymentUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param target
 	 * @return base URL of PHP server associated with specified target
@@ -224,7 +225,7 @@ public class DeploymentUtils {
 			String urlString = url.toString();
 			Server server = new Server(
 					"Zend Target (id: " + target.getId() + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
-							+ ")", urlString, urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
+							+ ")", target.getDefaultServerURL().toString(), urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			int zsPort = 10081;
 			if (TargetsManager.isOpenShift(target)) {
 				zsPort = 80;
