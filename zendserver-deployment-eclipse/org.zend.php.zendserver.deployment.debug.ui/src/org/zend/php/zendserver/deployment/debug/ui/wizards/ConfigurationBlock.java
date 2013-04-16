@@ -159,11 +159,10 @@ public class ConfigurationBlock extends AbstractBlock {
 		if (baseUrl.getText().isEmpty() && newBaseURL != null) {
 			if (target == null) {
 				target = targetsCombo.getSelected();
-				if (target != null) {
-					baseUrl.setText(updateURL(target, newBaseURL.toString()));
-				}
 			}
-
+			if (target != null) {
+				baseUrl.setText(updateURL(target, newBaseURL.toString()));
+			}
 		}
 		applicationNameCombo.setText(helper.getAppName());
 	}
