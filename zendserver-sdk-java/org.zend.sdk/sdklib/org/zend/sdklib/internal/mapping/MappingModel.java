@@ -107,6 +107,18 @@ public class MappingModel implements IMappingModel {
 					if (mapping.equals(toAdd)) {
 						return false;
 					}
+					String exisitngPath = mapping.getPath();
+					if (path.startsWith(mapping.getPath())) {
+						if (exisitngPath.endsWith("/")) {
+							return false;
+						} else {
+							String subPath = path.substring(exisitngPath
+									.length());
+							if (subPath.length() > 0 && subPath.startsWith("/")) {
+								return false;
+							}
+						}
+					}
 				}
 				if (entry.getMappings().add(toAdd)) {
 					modelChanged(new MappingChangeEvent(Kind.ADD_MAPPING, entry));
