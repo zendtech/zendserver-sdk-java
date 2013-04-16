@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.internal.validation.DescriptorValidator;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
@@ -75,6 +76,8 @@ public class IncrementalDeploymentBuilder extends IncrementalProjectBuilder {
 		try {
 			try {
 				if (file.exists()) {
+					file.refreshLocal(IResource.DEPTH_ONE,
+							new NullProgressMonitor());
 					validator.parse(file.getContents());
 					file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 				}

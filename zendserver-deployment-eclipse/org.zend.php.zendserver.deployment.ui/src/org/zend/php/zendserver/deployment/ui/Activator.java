@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui;
 
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -94,6 +96,8 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	private FormColors formColors;
 
 	private SocketCommandListener socketCommand;
+	
+	private IResourceChangeListener mappingChangeListener;
 
 	/**
 	 * The constructor
@@ -118,6 +122,10 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		socketCommand.start();
 		
 		ZendTargetAutoDetect.CAN_OPEN_GUI_DIALOGS = true;
+		
+		mappingChangeListener = new MappingChangeListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				mappingChangeListener);
 	}
 
 	/*
@@ -132,6 +140,9 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		super.stop(context);
 		
 		socketCommand.stop();
+		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+				mappingChangeListener);
 	}
 
 	/**
