@@ -22,6 +22,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
@@ -88,6 +89,9 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
 	@Override
 	public boolean performFinish() {
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
+			return false;
+		}
 		final IResource[] projects = parametersPage.getSelectedProjects();
 		final File directory = new File(parametersPage.getDestinationValue());
 		Job createPackageJob = new Job(Messages.exportWizard_JobTitle) {

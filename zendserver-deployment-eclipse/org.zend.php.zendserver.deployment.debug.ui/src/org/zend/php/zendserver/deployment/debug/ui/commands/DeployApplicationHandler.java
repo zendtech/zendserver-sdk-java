@@ -55,6 +55,9 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 	}
 
 	private void execute(final String mode, final IProject project, final String targetId) {
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
+			return;
+		}
 		try {
 			if (!hasDeploymentNature(project)) {
 				Shell shell = PlatformUI.getWorkbench().getDisplay()

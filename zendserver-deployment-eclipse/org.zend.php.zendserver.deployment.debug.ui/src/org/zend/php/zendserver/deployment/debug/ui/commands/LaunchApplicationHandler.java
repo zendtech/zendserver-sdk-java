@@ -74,6 +74,9 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 	}
 
 	private void execute(final String mode, IProject project, String targetId) {
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
+			return;
+		}
 		try {
 			if (!hasDeploymentNature(project)) {
 				Shell shell = PlatformUI.getWorkbench().getDisplay()
