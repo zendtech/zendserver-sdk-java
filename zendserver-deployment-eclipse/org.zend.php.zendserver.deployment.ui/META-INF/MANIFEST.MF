@@ -21,7 +21,9 @@ Require-Bundle: org.eclipse.ui,
  org.apache.xerces,
  org.zend.php.zendserver.monitor.core,
  org.eclipse.php.ui,
- org.zend.core.notifications
+ org.zend.core.notifications,
+ org.eclipse.php.server.ui,
+ org.eclipse.php.server.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions
