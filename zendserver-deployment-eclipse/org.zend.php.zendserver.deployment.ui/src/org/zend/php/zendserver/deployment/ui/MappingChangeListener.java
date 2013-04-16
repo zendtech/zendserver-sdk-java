@@ -39,6 +39,9 @@ public class MappingChangeListener implements IResourceChangeListener {
 	public void resourceChanged(IResourceChangeEvent event) {
 		// on close event - exit
 		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
+			return;
+		}
 		// finally - go over the changed files and submit changes
 		ChangedFilesVisitor visitor = new ChangedFilesVisitor();
 		try {
