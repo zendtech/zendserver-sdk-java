@@ -76,8 +76,6 @@ public enum ResponseCode {
 			"applicationConflict",
 			"Provided application package includes a different application, and not a different version of the existing application"),
 
-	INTERNAL_SERVER_ERROR(500, "internalServerError", "An unexpected error on the server side"),
-
 	SERVER_NOT_CONFIGURED(
 			500,
 			"serverNotConfigured",
@@ -91,6 +89,11 @@ public enum ResponseCode {
 			"serverVersionMismatch",
 			"One or more servers in the cluster has a Zend Server version which does not support deployment feature"),
 	
+	INTERNAL_SERVER_ERROR(
+			500,
+			"internalServerError",
+			"The server encountered an internal error or misconfiguration and was unable to complete your request. Verify if your license has not expired."),		
+			
 	UNKNOWN(
 			0,
 			"unknown",

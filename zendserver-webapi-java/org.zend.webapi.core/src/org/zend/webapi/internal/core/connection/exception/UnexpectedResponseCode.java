@@ -32,8 +32,15 @@ public class UnexpectedResponseCode extends WebApiException {
 	public UnexpectedResponseCode(int httpCode, Representation handle) {
 		this.httpCode = httpCode;
 		if (MediaType.TEXT_HTML.equals(handle.getMediaType())) {
-			this.errorCode = "pageNotFound";
-			this.message = ResponseCode.byErrorCode(errorCode).getDescription();
+			if (httpCode == 500) {
+				this.errorCode = "internalServerError";
+				this.message = ResponseCode.byErrorCode(errorCode)
+						.getDescription();
+			} else {
+				this.errorCode = "pageNotFound";
+				this.message = ResponseCode.byErrorCode(errorCode)
+						.getDescription();
+			}
 		} else {
 			final DomRepresentation domRepresentation = new DomRepresentation(
 					handle);
