@@ -61,6 +61,9 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 								message);
 					}
 				}
+			case INTERNAL_SERVER_ERROR:
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						codeException.getMessage(), codeException);
 			default:
 				break;
 			}
@@ -86,17 +89,26 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 				return Status.CANCEL_STATUS;
 			}
 			ApplicationsList info = application.getStatus(targetId, String.valueOf(id));
-			if (info != null && info.getApplicationsInfo() != null) {
-				result = info.getApplicationsInfo().get(0).getStatus();
-				helper.setInstalledLocation(info.getApplicationsInfo().get(0)
-						.getInstalledLocation());
-				if (isErrorStatus(result)) {
-					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Error on the Zend Server during application deployment: " //$NON-NLS-1$
-									+ result.getName()
-									+ "\nTo get more details, see Zend Server log file."); //$NON-NLS-1$
+			if (info != null) {
+				if (info.getApplicationsInfo() != null) {
+					result = info.getApplicationsInfo().get(0).getStatus();
+					helper.setInstalledLocation(info.getApplicationsInfo()
+							.get(0).getInstalledLocation());
+					if (isErrorStatus(result)) {
+						return new Status(
+								IStatus.ERROR,
+								Activator.PLUGIN_ID,
+								"Error on the Zend Server during application deployment: " //$NON-NLS-1$
+										+ result.getName()
+										+ "\nTo get more details, see Zend Server log file."); //$NON-NLS-1$
+					}
+					monitor.subTask(getStateLabel(result.getName()));
+				} else {
+					return new Status(
+							IStatus.ERROR,
+							Activator.PLUGIN_ID,
+							"Cannot perform deployment operation on selected target. Verify if your license has not expired."); //$NON-NLS-1$
 				}
-				monitor.subTask(getStateLabel(result.getName()));
 			}
 		}
 		monitor.done();
