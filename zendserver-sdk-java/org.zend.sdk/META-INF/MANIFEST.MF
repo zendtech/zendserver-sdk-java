@@ -5,10 +5,8 @@ Bundle-SymbolicName: org.zend.sdk;singleton:=true
 Bundle-Version: 0.6.0.qualifier
 Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.apache.commons.cli,
- org.zend.sdklib,
+Export-Package: org.zend.sdklib,
  org.zend.sdklib.application,
- org.zend.sdklib.event,
  org.zend.sdklib.internal.event,
  org.zend.sdklib.internal.library,
  org.zend.sdklib.internal.mapping,
