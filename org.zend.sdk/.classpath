@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="sdklib"/>
+	<classpathentry kind="src" path="sdklib/"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-httpclient-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.0.4.jar"/>
@@ -21,6 +21,5 @@
 	<classpathentry exported="true" kind="lib" path="resources/generator/jaxb/jaxb-xjc.jar"/>
 	<classpathentry exported="true" kind="lib" path="resources/generator/jaxb/xerces.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.zend.webapi-0.0.23-SNAPSHOT.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.zend.webapi"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
