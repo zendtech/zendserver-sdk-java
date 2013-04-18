@@ -43,6 +43,11 @@ public enum ResponseCode {
 
 	INSUFFICIENT_ACCESS_LEVEL(401, "insufficientAccessLevel",
 			"User is not authorized to perform this action"),
+			
+	NO_XML_UNAUTORIZED(
+			401,
+			"noXmlUnautorized",
+			"Communication with Zend Server failed due to a problem accessing it's web interface. Response code: 401 \"Unathorized\"."),
 
 	TIME_SKEW_ERROR(401, "timeSkewError", "Request timestamp deviates too much from server time"),
 

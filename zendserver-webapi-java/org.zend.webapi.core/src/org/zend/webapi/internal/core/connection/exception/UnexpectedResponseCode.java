@@ -32,22 +32,27 @@ public class UnexpectedResponseCode extends WebApiException {
 	public UnexpectedResponseCode(int httpCode, Representation handle) {
 		this.httpCode = httpCode;
 		if (MediaType.TEXT_HTML.equals(handle.getMediaType())) {
-			if (httpCode == 500) {
-				this.errorCode = "internalServerError";
-				this.message = ResponseCode.byErrorCode(errorCode)
-						.getDescription();
-			} else {
-				this.errorCode = "pageNotFound";
-				this.message = ResponseCode.byErrorCode(errorCode)
-						.getDescription();
+			ResponseCode code = null;
+			switch (httpCode) {
+			case 401:
+				code = ResponseCode.NO_XML_UNAUTORIZED;
+				break;
+			case 500:
+				code = ResponseCode.INTERNAL_SERVER_ERROR;
+				break;
+			default:
+				code = ResponseCode.PAGE_NOT_FOUND;
 			}
+			this.errorCode = code.getErrorCode();
+			this.message = code.getDescription();
 		} else {
 			final DomRepresentation domRepresentation = new DomRepresentation(
 					handle);
 			Node node = domRepresentation
 					.getNode("/zendServerAPIResponse/errorData/errorMessage");
 			this.message = node == null ? null : node.getTextContent().trim();
-			node = domRepresentation.getNode("/zendServerAPIResponse/errorData/errorCode");
+			node = domRepresentation
+					.getNode("/zendServerAPIResponse/errorData/errorCode");
 			this.errorCode = node == null ? null : node.getTextContent().trim();
 		}
 	}
