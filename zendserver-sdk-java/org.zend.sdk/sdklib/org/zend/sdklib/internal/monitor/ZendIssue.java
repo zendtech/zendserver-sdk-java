@@ -201,6 +201,18 @@ public class ZendIssue implements IZendIssue {
 			if (i.getId() == issue.getId()) {
 				return true;
 			}
+			if (i.getSeverity() != issue.getSeverity()) {
+				return false;
+			}
+			if (i.getLastOccurance() != issue.getLastOccurance()) {
+				return false;
+			}
+			if (i.getRule() != null && i.getRule().equals(issue.getRule())) {
+				return false;
+			}
+			if (i.getStatus() != issue.getStatus()) {
+				return false;
+			}
 			GeneralDetails iDetails = i.getGeneralDetails();
 			GeneralDetails details = issue.getGeneralDetails();
 			if (iDetails.getSourceFile() != null
