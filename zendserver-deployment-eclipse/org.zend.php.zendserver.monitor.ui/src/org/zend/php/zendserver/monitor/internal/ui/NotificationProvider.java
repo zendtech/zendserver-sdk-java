@@ -81,15 +81,9 @@ public class NotificationProvider implements INotificationProvider {
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);
 		if (eventSource != null && eventSource.getSourceFile() != null) {
-			settings.setComparator(getComparator(issue, eventSource));
+			settings.setComparator(new EventComparator(issue));
 		}
 		return settings;
-	}
-
-	private EventComparator getComparator(IZendIssue issue,
-			IEventDetails eventSource) {
-		return new EventComparator(issue.getIssue().getRule(),
-				eventSource.getSourceFile() + ':' + eventSource.getLine());
 	}
 
 }

@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.monitor.internal.ui;
 
 import org.zend.core.notifications.ui.IComparator;
+import org.zend.sdklib.monitor.IZendIssue;
 
 /**
  * Implementation of {@link IComparator} for event notifications.
@@ -17,13 +18,11 @@ import org.zend.core.notifications.ui.IComparator;
  */
 public class EventComparator implements IComparator {
 
-	private String rule;
-	private String source;
+	private IZendIssue issue;
 
-	public EventComparator(String rule, String source) {
+	public EventComparator(IZendIssue issue) {
 		super();
-		this.rule = rule;
-		this.source = source;
+		this.issue = issue;
 	}
 
 	/*
@@ -36,7 +35,7 @@ public class EventComparator implements IComparator {
 	public boolean equals(IComparator comparator) {
 		if (comparator instanceof EventComparator) {
 			EventComparator c = (EventComparator) comparator;
-			return rule.equals(c.rule) && source.equals(c.source);
+			return issue.equals(c.issue);
 		}
 		return false;
 	}
