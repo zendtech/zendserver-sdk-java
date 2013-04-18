@@ -175,6 +175,7 @@ public class Messages extends NLS {
 	public static String TargetDialog_KeyTooltip;
 	public static String TargetDialog_SecretTooltip;
 	public static String TargetDialog_validate;
+	public static String TargetDialog_AddingTargetError;
 	public static String TargetsLabelProvider_TargetLabel;
 	public static String TextHintField_0;
 

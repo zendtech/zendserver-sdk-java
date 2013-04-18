@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
@@ -318,15 +320,25 @@ public abstract class AbstractTargetDetailsComposite {
 							} else {
 								status = initializer.getStatus();
 							}
+							continue;
 						}
 					}
+					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							MessageFormat.format(
+									Messages.TargetDialog_AddingTargetError,
+									e.getMessage()), e);
+					continue;
 				} catch (WebApiException e) {
 					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e);
+							MessageFormat.format(
+									Messages.TargetDialog_AddingTargetError,
+									e.getMessage()), e);
 					continue;
 				} catch (RuntimeException e) {
 					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e);
+							MessageFormat.format(
+									Messages.TargetDialog_AddingTargetError,
+									e.getMessage()), e);
 					continue;
 				}
 			}
@@ -399,6 +411,7 @@ public abstract class AbstractTargetDetailsComposite {
 		} catch (UnexpectedResponseCode e) {
 			ResponseCode code = e.getResponseCode();
 			switch (code) {
+			case INTERNAL_SERVER_ERROR:
 			case AUTH_ERROR:
 			case INSUFFICIENT_ACCESS_LEVEL:
 				throw e;
