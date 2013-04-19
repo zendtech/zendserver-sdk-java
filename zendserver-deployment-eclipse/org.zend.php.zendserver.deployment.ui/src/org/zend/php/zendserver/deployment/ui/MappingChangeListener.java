@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -90,16 +91,53 @@ public class MappingChangeListener implements IResourceChangeListener {
 
 	private boolean handleAdded(IMappingModel model, IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		String relativePath = resource.getProjectRelativePath().toString();
-		return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-				relativePath, false);
+		if (checkIfValid(resource)) {
+			String relativePath = resource.getProjectRelativePath().toString();
+			return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+					relativePath, false);
+		}
+		return false;
 	}
 
 	private boolean handleRemoved(IMappingModel model, IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		String relativePath = resource.getProjectRelativePath().toString();
-		return model.removeMapping(IMappingModel.APPDIR, Type.INCLUDE,
-				relativePath);
+		if (checkIfValid(resource)) {
+			String relativePath = resource.getProjectRelativePath().toString();
+			return model.removeMapping(IMappingModel.APPDIR, Type.INCLUDE,
+					relativePath);
+		}
+		return false;
+	}
+
+	private boolean checkIfValid(IResource resource) {
+		if (resource != null) {
+			String name = resource.getName();
+			if (checkHiddenFile(resource)) {
+				return false;
+			}
+			if (name.equals(MappingModelFactory.DEPLOYMENT_PROPERTIES)) {
+				return false;
+			}
+			if (name.equals(DescriptorContainerManager.DESCRIPTOR_PATH)) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkHiddenFile(IResource resource) {
+		String name = resource.getName();
+		if (name.startsWith(".")) { //$NON-NLS-1$
+			return true;
+		} else {
+			IResource parent = resource.getParent();
+			if (parent == resource.getProject()) {
+				return false;
+			} else {
+				return checkHiddenFile(parent);
+			}
+		}
 	}
 
 	private boolean hasDeploymentNature(IProject project) {
