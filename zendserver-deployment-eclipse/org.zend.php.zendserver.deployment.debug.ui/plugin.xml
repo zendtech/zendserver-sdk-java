@@ -9,7 +9,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/run_exc.gif"
-               label="Launch application"
+               label="%command.label"
                style="push">
             <parameter
                   name="mode"
@@ -19,7 +19,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/debug_exc.gif"
-               label="Debug application"
+               label="%command.label.0"
                style="push">
             <parameter
                   name="mode"
@@ -29,7 +29,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
                icon="icons/obj16/deploy_exc.png"
-               label="Deploy application"
+               label="%command.label.1"
                style="push">
          </command>
       </menuContribution>
@@ -38,7 +38,7 @@
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
-               label="Open"
+               label="%command.label.2"
                style="push">
            <visibleWhen
                   checkEnabled="false">
@@ -54,7 +54,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/run_exc.gif"
-               label="Run"
+               label="%command.label.3"
                style="push">
             <parameter
                   name="mode"
@@ -74,7 +74,7 @@
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
                icon="icons/obj16/debug_exc.gif"
-               label="Debug"
+               label="%command.label.4"
                style="push">
             <parameter
                   name="mode"
@@ -93,7 +93,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.openSshTunnel"
-               label="Open SSH Tunnel"
+               label="%command.label.5"
                style="push">
            <visibleWhen
                   checkEnabled="true">
@@ -113,7 +113,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.startDebugMode"
-               label="Start Debug Mode"
+               label="%command.label.6"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -130,7 +130,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.stopDebugMode"
-               label="Stop Debug Mode"
+               label="%command.label.7"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -147,7 +147,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.debug.ui.debugModePreferences"
-               label="Debug Mode Preferences..."
+               label="%command.label.8"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -169,57 +169,57 @@
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.LaunchApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
-            name="Launch PHP Application">
+            name="%command.name">
          <commandParameter
                id="mode"
-               name="mode"
+               name="%commandParameter.name"
                optional="false">
          </commandParameter>
          <commandParameter
                id="projectName"
-               name="projectName"
+               name="%commandParameter.name.0"
                optional="false">
          </commandParameter>
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
-            name="Deploy PHP Application">
+            name="%command.name.0">
             <commandParameter
                id="mode"
-               name="mode"
+               name="%commandParameter.name.1"
                optional="false">
          </commandParameter>
          <commandParameter
                id="projectName"
-               name="projectName"
+               name="%commandParameter.name.2"
                optional="false">
          </commandParameter>
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenApplicationHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.OpenDeploymentWizard"
-            name="Open Deployment Wizard">
+            name="%command.name.1">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.OpenTunnelCommand"
             id="org.zend.php.zendserver.deployment.debug.openSshTunnel"
-            name="Open SSH Tunnel">
+            name="%command.name.2">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.StartDebugModeHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.startDebugMode"
-            name="Start Debug Mode">
+            name="%command.name.3">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.StopDebugModeHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.stopDebugMode"
-            name="Stop Debug Mode">
+            name="%command.name.4">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DebugModePreferencesHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.debugModePreferences"
-            name="Debug Mode Preferences...">
+            name="%command.name.5">
       </command>
    </extension>
    <extension
@@ -289,7 +289,7 @@
             category="org.eclipse.php.debug.ui.preferences.PhpDebugPreferencePage"
             class="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModePreferencesPage"
             id="org.zend.php.zendserver.deployment.ui.DebugModePreferencePage"
-            name="Debug Mode">
+            name="%page.name">
       </page>
    </extension>
 
