@@ -43,10 +43,10 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
 		public void run() {
 			final String message = MessageFormat
-					.format("The file {0} already exists.\n\nDo you want to overwrite it?",
+					.format(Messages.PackageExportWizard_0,
 							p.getAbsolutePath());
 			final boolean overwrite = MessageDialog.openQuestion(getShell(),
-					"Overwrite Packae", message);
+					Messages.PackageExportWizard_1, message);
 			setResult(overwrite ? Status.OK_STATUS : Status.CANCEL_STATUS);
 		}
 

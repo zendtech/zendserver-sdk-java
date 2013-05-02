@@ -102,10 +102,10 @@ public class OpenDatabaseConnectionAction extends Action {
 					public void run() {
 						String title = null;
 						if (TargetsManager.isPhpcloud(targetConnection.getTarget())) {
-							title = "Container Password"; //$NON-NLS-1$
+							title = Messages.OpenDatabaseConnectionAction_0;
 						}
 						if (TargetsManager.isOpenShift(targetConnection.getTarget())) {
-							title = "Database Password"; //$NON-NLS-1$
+							title = Messages.OpenDatabaseConnectionAction_1;
 						}
 						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
 								Display.getDefault().getActiveShell(), title);

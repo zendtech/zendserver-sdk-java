@@ -17,8 +17,8 @@ public class HelpAction extends Action {
 
 	public HelpAction(String helpContextID) {
 		this.helpContextID = helpContextID;
-		setText("Help");
-		setToolTipText("Help");
+		setText(Messages.HelpAction_0);
+		setToolTipText(Messages.HelpAction_0);
 		setImageDescriptor(Activator
 				.getImageDescriptor(Activator.IMAGE_DESCRIPTOR_HELP));
 	}

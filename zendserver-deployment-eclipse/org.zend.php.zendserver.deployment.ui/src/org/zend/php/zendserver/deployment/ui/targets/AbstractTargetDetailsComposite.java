@@ -203,7 +203,7 @@ public abstract class AbstractTargetDetailsComposite {
 
 	public IStatus validate(final IProgressMonitor monitor) {
 		result = null;
-		monitor.beginTask("Validating target", 4);
+		monitor.beginTask("Validating target", 4); //$NON-NLS-1$
 		monitor.worked(1);
 		Display.getDefault().syncExec(new Runnable() {
 
@@ -261,7 +261,7 @@ public abstract class AbstractTargetDetailsComposite {
 
 	private IStatus doValidate(String[] data, IProgressMonitor monitor) {
 		IZendTarget[] targets;
-		monitor.subTask("Creating targets");
+		monitor.subTask("Creating targets"); //$NON-NLS-1$
 		try {
 			targets = createTarget(data, monitor);
 		} catch (SdkException e) {
@@ -269,7 +269,7 @@ public abstract class AbstractTargetDetailsComposite {
 					e.getMessage(), e);
 		} catch (UnknownHostException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					"Unknown host " + e.getMessage(), e);
+					"Unknown host " + e.getMessage(), e); //$NON-NLS-1$
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					e.getMessage(), e);
@@ -286,17 +286,17 @@ public abstract class AbstractTargetDetailsComposite {
 			return new Status(
 					IStatus.ERROR,
 					Activator.PLUGIN_ID,
-					"Could not find any containers associated with Phpcloud account. "
-							+ "Create at least one container to be able to add Phpcloud target.");
+					"Could not find any containers associated with Phpcloud account. " //$NON-NLS-1$
+							+ "Create at least one container to be able to add Phpcloud target."); //$NON-NLS-1$
 		}
-		monitor.subTask("Found " + targets.length + " target"
-				+ (targets.length == 1 ? "" : "s"));
+		monitor.subTask("Found " + targets.length + " target" //$NON-NLS-1$ //$NON-NLS-2$
+				+ (targets.length == 1 ? "" : "s")); //$NON-NLS-1$ //$NON-NLS-2$
 		List<IZendTarget> finalTargets = new ArrayList<IZendTarget>(targets.length);
 		IStatus status = null;
 		for (IZendTarget target : targets) {
 			if (target == null) {
 				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						"Target was not created.");
+						"Target was not created."); //$NON-NLS-1$
 				continue;
 			}
 
@@ -355,7 +355,7 @@ public abstract class AbstractTargetDetailsComposite {
 				return new Status(
 						IStatus.WARNING,
 						Activator.PLUGIN_ID,
-						"Cannot connect to at least one of containers on specified account. Only valid containers will be added.");
+						"Cannot connect to at least one of containers on specified account. Only valid containers will be added."); //$NON-NLS-1$
 			}
 		}
 		return Status.OK_STATUS;
@@ -379,7 +379,7 @@ public abstract class AbstractTargetDetailsComposite {
 				} catch (MalformedURLException e) {
 					// should never happen
 				}
-				monitor.subTask("Testing port " + port + " of detected target "
+				monitor.subTask("Testing port " + port + " of detected target " //$NON-NLS-1$ //$NON-NLS-2$
 						+ target.getHost().getHost());
 				try {
 					return testTargetConnection(target);

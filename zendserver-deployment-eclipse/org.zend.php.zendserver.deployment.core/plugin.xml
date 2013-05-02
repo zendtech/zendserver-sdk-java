@@ -68,7 +68,7 @@
       <moveParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.DescriptorMoveParticipant"
             id="org.zend.php.zendserver.deployment.ui.moveParticipant"
-            name="Descriptor Move">
+            name="%moveParticipant.name">
          <enablement>
             <or>
                <instanceof
@@ -89,7 +89,7 @@
       <moveParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.MappingMoveParticipant"
             id="org.zend.php.zendserver.deployment.ui.moveParticipant"
-            name="Mapping Move">
+            name="%moveParticipant.name.0">
          <enablement>
             <or>
                <instanceof
@@ -114,7 +114,7 @@
       <renameParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.DescriptorRenameParticipant"
             id="org.zend.php.zendserver.deployment.ui.renameParticipant"
-            name="Descriptor Rename">
+            name="%renameParticipant.name">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
@@ -124,7 +124,7 @@
       <renameParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.MappingRenameParticipant"
             id="org.zend.php.zendserver.deployment.ui.renameParticipant"
-            name="Mapping Rename">
+            name="%renameParticipant.name.0">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
@@ -139,7 +139,7 @@
       <deleteParticipant
             class="org.zend.php.zendserver.deployment.core.refactoring.MappingDeleteParticipant"
             id="org.zend.php.zendserver.deployment.ui.deleteParticipant1"
-            name="Mapping Delete">
+            name="%deleteParticipant.name">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IResource">

@@ -29,8 +29,8 @@ public class ExportApplicationAction extends Action {
 	private IProject project;
 
 	public ExportApplicationAction() {
-		setText("Export");
-		setToolTipText("Export application package");
+		setText(Messages.ExportApplicationAction_0);
+		setToolTipText(Messages.ExportApplicationAction_1);
 		setImageDescriptor(Activator
 				.getImageDescriptor(Activator.IMAGE_EXPORT_APPLICATION));
 	}
@@ -48,7 +48,7 @@ public class ExportApplicationAction extends Action {
 		List<IProject> selection = new ArrayList<IProject>();
 		selection.add(project);
 		wizard.setInitialSelection(selection);
-		wizard.setWindowTitle("Export application");
+		wizard.setWindowTitle(Messages.ExportApplicationAction_2);
 		WizardDialog dialog = createDialog(window.getShell(), wizard);
 		dialog.open();
 	}

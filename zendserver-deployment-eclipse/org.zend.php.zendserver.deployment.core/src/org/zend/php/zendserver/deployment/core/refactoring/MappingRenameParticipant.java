@@ -30,7 +30,7 @@ public class MappingRenameParticipant extends RenameParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment"; //$NON-NLS-1$
+		return Messages.Application_Deployment;
 	}
 
 	@Override

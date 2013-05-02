@@ -134,11 +134,11 @@ public class TargetDetailsPage extends WizardPage {
 				wizard.setWindowTitle(Messages.TargetDetailsPage_3);
 				setTitle(Messages.TargetDetailsPage_4);
 			} else if (OpenshiftDetailsComposite.class.getName().equals(type)) {
-				wizard.setWindowTitle("Add OpenShift Target");
-				setTitle("OpenShift Target Details");
+				wizard.setWindowTitle(Messages.TargetDetailsPage_5);
+				setTitle(Messages.TargetDetailsPage_6);
 			} else if (DetectLocal.class.getName().equals(type)) {
-				wizard.setWindowTitle("Detect Localhost Target");
-				setTitle("Localhost Target Details");
+				wizard.setWindowTitle(Messages.TargetDetailsPage_7);
+				setTitle(Messages.TargetDetailsPage_8);
 			}
 		} else {
 			wizard.setWindowTitle(Messages.AddTargetAction_AddTarget);

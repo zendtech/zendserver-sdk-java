@@ -266,10 +266,10 @@ public class OverviewPage extends DescriptorEditorPage {
 				DeploymentDescriptorPackage.VERSION_API,
 				Messages.OverviewPage_1));
 		healthcheck = addField(new TextField(descr,
-				DeploymentDescriptorPackage.HEALTHCHECK, "Health-check URL"));
+				DeploymentDescriptorPackage.HEALTHCHECK, Messages.OverviewPage_3));
 		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
-				"License", editor.getProject())); //$NON-NLS-1$
+				Messages.OverviewPage_4, editor.getProject()));
 		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
 				Messages.OverviewPage_Icon, editor.getProject()));
 		docRoot = addField(new FolderField(fModel,

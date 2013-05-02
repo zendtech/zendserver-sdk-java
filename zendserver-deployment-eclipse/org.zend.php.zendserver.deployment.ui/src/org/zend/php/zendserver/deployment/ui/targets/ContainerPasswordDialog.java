@@ -51,12 +51,12 @@ public class ContainerPasswordDialog extends Dialog {
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 2;
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
-		passwordLabel.setText("Password: "); //$NON-NLS-1$
+		passwordLabel.setText(Messages.ContainerPasswordDialog_0);
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		passwordText.setLayoutData(data);
 		saveButton = new Button(comp, SWT.CHECK);
-		saveButton.setText("Save Password"); //$NON-NLS-1$
+		saveButton.setText(Messages.ContainerPasswordDialog_1);
 		getShell().setText(title);
 		return comp;
 	}

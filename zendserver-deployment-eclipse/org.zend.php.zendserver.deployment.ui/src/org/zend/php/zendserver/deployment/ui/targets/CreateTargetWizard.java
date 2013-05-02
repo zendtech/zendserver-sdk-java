@@ -87,11 +87,11 @@ public class CreateTargetWizard extends Wizard {
 
 	public static final String LOCAL_PHP_CREATION_WIZARD = "local_php_creation_wizard"; //$NON-NLS-1$
 	private static URL fgIconBaseURL = Activator.getDefault().getBundle()
-			.getEntry("/icons/");
+			.getEntry("/icons/"); //$NON-NLS-1$
 
 	private static final ImageDescriptor WIZARD_IMAGE = PHPPluginImages.create(
 			fgIconBaseURL, PHPPluginImages.T_WIZBAN,
-			"addtargetwizard.png");
+			"addtargetwizard.png"); //$NON-NLS-1$
 	public CreateTargetWizard() {
 		super();
 		setWindowTitle(Messages.AddTargetAction_AddTarget);

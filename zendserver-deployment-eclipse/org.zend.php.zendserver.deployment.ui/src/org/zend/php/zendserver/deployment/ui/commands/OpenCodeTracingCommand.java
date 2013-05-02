@@ -42,7 +42,7 @@ public class OpenCodeTracingCommand extends AbstractHandler {
 			fos.write(decoded);
 			fos.close();
 		} catch (IOException e) {
-			throw new ExecutionException("An error occured while storing Zend Server Event trace file: "+e.getMessage(), e);
+			throw new ExecutionException("An error occured while storing Zend Server Event trace file: "+e.getMessage(), e); //$NON-NLS-1$
 		}
 
 		ICommandService cmdService = (ICommandService) PlatformUI
@@ -55,7 +55,7 @@ public class OpenCodeTracingCommand extends AbstractHandler {
 		try {
 			cmd.executeWithChecks(event2);
 		} catch (NotDefinedException e) {
-			throw new ExecutionException("Zend Server Event Tracing feature could not be found", e);
+			throw new ExecutionException("Zend Server Event Tracing feature could not be found", e); //$NON-NLS-1$
 		} catch (NotEnabledException e) {
 			throw new ExecutionException(e.getMessage(), e);
 		} catch (NotHandledException e) {

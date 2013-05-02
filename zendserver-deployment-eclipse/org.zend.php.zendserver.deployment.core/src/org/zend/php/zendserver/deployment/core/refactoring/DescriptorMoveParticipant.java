@@ -43,7 +43,7 @@ public class DescriptorMoveParticipant extends MoveParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment"; //$NON-NLS-1$
+		return Messages.Application_Deployment;
 	}
 
 	@Override

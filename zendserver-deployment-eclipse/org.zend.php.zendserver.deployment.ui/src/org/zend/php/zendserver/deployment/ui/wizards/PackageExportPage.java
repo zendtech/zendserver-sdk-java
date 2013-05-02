@@ -85,7 +85,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private boolean overwrite;
 
 	protected PackageExportPage() {
-		super("Package Export"); //$NON-NLS-1$
+		super(Messages.PackageExportPage_1);
 		setDescription(Messages.exportPage_Description);
 		setTitle(Messages.exportPage_Title);
 	}

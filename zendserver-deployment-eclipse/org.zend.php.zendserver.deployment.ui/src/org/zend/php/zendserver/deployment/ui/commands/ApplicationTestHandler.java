@@ -24,7 +24,7 @@ public class ApplicationTestHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		MessageDialog.openInformation(shell, "Test Application Command", "Not ready yet!");
+		MessageDialog.openInformation(shell, Messages.ApplicationTestHandler_0, Messages.ApplicationTestHandler_1);
 		
 		return null;
 	}

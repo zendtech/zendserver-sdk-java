@@ -196,7 +196,7 @@ public class OpenShiftTargetPage extends WizardPage {
 				Messages.OpenShiftTargetPage_TargetNameLabel, false,
 				targetGroup);
 		cartridgesCombo = createLabelWithCombo(
-				"Cartridge:", targetGroup);
+				Messages.OpenShiftTargetPage_0, targetGroup);
 		gearProfileCombo = createLabelWithCombo(
 				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup);
 		mySqlButton = createMySqlSection(targetGroup);

@@ -9,8 +9,8 @@ public class NewTargetContributionsFactory {
 		return new Contribution[] {
 				new Contribution(Messages.SelectTargetTypePage_ZendServer, Activator.IMAGE_ZEND, ZendTargetDetailsComposite.class),
 				new Contribution(Messages.SelectTargetTypePage_DevCloud, Activator.IMAGE_CLOUD, DevCloudDetailsComposite.class),
-				new Contribution("OpenShift", Activator.IMAGE_OPENSHIFT, OpenshiftDetailsComposite.class),
-				new Contribution("Detect Local", Activator.IMAGE_DETECT, DetectLocal.class),
+				new Contribution(Messages.NewTargetContributionsFactory_0, Activator.IMAGE_OPENSHIFT, OpenshiftDetailsComposite.class),
+				new Contribution(Messages.NewTargetContributionsFactory_1, Activator.IMAGE_DETECT, DetectLocal.class),
 		};
 	}
 

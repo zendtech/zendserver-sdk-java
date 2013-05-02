@@ -117,14 +117,14 @@ public class OpenShiftPreferencesPage extends PreferencePage implements
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		composite.setLayout(new GridLayout(2, false));
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Server URL:"); //$NON-NLS-1$
+		label.setText(Messages.OpenShiftPreferencesPage_0);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		serverURL = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		serverURL
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		serverURL.setEditable(true);
 		Label labelDomain = new Label(composite, SWT.NONE);
-		labelDomain.setText("Domain:"); //$NON-NLS-1$
+		labelDomain.setText(Messages.OpenShiftPreferencesPage_1);
 		labelDomain.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		domain = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		domain

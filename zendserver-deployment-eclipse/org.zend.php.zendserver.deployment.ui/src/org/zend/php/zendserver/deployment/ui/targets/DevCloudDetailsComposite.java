@@ -103,7 +103,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		shouldStoreButton = new Button(composite, SWT.CHECK);
 		layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.horizontalSpan = 3;
-		shouldStoreButton.setText("Save password (could trigger secure storage login)");
+		shouldStoreButton.setText(Messages.DevCloudDetailsComposite_7);
 		shouldStoreButton.setLayoutData(layoutData);
 		
 		label = new Label(composite, SWT.NONE);
@@ -173,7 +173,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			
 			file = tmpFile.getAbsolutePath();
 			
-			boolean confirm = MessageDialog.openConfirm(privateKeyText.getShell(), "Generate Key", Messages.bind("New SSH RSA private key will be written to {0}. Do you want to continue?", file));
+			boolean confirm = MessageDialog.openConfirm(privateKeyText.getShell(), Messages.DevCloudDetailsComposite_8, Messages.bind(Messages.DevCloudDetailsComposite_9, file));
 			if (!confirm) {
 				return;
 			}
@@ -233,35 +233,35 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		String privateKeyPath = data[2];
 		String shouldStore = data[3];
 		
-		monitor.subTask("Validating account information");
+		monitor.subTask("Validating account information"); //$NON-NLS-1$
 		
 		if (username == null || username.trim().length() == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Username is required."));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Username is required.")); //$NON-NLS-1$
 		}
 		
 		if (password == null || password.trim().length() == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Password is required."));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Password is required.")); //$NON-NLS-1$
 		}
 		
 		if (privateKeyPath == null || privateKeyPath.trim().length() == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is required."));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is required.")); //$NON-NLS-1$
 		}
 		
-		monitor.subTask("Verifying SSH key");
+		monitor.subTask("Verifying SSH key"); //$NON-NLS-1$
 		
 		File keyFile = new File(privateKeyPath);
 		if (! keyFile.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key file does not exist."));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key file does not exist.")); //$NON-NLS-1$
 		}
 		
 		JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();
 		try {
 			decryptor.isValidPrivateKey(privateKeyPath);
 		} catch (PublicKeyNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is not valid.", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Private SSH key is not valid.", e)); //$NON-NLS-1$
 		}
 		
-		monitor.subTask("Detecting targets for "+username);
+		monitor.subTask("Detecting targets for "+username); //$NON-NLS-1$
 
 		IZendTarget[] target;
 		try {

@@ -37,7 +37,7 @@ public class DeploymentUtils {
 
 	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
 	private static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
-	private static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1
+	private static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1$
 
 	/**
 	 * Returns application URL used for last deployment.

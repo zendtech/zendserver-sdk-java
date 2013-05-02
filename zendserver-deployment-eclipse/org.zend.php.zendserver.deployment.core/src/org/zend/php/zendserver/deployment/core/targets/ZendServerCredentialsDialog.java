@@ -86,12 +86,12 @@ public class ZendServerCredentialsDialog extends Dialog {
 					false, 2, 1));
 		}
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
-		usernameLabel.setText("Username: "); //$NON-NLS-1$
+		usernameLabel.setText(Messages.ZendServerCredentialsDialog_0);
 		usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		usernameText.setLayoutData(data);
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
-		passwordLabel.setText("Password: "); //$NON-NLS-1$
+		passwordLabel.setText(Messages.ZendServerCredentialsDialog_1);
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		passwordText.setLayoutData(data);
 		getShell().setText(title);

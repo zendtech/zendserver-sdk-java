@@ -36,6 +36,7 @@ public class Messages extends NLS {
 	public static String OpenShiftEulaPage_PageDescription;
 	public static String OpenShiftInitializationWizard_JobTitle;
 	public static String OpenShiftInitializationWizard_WizardTitle;
+	public static String OpenShiftTargetPage_0;
 	public static String OpenShiftTargetPage_12;
 	public static String OpenShiftTargetPage_AddMySQLLabel;
 	public static String OpenShiftTargetPage_ConfirmationMessage;
@@ -61,6 +62,9 @@ public class Messages extends NLS {
 	public static String OpenShiftTargetWizard_Title;
 	public static String OpenShiftTargetWizardDialog_CreateDomainJobTitle;
 	public static String PackageExportPage_0;
+	public static String PackageExportPage_1;
+	public static String PackageExportWizard_0;
+	public static String PackageExportWizard_1;
 
 	static {
 		// initialize resource bundle

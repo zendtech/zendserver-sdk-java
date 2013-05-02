@@ -12,7 +12,7 @@
             filenames="deployment.xml"
             icon="icons/obj16/application_obj.gif"
             id="org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"
-            name="Deployment Descriptor">
+            name="%editor.name">
          <contentTypeBinding
                contentTypeId="org.zend.php.zendserver.deployment.ui.deploymentDescriptor">
          </contentTypeBinding>
@@ -33,7 +33,7 @@
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.openTarget"
-               label="Open Target"
+               label="%command.label"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -45,7 +45,7 @@
             locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup2">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-               label="Remove"
+               label="%command.label.0"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -53,7 +53,7 @@
          </command>
          <command
                commandId="org.zend.php.zendserver.deployment.ui.uninstallApplication"
-               label="Uninstall"
+               label="%command.label.1"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -65,44 +65,44 @@
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableDeploymentSupport"
-            description="Add Application Deployment Support"
+            description="%command.description"
             id="org.zend.php.zendserver.deployment.ui.configureNature"
-            name="Add Application Deployment Support">
+            name="%command.name">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.ApplicationTestHandler"
             id="org.zend.php.zendserver.deployment.ui.phpunit"
-            name="Run PHPUnit Test">
+            name="%command.name.0">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchOrTarget"
             id="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-            name="Remove Launch Configuration">
+            name="%command.name.1">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenTargetCommand"
             id="org.zend.php.zendserver.deployment.ui.openTarget"
-            name="Open Target">
+            name="%command.name.2">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.UninstallApplicationHandler"
             id="org.zend.php.zendserver.deployment.ui.uninstallApplication"
-            name="Uninstall Application">
+            name="%command.name.3">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenCodeTracingCommand"
             id="org.zend.php.zendserver.deployment.ui.OpenCodeTracingSnapshot"
-            name="Open Code Tracing Command">
+            name="%command.name.4">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableTargetMonitorHandler"
             id="org.zend.php.zendserver.deployment.ui.enableTargetMonitoring"
-            name="Start Monitoring">
+            name="%command.name.5">
       </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.DisableTargetMonitorHandler"
             id="org.zend.php.zendserver.deployment.ui.disableTargetMonitoring"
-            name="Stop Monitoring">
+            name="%command.name.6">
       </command>
    </extension>
    <extension
@@ -119,14 +119,14 @@
          point="org.eclipse.ui.exportWizards">
       <category
             id="org.zend.php.zendserver.deployment"
-            name="Zend">
+            name="%category.name">
       </category>
       <wizard
             category="org.zend.php.zendserver.deployment"
             class="org.zend.php.zendserver.deployment.ui.wizards.PackageExportWizard"
             icon="icons/obj16/application_obj.gif"
             id="org.zend.php.zendserver.deployment.ui.packageExportWizard"
-            name="Deployment Package (ZPK)">
+            name="%wizard.name">
       </wizard>
    </extension>
    <extension
@@ -135,7 +135,7 @@
             base-type="org.eclipse.core.runtime.xml"
             file-names="deployment.xml"
             id="org.zend.php.zendserver.deployment.ui.deploymentDescriptor"
-            name="Deployment Descriptor"
+            name="%content-type.name"
             priority="high">
          <describer
                class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
@@ -153,12 +153,12 @@
             class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
             icon="icons/eview16/servers_view.gif"
             id="org.zend.php.zendserver.deployment.ui.targetsview"
-            name="Targets"
+            name="%view.name"
             restorable="true">
       </view>
       <category
             id="org.zend.php.zendserver.deployment.ui.category"
-            name="Zend Application Deployment">
+            name="%category.name.0">
       </category>
    </extension>
    <extension
@@ -196,7 +196,7 @@
       <page
             class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferencesPage"
             id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
-            name="OpenShift">
+            name="%page.name">
       </page>
    </extension>
    <extension

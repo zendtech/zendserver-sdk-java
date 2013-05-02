@@ -85,16 +85,16 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
 		layoutData.horizontalSpan = 3;
 		usernameText.setLayoutData(layoutData);
-		usernameText.setToolTipText("Your OpenShift account username.");
+		usernameText.setToolTipText(Messages.OpenshiftDetailsComposite_0);
 		usernameText.addModifyListener(modifyListener);
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Password:");
+		label.setText(Messages.OpenshiftDetailsComposite_1);
 		passwordText = new Text(composite, SWT.BORDER | SWT.PASSWORD);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		layoutData.horizontalSpan = 2;
 		passwordText.setLayoutData(layoutData);
-		passwordText.setToolTipText("Your OpenShift account password.");
+		passwordText.setToolTipText(Messages.OpenshiftDetailsComposite_2);
 		passwordText.addModifyListener(modifyListener);
 		
 		Button restorePassword = new Button(composite, SWT.PUSH);
@@ -121,7 +121,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		Button createAccount = new Button(newButtonsGroup, SWT.PUSH);
 		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		createAccount.setLayoutData(layoutData);
-		createAccount.setText("Create New Account");
+		createAccount.setText(Messages.OpenshiftDetailsComposite_3);
 		createAccount.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent e) {
@@ -132,7 +132,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		Button createTarget = new Button(newButtonsGroup, SWT.PUSH);
 		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		createTarget.setLayoutData(layoutData);
-		createTarget.setText("Create New Target");
+		createTarget.setText(Messages.OpenshiftDetailsComposite_4);
 		createTarget.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent e) {
@@ -218,28 +218,28 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		String privateKey = data[2];
 
 		OpenShiftTarget detect = new OpenShiftTarget(username, password, new EclipseApiKeyDetector());
-		monitor.subTask("Validating account information");
+		monitor.subTask("Validating account information"); //$NON-NLS-1$
 
 		if (username == null || username.trim().length() == 0) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, "Username is required."));
+					Activator.PLUGIN_ID, "Username is required.")); //$NON-NLS-1$
 		}
 
 		if (password == null || password.trim().length() == 0) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, "Password is required."));
+					Activator.PLUGIN_ID, "Password is required.")); //$NON-NLS-1$
 		}
 
 		if (privateKey == null || privateKey.trim().length() == 0) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, "Private SSH key is required."));
+					Activator.PLUGIN_ID, "Private SSH key is required.")); //$NON-NLS-1$
 		}
 
 		File keyFile = new File(privateKey);
 		if (!keyFile.exists()) {
 			throw new CoreException(
 					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Private SSH key file does not exist."));
+							"Private SSH key file does not exist.")); //$NON-NLS-1$
 		}
 
 		JSCHPubKeyDecryptor decryptor = new JSCHPubKeyDecryptor();
@@ -247,7 +247,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			decryptor.isValidPrivateKey(privateKey);
 		} catch (PublicKeyNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, "Private SSH key is not valid.", e));
+					Activator.PLUGIN_ID, "Private SSH key is not valid.", e)); //$NON-NLS-1$
 		}
 
 		try {
@@ -257,7 +257,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 					Activator.PLUGIN_ID, ex.getMessage(), ex));
 		}
 
-		monitor.subTask("Detecting targets for " + username);
+		monitor.subTask("Detecting targets for " + username); //$NON-NLS-1$
 
 		IZendTarget[] targets = null;
 		try {
@@ -273,8 +273,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 					new Status(
 							IStatus.ERROR,
 							Activator.PLUGIN_ID,
-							"Could not detect any valid targets. "
-									+ "You can create new OpenShift target by using 'Create New Target' button below."));
+							"Could not detect any valid targets. " //$NON-NLS-1$
+									+ "You can create new OpenShift target by using 'Create New Target' button below.")); //$NON-NLS-1$
 		}
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		for (IZendTarget target : targets) {
@@ -305,7 +305,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		final String password = passwordText.getText();
 		if (username == null || username.trim().length() == 0
 				|| password == null || password.trim().length() == 0) {
-			setErrorMessage("Username and password are required.");
+			setErrorMessage("Username and password are required."); //$NON-NLS-1$
 			return;
 		}
 		try {
@@ -332,7 +332,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				OpenShiftTarget target = new OpenShiftTarget(username, password);
-				monitor.beginTask("Retrieving data from OpenShift account...",
+				monitor.beginTask("Retrieving data from OpenShift account...", //$NON-NLS-1$
 						IProgressMonitor.UNKNOWN);
 				try {
 					if (target.hasDomain()) {
@@ -353,7 +353,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 									shell, new OpenShiftTargetWizard(
 											username, password, data), data);
 							if (dialog.open() == Window.OK) {
-								setMessage("New OpenShift target has been created. Press Finish button to complete the process.");
+								setMessage(Messages.OpenshiftDetailsComposite_5);
 							}
 							changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
 						}
@@ -390,9 +390,9 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			boolean confirm = MessageDialog
 					.openConfirm(
 							privateKeyText.getShell(),
-							"Generate Key",
+							Messages.OpenshiftDetailsComposite_6,
 							Messages.bind(
-									"New SSH RSA private key will be written to {0}. Do you want to continue?",
+									Messages.OpenshiftDetailsComposite_7,
 									file));
 			if (!confirm) {
 				return;

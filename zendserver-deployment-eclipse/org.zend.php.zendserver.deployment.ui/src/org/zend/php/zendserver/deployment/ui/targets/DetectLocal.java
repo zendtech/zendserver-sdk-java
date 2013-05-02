@@ -22,7 +22,7 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, false));
 		Label descLabel = new Label(composite, SWT.NONE);
-		descLabel.setText("Press finish to detect local Zend Server target."); //$NON-NLS-1$
+		descLabel.setText(Messages.DetectLocal_0);
 		descLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true));
 		return composite;
 	}

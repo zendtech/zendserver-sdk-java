@@ -29,7 +29,7 @@ public class MappingDeleteParticipant extends DeleteParticipant {
 
 	@Override
 	public String getName() {
-		return "Application Deployment"; //$NON-NLS-1$
+		return Messages.Application_Deployment;
 	}
 
 	@Override

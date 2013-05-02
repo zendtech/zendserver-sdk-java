@@ -72,7 +72,7 @@ public class DetectTargetAction extends Action {
 			if (EnvironmentUtils.isUnderWindows()
 					&& EnvironmentUtils.isUACEnabled()) {
 				throw new PrivilegesException(
-						"Target detection on Windows must always be run by privileged user.");
+						"Target detection on Windows must always be run by privileged user."); //$NON-NLS-1$
 			}
 			try {
 				target = tm.detectLocalhostTarget(null, null);

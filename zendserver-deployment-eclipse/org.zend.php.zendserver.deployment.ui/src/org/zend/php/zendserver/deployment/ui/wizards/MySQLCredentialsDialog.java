@@ -49,7 +49,7 @@ public class MySQLCredentialsDialog extends Dialog {
 		text.setText(message);
 		text.setEditable(false);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		getShell().setText("MySQL Credentials");
+		getShell().setText(Messages.MySQLCredentialsDialog_DialogTitle);
 		return comp;
 	}
 	

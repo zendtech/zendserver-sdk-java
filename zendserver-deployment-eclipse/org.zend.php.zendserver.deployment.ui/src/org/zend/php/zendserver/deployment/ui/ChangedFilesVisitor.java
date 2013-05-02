@@ -54,7 +54,7 @@ public class ChangedFilesVisitor implements IResourceDeltaVisitor {
 			case IResource.FOLDER:
 				// ignore configuration folders (.settings,.svn)
 				String name = resource.getName();
-				if (name.startsWith(".")) {
+				if (name.startsWith(".")) { //$NON-NLS-1$
 					return false;
 				}
 				break;
