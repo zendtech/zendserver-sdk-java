@@ -310,4 +310,52 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean preVisit(LibraryServer libraryServer) {
+		return true;
+	}
+
+	public boolean visit(LibraryServer libraryServer) {
+		return true;
+	}
+
+	public boolean preVisit(LibraryServers libraryServers) {
+		return true;
+	}
+
+	public boolean visit(LibraryServers libraryServers) {
+		return true;
+	}
+
+	public boolean preVisit(LibraryVersion libraryVersion) {
+		return true;
+	}
+
+	public boolean visit(LibraryVersion libraryVersion) {
+		return true;
+	}
+
+	public boolean preVisit(LibraryVersions libraryVersions) {
+		return true;
+	}
+
+	public boolean visit(LibraryVersions libraryVersions) {
+		return true;
+	}
+
+	public boolean preVisit(LibraryInfo libraryInfo) {
+		return true;
+	}
+
+	public boolean visit(LibraryInfo libraryInfo) {
+		return true;
+	}
+
+	public boolean preVisit(LibraryList libraryList) {
+		return true;
+	}
+
+	public boolean visit(LibraryList libraryList) {
+		return true;
+	}
+
 }

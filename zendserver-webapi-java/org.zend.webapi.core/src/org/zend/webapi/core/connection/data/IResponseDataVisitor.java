@@ -163,4 +163,28 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(DebugMode debugMode);
 
+	public boolean preVisit(LibraryServer libraryServer);
+
+	public boolean visit(LibraryServer libraryServer);
+
+	public boolean preVisit(LibraryServers libraryServers);
+
+	public boolean visit(LibraryServers libraryServers);
+
+	public boolean preVisit(LibraryVersion libraryVersion);
+
+	public boolean visit(LibraryVersion libraryVersion);
+
+	public boolean preVisit(LibraryVersions libraryVersions);
+
+	public boolean visit(LibraryVersions libraryVersions);
+
+	public boolean preVisit(LibraryInfo libraryInfo);
+
+	public boolean visit(LibraryInfo libraryInfo);
+
+	public boolean preVisit(LibraryList libraryList);
+
+	public boolean visit(LibraryList libraryList);
+
 }
