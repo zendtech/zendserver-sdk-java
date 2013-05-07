@@ -23,4 +23,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Zend Technologies Ltd.
-Export-Package: org.zend.php.zendserver.deployment.debug.ui.config
+Export-Package: org.zend.php.zendserver.deployment.debug.ui.config,
+ org.zend.php.zendserver.deployment.debug.ui.listeners,
+ org.zend.php.zendserver.deployment.debug.ui.wizards

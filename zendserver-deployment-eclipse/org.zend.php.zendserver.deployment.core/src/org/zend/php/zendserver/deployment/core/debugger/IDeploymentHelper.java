@@ -28,6 +28,8 @@ public interface IDeploymentHelper {
 	String getInstalledLocation();
 
 	String getVirtualHost();
+	
+	Map<String, String> getExtraAttributes();
 
 	boolean isIgnoreFailures();
 
@@ -69,4 +71,6 @@ public interface IDeploymentHelper {
 	
 	void setWarnUpdate(boolean enabled);
 
+	void setExtraAtttributes(Map<String, String> extraAttributes);
+	
 }

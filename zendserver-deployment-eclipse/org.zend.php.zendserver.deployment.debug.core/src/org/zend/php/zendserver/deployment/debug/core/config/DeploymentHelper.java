@@ -35,6 +35,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	private boolean warnUpdate;
 
+	private Map<String, String> extraAttributes;
+
 	public DeploymentHelper() {
 		this.baseURL = null;
 		this.targetId = EMPTY_STRING;
@@ -157,6 +159,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 	public boolean isWarnUpdate() {
 		return warnUpdate;
 	}
+	
+	public Map<String, String> getExtraAttributes() {
+		return extraAttributes;
+	}
 
 	public void setBaseURL(String baseURL) {
 		try {
@@ -216,6 +222,10 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setWarnUpdate(boolean enabled) {
 		this.warnUpdate = enabled;
+	}
+
+	public void setExtraAtttributes(Map<String, String> extraAttributes) {
+		this.extraAttributes = extraAttributes;
 	}
 
 	@Override

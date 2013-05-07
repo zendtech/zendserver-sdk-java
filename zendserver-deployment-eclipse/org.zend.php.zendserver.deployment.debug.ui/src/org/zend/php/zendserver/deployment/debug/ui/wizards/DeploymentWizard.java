@@ -64,8 +64,9 @@ public class DeploymentWizard extends Wizard {
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		Point size = getShell().computeSize(SWT.DEFAULT, SWT.MIN);
-		Point containerSize = pageContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		getShell().setSize(size.x, size.y + containerSize.y);
+		Point containerSize = pageContainer.computeSize(size.x, SWT.DEFAULT);
+		// TODO change a way of computing dialog size
+		getShell().setSize(size.x, size.y + containerSize.y + 50);
 		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
 		Rectangle shellArea = getShell().getBounds();
 		int x = monitorArea.x + (monitorArea.width - shellArea.width) / 2;
@@ -163,6 +164,7 @@ public class DeploymentWizard extends Wizard {
 		helper.setBaseURL("http://default/" + trimmedName); //$NON-NLS-1$
 		helper.setDefaultServer(true);
 		helper.setAppName(name);
+		helper.setProjectName(project.getName());
 		return helper;
 	}
 

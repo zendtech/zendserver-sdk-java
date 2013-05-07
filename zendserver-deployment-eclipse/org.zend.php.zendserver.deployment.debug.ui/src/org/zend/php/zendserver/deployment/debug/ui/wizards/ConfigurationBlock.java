@@ -3,12 +3,18 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -63,15 +69,18 @@ public class ConfigurationBlock extends AbstractBlock {
 	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
 	private String description;
+	private String projectName;
 	
 	private List<String> bannedNames;
+	private List<IDeployWizardContribution> contributions;
 
 	public ConfigurationBlock(IStatusChangeListener listener,
-			IRunnableContext context, String description) {
+			String projectName, IRunnableContext context, String description) {
 		super(listener);
 		this.context = context;
 		this.description = description;
 		this.bannedNames = LaunchUtils.getBannedNames();
+		this.projectName = projectName;
 	}
 
 	/*
@@ -99,6 +108,12 @@ public class ConfigurationBlock extends AbstractBlock {
 				Messages.configurationPage_ignoreFailures,
 				Messages.configurationPage_ignoreFailuresTooltip,
 				getContainer());
+		contributions = getContributions();
+		for (IDeployWizardContribution contribution : contributions) {
+			contribution
+					.initialize(context, projectName, listener, description);
+			contribution.createExtraSection(getContainer());
+		}
 		return getContainer();
 	}
 
@@ -165,6 +180,9 @@ public class ConfigurationBlock extends AbstractBlock {
 			}
 		}
 		applicationNameCombo.setText(helper.getAppName());
+		for (IDeployWizardContribution c : contributions) {
+			c.initializeFields(helper);
+		}
 	}
 
 	public void clear() {
@@ -208,6 +226,12 @@ public class ConfigurationBlock extends AbstractBlock {
 		} catch (MalformedURLException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.configurationPage_ValidationError_BaseUrl);
+		}
+		for (IDeployWizardContribution c : contributions) {
+			IStatus status = c.validate();
+			if (status.getSeverity() != IStatus.OK) {
+				return status;
+			}
 		}
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, description);
 	}
@@ -255,6 +279,11 @@ public class ConfigurationBlock extends AbstractBlock {
 			helper.setWarnUpdate(false);
 		}
 		helper.setDevelopmentMode(developmentMode.getSelection());
+		Map<String, String> extraAttributes = new HashMap<String, String>();
+		for (IDeployWizardContribution c : contributions) {
+			extraAttributes.putAll(c.getExtraAttributes());
+		}
+		helper.setExtraAtttributes(extraAttributes);
 		return helper;
 	}
 
@@ -575,6 +604,27 @@ public class ConfigurationBlock extends AbstractBlock {
 		} catch (MalformedURLException e) {
 			Activator.log(e);
 		}
+	}
+	
+	private List<IDeployWizardContribution> getContributions() {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(
+						Activator.WIZARD_CONTRIBUTION_EXTENSION);
+		List<IDeployWizardContribution> result = new ArrayList<IDeployWizardContribution>();
+		for (IConfigurationElement element : elements) {
+			if ("wizardContribution".equals(element.getName())) { //$NON-NLS-1$
+				try {
+					Object contribution = element
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					if (contribution instanceof IDeployWizardContribution) {
+						result.add((IDeployWizardContribution) contribution);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		return result;
 	}
 
 	private String updateURL(IZendTarget target, String applicationUrl) {

@@ -1,7 +1,13 @@
 package org.zend.php.zendserver.deployment.debug.core.jobs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -9,6 +15,7 @@ import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
+import org.zend.php.zendserver.deployment.debug.core.IDeploymentContribution;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
@@ -39,8 +46,17 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		}
 		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
-			return monitorApplicationStatus(listener, helper.getTargetId(),
-					info.getId(), app, monitor);
+			List<IDeploymentContribution> contributions = getContributions();
+			IStatus status = monitorApplicationStatus(listener,
+					helper.getTargetId(), info.getId(), app, monitor);
+			if (status.getSeverity() == IStatus.OK) {
+				for (IDeploymentContribution c : contributions) {
+					status = c.performOperation(monitor, helper);
+					if (status.getSeverity() != IStatus.OK) {
+						return status;
+					}
+				}
+			}
 		}
 		Throwable exception = listener.getStatus().getThrowable();
 		if (exception instanceof UnexpectedResponseCode) {
@@ -80,8 +96,9 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 
 	protected abstract ApplicationInfo performOperation(ZendApplication app, String projectPath);
 
-	private IStatus monitorApplicationStatus(StatusChangeListener listener, String targetId,
-			int id, ZendApplication application, IProgressMonitor monitor) {
+	private IStatus monitorApplicationStatus(StatusChangeListener listener,
+			String targetId, int id, ZendApplication application,
+			IProgressMonitor monitor) {
 		monitor.beginTask(Messages.statusJob_Title, IProgressMonitor.UNKNOWN);
 		ApplicationStatus result = null;
 		while (result != ApplicationStatus.DEPLOYED) {
@@ -134,6 +151,27 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		default:
 			return false;
 		}
+	}
+
+	private List<IDeploymentContribution> getContributions() {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(
+						Activator.DEPLOYMENT_CONTRIBUTION_EXTENSION_ID);
+		List<IDeploymentContribution> result = new ArrayList<IDeploymentContribution>();
+		for (IConfigurationElement element : elements) {
+			if ("contribution".equals(element.getName())) { //$NON-NLS-1$
+				try {
+					Object contribution = element
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					if (contribution instanceof IDeploymentContribution) {
+						result.add((IDeploymentContribution) contribution);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		return result;
 	}
 
 }

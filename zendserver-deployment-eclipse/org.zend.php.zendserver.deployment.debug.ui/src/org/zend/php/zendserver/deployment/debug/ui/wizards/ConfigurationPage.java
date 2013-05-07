@@ -19,7 +19,8 @@ public class ConfigurationPage extends DeploymentWizardPage {
 		super(Messages.configurationPage_Name, helper, help);
 		setDescription(description);
 		setTitle(title);
-		this.block = new ConfigurationBlock(this, context, description);
+		this.block = new ConfigurationBlock(this, helper.getProjectName(),
+				context, description);
 	}
 
 	protected ConfigurationPage(IDeploymentHelper helper, String description,

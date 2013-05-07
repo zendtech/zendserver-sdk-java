@@ -91,7 +91,8 @@ public class DeploymentLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		} else {
 			description = Messages.DeploymentWizard_DebugDesc;
 		}
-		configBlock = new ConfigurationBlock(this,
+		String projectName = project != null ? project.getName() : null;
+		configBlock = new ConfigurationBlock(this, projectName,
 				getLaunchConfigurationDialog(), description);
 		configBlock.createContents(container, false);
 		configBlock.setEnabled(false);

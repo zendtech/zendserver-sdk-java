@@ -11,6 +11,9 @@ public class Activator extends Plugin {
 
 	public static final String AUTO_DEPLOY_EXTENSION_ID = "org.zend.php.zendserver.deployment.autoDeploy"; //$NON-NLS-1$
 
+	public static final String DEPLOYMENT_CONTRIBUTION_EXTENSION_ID = PLUGIN_ID
+			+ ".deploymentContribution"; //$NON-NLS-1$
+
 	private static BundleContext context;
 
 	private static Activator plugin;
