@@ -76,6 +76,9 @@ public class LibraryVersion extends AbstractResponseData {
 
 	public boolean accept(IResponseDataVisitor visitor) {
 		if (visitor.preVisit(this)) {
+			if (getServers() != null) {
+				getServers().accept(visitor);
+			}
 			return visitor.visit(this);
 		}
 		return false;
