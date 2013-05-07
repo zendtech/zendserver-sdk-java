@@ -30,6 +30,7 @@ import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.LibraryFile;
 import org.zend.webapi.core.connection.data.LibraryInfo;
 import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.LibraryServer;
@@ -460,6 +461,13 @@ public class DataUtils {
 		assertNotNull(server.getLastMessage());
 		assertNotNull(server.getLastUpdatedTimestamp());
 		assertNotNull(server.getStatus());
+	}
+
+	public static void checkValidLibraryFile(LibraryFile libraryFile) {
+		assertNotNull(libraryFile);
+		assertNotNull(libraryFile.getFilename());
+		assertNotNull(libraryFile.getFileContent());
+		assertTrue(libraryFile.getFileContent().length > 0);
 	}
 
 }

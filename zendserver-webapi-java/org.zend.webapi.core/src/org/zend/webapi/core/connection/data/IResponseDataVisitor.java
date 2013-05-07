@@ -187,4 +187,8 @@ public interface IResponseDataVisitor {
 
 	public boolean visit(LibraryList libraryList);
 
+	public boolean preVisit(LibraryFile libraryFile);
+
+	public boolean visit(LibraryFile libraryFile);
+
 }

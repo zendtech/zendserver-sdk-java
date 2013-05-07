@@ -32,6 +32,7 @@ import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueFile;
 import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.LibraryFile;
 import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
@@ -73,6 +74,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
+import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
@@ -1708,6 +1710,28 @@ public class WebApiClient {
 					}
 				});
 		return (LibraryList) handle.getData();
+	}
+	
+	/**
+	 * Download the zpk file specified by library version identifier.
+	 * 
+	 * @see WebApiMethodType#DOWNLOAD_LIBRARY_VERSION_FILE
+	 * 
+	 * @return LibraryFile
+	 * @throws WebApiException
+	 * @since 1.5
+	 */
+	public LibraryFile downloadLibraryVersionFile(final int libVersionId)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.DOWNLOAD_LIBRARY_VERSION_FILE,
+				getVersion(WebApiVersion.V1_5), new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						((DownloadLibraryVersionFileRequest) request)
+								.setLibVersionId(libVersionId);
+					}
+				});
+		return (LibraryFile) handle.getData();
 	}
 
 	/**

@@ -357,5 +357,13 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	public boolean visit(LibraryList libraryList) {
 		return true;
 	}
+	
+	public boolean preVisit(LibraryFile libraryFile) {
+		return true;
+	}
+	
+	public boolean visit(LibraryFile libraryFile) {
+		return true;
+	}
 
 }

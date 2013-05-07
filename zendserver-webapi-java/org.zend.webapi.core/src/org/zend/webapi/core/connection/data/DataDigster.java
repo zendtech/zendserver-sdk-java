@@ -1087,6 +1087,29 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryInfo.setLibraryVersions(versions);
 		return true;
 	}
+	
+	@Override
+	public boolean preVisit(LibraryFile libraryFile) {
+		Disposition disposition = representation.getDisposition();
+		if (disposition != null) {
+			libraryFile.setFilename(disposition.getFilename());
+		}
+		int size = (int) representation.getSize();
+		libraryFile.setFileSize(size);
+
+		try {
+			byte[] content = new byte[size];
+			InputStream reader = representation.getStream();
+			int offset = 0;
+			while (offset < size) {
+				offset += reader.read(content, offset, size - offset);
+			}
+			libraryFile.setFileContent(content);
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * @param value
@@ -1159,6 +1182,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new LibraryList();
 		case LIBRARY_INFO:
 			return new LibraryInfo();
+		case LIBRARY_FILE:
+			return new LibraryFile();
 		default:
 			return null;
 		}
@@ -1170,6 +1195,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		case SERVER_CONFIG:
 		case CODE_TRACE_FILE:
 		case ISSUE_FILE:
+		case LIBRARY_FILE:
 			return representation;
 		default:
 			return new DomRepresentation(representation);

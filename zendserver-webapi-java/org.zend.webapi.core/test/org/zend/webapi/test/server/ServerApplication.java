@@ -398,6 +398,24 @@ public class ServerApplication extends Application {
 				prepareResponse(response, serverResponse);
 			}
 		};
+		
+		Restlet downloadLibraryVersionFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				FileResponse serverResponse = (FileResponse) ZendSystem
+						.getInstance().downloadLibraryVersionFile();
+				InputRepresentation representation = new InputRepresentation(
+						new ByteArrayInputStream(serverResponse.getContent()),
+						MediaType.valueOf("application/vnd.zend.zpk"));
+				Disposition disposition = new Disposition(
+						Disposition.TYPE_ATTACHMENT);
+				disposition.setFilename(serverResponse.getFileName());
+				representation.setDisposition(disposition);
+				representation.setSize(serverResponse.getFileSize());
+				response.setEntity(representation);
+				response.setStatus(serverResponse.getStatus());
+			}
+		};
 
 		router.attach(base + "Api/getSystemInfo", getSystemInfo);
 		router.attach(base + "Api/clusterGetServerStatus",
@@ -444,6 +462,8 @@ public class ServerApplication extends Application {
 				libraryVersionGetStatus);
 		router.attach(base + "Api/libraryVersionDeploy", libraryVersionDeploy);
 		router.attach(base + "Api/librarySynchronize", librarySynchronize);
+		router.attach(base + "Api/downloadLibraryVersionFile",
+				downloadLibraryVersionFile);
 		return router;
 	}
 

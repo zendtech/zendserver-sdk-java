@@ -74,4 +74,6 @@ public interface RequestHandler {
 
 	ServerResponse librarySynchronize();
 
+	ServerResponse downloadLibraryVersionFile();
+
 }

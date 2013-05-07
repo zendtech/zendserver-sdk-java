@@ -30,6 +30,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
+import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
@@ -275,7 +276,13 @@ public enum WebApiMethodType {
 	/**
 	 * @see LibrarySynchronizeRequest
 	 */
-	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class);
+	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class),
+
+	/**
+	 * @see DownloadLibraryVersionFileRequest
+	 */
+	DOWNLOAD_LIBRARY_VERSION_FILE("downloadLibraryVersionFile",
+			DownloadLibraryVersionFileRequest.class);
 
 	/**
 	 * Name of the service

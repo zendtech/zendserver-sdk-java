@@ -3,6 +3,7 @@ package org.zend.webapi.test.server;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 import org.zend.webapi.core.connection.data.values.SystemEdition;
+import org.zend.webapi.test.server.response.FileResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 
 public class ZendSystem {
@@ -189,6 +190,10 @@ public class ZendSystem {
 
 	public ServerResponse librarySynchronize() {
 		return handler.librarySynchronize();
+	}
+
+	public ServerResponse downloadLibraryVersionFile() {
+		return handler.downloadLibraryVersionFile();
 	}
 
 }

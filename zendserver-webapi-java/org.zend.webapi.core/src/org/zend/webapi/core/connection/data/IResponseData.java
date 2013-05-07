@@ -95,7 +95,9 @@ public interface IResponseData {
 		
 		LIBRARY_INFO,
 		
-		LIBRARY_LIST
+		LIBRARY_LIST,
+		
+		LIBRARY_FILE
 
 	}
 
