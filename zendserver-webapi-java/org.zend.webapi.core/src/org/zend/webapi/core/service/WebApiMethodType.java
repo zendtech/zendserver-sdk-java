@@ -31,6 +31,7 @@ import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTrace
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
+import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetEventGroupDetailsRequest;
@@ -249,8 +250,13 @@ public enum WebApiMethodType {
 	 * @see StudioStartDebugModeRequest
 	 */
 	STUDIO_IS_DEBUG_MODE_ENABLED("studioIsDebugModeEnabled",
-			StudioIsDebugModeEnabledRequest.class);
-	
+			StudioIsDebugModeEnabledRequest.class), 
+		
+	/**
+	 * @see LibraryGetStatusRequest
+	 */
+	LIBRARY_GET_STATUS("libraryGetStatus", LibraryGetStatusRequest.class);
+
 	/**
 	 * Name of the service
 	 */

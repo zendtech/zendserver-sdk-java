@@ -1,5 +1,8 @@
 package org.zend.webapi.test;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import junit.framework.Assert;
@@ -27,6 +30,12 @@ import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.LibraryInfo;
+import org.zend.webapi.core.connection.data.LibraryList;
+import org.zend.webapi.core.connection.data.LibraryServer;
+import org.zend.webapi.core.connection.data.LibraryServers;
+import org.zend.webapi.core.connection.data.LibraryVersion;
+import org.zend.webapi.core.connection.data.LibraryVersions;
 import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
 import org.zend.webapi.core.connection.data.Parameter;
@@ -405,6 +414,52 @@ public class DataUtils {
 				profileRequest.getType());
 		Assert.assertNotNull(profileRequest.getSuccess());
 		Assert.assertNotNull(profileRequest.getMessage());
+	}
+
+	public static void checkValidLibraryList(LibraryList libraryList) {
+		assertNotNull(libraryList);
+		List<LibraryInfo> infos = libraryList.getLibrariesInfo();
+		assertNotNull(infos);
+		for (LibraryInfo libraryInfo : infos) {
+			checkIfValidLibraryInfo(libraryInfo);
+		}
+	}
+	
+	private static void checkIfValidLibraryInfo(LibraryInfo libraryInfo) {
+		assertNotNull(libraryInfo);
+		assertTrue(libraryInfo.getLibraryId() >= 0);
+		assertNotNull(libraryInfo.getLibraryName());
+		assertNotNull(libraryInfo.getStatus());
+		LibraryVersions libraryVersions = libraryInfo.getLibraryVersions();
+		assertNotNull(libraryVersions);
+		List<LibraryVersion> versions = libraryVersions.getVersions();
+		assertNotNull(versions);
+		for (LibraryVersion libraryVersion : versions) {
+			checkIfValidLibraryVersion(libraryVersion);
+		}
+	}
+
+	private static void checkIfValidLibraryVersion(LibraryVersion libraryVersion) {
+		assertNotNull(libraryVersion);
+		assertNotNull(libraryVersion.getCreationTime());
+		assertNotNull(libraryVersion.getCreationTimeTimestamp());
+		assertNotNull(libraryVersion.getInstalledLocation());
+		assertNotNull(libraryVersion.getLastUsed());
+		assertNotNull(libraryVersion.getLastUsedTimestamp());
+		assertNotNull(libraryVersion.getStatus());
+		LibraryServers servers = libraryVersion.getServers();
+		assertNotNull(servers);
+		List<LibraryServer> libaryServers = servers.getServers();
+		for (LibraryServer libraryServer : libaryServers) {
+			checkIfValidLibraryServer(libraryServer);
+		}
+	}
+
+	private static void checkIfValidLibraryServer(LibraryServer server) {
+		assertNotNull(server);
+		assertNotNull(server.getLastMessage());
+		assertNotNull(server.getLastUpdatedTimestamp());
+		assertNotNull(server.getStatus());
 	}
 
 }

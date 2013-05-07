@@ -32,6 +32,7 @@ import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueFile;
 import org.zend.webapi.core.connection.data.IssueList;
+import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.ServerConfig;
@@ -72,6 +73,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
+import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetEventGroupDetailsRequest;
@@ -1604,6 +1606,33 @@ public class WebApiClient {
 				WebApiMethodType.STUDIO_IS_DEBUG_MODE_ENABLED,
 				getVersion(WebApiVersion.V1_3), null);
 		return (DebugMode) handle.getData();
+	}
+	
+	/**
+	 * Get the list of libraries currently deployed on the server or the cluster
+	 * and information about each library’s available versions. If library IDs
+	 * are specified, will return information about the specified applications;
+	 * If no IDs are specified, will return information about all libraries.
+	 * 
+	 * @see WebApiMethodType#LIBRARY_GET_STATUS
+	 * 
+	 * @return libraries list
+	 * @throws WebApiException
+	 * @since 1.5
+	 */
+	public LibraryList libraryGetStatus(final String... libraries)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.LIBRARY_GET_STATUS,
+				getVersion(WebApiVersion.V1_5), libraries.length == 0 ? null
+						: new IRequestInitializer() {
+							public void init(IRequest request)
+									throws WebApiException {
+								((LibraryGetStatusRequest) request)
+										.setLibraries(libraries);
+							}
+						});
+		return (LibraryList) handle.getData();
 	}
 	
 	/**

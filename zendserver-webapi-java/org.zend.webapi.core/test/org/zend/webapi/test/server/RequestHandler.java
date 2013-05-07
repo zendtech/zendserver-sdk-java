@@ -66,4 +66,6 @@ public interface RequestHandler {
 
 	ServerResponse studioStartProfile();
 
+	ServerResponse libraryGetStatus();
+
 }

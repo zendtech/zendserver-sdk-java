@@ -172,4 +172,8 @@ public class ZendSystem {
 		return handler.studioStartProfile();
 	}
 
+	public ServerResponse libraryGetStatus() {
+		return handler.libraryGetStatus();
+	}
+
 }
