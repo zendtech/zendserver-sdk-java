@@ -15,6 +15,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class Event extends AbstractResponseData {
 
+	private static final String EVENT = "/event";
+	
 	private String eventsGroupId;
 	private String eventType;
 	private String description;
@@ -24,11 +26,11 @@ public class Event extends AbstractResponseData {
 	private String codeTracing;
 
 	protected Event() {
-		super(ResponseType.EVENT, BASE_PATH + "/event");
+		super(ResponseType.EVENT, BASE_PATH + EVENT, EVENT);
 	}
 
 	protected Event(String prefix, int occurrance) {
-		super(ResponseType.EVENT, prefix, occurrance);
+		super(ResponseType.EVENT, prefix, EVENT, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

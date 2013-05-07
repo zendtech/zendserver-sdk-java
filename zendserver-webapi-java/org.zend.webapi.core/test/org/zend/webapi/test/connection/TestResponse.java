@@ -2,15 +2,12 @@ package org.zend.webapi.test.connection;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
-import java.util.Calendar;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.zend.webapi.core.connection.data.AbstractResponseData;
 import org.zend.webapi.core.connection.data.GenericResponseDataVisitor;
-import org.zend.webapi.core.connection.data.IResponseData;
-import org.zend.webapi.core.connection.data.IResponseData.ResponseType;
 import org.zend.webapi.core.connection.data.IResponseDataVisitor;
 import org.zend.webapi.core.connection.data.LicenseInfo;
 import org.zend.webapi.core.connection.data.MessageList;
@@ -18,19 +15,15 @@ import org.zend.webapi.core.connection.data.ServerConfig;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
-import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.request.IRequest;
-import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseCode;
-import org.zend.webapi.core.connection.response.ResponseFactory;
-import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 
 public class TestResponse {
 
 	private class SimpleResponseData extends AbstractResponseData {
 
 		public SimpleResponseData(ResponseType type, String prefix) {
-			super(type, prefix);
+			super(type, prefix, prefix.substring(prefix.lastIndexOf('/')));
 		}
 
 		public boolean accept(IResponseDataVisitor visitor) {

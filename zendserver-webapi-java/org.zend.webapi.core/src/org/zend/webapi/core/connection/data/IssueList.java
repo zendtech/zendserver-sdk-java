@@ -17,14 +17,16 @@ import java.util.List;
  */
 public class IssueList extends AbstractResponseData {
 
+	private static final String ISSUES = "/issues";
+	
 	private List<Issue> issues;
 
 	protected IssueList() {
-		super(ResponseType.ISSUE_LIST, BASE_PATH + "/issues");
+		super(ResponseType.ISSUE_LIST, BASE_PATH + ISSUES, ISSUES);
 	}
 
 	protected IssueList(String prefix, int occurrance) {
-		super(ResponseType.ISSUE_LIST, prefix, occurrance);
+		super(ResponseType.ISSUE_LIST, prefix, ISSUES, occurrance);
 	}
 
 	/**

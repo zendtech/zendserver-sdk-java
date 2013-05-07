@@ -17,16 +17,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class ProfileRequest extends AbstractResponseData {
 
+	private static final String PROFILE_REQUEST = "/profileRequest";
+
 	private String success;
 	private String message;
 
 	protected ProfileRequest() {
 		super(ResponseType.PROFILE_REQUEST, AbstractResponseData.BASE_PATH
-				+ "/profileRequest", 0);
+				+ PROFILE_REQUEST, PROFILE_REQUEST, 0);
 	}
 
 	protected ProfileRequest(String prefix, int occurrence) {
-		super(ResponseType.PROFILE_REQUEST, prefix, occurrence);
+		super(ResponseType.PROFILE_REQUEST, prefix, PROFILE_REQUEST, occurrence);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

@@ -15,16 +15,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class IssueDetails extends AbstractResponseData {
 
+	private static final String ISSUE_DETAILS = "/issueDetails";
+	
 	private Issue issue;
 	private EventsGroups eventsGroups;
 
 	protected IssueDetails() {
 		super(ResponseType.ISSUE_DETAILS, AbstractResponseData.BASE_PATH
-				+ "/issueDetails", 0);
+				+ ISSUE_DETAILS, ISSUE_DETAILS, 0);
 	}
 
 	protected IssueDetails(String prefix, int occurrence) {
-		super(ResponseType.ISSUE_DETAILS, prefix, occurrence);
+		super(ResponseType.ISSUE_DETAILS, prefix, ISSUE_DETAILS, occurrence);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

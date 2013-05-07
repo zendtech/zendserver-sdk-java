@@ -18,6 +18,8 @@ import org.zend.webapi.core.connection.data.values.ServerStatus;
  */
 public class ServerInfo extends AbstractResponseData {
 
+	private static final String SERVER_INFO = "/serverInfo";
+	
 	private int id;
 	private String name;
 	private String address;
@@ -25,11 +27,11 @@ public class ServerInfo extends AbstractResponseData {
 	private MessageList messageList;
 
 	protected ServerInfo(String prefix, int occurrence) {
-		super(ResponseType.SERVER_INFO, prefix, occurrence);
+		super(ResponseType.SERVER_INFO, prefix, SERVER_INFO, occurrence);
 	}
 
 	protected ServerInfo() {
-		this(BASE_PATH + "/serverInfo", 0);
+		this(BASE_PATH + SERVER_INFO, 0);
 	}
 
 	/**

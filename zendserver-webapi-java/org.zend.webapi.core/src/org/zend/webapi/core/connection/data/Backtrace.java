@@ -17,14 +17,16 @@ import java.util.List;
  */
 public class Backtrace extends AbstractResponseData {
 
+	private static final String BACKTRACE = "/backtrace";
+	
 	private List<Step> steps;
 
 	protected Backtrace() {
-		super(ResponseType.BACKTRACE, BASE_PATH + "/backtrace");
+		super(ResponseType.BACKTRACE, BASE_PATH + BACKTRACE, BACKTRACE);
 	}
 
 	protected Backtrace(String prefix, int occurrance) {
-		super(ResponseType.BACKTRACE, prefix, occurrance);
+		super(ResponseType.BACKTRACE, prefix, BACKTRACE, occurrance);
 	}
 
 	/**

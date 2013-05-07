@@ -15,17 +15,19 @@ package org.zend.webapi.core.connection.data;
  */
 public class LibraryInfo extends AbstractResponseData {
 
+	private static final String LIBRARY_INFO = "/libraryInfo";
+	
 	private int libraryId;
 	private String libraryName;
 	private String status;
 	private LibraryVersions libraryVersions;
 
 	protected LibraryInfo(String prefix, int occurrence) {
-		super(ResponseType.LIBRARY_INFO, prefix, occurrence);
+		super(ResponseType.LIBRARY_INFO, prefix, LIBRARY_INFO, occurrence);
 	}
 
 	protected LibraryInfo() {
-		this(BASE_PATH + "/libraryInfo", 0);
+		this(BASE_PATH + LIBRARY_INFO, 0);
 	}
 
 	public int getLibraryId() {

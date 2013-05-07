@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class ApplicationServers extends AbstractResponseData {
 
+	private static final String SERVERS = "/servers";
 	private List<ApplicationServer> applicationServers;
 
 	protected ApplicationServers() {
-		super(ResponseType.APPLICATION_SERVERS_LIST, BASE_PATH + "/servers");
+		super(ResponseType.APPLICATION_SERVERS_LIST, BASE_PATH + SERVERS,
+				SERVERS);
 	}
 
 	protected ApplicationServers(String prefix, int occurrance) {
-		super(ResponseType.APPLICATION_SERVERS_LIST, prefix, occurrance);
+		super(ResponseType.APPLICATION_SERVERS_LIST, prefix, SERVERS,
+				occurrance);
 	}
 
 	/**

@@ -21,16 +21,18 @@ import java.util.List;
  */
 public class MessageList extends AbstractResponseData {
 
+	private static final String MESSAGE_LIST = "/messageList";
+	
 	private List<String> info;
 	private List<String> warning;
 	private List<String> error;
 
 	protected MessageList(String prefix, int occurrance) {
-		super(ResponseType.MESSAGE_LIST, prefix, occurrance);
+		super(ResponseType.MESSAGE_LIST, prefix, MESSAGE_LIST, occurrance);
 	}
 
 	protected MessageList() {
-		this(AbstractResponseData.BASE_PATH + "/messageList", 0);
+		this(AbstractResponseData.BASE_PATH + MESSAGE_LIST, 0);
 	}
 
 	/**

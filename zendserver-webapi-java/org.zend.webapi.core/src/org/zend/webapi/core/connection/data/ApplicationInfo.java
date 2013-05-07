@@ -17,6 +17,8 @@ import org.zend.webapi.core.connection.data.values.ApplicationStatus;
  */
 public class ApplicationInfo extends AbstractResponseData {
 
+	private static final String APPLICATION_INFO = "/applicationInfo";
+	
 	private int id;
 	private String baseUrl;
 	private String appName;
@@ -28,11 +30,12 @@ public class ApplicationInfo extends AbstractResponseData {
 	private MessageList messageList;
 
 	protected ApplicationInfo(String prefix, int occurrence) {
-		super(ResponseType.APPLICATION_INFO, prefix, occurrence);
+		super(ResponseType.APPLICATION_INFO, prefix, APPLICATION_INFO,
+				occurrence);
 	}
 
 	protected ApplicationInfo() {
-		this(BASE_PATH + "/applicationInfo", 0);
+		this(BASE_PATH + APPLICATION_INFO, 0);
 	}
 
 	/**

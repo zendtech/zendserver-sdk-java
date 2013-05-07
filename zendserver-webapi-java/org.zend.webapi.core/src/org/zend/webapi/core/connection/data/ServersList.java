@@ -18,14 +18,17 @@ import java.util.List;
  */
 public class ServersList extends AbstractResponseData {
 
+	private static final String SERVERS_LIST = "/serversList";
+	
 	private List<ServerInfo> serverInfo;
 
 	protected ServersList() {
-		super(IResponseData.ResponseType.SERVERS_LIST, BASE_PATH + "/serversList");
+		super(IResponseData.ResponseType.SERVERS_LIST,
+				BASE_PATH + SERVERS_LIST, SERVERS_LIST);
 	}
 
 	protected ServersList(String prefix) {
-		super(IResponseData.ResponseType.SERVERS_LIST, prefix);
+		super(IResponseData.ResponseType.SERVERS_LIST, SERVERS_LIST, prefix);
 	}
 
 	/**

@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class EventsGroups extends AbstractResponseData {
 
+	private static final String EVENTS_GROUPS = "/eventsGroups";
+	
 	private List<EventsGroup> groups;
 
 	protected EventsGroups() {
-		super(ResponseType.EVENTS_GROUPS, BASE_PATH + "/eventsGroups");
+		super(ResponseType.EVENTS_GROUPS, BASE_PATH + EVENTS_GROUPS,
+				EVENTS_GROUPS);
 	}
 
 	protected EventsGroups(String prefix, int occurrance) {
-		super(ResponseType.EVENTS_GROUPS, prefix, occurrance);
+		super(ResponseType.EVENTS_GROUPS, prefix, EVENTS_GROUPS, occurrance);
 	}
 
 	/**

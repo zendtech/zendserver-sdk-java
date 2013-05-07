@@ -20,11 +20,12 @@ public class ParameterList extends AbstractResponseData {
 	private List<Parameter> parameters;
 
 	protected ParameterList(String name) {
-		super(ResponseType.PARAMETER_LIST, BASE_PATH + "/" + name);
+		super(ResponseType.PARAMETER_LIST, BASE_PATH + "/" + name, "/" + name);
 	}
 
 	protected ParameterList(String prefix, int occurrance) {
-		super(ResponseType.PARAMETER_LIST, prefix, occurrance);
+		super(ResponseType.PARAMETER_LIST, prefix, prefix.substring(prefix
+				.lastIndexOf('/')), occurrance);
 	}
 
 	/**

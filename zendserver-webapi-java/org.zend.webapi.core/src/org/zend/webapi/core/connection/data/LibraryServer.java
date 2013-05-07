@@ -15,17 +15,19 @@ package org.zend.webapi.core.connection.data;
  */
 public class LibraryServer extends AbstractResponseData {
 
+	private static final String LIBRARY_SERVER = "/libraryServer";
+	
 	private int id;
 	private String status;
 	private String lastMessage;
 	private String lastUpdatedTimestamp;
 
 	protected LibraryServer(String prefix, int occurrence) {
-		super(ResponseType.LIBRARY_SERVER, prefix, occurrence);
+		super(ResponseType.LIBRARY_SERVER, prefix, LIBRARY_SERVER, occurrence);
 	}
 
 	protected LibraryServer() {
-		this(BASE_PATH + "/libraryServer", 0);
+		this(BASE_PATH + LIBRARY_SERVER, 0);
 	}
 
 	public int getId() {

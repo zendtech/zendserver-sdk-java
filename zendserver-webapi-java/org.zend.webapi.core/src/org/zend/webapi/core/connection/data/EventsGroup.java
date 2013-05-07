@@ -17,6 +17,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class EventsGroup extends AbstractResponseData {
 
+	private static final String EVENTS_GROUP = "/eventsGroup";
+	
 	private int eventsGroupId;
 	private int eventsCount;
 	private String startTime;
@@ -32,11 +34,11 @@ public class EventsGroup extends AbstractResponseData {
 	private String load;
 
 	protected EventsGroup() {
-		super(ResponseType.EVENTS_GROUP, BASE_PATH + "/eventsGroup");
+		super(ResponseType.EVENTS_GROUP, BASE_PATH + EVENTS_GROUP, EVENTS_GROUP);
 	}
 
 	protected EventsGroup(String prefix, int occurrance) {
-		super(ResponseType.EVENTS_GROUP, prefix, occurrance);
+		super(ResponseType.EVENTS_GROUP, prefix, EVENTS_GROUP, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

@@ -15,6 +15,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class CodeTrace extends AbstractResponseData {
 
+	private static final String CODE_TRACE = "/codeTrace";
+	
 	private String id;
 	private long date;
 	private String url;
@@ -23,11 +25,11 @@ public class CodeTrace extends AbstractResponseData {
 	private int applicationId;
 
 	protected CodeTrace() {
-		super(ResponseType.CODE_TRACE, BASE_PATH + "/codeTrace");
+		super(ResponseType.CODE_TRACE, BASE_PATH + CODE_TRACE, CODE_TRACE);
 	}
 
 	protected CodeTrace(String prefix, int occurrance) {
-		super(ResponseType.CODE_TRACE, prefix, occurrance);
+		super(ResponseType.CODE_TRACE, prefix, CODE_TRACE, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

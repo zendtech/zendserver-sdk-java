@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class ApplicationsList extends AbstractResponseData {
 
+	private static final String APPLICATIONS_LIST = "/applicationsList";
+	
 	private List<ApplicationInfo> applicationsInfo;
 
 	protected ApplicationsList() {
-		super(ResponseType.APPLICATIONS_LIST, BASE_PATH + "/applicationsList");
+		super(ResponseType.APPLICATIONS_LIST, BASE_PATH + APPLICATIONS_LIST,
+				APPLICATIONS_LIST);
 	}
 
 	protected ApplicationsList(String prefix) {
-		super(ResponseType.APPLICATIONS_LIST, prefix);
+		super(ResponseType.APPLICATIONS_LIST, prefix, APPLICATIONS_LIST);
 	}
 
 	/**

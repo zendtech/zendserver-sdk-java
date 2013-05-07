@@ -21,6 +21,8 @@ import org.zend.webapi.core.connection.data.values.ZendServerVersion;
  */
 public class SystemInfo extends AbstractResponseData {
 
+	private static final String SYSTEM_INFO = "/systemInfo";
+	
 	private SystemStatus status;
 	private SystemEdition edition;
 	private ZendServerVersion version;
@@ -32,7 +34,8 @@ public class SystemInfo extends AbstractResponseData {
 	private MessageList messageList;
 
 	protected SystemInfo() {
-		super(ResponseType.SYSTEM_INFO, AbstractResponseData.BASE_PATH + "/systemInfo");
+		super(ResponseType.SYSTEM_INFO, AbstractResponseData.BASE_PATH
+				+ SYSTEM_INFO, SYSTEM_INFO);
 	}
 
 	/**

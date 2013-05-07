@@ -17,6 +17,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class SuperGlobals extends AbstractResponseData {
 
+	private static final String SUPER_GLOBALS = "/superGlobals";
+	
 	private ParameterList get;
 	private ParameterList post;
 	private ParameterList cookie;
@@ -24,11 +26,12 @@ public class SuperGlobals extends AbstractResponseData {
 	private ParameterList server;
 
 	protected SuperGlobals() {
-		super(ResponseType.SUPER_GLOBALS, BASE_PATH + "/superGlobals");
+		super(ResponseType.SUPER_GLOBALS, BASE_PATH + SUPER_GLOBALS,
+				SUPER_GLOBALS);
 	}
 
 	protected SuperGlobals(String prefix, int occurrance) {
-		super(ResponseType.SUPER_GLOBALS, prefix, occurrance);
+		super(ResponseType.SUPER_GLOBALS, prefix, SUPER_GLOBALS, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

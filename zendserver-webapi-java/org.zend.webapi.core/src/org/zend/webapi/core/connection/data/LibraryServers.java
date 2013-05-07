@@ -17,14 +17,16 @@ import java.util.List;
  */
 public class LibraryServers extends AbstractResponseData {
 
+	private static final String SERVERS = "/servers";
+	
 	private List<LibraryServer> servers;
 
 	protected LibraryServers() {
-		super(ResponseType.LIBRARY_SERVERS, BASE_PATH + "/servers");
+		super(ResponseType.LIBRARY_SERVERS, BASE_PATH + SERVERS, SERVERS);
 	}
 
 	protected LibraryServers(String prefix, int occurrance) {
-		super(ResponseType.LIBRARY_SERVERS, prefix, occurrance);
+		super(ResponseType.LIBRARY_SERVERS, prefix, SERVERS, occurrance);
 	}
 
 	public List<LibraryServer> getServers() {

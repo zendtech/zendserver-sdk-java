@@ -17,14 +17,16 @@ import java.util.List;
  */
 public class LibraryList extends AbstractResponseData {
 
+	private static final String LIBRARY_LIST = "/libraryList";
+	
 	private List<LibraryInfo> librariesInfo;
 
 	protected LibraryList() {
-		super(ResponseType.LIBRARY_LIST, BASE_PATH + "/libraryList");
+		super(ResponseType.LIBRARY_LIST, BASE_PATH + LIBRARY_LIST, LIBRARY_LIST);
 	}
 
 	protected LibraryList(String prefix) {
-		super(ResponseType.LIBRARY_LIST, prefix);
+		super(ResponseType.LIBRARY_LIST, LIBRARY_LIST, prefix);
 	}
 
 	public List<LibraryInfo> getLibrariesInfo() {

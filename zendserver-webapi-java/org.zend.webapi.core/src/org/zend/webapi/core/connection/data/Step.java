@@ -16,6 +16,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class Step extends AbstractResponseData {
 
+	private static final String STEP = "/step";
+	
 	private int number;
 	private String objectId;
 	private String classId;
@@ -24,11 +26,11 @@ public class Step extends AbstractResponseData {
 	private int line;
 
 	protected Step() {
-		super(ResponseType.STEP, BASE_PATH + "/step");
+		super(ResponseType.STEP, BASE_PATH + STEP, STEP);
 	}
 
 	protected Step(String prefix, int occurrance) {
-		super(ResponseType.STEP, prefix, occurrance);
+		super(ResponseType.STEP, prefix, STEP, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

@@ -16,17 +16,19 @@ package org.zend.webapi.core.connection.data;
  */
 public class RequestSummary extends AbstractResponseData {
 
+	private static final String REQUEST_SUMMARY = "/requestSummary";
+	
 	private int eventsCount;
 	private Events events;
 	private String codeTracing;
 
 	protected RequestSummary() {
-		super(ResponseType.REQUEST_SUMMARY, BASE_PATH
-				+ "/requestSummary");
+		super(ResponseType.REQUEST_SUMMARY, BASE_PATH + REQUEST_SUMMARY,
+				REQUEST_SUMMARY);
 	}
 
 	protected RequestSummary(String prefix, int occurrance) {
-		super(ResponseType.REQUEST_SUMMARY, prefix, occurrance);
+		super(ResponseType.REQUEST_SUMMARY, prefix, REQUEST_SUMMARY, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

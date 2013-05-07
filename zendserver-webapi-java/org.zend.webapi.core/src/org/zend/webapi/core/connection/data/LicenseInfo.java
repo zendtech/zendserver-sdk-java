@@ -17,6 +17,8 @@ import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
  */
 public class LicenseInfo extends AbstractResponseData {
 
+	private static final String LICENSE_INFO = "/licenseInfo";
+	
 	private LicenseInfoStatus status;
 	private String orderNumber;
 	private Date validUntil;
@@ -24,11 +26,12 @@ public class LicenseInfo extends AbstractResponseData {
 	
 
 	protected LicenseInfo() {
-		super(ResponseType.LICENSE_INFO, AbstractResponseData.BASE_PATH + "/licenseInfo");
+		super(ResponseType.LICENSE_INFO, AbstractResponseData.BASE_PATH
+				+ LICENSE_INFO, LICENSE_INFO);
 	}
 
 	protected LicenseInfo(String prefix) {
-		super(ResponseType.LICENSE_INFO, prefix);
+		super(ResponseType.LICENSE_INFO, prefix, LICENSE_INFO);
 	}
 
 	/**

@@ -15,6 +15,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class GeneralDetails extends AbstractResponseData {
 
+	private static final String GENERAL_DETAILS = "/generalDetails";
+	
 	private String url;
 	private String sourceFile;
 	private long sourceLine;
@@ -24,11 +26,12 @@ public class GeneralDetails extends AbstractResponseData {
 	private String errorType;
 
 	protected GeneralDetails() {
-		super(ResponseType.GENERAL_DETAILS, BASE_PATH + "/generalDetails");
+		super(ResponseType.GENERAL_DETAILS, BASE_PATH + GENERAL_DETAILS,
+				GENERAL_DETAILS);
 	}
 
 	protected GeneralDetails(String prefix, int occurrance) {
-		super(ResponseType.GENERAL_DETAILS, prefix, occurrance);
+		super(ResponseType.GENERAL_DETAILS, prefix, GENERAL_DETAILS, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

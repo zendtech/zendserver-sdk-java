@@ -18,6 +18,8 @@ import org.zend.webapi.core.connection.data.values.IssueStatus;
  */
 public class Issue extends AbstractResponseData {
 
+	private static final String ISSUE = "/issue";
+	
 	private int id;
 	private String rule;
 	private String lastOccurance;
@@ -27,11 +29,11 @@ public class Issue extends AbstractResponseData {
 	private RouteDetails routeDetails;
 
 	protected Issue() {
-		super(ResponseType.ISSUE, BASE_PATH + "/issue");
+		super(ResponseType.ISSUE, BASE_PATH + ISSUE, ISSUE);
 	}
 
 	protected Issue(String prefix, int occurrance) {
-		super(ResponseType.ISSUE, prefix, occurrance);
+		super(ResponseType.ISSUE, prefix, ISSUE, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

@@ -17,14 +17,18 @@ import java.util.List;
  */
 public class LibraryVersions extends AbstractResponseData {
 
+	private static final String LIBRARY_VERSIONS = "/libraryVersions";
+	
 	private List<LibraryVersion> versions;
 
 	protected LibraryVersions() {
-		super(ResponseType.LIBRARY_VERSIONS, BASE_PATH + "/libraryVersions");
+		super(ResponseType.LIBRARY_VERSIONS, BASE_PATH + LIBRARY_VERSIONS,
+				LIBRARY_VERSIONS);
 	}
 
 	protected LibraryVersions(String prefix, int occurrance) {
-		super(ResponseType.LIBRARY_VERSIONS, prefix, occurrance);
+		super(ResponseType.LIBRARY_VERSIONS, prefix, LIBRARY_VERSIONS,
+				occurrance);
 	}
 
 	public List<LibraryVersion> getVersions() {

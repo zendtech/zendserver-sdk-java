@@ -25,24 +25,29 @@ public abstract class AbstractResponseData implements IResponseData {
 	 * The prefix of the data represented in the XML document
 	 */
 	private final String prefix;
+	private final String suffix;
 	private final int occurrence;
 	
-
-	public AbstractResponseData(ResponseType type, String prefix, int occurrence) {
+	public AbstractResponseData(ResponseType type, String prefix,
+			String suffix, int occurrence) {
 		super();
 		this.type = type;
 		this.prefix = prefix;
 		this.occurrence = occurrence;
+		this.suffix = suffix;
 	}
 
-	public AbstractResponseData(ResponseType type, String prefix) {
-		this(type,prefix, 0);
+	public AbstractResponseData(ResponseType type, String prefix, String suffix) {
+		this(type, prefix, suffix, 0);
 	}
 
 	public ResponseType getType() {
 		return type;
 	}
-
+	
+	public String getSuffix() {
+		return suffix;
+	}
 
 	protected String getPrefix() {
 		return prefix;

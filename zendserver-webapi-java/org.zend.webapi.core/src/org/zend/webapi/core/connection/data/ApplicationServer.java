@@ -17,17 +17,20 @@ import org.zend.webapi.core.connection.data.values.ApplicationStatus;
  */
 public class ApplicationServer extends AbstractResponseData {
 
+	private static final String APPLICATION_SERVER = "/applicationServer";
+	
 	private int id;
 	private String deployedVersion;
 	private ApplicationStatus status;
 
 	protected ApplicationServer() {
 		super(ResponseType.APPLICATION_SERVER, AbstractResponseData.BASE_PATH
-				+ "/applicationServer", 0);
+				+ APPLICATION_SERVER, APPLICATION_SERVER, 0);
 	}
 
 	protected ApplicationServer(String prefix, int occurrence) {
-		super(ResponseType.APPLICATION_SERVER, prefix, occurrence);
+		super(ResponseType.APPLICATION_SERVER, prefix, APPLICATION_SERVER,
+				occurrence);
 	}
 
 	/**

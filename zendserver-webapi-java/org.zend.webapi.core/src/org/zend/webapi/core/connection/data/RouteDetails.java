@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class RouteDetails extends AbstractResponseData {
 
+	private static final String ROUTE_DETAILS = "/routeDetails";
+	
 	private List<RouteDetail> details;
 
 	protected RouteDetails() {
-		super(ResponseType.ROUTE_DETAILS, BASE_PATH + "/routeDetails");
+		super(ResponseType.ROUTE_DETAILS, BASE_PATH + ROUTE_DETAILS,
+				ROUTE_DETAILS);
 	}
 
 	protected RouteDetails(String prefix, int occurrance) {
-		super(ResponseType.ROUTE_DETAILS, prefix, occurrance);
+		super(ResponseType.ROUTE_DETAILS, prefix, ROUTE_DETAILS, occurrance);
 	}
 
 	/**

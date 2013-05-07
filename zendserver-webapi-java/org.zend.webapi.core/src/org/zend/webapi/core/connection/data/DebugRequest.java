@@ -17,16 +17,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class DebugRequest extends AbstractResponseData {
 
+	private static final String DEBUG_REQUEST = "/debugRequest";
+	
 	private String success;
 	private String message;
 
 	protected DebugRequest() {
 		super(ResponseType.DEBUG_REQUEST, AbstractResponseData.BASE_PATH
-				+ "/debugRequest", 0);
+				+ DEBUG_REQUEST, DEBUG_REQUEST, 0);
 	}
 
 	protected DebugRequest(String prefix, int occurrence) {
-		super(ResponseType.DEBUG_REQUEST, prefix, occurrence);
+		super(ResponseType.DEBUG_REQUEST, prefix, DEBUG_REQUEST, occurrence);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

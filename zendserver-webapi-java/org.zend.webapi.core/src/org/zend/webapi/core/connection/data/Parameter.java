@@ -17,16 +17,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class Parameter extends AbstractResponseData {
 
+	private static final String PARAMETER = "/parameter";
+	
 	private String name;
 	private String value;
 
 	protected Parameter() {
 		super(ResponseType.PARAMETER, AbstractResponseData.BASE_PATH
-				+ "/parameter", 0);
+				+ PARAMETER, PARAMETER, 0);
 	}
 
 	protected Parameter(String prefix, int occurrence) {
-		super(ResponseType.PARAMETER, prefix, occurrence);
+		super(ResponseType.PARAMETER, prefix, PARAMETER, occurrence);
 	}
 
 	/**

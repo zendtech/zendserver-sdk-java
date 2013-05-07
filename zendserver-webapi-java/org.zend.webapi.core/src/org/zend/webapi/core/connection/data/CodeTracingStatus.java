@@ -16,6 +16,8 @@ package org.zend.webapi.core.connection.data;
 public class CodeTracingStatus extends AbstractResponseData {
 
 	
+	private static final String CODE_TRACING_STATUS = "/codeTracingStatus";
+
 	/**
 	 * Represents set of possible states for CodeTracingStatus fields.
 	 */
@@ -94,12 +96,13 @@ public class CodeTracingStatus extends AbstractResponseData {
 	private State awaitsRestart;
 
 	protected CodeTracingStatus() {
-		super(ResponseType.CODE_TRACING_STATUS, BASE_PATH
-				+ "/codeTracingStatus");
+		super(ResponseType.CODE_TRACING_STATUS,
+				BASE_PATH + CODE_TRACING_STATUS, CODE_TRACING_STATUS);
 	}
 
 	protected CodeTracingStatus(String prefix, int occurrance) {
-		super(ResponseType.CODE_TRACING_STATUS, prefix, occurrance);
+		super(ResponseType.CODE_TRACING_STATUS, prefix, CODE_TRACING_STATUS,
+				occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

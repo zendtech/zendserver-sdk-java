@@ -18,16 +18,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class RouteDetail extends AbstractResponseData {
 
+	private static final String ROUTE_DETAIL = "/routeDetail";
+
 	private String key;
 	private String value;
 
 	protected RouteDetail() {
 		super(ResponseType.ROUTE_DETAIL, AbstractResponseData.BASE_PATH
-				+ "/routeDetail", 0);
+				+ ROUTE_DETAIL, ROUTE_DETAIL, 0);
 	}
 
 	protected RouteDetail(String prefix, int occurrence) {
-		super(ResponseType.ROUTE_DETAIL, prefix, occurrence);
+		super(ResponseType.ROUTE_DETAIL, prefix, ROUTE_DETAIL, occurrence);
 	}
 
 	/**

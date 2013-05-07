@@ -15,6 +15,8 @@ package org.zend.webapi.core.connection.data;
  */
 public class LibraryVersion extends AbstractResponseData {
 
+	private static final String LIBRARY_VERSION = "/libraryVersion";
+	
 	private int libraryVersionId;
 	private String version;
 	private String status;
@@ -27,11 +29,11 @@ public class LibraryVersion extends AbstractResponseData {
 	private LibraryServers servers;
 
 	protected LibraryVersion(String prefix, int occurrence) {
-		super(ResponseType.LIBRARY_VERSION, prefix, occurrence);
+		super(ResponseType.LIBRARY_VERSION, prefix, LIBRARY_VERSION, occurrence);
 	}
 
 	protected LibraryVersion() {
-		this(BASE_PATH + "/libraryVersion", 0);
+		this(BASE_PATH + LIBRARY_VERSION, 0);
 	}
 
 	public int getLibraryVersionId() {

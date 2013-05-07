@@ -17,14 +17,18 @@ import java.util.List;
  */
 public class CodeTracingList extends AbstractResponseData {
 
+	private static final String CODE_TRACING_LIST = "/codeTracingList";
+	
 	private List<CodeTrace> traces;
 
 	protected CodeTracingList() {
-		super(ResponseType.CODE_TRACING_LIST, BASE_PATH + "/codeTracingList");
+		super(ResponseType.CODE_TRACING_LIST, BASE_PATH + CODE_TRACING_LIST,
+				CODE_TRACING_LIST);
 	}
 
 	protected CodeTracingList(String prefix, int occurrance) {
-		super(ResponseType.CODE_TRACING_LIST, prefix, occurrance);
+		super(ResponseType.CODE_TRACING_LIST, prefix, CODE_TRACING_LIST,
+				occurrance);
 	}
 
 	/**

@@ -15,14 +15,16 @@ package org.zend.webapi.core.connection.data;
  */
 public class DebugMode extends AbstractResponseData {
 
+	private static final String DEBUG_MODE = "/debugMode";
+	
 	private int result;
 
 	protected DebugMode() {
-		super(ResponseType.ISSUE, BASE_PATH + "/debugMode");
+		super(ResponseType.ISSUE, BASE_PATH + DEBUG_MODE, DEBUG_MODE);
 	}
 
 	protected DebugMode(String prefix, int occurrance) {
-		super(ResponseType.DEBUG_MODE, prefix, occurrance);
+		super(ResponseType.DEBUG_MODE, prefix, DEBUG_MODE, occurrance);
 	}
 
 	public boolean accept(IResponseDataVisitor visitor) {

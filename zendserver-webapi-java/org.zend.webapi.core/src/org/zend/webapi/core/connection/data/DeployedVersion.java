@@ -15,15 +15,18 @@ package org.zend.webapi.core.connection.data;
  */
 public class DeployedVersion extends AbstractResponseData {
 
+	private static final String DEPLOYED_VERSION = "/deployedVersion";
+	
 	private String version;
 
 	protected DeployedVersion() {
 		super(ResponseType.DEPLOYED_VERSION, AbstractResponseData.BASE_PATH
-				+ "/deployedVersion", 0);
+				+ DEPLOYED_VERSION, DEPLOYED_VERSION, 0);
 	}
 
 	protected DeployedVersion(String prefix, int occurrence) {
-		super(ResponseType.DEPLOYED_VERSION, prefix, occurrence);
+		super(ResponseType.DEPLOYED_VERSION, prefix, DEPLOYED_VERSION,
+				occurrence);
 	}
 
 	/**
