@@ -32,6 +32,7 @@ import org.zend.webapi.internal.core.connection.request.ConfigurationExportReque
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
@@ -269,7 +270,12 @@ public enum WebApiMethodType {
 	 * @see LibraryVersionDeployRequest
 	 */
 	LIBRARY_VERSION_DEPLOY("libraryVersionDeploy",
-			LibraryVersionDeployRequest.class);
+			LibraryVersionDeployRequest.class), 
+	
+	/**
+	 * @see LibrarySynchronizeRequest
+	 */
+	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class);
 
 	/**
 	 * Name of the service

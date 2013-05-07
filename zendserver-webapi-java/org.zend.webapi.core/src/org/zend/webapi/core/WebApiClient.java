@@ -74,6 +74,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
@@ -1683,6 +1684,27 @@ public class WebApiClient {
 						LibraryVersionDeployRequest deployRequest = (LibraryVersionDeployRequest) request;
 						deployRequest.setLibPackage(libPackage);
 						deployRequest.setNotifier(notifier);
+					}
+				});
+		return (LibraryList) handle.getData();
+	}
+	
+	/**
+	 * @return information about synchronized library
+	 * @throws WebApiException
+	 * @since 1.5
+	 */
+	public LibraryList librarySynchronize(final int libraryVersionId,
+			final NamedInputStream libPackage) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.LIBRARY_SYNCHRONIZE,
+				getVersion(WebApiVersion.V1_5), new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						LibrarySynchronizeRequest synchRequest = (LibrarySynchronizeRequest) request;
+						synchRequest.setLibPackage(libPackage);
+						synchRequest.setLibraryVersionId(libraryVersionId);
+						synchRequest.setNotifier(notifier);
 					}
 				});
 		return (LibraryList) handle.getData();

@@ -187,4 +187,8 @@ public class ZendSystem {
 		return handler.libraryVersionDeploy();
 	}
 
+	public ServerResponse librarySynchronize() {
+		return handler.librarySynchronize();
+	}
+
 }

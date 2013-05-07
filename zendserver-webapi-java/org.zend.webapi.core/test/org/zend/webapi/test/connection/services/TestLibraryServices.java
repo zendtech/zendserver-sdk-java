@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.LibraryList;
-import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.test.AbstractTestServer;
@@ -35,7 +34,6 @@ public class TestLibraryServices extends AbstractTestServer {
 		initMock(handler.libraryGetStatus(), "libraryGetStatus",
 				ResponseCode.OK);
 		WebApiClient client = Configuration.getClient();
-		client.setServerType(ServerType.ZEND_SERVER);
 		LibraryList libraryList = client.libraryGetStatus();
 		DataUtils.checkValidLibraryList(libraryList);
 	}
@@ -46,7 +44,6 @@ public class TestLibraryServices extends AbstractTestServer {
 		initMock(handler.libraryVersionGetStatus(), "libraryVersionGetStatus",
 				ResponseCode.OK);
 		WebApiClient client = Configuration.getClient();
-		client.setServerType(ServerType.ZEND_SERVER);
 		LibraryList libraryList = client.libraryVersionGetStatus(1);
 		DataUtils.checkValidLibraryList(libraryList);
 	}
@@ -60,9 +57,25 @@ public class TestLibraryServices extends AbstractTestServer {
 				+ "library-1.0.0.zpk"));
 		if (app.exists()) {
 			WebApiClient client = Configuration.getClient();
-			client.setServerType(ServerType.ZEND_SERVER);
-			LibraryList libraryList  = client
+			LibraryList libraryList = client
 					.libraryVersionDeploy(new NamedInputStream(app));
+			DataUtils.checkValidLibraryList(libraryList);
+		} else {
+			fail("Cannot find file: " + app.getAbsolutePath());
+		}
+	}
+
+	@Test
+	public void testLibrarySynchronize() throws MalformedURLException,
+			WebApiException, FileNotFoundException {
+		initMock(handler.librarySynchronize(), "librarySynchronize",
+				ResponseCode.ACCEPTED);
+		File app = new File(ServerUtils.createFileName(DEPLOY_FOLDER
+				+ "library-2.0.0.zpk"));
+		if (app.exists()) {
+			WebApiClient client = Configuration.getClient();
+			LibraryList libraryList = client
+					.librarySynchronize(0, new NamedInputStream(app));
 			DataUtils.checkValidLibraryList(libraryList);
 		} else {
 			fail("Cannot find file: " + app.getAbsolutePath());

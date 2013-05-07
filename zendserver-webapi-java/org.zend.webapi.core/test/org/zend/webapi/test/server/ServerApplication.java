@@ -389,6 +389,15 @@ public class ServerApplication extends Application {
 				prepareResponse(response, serverResponse);
 			}
 		};
+		
+		Restlet librarySynchronize = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.librarySynchronize();
+				prepareResponse(response, serverResponse);
+			}
+		};
 
 		router.attach(base + "Api/getSystemInfo", getSystemInfo);
 		router.attach(base + "Api/clusterGetServerStatus",
@@ -434,6 +443,7 @@ public class ServerApplication extends Application {
 		router.attach(base + "Api/libraryVersionGetStatus",
 				libraryVersionGetStatus);
 		router.attach(base + "Api/libraryVersionDeploy", libraryVersionDeploy);
+		router.attach(base + "Api/librarySynchronize", librarySynchronize);
 		return router;
 	}
 

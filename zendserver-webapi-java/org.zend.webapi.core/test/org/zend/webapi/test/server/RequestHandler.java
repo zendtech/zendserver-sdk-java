@@ -72,4 +72,6 @@ public interface RequestHandler {
 
 	ServerResponse libraryVersionDeploy();
 
+	ServerResponse librarySynchronize();
+
 }
