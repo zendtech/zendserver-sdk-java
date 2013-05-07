@@ -421,11 +421,11 @@ public class DataUtils {
 		List<LibraryInfo> infos = libraryList.getLibrariesInfo();
 		assertNotNull(infos);
 		for (LibraryInfo libraryInfo : infos) {
-			checkIfValidLibraryInfo(libraryInfo);
+			checkValidLibraryInfo(libraryInfo);
 		}
 	}
 	
-	private static void checkIfValidLibraryInfo(LibraryInfo libraryInfo) {
+	public static void checkValidLibraryInfo(LibraryInfo libraryInfo) {
 		assertNotNull(libraryInfo);
 		assertTrue(libraryInfo.getLibraryId() >= 0);
 		assertNotNull(libraryInfo.getLibraryName());
@@ -435,27 +435,27 @@ public class DataUtils {
 		List<LibraryVersion> versions = libraryVersions.getVersions();
 		assertNotNull(versions);
 		for (LibraryVersion libraryVersion : versions) {
-			checkIfValidLibraryVersion(libraryVersion);
+			checkValidLibraryVersion(libraryVersion);
 		}
 	}
 
-	private static void checkIfValidLibraryVersion(LibraryVersion libraryVersion) {
+	public static void checkValidLibraryVersion(LibraryVersion libraryVersion) {
 		assertNotNull(libraryVersion);
 		assertNotNull(libraryVersion.getCreationTime());
 		assertNotNull(libraryVersion.getCreationTimeTimestamp());
 		assertNotNull(libraryVersion.getInstalledLocation());
 		assertNotNull(libraryVersion.getLastUsed());
-		assertNotNull(libraryVersion.getLastUsedTimestamp());
+		//assertNotNull(libraryVersion.getLastUsedTimestamp());
 		assertNotNull(libraryVersion.getStatus());
 		LibraryServers servers = libraryVersion.getServers();
 		assertNotNull(servers);
 		List<LibraryServer> libaryServers = servers.getServers();
 		for (LibraryServer libraryServer : libaryServers) {
-			checkIfValidLibraryServer(libraryServer);
+			checkValidLibraryServer(libraryServer);
 		}
 	}
 
-	private static void checkIfValidLibraryServer(LibraryServer server) {
+	public static void checkValidLibraryServer(LibraryServer server) {
 		assertNotNull(server);
 		assertNotNull(server.getLastMessage());
 		assertNotNull(server.getLastUpdatedTimestamp());

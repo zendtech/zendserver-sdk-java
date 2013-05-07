@@ -356,6 +356,15 @@ public class ServerApplication extends Application {
 				prepareResponse(response, serverResponse);
 			}
 		};
+		
+		Restlet libraryVersionGetStatus = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.libraryVersionGetStatus();
+				prepareResponse(response, serverResponse);
+			}
+		};
 
 		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
 		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
@@ -419,6 +428,8 @@ public class ServerApplication extends Application {
 				studioStartProfile);
 		router.attach("/ZendServerManager/Api/libraryGetStatus",
 				libraryGetStatus);
+		router.attach("/ZendServerManager/Api/libraryVersionGetStatus",
+				libraryVersionGetStatus);
 		return router;
 	}
 

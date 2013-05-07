@@ -72,7 +72,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public DataDigster(IRequest request, Representation representation) {
 		this(create(request), representation);
 	}
-	
+
 	/**
 	 * Validate XML or amf file representation.
 	 * 
@@ -878,8 +878,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 			byte[] buffer = new byte[8192];
 			int count = 0;
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			while ((count = reader.read(buffer)) > 0)
-			{
+			while ((count = reader.read(buffer)) > 0) {
 				out.write(buffer, 0, count);
 			}
 			codeTraceFile.setFileSize(out.size());
@@ -964,7 +963,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		debugMode.setResult(Integer.valueOf(value));
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryVersion libraryVersion) {
 		String currentPath = libraryVersion.getPrefix();
@@ -982,13 +981,15 @@ public class DataDigster extends GenericResponseDataVisitor {
 		value = getValue(currentPath + "/lastUsed", occurrence);
 		libraryVersion.setLastUsed(value);
 		value = getValue(currentPath + "/lastUsedTimeTimestamp", occurrence);
-		libraryVersion.setCreationTimeTimestamp(value);
+		libraryVersion.setLastUsedTimestamp(value);
+		value = getValue(currentPath + "/status", occurrence);
+		libraryVersion.setStatus(value);
 		LibraryServers servers = new LibraryServers(currentPath + "/servers",
 				occurrence);
 		libraryVersion.setServers(servers);
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryServer libraryServer) {
 		String currentPath = libraryServer.getPrefix();
@@ -1003,7 +1004,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryServer.setLastUpdatedTimestamp(value);
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryServers libraryServers) {
 		String currentPath = libraryServers.getPrefix();
@@ -1025,7 +1026,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryServers.setServers(servers);
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryList libraryList) {
 		String currentPath = libraryList.getPrefix();
@@ -1047,7 +1048,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryList.setLibrariesInfo(infos);
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryVersions libraryVersions) {
 		String currentPath = libraryVersions.getPrefix();
@@ -1063,7 +1064,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 		List<LibraryVersion> versions = new ArrayList<LibraryVersion>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			versions.add(new LibraryVersion(currentPath + "/libraryVersion", index));
+			versions.add(new LibraryVersion(currentPath + "/libraryVersion",
+					index));
 		}
 
 		libraryVersions.setVersions(versions);
@@ -1154,7 +1156,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 		case DEBUG_MODE:
 			return new DebugMode();
 		case LIBRARY_LIST:
-			return new LibraryList();	
+			return new LibraryList();
+		case LIBRARY_INFO:
+			return new LibraryInfo();
 		default:
 			return null;
 		}

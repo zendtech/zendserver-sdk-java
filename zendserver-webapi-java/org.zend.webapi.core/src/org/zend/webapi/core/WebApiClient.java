@@ -74,6 +74,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorGetEventGroupDetailsRequest;
@@ -1632,6 +1633,29 @@ public class WebApiClient {
 										.setLibraries(libraries);
 							}
 						});
+		return (LibraryList) handle.getData();
+	}
+	
+	/**
+	 * Get the library version id that is deployed on the server or the cluster
+	 * and information about that version and its library.
+	 * 
+	 * @see WebApiMethodType#LIBRARY_VERSION_GET_STATUS
+	 * 
+	 * @return libraries list
+	 * @throws WebApiException
+	 * @since 1.5
+	 */
+	public LibraryList libraryVersionGetStatus(final int id)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.LIBRARY_VERSION_GET_STATUS,
+				getVersion(WebApiVersion.V1_5), new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						((LibraryVersionGetStatusRequest) request)
+								.setLibraryId(id);
+					}
+				});
 		return (LibraryList) handle.getData();
 	}
 	

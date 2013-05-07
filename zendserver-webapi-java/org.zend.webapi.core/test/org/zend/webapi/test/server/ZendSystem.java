@@ -176,4 +176,8 @@ public class ZendSystem {
 		return handler.libraryGetStatus();
 	}
 
+	public ServerResponse libraryVersionGetStatus() {
+		return handler.libraryVersionGetStatus();
+	}
+
 }

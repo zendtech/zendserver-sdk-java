@@ -68,4 +68,6 @@ public interface RequestHandler {
 
 	ServerResponse libraryGetStatus();
 
+	ServerResponse libraryVersionGetStatus();
+
 }
