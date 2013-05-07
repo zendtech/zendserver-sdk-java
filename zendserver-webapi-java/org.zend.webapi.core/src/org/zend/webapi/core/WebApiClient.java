@@ -74,6 +74,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorChangeIssueStatusRequest;
 import org.zend.webapi.internal.core.connection.request.MonitorExportIssueByEventsGroupRequest;
@@ -1659,6 +1660,34 @@ public class WebApiClient {
 		return (LibraryList) handle.getData();
 	}
 	
+	/**
+	 * Deploy a new library version to the server or cluster. This process is
+	 * asynchronous – the initial request will wait until the library is
+	 * uploaded and verified, and the initial response will show information
+	 * about the library being deployed – however the staging and activation
+	 * process will proceed after the response is returned. The user is expected
+	 * to continue checking the library version status using the
+	 * libraryVersionGetStatus method until the deployment process is complete.
+	 * 
+	 * @return information about deployed library
+	 * @throws WebApiException
+	 * @since 1.5
+	 */
+	public LibraryList libraryVersionDeploy(final NamedInputStream libPackage)
+			throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.LIBRARY_VERSION_DEPLOY,
+				getVersion(WebApiVersion.V1_5), new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						LibraryVersionDeployRequest deployRequest = (LibraryVersionDeployRequest) request;
+						deployRequest.setLibPackage(libPackage);
+						deployRequest.setNotifier(notifier);
+					}
+				});
+		return (LibraryList) handle.getData();
+	}
+
 	/**
 	 * Zend Server Web API is intended to allow automation of the management and
 	 * deployment of Zend Server and Zend Server Cluster Manager, and allow

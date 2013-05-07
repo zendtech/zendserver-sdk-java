@@ -444,7 +444,7 @@ public class DataUtils {
 		assertNotNull(libraryVersion.getCreationTime());
 		assertNotNull(libraryVersion.getCreationTimeTimestamp());
 		assertNotNull(libraryVersion.getInstalledLocation());
-		assertNotNull(libraryVersion.getLastUsed());
+		//assertNotNull(libraryVersion.getLastUsed());
 		//assertNotNull(libraryVersion.getLastUsedTimestamp());
 		assertNotNull(libraryVersion.getStatus());
 		LibraryServers servers = libraryVersion.getServers();

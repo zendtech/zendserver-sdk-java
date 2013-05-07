@@ -24,11 +24,26 @@ import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.routing.Router;
 import org.w3c.dom.Document;
+import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.test.server.response.FileResponse;
 import org.zend.webapi.test.server.response.ServerResponse;
 import org.zend.webapi.test.server.response.ServiceResponse;
 
 public class ServerApplication extends Application {
+
+	private String base;
+
+	public ServerApplication(SystemEdition edition) {
+		switch (edition) {
+		case ZEND_SERVER_CLUSER_MANAGER:
+		case ZEND_SERVER_COMMUNITY_EDITION:
+			this.base = "/ZendServerManager/";
+			break;
+		default:
+			this.base = "/ZendServer/";
+			break;
+		}
+	}
 
 	@Override
 	public synchronized Restlet createRoot() {
@@ -347,7 +362,7 @@ public class ServerApplication extends Application {
 				prepareResponse(response, serverResponse);
 			}
 		};
-		
+
 		Restlet libraryGetStatus = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -356,7 +371,7 @@ public class ServerApplication extends Application {
 				prepareResponse(response, serverResponse);
 			}
 		};
-		
+
 		Restlet libraryVersionGetStatus = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -366,70 +381,59 @@ public class ServerApplication extends Application {
 			}
 		};
 
-		router.attach("/ZendServerManager/Api/getSystemInfo", getSystemInfo);
-		router.attach("/ZendServerManager/Api/clusterGetServerStatus",
+		Restlet libraryVersionDeploy = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				ServerResponse serverResponse = ZendSystem.getInstance()
+						.libraryVersionDeploy();
+				prepareResponse(response, serverResponse);
+			}
+		};
+
+		router.attach(base + "Api/getSystemInfo", getSystemInfo);
+		router.attach(base + "Api/clusterGetServerStatus",
 				clusterGetServerStatus);
-		router.attach("/ZendServerManager/Api/clusterAddServer",
-				clusterAddServer);
-		router.attach("/ZendServerManager/Api/clusterRemoveServer",
-				clusterRemoveServer);
-		router.attach("/ZendServerManager/Api/clusterDisableServer",
-				clusterDisableServer);
-		router.attach("/ZendServerManager/Api/clusterEnableServer",
-				clusterEnableServer);
-		router.attach("/ZendServerManager/Api/clusterReconfigureServer",
+		router.attach(base + "Api/clusterAddServer", clusterAddServer);
+		router.attach(base + "Api/clusterRemoveServer", clusterRemoveServer);
+		router.attach(base + "Api/clusterDisableServer", clusterDisableServer);
+		router.attach(base + "Api/clusterEnableServer", clusterEnableServer);
+		router.attach(base + "Api/clusterReconfigureServer",
 				clusterReconfigureServer);
-		router.attach("/ZendServerManager/Api/restartPhp", restartPhp);
-		router.attach("/ZendServerManager/Api/configurationExport",
-				configurationExport);
-		router.attach("/ZendServerManager/Api/configurationImport",
-				configurationImport);
-		router.attach("/ZendServerManager/Api/applicationGetStatus",
-				applicationGetStatus);
-		router.attach("/ZendServerManager/Api/applicationDeploy",
-				applicationDeploy);
-		router.attach("/ZendServerManager/Api/applicationUpdate",
-				applicationUpdate);
-		router.attach("/ZendServerManager/Api/applicationRemove",
-				applicationRemove);
-		router.attach("/ZendServerManager/Api/applicationSynchronize",
-				applicationRedeploy);
-		router.attach("/ZendServerManager/Api/applicationRollback",
-				applicationRollback);
-		router.attach("/ZendServerManager/Api/codetracingDisable",
-				codeTracingDisable);
-		router.attach("/ZendServerManager/Api/codetracingEnable",
-				codeTracingEnable);
-		router.attach("/ZendServerManager/Api/codetracingIsEnabled",
-				codeTracingIsEnabled);
-		router.attach("/ZendServerManager/Api/codetracingCreate",
-				codeTracingCreate);
-		router.attach("/ZendServerManager/Api/codetracingDelete",
-				codeTracingDelete);
-		router.attach("/ZendServerManager/Api/codetracingList", codeTracingList);
-		router.attach("/ZendServerManager/Api/codetracingDownloadTraceFile",
+		router.attach(base + "Api/restartPhp", restartPhp);
+		router.attach(base + "Api/configurationExport", configurationExport);
+		router.attach(base + "Api/configurationImport", configurationImport);
+		router.attach(base + "Api/applicationGetStatus", applicationGetStatus);
+		router.attach(base + "Api/applicationDeploy", applicationDeploy);
+		router.attach(base + "Api/applicationUpdate", applicationUpdate);
+		router.attach(base + "Api/applicationRemove", applicationRemove);
+		router.attach(base + "Api/applicationSynchronize", applicationRedeploy);
+		router.attach(base + "Api/applicationRollback", applicationRollback);
+		router.attach(base + "Api/codetracingDisable", codeTracingDisable);
+		router.attach(base + "Api/codetracingEnable", codeTracingEnable);
+		router.attach(base + "Api/codetracingIsEnabled", codeTracingIsEnabled);
+		router.attach(base + "Api/codetracingCreate", codeTracingCreate);
+		router.attach(base + "Api/codetracingDelete", codeTracingDelete);
+		router.attach(base + "Api/codetracingList", codeTracingList);
+		router.attach(base + "Api/codetracingDownloadTraceFile",
 				codetracingDownloadTraceFile);
-		router.attach("/ZendServerManager/Api/monitorGetRequestSummary",
+		router.attach(base + "Api/monitorGetRequestSummary",
 				monitorGetRequestSummary);
-		router.attach(
-				"/ZendServerManager/Api/monitorGetIssuesListPredefinedFilter",
+		router.attach(base + "Api/monitorGetIssuesListPredefinedFilter",
 				monitorGetIssuesListPredefinedFilter);
-		router.attach("/ZendServerManager/Api/monitorGetIssueDetails",
+		router.attach(base + "Api/monitorGetIssueDetails",
 				monitorGetIssueDetails);
-		router.attach("/ZendServerManager/Api/monitorGetEventGroupDetails",
+		router.attach(base + "Api/monitorGetEventGroupDetails",
 				monitorGetEventGroupDetails);
-		router.attach("/ZendServerManager/Api/monitorExportIssueByEventsGroup",
+		router.attach(base + "Api/monitorExportIssueByEventsGroup",
 				monitorExportIssueByEventsGroup);
-		router.attach("/ZendServerManager/Api/monitorChangeIssueStatus",
+		router.attach(base + "Api/monitorChangeIssueStatus",
 				monitorChangeIssueStatus);
-		router.attach("/ZendServerManager/Api/studioStartDebug",
-				studioStartDebug);
-		router.attach("/ZendServerManager/Api/studioStartProfile",
-				studioStartProfile);
-		router.attach("/ZendServerManager/Api/libraryGetStatus",
-				libraryGetStatus);
-		router.attach("/ZendServerManager/Api/libraryVersionGetStatus",
+		router.attach(base + "Api/studioStartDebug", studioStartDebug);
+		router.attach(base + "Api/studioStartProfile", studioStartProfile);
+		router.attach(base + "Api/libraryGetStatus", libraryGetStatus);
+		router.attach(base + "Api/libraryVersionGetStatus",
 				libraryVersionGetStatus);
+		router.attach(base + "Api/libraryVersionDeploy", libraryVersionDeploy);
 		return router;
 	}
 

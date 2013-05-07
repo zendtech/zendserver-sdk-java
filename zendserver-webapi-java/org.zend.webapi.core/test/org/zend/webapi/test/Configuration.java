@@ -20,12 +20,14 @@ import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.PropertiesCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.values.SystemEdition;
 import org.zend.webapi.test.server.utils.ServerType;
 
 public class Configuration {
 
 	private static final String PROPERTY = "org.zend.webapi.confgurationFile";
 	private static ServerType type;
+	private static SystemEdition edition;
 	private static String host;
 
 	private static String configFile = "configuration.properties";
@@ -44,12 +46,27 @@ public class Configuration {
 			keyName = credentials.getKeyName();
 			secretKey = credentials.getSecretKey();
 			webApiClient = new WebApiClient(credentials, host);
+			switch (edition) {
+			case ZEND_SERVER_CLUSER_MANAGER:
+			case ZEND_SERVER_COMMUNITY_EDITION:
+				webApiClient
+						.setServerType(org.zend.webapi.core.connection.data.values.ServerType.ZEND_SERVER_MANAGER);
+				break;
+			default:
+				webApiClient
+						.setServerType(org.zend.webapi.core.connection.data.values.ServerType.ZEND_SERVER);
+				break;
+			}
 		}
 		return webApiClient;
 	}
 
 	public static ServerType getType() {
 		return type;
+	}
+	
+	public static SystemEdition getEdition() {
+		return edition;
 	}
 
 	public static String getHost() {
@@ -85,6 +102,8 @@ public class Configuration {
 		}
 		type = ServerType.byType((String) p.get("serverType"));
 		host = (String) p.get("host");
+		edition = SystemEdition.byName((String) p.getProperty("systemEdition"));
+
 		if (type == null || host == null) {
 			fail("missing entries type and/or host in " + configFile);
 		}

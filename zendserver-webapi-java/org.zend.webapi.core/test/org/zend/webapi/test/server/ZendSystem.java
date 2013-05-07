@@ -12,15 +12,18 @@ public class ZendSystem {
 	private RequestHandler handler;
 
 	private static ZendSystem instance;
+	
+	private SystemEdition edition;
 
-	private ZendSystem() {
+	private ZendSystem(SystemEdition edition) {
 		this.component = new Component();
+		this.edition = edition;
 	}
 
 	public static ZendSystem initializeServer(SystemEdition edition,
 			Protocol protocol, int port, RequestHandler handler) {
 		if (instance == null) {
-			instance = new ZendSystem();
+			instance = new ZendSystem(edition);
 		}
 		instance.handler = handler;
 		instance.prepareServer(protocol, port);
@@ -45,7 +48,7 @@ public class ZendSystem {
 	private void prepareServer(Protocol protocol, int port) {
 		component.getServers().clear();
 		component.getServers().add(protocol, port);
-		component.getDefaultHost().attach(new ServerApplication());
+		component.getDefaultHost().attach(new ServerApplication(edition));
 	}
 
 	public ServerResponse getSystemInfo() {
@@ -178,6 +181,10 @@ public class ZendSystem {
 
 	public ServerResponse libraryVersionGetStatus() {
 		return handler.libraryVersionGetStatus();
+	}
+
+	public ServerResponse libraryVersionDeploy() {
+		return handler.libraryVersionDeploy();
 	}
 
 }
