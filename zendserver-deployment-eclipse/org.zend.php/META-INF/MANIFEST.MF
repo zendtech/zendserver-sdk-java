@@ -5,7 +5,9 @@ Bundle-SymbolicName: org.zend.php;singleton:=true
 Bundle-Version: 3.0.2.qualifier
 Bundle-Activator: org.zend.php.EclipseForPHPDevelopersPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.zend.sdk.cli;resolution:=optional,
+ org.zend.sdk;resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %pluginProvider
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
