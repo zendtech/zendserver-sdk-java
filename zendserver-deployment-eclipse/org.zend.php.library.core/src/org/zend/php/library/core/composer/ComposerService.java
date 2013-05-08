@@ -1,7 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Zend Technologies.
+ * All rights reserved. This program and the accompanying materials
+ * are the copyright of Zend Technologies and is protected under
+ * copyright laws of the United States.
+ * You must not copy, adapt or redistribute this document for 
+ * any use.
+ *******************************************************************************/
 package org.zend.php.library.core.composer;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -15,6 +37,10 @@ import org.zend.php.library.internal.json.JSONArray;
 import org.zend.php.library.internal.json.JSONException;
 import org.zend.php.library.internal.json.JSONObject;
 
+/**
+ * @author Wojciech Galanciak, 2013
+ *
+ */
 public class ComposerService {
 
 	private static final String VENDOR_FOLDER = "vendor";
