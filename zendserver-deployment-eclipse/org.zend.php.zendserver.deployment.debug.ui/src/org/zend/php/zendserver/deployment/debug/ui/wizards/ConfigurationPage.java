@@ -32,7 +32,7 @@ public class ConfigurationPage extends DeploymentWizardPage {
 		this(null, null, null);
 	}
 
-	private ConfigurationBlock block;
+	protected AbstractBlock block;
 
 	public void createControl(Composite parent) {
 		super.createControl(parent);

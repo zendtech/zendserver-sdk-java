@@ -17,7 +17,7 @@ public class ParametersPage extends DeploymentWizardPage {
 	private IProject project;
 	private ParametersBlock block;
 
-	protected ParametersPage(IProject project, IDeploymentHelper helper,
+	public ParametersPage(IProject project, IDeploymentHelper helper,
 			String title, String help) {
 		super(Messages.parametersPage_Name, helper, help);
 		setDescription(Messages.parametersPage_Description);
@@ -26,7 +26,7 @@ public class ParametersPage extends DeploymentWizardPage {
 		this.block = new ParametersBlock(this);
 	}
 
-	protected ParametersPage(IProject project, IDeploymentHelper helper) {
+	public ParametersPage(IProject project, IDeploymentHelper helper) {
 		this(project, helper, Messages.parametersPage_Title, null);
 	}
 

@@ -38,13 +38,13 @@ public class DeploymentWizard extends Wizard {
 		RUN, DEBUG, DEPLOY;
 	}
 
-	private ConfigurationPage configPage;
-	private ParametersPage parametersPage;
-	private IDescriptorContainer model;
-	private IProject project;
-	private IDeploymentHelper helper;
-	private String help;
-	private String description;
+	protected ConfigurationPage configPage;
+	protected ParametersPage parametersPage;
+	protected IDescriptorContainer model;
+	protected IProject project;
+	protected IDeploymentHelper helper;
+	protected String help;
+	protected String description;
 
 	public DeploymentWizard(ILaunchConfiguration config, Mode mode) {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
@@ -102,7 +102,7 @@ public class DeploymentWizard extends Wizard {
 		return helper;
 	}
 
-	private void init(IProject project, IDeploymentHelper helper, Mode mode) {
+	protected void init(IProject project, IDeploymentHelper helper, Mode mode) {
 		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
 		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
@@ -140,7 +140,7 @@ public class DeploymentWizard extends Wizard {
 		setDefaultPageImageDescriptor(Activator.getImageDescriptor(image));
 	}
 
-	private IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
+	protected IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
 		if (toUpdate.getBaseURL() == null) {
 			toUpdate.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
 			toUpdate.setDefaultServer(true);
@@ -152,7 +152,7 @@ public class DeploymentWizard extends Wizard {
 		return toUpdate;
 	}
 
-	private IDeploymentHelper createDefaultHelper() {
+	protected IDeploymentHelper createDefaultHelper() {
 		IDeploymentHelper helper = new DeploymentHelper();
 		IDescriptorContainer descContainer = DescriptorContainerManager.getService().openDescriptorContainer(project);
 		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
@@ -168,14 +168,14 @@ public class DeploymentWizard extends Wizard {
 		return helper;
 	}
 
-	private IDeploymentHelper createHelper() {
+	protected IDeploymentHelper createHelper() {
 		IDeploymentHelper helper = configPage.getHelper();
 		helper.setProjectName(project.getName());
 		helper.setUserParams(parametersPage.getHelper().getUserParams());
 		return helper;
 	}
 
-	private void saveSettings(IDeploymentHelper helper) {
+	protected void saveSettings(IDeploymentHelper helper) {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(DeploymentAttributes.TARGET_ID.getName(),
 				helper.getTargetId());

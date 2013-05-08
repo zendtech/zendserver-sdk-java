@@ -4,7 +4,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
-public class TestingSectionContribution implements ITestingSectionContribution {
+public abstract class TestingSectionContribution implements ITestingSectionContribution {
 	
 	private String label;
 	private String command;
