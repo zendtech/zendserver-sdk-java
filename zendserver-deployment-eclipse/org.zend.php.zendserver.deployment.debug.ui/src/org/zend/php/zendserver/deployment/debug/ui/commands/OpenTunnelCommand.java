@@ -1,5 +1,6 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -7,6 +8,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -27,11 +30,12 @@ import com.jcraft.jsch.JSchException;
  */
 public class OpenTunnelCommand extends AbstractHandler {
 
-	private static final String CONTAINER = "container"; //$NON-NLS-1$
+	protected static final String CONTAINER = "container"; //$NON-NLS-1$
 
+	private IZendTarget target;
+	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String containerName = event.getParameter(CONTAINER);
-		IZendTarget target = null;
 
 		if (containerName != null) {
 			target = TargetsManagerService.INSTANCE
@@ -54,7 +58,20 @@ public class OpenTunnelCommand extends AbstractHandler {
 			throw new ExecutionException(NLS.bind(
 					Messages.OpenTunnelCommand_UnknownContainer, containerName));
 		}
-		openTunnel(target);
+		NotificationManager.registerProgress(Messages.OpenTunnelCommand_Title,
+				Messages.OpenTunnelCommand_Message,
+				new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						monitor.beginTask(Messages.OpenTunnelCommand_Message,
+								IProgressMonitor.UNKNOWN);
+						openTunnel(target);
+						monitor.done();
+					}
+
+				}, false);
 		return null;
 	}
 
