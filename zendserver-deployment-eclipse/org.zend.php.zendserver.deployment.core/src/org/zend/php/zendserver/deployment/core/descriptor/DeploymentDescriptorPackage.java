@@ -8,6 +8,10 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final Feature PACKAGE = new Feature("package", null, IModelObject.class, PACKAGE_ID); //$NON-NLS-1$
 	
+	public static final int PKG_TYPE_ID = 38;
+
+	public static final Feature PKG_TYPE = new Feature("type", null, String.class, PKG_TYPE_ID); //$NON-NLS-1$
+	
 	public static final int PKG_NAME_ID = 1;
 	
 	public static final Feature PKG_NAME = new Feature("name", null, String.class, PKG_NAME_ID); //$NON-NLS-1$

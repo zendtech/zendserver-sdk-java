@@ -4,6 +4,10 @@ import java.util.List;
 
 public interface IDeploymentDescriptor extends IModelContainer {
 	
+	ProjectType getType();
+	
+	void setType(String type);
+	
 	String getName();
 
 	void setName(String name);

@@ -15,11 +15,13 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependen
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFramework2Dependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 
 public class DeploymentDescriptor extends ModelContainer implements
 		IDeploymentDescriptor {
 
 	private String name;
+	private String type;
 	private String summary;
 	private String description;
 	private String releaseVersion;
@@ -32,7 +34,8 @@ public class DeploymentDescriptor extends ModelContainer implements
 	private String healthcheck;
 
 	public DeploymentDescriptor() {
-		super(new Feature[] { DeploymentDescriptorPackage.PKG_NAME,
+		super(new Feature[] { DeploymentDescriptorPackage.PKG_TYPE,
+				DeploymentDescriptorPackage.PKG_NAME,
 				DeploymentDescriptorPackage.SUMMARY,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
 				DeploymentDescriptorPackage.VERSION_RELEASE,
@@ -53,6 +56,16 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.PARAMETERS,
 				DeploymentDescriptorPackage.VARIABLES,
 				DeploymentDescriptorPackage.PERSISTENT_RESOURCES });
+	}
+	
+	public ProjectType getType() {
+		return ProjectType.byName(type);
+	}
+	
+	public void setType(String type) {
+		String oldType = this.type;
+		this.type = type;
+		fireChange(DeploymentDescriptorPackage.TYPE, type, oldType);
 	}
 
 	public String getName() {
@@ -217,6 +230,9 @@ public class DeploymentDescriptor extends ModelContainer implements
 
 	public void set(Feature key, String value) {
 		switch (key.id) {
+		case DeploymentDescriptorPackage.PKG_TYPE_ID:
+			setType(value);
+			break;
 		case DeploymentDescriptorPackage.PKG_NAME_ID:
 			setName(value);
 			break;
