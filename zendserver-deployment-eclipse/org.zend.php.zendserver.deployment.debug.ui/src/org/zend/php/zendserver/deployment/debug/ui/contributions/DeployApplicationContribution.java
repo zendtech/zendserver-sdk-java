@@ -10,8 +10,9 @@ public class DeployApplicationContribution extends TestingSectionContribution {
 	protected static final String DEPLOY_COMMAND = "org.zend.php.zendserver.deployment.debug.ui.deployApplication"; //$NON-NLS-1$
 
 	public DeployApplicationContribution() {
-		super(DEPLOY_COMMAND, ILaunchManager.RUN_MODE, Messages.deployContribution_DeployPHPApp,
-				Activator.IMAGE_DEPLOY_APPLICATION);
+		super(DEPLOY_COMMAND, ILaunchManager.RUN_MODE,
+				Messages.deployContribution_DeployPHPApp, Activator
+						.getImageDescriptor(Activator.IMAGE_DEPLOY_APPLICATION));
 	}
 	
 	public ProjectType getType() {

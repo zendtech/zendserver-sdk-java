@@ -1,7 +1,6 @@
 package org.zend.php.zendserver.deployment.debug.ui.contributions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public abstract class TestingSectionContribution implements ITestingSectionContribution {
@@ -9,10 +8,10 @@ public abstract class TestingSectionContribution implements ITestingSectionContr
 	private String label;
 	private String command;
 	private String mode;
-	private String image;
+	private ImageDescriptor image;
 
 	public TestingSectionContribution(String command, String mode,
-			String label, String image) {
+			String label, ImageDescriptor image) {
 		super();
 		this.label = label;
 		this.command = command;
@@ -25,7 +24,7 @@ public abstract class TestingSectionContribution implements ITestingSectionContr
 	}
 
 	public ImageDescriptor getIcon() {
-		return Activator.getImageDescriptor(image);
+		return image;
 	}
 
 	public String getCommand() {

@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
@@ -37,6 +38,7 @@ public class OverviewPage extends DescriptorEditorPage {
 	private static final String LINK_EXPORT = "export"; //$NON-NLS-1$
 
 	private TextField name;
+	private ComboField type;
 	private TextField summary;
 	private TextField description;
 	private TextField releaseVersion;
@@ -231,10 +233,13 @@ public class OverviewPage extends DescriptorEditorPage {
 		sectionClient.setLayout(new GridLayout(1, false));
 
 		List<ITestingSectionContribution> contributions = getTestingContributions();
+		ProjectType type = fModel.getDescriptorModel().getType();
 		for (ITestingSectionContribution c : contributions) {
+			if (c.getType() == type) {
 			ContributionControl control = new ContributionControl(
 					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
 			control.createControl(sectionClient);
+			}
 		}
 	}
 
@@ -252,6 +257,11 @@ public class OverviewPage extends DescriptorEditorPage {
 		name = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_NAME,
 				Messages.OverviewPage_Name));
+		type = addField(new ComboField(descr,
+				DeploymentDescriptorPackage.PKG_TYPE, "Project Type:",
+				SWT.READ_ONLY));
+		type.setItems(new String[] { ProjectType.APPLICATION.getName(),
+				ProjectType.LIBRARY.getName() });
 		summary = addField(new TextField(descr,
 				DeploymentDescriptorPackage.SUMMARY,
 				Messages.OverviewPage_Summary));
@@ -294,6 +304,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		section.setLayoutData(td);
 
 		name.create(sectionClient, toolkit);
+		type.create(sectionClient, toolkit);
 		summary.create(sectionClient, toolkit);
 		description.create(sectionClient, toolkit);
 		((GridData) description.getText().getLayoutData()).heightHint = 50;
@@ -336,6 +347,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	public void refresh() {
 		name.refresh();
+		type.refresh();
 		summary.refresh();
 		description.refresh();
 		releaseVersion.refresh();

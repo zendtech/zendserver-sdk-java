@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
@@ -81,6 +82,7 @@ public class ComboField implements EditorField {
 		label = toolkit.createLabel(parent, labelTxt);
 		GridData gd = new GridData();
 		label.setLayoutData(gd);
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		text = new Combo(parent, style);
 		if (this.items != null) {
 			text.setItems(items);

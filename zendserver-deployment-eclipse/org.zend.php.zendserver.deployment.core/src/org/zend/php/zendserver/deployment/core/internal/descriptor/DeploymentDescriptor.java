@@ -275,6 +275,8 @@ public class DeploymentDescriptor extends ModelContainer implements
 
 	public String get(Feature key) {
 		switch (key.id) {
+		case DeploymentDescriptorPackage.PKG_TYPE_ID:
+			return type;
 		case DeploymentDescriptorPackage.PKG_NAME_ID:
 			return name;
 		case DeploymentDescriptorPackage.SUMMARY_ID:

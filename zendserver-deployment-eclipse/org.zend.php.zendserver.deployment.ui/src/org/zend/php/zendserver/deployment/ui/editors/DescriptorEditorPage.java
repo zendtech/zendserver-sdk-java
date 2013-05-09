@@ -111,6 +111,10 @@ public abstract class DescriptorEditorPage extends FormPage {
 		return (TextField) fields.add(field);
 	}
 
+	protected ComboField addField(ComboField field) {
+		return (ComboField) fields.add(field);
+	}
+
 	protected List<ITestingSectionContribution> getTestingContributions() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(TESTING_EXTENSION_POINT);
