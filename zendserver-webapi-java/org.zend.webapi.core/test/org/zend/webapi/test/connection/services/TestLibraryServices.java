@@ -70,7 +70,7 @@ public class TestLibraryServices extends AbstractTestServer {
 	public void testLibrarySynchronize() throws MalformedURLException,
 			WebApiException, FileNotFoundException {
 		initMock(handler.librarySynchronize(), "librarySynchronize",
-				ResponseCode.ACCEPTED);
+				ResponseCode.OK);
 		File app = new File(ServerUtils.createFileName(LIBRARY_FOLDER
 				+ "library-2.0.0.zpk"));
 		if (app.exists()) {

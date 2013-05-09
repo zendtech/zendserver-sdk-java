@@ -50,7 +50,7 @@ public class LibrarySynchronizeRequest extends AbstractRequest {
 	public static final MediaType LIBRARY_PACKAGE = MediaType.register(
 			"library/vnd.zend.librarypackage", "Zend Library Package");
 
-	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.ACCEPTED };
+	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.OK };
 
 	public LibrarySynchronizeRequest(WebApiVersion version, Date date,
 			String keyName, String userAgent, String host, String secretKey,

@@ -1882,7 +1882,8 @@ public class WebApiClient {
 	}
 	
 	private WebApiVersion getVersion(WebApiVersion preferedVersion) {
-		if (customVersion != null && customVersion != WebApiVersion.UNKNOWN) {
+		if (customVersion != null && customVersion != WebApiVersion.UNKNOWN
+				&& customVersion.compareTo(preferedVersion) > 0) {
 			return customVersion;
 		}
 		return preferedVersion;
