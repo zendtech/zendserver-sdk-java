@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.zend.php.feature_3.0.2.qualifier.jar" id="org.zend.php.feature" version="3.0.2.qualifier">
+      <category name="org.zend.sdk"/>
+   </feature>
+   <feature url="features/org.zend.php.common_1.0.0.qualifier.jar" id="org.zend.php.common" version="1.0.0.qualifier">
+      <category name="org.zend.sdk"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment_1.0.0.qualifier.jar" id="org.zend.php.zendserver.deployment" version="1.0.0.qualifier">
+      <category name="org.zend.sdk"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment.all_1.0.0.qualifier.jar" id="org.zend.php.zendserver.deployment.all" version="1.0.0.qualifier">
+      <category name="org.zend.sdk"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment.debug_1.0.0.qualifier.jar" id="org.zend.php.zendserver.deployment.debug" version="1.0.0.qualifier">
+      <category name="org.zend.sdk"/>
+   </feature>
+   <category-def name="org.zend.sdk" label="SDK"/>
+</site>
