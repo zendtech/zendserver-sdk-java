@@ -93,8 +93,10 @@ public class MappingChangeListener implements IResourceChangeListener {
 		IResource resource = delta.getResource();
 		if (checkIfValid(resource)) {
 			String relativePath = resource.getProjectRelativePath().toString();
-			return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
-					relativePath, false);
+			if (!relativePath.isEmpty()) {
+				return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
+						relativePath, false);
+			}
 		}
 		return false;
 	}
