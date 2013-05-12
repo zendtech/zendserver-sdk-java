@@ -107,7 +107,8 @@ public class ToolTipHandler {
 				.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		tipLabelProvider.setBackground(display
 				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData();
+		gd.widthHint = tipWidth;
 		gd.horizontalSpan = 2;
 		tipLabelProvider.setLayoutData(gd);
 
@@ -116,7 +117,10 @@ public class ToolTipHandler {
 				.align(SWT.BEGINNING, SWT.CENTER).applyTo(link);
 		link.setText(Messages.ConnectorDescriptorToolTip_detailsLink);
 		link.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		link.setLayoutData(gd);
+		GridData linkGD = new GridData();
+		linkGD.widthHint = tipWidth;
+		linkGD.horizontalSpan = 2;
+		link.setLayoutData(linkGD);
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				WorkbenchUtil
