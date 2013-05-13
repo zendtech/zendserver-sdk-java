@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String DependenciesMasterDetailsProvider_Add;
 	public static String DependenciesMasterDetailsProvider_DependencyType;
 	public static String DependenciesMasterDetailsProvider_Description;
+	public static String DependenciesMasterDetailsProvider_DescriptionLibrary;
 	public static String DeploymentDescriptorEditor_Dependencies;
 	public static String DeploymentDescriptorEditor_Package;
 	public static String DeploymentDescriptorEditor_Parameters;
@@ -50,6 +51,9 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_ZendServer;
 	public static String DeploymentDescriptorLabelProvider_ZendServerComponent;
 	public static String DeploymentDescriptorLabelProvider_ZendServerVersion;
+	public static String DeploymentDescriptorLabelProvider_PHPLibrary;
+	public static String PHPLibraryDependencyDetailsPage_PHPLibraryTitle;
+	public static String PHPLibraryDependencyDetailsPage_PHPLibraryDetails;
 	public static String DescriptorMasterDetailsBlock_Add;
 	public static String DescriptorMasterDetailsBlock_Remove;
 	public static String DetectTargetAction_DetectUnsupportedDesc;
@@ -118,6 +122,7 @@ public class Messages extends NLS {
 	public static String OverviewPage_Exporting;
 	public static String OverviewPage_GeneralInfo;
 	public static String OverviewPage_GeneralInfoDescr;
+	public static String OverviewPage_GeneralInfoDescrLibrary;
 	public static String OverviewPage_Icon;
 	public static String OverviewPage_LaunchingAndDebuggingPHPApp;
 	public static String OverviewPage_LaunchingPHPApp;
@@ -126,6 +131,7 @@ public class Messages extends NLS {
 	public static String OverviewPage_OpenScript;
 	public static String OverviewPage_Overview;
 	public static String OverviewPage_PackageAndExport;
+	public static String OverviewPage_PackageAndExportLibrary;
 	public static String OverviewPage_PersistentResources;
 	public static String OverviewPage_PersistentResourcesDescription;
 	public static String OverviewPage_ScriptsDescription;

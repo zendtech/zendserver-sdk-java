@@ -9,6 +9,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPLibraryDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
@@ -53,6 +54,7 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK,
 				DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2,
+				DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY,
 				DeploymentDescriptorPackage.PARAMETERS,
 				DeploymentDescriptorPackage.VARIABLES,
 				DeploymentDescriptorPackage.PERSISTENT_RESOURCES });
@@ -65,7 +67,7 @@ public class DeploymentDescriptor extends ModelContainer implements
 	public void setType(String type) {
 		String oldType = this.type;
 		this.type = type;
-		fireChange(DeploymentDescriptorPackage.TYPE, type, oldType);
+		fireChange(DeploymentDescriptorPackage.PKG_TYPE, type, oldType);
 	}
 
 	public String getName() {
@@ -223,6 +225,11 @@ public class DeploymentDescriptor extends ModelContainer implements
 		return super
 				.getList(DeploymentDescriptorPackage.DEPENDENCIES_ZENDFRAMEWORK2);
 	}
+	
+	public List<IPHPLibraryDependency> getPHPLibraryDependencies() {
+		return super
+				.getList(DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY);
+	}
 
 	public List<String> getPersistentResources() {
 		return super.getList(DeploymentDescriptorPackage.PERSISTENT_RESOURCES);
@@ -231,7 +238,10 @@ public class DeploymentDescriptor extends ModelContainer implements
 	public void set(Feature key, String value) {
 		switch (key.id) {
 		case DeploymentDescriptorPackage.PKG_TYPE_ID:
-			setType(value);
+			ProjectType type = ProjectType.byName(value);
+			if (type != ProjectType.UNKNOWN) {
+				setType(value);
+			}
 			break;
 		case DeploymentDescriptorPackage.PKG_NAME_ID:
 			setName(value);

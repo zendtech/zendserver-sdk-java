@@ -10,15 +10,23 @@ import org.eclipse.ui.dialogs.ListDialog;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Messages;
 
 public class DependenciesMasterDetailsProvider implements MasterDetailsProvider {
 
-	public DependenciesMasterDetailsProvider() {
+	private IDescriptorContainer fModel;
+	
+	public DependenciesMasterDetailsProvider(IDescriptorContainer model) {
+		this.fModel = model;
 	}
 
 	public String getDescription() {
+		if (fModel.getDescriptorModel().getType() == ProjectType.LIBRARY) {
+			return Messages.DependenciesMasterDetailsProvider_DescriptionLibrary;
+		}
 		return Messages.DependenciesMasterDetailsProvider_Description;
 	}
 
@@ -33,7 +41,7 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 			all.addAll(descr.getZendComponentDependencies());
 			all.addAll(descr.getZendFrameworkDependencies());
 			all.addAll(descr.getZendFramework2Dependencies());
-			
+			all.addAll(descr.getPHPLibraryDependencies());
 			return all.toArray();
 		}
 
@@ -53,6 +61,8 @@ public class DependenciesMasterDetailsProvider implements MasterDetailsProvider 
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION),
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE),
+				DeploymentDescriptorFactory
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY),
 				DeploymentDescriptorFactory
 						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_ZENDSERVER),
 				DeploymentDescriptorFactory

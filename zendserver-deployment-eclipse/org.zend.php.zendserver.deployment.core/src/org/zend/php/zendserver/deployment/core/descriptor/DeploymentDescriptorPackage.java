@@ -84,6 +84,11 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final Feature DEPENDENCIES_ZSCOMPONENT = new Feature("dependencies/required/zendservercomponent", null, IModelObject.class, DEPENDENCIES_ZSCOMPONENT_ID); //$NON-NLS-1$
 	
+	public static final int DEPENDENCIES_LIBRARY_ID = 121;
+
+	public static final Feature DEPENDENCIES_LIBRARY = new Feature(
+			"dependencies/required/library", null, IModelObject.class, DEPENDENCIES_LIBRARY_ID); //$NON-NLS-1$
+	
 	public static final int PARAMETERS_ID = 18;
 	
 	public static final Feature PARAMETERS = new Feature("parameters/parameter", null, IModelObject.class, PARAMETERS_ID); //$NON-NLS-1$

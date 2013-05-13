@@ -17,7 +17,9 @@ public enum ProjectType {
 
 	LIBRARY("library"), //$NON-NLS-1$
 
-	APPLICATION("application"); //$NON-NLS-1$
+	APPLICATION("application"), //$NON-NLS-1$
+	
+	UNKNOWN(null);
 
 	private final String name;
 
@@ -34,7 +36,7 @@ public enum ProjectType {
 				}
 			}
 		}
-		return APPLICATION;
+		return UNKNOWN;
 	}
 
 	public String getName() {

@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPLibraryDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
@@ -102,6 +103,8 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 		} else if (element instanceof IZendComponentDependency) {
 			return Activator.getDefault().getImage(
 					Activator.IMAGE_ZENDSERVERCOMPONENT);
+		} else if (element instanceof IPHPLibraryDependency) {
+			return Activator.getDefault().getImage(Activator.IMAGE_LIBRARY);
 		}
 
 		return super.getImage(element);
@@ -169,6 +172,13 @@ public class DeploymentDescriptorLabelProvider extends LabelProvider {
 			return dep.getName()
 					+ format(dep.getEquals(), dep.getMin(), dep.getMax(),
 							dep.getConflicts());
+		} else if (element instanceof IPHPLibraryDependency) {
+			IPHPLibraryDependency dep = (IPHPLibraryDependency) element;
+			if (dep.getName() == null) {
+				return Messages.DeploymentDescriptorLabelProvider_PHPLibrary;
+			}
+			return dep.getName()
+					+ format(dep.getEquals(), dep.getMin(), dep.getMax(), null);
 		}
 
 		return super.getText(element);

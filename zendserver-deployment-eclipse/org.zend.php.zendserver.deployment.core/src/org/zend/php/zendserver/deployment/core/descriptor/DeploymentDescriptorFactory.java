@@ -10,6 +10,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.DirectiveDepe
 import org.zend.php.zendserver.deployment.core.internal.descriptor.ExtensionDependency;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.PHPDependency;
+import org.zend.php.zendserver.deployment.core.internal.descriptor.PHPLibraryDependency;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Parameter;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Variable;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.ZendComponentDependency;
@@ -44,6 +45,8 @@ public class DeploymentDescriptorFactory {
 				return new ZendServerDependency();
 			case DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT_ID:
 				return new ZendComponentDependency();
+			case DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY_ID:
+				return new PHPLibraryDependency();
 			case DeploymentDescriptorPackage.PARAMETERS_ID:
 				return new Parameter();
 		}
@@ -73,6 +76,8 @@ public class DeploymentDescriptorFactory {
 			return DeploymentDescriptorPackage.DEPENDENCIES_ZSCOMPONENT;
 		} else if (result instanceof IParameter) {
 			return DeploymentDescriptorPackage.PARAMETERS;
+		} else if (result instanceof IPHPLibraryDependency) {
+			return DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY;
 		}
 		
 		throw new IllegalArgumentException("Unknown model object "+result); //$NON-NLS-1$

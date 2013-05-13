@@ -5,6 +5,7 @@ import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.IDirectiveDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IExtensionDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IPHPDependency;
+import org.zend.php.zendserver.deployment.core.descriptor.IPHPLibraryDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.IVariable;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendComponentDependency;
@@ -22,6 +23,7 @@ public class DetailsPageProvider implements IDetailsPageProvider {
 	private IDetailsPage zscompPage;
 	private IDetailsPage paramsPage;
 	private IDetailsPage varPage;
+	private IDetailsPage libraryPage;
 
 	private DeploymentDescriptorEditor editor;
 	private Class type;
@@ -59,6 +61,12 @@ public class DetailsPageProvider implements IDetailsPageProvider {
 				phpPage = new PHPDependencyDetailsPage(editor);
 			}
 			return phpPage;
+		}
+		if (IPHPLibraryDependency.class.isAssignableFrom(clazz)) {
+			if (libraryPage == null) {
+				libraryPage = new PHPLibraryDependencyDetailsPage(editor);
+			}
+			return libraryPage;
 		}
 		if (IExtensionDependency.class.isAssignableFrom(clazz)) {
 			if (extensionPage == null) {

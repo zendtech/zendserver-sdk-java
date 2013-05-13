@@ -71,6 +71,8 @@ public interface IDeploymentDescriptor extends IModelContainer {
 	List<IZendFramework2Dependency> getZendFramework2Dependencies();
 	
 	List<IZendComponentDependency> getZendComponentDependencies();
+	
+	List<IPHPLibraryDependency> getPHPLibraryDependencies();
 
 	List<String> getPersistentResources();
 }
