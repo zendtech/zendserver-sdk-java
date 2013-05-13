@@ -105,7 +105,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 		layoutData.horizontalSpan = 3;
 		shouldStoreButton.setText(Messages.DevCloudDetailsComposite_7);
 		shouldStoreButton.setLayoutData(layoutData);
-		
+		shouldStoreButton.setSelection(true);
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.DevCloudDetailsComposite_0);
 		privateKeyText = new Text(composite, SWT.BORDER);
