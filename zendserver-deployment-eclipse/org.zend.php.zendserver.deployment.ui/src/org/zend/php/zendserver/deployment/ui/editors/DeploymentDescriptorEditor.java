@@ -39,10 +39,12 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
@@ -60,6 +62,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private SourcePage descriptorSourcePage;
 	private SourcePage propertiesSourcePage;
 	
+	private FormPage automationPage; 
+	
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
 		return new FormToolkit(Activator.getDefault().getFormColors(display));
@@ -70,9 +74,15 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			addPage(new OverviewPage(this, fModel));
 			addPage(new DescriptorMasterDetailsPage(
 					this,
-					new DependenciesMasterDetailsProvider(),
+					new DependenciesMasterDetailsProvider(fModel),
 					"dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
-			addPage(new AutomationPage(this, "automation", Messages.DeploymentDescriptorEditor_Scripts)); //$NON-NLS-1$
+			automationPage = new AutomationPage(
+					DeploymentDescriptorEditor.this, "automation", //$NON-NLS-1$
+					Messages.DeploymentDescriptorEditor_Scripts);
+			ProjectType type = fModel.getDescriptorModel().getType();
+			if (type == ProjectType.APPLICATION || type == ProjectType.UNKNOWN) {
+				addPage(automationPage);
+			}
 			addMappingPages();
 			descriptorSourcePage = new SourcePage("source", this, HelpContextIds.DEPLOYMENT_XML_TAB); //$NON-NLS-1$
 			addPage(descriptorSourcePage, getEditorInput());
@@ -185,20 +195,63 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			throw new PartInitException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
-		
+
 		fModel.connect(getDocument());
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
-		
-		fModel.getDescriptorModel().addListener(new IDescriptorChangeListener() {
 
-			public void descriptorChanged(ChangeEvent event) {
-				if (event.target instanceof IDeploymentDescriptor) {
-					handleModelUpdate((IDeploymentDescriptor)event.target);
-				}
-			}
-		});
+		fModel.getDescriptorModel().addListener(
+				new IDescriptorChangeListener() {
+
+					public void descriptorChanged(ChangeEvent event) {
+						if (event.target instanceof IDeploymentDescriptor) {
+							handleModelUpdate((IDeploymentDescriptor) event.target);
+						}
+						if (event.feature
+								.equals(DeploymentDescriptorPackage.PKG_TYPE)) {
+							if (event.newValue != null
+									&& !event.newValue.equals(event.oldValue)) {
+								handleTypeChanged((String) event.newValue);
+							}
+						}
+					}
+				});
 	}
 	
+	private void handleTypeChanged(String value) {
+		int count = DeploymentDescriptorEditor.this.getPageCount();
+		switch (ProjectType.byName(value)) {
+		case APPLICATION:
+			if (count != 5 && count != 3) {
+				return;
+			}
+			getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+
+				public void run() {
+					try {
+						DeploymentDescriptorEditor.this.addPage(2,
+								automationPage);
+					} catch (PartInitException e) {
+						Activator.log(e);
+					}
+				}
+			});
+			break;
+		case LIBRARY:
+			if (count != 6 && count != 4) {
+				return;
+			}
+			getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+
+				public void run() {
+					DeploymentDescriptorEditor.this.removePage(2);
+				}
+			});
+			break;
+		default:
+			break;
+		}
+	}
+
 	private void initMapping() throws PartInitException {
 		IFile propsFile = (IFile) fModel.getMappingFile();
 		propertiesInput = new FileEditorInput(propsFile);
@@ -420,10 +473,17 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 						if (getPageCount() == 6) {
 							return;
 						}
-						addPage(3, new DeploymentPropertiesPage(fModel, DeploymentDescriptorEditor.this, "package", //$NON-NLS-1$
+						int index = 3;
+						if (getPageCount() == 3) {
+							index--;
+						}
+						addPage(index, new DeploymentPropertiesPage(fModel,
+								DeploymentDescriptorEditor.this, "package", //$NON-NLS-1$
 								Messages.DeploymentDescriptorEditor_Package));
-						propertiesSourcePage = new PropertiesSourcePage("propertiesSource", DeploymentDescriptorEditor.this); //$NON-NLS-1$
-						addPage(4, propertiesSourcePage, getPropertiesInput());
+						propertiesSourcePage = new PropertiesSourcePage(
+								"propertiesSource", DeploymentDescriptorEditor.this); //$NON-NLS-1$
+						addPage(++index, propertiesSourcePage,
+								getPropertiesInput());
 					} catch (PartInitException e) {
 						Activator.log(e);
 					}

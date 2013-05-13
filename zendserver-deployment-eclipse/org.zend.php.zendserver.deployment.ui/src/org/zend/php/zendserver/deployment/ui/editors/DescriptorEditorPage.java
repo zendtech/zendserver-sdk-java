@@ -9,9 +9,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
+import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
@@ -79,23 +84,33 @@ public abstract class DescriptorEditorPage extends FormPage {
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-
 		ScrolledForm form = managedForm.getForm();
 		managedForm.getToolkit().decorateFormHeading(form.getForm());
 		form.setText(getTitle());
-		IToolBarManager mgr = form.getToolBarManager();
-		List<ITestingSectionContribution> contributions = getTestingContributions();
-		for (ITestingSectionContribution c : contributions) {
-			Action action = new ToolbarAction(c.getCommand(), c.getMode(),
-					c.getLabel(), c.getIcon());
-			mgr.add(action);
-		}
-		final String helpContextID = getHelpResource();
-		if (helpContextID != null) {
-			mgr.add(new HelpAction(helpContextID));
-		}
-
+		final IToolBarManager mgr = form.getToolBarManager();
+		ProjectType type = editor.getModel().getType();
+		resolveContributions(mgr, type);
 		mgr.update(true);
+		editor.getModel().addListener(new IDescriptorChangeListener() {
+
+			public void descriptorChanged(ChangeEvent event) {
+				if (event.feature.equals(DeploymentDescriptorPackage.PKG_TYPE)) {
+					if (event.newValue != null
+							&& !event.newValue.equals(event.oldValue)) {
+						mgr.removeAll();
+						ProjectType currentType = ProjectType
+								.byName((String) event.newValue);
+						resolveContributions(mgr, currentType);
+						Display.getDefault().asyncExec(new Runnable() {
+
+							public void run() {
+								mgr.update(true);
+							}
+						});
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -133,6 +148,25 @@ public abstract class DescriptorEditorPage extends FormPage {
 			}
 		}
 		return result;
+	}
+
+	private void resolveContributions(final IToolBarManager mgr,
+			ProjectType currentType) {
+		if (currentType == ProjectType.UNKNOWN) {
+			currentType = ProjectType.APPLICATION;
+		}
+		List<ITestingSectionContribution> contributions = getTestingContributions();
+		for (ITestingSectionContribution c : contributions) {
+			if (c.getType() == currentType) {
+				Action action = new ToolbarAction(c.getCommand(), c.getMode(),
+						c.getLabel(), c.getIcon());
+				mgr.add(action);
+			}
+		}
+		final String helpContextID = getHelpResource();
+		if (helpContextID != null) {
+			mgr.add(new HelpAction(helpContextID));
+		}
 	}
 	
 }

@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.core.internal.descriptor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
@@ -44,24 +45,31 @@ public abstract class ModelObject implements IModelObject {
 	
 	public void addListener(IDescriptorChangeListener listener) {
 		if (listeners == null) {
-			listeners = new ArrayList<IDescriptorChangeListener>();
+			listeners = Collections
+					.synchronizedList(new ArrayList<IDescriptorChangeListener>());
 		}
-		listeners.add(listener);
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
 	}
 	
 	public void removeListener(IDescriptorChangeListener listener) {
-		listeners.remove(listener);
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 	
 	protected void fireChange(ChangeEvent event) {
-		if (listeners != null) {
-			for (IDescriptorChangeListener l : listeners) {
-				l.descriptorChanged(event);
+		synchronized (listeners) {
+			if (listeners != null) {
+				for (IDescriptorChangeListener l : listeners) {
+					l.descriptorChanged(event);
+				}
 			}
-		}
-		
-		if (parent != null) {
-			((ModelObject) parent).fireChange(event);
+			
+			if (parent != null) {
+				((ModelObject) parent).fireChange(event);
+			}	
 		}
 	}
 	

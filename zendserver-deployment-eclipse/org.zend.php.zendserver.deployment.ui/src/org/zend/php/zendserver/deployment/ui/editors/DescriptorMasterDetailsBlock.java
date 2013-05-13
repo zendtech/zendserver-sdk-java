@@ -90,10 +90,10 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION
+		final Section section = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.setText(title);
-		section.setDescription(description);
+		section.setDescription(provider.getDescription());
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
 		TableWrapData tdd = new TableWrapData(TableWrapData.FILL_GRAB,
@@ -140,6 +140,7 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 
 			public void descriptorChanged(ChangeEvent event) {
+				section.setDescription(provider.getDescription());
 				refreshViewer(event.target);
 			}
 		});

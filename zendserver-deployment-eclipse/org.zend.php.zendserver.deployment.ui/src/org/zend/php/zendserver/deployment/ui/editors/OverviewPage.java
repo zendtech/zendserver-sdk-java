@@ -9,6 +9,8 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
@@ -18,11 +20,14 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorChangeListener;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -150,10 +155,41 @@ public class OverviewPage extends DescriptorEditorPage {
 		Section section = createStaticSection(toolkit, body,
 				Messages.OverviewPage_Exporting);
 		Composite container = createStaticSectionClient(toolkit, section);
-		createClient(container, Messages.OverviewPage_PackageAndExport,
-				toolkit, new HyperlinkAdapter() {
+		String content = Messages.OverviewPage_PackageAndExport;
+		if (fModel.getDescriptorModel().getType() == ProjectType.LIBRARY) {
+			content = Messages.OverviewPage_PackageAndExportLibrary;
+		}
+		final FormText text = createClient(container, content, toolkit,
+				new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						handleLinkClick(e.data);
+					}
+				});
+		fModel.getDescriptorModel().addListener(
+				new IDescriptorChangeListener() {
+
+					public void descriptorChanged(final ChangeEvent event) {
+						if (text == null || text.isDisposed()) {
+							return;
+						}
+						Display.getDefault().asyncExec(new Runnable() {
+
+							public void run() {
+								switch (fModel.getDescriptorModel().getType()) {
+								case LIBRARY:
+									text.setText(
+											Messages.OverviewPage_PackageAndExportLibrary,
+											true, false);
+									break;
+								default:
+									text.setText(
+											Messages.OverviewPage_PackageAndExport,
+											true, false);
+									break;
+								}
+								text.getParent().getParent().pack(true);
+							}
+						});
 					}
 				});
 		section.setClient(container);
@@ -232,15 +268,42 @@ public class OverviewPage extends DescriptorEditorPage {
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(1, false));
 
-		List<ITestingSectionContribution> contributions = getTestingContributions();
 		ProjectType type = fModel.getDescriptorModel().getType();
-		for (ITestingSectionContribution c : contributions) {
-			if (c.getType() == type) {
-			ContributionControl control = new ContributionControl(
-					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
-			control.createControl(sectionClient);
-			}
-		}
+		resolveContributions(sectionClient, type);
+		fModel.getDescriptorModel().addListener(
+				new IDescriptorChangeListener() {
+
+					public void descriptorChanged(final ChangeEvent event) {
+						if (sectionClient == null || sectionClient.isDisposed()) {
+							return;
+						}
+						Display.getDefault().asyncExec(new Runnable() {
+
+							public void run() {
+								Control[] children = sectionClient
+										.getChildren();
+								if (event.feature
+										.equals(DeploymentDescriptorPackage.PKG_TYPE)) {
+									if (event.newValue != null
+											&& !event.newValue
+													.equals(event.oldValue)) {
+										for (Control child : children) {
+											if (child instanceof ImageHyperlink) {
+												child.dispose();
+											}
+										}
+										ProjectType currentType = ProjectType
+												.byName((String) event.newValue);
+										resolveContributions(sectionClient,
+												currentType);
+										sectionClient.getParent().getParent()
+												.pack(true);
+									}
+								}
+							}
+						});
+					}
+				});
 	}
 
 	protected void updateTestingActions(Composite parent,
@@ -290,10 +353,39 @@ public class OverviewPage extends DescriptorEditorPage {
 				Messages.OverviewPage_Appdir));
 
 		FormToolkit toolkit = managedForm.getToolkit();
-		Section section = toolkit.createSection(body, Section.DESCRIPTION
+		final Section section = toolkit.createSection(body, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_GeneralInfo);
-		section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
+		switch (fModel.getDescriptorModel().getType()) {
+		case LIBRARY:
+			section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
+			break;
+		default:
+			section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
+			break;
+		}
+		fModel.getDescriptorModel().addListener(
+				new IDescriptorChangeListener() {
+
+					public void descriptorChanged(final ChangeEvent event) {
+						if (section == null || section.isDisposed()) {
+							return;
+						}
+						Display.getDefault().asyncExec(new Runnable() {
+
+							public void run() {
+								switch (fModel.getDescriptorModel().getType()) {
+								case LIBRARY:
+									section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
+									break;
+								default:
+									section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
+									break;
+								}
+							}
+						});
+					}
+				});
 		Composite sectionClient = toolkit.createComposite(section);
 		section.setClient(sectionClient);
 		sectionClient.setLayout(new GridLayout(3, false));
@@ -362,6 +454,21 @@ public class OverviewPage extends DescriptorEditorPage {
 	@Override
 	protected String getHelpResource() {
 		return HelpContextIds.OVERVIEW_TAB;
+	}
+
+	private void resolveContributions(final Composite sectionClient,
+			ProjectType currentType) {
+		if (currentType == ProjectType.UNKNOWN) {
+			currentType = ProjectType.APPLICATION;
+		}
+		List<ITestingSectionContribution> contributions = getTestingContributions();
+		for (ITestingSectionContribution c : contributions) {
+			if (c.getType() == currentType) {
+				ContributionControl control = new ContributionControl(
+						c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
+				control.createControl(sectionClient);
+			}
+		}
 	}
 
 }
