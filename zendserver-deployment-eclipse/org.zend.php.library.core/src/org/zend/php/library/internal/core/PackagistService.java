@@ -26,33 +26,33 @@ import org.zend.php.library.internal.json.JSONObject;
 
 /**
  * @author Wojciech Galanciak, 2013
- *
+ * 
  */
 public class PackagistService {
 
-	private static final String URL_TAG = "url";
-	private static final String RESULTS_TAG = "results";
-	private static final String TOTAL_TAG = "total";
-	private static final String VERSIONS_TAG = "versions";
-	private static final String TIME_TAG = "time";
-	private static final String HOMEPAGE_TAG = "homepage";
-	private static final String REQUIRE_TAG = "require";
-	private static final String VERSION_NORMALIZED_TAG = "version_normalized";
-	private static final String VERSION_TAG = "version";
-	private static final String DESCRIPTION_TAG = "description";
-	private static final String NAME_TAG = "name";
-	private static final String PACKAGE_TAG = "package";
+	private static final String URL_TAG = "url"; //$NON-NLS-1$
+	private static final String RESULTS_TAG = "results"; //$NON-NLS-1$
+	private static final String TOTAL_TAG = "total"; //$NON-NLS-1$
+	private static final String VERSIONS_TAG = "versions"; //$NON-NLS-1$
+	private static final String TIME_TAG = "time"; //$NON-NLS-1$
+	private static final String HOMEPAGE_TAG = "homepage"; //$NON-NLS-1$
+	private static final String REQUIRE_TAG = "require"; //$NON-NLS-1$
+	private static final String VERSION_NORMALIZED_TAG = "version_normalized"; //$NON-NLS-1$
+	private static final String VERSION_TAG = "version"; //$NON-NLS-1$
+	private static final String DESCRIPTION_TAG = "description"; //$NON-NLS-1$
+	private static final String NAME_TAG = "name"; //$NON-NLS-1$
+	private static final String PACKAGE_TAG = "package"; //$NON-NLS-1$
 
-	private static final String BASE_URL = "https://packagist.org/";
+	private static final String BASE_URL = "https://packagist.org/"; //$NON-NLS-1$
 
 	public static List<RepositoryPackage> getPackages(String query, int page) {
 		List<RepositoryPackage> result = new ArrayList<RepositoryPackage>();
 		Map<String, String> params = new TreeMap<String, String>();
-		params.put("q", query);
+		params.put("q", query); //$NON-NLS-1$
 		if (page > 1) {
-			params.put("page", String.valueOf(page));
+			params.put("page", String.valueOf(page)); //$NON-NLS-1$
 		}
-		String response = executeGetRequest(BASE_URL + "search.json", params,
+		String response = executeGetRequest(BASE_URL + "search.json", params, //$NON-NLS-1$
 				null, 200);
 		result.addAll(parsePackages(response));
 		return result;
@@ -60,15 +60,15 @@ public class PackagistService {
 
 	public static int getPagesSize(String query) {
 		Map<String, String> params = new TreeMap<String, String>();
-		params.put("q", query);
-		String response = executeGetRequest(BASE_URL + "search.json", params,
+		params.put("q", query); //$NON-NLS-1$
+		String response = executeGetRequest(BASE_URL + "search.json", params, //$NON-NLS-1$
 				null, 200);
 		return getPageNumber(response);
 	}
 
 	public static RepositoryPackage getPackageInfo(String name) {
-		String response = executeGetRequest(BASE_URL + "packages/" + name
-				+ ".json", null, null, 200);
+		String response = executeGetRequest(BASE_URL + "packages/" + name //$NON-NLS-1$
+				+ ".json", null, null, 200); //$NON-NLS-1$
 		return parseRepositoryPackage(response);
 	}
 

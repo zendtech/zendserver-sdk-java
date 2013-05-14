@@ -16,19 +16,19 @@ package org.zend.php.library.core;
 public class LibraryVersion implements Comparable<LibraryVersion> {
 
 	public static final LibraryVersion UNKNOWN = new LibraryVersion(-1, -1, -1,
-			-1, Suffix.NONE, -1, "unknown");
+			-1, Suffix.NONE, -1, "unknown"); //$NON-NLS-1$
 
 	public enum Suffix {
 
-		ALPHA("alpha"),
+		ALPHA("alpha"), //$NON-NLS-1$
 
-		BETA("beta"),
+		BETA("beta"), //$NON-NLS-1$
 
-		RC("rc"),
+		RC("rc"), //$NON-NLS-1$
 
-		DEV("dev"),
+		DEV("dev"), //$NON-NLS-1$
 
-		UNKNOWN(""),
+		UNKNOWN(""), //$NON-NLS-1$
 
 		NONE(null);
 
@@ -58,7 +58,7 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 		}
 
 		private static String parseSuffix(String name) {
-			return name.replaceAll("[0-9]", ""); // returns 123
+			return name.replaceAll("[0-9]", ""); // returns 123 //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -88,7 +88,7 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 	 * @see org.eclipse.php.internal.core.library.ILibraryVersion#getName()
 	 */
 	public String getName() {
-		return major + "." + minor + "." + build + "." + revision;
+		return major + "." + minor + "." + build + "." + revision; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/*
@@ -201,22 +201,22 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 		Suffix suffix = Suffix.NONE;
 		int suffixVersion = -1;
 		String toParse = name.trim();
-		if (name.equals("*")) {
+		if (name.equals("*")) { //$NON-NLS-1$
 			return UNKNOWN;
 		}
 
 		// e.g. v2.0.0
-		if (toParse.startsWith("v") || toParse.startsWith("V")) {
+		if (toParse.startsWith("v") || toParse.startsWith("V")) { //$NON-NLS-1$ //$NON-NLS-2$
 			toParse = toParse.substring(1);
 		}
 
 		// e.g. 2.0.0-dev or 2.0.0_dev,
 		int index = -1;
-		if (toParse.indexOf("-") != -1) {
-			index = toParse.indexOf("-");
+		if (toParse.indexOf("-") != -1) { //$NON-NLS-1$
+			index = toParse.indexOf("-"); //$NON-NLS-1$
 		}
-		if (toParse.indexOf("_") != -1) {
-			int i = toParse.indexOf("_");
+		if (toParse.indexOf("_") != -1) { //$NON-NLS-1$
+			int i = toParse.indexOf("_"); //$NON-NLS-1$
 			if (index == -1 || index > i) {
 				index = i;
 			}
@@ -230,13 +230,13 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 			toParse = toParse.substring(0, index);
 		}
 
-		String[] segments = toParse.split("\\.");
+		String[] segments = toParse.split("\\."); //$NON-NLS-1$
 		int[] result = new int[4];
 		for (int i = 0; i < result.length; i++) {
 			if (segments.length > i) {
-				if (segments[i].equalsIgnoreCase("x")) {
+				if (segments[i].equalsIgnoreCase("x")) { //$NON-NLS-1$
 					result[i] = 9999999;
-				} else if (segments[i].equalsIgnoreCase("*")) {
+				} else if (segments[i].equalsIgnoreCase("*")) { //$NON-NLS-1$
 					result[i] = -1;
 				} else {
 					try {
@@ -254,7 +254,7 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 	}
 
 	private static int parseSuffixVersion(String name) {
-		String val = name.replaceAll("[a-zA-Z]", ""); // returns 123
+		String val = name.replaceAll("[a-zA-Z]", ""); // returns 123 //$NON-NLS-1$ //$NON-NLS-2$
 		if (!val.isEmpty()) {
 			return Integer.valueOf(val);
 		}

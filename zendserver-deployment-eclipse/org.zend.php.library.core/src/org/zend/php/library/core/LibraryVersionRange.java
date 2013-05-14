@@ -15,17 +15,17 @@ package org.zend.php.library.core;
 public class LibraryVersionRange {
 
 	private enum Relation {
-		EQUAL("="),
+		EQUAL("="), //$NON-NLS-1$
 
-		GREATER(">"),
+		GREATER(">"), //$NON-NLS-1$
 
-		LESS("<"),
+		LESS("<"), //$NON-NLS-1$
 
-		GREATER_EQUAL(">="),
+		GREATER_EQUAL(">="), //$NON-NLS-1$
 
-		LESS_EQUAL("<="),
+		LESS_EQUAL("<="), //$NON-NLS-1$
 
-		APPROX("~"),
+		APPROX("~"), //$NON-NLS-1$
 
 		UNKNOWN(null);
 
@@ -60,7 +60,7 @@ public class LibraryVersionRange {
 
 	public static LibraryVersionRange getRange(String input) {
 		LibraryVersionRange range = new LibraryVersionRange();
-		String[] segments = input.split(",");
+		String[] segments = input.split(","); //$NON-NLS-1$
 		if (segments.length > 0) {
 			String down = null;
 			String up = null;

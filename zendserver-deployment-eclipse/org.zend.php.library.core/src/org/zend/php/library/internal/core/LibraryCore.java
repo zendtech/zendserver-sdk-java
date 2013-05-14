@@ -8,7 +8,9 @@
  *******************************************************************************/
 package org.zend.php.library.internal.core;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -56,6 +58,11 @@ public class LibraryCore extends Plugin {
 	 */
 	public static LibraryCore getDefault() {
 		return plugin;
+	}
+	
+	public static void log(Throwable e) {
+		getDefault().getLog().log(
+				new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
 	}
 
 }

@@ -27,6 +27,7 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.zend.php.library.core.LibraryManager;
 import org.zend.php.library.core.LibraryVersion;
 import org.zend.php.library.core.LibraryVersionRange;
 import org.zend.php.library.internal.core.CommandExecutor;
@@ -39,7 +40,7 @@ import org.zend.php.library.internal.json.JSONObject;
 
 /**
  * @author Wojciech Galanciak, 2013
- *
+ * 
  */
 public class ComposerService {
 
@@ -138,8 +139,10 @@ public class ComposerService {
 						for (String path : srcPaths) {
 							paths.add(new File(root, path).getAbsolutePath());
 						}
-						IPath key = new Path(createLibraryName(packageName,
-								libVersions[0]) + '/' + libVersions[1]);
+						IPath key = new Path(LibraryManager.createLibraryName(
+								packageName, libVersions[0])
+								+ '/'
+								+ libVersions[1]);
 						result.put(key, paths);
 					}
 				}
@@ -206,10 +209,6 @@ public class ComposerService {
 			return LibraryVersion.byName(version.substring(0, index));
 		}
 		return LibraryVersion.UNKNOWN;
-	}
-
-	public static String createLibraryName(String name, String version) {
-		return name.replace('/', '-') + " (" + version + ")";
 	}
 
 	private static String[] getLibraryVersions(String packageName, File vendor)
