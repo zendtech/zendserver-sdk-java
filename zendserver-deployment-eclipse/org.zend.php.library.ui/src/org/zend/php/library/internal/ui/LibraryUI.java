@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.zend.php.library.internal.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -22,6 +24,8 @@ public class LibraryUI extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.zend.php.library.ui"; //$NON-NLS-1$
+
+	public static final String IMAGE_DEPLOY_LIBRARY = "icons/obj16/library_obj.gif"; //$NON-NLS-1$
 
 	// The shared instance
 	private static LibraryUI plugin;
@@ -74,7 +78,12 @@ public class LibraryUI extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path); //$NON-NLS-1$
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static void log(Throwable e) {
+		getDefault().getLog().log(
+				new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
 	}
 
 }
