@@ -9,29 +9,20 @@ package org.zend.php.library.core.deploy;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
-import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.sdklib.application.ZendLibrary;
 import org.zend.webapi.core.connection.data.LibraryInfo;
 import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.LibraryVersion;
 import org.zend.webapi.core.connection.data.LibraryVersions;
-import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
@@ -42,22 +33,10 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
  * @author Wojciech Galanciak, 2013
  * 
  */
-public class SynchronizeLibraryJob extends AbstractLaunchJob {
+public class SynchronizeLibraryJob extends AbstractLibraryJob {
 
-	public SynchronizeLibraryJob(IDeploymentHelper helper, IProject project) {
-		super(Messages.deploymentJob_Title, helper, project.getLocation()
-				.toString());
-	}
-
-	public SynchronizeLibraryJob(IDeploymentHelper helper, String projectPath) {
-		super(Messages.deploymentJob_Title, helper, projectPath);
-	}
-
-	private ResponseCode responseCode;
-
-	protected SynchronizeLibraryJob(String name, IDeploymentHelper helper,
-			String projectPath) {
-		super(name, helper, projectPath);
+	public SynchronizeLibraryJob(LibraryDeployData data) {
+		super(Messages.deploymentJob_Title, data);
 	}
 
 	/*
@@ -71,9 +50,10 @@ public class SynchronizeLibraryJob extends AbstractLaunchJob {
 		ZendLibrary lib = new ZendLibrary(new EclipseMappingModelLoader());
 		lib.addStatusChangeListener(listener);
 		lib.setVariableResolver(new EclipseVariableResolver());
-		int id = findLibraryId(lib, helper.getTargetId());
+		int id = findLibraryId(lib, data.getTargetId());
 		if (id != -1) {
-			lib.synchronize(projectPath, id, helper.getTargetId());
+			lib.synchronize(data.getRoot().getAbsolutePath(), id,
+					data.getTargetId());
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -101,16 +81,8 @@ public class SynchronizeLibraryJob extends AbstractLaunchJob {
 	}
 
 	private int findLibraryId(ZendLibrary library, String targetId) {
-		IDescriptorContainer descContainer = DescriptorContainerManager
-				.getService()
-				.openDescriptorContainer(
-						ResourcesPlugin
-								.getWorkspace()
-								.getRoot()
-								.getProject(new Path(projectPath).lastSegment()));
-		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
-		String version = descModel.getReleaseVersion();
-		String name = descModel.getName();
+		String version = data.getVersion();
+		String name = data.getName();
 		LibraryList list = library.getStatus(targetId);
 		if (list != null) {
 			List<LibraryInfo> libs = list.getLibrariesInfo();
@@ -130,10 +102,6 @@ public class SynchronizeLibraryJob extends AbstractLaunchJob {
 			}
 		}
 		return -1;
-	}
-
-	public ResponseCode getResponseCode() {
-		return responseCode;
 	}
 
 }

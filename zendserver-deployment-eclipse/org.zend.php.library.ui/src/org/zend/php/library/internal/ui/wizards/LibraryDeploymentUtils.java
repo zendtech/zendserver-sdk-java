@@ -18,15 +18,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.library.core.LibraryManager;
+import org.zend.php.library.core.deploy.AbstractLibraryJob;
 import org.zend.php.library.core.deploy.DeployLibraryJob;
-import org.zend.php.library.core.deploy.LibraryDeploymentAttributes;
+import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.core.deploy.SynchronizeLibraryJob;
 import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
-import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -35,7 +33,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  */
 public class LibraryDeploymentUtils {
 
-	private AbstractLaunchJob job;
+	private AbstractLibraryJob job;
 
 	private boolean cancelled;
 
@@ -53,7 +51,7 @@ public class LibraryDeploymentUtils {
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			return verifyJobResult(job.getHelper(), project);
+			return verifyJobResult(job.getData());
 		} catch (InterruptedException e) {
 			LibraryUI.log(e);
 		}
@@ -67,7 +65,7 @@ public class LibraryDeploymentUtils {
 		return cancelled;
 	}
 
-	private int verifyJobResult(final IDeploymentHelper helper, IProject project)
+	private int verifyJobResult(LibraryDeployData data)
 			throws InterruptedException {
 		if (isCancelled()) {
 			return IStatus.CANCEL;
@@ -80,17 +78,14 @@ public class LibraryDeploymentUtils {
 				// TODO change it for a proper errorCode when it will be
 				// available
 				case INTERNAL_SERVER_ERROR:
-					return handleConflict(helper, project,
-							deploymentJob.getResponseCode());
+					return handleConflict(data, deploymentJob.getResponseCode());
 				default:
 					break;
 				}
 			}
 		}
-		boolean addLib = Boolean.valueOf(helper.getExtraAttributes().get(
-				LibraryDeploymentAttributes.ADD_LIBRARY.getName()));
-		if (addLib) {
-			LibraryManager.addDeployableLibrary(project);
+		if (data.isAddPHPLibrary()) {
+			LibraryManager.addDeployableLibrary(data);
 		}
 		return IStatus.OK;
 	}
@@ -100,19 +95,16 @@ public class LibraryDeploymentUtils {
 
 			public void run() {
 				LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(
-						project, Mode.DEPLOY);
+						project);
 				Shell shell = PlatformUI.getWorkbench().getDisplay()
 						.getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.setPageSize(550, 350);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-					IDeploymentHelper updatedHelper = wizard.getHelper();
-					job = new DeployLibraryJob(updatedHelper, project);
-					job.setHelper(updatedHelper);
-					job.setProjectPath(project);
+					LibraryDeployData data = wizard.getData();
+					job = new DeployLibraryJob(data);
 					job.addJobChangeListener(new JobChangeAdapter() {
-						@Override
 						public void done(IJobChangeEvent event) {
 							if (event.getResult().getSeverity() == IStatus.CANCEL) {
 								cancelled = true;
@@ -127,9 +119,9 @@ public class LibraryDeploymentUtils {
 		});
 	}
 
-	private int handleConflict(IDeploymentHelper helper, IProject project,
-			ResponseCode code) throws InterruptedException {
-		if (helper.isWarnUpdate()) {
+	private int handleConflict(LibraryDeployData data, ResponseCode code)
+			throws InterruptedException {
+		if (data.isWarnSynchronize()) {
 			switch (code) {
 			// TODO change it for a proper errorCode when it will be
 			// available
@@ -154,11 +146,11 @@ public class LibraryDeploymentUtils {
 			return IStatus.CANCEL;
 		} else {
 			dialogResult = false;
-			job = new SynchronizeLibraryJob(helper, project);
+			job = new SynchronizeLibraryJob(data);
 			job.setUser(true);
 			job.schedule();
 			job.join();
-			return verifyJobResult(job.getHelper(), project);
+			return verifyJobResult(job.getData());
 		}
 	}
 

@@ -7,27 +7,31 @@
  *******************************************************************************/
 package org.zend.php.library.internal.ui.wizards;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.Wizard;
+import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.core.deploy.LibraryDeploymentAttributes;
+import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
-import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 
 /**
  * @author Wojciech Galanciak, 2013
  * 
  */
-public class LibraryDeploymentWizard extends DeploymentWizard {
+public class LibraryDeploymentWizard extends Wizard {
 
-	public LibraryDeploymentWizard(IProject project, Mode mode) {
-		super(project, null, mode);
+	private LibraryDeployData data;
+	private LibraryConfigurationPage configPage;
+
+	public LibraryDeploymentWizard(IProject project) {
+		setDialogSettings(LibraryUI.getDefault().getDialogSettings());
+		init(project);
 	}
 
 	/*
@@ -38,83 +42,57 @@ public class LibraryDeploymentWizard extends DeploymentWizard {
 	 * addPages()
 	 */
 	public void addPages() {
-		this.configPage = new LibraryConfigurationPage(helper, getContainer(),
-				getWindowTitle(), description, help);
+		this.configPage = new LibraryConfigurationPage(data);
 		addPage(configPage);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard#
-	 * init(org.eclipse.core.resources.IProject,
-	 * org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper,
-	 * org.zend
-	 * .php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode)
+	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
-	protected void init(IProject project, IDeploymentHelper helper, Mode mode) {
-		IResource descriptor = project
-				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
-		this.project = project;
-		this.model = DescriptorContainerManager.getService()
-				.openDescriptorContainer((IFile) descriptor);
-		setNeedsProgressMonitor(true);
-		description = Messages.LibraryDeploymentWizard_Description;
-		// TODO change help context
-		help = null; // HelpContextIds.DEPLOYING_AN_APPLICATION;
-		this.helper = createDefaultHelper();
+	public boolean performFinish() {
+		data = configPage.getData();
+		saveSettings(data);
+		return true;
+	}
+
+	public LibraryDeployData getData() {
+		return data;
+	}
+
+	protected void init(IProject project) {
+		this.data = createDefaultData(project);
 		setWindowTitle(Messages.LibraryDeploymentWizard_Title);
+		setNeedsProgressMonitor(true);
 		// TODO set image
 		// image = Activator.IMAGE_WIZBAN_DEPLOY;
 		// setDefaultPageImageDescriptor(LibraryUI.getImageDescriptor(image));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard#
-	 * createDefaultHelper()
-	 */
-	protected IDeploymentHelper createDefaultHelper() {
-		IDeploymentHelper helper = super.createDefaultHelper();
-		Map<String, String> extraAttributes = new HashMap<String, String>();
-		extraAttributes.put(LibraryDeploymentAttributes.ADD_LIBRARY.getName(),
-				String.valueOf(true));
-		helper.setExtraAtttributes(extraAttributes);
-		return helper;
+	private LibraryDeployData createDefaultData(IProject project) {
+		IResource res = project
+				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		IDescriptorContainer model = DescriptorContainerManager.getService()
+				.openDescriptorContainer((IFile) res);
+		IDeploymentDescriptor descriptor = model.getDescriptorModel();
+		LibraryDeployData data = new LibraryDeployData();
+		data.setName(descriptor.getName());
+		data.setVersion(descriptor.getReleaseVersion());
+		data.setRoot(project.getLocation().toFile());
+		return data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard#
-	 * createHelper()
-	 */
-	protected IDeploymentHelper createHelper() {
-		IDeploymentHelper helper = configPage.getHelper();
-		helper.setProjectName(project.getName());
-		return helper;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard#
-	 * saveSettings
-	 * (org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper)
-	 */
-	protected void saveSettings(IDeploymentHelper helper) {
+	protected void saveSettings(LibraryDeployData data) {
 		IDialogSettings settings = getDialogSettings();
-		settings.put(LibraryDeploymentAttributes.TARGET_ID.getName(),
-				helper.getTargetId());
-		settings.put(LibraryDeploymentAttributes.WARN_UPDATE.getName(),
-				helper.isWarnUpdate());
-		settings.put(LibraryDeploymentAttributes.ADD_LIBRARY.getName(),
-				helper.isWarnUpdate());
+		if (settings != null) {
+			settings.put(LibraryDeploymentAttributes.TARGET_ID.getName(),
+					data.getTargetId());
+			settings.put(LibraryDeploymentAttributes.WARN_UPDATE.getName(),
+					data.isWarnSynchronize());
+			settings.put(LibraryDeploymentAttributes.ADD_LIBRARY.getName(),
+					data.isAddPHPLibrary());
+		}
 	}
 
 }

@@ -7,20 +7,16 @@
  *******************************************************************************/
 package org.zend.php.library.core.deploy;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
-import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
 import org.zend.sdklib.application.ZendLibrary;
-import org.zend.webapi.core.connection.response.ResponseCode;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
@@ -30,22 +26,10 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
  * @author Wojciech Galanciak, 2013
  * 
  */
-public class DeployLibraryJob extends AbstractLaunchJob {
+public class DeployLibraryJob extends AbstractLibraryJob {
 
-	public DeployLibraryJob(IDeploymentHelper helper, IProject project) {
-		super(Messages.deploymentJob_Title, helper, project.getLocation()
-				.toString());
-	}
-
-	public DeployLibraryJob(IDeploymentHelper helper, String projectPath) {
-		super(Messages.deploymentJob_Title, helper, projectPath);
-	}
-
-	private ResponseCode responseCode;
-
-	protected DeployLibraryJob(String name, IDeploymentHelper helper,
-			String projectPath) {
-		super(name, helper, projectPath);
+	public DeployLibraryJob(LibraryDeployData data) {
+		super(Messages.deploymentJob_Title, data);
 	}
 
 	/*
@@ -59,7 +43,7 @@ public class DeployLibraryJob extends AbstractLaunchJob {
 		ZendLibrary lib = new ZendLibrary(new EclipseMappingModelLoader());
 		lib.addStatusChangeListener(listener);
 		lib.setVariableResolver(new EclipseVariableResolver());
-		lib.deploy(projectPath, helper.getTargetId());
+		lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId());
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
@@ -82,10 +66,6 @@ public class DeployLibraryJob extends AbstractLaunchJob {
 					Messages.DeploymentLaunchJob_ConnectionRefusedMessage);
 		}
 		return new SdkStatus(listener.getStatus());
-	}
-
-	public ResponseCode getResponseCode() {
-		return responseCode;
 	}
 
 }
