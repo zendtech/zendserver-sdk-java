@@ -74,18 +74,16 @@ public class LibraryDeploymentWizard extends Wizard {
 		this.data = createDefaultData(root);
 		setWindowTitle(Messages.LibraryDeploymentWizard_Title);
 		setNeedsProgressMonitor(true);
-		// TODO set image
-		// image = Activator.IMAGE_WIZBAN_DEPLOY;
-		// setDefaultPageImageDescriptor(LibraryUI.getImageDescriptor(image));
+		setDefaultPageImageDescriptor(LibraryUI
+				.getImageDescriptor(LibraryUI.IMAGE_DEPLOY_WIZBAN));
 	}
 
 	protected void init(IProject project) {
 		this.data = createDefaultData(project);
 		setWindowTitle(Messages.LibraryDeploymentWizard_Title);
 		setNeedsProgressMonitor(true);
-		// TODO set image
-		// image = Activator.IMAGE_WIZBAN_DEPLOY;
-		// setDefaultPageImageDescriptor(LibraryUI.getImageDescriptor(image));
+		setDefaultPageImageDescriptor(LibraryUI
+				.getImageDescriptor(LibraryUI.IMAGE_DEPLOY_WIZBAN));
 	}
 
 	private LibraryDeployData createDefaultData(IProject project) {

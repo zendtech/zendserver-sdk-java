@@ -26,6 +26,7 @@ public class LibraryUI extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.zend.php.library.ui"; //$NON-NLS-1$
 
 	public static final String IMAGE_DEPLOY_LIBRARY = "icons/obj16/library_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DEPLOY_WIZBAN = "icons/wizban/deploy_lib_wiz.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static LibraryUI plugin;
