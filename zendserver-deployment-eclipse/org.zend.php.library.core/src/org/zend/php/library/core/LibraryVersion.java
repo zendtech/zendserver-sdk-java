@@ -242,7 +242,7 @@ public class LibraryVersion implements Comparable<LibraryVersion> {
 					try {
 						result[i] = Integer.valueOf(segments[i]);
 					} catch (NumberFormatException e) {
-						result[i] = 9999999;
+						result[i] = -1;
 					}
 				}
 			} else {

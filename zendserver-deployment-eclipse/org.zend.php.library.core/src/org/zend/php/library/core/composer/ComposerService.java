@@ -27,7 +27,7 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.zend.php.library.core.LibraryManager;
+import org.zend.php.library.core.LibraryUtils;
 import org.zend.php.library.core.LibraryVersion;
 import org.zend.php.library.core.LibraryVersionRange;
 import org.zend.php.library.internal.core.CommandExecutor;
@@ -140,7 +140,7 @@ public class ComposerService {
 							paths.add(new File(root, path).getAbsolutePath());
 						}
 						IPath key = new Path(
-								LibraryManager.createLibraryName(packageName)
+								LibraryUtils.createLibraryName(packageName)
 										+ '/' + libVersions[1]);
 						result.put(key, paths);
 					}

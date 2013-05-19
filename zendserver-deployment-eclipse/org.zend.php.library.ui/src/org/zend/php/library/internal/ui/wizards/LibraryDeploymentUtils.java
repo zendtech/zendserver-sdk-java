@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.library.internal.ui.wizards;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -58,6 +60,23 @@ public class LibraryDeploymentUtils {
 		return IStatus.OK;
 	}
 
+	public int openLibraryDeploymentWizard(File root) {
+		job = null;
+		try {
+			doOpenLibraryDeploymentWizard(root);
+			if (job == null) {
+				return IStatus.OK;
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(job.getData());
+		} catch (InterruptedException e) {
+			LibraryUI.log(e);
+		}
+		return IStatus.OK;
+	}
+
 	private boolean isCancelled() {
 		if (listener != null) {
 			return listener.isCancelled() || cancelled;
@@ -91,11 +110,20 @@ public class LibraryDeploymentUtils {
 	}
 
 	private void doOpenLibraryDeploymentWizard(final IProject project) {
+		LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(project);
+		doOpenLibraryDeploymentWizard(wizard);
+	}
+
+	private void doOpenLibraryDeploymentWizard(File root) {
+		LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(root);
+		doOpenLibraryDeploymentWizard(wizard);
+	}
+
+	private void doOpenLibraryDeploymentWizard(
+			final LibraryDeploymentWizard wizard) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
-				LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(
-						project);
 				Shell shell = PlatformUI.getWorkbench().getDisplay()
 						.getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);

@@ -15,6 +15,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.zend.php.library.core.LibraryVersion;
 import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.core.deploy.LibraryDeploymentAttributes;
 import org.zend.php.library.internal.ui.LibraryUI;
@@ -38,8 +40,10 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 
 	private String description;
 
-	private Label libraryName;
-	private Label libraryVersion;
+	private Label libraryNameLabel;
+	private Label libraryVersionLabel;
+	private Text libraryNameText;
+	private Text libraryVersionText;
 
 	private LibraryDeployData data;
 
@@ -54,22 +58,40 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 			final boolean resizeShell) {
 		Composite container = super.createContents(parent, resizeShell);
 		createDeployCombo(container);
-		libraryName = createLabelWithLabel(
-				Messages.LibraryConfigurationBlock_Name, null, container);
-		libraryVersion = createLabelWithLabel(
-				Messages.LibraryConfigurationBlock_Version, null, container);
+		if (data.getName() != null) {
+			libraryNameLabel = createLabelWithLabel(
+					Messages.LibraryConfigurationBlock_Name, null, container);
+		} else {
+			libraryNameText = createLabelWithText(
+					Messages.LibraryConfigurationBlock_Name, null, container,
+					false, 0);
+		}
+		if (data.getVersion() != null) {
+			libraryVersionLabel = createLabelWithLabel(
+					Messages.LibraryConfigurationBlock_Version, null, container);
+		} else {
+			libraryVersionText = createLabelWithText(
+					Messages.LibraryConfigurationBlock_Version, null,
+					container, false, 0);
+		}
 		warnUpdate = createLabelWithCheckbox(
 				Messages.LibraryConfigurationBlock_WarnRedeploy, null,
 				container);
-		addPHPLibrary = createLabelWithCheckbox(
-				Messages.LibraryConfigurationBlock_AddPHPLibrary, null,
-				container);
+		if (data.isEnableAddLibrary()) {
+			addPHPLibrary = createLabelWithCheckbox(
+					Messages.LibraryConfigurationBlock_AddPHPLibrary, null,
+					container);
+		}
 		return container;
 	}
 
 	public void initializeFields() {
-		libraryName.setText(data.getName());
-		libraryVersion.setText(data.getVersion());
+		if (data.getName() != null) {
+			libraryNameLabel.setText(data.getName());
+		}
+		if (data.getVersion() != null) {
+			libraryVersionLabel.setText(data.getVersion());
+		}
 		String targetId = data.getTargetId();
 		if ((targetId == null || targetId.isEmpty())) {
 			IDialogSettings settings = getDialogSettings();
@@ -92,14 +114,18 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 
 			String addLib = settings
 					.get(LibraryDeploymentAttributes.ADD_LIBRARY.getName());
-			if (addLib != null) {
-				addPHPLibrary.setSelection(Boolean.valueOf(addLib));
-			} else {
-				addPHPLibrary.setSelection(true);
+			if (addPHPLibrary != null) {
+				if (addLib != null) {
+					addPHPLibrary.setSelection(Boolean.valueOf(addLib));
+				} else {
+					addPHPLibrary.setSelection(true);
+				}
 			}
 		} else {
 			warnUpdate.setSelection(data.isWarnSynchronize());
-			addPHPLibrary.setSelection(true);
+			if (addPHPLibrary != null) {
+				addPHPLibrary.setSelection(true);
+			}
 		}
 	}
 
@@ -114,6 +140,26 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 			return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,
 					Messages.LibraryConfigurationBlock_NoTargetMessage);
 		}
+		if (libraryNameText != null && libraryNameText.getText().isEmpty()) {
+			return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,
+					Messages.LibraryConfigurationBlock_NameRequiredError);
+		}
+		if (libraryVersionText != null) {
+			if (libraryVersionText.getText().isEmpty()) {
+				return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,
+						Messages.LibraryConfigurationBlock_VersionRequiredError);
+			} else {
+				LibraryVersion version = LibraryVersion
+						.byName(libraryVersionText.getText());
+				if (version == null || version.getMajor() == -1
+						|| version.getMinor() == -1 || version.getBuild() == -1) {
+					return new Status(
+							IStatus.ERROR,
+							LibraryUI.PLUGIN_ID,
+							Messages.LibraryConfigurationBlock_VersionInvalidError);
+				}
+			}
+		}
 		return new Status(IStatus.OK, LibraryUI.PLUGIN_ID, description);
 	}
 
@@ -126,8 +172,16 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 		} else {
 			data.setWarnSynchronize(false);
 		}
-		if (addPHPLibrary.isEnabled()) {
+		if (libraryNameText != null) {
+			data.setName(libraryNameText.getText());
+		}
+		if (libraryVersionText != null) {
+			data.setVersion(libraryVersionText.getText());
+		}
+		if (data.isEnableAddLibrary() && addPHPLibrary.isEnabled()) {
 			data.setAddPHPLibrary(addPHPLibrary.getSelection());
+		} else {
+			data.setAddPHPLibrary(false);
 		}
 		return data;
 	}

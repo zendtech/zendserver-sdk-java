@@ -24,7 +24,7 @@ import org.eclipse.dltk.internal.ui.wizards.buildpath.BPUserLibraryElement;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
-import org.zend.php.library.core.LibraryManager;
+import org.zend.php.library.core.LibraryUtils;
 import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
 
@@ -79,7 +79,7 @@ public class ImportZpkWizard extends Wizard {
 												data.getName())));
 						return;
 					}
-					File root = LibraryManager.unzipToSharedFolder(
+					File root = LibraryUtils.unzipToSharedFolder(
 							data.getName(), data.getVersion(),
 							new File(data.getPath()));
 					BPUserLibraryElement element = new BPUserLibraryElement(

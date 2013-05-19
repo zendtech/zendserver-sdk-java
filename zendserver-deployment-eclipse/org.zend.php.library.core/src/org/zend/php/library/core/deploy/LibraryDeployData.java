@@ -23,9 +23,10 @@ public class LibraryDeployData {
 	private File root;
 	private boolean addPHPLibrary;
 	private boolean warnSynchronize;
+	private boolean enableAddLibrary;
 
-	public static LibraryDeployData getHelper(String path) {
-		return new LibraryDeployData();
+	public LibraryDeployData() {
+		this.enableAddLibrary = true;
 	}
 
 	public String getTargetId() {
@@ -52,6 +53,10 @@ public class LibraryDeployData {
 		return warnSynchronize;
 	}
 
+	public boolean isEnableAddLibrary() {
+		return enableAddLibrary;
+	}
+
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
 	}
@@ -74,6 +79,10 @@ public class LibraryDeployData {
 
 	public void setWarnSynchronize(boolean warnSynchronize) {
 		this.warnSynchronize = warnSynchronize;
+	}
+
+	public void setEnableAddLibrary(boolean enableAddLibrary) {
+		this.enableAddLibrary = enableAddLibrary;
 	}
 
 }

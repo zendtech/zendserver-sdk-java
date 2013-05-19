@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
-import org.zend.php.library.core.LibraryManager;
+import org.zend.php.library.core.LibraryUtils;
 import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
@@ -82,13 +82,13 @@ public class ImportZpkBlock extends AbstractBlock {
 					return;
 				}
 				zpkPathText.setText(res);
-				File deploymentFile = LibraryManager.unzipDescriptor(new File(
+				File deploymentFile = LibraryUtils.unzipDescriptor(new File(
 						res));
-				Document doc = LibraryManager
+				Document doc = LibraryUtils
 						.getDeploymentDescriptor(deploymentFile);
-				if (LibraryManager.getProjectType(doc) == ProjectType.LIBRARY) {
-					String name = LibraryManager.getLibraryName(doc);
-					String version = LibraryManager.getLibraryVersion(doc);
+				if (LibraryUtils.getProjectType(doc) == ProjectType.LIBRARY) {
+					String name = LibraryUtils.getLibraryName(doc);
+					String version = LibraryUtils.getLibraryVersion(doc);
 					libraryName.setText(name);
 					libraryVersion.setText(version);
 					listener.statusChanged(validatePage());

@@ -21,8 +21,11 @@ public class Messages extends NLS {
 	public static String LibraryConfigurationBlock_AddPHPLibrary;
 	public static String LibraryConfigurationBlock_DeployTo;
 	public static String LibraryConfigurationBlock_Name;
+	public static String LibraryConfigurationBlock_NameRequiredError;
 	public static String LibraryConfigurationBlock_NoTargetMessage;
 	public static String LibraryConfigurationBlock_Version;
+	public static String LibraryConfigurationBlock_VersionInvalidError;
+	public static String LibraryConfigurationBlock_VersionRequiredError;
 	public static String LibraryConfigurationBlock_WarnRedeploy;
 	public static String LibraryConfigurationPage_Title;
 	public static String LibraryDeploymentUtils_ConflictMessage;

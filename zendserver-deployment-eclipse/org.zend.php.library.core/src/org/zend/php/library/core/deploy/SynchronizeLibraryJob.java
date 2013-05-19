@@ -7,11 +7,16 @@
  *******************************************************************************/
 package org.zend.php.library.core.deploy;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.zend.php.library.core.LibraryUtils;
+import org.zend.php.library.internal.core.LibraryCore;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
@@ -52,8 +57,20 @@ public class SynchronizeLibraryJob extends AbstractLibraryJob {
 		lib.setVariableResolver(new EclipseVariableResolver());
 		int id = findLibraryId(lib, data.getTargetId());
 		if (id != -1) {
-			lib.synchronize(data.getRoot().getAbsolutePath(), id,
-					data.getTargetId());
+			if (new File(data.getRoot(),
+					DescriptorContainerManager.DESCRIPTOR_PATH).exists()) {
+				lib.synchronize(data.getRoot().getAbsolutePath(), id,
+						data.getTargetId());
+			} else {
+				try {
+					File root = LibraryUtils.getTemporaryDescriptor(
+							data.getName(), data.getVersion());
+					lib.synchronize(data.getRoot().getAbsolutePath(),
+							root.getAbsolutePath(), id, data.getTargetId());
+				} catch (IOException e) {
+					LibraryCore.log(e);
+				}
+			}
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}

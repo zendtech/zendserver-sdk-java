@@ -12,6 +12,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.library.core.deploy.LibraryDeployData;
+import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
 /**
@@ -22,10 +23,10 @@ public class LibraryConfigurationPage extends WizardPage implements
 		IStatusChangeListener {
 
 	private LibraryConfigurationBlock block;
-	private LibraryDeployData data;
 
 	protected LibraryConfigurationPage(LibraryDeployData data) {
-		super("Configuration Page");
+		super("Configuration Page"); //$NON-NLS-1$
+		setTitle(Messages.LibraryConfigurationPage_Title);
 		this.block = new LibraryConfigurationBlock(this, data);
 	}
 

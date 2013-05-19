@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.zend.php.library.core.LibraryManager;
+import org.zend.php.library.core.LibraryUtils;
 import org.zend.php.library.core.LibraryVersion;
 import org.zend.php.library.core.LibraryVersion.Suffix;
 import org.zend.php.library.core.LibraryVersionRange;
@@ -229,7 +229,7 @@ public class LibraryDetailsPage extends WizardPage {
 		if (repositoryPackage == null) {
 			return false;
 		}
-		String libName = LibraryManager.createLibraryName(repositoryPackage
+		String libName = LibraryUtils.createLibraryName(repositoryPackage
 				.getName());
 		String libVersion = DLTKCore.getUserLibraryVersion(libName,
 				PHPLanguageToolkit.getDefault());
