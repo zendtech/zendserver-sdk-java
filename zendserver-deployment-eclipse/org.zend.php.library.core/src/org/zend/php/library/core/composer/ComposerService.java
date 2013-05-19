@@ -139,10 +139,9 @@ public class ComposerService {
 						for (String path : srcPaths) {
 							paths.add(new File(root, path).getAbsolutePath());
 						}
-						IPath key = new Path(LibraryManager.createLibraryName(
-								packageName, libVersions[0])
-								+ '/'
-								+ libVersions[1]);
+						IPath key = new Path(
+								LibraryManager.createLibraryName(packageName)
+										+ '/' + libVersions[1]);
 						result.put(key, paths);
 					}
 				}

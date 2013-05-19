@@ -7,31 +7,20 @@
  *******************************************************************************/
 package org.zend.php.library.internal.ui.wizards;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.core.deploy.LibraryDeploymentAttributes;
 import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
-import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
-import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
-import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
-import org.zend.php.zendserver.deployment.debug.ui.wizards.AbstractBlock;
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.target.IZendTarget;
@@ -52,54 +41,36 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 	private Label libraryName;
 	private Label libraryVersion;
 
+	private LibraryDeployData data;
+
 	public LibraryConfigurationBlock(IStatusChangeListener listener,
-			String description) {
+			LibraryDeployData data) {
 		super(listener);
-		this.description = description;
+		this.data = data;
+		this.description = Messages.LibraryDeploymentWizard_Description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.deployment.debug.ui.wizards.AbstractBlock#
-	 * createContents(org.eclipse.swt.widgets.Composite, boolean)
-	 */
 	public Composite createContents(final Composite parent,
 			final boolean resizeShell) {
-		super.createContents(parent, resizeShell);
-		getContainer().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, false));
-		createDeployCombo(getContainer());
+		Composite container = super.createContents(parent, resizeShell);
+		createDeployCombo(container);
 		libraryName = createLabelWithLabel(
-				Messages.LibraryConfigurationBlock_Name, null, getContainer());
+				Messages.LibraryConfigurationBlock_Name, null, container);
 		libraryVersion = createLabelWithLabel(
-				Messages.LibraryConfigurationBlock_Version, null,
-				getContainer());
+				Messages.LibraryConfigurationBlock_Version, null, container);
 		warnUpdate = createLabelWithCheckbox(
 				Messages.LibraryConfigurationBlock_WarnRedeploy, null,
-				getContainer());
+				container);
 		addPHPLibrary = createLabelWithCheckbox(
 				Messages.LibraryConfigurationBlock_AddPHPLibrary, null,
-				getContainer());
-		return getContainer();
+				container);
+		return container;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.deployment.debug.ui.wizards.AbstractBlock#
-	 * initializeFields
-	 * (org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper)
-	 */
-	public void initializeFields(IDeploymentHelper helper) {
-		libraryName.setText(helper.getAppName());
-		IDescriptorContainer descContainer = DescriptorContainerManager
-				.getService().openDescriptorContainer(
-						ResourcesPlugin.getWorkspace().getRoot()
-								.getProject(helper.getProjectName()));
-		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
-		libraryVersion.setText(descModel.getReleaseVersion());
-		String targetId = helper.getTargetId();
+	public void initializeFields() {
+		libraryName.setText(data.getName());
+		libraryVersion.setText(data.getVersion());
+		String targetId = data.getTargetId();
 		if ((targetId == null || targetId.isEmpty())) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
@@ -116,7 +87,7 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 			if (warnUpdateVal != null) {
 				warnUpdate.setSelection(Boolean.valueOf(warnUpdateVal));
 			} else {
-				warnUpdate.setSelection(helper.isWarnUpdate());
+				warnUpdate.setSelection(data.isWarnSynchronize());
 			}
 
 			String addLib = settings
@@ -124,25 +95,19 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 			if (addLib != null) {
 				addPHPLibrary.setSelection(Boolean.valueOf(addLib));
 			} else {
-				Boolean value = Boolean
-						.valueOf(helper.getExtraAttributes().get(
-								LibraryDeploymentAttributes.ADD_LIBRARY
-										.getName()));
-				addPHPLibrary.setSelection(value);
+				addPHPLibrary.setSelection(true);
 			}
 		} else {
-			warnUpdate.setSelection(helper.isWarnUpdate());
-			Boolean value = Boolean.valueOf(helper.getExtraAttributes().get(
-					LibraryDeploymentAttributes.ADD_LIBRARY.getName()));
-			addPHPLibrary.setSelection(value);
+			warnUpdate.setSelection(data.isWarnSynchronize());
+			addPHPLibrary.setSelection(true);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.zend.php.zendserver.deployment.debug.ui.wizards.AbstractBlock#
-	 * validatePage()
+	 * @see
+	 * org.zend.php.library.internal.ui.wizards.AbstractBlock#validatePage()
 	 */
 	public IStatus validatePage() {
 		if (getTarget() == null) {
@@ -152,45 +117,19 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 		return new Status(IStatus.OK, LibraryUI.PLUGIN_ID, description);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.debug.ui.wizards.AbstractBlock#getHelper
-	 * ()
-	 */
-	public IDeploymentHelper getHelper() {
-		DeploymentHelper helper = new DeploymentHelper();
+	public LibraryDeployData getData() {
 		if (getTarget() != null) {
-			helper.setTargetId(getTarget().getId());
-			helper.setTargetHost(getTarget().getHost().getHost());
+			data.setTargetId(getTarget().getId());
 		}
-		helper.setOperationType(IDeploymentHelper.DEPLOY);
 		if (warnUpdate.isEnabled()) {
-			helper.setWarnUpdate(warnUpdate.getSelection());
+			data.setWarnSynchronize(warnUpdate.getSelection());
 		} else {
-			helper.setWarnUpdate(false);
+			data.setWarnSynchronize(false);
 		}
-		Map<String, String> extraAttributes = new HashMap<String, String>();
 		if (addPHPLibrary.isEnabled()) {
-			extraAttributes.put(
-					LibraryDeploymentAttributes.ADD_LIBRARY.getName(),
-					String.valueOf(addPHPLibrary.getSelection()));
-		} else {
-			extraAttributes.put(
-					LibraryDeploymentAttributes.ADD_LIBRARY.getName(),
-					String.valueOf(false));
+			data.setAddPHPLibrary(addPHPLibrary.getSelection());
 		}
-		helper.setExtraAtttributes(extraAttributes);
-		return helper;
-	}
-
-	public void setDeployComboEnabled(boolean value) {
-		targetsCombo.setEnabled(value);
-	}
-
-	public void setWarnUpdateEnabled(boolean value) {
-		warnUpdate.setEnabled(value);
+		return data;
 	}
 
 	private IZendTarget getTarget() {

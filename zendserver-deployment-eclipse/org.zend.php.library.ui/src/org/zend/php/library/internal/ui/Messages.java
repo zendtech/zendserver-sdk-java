@@ -7,6 +7,17 @@ public class Messages extends NLS {
 	public static String DeployLibraryContribution_Title;
 	public static String DeployLibraryHandler_WarningMessage;
 	public static String DeployLibraryHandler_WarningTitle;
+	public static String ImportZpkBlock_BrowseLabel;
+	public static String ImportZpkBlock_CannotParseNameError;
+	public static String ImportZpkBlock_CannotParseVersionError;
+	public static String ImportZpkBlock_Description;
+	public static String ImportZpkBlock_DialogTitle;
+	public static String ImportZpkBlock_NotLibaryError;
+	public static String ImportZpkBlock_ZpkFIleLabel;
+	public static String ImportZpkPage_Title;
+	public static String ImportZpkWizard_AlreadyExistsError;
+	public static String ImportZpkWizard_TaskTitle;
+	public static String ImportZpkWizard_Title;
 	public static String LibraryConfigurationBlock_AddPHPLibrary;
 	public static String LibraryConfigurationBlock_DeployTo;
 	public static String LibraryConfigurationBlock_Name;

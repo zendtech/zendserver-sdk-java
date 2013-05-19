@@ -229,8 +229,8 @@ public class LibraryDetailsPage extends WizardPage {
 		if (repositoryPackage == null) {
 			return false;
 		}
-		String libName = LibraryManager.createLibraryName(
-				repositoryPackage.getName(), getVersion());
+		String libName = LibraryManager.createLibraryName(repositoryPackage
+				.getName());
 		String libVersion = DLTKCore.getUserLibraryVersion(libName,
 				PHPLanguageToolkit.getDefault());
 		LibraryVersion existingVersion = LibraryVersion.byName(libVersion);
