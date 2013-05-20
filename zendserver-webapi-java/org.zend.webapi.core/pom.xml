@@ -48,24 +48,32 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.2</version>
                 <executions>
                     <execution>
-			<id>a2</id>
+                        <id>a2</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-	   <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.2</version>
                 <executions>
                     <execution>
-			<id>a1</id>
+                        <id>a1</id>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
@@ -98,7 +106,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>bindistro-descriptor.xml</descriptor>
-			<descriptor>full-distro-descriptor.xml</descriptor>
+                        <descriptor>full-distro-descriptor.xml</descriptor>
                     </descriptors>
                     <finalName>org.zend.webapi-${project.version}</finalName>
                     <outputDirectory>${project.build.directory}/output/distro</outputDirectory>
