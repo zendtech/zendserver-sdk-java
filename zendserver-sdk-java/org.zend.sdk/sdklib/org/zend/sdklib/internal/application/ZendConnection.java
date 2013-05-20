@@ -64,8 +64,7 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 	 *         does not exist, it returns <code>null</code>
 	 * @throws MalformedURLException
 	 */
-	public WebApiClient getClient(String targetId)
-			throws MalformedURLException {
+	public WebApiClient getClient(String targetId) throws MalformedURLException {
 		IZendTarget target = getTargetById(targetId);
 		if (target == null) {
 			final String er = "Target with id '" + targetId
@@ -74,7 +73,7 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 			throw new IllegalArgumentException(er);
 		}
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
-				target.getSecretKey()); 
+				target.getSecretKey());
 		String hostname = target.getHost().toString();
 		WebApiClient client = new WebApiClient(credentials, hostname,
 				SSLContextInitializer.instance.getRestletContext(), notifier);
@@ -86,7 +85,7 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 	protected IZendTarget getTargetById(String targetId) {
 		return manager.getTargetById(targetId);
 	}
-	
+
 	protected PackageBuilder getPackageBuilder(String path,
 			IVariableResolver variableResolver) {
 		PackageBuilder builder = null;
@@ -94,6 +93,22 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 			builder = new PackageBuilder(new File(path));
 		} else {
 			builder = new PackageBuilder(new File(path), mappingLoader, this);
+		}
+		if (variableResolver != null) {
+			builder.setVariableResolver(variableResolver);
+		}
+		return builder;
+	}
+
+	protected PackageBuilder getPackageBuilder(String path,
+			String configLocation, IVariableResolver variableResolver) {
+		PackageBuilder builder = null;
+		if (mappingLoader == null) {
+			builder = new PackageBuilder(new File(path), new File(
+					configLocation));
+		} else {
+			builder = new PackageBuilder(new File(path), new File(
+					configLocation), mappingLoader, this);
 		}
 		if (variableResolver != null) {
 			builder.setVariableResolver(variableResolver);
