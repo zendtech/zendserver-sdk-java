@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.Wizard;
 import org.w3c.dom.Document;
 import org.zend.php.library.core.LibraryUtils;
 import org.zend.php.library.core.deploy.LibraryDeployData;
@@ -28,18 +27,17 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
  * @author Wojciech Galanciak, 2013
  * 
  */
-public class LibraryDeploymentWizard extends Wizard {
+public class LibraryDeploymentWizard extends AbstractLibraryWizard {
 
-	private LibraryDeployData data;
 	private LibraryConfigurationPage configPage;
 
 	public LibraryDeploymentWizard(IProject project) {
-		setDialogSettings(LibraryUI.getDefault().getDialogSettings());
+		super();
 		init(project);
 	}
 
 	public LibraryDeploymentWizard(File root) {
-		setDialogSettings(LibraryUI.getDefault().getDialogSettings());
+		super();
 		init(root);
 	}
 
@@ -51,7 +49,7 @@ public class LibraryDeploymentWizard extends Wizard {
 	 * addPages()
 	 */
 	public void addPages() {
-		this.configPage = new LibraryConfigurationPage(data);
+		this.configPage = new LibraryConfigurationPage(getData());
 		addPage(configPage);
 	}
 
@@ -61,17 +59,13 @@ public class LibraryDeploymentWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		data = configPage.getData();
-		saveSettings(data);
+		setData(configPage.getData());
+		saveSettings(getData());
 		return true;
 	}
 
-	public LibraryDeployData getData() {
-		return data;
-	}
-
 	protected void init(File root) {
-		this.data = createDefaultData(root);
+		setData(createDefaultData(root));
 		setWindowTitle(Messages.LibraryDeploymentWizard_Title);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(LibraryUI
@@ -79,7 +73,7 @@ public class LibraryDeploymentWizard extends Wizard {
 	}
 
 	protected void init(IProject project) {
-		this.data = createDefaultData(project);
+		setData(createDefaultData(project));
 		setWindowTitle(Messages.LibraryDeploymentWizard_Title);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(LibraryUI

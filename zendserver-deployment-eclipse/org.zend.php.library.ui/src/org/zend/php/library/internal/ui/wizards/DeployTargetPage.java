@@ -11,29 +11,37 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
 /**
  * @author Wojciech Galanciak, 2013
- * 
+ *
  */
-public class ImportZpkPage extends WizardPage implements IStatusChangeListener {
+public class DeployTargetPage extends WizardPage implements
+		IStatusChangeListener {
 
-	private ImportZpkBlock block;
+	private DeployTargetBlock block;
 
-	protected ImportZpkPage() {
-		super("Configuration Page"); //$NON-NLS-1$
-		setTitle(Messages.ImportZpkPage_Title);
-		this.block = new ImportZpkBlock(this);
+	/**
+	 * Create the wizard.
+	 * 
+	 * @param data
+	 */
+	public DeployTargetPage(LibraryDeployData data) {
+		super(Messages.DeployTargetPage_TItle);
+		setTitle(Messages.DeployTargetPage_TItle);
+		setDescription(Messages.DeployTargetPage_2);
+		this.block = new DeployTargetBlock(this, data);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
+	 * org.zend.php.zendserver.deployment.debug.ui.wizards.ConfigurationPage
+	 * #createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite container = block.createContents(parent, true);
@@ -44,7 +52,7 @@ public class ImportZpkPage extends WizardPage implements IStatusChangeListener {
 		statusChanged(block.validatePage());
 	}
 
-	public ImportZpkData getData() {
+	public LibraryDeployData getData() {
 		return block.getData();
 	}
 

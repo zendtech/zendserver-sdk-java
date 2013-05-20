@@ -27,6 +27,7 @@ import org.zend.php.library.core.deploy.SynchronizeLibraryJob;
 import org.zend.php.library.internal.ui.LibraryUI;
 import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeListener;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
 /**
@@ -76,6 +77,23 @@ public class LibraryDeploymentUtils {
 		}
 		return IStatus.OK;
 	}
+	
+	public int openLibraryDeploymentWizard(IZendTarget target) {
+		job = null;
+		try {
+			doOpenLibraryDeploymentWizard(target);
+			if (job == null) {
+				return IStatus.OK;
+			}
+			job.setUser(true);
+			job.schedule();
+			job.join();
+			return verifyJobResult(job.getData());
+		} catch (InterruptedException e) {
+			LibraryUI.log(e);
+		}
+		return IStatus.OK;
+	}
 
 	private boolean isCancelled() {
 		if (listener != null) {
@@ -108,19 +126,24 @@ public class LibraryDeploymentUtils {
 		}
 		return IStatus.OK;
 	}
+	
+	private void doOpenLibraryDeploymentWizard(IZendTarget target) {
+		AbstractLibraryWizard wizard = new DeployTargetWizard(target);
+		doOpenLibraryDeploymentWizard(wizard);
+	}
 
-	private void doOpenLibraryDeploymentWizard(final IProject project) {
-		LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(project);
+	private void doOpenLibraryDeploymentWizard(IProject project) {
+		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(project);
 		doOpenLibraryDeploymentWizard(wizard);
 	}
 
 	private void doOpenLibraryDeploymentWizard(File root) {
-		LibraryDeploymentWizard wizard = new LibraryDeploymentWizard(root);
+		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(root);
 		doOpenLibraryDeploymentWizard(wizard);
 	}
 
 	private void doOpenLibraryDeploymentWizard(
-			final LibraryDeploymentWizard wizard) {
+			final AbstractLibraryWizard wizard) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {

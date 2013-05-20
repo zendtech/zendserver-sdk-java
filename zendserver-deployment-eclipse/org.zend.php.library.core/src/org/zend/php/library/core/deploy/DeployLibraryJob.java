@@ -49,8 +49,9 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 		ZendLibrary lib = new ZendLibrary(new EclipseMappingModelLoader());
 		lib.addStatusChangeListener(listener);
 		lib.setVariableResolver(new EclipseVariableResolver());
-		if (new File(data.getRoot(), DescriptorContainerManager.DESCRIPTOR_PATH)
-				.exists()) {
+		if (data.getRoot().getName().endsWith(".zpk") //$NON-NLS-1$
+				|| new File(data.getRoot(),
+						DescriptorContainerManager.DESCRIPTOR_PATH).exists()) {
 			lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId());
 		} else {
 			try {
