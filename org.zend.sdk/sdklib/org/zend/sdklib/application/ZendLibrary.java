@@ -94,9 +94,13 @@ public class ZendLibrary extends ZendConnection {
 		return null;
 	}
 
-	public LibraryList deploy(String path, String targetId) {
+	public LibraryList deploy(String path, String configLocation,
+			String targetId) {
 		if (path != null) {
-			File zendPackage = createPackage(path);
+			File zendPackage = new File(path);
+			if (!path.endsWith(".zpk")) {
+				zendPackage = createPackage(path, configLocation);
+			}
 			try {
 				if (zendPackage != null) {
 					WebApiClient client = getClient(targetId);
@@ -130,9 +134,13 @@ public class ZendLibrary extends ZendConnection {
 		return null;
 	}
 
-	public LibraryList synchronize(String path, int id, String targetId) {
+	public LibraryList deploy(String path, String targetId) {
+		return deploy(path, path, targetId);
+	}
+	
+	public LibraryList synchronize(String path, String configLocation, int id, String targetId) {
 		if (path != null) {
-			File zendPackage = createPackage(path);
+			File zendPackage = createPackage(path, configLocation);
 			try {
 				if (zendPackage != null) {
 					WebApiClient client = getClient(targetId);
@@ -168,7 +176,11 @@ public class ZendLibrary extends ZendConnection {
 		return null;
 	}
 
-	private File createPackage(String path) {
+	public LibraryList synchronize(String path, int id, String targetId) {
+		return synchronize(path, path, id, targetId);
+	}
+
+	private File createPackage(String path, String configLocation) {
 		File file = new File(path);
 		if (!file.exists()) {
 			log.error("Path does not exist: " + file);
@@ -178,11 +190,12 @@ public class ZendLibrary extends ZendConnection {
 			File tempFile = getTempFile(path);
 			if (tempFile.isDirectory()) {
 				File[] children = tempFile.listFiles();
-				if (children.length == 1) {
+				if (children.length == 1
+						&& children[0].getName().endsWith(".zpk")) {
 					return children[0];
 				}
 			}
-			return getPackageBuilder(path, variableResolver)
+			return getPackageBuilder(path, configLocation, variableResolver)
 					.createDeploymentPackage(tempFile);
 		} else {
 			return file;

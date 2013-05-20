@@ -54,36 +54,60 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private ZipOutputStream out;
 	private File container;
+	private File configLocation;
 	private IMappingModel model;
 
 	private Set<String> addedPaths;
 	private IVariableResolver variableResolver;
 
-	public PackageBuilder(File container, IMappingLoader loader,
-			IChangeNotifier notifier) {
+	public PackageBuilder(File container, File configLocation,
+			IMappingLoader loader, IChangeNotifier notifier) {
 		super(notifier);
 		this.container = container;
+		this.configLocation = configLocation;
 		this.model = loader != null ? MappingModelFactory.createModel(loader,
-				container) : MappingModelFactory.createDefaultModel(container);
+				configLocation) : MappingModelFactory
+				.createDefaultModel(configLocation);
 		this.addedPaths = new HashSet<String>();
+	}
+
+	public PackageBuilder(File container, File configLocation,
+			IChangeNotifier notifier) {
+		this(container, configLocation, null, notifier);
+	}
+
+	public PackageBuilder(File container, File configLocation,
+			IMappingLoader loader) {
+		super();
+		this.container = container;
+		this.configLocation = configLocation;
+		this.model = loader != null ? MappingModelFactory.createModel(loader,
+				configLocation) : MappingModelFactory
+				.createDefaultModel(configLocation);
+		this.addedPaths = new HashSet<String>();
+	}
+
+	public PackageBuilder(File container, File configLocation) {
+		this(container, configLocation, (IMappingLoader) null);
+	}
+
+	public PackageBuilder(File container, IMappingLoader loader,
+			IChangeNotifier notifier) {
+		this(container, container, loader, notifier);
 	}
 
 	public PackageBuilder(File container, IChangeNotifier notifier) {
-		this(container, null, notifier);
+		this(container, container, notifier);
 	}
 
 	public PackageBuilder(File container, IMappingLoader loader) {
-		super();
-		this.container = container;
-		this.model = loader != null ? MappingModelFactory.createModel(loader,
-				container) : MappingModelFactory.createDefaultModel(container);
-		this.addedPaths = new HashSet<String>();
+		this(container, container, loader);
 	}
 
 	public PackageBuilder(File container) {
 		this(container, (IMappingLoader) null);
 	}
-	
+
 	public void setVariableResolver(IVariableResolver variableResolver) {
 		this.variableResolver = variableResolver;
 	}
@@ -100,8 +124,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					"Location cannot be null or non-existing directory"));
 			return null;
 		}
-		container = container.getCanonicalFile();
-		String name = getPackageName(container);
+		configLocation = configLocation.getCanonicalFile();
+		String name = getPackageName(configLocation);
 		if (name == null) {
 			return null;
 		}
@@ -129,7 +153,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Package creation", "Creating " + result.getName()
 							+ " deployment package...", calculateTotalWork()));
-			File descriptorFile = new File(container,
+			File descriptorFile = new File(configLocation,
 					ProjectResourcesWriter.DESCRIPTOR);
 			addFileToZip(descriptorFile, null, null, null, false);
 			resolveIconAndLicence();
@@ -172,7 +196,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private void resolveIconAndLicence() {
-		String icon = getIconName(container);
+		String icon = getIconName(configLocation);
 		if (icon != null) {
 			try {
 				addFileToZip(new File(container, icon), null, null, null, false);
@@ -181,7 +205,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 				// not valid
 			}
 		}
-		String license = getLicenseName(container);
+		String license = getLicenseName(configLocation);
 		if (license != null) {
 			try {
 				addFileToZip(new File(container, license), null, null, null,
@@ -194,8 +218,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	}
 
 	private void resolveMappings() throws IOException {
-		String appdir = getAppdirName(container);
-		String scriptsdir = getScriptsdirName(container);
+		String appdir = getAppdirName(configLocation);
+		String scriptsdir = getScriptsdirName(configLocation);
 		if (appdir != null) {
 			if (!appdir.isEmpty()) {
 				addNewFolderToZip(new File(container, appdir));
@@ -345,7 +369,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String containerPath = container.getAbsolutePath();
 		int position = containerPath.length() + 1;
 		if (!path.startsWith(containerPath) || position >= path.length()) {
-			return path;
+			containerPath = configLocation.getAbsolutePath();
+			position = containerPath.length() + 1;
+			if (!path.startsWith(containerPath) || position >= path.length()) {
+				return path;
+			}
 		}
 		return path.substring(position);
 	}
@@ -434,7 +462,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private void createDefaultModel() throws IOException {
 		if (container.isDirectory()) {
-			String scriptdir = getScriptsdirName(container);
+			String scriptdir = getScriptsdirName(configLocation);
 			File[] files = container.listFiles();
 			for (File file : files) {
 				String name = file.getName();
