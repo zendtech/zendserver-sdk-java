@@ -111,6 +111,41 @@ public abstract class AbstractBlock {
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
 	}
+	
+	protected Text createLabelWithText(String labelText, String tooltip,
+			Composite container, boolean required, int style) {
+		Label label = new Label(container, SWT.NONE);
+		if (required) {
+			labelText += " * "; //$NON-NLS-1$
+		}
+		label.setText(labelText);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		Text text = new Text(container, SWT.BORDER | SWT.SINGLE | style);
+		text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				listener.statusChanged(validatePage());
+			}
+		});
+		text.setToolTipText(tooltip);
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return text;
+	}
+	
+	protected Label createLabelWithLabel(String labelText, String tooltip,
+			Composite container) {
+		Label label = new Label(container, SWT.NONE);
+		label.setText(labelText);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		Label text = new Label(container, SWT.SINGLE);
+		text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				listener.statusChanged(validatePage());
+			}
+		});
+		text.setToolTipText(tooltip);
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return text;
+	}
 
 	protected Button createLabelWithCheckbox(String desc, String tooltip, Composite composite) {
 		Button button = new Button(composite, SWT.CHECK);

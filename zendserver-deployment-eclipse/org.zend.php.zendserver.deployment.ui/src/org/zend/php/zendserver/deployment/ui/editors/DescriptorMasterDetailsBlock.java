@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.DetailsPart;
@@ -139,9 +140,13 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 		viewer.setInput(editor.getModel());
 		editor.getModel().addListener(new IDescriptorChangeListener() {
 
-			public void descriptorChanged(ChangeEvent event) {
-				section.setDescription(provider.getDescription());
-				refreshViewer(event.target);
+			public void descriptorChanged(final ChangeEvent event) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						section.setDescription(provider.getDescription());
+						refreshViewer(event.target);
+					}
+				});
 			}
 		});
 		
