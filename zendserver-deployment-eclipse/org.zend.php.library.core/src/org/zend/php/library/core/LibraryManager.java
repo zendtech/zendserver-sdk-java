@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IAccessRule;
 import org.eclipse.dltk.core.IBuildpathAttribute;
@@ -26,6 +27,7 @@ import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.internal.core.BuildpathEntry;
 import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
+import org.osgi.framework.Bundle;
 import org.zend.php.library.core.deploy.LibraryDeployData;
 import org.zend.php.library.internal.core.LibraryCore;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -40,26 +42,17 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
  */
 public class LibraryManager {
 
-	private static final File SHARE_FOLDER;
+	private static final String SHARED_FOLDER_NAME = "libraries"; //$NON-NLS-1$
+	private static final File SHARED_FOLDER;
 
 	static {
-		final String property = System.getProperty("user.home");
-		final File user = new File(property);
-		SHARE_FOLDER = new File(user.getAbsolutePath() + File.separator
-				+ ".zend" + File.separator + "libraries");
-		if (!SHARE_FOLDER.exists()) {
-			SHARE_FOLDER.mkdir();
+		Bundle bundle = Platform.getBundle(LibraryCore.PLUGIN_ID);
+		SHARED_FOLDER = Platform.getStateLocation(bundle)
+				.append(SHARED_FOLDER_NAME).toFile();
+		if (!SHARED_FOLDER.exists()) {
+			SHARED_FOLDER.mkdirs();
 		}
 	}
-
-	/*
-	 * public static String[] importZPKLibrary(File zpkFile) { File folder =
-	 * unzipDescriptor(zpkFile); if (folder != null) { Document descriptor =
-	 * getDeploymentDescriptor(folder); String name =
-	 * getLibraryName(descriptor); String version =
-	 * getLibraryVersion(descriptor); folder.deleteOnExit(); return new String[]
-	 * { name, version }; } return null; }
-	 */
 
 	public static void addDeployableLibrary(LibraryDeployData data) {
 		addLibrary(data.getName(), data.getVersion(), data.getRoot());
@@ -81,18 +74,13 @@ public class LibraryManager {
 		}
 		addPHPLibrary(name, version);
 	}
-
-	/*
-	 * public static String[] importZPKLibrary(File zpkFile) { File folder =
-	 * unzipDescriptor(zpkFile); if (folder != null) { Document descriptor =
-	 * getDeploymentDescriptor(folder); String name =
-	 * getLibraryName(descriptor); String version =
-	 * getLibraryVersion(descriptor); folder.deleteOnExit(); return new String[]
-	 * { name, version }; } return null; }
-	 */
 	
+	public static File getSharedFolder() {
+		return SHARED_FOLDER;
+	}
+
 	protected static File getLibraryRoot(String version, String name) {
-		File libFolder = new File(SHARE_FOLDER, name);
+		File libFolder = new File(SHARED_FOLDER, name);
 		File versionFolder = new File(libFolder, version);
 		if (!versionFolder.exists()) {
 			versionFolder.mkdirs();
@@ -114,10 +102,8 @@ public class LibraryManager {
 						EnvironmentManager.getLocalEnvironment(), Path
 								.fromOSString(getLibraryRoot(version, name)
 										.getAbsolutePath())), false,
-				BuildpathEntry.INCLUDE_ALL, // inclusion patterns
-				BuildpathEntry.EXCLUDE_NONE, // exclusion patterns
-				new IAccessRule[0], false, // no access rules to combine
-				new IBuildpathAttribute[0], true);
+				BuildpathEntry.INCLUDE_ALL, BuildpathEntry.EXCLUDE_NONE,
+				new IAccessRule[0], false, new IBuildpathAttribute[0], true);
 		ModelManager.getUserLibraryManager().setUserLibrary(
 				LibraryUtils.createLibraryName(name), version,
 				new IBuildpathEntry[] { entry }, false,
@@ -141,7 +127,7 @@ public class LibraryManager {
 			relativePath = packageName + File.separator + version
 					+ relativePath;
 		}
-		File libFile = new File(SHARE_FOLDER, relativePath);
+		File libFile = new File(SHARED_FOLDER, relativePath);
 		if (lib.isDirectory()) {
 			if (!libFile.exists()) {
 				libFile.mkdirs();
@@ -194,7 +180,7 @@ public class LibraryManager {
 	}
 
 	private static boolean isExist(String version, String name) {
-		File libFolder = new File(SHARE_FOLDER, name);
+		File libFolder = new File(SHARED_FOLDER, name);
 		if (libFolder.exists()) {
 			File versionFolder = new File(libFolder, version);
 			return versionFolder.exists();
