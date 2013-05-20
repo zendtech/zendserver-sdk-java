@@ -48,6 +48,21 @@ public class Messages extends NLS {
 	public static String LibraryDeploymentUtils_Yes;
 	public static String LibraryDeploymentWizard_Description;
 	public static String LibraryDeploymentWizard_Title;
+	public static String UserLibraryWizardPage_AddDependency;
+	public static String UserLibraryWizardPage_AddToSource;
+	public static String UserLibraryWizardPage_Browse;
+	public static String UserLibraryWizardPage_DialogDescription;
+	public static String UserLibraryWizardPage_DialogTitle;
+	public static String UserLibraryWizardPage_EditDescription;
+	public static String UserLibraryWizardPage_error_alreadyoncp;
+	public static String UserLibraryWizardPage_ListDescription;
+	public static String UserLibraryWizardPage_Manage;
+	public static String UserLibraryWizardPage_NewDescription;
+	public static String UserLibraryWizardPage_NoSelectionError;
+	public static String UserLibraryWizardPage_SourceFolder;
+	public static String UserLibraryWizardPage_SourceFolderNotExist;
+	public static String UserLibraryWizardPage_title;
+	public static String UserLibraryWizardPage_TooManyError;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

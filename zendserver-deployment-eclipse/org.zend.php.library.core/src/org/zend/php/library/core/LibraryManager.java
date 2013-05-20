@@ -74,7 +74,19 @@ public class LibraryManager {
 		}
 		addPHPLibrary(name, version);
 	}
-	
+
+	public static void addLibraryToProject(File destination, File source,
+			String name) {
+		File destFile = new File(destination, name);
+		if (!destFile.exists()) {
+			try {
+				copy(source, destFile, source.getAbsolutePath().length());
+			} catch (IOException e) {
+				LibraryCore.log(e);
+			}
+		}
+	}
+
 	public static File getSharedFolder() {
 		return SHARED_FOLDER;
 	}
@@ -142,6 +154,28 @@ public class LibraryManager {
 			}
 			InputStream in = new FileInputStream(lib);
 			OutputStream out = new FileOutputStream(libFile);
+			copyInputStream(in, out);
+		}
+	}
+
+	private static void copy(File sourceFile, File destFile, int root)
+			throws IOException {
+		String relativePath = sourceFile.getAbsolutePath().substring(root);
+		File file = new File(destFile, relativePath);
+		if (sourceFile.isDirectory()) {
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			File[] files = sourceFile.listFiles();
+			for (File f : files) {
+				copy(f, destFile, root);
+			}
+		} else {
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			InputStream in = new FileInputStream(sourceFile);
+			OutputStream out = new FileOutputStream(file);
 			copyInputStream(in, out);
 		}
 	}
