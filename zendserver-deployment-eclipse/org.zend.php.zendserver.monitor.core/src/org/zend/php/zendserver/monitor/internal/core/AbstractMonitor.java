@@ -312,9 +312,11 @@ public abstract class AbstractMonitor extends Job {
 		if (monitor == null) {
 			monitor = new ZendMonitor(targetId);
 			issues = monitor.getOpenIssues();
-			offset += issues.size();
-			lastTime = monitor.getLastEventTime(issues.get(issues.size() - 1),
-					target);
+			if (issues != null && issues.size() > 0) {
+				offset += issues.size();
+				lastTime = monitor.getLastEventTime(
+						issues.get(issues.size() - 1), target);
+			}
 		} else {
 			issues = monitor.getIssues(Filter.ALL_OPEN_EVENTS, offset);
 			if (issues != null && issues.size() > 0) {
