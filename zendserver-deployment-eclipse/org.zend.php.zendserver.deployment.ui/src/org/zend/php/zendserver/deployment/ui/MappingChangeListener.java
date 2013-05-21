@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -91,7 +93,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 
 	private boolean handleAdded(IMappingModel model, IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		if (checkIfValid(resource)) {
+		if (checkIfValid(resource, model)) {
 			String relativePath = resource.getProjectRelativePath().toString();
 			if (!relativePath.isEmpty()) {
 				return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
@@ -103,7 +105,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 
 	private boolean handleRemoved(IMappingModel model, IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		if (checkIfValid(resource)) {
+		if (checkIfValid(resource, model)) {
 			String relativePath = resource.getProjectRelativePath().toString();
 			return model.removeMapping(IMappingModel.APPDIR, Type.INCLUDE,
 					relativePath);
@@ -111,7 +113,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 		return false;
 	}
 
-	private boolean checkIfValid(IResource resource) {
+	private boolean checkIfValid(IResource resource, IMappingModel model) {
 		if (resource != null) {
 			String name = resource.getName();
 			if (checkHiddenFile(resource)) {
@@ -122,6 +124,27 @@ public class MappingChangeListener implements IResourceChangeListener {
 			}
 			if (name.equals(DescriptorContainerManager.DESCRIPTOR_PATH)) {
 				return false;
+			}
+			
+			try {
+				String[] folders = model.getFolders(resource
+						.getProjectRelativePath().toString());
+				if (folders != null && folders.length > 0) {
+					return false;
+				}
+			} catch (IOException e) {
+				// should not appear
+			}
+
+			IProject project = resource.getProject();
+			if (project != null) {
+				IDescriptorContainer container = DescriptorContainerManager
+						.getService().openDescriptorContainer(project);
+				IDeploymentDescriptor desc = container.getDescriptorModel();
+				String scripts = desc.getScriptsRoot();
+				if (resource.getName().equals(scripts)) {
+					return false;
+				}
 			}
 			return true;
 		}
