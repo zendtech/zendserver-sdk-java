@@ -267,6 +267,10 @@ public class UserLibraryWizardPage extends NewElementWizardPage {
 		if (containerEntry != null
 				&& containerEntry.getPath().segmentCount() > 1) {
 			selected = containerEntry.getPath().segment(1);
+			int pos = selected.indexOf("#"); //$NON-NLS-1$
+			if (pos != -1) {
+				selected = selected.substring(pos + 1);
+			}
 		} else {
 			// get from dialog store
 		}
@@ -330,7 +334,12 @@ public class UserLibraryWizardPage extends NewElementWizardPage {
 
 		List<String> usedNames = new ArrayList<String>();
 		for (IPath name : fUsedPaths) {
-			usedNames.add(name.segment(1));
+			String usedName = name.segment(1);
+			int pos = usedName.indexOf("#"); //$NON-NLS-1$
+			if (pos != -1) {
+				usedName = usedName.substring(pos + 1);
+			}
+			usedNames.add(usedName);
 		}
 		ArrayList<BPUserLibraryElement> elements = new ArrayList<BPUserLibraryElement>(
 				names.length);
