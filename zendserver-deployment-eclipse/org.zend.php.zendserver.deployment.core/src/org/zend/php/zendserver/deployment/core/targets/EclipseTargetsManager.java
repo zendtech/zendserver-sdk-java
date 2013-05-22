@@ -20,6 +20,7 @@ import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 public class EclipseTargetsManager extends TargetsManager {
 
@@ -57,7 +58,8 @@ public class EclipseTargetsManager extends TargetsManager {
 
 	@Override
 	public synchronized IZendTarget add(IZendTarget target,
-			boolean suppressConnect) throws TargetException {
+			boolean suppressConnect) throws TargetException,
+			LicenseExpiredException {
 		// Create PHP Server associated with this target
 		Server server = DeploymentUtils.findExistingServer(target);
 		if (server != null) {
@@ -110,7 +112,8 @@ public class EclipseTargetsManager extends TargetsManager {
 
 	@Override
 	public IZendTarget updateTarget(String targetId, String host,
-			String defaultServer, String key, String secretKey) {
+			String defaultServer, String key, String secretKey)
+			throws LicenseExpiredException {
 		return super
 				.updateTarget(targetId, host, defaultServer, key, secretKey);
 		// TODO update SSH key?

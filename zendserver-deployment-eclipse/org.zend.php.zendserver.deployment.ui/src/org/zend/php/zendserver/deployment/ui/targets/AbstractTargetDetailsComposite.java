@@ -28,6 +28,7 @@ import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
@@ -87,6 +88,9 @@ public abstract class AbstractTargetDetailsComposite {
 				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						ex.getMessage(), ex);
 			} catch (RuntimeException e) {
+				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						e.getMessage(), e);
+			} catch (LicenseExpiredException e) {
 				status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						e.getMessage(), e);
 			}
@@ -175,10 +179,9 @@ public abstract class AbstractTargetDetailsComposite {
 	}
 
 	public void setErrorMessage(String errorMessage) {
-		String oldMessage = this.errorMessage;
 		this.errorMessage = errorMessage;
-		changeSupport.firePropertyChange(PROP_ERROR_MESSAGE, oldMessage,
-				errorMessage);
+		changeSupport
+				.firePropertyChange(PROP_ERROR_MESSAGE, null, errorMessage);
 	}
 
 	public String getErrorMessage() {
@@ -266,7 +269,7 @@ public abstract class AbstractTargetDetailsComposite {
 			targets = createTarget(data, monitor);
 		} catch (SdkException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					e.getMessage(), e);
+					e.getMessage());
 		} catch (UnknownHostException e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					"Unknown host " + e.getMessage(), e); //$NON-NLS-1$
@@ -340,6 +343,12 @@ public abstract class AbstractTargetDetailsComposite {
 									Messages.TargetDialog_AddingTargetError,
 									e.getMessage()), e);
 					continue;
+				} catch (LicenseExpiredException e) {
+					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							MessageFormat.format(
+									Messages.TargetDialog_AddingTargetError,
+									e.getMessage()), e);
+					continue;
 				}
 			}
 			
@@ -362,7 +371,7 @@ public abstract class AbstractTargetDetailsComposite {
 	}
 
 	private IZendTarget testConnectAndDetectPort(IZendTarget target,
-			IProgressMonitor monitor) throws WebApiException {
+			IProgressMonitor monitor) throws WebApiException, LicenseExpiredException {
 		WebApiException catchedException = null;
 		int[] portToTest = possiblePorts;
 		if (TargetsManager.isPhpcloud(target)) {
@@ -401,7 +410,7 @@ public abstract class AbstractTargetDetailsComposite {
 	}
 
 	private IZendTarget testTargetConnection(IZendTarget target)
-			throws WebApiException {
+			throws WebApiException, LicenseExpiredException {
 		try {
 			if (target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER)) {
 				return target;

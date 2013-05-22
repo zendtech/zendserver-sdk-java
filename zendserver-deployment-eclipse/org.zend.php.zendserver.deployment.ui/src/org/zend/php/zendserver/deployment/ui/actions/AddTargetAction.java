@@ -15,6 +15,7 @@ import org.zend.php.zendserver.deployment.ui.targets.CreateTargetWizard;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * Adds new Deployment Target via TargetDetailsDialog.
@@ -56,6 +57,8 @@ public class AddTargetAction extends Action {
 					addedTarget = t;
 				}
 			} catch (TargetException e) {
+				lastException = e;
+			} catch (LicenseExpiredException e) {
 				lastException = e;
 			}
 		}

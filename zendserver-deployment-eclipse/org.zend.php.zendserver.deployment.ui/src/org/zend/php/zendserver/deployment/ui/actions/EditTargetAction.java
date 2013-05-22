@@ -1,5 +1,7 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -10,6 +12,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
@@ -20,6 +23,7 @@ import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * Opens editing dialog and updates the Target accordingly to user changes.
@@ -109,7 +113,15 @@ public class EditTargetAction extends Action implements
 		String defaultServer = newTarget.getDefaultServerURL() != null ? newTarget.getDefaultServerURL().toString() : null;
 		String host = newTarget.getHost() != null ? newTarget.getHost().toString() : null;
 
-		tm.updateTarget(toEdit.getId(), host, defaultServer , newTarget.getKey(), newTarget.getSecretKey());
+		try {
+			tm.updateTarget(toEdit.getId(), host, defaultServer,
+					newTarget.getKey(), newTarget.getSecretKey());
+		} catch (LicenseExpiredException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage()), StatusManager.SHOW);
+			return;
+		}
 		updateTargetProperties(toEdit, newTarget);
 	}
 

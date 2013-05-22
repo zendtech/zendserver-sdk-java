@@ -44,15 +44,19 @@ public class DetectLocal extends AbstractTargetDetailsComposite {
 		DetectTargetAction detectTargetAction = new DetectTargetAction();
 		detectTargetAction.run();
 		IStatus status = detectTargetAction.getStatus();
-		if (status != null && status.getSeverity() == IStatus.CANCEL) {
-			throw new CancelCreationException(status.getMessage());
+		if (status != null) {
+			if (status.getSeverity() == IStatus.CANCEL) {
+				throw new CancelCreationException(status.getMessage());
+			} else if (status.getSeverity() == IStatus.ERROR) {
+				throw new SdkException(status.getMessage());
+			}
 		}
 		return new IZendTarget[] { detectTargetAction.getDetectedTarget() };
 	}
 
 	@Override
 	public boolean hasPage() {
-		return false;
+		return true;
 	}
 
 	@Override

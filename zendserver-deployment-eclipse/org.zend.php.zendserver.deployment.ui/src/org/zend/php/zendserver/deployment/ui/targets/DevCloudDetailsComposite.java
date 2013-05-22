@@ -35,6 +35,7 @@ import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * DevCloud details editing composite: username and password.
@@ -289,6 +290,8 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			try {
 				tm.add(zts[i], true);
 			} catch (TargetException e) {
+				// should not appear cause we do not try to connect to it
+			} catch (LicenseExpiredException e) {
 				// should not appear cause we do not try to connect to it
 			}
 		}

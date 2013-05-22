@@ -22,6 +22,7 @@ import org.zend.sdklib.manager.ServerVersionException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.sdklib.target.InvalidCredentialsException;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
@@ -93,6 +94,8 @@ public class DetectTargetAction extends Action {
 					target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
 				} catch (WebApiException ex) {
 					cause = ex.getCause();
+				} catch (LicenseExpiredException ex) {
+					cause = ex.getCause();
 				}
 			}
 			if (cause instanceof InvalidResponseException) {
@@ -102,6 +105,10 @@ public class DetectTargetAction extends Action {
 						Messages.DetectTargetAction_DetectUnsupportedTitle,
 						Messages.DetectTargetAction_DetectUnsupportedDesc);
 			}
+		} catch (LicenseExpiredException e) {
+			status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage());
+			return;
 		}
 
 		if (target == null) {
@@ -170,6 +177,10 @@ public class DetectTargetAction extends Action {
 						target = tm.detectLocalhostTarget(id, key, true, false);
 					} catch (DetectionException e) {
 						detectZendServer6(null);
+					} catch (LicenseExpiredException e) {
+						status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								e.getMessage());
+						return;
 					}
 				} catch (DetectionException e) {
 					// ignore
@@ -195,8 +206,11 @@ public class DetectTargetAction extends Action {
 			if (e.getCause() != null) {
 				msg = e.getCause().getMessage();
 			}
-			this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg);
-			StatusManager.getManager().handle(status);
+			this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg, e);
+			return;
+		} catch (LicenseExpiredException e) {
+			status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
 			return;
 		}
 	}
