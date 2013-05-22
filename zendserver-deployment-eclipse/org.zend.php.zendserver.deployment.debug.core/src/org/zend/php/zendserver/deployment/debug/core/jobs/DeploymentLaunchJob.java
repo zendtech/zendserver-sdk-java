@@ -44,7 +44,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
-		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
+		if (info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
 			List<IDeploymentContribution> contributions = getContributions();
 			IStatus status = monitorApplicationStatus(listener,
@@ -56,6 +56,8 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 						return status;
 					}
 				}
+			} else {
+				return status;
 			}
 		}
 		Throwable exception = listener.getStatus().getThrowable();
@@ -124,7 +126,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 					return new Status(
 							IStatus.ERROR,
 							Activator.PLUGIN_ID,
-							"Cannot perform deployment operation on selected target. Verify if your license has not expired."); //$NON-NLS-1$
+							"Cannot perform deployment operation on selected target. Verify if server license has not expired."); //$NON-NLS-1$
 				}
 			}
 		}
