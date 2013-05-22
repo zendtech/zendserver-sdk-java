@@ -75,18 +75,22 @@ public interface IZendTarget {
 	/**
 	 * @return true if connection success
 	 * @throws WebApiException
+	 * @throws LicenseExpiredException
 	 */
-	boolean connect() throws WebApiException;
+	boolean connect() throws WebApiException, LicenseExpiredException;
 	
 	/**
 	 * Try to connect with this target using specified WebAPI version.
 	 * 
-	 * @param webapi version
+	 * @param webapi
+	 *            version
 	 * @param serverType
 	 * @return true if connection success
 	 * @throws WebApiException
+	 * @throws LicenseExpiredException
 	 */
-	boolean connect(WebApiVersion version, ServerType serverType) throws WebApiException;
+	boolean connect(WebApiVersion version, ServerType serverType)
+			throws WebApiException, LicenseExpiredException;
 
 	/**
 	 * @return true if target was not fully initialized and e.g. requires some additional

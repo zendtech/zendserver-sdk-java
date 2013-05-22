@@ -31,6 +31,7 @@ import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
@@ -72,7 +73,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		this.loader = loader;
 		load();
 	}
-	
+
 	public void reload() {
 		this.all.clear();
 		load();
@@ -81,10 +82,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 	/**
 	 * @param target
 	 * @return
+	 * @throws LicenseExpiredException 
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target)
-			throws TargetException {
+			throws TargetException, LicenseExpiredException {
 		return add(target, false);
 	}
 
@@ -92,10 +94,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param target
 	 * @param suppressConnect
 	 * @return
+	 * @throws LicenseExpiredException 
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target,
-			boolean suppressConnect) throws TargetException {
+			boolean suppressConnect) throws TargetException,
+			LicenseExpiredException {
 		if (!validTarget(target)) {
 			return null;
 		}
@@ -107,9 +111,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 			}
 		} catch (WebApiException e) {
 			throw new TargetException(e);
+		} catch (LicenseExpiredException e) {
+			throw new TargetException(e);
 		}
-		
-		IZendTarget existingTarget = getTarget(target.getHost(), target.getKey());
+
+		IZendTarget existingTarget = getTarget(target.getHost(),
+				target.getKey());
 		if (existingTarget != null) {
 			return updateTarget(existingTarget, target);
 		} else {
@@ -122,9 +129,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 			if (this.all.size() == 1) {
 				defaultId = this.all.get(0).getId();
 			}
-		
+
 			if (added) {
-				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "added target", "added target"));
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN,
+						"added target", "added target"));
 			}
 
 			return added ? target : null;
@@ -134,14 +142,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 	private IZendTarget getTarget(URL host, String key) {
 		for (IZendTarget t : all) {
 			try {
-				if (host.toURI().equals(t.getHost().toURI()) && key.equals(t.getKey())) {
+				if (host.toURI().equals(t.getHost().toURI())
+						&& key.equals(t.getKey())) {
 					return t;
 				}
 			} catch (URISyntaxException e) {
 				// ignore
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -164,9 +173,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 
 		if (removed) {
-			statusChanged(new BasicStatus(StatusCode.UNKNOWN, "removed target", "removed target"));
+			statusChanged(new BasicStatus(StatusCode.UNKNOWN, "removed target",
+					"removed target"));
 		}
-		
+
 		return removed ? target : null;
 	}
 
@@ -206,68 +216,86 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	public synchronized IZendTarget detectLocalhostTarget(String targetId, String key,
-			String secretKey) throws DetectionException {
+	public synchronized IZendTarget detectLocalhostTarget(String targetId,
+			String key, String secretKey) throws DetectionException,
+			LicenseExpiredException {
 		return detectLocalhostTarget(targetId, key, secretKey, true, true);
 	}
-	
+
 	/**
-	 * Returns a target that represents the localhost zend server.
-	 * Returned target may be not fully initialized, requiring some extra commands.
-	 * Clients should use {@link IZendTarget#isTemporary()} to test whether they can connect safely.
+	 * Returns a target that represents the localhost zend server. Returned
+	 * target may be not fully initialized, requiring some extra commands.
+	 * Clients should use {@link IZendTarget#isTemporary()} to test whether they
+	 * can connect safely.
 	 * 
 	 * @param targetId
 	 *            target id to use, null if not specified
 	 * @param key
 	 *            key to use, null if not specified
 	 * @return the detected localhost target, or null if detection failed
-	 * @throws DetectionException 
+	 * @throws DetectionException
+	 * @throws LicenseExpiredException 
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key) throws DetectionException {
+			String key) throws DetectionException, LicenseExpiredException {
 		return detectLocalhostTarget(targetId, key, true, true);
 	}
-	
+
 	/**
 	 * 
-	 * @param targetId target id to use
-	 * @param key key name to use
-	 * @param add whether to add found target to targets list
-	 * @param createKey whether to attempt to automatically generate key secret in server config file
+	 * @param targetId
+	 *            target id to use
+	 * @param key
+	 *            key name to use
+	 * @param add
+	 *            whether to add found target to targets list
+	 * @param createKey
+	 *            whether to attempt to automatically generate key secret in
+	 *            server config file
 	 * @return
 	 * @throws DetectionException
+	 * @throws LicenseExpiredException 
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key, boolean add, boolean createKey) throws DetectionException {
+			String key, boolean add, boolean createKey)
+			throws DetectionException, LicenseExpiredException {
 		return detectLocalhostTarget(targetId, key, null, add, createKey);
 	}
-	
+
 	/**
 	 * 
-	 * @param targetId target id to use
-	 * @param key key name to use
-	 * @param add whether to add found target to targets list
-	 * @param createKey whether to attempt to automatically generate key secret in server config file
+	 * @param targetId
+	 *            target id to use
+	 * @param key
+	 *            key name to use
+	 * @param add
+	 *            whether to add found target to targets list
+	 * @param createKey
+	 *            whether to attempt to automatically generate key secret in
+	 *            server config file
 	 * @return
 	 * @throws DetectionException
+	 * @throws LicenseExpiredException 
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
-			String key, String secretKey, boolean add, boolean createKey) throws DetectionException {
+			String key, String secretKey, boolean add, boolean createKey)
+			throws DetectionException, LicenseExpiredException {
 
 		if (targetId == null) {
 			targetId = createUniqueId(null);
-		}	
-		key = key != null ? key : DEFAULT_KEY + "." + System.getProperty("user.name");
+		}
+		key = key != null ? key : DEFAULT_KEY + "."
+				+ System.getProperty("user.name");
 
 		final IZendTarget existing = getExistingLocalhost();
-		
+
 		ZendTargetAutoDetect detection = null;
 		try {
 			detection = getAutoDetector();
 		} catch (IOException e) {
 			throw new MissingZendServerException(e);
 		}
-		
+
 		String existingSecret = null;
 		if (secretKey != null) {
 			existingSecret = secretKey;
@@ -277,15 +305,17 @@ public class TargetsManager extends AbstractChangeNotifier {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		// only return existing, if it's key still exists and is valid
-		if ((existing != null) && (existingSecret != null) && existingSecret.equals(existing.getSecretKey())) {
+		if ((existing != null) && (existingSecret != null)
+				&& existingSecret.equals(existing.getSecretKey())) {
 			return existing;
 		}
-		
-		// if there's no key in server config and we don't want to create automatic one, throw an error
+
+		// if there's no key in server config and we don't want to create
+		// automatic one, throw an error
 		if ((existingSecret == null) && (!createKey)) {
-			throw new DetectionException("Key entry '"+key+"' not found.");
+			throw new DetectionException("Key entry '" + key + "' not found.");
 		}
 		IZendTarget local = null;
 		try {
@@ -317,7 +347,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 						&& (responseCode == ResponseCode.UNKNOWN_METHOD || responseCode == ResponseCode.PAGE_NOT_FOUND)) {
 					// try to repeat for zs6
 					try {
-						local.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER);
+						local.connect(WebApiVersion.V1_3,
+								ServerType.ZEND_SERVER);
 						if (add) {
 							return add(local, true);
 						} else {
@@ -329,7 +360,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 						final String message = e1.getMessage();
 						throw new ServerVersionException(code, message);
 					} catch (TargetException e1) {
-						// do nothing, cannot occur when suppress connection
+						throw new DetectionException(e1);
+					} catch (LicenseExpiredException e1) {
+						throw e1;
 					}
 				}
 				if (cause instanceof WebApiException) {
@@ -384,8 +417,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param key
 	 * @param secretKey
 	 * @return
+	 * @throws LicenseExpiredException
 	 */
-	public IZendTarget createTarget(String host, String key, String secretKey) {
+	public IZendTarget createTarget(String host, String key, String secretKey)
+			throws LicenseExpiredException {
 		return createTarget(createUniqueId(null), host, key, secretKey);
 	}
 
@@ -395,12 +430,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param key
 	 * @param secretKey
 	 * @return
+	 * @throws LicenseExpiredException 
 	 */
 	public IZendTarget createTarget(String targetId, String host, String key,
-			String secretKey) {
+			String secretKey) throws LicenseExpiredException {
 		return createTarget(targetId, host, key, secretKey, null);
 	}
-	
+
 	/**
 	 * Creates and adds new target based on provided parameters.
 	 * 
@@ -409,20 +445,24 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param key
 	 * @param secretKey
 	 * @return
+	 * @throws LicenseExpiredException
 	 */
 	public IZendTarget createTarget(String targetId, String host, String key,
-			String secretKey, Properties extraProperties) {
+			String secretKey, Properties extraProperties)
+			throws LicenseExpiredException {
 		try {
-			final ZendTarget t = new ZendTarget(targetId, new URL(host),
-					key, secretKey);
-			
+			final ZendTarget t = new ZendTarget(targetId, new URL(host), key,
+					secretKey);
+
 			if (extraProperties != null && !extraProperties.isEmpty()) {
-				final Set<Entry<Object, Object>> entrySet = extraProperties.entrySet();
+				final Set<Entry<Object, Object>> entrySet = extraProperties
+						.entrySet();
 				for (Entry<Object, Object> entry : entrySet) {
-					t.addProperty(entry.getKey().toString(), entry.getValue().toString());
+					t.addProperty(entry.getKey().toString(), entry.getValue()
+							.toString());
 				}
 			}
-			
+
 			IZendTarget target = add(t);
 			if (target == null) {
 				return null;
@@ -438,22 +478,26 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget) {
-		IZendTarget updated = updateTarget(existing.getId(), newTarget.getHost().toString(), newTarget.getDefaultServerURL().toString(), newTarget.getKey(), newTarget.getSecretKey());
+	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget)
+			throws LicenseExpiredException {
+		IZendTarget updated = updateTarget(existing.getId(), newTarget
+				.getHost().toString(), newTarget.getDefaultServerURL()
+				.toString(), newTarget.getKey(), newTarget.getSecretKey());
 		ZendTarget updatedZT = (ZendTarget) updated;
-		
+
 		ZendTarget newZT = (ZendTarget) newTarget;
 		String[] newZTKeys = newZT.getPropertiesKeys();
-		
+
 		for (String key : newZTKeys) {
 			updatedZT.addProperty(key, newZT.getProperty(key));
 		}
-		
+
 		return updated;
 	}
-	
-	public IZendTarget updateTarget(String targetId, String host, String defaultServer, String key,
-			String secretKey) {
+
+	public IZendTarget updateTarget(String targetId, String host,
+			String defaultServer, String key, String secretKey)
+			throws LicenseExpiredException {
 		ZendTarget target = (ZendTarget) getTargetById(targetId);
 		if (target == null) {
 			log.info("Target with id '" + targetId + "' does not exist.");
@@ -490,7 +534,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 			}
 			IZendTarget updated = loader.update(target);
 			if (updated != null) {
-				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "updated target", "updated target"));
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN,
+						"updated target", "updated target"));
 			}
 			return updated;
 		} catch (MalformedURLException e) {
@@ -499,10 +544,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 			log.error("Error during updating Zend Target with id '" + targetId
 					+ "'");
 			log.error("\tPossible error: " + e.getMessage());
+		} catch (LicenseExpiredException e) {
+			throw e;
 		}
 		return null;
 	}
-	
+
 	public IZendTarget updateTarget(IZendTarget target, boolean suppressConnect) {
 		try {
 			if (!suppressConnect && !target.connect()) {
@@ -510,17 +557,22 @@ public class TargetsManager extends AbstractChangeNotifier {
 			}
 			IZendTarget updated = loader.update(target);
 			if (updated != null) {
-				statusChanged(new BasicStatus(StatusCode.UNKNOWN, "updated target", "updated target"));
+				statusChanged(new BasicStatus(StatusCode.UNKNOWN,
+						"updated target", "updated target"));
 			}
 			return updated;
 		} catch (WebApiException e) {
-			log.error("Error during updating Zend Target with id '" + target.getId()
-					+ "'");
+			log.error("Error during updating Zend Target with id '"
+					+ target.getId() + "'");
+			log.error("\tPossible error: " + e.getMessage());
+		} catch (LicenseExpiredException e) {
+			log.error("Error during updating Zend Target with id '"
+					+ target.getId() + "'");
 			log.error("\tPossible error: " + e.getMessage());
 		}
 		return null;
 	}
-	
+
 	public IZendTarget updateTarget(IZendTarget target) {
 		return updateTarget(target, false);
 	}
@@ -544,12 +596,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		IZendTarget dupTarget = getTargetById(target.getId());
 		if (dupTarget != null) {
 			if (!dupTarget.isTemporary()) {
-				log.error("Target with id '" + target.getId() + "' already exists.");
+				log.error("Target with id '" + target.getId()
+						+ "' already exists.");
 				return false;
 			} else {
 				remove(dupTarget);
 			}
-		}		
+		}
 		return true;
 	}
 
@@ -562,11 +615,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 		return defaultId;
 	}
-	
+
 	/**
 	 * Creates new target id unique in target manager.
 	 * 
-	 * @param prefix Optional prefix for generated id. Might be null.
+	 * @param prefix
+	 *            Optional prefix for generated id. Might be null.
 	 * 
 	 * @return unique id.
 	 */
@@ -574,13 +628,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (prefix == null) {
 			prefix = "";
 		}
-		
+
 		int idgenerator = getTargets().length;
 		String id;
 		do {
 			id = prefix + Integer.toString(idgenerator++);
 		} while (!isIdAvailable(id));
-		
+
 		return id;
 	}
 
@@ -629,7 +683,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return targetHost != null
 				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
 	}
-	
+
 	/**
 	 * Allows to check if specified target has exact Zend Server version.
 	 * 
@@ -686,7 +740,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public static boolean isLocalhost(IZendTarget target) {
 		return isLocalhost(target.getHost().getHost());
 	}
-	
+
 	public static boolean isLocalhost(String host) {
 		if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
 			return true;

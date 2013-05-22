@@ -23,11 +23,13 @@ import javax.crypto.spec.SecretKeySpec;
 import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.auth.BasicCredentials;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.LicenseInfoStatus;
 import org.zend.webapi.core.connection.data.values.ServerType;
 import org.zend.webapi.core.connection.data.values.WebApiVersion;
 import org.zend.webapi.core.connection.data.values.ZendServerVersion;
@@ -322,7 +324,8 @@ public class ZendTarget implements IZendTarget {
 	}
 
 	@Override
-	public boolean connect(WebApiVersion version, ServerType serverType) throws WebApiException {
+	public boolean connect(WebApiVersion version, ServerType serverType)
+			throws WebApiException, LicenseExpiredException {
 		WebApiCredentials credentials = new BasicCredentials(getKey(),
 				getSecretKey());
 		try {
@@ -337,6 +340,10 @@ public class ZendTarget implements IZendTarget {
 				client.setServerType(ServerType.ZEND_SERVER);
 			}
 			final SystemInfo info = client.getSystemInfo();
+			if (info.getLicenseInfo().getStatus() == LicenseInfoStatus.EXPIRED) {
+				throw new LicenseExpiredException(info.getLicenseInfo()
+						.getValidUntil());
+			}
 			addProperty("edition", info.getEdition().name());
 			addProperty(OPERATING_SYSTEM, info.getOperatingSystem());
 			addProperty("phpVersion", info.getPhpVersion());
@@ -371,7 +378,7 @@ public class ZendTarget implements IZendTarget {
 	}
 
 	@Override
-	public boolean connect() throws WebApiException {
+	public boolean connect() throws WebApiException, LicenseExpiredException {
 		return connect(WebApiVersion.UNKNOWN, ServerType.ZEND_SERVER_MANAGER);
 	}
 	
