@@ -4,6 +4,7 @@ import org.zend.sdklib.logger.ILogger;
 import org.zend.sdklib.logger.Log;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.TargetsManager;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * Simplified command line util to detect localhost target.
@@ -53,7 +54,11 @@ public class ZendTargetDetectMain {
 		}
 		
 		TargetsManager tm = new TargetsManager();
-		tm.detectLocalhostTarget(targetId, key, false, true);
+		try {
+			tm.detectLocalhostTarget(targetId, key, false, true);
+		} catch (LicenseExpiredException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 }
