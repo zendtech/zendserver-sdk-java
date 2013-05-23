@@ -13,8 +13,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.DLTKCore;
@@ -22,6 +27,8 @@ import org.eclipse.dltk.core.IAccessRule;
 import org.eclipse.dltk.core.IBuildpathAttribute;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.environment.EnvironmentManager;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.internal.core.BuildpathEntry;
@@ -222,4 +229,51 @@ public class LibraryManager {
 		return false;
 	}
 
+	public static boolean isExcludedFromBuildpath(IProject project, IPath path) {
+		IBuildpathEntry[] buildpathEntries = DLTKCore.create(project)
+				.readRawBuildpath();
+		for (int i = 0; i < buildpathEntries.length; i++) {
+			IBuildpathEntry curr = buildpathEntries[i];
+			if (curr.getEntryKind() == IBuildpathEntry.BPE_SOURCE
+					&& curr.getPath()
+							.equals(project.getProject().getFullPath())) {
+				IPath[] exclusionPatterns = curr.getExclusionPatterns();
+				for (IPath p : exclusionPatterns) {
+					if (path.matchingFirstSegments(p) == p.segmentCount()) {
+						return true;
+					}
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+	public static void excludeFromBuildpath(IScriptProject fCurrProject,
+			Path path, IProgressMonitor monitor)
+			throws ModelException {
+		IBuildpathEntry[] buildpathEntries = fCurrProject.readRawBuildpath();
+		IBuildpathEntry toModify = null;
+		List<IBuildpathEntry> newRawBuildpath = new ArrayList<IBuildpathEntry>();
+		for (int i = 0; i < buildpathEntries.length; i++) {
+			IBuildpathEntry curr = buildpathEntries[i];
+			if (curr.getEntryKind() == IBuildpathEntry.BPE_SOURCE
+					&& curr.getPath().equals(
+							fCurrProject.getProject().getFullPath())) {
+				toModify = curr;
+			} else {
+				newRawBuildpath.add(curr);
+			}
+		}
+		List<IPath> exlusionPatters = new ArrayList<IPath>(
+				Arrays.asList(toModify.getExclusionPatterns()));
+			exlusionPatters.add(path);
+		IBuildpathEntry newEntry = DLTKCore.newSourceEntry(toModify.getPath(),
+				toModify.getInclusionPatterns(),
+				exlusionPatters.toArray(new IPath[exlusionPatters.size()]),
+				toModify.getExtraAttributes());
+		newRawBuildpath.add(newEntry);
+		fCurrProject.setRawBuildpath(newRawBuildpath
+				.toArray(new IBuildpathEntry[newRawBuildpath.size()]), monitor);
+	}
 }

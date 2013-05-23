@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.zend.php.library.core.LibraryManager;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -66,6 +67,9 @@ public class MappingChangeListener implements IResourceChangeListener {
 			IResourceDelta[] changedFiles = visitor.getChangedFiles(project);
 			boolean isDirty = false;
 			for (IResourceDelta d : changedFiles) {
+				if (isExcluded(d, project)) {
+					continue;
+				}
 				switch (d.getKind()) {
 				case IResourceDelta.REMOVED:
 					if (handleRemoved(model, d) && !isDirty) {
@@ -89,6 +93,15 @@ public class MappingChangeListener implements IResourceChangeListener {
 				}
 			}
 		}
+	}
+
+	private boolean isExcluded(IResourceDelta d, IProject project) {
+		IResource res = d.getResource();
+		if (res != null) {
+			return LibraryManager.isExcludedFromBuildpath(project,
+					res.getProjectRelativePath());
+		}
+		return false;
 	}
 
 	private boolean handleAdded(IMappingModel model, IResourceDelta delta) {
