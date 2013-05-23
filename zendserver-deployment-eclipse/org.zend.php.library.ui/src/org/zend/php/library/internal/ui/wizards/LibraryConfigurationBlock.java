@@ -10,6 +10,7 @@ package org.zend.php.library.internal.ui.wizards;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -74,6 +75,7 @@ public class LibraryConfigurationBlock extends AbstractBlock {
 					Messages.LibraryConfigurationBlock_Version, null,
 					container, false, 0);
 		}
+		new Label(container, SWT.NONE);
 		warnUpdate = createLabelWithCheckbox(
 				Messages.LibraryConfigurationBlock_WarnRedeploy, null,
 				container);

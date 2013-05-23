@@ -8,23 +8,28 @@
 package org.zend.php.library.internal.ui.wizards;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathContainer;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.ui.wizards.AbstractUserLibraryWizard;
 import org.zend.php.library.core.LibraryManager;
 import org.zend.php.library.internal.ui.LibraryUI;
+import org.zend.php.library.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorFactory;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -73,11 +78,12 @@ public class BuildpathContainerWizard extends AbstractUserLibraryWizard {
 
 		String title;
 		if (entryToEdit == null) {
-			title = NewWizardMessages.BuildpathContainerWizard_new_title;
+			title = Messages.BuildpathContainerWizard_new_title;
 		} else {
-			title = NewWizardMessages.BuildpathContainerWizard_edit_title;
+			title = Messages.BuildpathContainerWizard_edit_title;
 		}
 		setWindowTitle(title);
+		setNeedsProgressMonitor(true);
 	}
 
 	/*
@@ -94,8 +100,27 @@ public class BuildpathContainerWizard extends AbstractUserLibraryWizard {
 				fNewEntries = (entry != null) ? new IBuildpathEntry[] { entry }
 						: null;
 			}
-			addDependences();
-			addSources();
+			final boolean addDependency = fUserLibraryPage.getAddDependency();
+			final IPath sourcePath = fUserLibraryPage.getAddSource();
+			try {
+				getContainer().run(true, false, new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						if (addDependency) {
+							addDependences(monitor);
+						}
+						if (sourcePath != null) {
+							addSources(sourcePath, monitor);
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				LibraryUI.log(e);
+			} catch (InterruptedException e) {
+				LibraryUI.log(e);
+			}
 			return true;
 		}
 		return false;
@@ -135,82 +160,83 @@ public class BuildpathContainerWizard extends AbstractUserLibraryWizard {
 		return fNewEntries;
 	}
 
-	private void addSources() {
-		IPath sourcePath = fUserLibraryPage.getAddSource();
-		if (sourcePath != null) {
-			File destFile = fCurrProject.getProject().findMember(sourcePath)
-					.getLocation().toFile();
-			for (IBuildpathEntry enty : fNewEntries) {
-				IPath path = enty.getPath();
-				try {
-					IBuildpathContainer container = DLTKCore
-							.getBuildpathContainer(path, fCurrProject);
-					IBuildpathEntry[] entries = container.getBuildpathEntries();
-					for (IBuildpathEntry entry : entries) {
-						LibraryManager.addLibraryToProject(
-								destFile,
-								EnvironmentPathUtils.getLocalPath(
-										entry.getPath()).toFile(),
-								path.segment(1));
-					}
-				} catch (ModelException e) {
-					LibraryUI.log(e);
+	private void addSources(IPath sourcePath, IProgressMonitor monitor) {
+		monitor.beginTask(Messages.BuildpathContainerWizard_AddSourceJob,
+				IProgressMonitor.UNKNOWN);
+		try {
+			IFolder destFolder = fCurrProject.getProject()
+					.getFolder(sourcePath);
+			if (!destFolder.exists()) {
+				destFolder.getLocation().toFile().mkdirs();
+			}
+			File destFile = destFolder.getLocation().toFile();
+			for (IBuildpathEntry entry : fNewEntries) {
+				IPath path = entry.getPath();
+				IBuildpathContainer container = DLTKCore.getBuildpathContainer(
+						path, fCurrProject);
+				IBuildpathEntry[] entries = container.getBuildpathEntries();
+				for (IBuildpathEntry e : entries) {
+					LibraryManager.addLibraryToProject(destFile,
+							EnvironmentPathUtils.getLocalPath(e.getPath())
+									.toFile(), path.segment(1));
 				}
 			}
-			try {
-				fCurrProject.getProject().refreshLocal(IResource.DEPTH_INFINITE,
-						new NullProgressMonitor());
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			LibraryManager.excludeFromBuildpath(fCurrProject, new Path(
+					sourcePath.toString() + "/"), monitor); //$NON-NLS-1$
+			fCurrProject.getProject().refreshLocal(IResource.DEPTH_INFINITE,
+					new NullProgressMonitor());
+		} catch (CoreException e) {
+			LibraryUI.log(e);
+		} finally {
+			monitor.done();
 		}
 	}
 
-	private void addDependences() {
-		if (fUserLibraryPage.getAddDependency()) {
-			final IDescriptorContainer container = DescriptorContainerManager
-					.getService().openDescriptorContainer(
-							fCurrProject.getProject());
-			IDeploymentDescriptor model = container.getDescriptorModel();
-			List<IPHPLibraryDependency> dependences = model
-					.getPHPLibraryDependencies();
-			if (fEntryToEdit != null) {
-				IPHPLibraryDependency entryToRemove = null;
-				String nameToRemove = fEntryToEdit.getPath().segment(1);
-				for (IPHPLibraryDependency d : dependences) {
-					if (nameToRemove.equals(d.getName())) {
-						entryToRemove = d;
-						break;
-					}
-				}
-				if (entryToRemove != null) {
-					dependences.remove(entryToRemove);
+	private void addDependences(IProgressMonitor monitor) {
+		monitor.beginTask(Messages.BuildpathContainerWizard_AddDependencyJob,
+				IProgressMonitor.UNKNOWN);
+		final IDescriptorContainer container = DescriptorContainerManager
+				.getService()
+				.openDescriptorContainer(fCurrProject.getProject());
+		IDeploymentDescriptor model = container.getDescriptorModel();
+		List<IPHPLibraryDependency> dependences = model
+				.getPHPLibraryDependencies();
+		if (fEntryToEdit != null) {
+			IPHPLibraryDependency entryToRemove = null;
+			String nameToRemove = fEntryToEdit.getPath().segment(1);
+			for (IPHPLibraryDependency d : dependences) {
+				if (nameToRemove.equals(d.getName())) {
+					entryToRemove = d;
+					break;
 				}
 			}
-			for (IBuildpathEntry entry : fNewEntries) {
-				String name = entry.getPath().segment(1);
-				for (IPHPLibraryDependency d : dependences) {
-					if (name.equals(d.getName())) {
-						name = null;
-						break;
-					}
-				}
-				if (name != null) {
-					IPHPLibraryDependency dependency = (IPHPLibraryDependency) DeploymentDescriptorFactory
-							.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY);
-
-					dependency.setName(name);
-					String version = DLTKCore.getUserLibraryVersion(name,
-							PHPLanguageToolkit.getDefault());
-					if (version != null) {
-						dependency.setEquals(version);
-					}
-					dependences.add(dependency);
-				}
+			if (entryToRemove != null) {
+				dependences.remove(entryToRemove);
 			}
-			container.save();
 		}
+		for (IBuildpathEntry entry : fNewEntries) {
+			String name = entry.getPath().segment(1);
+			for (IPHPLibraryDependency d : dependences) {
+				if (name.equals(d.getName())) {
+					name = null;
+					break;
+				}
+			}
+			if (name != null) {
+				IPHPLibraryDependency dependency = (IPHPLibraryDependency) DeploymentDescriptorFactory
+						.createModelElement(DeploymentDescriptorPackage.DEPENDENCIES_LIBRARY);
+
+				dependency.setName(name);
+				String version = DLTKCore.getUserLibraryVersion(name,
+						PHPLanguageToolkit.getDefault());
+				if (version != null) {
+					dependency.setMin(version);
+				}
+				dependences.add(dependency);
+			}
+		}
+		container.save();
+		monitor.done();
 	}
 
 }

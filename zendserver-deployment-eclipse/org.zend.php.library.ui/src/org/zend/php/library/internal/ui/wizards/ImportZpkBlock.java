@@ -12,6 +12,8 @@ import java.io.File;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -33,6 +35,8 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
  * 
  */
 public class ImportZpkBlock extends AbstractBlock {
+
+	private static final String ZPK_EXTENSION = ".zpk"; //$NON-NLS-1$
 
 	private String description;
 
@@ -66,7 +70,11 @@ public class ImportZpkBlock extends AbstractBlock {
 				1));
 		zpkPathText = createLabelWithText(Messages.ImportZpkBlock_ZpkFIleLabel,
 				null, section, false, 0);
-		zpkPathText.setEditable(false);
+		zpkPathText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				listener.statusChanged(validatePage());
+			}
+		});
 		Button zpkSelectionButton = new Button(section, SWT.PUSH);
 		zpkSelectionButton.setText(Messages.ImportZpkBlock_BrowseLabel);
 		zpkSelectionButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
@@ -76,14 +84,14 @@ public class ImportZpkBlock extends AbstractBlock {
 				FileDialog dialog = new FileDialog(e.display.getActiveShell(),
 						SWT.SINGLE);
 				dialog.setText(Messages.ImportZpkBlock_DialogTitle);
-				dialog.setFilterExtensions(new String[] { "*.zpk" }); //$NON-NLS-1$
+				dialog.setFilterExtensions(new String[] { "*" + ZPK_EXTENSION }); //$NON-NLS-1$
 				final String res = dialog.open();
 				if (res == null) {
 					return;
 				}
 				zpkPathText.setText(res);
-				File deploymentFile = LibraryUtils.unzipDescriptor(new File(
-						res));
+				File deploymentFile = LibraryUtils
+						.unzipDescriptor(new File(res));
 				Document doc = LibraryUtils
 						.getDeploymentDescriptor(deploymentFile);
 				if (LibraryUtils.getProjectType(doc) == ProjectType.LIBRARY) {
@@ -109,6 +117,14 @@ public class ImportZpkBlock extends AbstractBlock {
 	 * org.zend.php.library.internal.ui.wizards.AbstractBlock#validatePage()
 	 */
 	public IStatus validatePage() {
+		if (!new File(zpkPathText.getText()).exists()) {
+			return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,
+					Messages.DeployTargetBlock_ZpkDoesNotExistError);
+		}
+		if (!zpkPathText.getText().endsWith(".zpk")) { //$NON-NLS-1$
+			return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,
+					Messages.DeployTargetBlock_InvalidZpkError);
+		}
 		if (!zpkPathText.getText().isEmpty()) {
 			if (libraryName.getText().isEmpty()) {
 				return new Status(IStatus.ERROR, LibraryUI.PLUGIN_ID,

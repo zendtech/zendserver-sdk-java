@@ -75,6 +75,8 @@ import com.ibm.icu.text.Collator;
  */
 public class UserLibraryWizardPage extends NewElementWizardPage {
 
+	private static final String VENDOR_FOLDER = "vendor"; //$NON-NLS-1$
+
 	private class LibraryListAdapter implements IListAdapter,
 			IDialogFieldListener {
 
@@ -158,6 +160,7 @@ public class UserLibraryWizardPage extends NewElementWizardPage {
 					.setText(Messages.UserLibraryWizardPage_AddDependency);
 			addDependecyButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 					true, false, 3, 1));
+			addDependecyButton.setSelection(true);
 		}
 		addSourceButton = new Button(bottomSection, SWT.CHECK);
 		addSourceButton.setText(Messages.UserLibraryWizardPage_AddToSource);
@@ -177,16 +180,11 @@ public class UserLibraryWizardPage extends NewElementWizardPage {
 		pathText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				String path = pathText.getText();
-				if (fProject.getProject().findMember(path) == null) {
-					updateStatus(new StatusInfo(IStatus.ERROR,
-							Messages.UserLibraryWizardPage_SourceFolderNotExist));
-				} else {
-					updateStatus(new StatusInfo());
-				}
+				updateStatus(new StatusInfo());
 			}
 		});
 		pathText.setEnabled(false);
+		pathText.setText(VENDOR_FOLDER);
 		pathButton = new Button(bottomSection, SWT.PUSH);
 		pathButton.setText(Messages.UserLibraryWizardPage_Browse);
 		pathButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -355,8 +353,10 @@ public class UserLibraryWizardPage extends NewElementWizardPage {
 				if (version != null) {
 					path.append(version);
 				}
+				boolean buildIn = DLTKCore.isBuiltInUserLibrary(curr,
+						PHPLanguageToolkit.getDefault());
 				BPUserLibraryElement elem = new BPUserLibraryElement(curr,
-						container, fProject);
+						container, fProject, version, buildIn);
 				if (!usedNames.contains(curr)) {
 					elements.add(elem);
 					if (!oldCheckedNames.isEmpty()) {

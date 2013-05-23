@@ -4,6 +4,10 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.library.internal.ui.messages"; //$NON-NLS-1$
+	public static String BuildpathContainerWizard_AddDependencyJob;
+	public static String BuildpathContainerWizard_AddSourceJob;
+	public static String BuildpathContainerWizard_edit_title;
+	public static String BuildpathContainerWizard_new_title;
 	public static String DeployLibraryContribution_Title;
 	public static String DeployLibraryHandler_WarningMessage;
 	public static String DeployLibraryHandler_WarningTitle;
