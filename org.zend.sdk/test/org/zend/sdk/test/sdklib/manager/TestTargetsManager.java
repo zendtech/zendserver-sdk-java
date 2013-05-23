@@ -30,6 +30,7 @@ import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestTargetsManager extends AbstractTest {
@@ -74,7 +75,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddTarget() throws WebApiException, TargetException {
+	public void testAddTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -83,7 +84,7 @@ public class TestTargetsManager extends AbstractTest {
 
 	@Test
 	public void testNullIdAddTarget() throws WebApiException, TargetException,
-			MalformedURLException {
+			MalformedURLException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = spy(new ZendTarget(null, new URL(
 				"http://localhost:10081"), "mykey", "43543"));
@@ -93,7 +94,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddDisconnectedTarget() throws WebApiException, TargetException {
+	public void testAddDisconnectedTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		when(target.connect()).thenReturn(false);
@@ -101,7 +102,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddDuplicatedTarget() throws WebApiException, TargetException {
+	public void testAddDuplicatedTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -110,13 +111,13 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testAddNullTarget() throws TargetException {
+	public void testAddNullTarget() throws TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		assertNull(manager.add(null));
 	}
 
 	@Test
-	public void testRemoveTarget() throws WebApiException, TargetException {
+	public void testRemoveTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -132,14 +133,14 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testRemoveNotAddedTarget() throws WebApiException {
+	public void testRemoveNotAddedTarget() throws WebApiException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.remove(target);
 	}
 
 	@Test
-	public void testGetTargetById() throws WebApiException, TargetException {
+	public void testGetTargetById() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = new TargetsManager(loader);
 		IZendTarget target = getTarget();
 		manager.add(target);
@@ -161,7 +162,7 @@ public class TestTargetsManager extends AbstractTest {
 
 	@Test
 	public void testDetectLocalhost() throws WebApiException, TargetException,
-			IOException, DetectionException {
+			IOException, DetectionException, LicenseExpiredException {
 		TargetsManager manager = getManagerForLocalhostDetection();
 		IZendTarget target = manager.detectLocalhostTarget("test", "sdk.admin",
 				false, false);
@@ -170,13 +171,13 @@ public class TestTargetsManager extends AbstractTest {
 
 	@Test(expected = DetectionException.class)
 	public void testDetectLocalhostNoKey() throws WebApiException,
-			TargetException, IOException, DetectionException {
+			TargetException, IOException, DetectionException, LicenseExpiredException {
 		TargetsManager manager = getManagerForLocalhostDetection();
 		manager.detectLocalhostTarget("test", null, false, false);
 	}
 
 	@Test
-	public void testCreateTarget() throws WebApiException, TargetException {
+	public void testCreateTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertNotNull(manager.createTarget("1", "http://localhost", "mykey",
@@ -184,7 +185,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetNoId() throws WebApiException, TargetException {
+	public void testCreateTargetNoId() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(getTarget()).when(manager).add(any(IZendTarget.class));
 		assertNotNull(manager
@@ -192,7 +193,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetFailAdd() throws TargetException {
+	public void testCreateTargetFailAdd() throws TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
 		assertNull(manager.createTarget("1", "http://localhost", "mykey",
@@ -200,7 +201,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetInvalidUrl() throws TargetException {
+	public void testCreateTargetInvalidUrl() throws TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		doReturn(null).when(manager).add(any(IZendTarget.class));
 		assertNull(manager.createTarget("1", "aaa11://localhost", "mykey",
@@ -208,7 +209,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testCreateTargetAddThrowsException() throws TargetException {
+	public void testCreateTargetAddThrowsException() throws TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		Mockito.doThrow(new TargetException("testError")).when(manager)
 				.add(any(IZendTarget.class));
@@ -217,7 +218,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget() throws WebApiException, TargetException {
+	public void testUpdateTarget() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
@@ -229,7 +230,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget2() throws WebApiException, TargetException {
+	public void testUpdateTarget2() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, "new",
@@ -241,7 +242,7 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTarget3() throws WebApiException, TargetException {
+	public void testUpdateTarget3() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNotNull(manager.updateTarget("dev4", "http://test1test", null, null,
@@ -253,21 +254,21 @@ public class TestTargetsManager extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateTargetNullId() throws WebApiException, TargetException {
+	public void testUpdateTargetNullId() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNull(manager.updateTarget(null, null, null, null, null));
 	}
 
 	@Test
-	public void testUpdateTargetInvalidUrl() throws WebApiException, TargetException {
+	public void testUpdateTargetInvalidUrl() throws WebApiException, TargetException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertNull(manager.updateTarget("dev4", "a111://qwerty", null, null, null));
 	}
 
 	@Test
-	public void testCreateUniqueId() throws TargetException, WebApiException {
+	public void testCreateUniqueId() throws TargetException, WebApiException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertEquals("1", manager.createUniqueId(null));
@@ -275,7 +276,7 @@ public class TestTargetsManager extends AbstractTest {
 
 	@Test
 	public void testCreateUniqueIdPrefix() throws TargetException,
-			WebApiException {
+			WebApiException, LicenseExpiredException {
 		TargetsManager manager = spy(new TargetsManager(loader));
 		manager.add(getTarget());
 		assertEquals("target1", manager.createUniqueId("target"));
@@ -315,7 +316,7 @@ public class TestTargetsManager extends AbstractTest {
 		assertFalse(TargetsManager.isPhpcloud((String) null));
 	}
 
-	private IZendTarget getTarget() throws WebApiException {
+	private IZendTarget getTarget() throws WebApiException, LicenseExpiredException {
 		IZendTarget target = null;
 		try {
 			target = spy(new ZendTarget("dev4", new URL("http://localhost"),
