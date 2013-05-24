@@ -44,7 +44,7 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
-		if (info.getStatus() == ApplicationStatus.STAGING) {
+		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
 			List<IDeploymentContribution> contributions = getContributions();
 			IStatus status = monitorApplicationStatus(listener,
