@@ -33,6 +33,7 @@ public class DescriptorWriter {
 	private String appDir = "data";
 	private String descriptorVersion = "1.0";
 	private String appVersion = "1.0.0";
+	private String type = "application";
 	private String docroot;
 	private String summary;
 	private String zfMin;
@@ -120,6 +121,7 @@ public class DescriptorWriter {
 		ObjectFactory f = new ObjectFactory();
 		final Package p = f.createPackage();
 		p.setName(appName);
+		p.setType(type);
 		p.setAppdir(appDir);
 		if (docroot != null)
 			p.setDocroot(docroot);

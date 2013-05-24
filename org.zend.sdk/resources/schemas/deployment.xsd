@@ -9,15 +9,17 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
 				<xs:element name="summary" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="version" minOccurs="1" maxOccurs="1" />
 				<xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="eula" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="appdir" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<xs:element name="appdir" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="docroot" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="scriptsdir" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="healthcheck" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="dependencies" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="parameters" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="variables" minOccurs="0" maxOccurs="1" />
@@ -40,7 +42,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="release" type="xs:string" minOccurs="1" maxOccurs="1" />
-				<xs:element name="api" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="api" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -61,10 +63,10 @@
 							<xs:element ref="extension" minOccurs="0" maxOccurs="unbounded" />
 							<xs:element ref="directive" minOccurs="0" maxOccurs="unbounded" />
 							<xs:element ref="zendserver" minOccurs="0" maxOccurs="unbounded" />
-							<xs:element ref="zendservercomponent" minOccurs="0"
-								maxOccurs="unbounded" />
-							<xs:element ref="zendframework" minOccurs="0"
-								maxOccurs="unbounded" />
+							<xs:element ref="zendservercomponent" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="zendframework" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="zendframework2" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="library" minOccurs="0" maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -78,10 +80,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -92,12 +94,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="conflicts" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="conflicts" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -108,10 +110,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -122,10 +124,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -136,12 +138,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="conflicts" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" minOccurs="1" maxOccurs="1" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="conflicts" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -152,12 +154,41 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="equals" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="min" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="exclude" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="zendframework2">
+		<xs:annotation>
+			<xs:documentation>Zend Framework 2 dependencies block</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+				<xs:element name="min" minOccurs="0" maxOccurs="1" />
+				<xs:element name="max" minOccurs="0" maxOccurs="1" />
+				<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="library">
+			<xs:annotation>
+					<xs:documentation>Deployment Libraries dependencies block</xs:documentation>
+			</xs:annotation>
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="name" minOccurs="1" maxOccurs="1" />
+					<xs:element name="equals" minOccurs="0" maxOccurs="1" />
+					<xs:element name="min" minOccurs="0" maxOccurs="1" />
+					<xs:element name="max" minOccurs="0" maxOccurs="1" />
+					<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
 	</xs:element>
 
 	<xs:element name="parameters">
