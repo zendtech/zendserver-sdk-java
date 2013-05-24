@@ -58,8 +58,5 @@ Bundle-ClassPath: .,
  lib/registry.jar,
  lib/slf4j-api-1.6.4.jar,
  lib/slf4j-log4j12-1.6.4.jar,
- resources/generator/jaxb/jaxb-api.jar,
- resources/generator/jaxb/jaxb-impl.jar,
- resources/generator/jaxb/jaxb-xjc.jar,
- resources/generator/jaxb/xerces.jar,
  lib/org.zend.webapi-0.0.23-SNAPSHOT.jar
+
