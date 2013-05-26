@@ -58,6 +58,8 @@ public class WelcomePageCommandHandler extends AbstractHandler {
 							page.openEditor(editorInput,
 									WelcomePageEditor.EDITOR_ID, true,
 									IWorkbenchPage.MATCH_ID);
+							
+							
 
 						} catch (Exception e) {
 							Activator.log(e);

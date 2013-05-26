@@ -4,11 +4,16 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.zend.php.common.Activator;
+import org.zend.php.common.callout.CalloutManager;
 
 public class WelcomePageFirstTimeStartup implements IStartup {
 
@@ -16,6 +21,9 @@ public class WelcomePageFirstTimeStartup implements IStartup {
 	private static final String SHOW_WELCOME = "showWelcome";
 
 	public static void run() {
+		
+		launchCalloutManager();
+		
 		// Workspace specific preferences
 		IPreferenceStore pref = Activator.getDefault().getPreferenceStore();
 
@@ -46,5 +54,16 @@ public class WelcomePageFirstTimeStartup implements IStartup {
 
 	public void earlyStartup() {
 		run();
+	}
+	
+	private static void launchCalloutManager() {
+		Job job = new Job("") { //$NON-NLS-1$
+			public IStatus run(IProgressMonitor monitor) {
+				CalloutManager.initiateCalloutTesters();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 }
