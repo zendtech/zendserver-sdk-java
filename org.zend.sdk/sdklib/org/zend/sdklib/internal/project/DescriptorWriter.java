@@ -33,7 +33,7 @@ public class DescriptorWriter {
 	private String appDir = "data";
 	private String descriptorVersion = "1.0";
 	private String appVersion = "1.0.0";
-	private String type = "application";
+	private String type;
 	private String docroot;
 	private String summary;
 	private String zfMin;
