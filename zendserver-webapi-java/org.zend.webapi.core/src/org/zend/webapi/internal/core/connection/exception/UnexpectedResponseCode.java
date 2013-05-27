@@ -25,14 +25,13 @@ public class UnexpectedResponseCode extends WebApiException {
 	private static final long serialVersionUID = -2095471259882902506L;
 
 	final private int httpCode;
-	final private String message;
+	private String message;
 	private String errorCode;
-
 
 	public UnexpectedResponseCode(int httpCode, Representation handle) {
 		this.httpCode = httpCode;
+		ResponseCode code = null;
 		if (MediaType.TEXT_HTML.equals(handle.getMediaType())) {
-			ResponseCode code = null;
 			switch (httpCode) {
 			case 401:
 				code = ResponseCode.NO_XML_UNAUTORIZED;
@@ -48,12 +47,20 @@ public class UnexpectedResponseCode extends WebApiException {
 		} else {
 			final DomRepresentation domRepresentation = new DomRepresentation(
 					handle);
-			Node node = domRepresentation
-					.getNode("/zendServerAPIResponse/errorData/errorMessage");
-			this.message = node == null ? null : node.getTextContent().trim();
-			node = domRepresentation
-					.getNode("/zendServerAPIResponse/errorData/errorCode");
-			this.errorCode = node == null ? null : node.getTextContent().trim();
+			try {
+				Node node = domRepresentation
+						.getNode("/zendServerAPIResponse/errorData/errorMessage");
+				this.message = node == null ? null : node.getTextContent()
+						.trim();
+				node = domRepresentation
+						.getNode("/zendServerAPIResponse/errorData/errorCode");
+				this.errorCode = node == null ? null : node.getTextContent()
+						.trim();
+			} catch (RuntimeException ex) {
+				code = ResponseCode.PAGE_NOT_FOUND;
+				this.errorCode = code.getErrorCode();
+				this.message = code.getDescription();
+			}
 		}
 	}
 
