@@ -14,17 +14,17 @@ import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
 public abstract class ModelObject implements IModelObject {
 
 	private IModelContainer parent;
-	
+
 	protected List<IDescriptorChangeListener> listeners;
-	
+
 	protected Feature[] properties;
 	private int[] offsets;
-	
+
 	public ModelObject(Feature[] properties) {
 		this.properties = properties;
 		offsets = new int[properties.length];
 	}
-	
+
 	public void copy(IModelObject source) {
 		throw new UnsupportedOperationException(MessageFormat.format(
 				"Can't copy {0}", this)); //$NON-NLS-1$
@@ -36,13 +36,14 @@ public abstract class ModelObject implements IModelObject {
 	}
 
 	public boolean getBoolean(Feature key) {
-		throw new IllegalArgumentException(MessageFormat.format("Can't get feature {0} from {1}", key, this)); //$NON-NLS-1$
+		throw new IllegalArgumentException(MessageFormat.format(
+				"Can't get feature {0} from {1}", key, this)); //$NON-NLS-1$
 	}
 
 	public Feature[] getPropertyNames() {
 		return properties;
 	}
-	
+
 	public void addListener(IDescriptorChangeListener listener) {
 		if (listeners == null) {
 			listeners = Collections
@@ -52,49 +53,58 @@ public abstract class ModelObject implements IModelObject {
 			listeners.add(listener);
 		}
 	}
-	
+
 	public void removeListener(IDescriptorChangeListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	protected void fireChange(ChangeEvent event) {
-		synchronized (listeners) {
-			if (listeners != null) {
-				for (IDescriptorChangeListener l : listeners) {
-					l.descriptorChanged(event);
+		if (listeners != null) {
+			synchronized (listeners) {
+				if (listeners != null) {
+					for (IDescriptorChangeListener l : listeners) {
+						l.descriptorChanged(event);
+					}
+				}
+
+				if (parent != null) {
+					((ModelObject) parent).fireChange(event);
 				}
 			}
-			
-			if (parent != null) {
-				((ModelObject) parent).fireChange(event);
-			}	
 		}
 	}
-	
-	protected void fireChange(IModelObject target, Feature key, int type, Object newValue, Object oldValue) {
-		if ((newValue == null && oldValue != null) ||
-			(newValue != null && oldValue == null) ||
-			(newValue != null && !newValue.equals(oldValue))) {
+
+	protected void fireChange(IModelObject target, Feature key, int type,
+			Object newValue, Object oldValue) {
+		if ((newValue == null && oldValue != null)
+				|| (newValue != null && oldValue == null)
+				|| (newValue != null && !newValue.equals(oldValue))) {
 			fireChange(new ChangeEvent(target, key, type, newValue, oldValue));
 		}
 	}
-	
+
 	protected void fireChange(Feature key, Object newValue, Object oldValue) {
-		fireChange(this, key, IDescriptorChangeListener.SET, newValue, oldValue); // for basic properties, oldValue is always null
+		fireChange(this, key, IDescriptorChangeListener.SET, newValue, oldValue); // for
+																					// basic
+																					// properties,
+																					// oldValue
+																					// is
+																					// always
+																					// null
 	}
-	
+
 	public void setParent(IModelContainer container) {
 		this.parent = container;
 	}
-	
+
 	public int getOffset(Feature f) {
 		return offsets[Arrays.asList(properties).indexOf(f)];
 	}
-	
+
 	public void setOffset(Feature f, int offset) {
 		offsets[Arrays.asList(properties).indexOf(f)] = offset;
 	}
-	
+
 }
