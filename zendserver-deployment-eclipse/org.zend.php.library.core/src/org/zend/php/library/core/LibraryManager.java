@@ -229,26 +229,6 @@ public class LibraryManager {
 		return false;
 	}
 
-	public static boolean isExcludedFromBuildpath(IProject project, IPath path) {
-		IBuildpathEntry[] buildpathEntries = DLTKCore.create(project)
-				.readRawBuildpath();
-		for (int i = 0; i < buildpathEntries.length; i++) {
-			IBuildpathEntry curr = buildpathEntries[i];
-			if (curr.getEntryKind() == IBuildpathEntry.BPE_SOURCE
-					&& curr.getPath()
-							.equals(project.getProject().getFullPath())) {
-				IPath[] exclusionPatterns = curr.getExclusionPatterns();
-				for (IPath p : exclusionPatterns) {
-					if (path.matchingFirstSegments(p) == p.segmentCount()) {
-						return true;
-					}
-				}
-				break;
-			}
-		}
-		return false;
-	}
-
 	public static void excludeFromBuildpath(IScriptProject fCurrProject,
 			Path path, IProgressMonitor monitor)
 			throws ModelException {
