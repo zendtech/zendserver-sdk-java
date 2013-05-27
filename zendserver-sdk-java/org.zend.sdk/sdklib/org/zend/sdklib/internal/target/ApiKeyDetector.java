@@ -126,17 +126,19 @@ public abstract class ApiKeyDetector {
 					Header sessionId = method.getResponseHeader("Set-Cookie"); //$NON-NLS-1$
 					String value = sessionId.getValue();
 					String[] segments = value.split(";"); //$NON-NLS-1$
+					String currentValue = null;
 					for (String segment : segments) {
 						String[] parts = segment.split(","); //$NON-NLS-1$
 						for (String part : parts) {
 							if (part.trim().startsWith(SESSION_ID)) {
 								String[] id = part.split("="); //$NON-NLS-1$
 								if (id.length > 1) {
-									return id[1].trim();
+									currentValue = id[1].trim();
 								}
 							}
 						}
 					}
+					return currentValue;
 				} else if (statusCode == 200) {
 					throw new InvalidCredentialsException();
 				}
