@@ -20,7 +20,6 @@ import java.util.List;
 import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.target.ITargetLoader;
-import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.CodeTrace;
@@ -113,18 +112,14 @@ public class ZendCodeTracing extends ZendConnection {
 	 * @throws WebApiException
 	 */
 	public CodeTracingStatus disable(boolean restartPhp) throws WebApiException {
-		IZendTarget target = getTargetById(targetId);
-		if (target != null) {
-			try {
-				return getClient(targetId).codeTracingDisable(restartPhp);
-			} catch (MalformedURLException e) {
-				String message = MessageFormat.format(
-						"Error during disabling code tracing for '{0}'",
-						targetId);
-				notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
-						"Disabling Code Tracing", message, e));
-				log.error(e);
-			}
+		try {
+			return getClient(targetId).codeTracingDisable(restartPhp);
+		} catch (MalformedURLException e) {
+			String message = MessageFormat.format(
+					"Error during disabling code tracing for '{0}'", targetId);
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Disabling Code Tracing", message, e));
+			log.error(e);
 		}
 		return null;
 	}
