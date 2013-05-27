@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.ui,
  org.zend.core.notifications,
  org.eclipse.php.server.ui,
  org.eclipse.php.server.core,
- org.zend.php.library.core
+ org.eclipse.dltk.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions

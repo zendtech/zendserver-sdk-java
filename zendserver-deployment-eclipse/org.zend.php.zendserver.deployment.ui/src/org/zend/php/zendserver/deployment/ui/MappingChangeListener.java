@@ -15,7 +15,9 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.zend.php.library.core.LibraryManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IBuildpathEntry;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
@@ -98,7 +100,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 	private boolean isExcluded(IResourceDelta d, IProject project) {
 		IResource res = d.getResource();
 		if (res != null) {
-			return LibraryManager.isExcludedFromBuildpath(project,
+			return isExcludedFromBuildpath(project,
 					res.getProjectRelativePath());
 		}
 		return false;
@@ -188,6 +190,26 @@ public class MappingChangeListener implements IResourceChangeListener {
 		for (String nature : natures) {
 			if (DeploymentNature.ID.equals(nature)) {
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isExcludedFromBuildpath(IProject project, IPath path) {
+		IBuildpathEntry[] buildpathEntries = DLTKCore.create(project)
+				.readRawBuildpath();
+		for (int i = 0; i < buildpathEntries.length; i++) {
+			IBuildpathEntry curr = buildpathEntries[i];
+			if (curr.getEntryKind() == IBuildpathEntry.BPE_SOURCE
+					&& curr.getPath()
+							.equals(project.getProject().getFullPath())) {
+				IPath[] exclusionPatterns = curr.getExclusionPatterns();
+				for (IPath p : exclusionPatterns) {
+					if (path.matchingFirstSegments(p) == p.segmentCount()) {
+						return true;
+					}
+				}
+				break;
 			}
 		}
 		return false;
