@@ -31,18 +31,30 @@ public class ComboField implements EditorField {
 	protected boolean isRefresh;
 	protected ControlDecoration controlDecoration;
 	private String[] items;
+	private String defaultValue;
 	
-	public ComboField(IModelObject target,Feature key, String label) {
+	public ComboField(IModelObject target, Feature key, String label) {
 		this(target, key, label, SWT.NONE);
 	}
-	
-	public ComboField(IModelObject target,Feature key, String label, int style) {
+
+	public ComboField(IModelObject target, Feature key, String label,
+			String defaultValue) {
+		this(target, key, label, SWT.NONE, null);
+	}
+
+	public ComboField(IModelObject target, Feature key, String label, int style) {
+		this(target, key, label, style, null);
+	}
+
+	public ComboField(IModelObject target, Feature key, String label,
+			int style, String defaultValue) {
 		this.target = target;
 		this.key = key;
 		this.labelTxt = label;
 		this.style = style;
+		this.defaultValue = defaultValue;
 	}
-	
+
 	public Feature getKey() {
 		return key;
 	}
@@ -57,6 +69,9 @@ public class ComboField implements EditorField {
 			// read-writeable combo fields
 			text.setText(value == null ? "" : value); //$NON-NLS-1$
 			
+			if (value == null && defaultValue != null) {
+				value = defaultValue;
+			}
 			// read-only combo fields
 			if (value != null) {
 				String[] items = text.getItems();
@@ -67,7 +82,7 @@ public class ComboField implements EditorField {
 						break;
 					}
 				}
-			}			
+			}		
 		} finally {
 			isRefresh = false;
 		}

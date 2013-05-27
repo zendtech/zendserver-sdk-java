@@ -322,7 +322,7 @@ public class OverviewPage extends DescriptorEditorPage {
 				Messages.OverviewPage_Name));
 		type = addField(new ComboField(descr,
 				DeploymentDescriptorPackage.PKG_TYPE, "Project Type:",
-				SWT.READ_ONLY));
+				SWT.READ_ONLY, ProjectType.APPLICATION.getName()));
 		type.setItems(new String[] { ProjectType.APPLICATION.getName(),
 				ProjectType.LIBRARY.getName() });
 		summary = addField(new TextField(descr,
