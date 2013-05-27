@@ -11,10 +11,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathEntry;
+import org.eclipse.dltk.internal.core.UserLibraryManager;
+import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.includepath.IncludePath;
 import org.eclipse.php.internal.core.includepath.IncludePathManager;
 import org.zend.sdklib.application.ZendProject;
@@ -28,6 +33,11 @@ public class DeploymentNature implements IProjectNature {
 
 	private static final String ZF_NATURE_ID = "org.zend.php.framework.ZendFrameworkNature"; //$NON-NLS-1$
 
+	public static final IPath zf2ContainerPath = new Path(
+			DLTKCore.USER_LIBRARY_CONTAINER_ID).append(UserLibraryManager
+			.makeLibraryName("Zend Framework 2",
+					PHPLanguageToolkit.getDefault()));
+	
 	private IProject project;
 	
 	public void configure() throws CoreException {
@@ -91,9 +101,7 @@ public class DeploymentNature implements IProjectNature {
 					IBuildpathEntry bPath = (IBuildpathEntry) includePath
 							.getEntry();
 					if (bPath.getEntryKind() == IBuildpathEntry.BPE_CONTAINER
-							&& bPath.getPath()
-									.toString()
-									.equals("org.zend.php.framework.v2.CONTAINER")) { //$NON-NLS-1$
+							&& bPath.getPath().equals(zf2ContainerPath)) {
 						IMappingModel model = MappingModelFactory
 								.createDefaultModel(project.getLocation()
 										.toFile());
