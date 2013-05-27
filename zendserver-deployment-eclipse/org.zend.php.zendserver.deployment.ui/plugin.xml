@@ -205,5 +205,13 @@
             class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.zend.php.ui.welcomeLinkListener">
+      <listener
+            class="org.zend.php.zendserver.deployment.ui.actions.LaunchTargetWizard"
+            id="org.zend.php.zendserver.deployment.ui.actions.LaunchTargetWizard.listener"
+            name="target">
+      </listener>
+   </extension>
 
 </plugin>
