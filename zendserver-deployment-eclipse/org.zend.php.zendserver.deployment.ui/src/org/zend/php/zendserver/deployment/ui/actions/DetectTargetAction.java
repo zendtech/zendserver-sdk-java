@@ -175,6 +175,8 @@ public class DetectTargetAction extends Action {
 				try {
 					try {
 						target = tm.detectLocalhostTarget(id, key, true, false);
+					} catch (IllegalArgumentException e) {
+						detectZendServer6(null);
 					} catch (DetectionException e) {
 						detectZendServer6(null);
 					} catch (LicenseExpiredException e) {
