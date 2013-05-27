@@ -66,7 +66,11 @@ public class DeploymentDescriptor extends ModelContainer implements
 	
 	public void setType(String type) {
 		String oldType = this.type;
-		this.type = type;
+		if (ProjectType.byName(type) == ProjectType.APPLICATION) {
+			this.type = null;
+		} else {
+			this.type = type;
+		}
 		fireChange(DeploymentDescriptorPackage.PKG_TYPE, type, oldType);
 	}
 
