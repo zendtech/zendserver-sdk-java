@@ -235,14 +235,17 @@ public abstract class AbstractMonitor extends Job {
 						ZendCodeTracing codeTracing = new ZendCodeTracing(
 								targetId);
 						try {
-							CodeTracingStatus status = codeTracing
-									.disable(true);
-							if (status == null) {
-								String m = MessageFormat
-										.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-												targetId);
-								handleError(monitor, m);
-								return;
+							if (TargetsManagerService.INSTANCE
+									.getTargetManager().getTargetById(targetId) != null) {
+								CodeTracingStatus status = codeTracing
+										.disable(true);
+								if (status == null) {
+									String m = MessageFormat
+											.format(Messages.AbstractMonitor_InitializationJobConnectionError,
+													targetId);
+									handleError(monitor, m);
+									return;
+								}
 							}
 						} catch (WebApiCommunicationError e) {
 							String m = MessageFormat
