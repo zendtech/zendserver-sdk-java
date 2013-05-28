@@ -404,6 +404,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		if (p != null) {
 			result = p.getAppdir();
 		}
+		if (result == null || "library".equals(p.getType())) {
+			result = "";
+		}
 		return result;
 	}
 
