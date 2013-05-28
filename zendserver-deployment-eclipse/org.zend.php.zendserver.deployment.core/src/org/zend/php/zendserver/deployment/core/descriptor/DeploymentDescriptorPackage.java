@@ -54,7 +54,7 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final int APPDIR_ID = 11;
 	
-	public static final Feature APPDIR = new Feature("appdir", null, String.class, APPDIR_ID); //$NON-NLS-1$
+	public static final Feature APPDIR = new Feature("appdir", null, String.class, APPDIR_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int DEPENDENCIES_PHP_ID = 12;
 	

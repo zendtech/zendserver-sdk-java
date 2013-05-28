@@ -26,7 +26,6 @@ public class DescriptorSemanticValidator {
 		PropertyTester tester = new FieldNotEmptyTester(this);
 		add(DeploymentDescriptorPackage.PKG_NAME, tester);
 		add(DeploymentDescriptorPackage.VERSION_RELEASE, tester);
-		add(DeploymentDescriptorPackage.APPDIR, tester); // may be empty but must exist
 		
 		add(DeploymentDescriptorPackage.ID, tester);
 		add(DeploymentDescriptorPackage.DISPLAY, tester);
