@@ -8,9 +8,17 @@
 package org.zend.sdklib.application;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
+import javax.xml.bind.JAXBException;
+
+import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.application.ZendConnection;
+import org.zend.sdklib.internal.project.ProjectResourcesWriter;
+import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.sdklib.target.ITargetLoader;
@@ -137,8 +145,9 @@ public class ZendLibrary extends ZendConnection {
 	public LibraryList deploy(String path, String targetId) {
 		return deploy(path, path, targetId);
 	}
-	
-	public LibraryList synchronize(String path, String configLocation, int id, String targetId) {
+
+	public LibraryList synchronize(String path, String configLocation, int id,
+			String targetId) {
 		if (path != null) {
 			File zendPackage = createPackage(path, configLocation);
 			try {
@@ -188,10 +197,11 @@ public class ZendLibrary extends ZendConnection {
 		}
 		if (file.isDirectory()) {
 			File tempFile = getTempFile(path);
+			String name = getDeploymentPackageName(file, new File(
+					configLocation));
 			if (tempFile.isDirectory()) {
 				File[] children = tempFile.listFiles();
-				if (children.length == 1
-						&& children[0].getName().endsWith(".zpk")) {
+				if (children.length == 1 && children[0].getName().equals(name)) {
 					return children[0];
 				}
 			}
@@ -200,6 +210,66 @@ public class ZendLibrary extends ZendConnection {
 		} else {
 			return file;
 		}
+	}
+
+	private String getDeploymentPackageName(File directory, File configLocation) {
+		if (directory == null || !directory.isDirectory()) {
+			log.error(new IllegalArgumentException(
+					"Location cannot be null or non-existing directory"));
+			return null;
+		}
+		configLocation = configLocation.getAbsoluteFile();
+		String name = getPackageName(configLocation);
+		if (name == null) {
+			return null;
+		}
+		return name + ".zpk";
+	}
+
+	private String getPackageName(File container) {
+		String result = null;
+		Package p = getPackage(container);
+		if (p != null) {
+			String name = p.getName();
+			final Version version2 = p.getVersion();
+			if (version2 == null) {
+				throw new IllegalStateException(
+						"Error, missing <version> element in deployment descriptor");
+			}
+
+			String version = version2.getRelease();
+
+			if (name != null && version != null) {
+				result = name + "-" + version;
+			}
+		}
+		return result;
+	}
+
+	private Package getPackage(File container) {
+		File descriptorFile = new File(container,
+				ProjectResourcesWriter.DESCRIPTOR);
+		if (!descriptorFile.exists()) {
+			log.error(descriptorFile.getAbsoluteFile() + " does not exist.");
+			return null;
+		}
+		FileInputStream pkgStream = null;
+		Package p = null;
+		try {
+			pkgStream = new FileInputStream(descriptorFile);
+			p = JaxbHelper.unmarshalPackage(pkgStream);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		} catch (JAXBException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			try {
+				pkgStream.close();
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return p;
 	}
 
 	private File getTempFile(String path) {
