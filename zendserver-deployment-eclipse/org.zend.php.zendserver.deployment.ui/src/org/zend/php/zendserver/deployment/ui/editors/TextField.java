@@ -193,6 +193,9 @@ public class TextField implements EditorField {
 						if (currText.equals(newText)) {
 							return;
 						}
+						if (newText == null) {
+							newText = ""; //$NON-NLS-1$
+						}
 						
 						Point sel = text.getSelection();
 						isRefresh = true;
@@ -232,6 +235,22 @@ public class TextField implements EditorField {
 		
 		
 		if (visible) {
+			if (textValue != null) {
+				text.setText(textValue);
+				textValue = null;
+			}
+		} else {
+			textValue = text.getText();
+			text.setText(""); //$NON-NLS-1$
+		}
+	}
+	
+	public void setEnabled(boolean enabled) {
+		if (text.getEnabled() == enabled) {
+			return;
+		}
+		text.setEnabled(enabled);	
+		if (enabled) {
 			if (textValue != null) {
 				text.setText(textValue);
 				textValue = null;

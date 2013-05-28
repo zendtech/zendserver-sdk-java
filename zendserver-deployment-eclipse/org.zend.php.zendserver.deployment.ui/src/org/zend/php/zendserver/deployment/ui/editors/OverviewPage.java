@@ -356,14 +356,6 @@ public class OverviewPage extends DescriptorEditorPage {
 		final Section section = toolkit.createSection(body, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED);
 		section.setText(Messages.OverviewPage_GeneralInfo);
-		switch (fModel.getDescriptorModel().getType()) {
-		case LIBRARY:
-			section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
-			break;
-		default:
-			section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
-			break;
-		}
 		fModel.getDescriptorModel().addListener(
 				new IDescriptorChangeListener() {
 
@@ -377,8 +369,12 @@ public class OverviewPage extends DescriptorEditorPage {
 								switch (fModel.getDescriptorModel().getType()) {
 								case LIBRARY:
 									section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
+									appDir.setEnabled(false);
+									docRoot.setEnabled(false);
 									break;
 								default:
+									appDir.setEnabled(true);
+									docRoot.setEnabled(true);
 									section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
 									break;
 								}
@@ -413,6 +409,17 @@ public class OverviewPage extends DescriptorEditorPage {
 
 		icon.create(sectionClient, toolkit);
 
+		switch (fModel.getDescriptorModel().getType()) {
+		case LIBRARY:
+			appDir.setEnabled(false);
+			docRoot.setEnabled(false);
+			section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
+			break;
+		default:
+			section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
+			break;
+		}
+		
 		toolkit.paintBordersFor(sectionClient);
 	}
 

@@ -92,4 +92,11 @@ public class FileField extends TextField {
 	protected String openDialog(OpenFileDialog dialog) {
 		return dialog.openFile();
 	}
+	
+	@Override
+	public void setEnabled(boolean enable) {
+		super.setEnabled(enable);
+		licenseBrowseButton.setEnabled(enable);
+	}
+	
 }
