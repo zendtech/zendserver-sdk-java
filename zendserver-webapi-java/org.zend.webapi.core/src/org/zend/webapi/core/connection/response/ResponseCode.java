@@ -81,6 +81,12 @@ public enum ResponseCode {
 			"applicationConflict",
 			"Provided application package includes a different application, and not a different version of the existing application"),
 
+	LIBRARY_CONFLICT(
+			409,
+			"libraryAlreadyExists",
+			"Could not deploy library: Library with the same name and version already exists"),
+	
+			
 	SERVER_NOT_CONFIGURED(
 			500,
 			"serverNotConfigured",
