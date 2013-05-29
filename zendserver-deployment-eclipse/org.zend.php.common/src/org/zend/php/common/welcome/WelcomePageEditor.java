@@ -104,7 +104,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		layout.marginHeight = 0;
 		editor.setLayout(layout);
 		editor.setBackgroundMode(SWT.INHERIT_FORCE);
-		Color c = new Color(Display.getDefault(), 95, 166, 48);
+		Color c = new Color(Display.getDefault(), 239, 240, 240);
 		editor.setBackground(c);
 		createWelcomePageContent(editor);
 		createFeatureManager(editor);
