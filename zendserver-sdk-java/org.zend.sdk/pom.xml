@@ -40,7 +40,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.zend</groupId>
+			<groupId>org.zend</groupId>
 			<artifactId>org.zend.webapi</artifactId>
 			<version>0.0.23-SNAPSHOT</version>
 			<type>test-jar</type>
@@ -112,7 +112,7 @@
 			<version>1.6.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.zend</groupId>
+			<groupId>org.zend</groupId>
 			<artifactId>org.zend.webapi</artifactId>
 			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
