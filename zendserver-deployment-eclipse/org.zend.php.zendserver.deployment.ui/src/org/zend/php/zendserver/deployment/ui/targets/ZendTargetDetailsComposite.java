@@ -146,6 +146,14 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		IZendTarget[] targets = tm.getTargets();
+		for (IZendTarget t : targets) {
+			if (t.getHost().equals(host)) {
+				throw new CoreException(new Status(IStatus.ERROR,
+						Activator.PLUGIN_ID,
+						Messages.TargetDialog_HostConflictError));
+			}
+		}
 		String id = tm.createUniqueId(null);
 		IZendTarget target = new ZendTarget(id, host, data[1], data[2], true);
 		String baseUrl = data[3];
