@@ -110,11 +110,9 @@ public class ProfileModificationHelper {
 			return true;
 		}
 
-		IQuery<IInstallableUnit> query = Platform.inDevelopmentMode() ? QueryUtil
-				.createIUAnyQuery() : QueryUtil.createIUPatchQuery();
+		IQuery<IInstallableUnit> query = QueryUtil.createIUAnyQuery(); 
 		ElementQueryDescriptor queryDescriptor = new ElementQueryDescriptor(
-				profile, QueryUtil.createCompoundQuery(pui.getPolicy()
-						.getVisibleInstalledIUQuery(), query, false),
+				profile, query,
 				new Collector<IInstallableUnit>(),
 				new InstalledIUElementWrapper(profile, element));
 
