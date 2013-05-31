@@ -10,14 +10,11 @@ package org.zend.sdklib.manager;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -746,21 +743,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 			return true;
 		}
 		try {
-			Enumeration<NetworkInterface> interfaces = NetworkInterface
-					.getNetworkInterfaces();
-			ArrayList<NetworkInterface> interfacesList = Collections
-					.list(interfaces);
-			for (NetworkInterface netInterface : interfacesList) {
-				Enumeration<InetAddress> inetAddresses = netInterface
-						.getInetAddresses();
-				for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-					if (host.equals(inetAddress.getHostName())) {
-						return true;
-					}
-				}
-			}
-		} catch (SocketException e) {
-			// just ignore and continue
+			return InetAddress.getLocalHost().getHostAddress().equals(host);
+		} catch (UnknownHostException e) {
+			// skip and continue
 		}
 		return false;
 	}
