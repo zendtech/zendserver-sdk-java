@@ -209,7 +209,7 @@ public class DevCloudDetailsComposite extends AbstractTargetDetailsComposite {
 			usernameText.setText(username);
 		}
 		String password = TargetsManagerService.INSTANCE
-				.getContainerPassword(defaultTarget);
+				.getPhpcloudPassword(defaultTarget);
 		if (password != null) {
 			passwordText.setText(password);
 			shouldStoreButton.setSelection(true);

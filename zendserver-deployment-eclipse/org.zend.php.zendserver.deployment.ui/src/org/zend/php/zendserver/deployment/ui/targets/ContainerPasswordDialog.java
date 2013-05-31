@@ -49,6 +49,8 @@ public class ContainerPasswordDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		GridLayout layout = (GridLayout) comp.getLayout();
+		GridData gd = (GridData) comp.getLayoutData();
+		gd.widthHint = 250;
 		layout.numColumns = 2;
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
 		passwordLabel.setText(Messages.ContainerPasswordDialog_0);

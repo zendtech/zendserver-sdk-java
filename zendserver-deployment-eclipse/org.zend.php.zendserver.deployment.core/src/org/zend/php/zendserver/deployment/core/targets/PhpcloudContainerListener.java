@@ -95,7 +95,7 @@ public class PhpcloudContainerListener implements IRequestListener {
 			String password = target.getProperty(ZendDevCloud.TARGET_PASSWORD);
 			if (password == null) {
 				password = TargetsManagerService.INSTANCE
-						.getContainerPassword(target);
+						.getPhpcloudPassword(target);
 			}
 			if (password == null) {
 				password = getPassword(target);

@@ -161,7 +161,7 @@ public class TargetsManagerService {
 		removeJob.schedule();
 	}
 
-	public void storeContainerPassword(IZendTarget target, String password) {
+	public void storePhpcloudPassword(IZendTarget target, String password) {
 		ISecurePreferences node = getNode(target);
 		try {
 			node.put(PASSWORD_KEY, password, true);
@@ -173,7 +173,7 @@ public class TargetsManagerService {
 		}
 	}
 
-	public String getContainerPassword(IZendTarget target) {
+	public String getPhpcloudPassword(IZendTarget target) {
 		ISecurePreferences node = getNode(target);
 		try {
 			return node.get(PASSWORD_KEY, null);
@@ -181,6 +181,16 @@ public class TargetsManagerService {
 			DeploymentCore.log(e);
 		}
 		return null;
+	}
+	
+	public void storeContainerPassword(IZendTarget target, String password) {
+		ZendDevCloud devCloud = new ZendDevCloud();
+		devCloud.setContainerPassword(target, password);
+	}
+
+	public String getContainerPassword(IZendTarget target) {
+		ZendDevCloud devCloud = new ZendDevCloud();
+		return devCloud.getContainerPassword(target);
 	}
 
 	private ISecurePreferences getNode(IZendTarget target) {

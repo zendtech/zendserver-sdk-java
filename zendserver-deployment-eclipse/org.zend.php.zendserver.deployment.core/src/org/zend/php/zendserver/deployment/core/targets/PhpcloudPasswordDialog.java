@@ -91,7 +91,7 @@ public class PhpcloudPasswordDialog extends Dialog {
 		save = saveButton.getSelection();
 		if (password != null) {
 			if (save) {
-			TargetsManagerService.INSTANCE.storeContainerPassword(target,
+			TargetsManagerService.INSTANCE.storePhpcloudPassword(target,
 					password);
 			}
 			((ZendTarget) target).addProperty(ZendDevCloud.TARGET_PASSWORD,

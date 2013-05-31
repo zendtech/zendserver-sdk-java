@@ -89,7 +89,7 @@ public class EclipseTargetsManager extends TargetsManager {
 			String shouldStore = result
 					.getProperty(ZendDevCloud.STORE_PASSWORD);
 			if (shouldStore != null && Boolean.valueOf(shouldStore)) {
-				TargetsManagerService.INSTANCE.storeContainerPassword(result,
+				TargetsManagerService.INSTANCE.storePhpcloudPassword(result,
 						result.getProperty(ZendDevCloud.TARGET_PASSWORD));
 			}
 		}
