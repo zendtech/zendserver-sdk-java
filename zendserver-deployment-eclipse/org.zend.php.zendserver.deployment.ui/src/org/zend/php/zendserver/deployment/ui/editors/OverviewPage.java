@@ -150,7 +150,7 @@ public class OverviewPage extends DescriptorEditorPage {
 
 	}
 
-	private void createExportingSection(IManagedForm managedForm, Composite body) {
+	private void createExportingSection(final IManagedForm managedForm, Composite body) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createStaticSection(toolkit, body,
 				Messages.OverviewPage_Exporting);
@@ -187,7 +187,7 @@ public class OverviewPage extends DescriptorEditorPage {
 											true, false);
 									break;
 								}
-								text.getParent().getParent().pack(true);
+								managedForm.reflow(true);
 							}
 						});
 					}
@@ -235,7 +235,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		return text;
 	}
 
-	private void createTestingSection(IManagedForm managedForm, Composite body) {
+	private void createTestingSection(final IManagedForm managedForm, Composite body) {
 		FormToolkit toolkit = managedForm.getToolkit();
 
 		Section section = toolkit.createSection(body, Section.TITLE_BAR
@@ -287,17 +287,15 @@ public class OverviewPage extends DescriptorEditorPage {
 									if (event.newValue != null
 											&& !event.newValue
 													.equals(event.oldValue)) {
-										for (Control child : children) {
-											if (child instanceof ImageHyperlink) {
-												child.dispose();
-											}
-										}
 										ProjectType currentType = ProjectType
 												.byName((String) event.newValue);
-										resolveContributions(sectionClient,
-												currentType);
-										sectionClient.getParent().getParent()
-												.pack(true);
+										for (Control child : children) {
+											if (child instanceof ImageHyperlink) {
+												ProjectType linkType = (ProjectType) child.getData();
+												setControlVisibility(child, linkType == currentType);
+											}
+										}
+										managedForm.reflow(true);
 									}
 								}
 							}
@@ -470,12 +468,21 @@ public class OverviewPage extends DescriptorEditorPage {
 		}
 		List<ITestingSectionContribution> contributions = getTestingContributions();
 		for (ITestingSectionContribution c : contributions) {
-			if (c.getType() == currentType) {
-				ContributionControl control = new ContributionControl(
-						c.getCommand(), c.getMode(), c.getLabel(), c.getIcon());
-				control.createControl(sectionClient);
-			}
+			ContributionControl control = new ContributionControl(
+					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon(), c.getType());
+			Control link = control.createControl(sectionClient);
+			setControlVisibility(link, c.getType() == currentType);
 		}
+	}
+	
+	private void setControlVisibility(Control control, boolean show) {
+		control.setVisible(show);
+		GridData data = (GridData) control.getLayoutData();
+		if (data == null) {
+			data = new GridData();
+			control.setLayoutData(data);
+		}
+		data.exclude = !show;
 	}
 
 }

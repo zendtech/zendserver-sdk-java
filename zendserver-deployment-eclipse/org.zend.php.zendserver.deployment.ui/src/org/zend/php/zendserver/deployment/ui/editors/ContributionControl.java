@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
@@ -29,13 +30,15 @@ public class ContributionControl {
 	private String message;
 	private ImageDescriptor image;
 	private String commandId;
+	private ProjectType projectType;
 
-	public ContributionControl(String commandId, String mode, String message, ImageDescriptor image) {
+	public ContributionControl(String commandId, String mode, String message, ImageDescriptor image, ProjectType projectType) {
 		super();
 		this.mode = mode;
 		this.message = message;
 		this.image = image;
 		this.commandId = commandId;
+		this.projectType = projectType;
 	}
 
 	protected Control createControl(Composite parent) {
@@ -44,6 +47,7 @@ public class ContributionControl {
 		ImageHyperlink link = toolkit.createImageHyperlink(parent, SWT.NONE);
 		link.setText(message);
 		link.setImage(image.createImage());
+		link.setData(projectType);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				IProject project = getProject();
