@@ -17,6 +17,7 @@ import org.zend.php.zendserver.deployment.core.descriptor.IZendFramework2Depende
 import org.zend.php.zendserver.deployment.core.descriptor.IZendFrameworkDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.IZendServerDependency;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
+import org.zend.php.zendserver.deployment.core.utils.ObjectUtils;
 
 public class DeploymentDescriptor extends ModelContainer implements
 		IDeploymentDescriptor {
@@ -66,12 +67,15 @@ public class DeploymentDescriptor extends ModelContainer implements
 	
 	public void setType(String type) {
 		String oldType = this.type;
-		if (ProjectType.byName(type) == ProjectType.APPLICATION) {
-			this.type = null;
-		} else {
-			this.type = type;
+		
+		// type "application" is always represented as null in the model
+		String newType = (ProjectType.APPLICATION.getName().equals(type)) ? null : type;
+		
+		// fire the change event only if the type has changed
+		if (!ObjectUtils.equals(oldType, newType)) {
+			this.type = newType;
+			fireChange(DeploymentDescriptorPackage.PKG_TYPE, type, oldType);
 		}
-		fireChange(DeploymentDescriptorPackage.PKG_TYPE, type, oldType);
 	}
 
 	public String getName() {
