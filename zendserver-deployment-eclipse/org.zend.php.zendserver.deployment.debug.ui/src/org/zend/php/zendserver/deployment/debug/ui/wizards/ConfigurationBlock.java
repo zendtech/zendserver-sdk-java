@@ -47,6 +47,7 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
 import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
 import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -209,7 +210,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		URL baseUrl = null;
 		try {
 			baseUrl = getBaseURL();
-			if (baseUrl.getHost().equals("localhost")) { //$NON-NLS-1$
+			if (TargetsManager.isLocalhost(baseUrl.getHost())) {
 				IPath file = new Path(baseUrl.getFile());
 				if (file.segmentCount() > 0) {
 					if (bannedNames.contains(file.segment(0))) {
