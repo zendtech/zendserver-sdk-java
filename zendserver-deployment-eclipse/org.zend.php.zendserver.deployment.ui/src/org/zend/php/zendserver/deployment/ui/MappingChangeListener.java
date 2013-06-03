@@ -158,8 +158,9 @@ public class MappingChangeListener implements IResourceChangeListener {
 				IDeploymentDescriptor desc = container.getDescriptorModel();
 				String scripts = desc.getScriptsRoot();
 				IPath resPath = resource.getProjectRelativePath();
-				if (resource.getName().equals(scripts)
-						|| resPath.segment(0).equals(scripts)) {
+				if (resPath.segmentCount() > 0
+						&& (resource.getName().equals(scripts) || resPath
+								.segment(0).equals(scripts))) {
 					return false;
 				}
 			}
