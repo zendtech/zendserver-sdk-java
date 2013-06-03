@@ -47,6 +47,8 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	private Text baseUrlText;
 	private Label baseUrlLabel;
 	private Button baseUrlButton;
+	
+	private boolean editMode;
 
 	public Composite create(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -111,6 +113,7 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	public void setDefaultTargetSettings(IZendTarget defaultTarget) {
+		editMode = true;
 		if (hostText != null) {
 			hostText.setText(defaultTarget.getHost().toString());
 		}
@@ -144,14 +147,15 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage()));
 		}
-
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		IZendTarget[] targets = tm.getTargets();
-		for (IZendTarget t : targets) {
-			if (t.getHost().equals(host)) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.PLUGIN_ID,
-						Messages.TargetDialog_HostConflictError));
+		if (!editMode) {
+			IZendTarget[] targets = tm.getTargets();
+			for (IZendTarget t : targets) {
+				if (t.getHost().equals(host)) {
+					throw new CoreException(new Status(IStatus.ERROR,
+							Activator.PLUGIN_ID,
+							Messages.TargetDialog_HostConflictError));
+				}
 			}
 		}
 		String id = tm.createUniqueId(null);
