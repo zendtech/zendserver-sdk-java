@@ -8,7 +8,7 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
 import org.zend.php.zendserver.deployment.ui.Messages;
-import org.zend.php.zendserver.deployment.ui.contentassist.ZendComponentsProvider;
+import org.zend.php.zendserver.deployment.ui.contentassist.PHPLibrariesProvider;
 
 public class PHPLibraryDependencyDetailsPage extends DependencyDetailsPage {
 
@@ -17,7 +17,7 @@ public class PHPLibraryDependencyDetailsPage extends DependencyDetailsPage {
 				Messages.PHPLibraryDependencyDetailsPage_PHPLibraryDetails);
 
 		setNameRequired(Messages.ZendComponentDependencyDetailsPage_Name,
-				new ZendComponentsProvider());
+				new PHPLibrariesProvider());
 	}
 
 	@Override
