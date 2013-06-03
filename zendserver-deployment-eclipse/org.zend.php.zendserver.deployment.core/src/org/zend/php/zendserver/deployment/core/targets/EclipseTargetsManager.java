@@ -57,7 +57,7 @@ public class EclipseTargetsManager extends TargetsManager {
 	}
 
 	@Override
-	public synchronized IZendTarget add(IZendTarget target,
+	public IZendTarget add(IZendTarget target,
 			boolean suppressConnect) throws TargetException,
 			LicenseExpiredException {
 		// Create PHP Server associated with this target
@@ -102,7 +102,7 @@ public class EclipseTargetsManager extends TargetsManager {
 	}
 
 	@Override
-	public synchronized IZendTarget remove(IZendTarget target) {
+	public IZendTarget remove(IZendTarget target) {
 		for (ITargetsManagerListener listener : listeners) {
 			listener.targetRemoved(target);
 		}
