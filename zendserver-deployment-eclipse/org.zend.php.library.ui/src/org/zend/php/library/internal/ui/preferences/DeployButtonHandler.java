@@ -19,7 +19,7 @@ public class DeployButtonHandler implements IPHPLibraryButtonHandler {
 	 * @see org.eclipse.php.ui.preferences.IPHPLibraryButtonHandler#getLabel()
 	 */
 	public String getLabel() {
-		return "Deploy to Target";
+		return Messages.DeployButtonHandler_0;
 	}
 
 	/*

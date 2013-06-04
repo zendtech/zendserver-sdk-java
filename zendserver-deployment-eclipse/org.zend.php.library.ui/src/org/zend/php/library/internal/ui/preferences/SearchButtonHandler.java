@@ -32,7 +32,7 @@ public class SearchButtonHandler implements IPHPLibraryButtonHandler {
 	 * @see org.eclipse.php.ui.preferences.IPHPLibraryButtonHandler#getLabel()
 	 */
 	public String getLabel() {
-		return "Search...";
+		return Messages.SearchButtonHandler_0;
 	}
 
 	/*

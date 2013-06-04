@@ -42,13 +42,13 @@ public class SearchLibraryWizard extends Wizard {
 	List<BPUserLibraryElement> elements;
 
 	public SearchLibraryWizard(Map<String, LibraryVersion> libraries) {
-		setWindowTitle("Search Library");
+		setWindowTitle(Messages.SearchLibraryWizard_0);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(LibraryUI
-				.getImageDescriptor("icons/full/wizban/packagist.png"));
+				.getImageDescriptor("icons/full/wizban/packagist.png")); //$NON-NLS-1$
 		searchPage = new SearchLibraryPage();
 		detailsPage = new LibraryDetailsPage(libraries);
-		this.log = new EclipseConsoleLog("Composer");
+		this.log = new EclipseConsoleLog("Composer"); //$NON-NLS-1$
 		this.log.init();
 	}
 
@@ -80,7 +80,7 @@ public class SearchLibraryWizard extends Wizard {
 
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("Downloading selected library...",
+					monitor.beginTask("Downloading selected library...", //$NON-NLS-1$
 							IProgressMonitor.UNKNOWN);
 					Map<IPath, List<String>> toAdd = ComposerService
 							.downloadPackages(searchPage.getSelection(),

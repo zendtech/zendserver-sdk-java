@@ -120,7 +120,7 @@ public class SearchLibraryPage extends WizardPage {
 		}
 
 		public String getLabel() {
-			return (pagesNumber > 0 ? String.valueOf(currentPage) : 0) + "/"
+			return (pagesNumber > 0 ? String.valueOf(currentPage) : 0) + "/" //$NON-NLS-1$
 					+ pagesNumber;
 		}
 
@@ -141,10 +141,10 @@ public class SearchLibraryPage extends WizardPage {
 	 * Create the wizard.
 	 */
 	public SearchLibraryPage() {
-		super("wizardPage");
+		super("wizardPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Library Search");
-		setDescription("Seach for required library in remote repository.");
+		setTitle(Messages.SearchLibraryPage_2);
+		setDescription(Messages.SearchLibraryPage_3);
 	}
 
 	public RepositoryPackage getSelection() {
@@ -183,10 +183,10 @@ public class SearchLibraryPage extends WizardPage {
 		Button searchButton = new Button(container, SWT.NONE);
 		searchButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
 				false, 1, 1));
-		searchButton.setText("Search");
+		searchButton.setText(Messages.SearchLibraryPage_4);
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ComposerService.search("monolog/monolog", null);
+				ComposerService.search("monolog/monolog", null); //$NON-NLS-1$
 				doSearch();
 			}
 		});
@@ -201,11 +201,11 @@ public class SearchLibraryPage extends WizardPage {
 		TableViewerColumn nameColumn = new TableViewerColumn(tableViewer,
 				SWT.NONE);
 		nameColumn.getColumn().setWidth(180);
-		nameColumn.getColumn().setText("Name");
+		nameColumn.getColumn().setText(Messages.SearchLibraryPage_6);
 		TableViewerColumn descColumn = new TableViewerColumn(tableViewer,
 				SWT.NONE);
 		descColumn.getColumn().setWidth(250);
-		descColumn.getColumn().setText("Description");
+		descColumn.getColumn().setText(Messages.SearchLibraryPage_7);
 		tableViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -231,7 +231,7 @@ public class SearchLibraryPage extends WizardPage {
 				if (element instanceof RepositoryPackage) {
 					return ((RepositoryPackage) element).getName();
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		});
 		tableViewer.setContentProvider(new ContentProvider() {
@@ -256,7 +256,7 @@ public class SearchLibraryPage extends WizardPage {
 				false, 1, 1);
 		gd_previousButton.widthHint = 100;
 		previousButton.setLayoutData(gd_previousButton);
-		previousButton.setText("< Previous");
+		previousButton.setText(Messages.SearchLibraryPage_9);
 		previousButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -279,14 +279,14 @@ public class SearchLibraryPage extends WizardPage {
 		gd_pagesLabel.widthHint = 60;
 		gd_pagesLabel.minimumWidth = 60;
 		pagesLabel.setLayoutData(gd_pagesLabel);
-		pagesLabel.setText("0/0");
+		pagesLabel.setText("0/0"); //$NON-NLS-1$
 
 		nextButton = new Button(pagesNavigation, SWT.NONE);
 		GridData gd_nextButton = new GridData(SWT.LEFT, SWT.CENTER, false,
 				false, 1, 1);
 		gd_nextButton.widthHint = 100;
 		nextButton.setLayoutData(gd_nextButton);
-		nextButton.setText("Next >");
+		nextButton.setText(Messages.SearchLibraryPage_11);
 		nextButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -314,7 +314,7 @@ public class SearchLibraryPage extends WizardPage {
 		getContainer().run(true, false, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("Switching page...", IProgressMonitor.UNKNOWN);
+				monitor.beginTask("Switching page...", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				pages.previousPage();
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
@@ -335,7 +335,7 @@ public class SearchLibraryPage extends WizardPage {
 		getContainer().run(true, false, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("Switching page...", IProgressMonitor.UNKNOWN);
+				monitor.beginTask("Switching page...", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				pages.nextPage();
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
@@ -357,7 +357,7 @@ public class SearchLibraryPage extends WizardPage {
 			getContainer().run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("Searching...", IProgressMonitor.UNKNOWN);
+					monitor.beginTask("Searching...", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 					pages.init();
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {

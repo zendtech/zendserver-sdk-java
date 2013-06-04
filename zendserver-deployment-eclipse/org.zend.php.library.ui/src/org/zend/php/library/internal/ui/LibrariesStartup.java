@@ -53,7 +53,7 @@ public class LibrariesStartup implements IStartup {
 	private List<IBuiltInLibrary> getLibraries() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(LibraryUI.PLUGIN_ID,
-						"builtInLibrary");
+						"builtInLibrary"); //$NON-NLS-1$
 		List<IBuiltInLibrary> result = new ArrayList<IBuiltInLibrary>();
 		for (IConfigurationElement element : elements) {
 			if ("library".equals(element.getName())) { //$NON-NLS-1$

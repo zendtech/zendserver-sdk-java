@@ -47,8 +47,8 @@ public class SearchLibraryDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitle("Library Search");
-		setMessage("Search for library in packagist.org repository");
+		setTitle(Messages.SearchLibraryDialog_0);
+		setMessage(Messages.SearchLibraryDialog_1);
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
@@ -61,7 +61,7 @@ public class SearchLibraryDialog extends TitleAreaDialog {
 		Button searchButton = new Button(container, SWT.NONE);
 		searchButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
-		searchButton.setText("Search");
+		searchButton.setText(Messages.SearchLibraryDialog_2);
 
 		table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -70,15 +70,15 @@ public class SearchLibraryDialog extends TitleAreaDialog {
 
 		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
 		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");
+		tblclmnName.setText(Messages.SearchLibraryDialog_3);
 
 		TableColumn versionColumn = new TableColumn(table, SWT.NONE);
 		versionColumn.setWidth(100);
-		versionColumn.setText("Version");
+		versionColumn.setText(Messages.SearchLibraryDialog_4);
 
 		TableColumn descriptionColumn = new TableColumn(table, SWT.LEFT);
 		descriptionColumn.setWidth(100);
-		descriptionColumn.setText("Description");
+		descriptionColumn.setText(Messages.SearchLibraryDialog_5);
 
 		Composite composite = new Composite(container, SWT.NONE);
 		composite.setLayout(new FillLayout(SWT.VERTICAL));
@@ -86,10 +86,10 @@ public class SearchLibraryDialog extends TitleAreaDialog {
 				1, 1));
 
 		Button detailsButton = new Button(composite, SWT.NONE);
-		detailsButton.setText("Details");
+		detailsButton.setText(Messages.SearchLibraryDialog_6);
 
 		Button newButton = new Button(composite, SWT.NONE);
-		newButton.setText("Add Dependences");
+		newButton.setText(Messages.SearchLibraryDialog_7);
 
 		return area;
 	}

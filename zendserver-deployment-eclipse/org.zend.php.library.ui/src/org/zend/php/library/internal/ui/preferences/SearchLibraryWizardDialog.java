@@ -46,7 +46,7 @@ public class SearchLibraryWizardDialog extends WizardDialog {
 					public void run(IProgressMonitor monitor)
 							throws InvocationTargetException,
 							InterruptedException {
-						monitor.beginTask("Retireving library details...",
+						monitor.beginTask("Retireving library details...", //$NON-NLS-1$
 								IProgressMonitor.UNKNOWN);
 						RepositoryPackage pkg = PackagistService
 								.getPackageInfo(repositoryPackage.getName());

@@ -16,7 +16,7 @@ public class ImportZpkHandler implements IPHPLibraryButtonHandler {
 	 * @see org.eclipse.php.ui.preferences.IPHPLibraryButtonHandler#getLabel()
 	 */
 	public String getLabel() {
-		return "Import form ZPK";
+		return Messages.ImportZpkHandler_0;
 	}
 
 	/*

@@ -75,9 +75,9 @@ public class LibraryDetailsPage extends WizardPage {
 	 * @param searchPage
 	 */
 	public LibraryDetailsPage(Map<String, LibraryVersion> libraries) {
-		super("wizardPage");
-		setTitle("Library Details");
-		setDescription("Choose version and resolve dependences of selected library.");
+		super("wizardPage"); //$NON-NLS-1$
+		setTitle(Messages.LibraryDetailsPage_1);
+		setDescription(Messages.LibraryDetailsPage_2);
 		this.requires = new ArrayList<String>();
 		this.resolvedRequires = new ArrayList<String>();
 		this.availableLibraries = libraries;
@@ -95,29 +95,29 @@ public class LibraryDetailsPage extends WizardPage {
 		container.setLayout(new GridLayout(2, false));
 
 		Label lblName = new Label(container, SWT.NONE);
-		lblName.setText("Name:");
+		lblName.setText(Messages.LibraryDetailsPage_3);
 
 		nameValLabel = new Label(container, SWT.NONE);
 		nameValLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
 
 		Label lblDescription = new Label(container, SWT.NONE);
-		lblDescription.setText("Description:");
+		lblDescription.setText(Messages.LibraryDetailsPage_4);
 
 		descriptionText = new Label(container, SWT.WRAP);
 		descriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
 
 		Label lblHomepage = new Label(container, SWT.NONE);
-		lblHomepage.setText("Homepage:");
+		lblHomepage.setText(Messages.LibraryDetailsPage_5);
 
 		homePageLink = new Link(container, SWT.NONE);
 		homePageLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
 				false, 1, 1));
-		homePageLink.setText("<a></a>");
+		homePageLink.setText("<a></a>"); //$NON-NLS-1$
 
 		Label lblVersions = new Label(container, SWT.NONE);
-		lblVersions.setText("Version(s):");
+		lblVersions.setText(Messages.LibraryDetailsPage_7);
 
 		versionCombo = new Combo(container, SWT.READ_ONLY);
 		versionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
@@ -131,7 +131,7 @@ public class LibraryDetailsPage extends WizardPage {
 		});
 
 		Label lblRequires = new Label(container, SWT.NONE);
-		lblRequires.setText("Requires:");
+		lblRequires.setText(Messages.LibraryDetailsPage_8);
 
 		Composite requiresComposite = new Composite(container, SWT.NONE);
 		requiresComposite.setLayout(new GridLayout(2, false));
@@ -141,7 +141,7 @@ public class LibraryDetailsPage extends WizardPage {
 		Label requiresDesc = new Label(requiresComposite, SWT.NONE);
 		requiresDesc.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
 				2, 1));
-		requiresDesc.setText("Import library dependences selected below:");
+		requiresDesc.setText(Messages.LibraryDetailsPage_9);
 
 		table = new Table(requiresComposite, SWT.BORDER | SWT.CHECK
 				| SWT.FULL_SELECTION);
@@ -156,7 +156,7 @@ public class LibraryDetailsPage extends WizardPage {
 					String name = selectedItem.getText(1);
 					if (resolvedRequires.contains(name)) {
 						selectedItem.setChecked(false);
-					} else if (!"php".equalsIgnoreCase(name)) {
+					} else if (!"php".equalsIgnoreCase(name)) { //$NON-NLS-1$
 						requires.add(name);
 					}
 				} else {
@@ -167,19 +167,19 @@ public class LibraryDetailsPage extends WizardPage {
 		});
 
 		TableColumn checkColumn = new TableColumn(table, SWT.NONE);
-		checkColumn.setText("");
+		checkColumn.setText(""); //$NON-NLS-1$
 
 		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
 		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");
+		tblclmnName.setText(Messages.LibraryDetailsPage_12);
 
 		TableColumn tblclmnVersion = new TableColumn(table, SWT.NONE);
 		tblclmnVersion.setWidth(100);
-		tblclmnVersion.setText("Version");
+		tblclmnVersion.setText(Messages.LibraryDetailsPage_13);
 
 		TableColumn tblclmnStatus = new TableColumn(table, SWT.NONE);
 		tblclmnStatus.setWidth(100);
-		tblclmnStatus.setText("Status");
+		tblclmnStatus.setText(Messages.LibraryDetailsPage_14);
 
 		Composite tableButtonsComposite = new Composite(requiresComposite,
 				SWT.NONE);
@@ -188,7 +188,7 @@ public class LibraryDetailsPage extends WizardPage {
 				false, false, 1, 1));
 
 		Button selectAllButton = new Button(tableButtonsComposite, SWT.NONE);
-		selectAllButton.setText("Select All");
+		selectAllButton.setText(Messages.LibraryDetailsPage_15);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = table.getItems();
@@ -198,7 +198,7 @@ public class LibraryDetailsPage extends WizardPage {
 						continue;
 					}
 					tableItem.setChecked(true);
-					if (!"php".equalsIgnoreCase(name)) {
+					if (!"php".equalsIgnoreCase(name)) { //$NON-NLS-1$
 						requires.add(name);
 					}
 				}
@@ -207,7 +207,7 @@ public class LibraryDetailsPage extends WizardPage {
 		});
 
 		Button deselectAllButton = new Button(tableButtonsComposite, SWT.NONE);
-		deselectAllButton.setText("Deselect All");
+		deselectAllButton.setText(Messages.LibraryDetailsPage_17);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = table.getItems();
@@ -240,7 +240,7 @@ public class LibraryDetailsPage extends WizardPage {
 				if (LibraryVersion.byName(version.getVersionNormalized())
 						.compareTo(existingVersion) == 0) {
 					setErrorMessage(MessageFormat.format(
-							"{0} version of {1} library already exists.",
+							"{0} version of {1} library already exists.", //$NON-NLS-1$
 							getVersion(), repositoryPackage.getName()));
 					return false;
 				}
@@ -259,7 +259,7 @@ public class LibraryDetailsPage extends WizardPage {
 		Map<String, String> requires = version.getRequires();
 		Set<String> keys = requires.keySet();
 		for (String key : keys) {
-			if (!"php".equalsIgnoreCase(key)) {
+			if (!"php".equalsIgnoreCase(key)) { //$NON-NLS-1$
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setText(1, key);
 				item.setText(2, requires.get(key));
@@ -268,7 +268,7 @@ public class LibraryDetailsPage extends WizardPage {
 				for (String name : libraryNames) {
 					String libName = ComposerService.parseName(name);
 					if (libName != null) {
-						libName = libName.replaceAll("-", "/");
+						libName = libName.replaceAll("-", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (key.equals(libName)) {
 							LibraryVersion libVersion = ComposerService
 									.parseVersion(name);
@@ -276,7 +276,7 @@ public class LibraryDetailsPage extends WizardPage {
 									.getRange(requires.get(key));
 							if (range.isInRange(libVersion)) {
 								resolvedRequires.add(libName);
-								item.setText(3, "available");
+								item.setText(3, Messages.LibraryDetailsPage_22);
 								item.setForeground(Display.getDefault()
 										.getSystemColor(SWT.COLOR_GRAY));
 							}
@@ -293,17 +293,17 @@ public class LibraryDetailsPage extends WizardPage {
 
 			public void run() {
 				if (repositoryPackage == null) {
-					nameValLabel.setText("");
-					descriptionText.setText("");
-					homePageLink.setText("");
+					nameValLabel.setText(""); //$NON-NLS-1$
+					descriptionText.setText(""); //$NON-NLS-1$
+					homePageLink.setText(""); //$NON-NLS-1$
 					versionCombo.removeAll();
 					table.removeAll();
 				} else {
 					nameValLabel.setText(repositoryPackage.getName());
 					descriptionText.setText(repositoryPackage.getDescription());
 					if (repositoryPackage.getUrl() != null) {
-						homePageLink.setText("<a>" + repositoryPackage.getUrl()
-								+ "</a>");
+						homePageLink.setText("<a>" + repositoryPackage.getUrl() //$NON-NLS-1$
+								+ "</a>"); //$NON-NLS-1$
 					}
 					List<PackageVersion> versions = repositoryPackage
 							.getVersions();
