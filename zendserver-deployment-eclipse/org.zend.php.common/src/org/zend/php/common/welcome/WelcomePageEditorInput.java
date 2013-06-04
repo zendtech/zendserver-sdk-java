@@ -8,12 +8,16 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
+import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
 import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 import org.zend.php.common.Activator;
+import org.zend.php.common.StudioFeaturesCheckStateListener;
+import org.zend.php.common.ZendCatalogContentProvider;
 import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -48,12 +49,15 @@ import org.eclipse.ui.internal.browser.WebBrowserEditor;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.common.Activator;
+import org.zend.php.common.StudioFeaturesCheckStateListener;
+import org.zend.php.common.ZendCatalogContentProvider;
 import org.zend.php.common.ZendCatalogViewer;
+import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 public class WelcomePageEditor extends WebBrowserEditor {
 
 	private static final String OUTLINE_VIEW = "org.eclipse.ui.views.ContentOutline";
-	
+
 	private static final String VIEWS_TO_REOPEN = "viewsToReopen";
 
 	public static final String EDITOR_ID = "org.zend.customization.welcome.welcomePageEditor"; //$NON-NLS-1$
@@ -118,9 +122,13 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			public void run() {
 				if (!editor.isDisposed()) {
 					viewer.updateCatalog();
+					if (getEditorInput() instanceof PdtWelcomePageEditorInput) {
+						viewer.expandStudioCategory();
+					}
 				}
 			}
 		});
+
 		// PlatformUI.getWorkbench().getHelpSystem()
 		// .setHelp(parent, IStudioHelpContextIds.WELCOME_PAGE);
 	}
@@ -169,17 +177,21 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			showStaticWelcomeImage(composite);
 			Activator.log(ex);
 		}
-		
+
 		Composite editorComp = parent;
-		while(!(editorComp instanceof CTabFolder)&&editorComp!=null){
+		while (!(editorComp instanceof CTabFolder) && editorComp != null) {
 			editorComp = editorComp.getParent();
 		}
 		if (editorComp instanceof CTabFolder) {
-			if (editorComp.getSize().x<800) {
+			if (editorComp.getSize().x < 800) {
 				hideRightSideViews();
 			}
-		}else if(editorComp==null){
-			if (parent.getParent().getParent().getParent().getSize().x<800) {//FIXME This is hard coded
+		} else if (editorComp == null) {
+			if (parent.getParent().getParent().getParent().getSize().x < 800) {// FIXME
+																				// This
+																				// is
+																				// hard
+																				// coded
 				hideRightSideViews();
 			}
 		}
@@ -189,7 +201,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	static void initialize(final Display display, Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
-				if (!event.required) return;	/* only do it if necessary */
+				if (!event.required)
+					return; /* only do it if necessary */
 				Shell shell = new Shell(display);
 				shell.setText("Welcome");
 				shell.setLayout(new FillLayout());
@@ -200,14 +213,16 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		});
 		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
 			public void hide(WindowEvent event) {
-				Browser browser = (Browser)event.widget;
+				Browser browser = (Browser) event.widget;
 				Shell shell = browser.getShell();
 				shell.setVisible(false);
 			}
+
 			public void show(WindowEvent event) {
-				Browser browser = (Browser)event.widget;
+				Browser browser = (Browser) event.widget;
 				final Shell shell = browser.getShell();
-				if (event.location != null) shell.setLocation(event.location);
+				if (event.location != null)
+					shell.setLocation(event.location);
 				if (event.size != null) {
 					Point size = event.size;
 					shell.setSize(shell.computeSize(size.x, size.y));
@@ -217,13 +232,13 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		});
 		browser.addCloseWindowListener(new CloseWindowListener() {
 			public void close(WindowEvent event) {
-				Browser browser = (Browser)event.widget;
+				Browser browser = (Browser) event.widget;
 				Shell shell = browser.getShell();
 				shell.close();
 			}
 		});
 	}
-	
+
 	private void showStaticWelcomeImage(Composite composite) {
 		Image img = Activator.getDefault().getImageRegistry()
 				.get(Activator.PDT_STATIC_WELCOME);
@@ -284,11 +299,12 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				reopenRightSideViews();
 			}
 		});
-//		Display.getDefault().asyncExec(new Runnable() {//change syncExec to asyncExec,or there is NPE
-//				public void run() {
-//					reopenRightSideViews();
-//				}
-//			});
+		// Display.getDefault().asyncExec(new Runnable() {//change syncExec to
+		// asyncExec,or there is NPE
+		// public void run() {
+		// reopenRightSideViews();
+		// }
+		// });
 		super.dispose();
 	}
 
@@ -309,9 +325,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			return;
 		}
 
-		
-		IViewReference outlineView = page
-				.findViewReference(OUTLINE_VIEW);
+		IViewReference outlineView = page.findViewReference(OUTLINE_VIEW);
 
 		List<String> viewIds = new ArrayList<String>();
 		if (outlineView != null) {
@@ -340,6 +354,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 			Activator.log(e);
 		}
 	}
+
 	protected void reopenRightSideViews() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
@@ -354,7 +369,11 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		List<String> viewIds = restoreState();
 		for (String viewId : viewIds) {
 			try {
-				page.showView(viewId, null, viewId.equals(OUTLINE_VIEW) ? IWorkbenchPage.VIEW_VISIBLE : IWorkbenchPage.VIEW_CREATE);
+				page.showView(
+						viewId,
+						null,
+						viewId.equals(OUTLINE_VIEW) ? IWorkbenchPage.VIEW_VISIBLE
+								: IWorkbenchPage.VIEW_CREATE);
 			} catch (Exception e) {
 				// ignore
 			}
@@ -364,13 +383,14 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	}
 
 	public void saveState(List<String> viewIds) {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		
+		IEclipsePreferences preferences = InstanceScope.INSTANCE
+				.getNode(Activator.PLUGIN_ID);
+
 		StringBuilder sb = new StringBuilder();
 		for (String viewId : viewIds) {
 			sb.append(viewId).append(",");
 		}
-		
+
 		preferences.put(VIEWS_TO_REOPEN, sb.toString());
 		try {
 			preferences.flush();
@@ -380,8 +400,9 @@ public class WelcomePageEditor extends WebBrowserEditor {
 	}
 
 	public List<String> restoreState() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		
+		IEclipsePreferences preferences = InstanceScope.INSTANCE
+				.getNode(Activator.PLUGIN_ID);
+
 		List<String> viewIds = new ArrayList<String>();
 		String viewsToReopen = preferences.get(VIEWS_TO_REOPEN, "");
 		if ((viewsToReopen != null) && (viewsToReopen.length() > 0)) {
@@ -393,7 +414,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 				}
 			}
 		}
-		
+
 		return viewIds;
 	}
 
