@@ -7,6 +7,7 @@ Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.zend.sdklib,
  org.zend.sdklib.application,
+ org.zend.sdklib.descriptor.pkg,
  org.zend.sdklib.internal.event,
  org.zend.sdklib.internal.library,
  org.zend.sdklib.internal.mapping,
