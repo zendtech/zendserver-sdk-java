@@ -70,6 +70,7 @@ public class RevertUtil {
 		Job job = new UIJob("") {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				PdtStats.visit("http://www.zend.com/en/community/pdt/downgrade");
 				boolean success = doRevert(snapshot);
 				if (success) {
 					postRevertFixes();
@@ -83,7 +84,6 @@ public class RevertUtil {
 	
 	protected void postRevertFixes() {
 		revertEclipseProductId();
-		PdtStats.visit("http://www.zend.com/en/community/pdt/downgrade");
 	}
 	
 	private void revertEclipseProductId() {
@@ -100,7 +100,6 @@ public class RevertUtil {
 			p.setProperty("eclipse.product", "org.zend.php.product");
 			p.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench");
 			p.setProperty("osgi.splashPath", "platform:/base/plugins/org.zend.php");
-			System.out.println(p.toString());
 			FileOutputStream fos = new FileOutputStream(config);
 			p.store(fos, null);
 			fos.close();
