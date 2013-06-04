@@ -13,6 +13,7 @@ import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
 import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 import org.zend.php.common.Activator;
@@ -150,10 +151,15 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 			autoExpandCategories = false;
 		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
-
-		WebBrowserEditorInput input = new WelcomePageEditorInput(url, style,
-				id, discoveryFileName, showCategories, progressDialogMsg,
-				flatTopLevel, autoExpandCategories);
+		WebBrowserEditorInput input = null;
+		if (str.toLowerCase().contains("pdt")) {
+			input = new PdtWelcomePageEditorInput(url,
+					IWorkbenchBrowserSupport.PERSISTENT, "welcomeBrowser");
+		} else {
+			input = new WelcomePageEditorInput(url, style, id,
+					discoveryFileName, showCategories, progressDialogMsg,
+					flatTopLevel, autoExpandCategories);
+		}
 		input.setName(name);
 		input.setToolTipText(tooltip);
 		return input;
