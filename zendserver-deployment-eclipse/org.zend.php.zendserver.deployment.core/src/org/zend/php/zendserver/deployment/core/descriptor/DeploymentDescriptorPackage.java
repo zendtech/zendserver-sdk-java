@@ -3,8 +3,10 @@ package org.zend.php.zendserver.deployment.core.descriptor;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 
 public class DeploymentDescriptorPackage {
+	
+	// last id = 40
 
-public static final int PACKAGE_ID = 0;
+	public static final int PACKAGE_ID = 0;
 	
 	public static final Feature PACKAGE = new Feature("package", null, IModelObject.class, PACKAGE_ID); //$NON-NLS-1$
 	
@@ -52,11 +54,19 @@ public static final int PACKAGE_ID = 0;
 	
 	public static final Feature HEALTHCHECK = new Feature("healthcheck", null, String.class, HEALTHCHECK_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
+	public static final int LIBDIR_ID = 40;
+	
+	public static final Feature LIBDIR = new Feature("libdir", null, String.class, LIBDIR_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
+	
 	public static final int APPDIR_ID = 11;
 	
 	public static final Feature APPDIR = new Feature("appdir", null, String.class, APPDIR_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final int DEPENDENCIES_PHP_ID = 12;
+	
+	public static final int UPDATE_URL_ID = 39;
+	
+	public static final Feature UPDATE_URL = new Feature("updateurl", null, String.class, UPDATE_URL_ID, Feature.SET_EMPTY_TO_NULL); //$NON-NLS-1$
 	
 	public static final Feature DEPENDENCIES_PHP = new Feature("dependencies/required/php", null, IModelObject.class, DEPENDENCIES_PHP_ID); //$NON-NLS-1$
 	

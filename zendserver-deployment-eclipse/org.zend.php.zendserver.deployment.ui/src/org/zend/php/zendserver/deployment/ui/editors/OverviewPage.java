@@ -53,6 +53,8 @@ public class OverviewPage extends DescriptorEditorPage {
 	private TextField icon;
 	private TextField docRoot;
 	private TextField appDir;
+	private TextField libDir;
+	private TextField updateUrl;
 
 	private ResourceListSection persistent;
 
@@ -319,8 +321,9 @@ public class OverviewPage extends DescriptorEditorPage {
 				DeploymentDescriptorPackage.PKG_NAME,
 				Messages.OverviewPage_Name));
 		type = addField(new ComboField(descr,
-				DeploymentDescriptorPackage.PKG_TYPE, "Project Type:",
-				SWT.READ_ONLY, ProjectType.APPLICATION.getName()));
+				DeploymentDescriptorPackage.PKG_TYPE,
+				Messages.OverviewPage_ProjectType, SWT.READ_ONLY,
+				ProjectType.APPLICATION.getName()));
 		type.setItems(new String[] { ProjectType.APPLICATION.getName(),
 				ProjectType.LIBRARY.getName() });
 		summary = addField(new TextField(descr,
@@ -346,6 +349,12 @@ public class OverviewPage extends DescriptorEditorPage {
 		docRoot = addField(new FolderField(fModel,
 				DeploymentDescriptorPackage.DOCROOT,
 				Messages.OverviewPage_Docroot, editor.getProject()));
+		libDir = addField(new TextField(descr,
+				DeploymentDescriptorPackage.LIBDIR,
+				Messages.OverviewPage_Libdir));
+		updateUrl = addField(new TextField(descr,
+				DeploymentDescriptorPackage.UPDATE_URL,
+				Messages.OverviewPage_UpdateUrl));
 		appDir = addField(new TextField(descr,
 				DeploymentDescriptorPackage.APPDIR,
 				Messages.OverviewPage_Appdir));
@@ -364,18 +373,20 @@ public class OverviewPage extends DescriptorEditorPage {
 						Display.getDefault().asyncExec(new Runnable() {
 
 							public void run() {
+								boolean libEnabled = false;
 								switch (fModel.getDescriptorModel().getType()) {
 								case LIBRARY:
 									section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
-									appDir.setEnabled(false);
-									docRoot.setEnabled(false);
+									libEnabled = true;
 									break;
 								default:
-									appDir.setEnabled(true);
-									docRoot.setEnabled(true);
 									section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
 									break;
 								}
+								appDir.setEnabled(!libEnabled);
+								docRoot.setEnabled(!libEnabled);
+								libDir.setEnabled(libEnabled);
+								updateUrl.setEnabled(libEnabled);
 							}
 						});
 					}
@@ -400,6 +411,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		apiVersion.create(sectionClient, toolkit);
 		healthcheck.create(sectionClient, toolkit);
 
+		libDir.create(sectionClient, toolkit);
+		updateUrl.create(sectionClient, toolkit);
 		appDir.create(sectionClient, toolkit);
 		docRoot.create(sectionClient, toolkit);
 
@@ -414,6 +427,8 @@ public class OverviewPage extends DescriptorEditorPage {
 			section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
 			break;
 		default:
+			libDir.setEnabled(false);
+			updateUrl.setEnabled(false);
 			section.setDescription(Messages.OverviewPage_GeneralInfoDescr);
 			break;
 		}

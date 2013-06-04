@@ -48,6 +48,14 @@ public interface IDeploymentDescriptor extends IModelContainer {
 
 	void setScriptsRoot(String value);
 	
+	String getUpdateUrl();
+	
+	void setUpdateUrl(String updateUrl);
+	
+	String getLibraryDir();
+	
+	void setLibraryDir(String libraryDir);
+	
 	/**
 	 * 
 	 * @return URL or null

@@ -141,6 +141,9 @@ public class Messages extends NLS {
 	public static String OverviewPage_Summary;
 	public static String OverviewPage_Testing;
 	public static String OverviewPage_TestingDescr;
+	public static String OverviewPage_ProjectType;
+	public static String OverviewPage_Libdir;
+	public static String OverviewPage_UpdateUrl;
 	public static String ParameterDetailsPage_DefaultValue;
 	public static String ParameterDetailsPage_Description;
 	public static String ParameterDetailsPage_Display;

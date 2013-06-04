@@ -14,16 +14,19 @@
 				<xs:element name="summary" minOccurs="0" maxOccurs="1" />
 				<xs:element name="description" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="version" minOccurs="1" maxOccurs="1" />
+				<xs:element name="releasedate" minOccurs="0" maxOccurs="1" />
 				<xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="eula" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="libdir" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="appdir" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="docroot" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="scriptsdir" type="xs:string" minOccurs="0" maxOccurs="1" />
 				<xs:element name="healthcheck" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="updateurl" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="dependencies" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="parameters" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="variables" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="persistentresources" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="persistentresources" minOccurs="0" maxOccurs="1" />				
 			</xs:sequence>
 
 			<xs:attribute name="version" type="xs:string" use="required">

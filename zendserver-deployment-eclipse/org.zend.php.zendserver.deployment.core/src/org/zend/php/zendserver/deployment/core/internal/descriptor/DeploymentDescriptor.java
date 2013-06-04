@@ -34,6 +34,8 @@ public class DeploymentDescriptor extends ModelContainer implements
 	private String appDir;
 	private String scriptsRoot;
 	private String healthcheck;
+	private String libDir;
+	private String updateUrl;
 
 	public DeploymentDescriptor() {
 		super(new Feature[] { DeploymentDescriptorPackage.PKG_TYPE,
@@ -44,10 +46,12 @@ public class DeploymentDescriptor extends ModelContainer implements
 				DeploymentDescriptorPackage.VERSION_API,
 				DeploymentDescriptorPackage.ICON,
 				DeploymentDescriptorPackage.EULA,
-				DeploymentDescriptorPackage.APPDIR, 
+				DeploymentDescriptorPackage.LIBDIR,
+				DeploymentDescriptorPackage.APPDIR,
 				DeploymentDescriptorPackage.DOCROOT,
 				DeploymentDescriptorPackage.SCRIPTSDIR,
-				DeploymentDescriptorPackage.HEALTHCHECK}, new Feature[] {
+				DeploymentDescriptorPackage.HEALTHCHECK,
+				DeploymentDescriptorPackage.UPDATE_URL }, new Feature[] {
 				DeploymentDescriptorPackage.DEPENDENCIES_PHP,
 				DeploymentDescriptorPackage.DEPENDENCIES_EXTENSION,
 				DeploymentDescriptorPackage.DEPENDENCIES_DIRECTIVE,
@@ -191,7 +195,27 @@ public class DeploymentDescriptor extends ModelContainer implements
 		this.appDir = appDir;
 		fireChange(DeploymentDescriptorPackage.APPDIR, appDir, oldValue);
 	}
+	
+	public String getLibraryDir() {
+		return libDir;
+	}
 
+	public void setLibraryDir(String libDir) {
+		String oldValue = this.libDir;
+		this.libDir = libDir;
+		fireChange(DeploymentDescriptorPackage.LIBDIR, libDir, oldValue);
+	}
+	
+	public String getUpdateUrl() {
+		return updateUrl;
+	}
+	
+	public void setUpdateUrl(String updateUrl) {
+		String oldValue = this.updateUrl;
+		this.updateUrl = updateUrl;
+		fireChange(DeploymentDescriptorPackage.UPDATE_URL, updateUrl, oldValue);
+	}
+	
 	public List<IParameter> getParameters() {
 		return super.getList(DeploymentDescriptorPackage.PARAMETERS);
 	}
@@ -284,6 +308,12 @@ public class DeploymentDescriptor extends ModelContainer implements
 		case DeploymentDescriptorPackage.APPDIR_ID:
 			setApplicationDir(value);
 			break;
+		case DeploymentDescriptorPackage.LIBDIR_ID:
+			setLibraryDir(value);
+			break;
+		case DeploymentDescriptorPackage.UPDATE_URL_ID:
+			setUpdateUrl(value);
+			break;
 		default:
 			throw new IllegalArgumentException(MessageFormat.format(
 					Messages.DeploymentDescriptor_CannotSetProperty, key));
@@ -317,6 +347,10 @@ public class DeploymentDescriptor extends ModelContainer implements
 			return healthcheck;
 		case DeploymentDescriptorPackage.APPDIR_ID:
 			return appDir;
+		case DeploymentDescriptorPackage.LIBDIR_ID:
+			return libDir;
+		case DeploymentDescriptorPackage.UPDATE_URL_ID:
+			return updateUrl;
 		default:
 			throw new IllegalArgumentException(MessageFormat.format(
 					Messages.DeploymentDescriptor_CannotSetProperty, key));
