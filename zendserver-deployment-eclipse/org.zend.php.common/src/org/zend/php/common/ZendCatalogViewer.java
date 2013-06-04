@@ -69,6 +69,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
+import org.zend.php.common.welcome.PdtWelcomePageEditorInput;
 
 @SuppressWarnings("restriction")
 public class ZendCatalogViewer extends FilteredViewer {
@@ -130,7 +131,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 	Button applyChangesButton;
 
 	Button restoreButton;
-	
+
 	boolean expandAll;
 
 	/**
@@ -248,6 +249,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 					viewer.setInput(catalog);
 					installedConectors = contentProvider.getInstalledElements();
 					showInstalled();
+
 				}
 			}
 		});
@@ -338,7 +340,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 		viewer.addFilter(new Filter());
 		final ToolTipHandler tooltip = new ToolTipHandler(
 				viewerComposite.getShell());
-		tooltip.activateHoverHelp(viewer.getControl());	
+		tooltip.activateHoverHelp(viewer.getControl());
 		checkStateListener = new StudioFeaturesCheckStateListener(viewer);
 		viewer.addCheckStateListener(checkStateListener);
 
@@ -371,6 +373,37 @@ public class ZendCatalogViewer extends FilteredViewer {
 					&& installedFeatures.containsAll(connector
 							.getInstallableUnits()));
 		}
+	}
+
+	public void expandStudioCategory() {
+		Job job = new Job(Messages.UpdateCatalogJobName) {
+			protected IStatus run(IProgressMonitor monitor) {
+
+				Object[] topLevel = ((ZendCatalogContentProvider) viewer
+						.getContentProvider()).getElements(viewer.getInput());
+				for (final Object tl : topLevel) {
+					if (tl instanceof VirtualTreeCategory) {
+						VirtualTreeCategory cat = (VirtualTreeCategory) tl;
+						if (cat.parent
+								.getId()
+								.equals(StudioFeaturesCheckStateListener.STUDIO_CORE_IU)) {
+							Display.getDefault().asyncExec(new Runnable() {
+
+								public void run() {
+									if (viewer instanceof CheckboxTreeViewer)
+										((CheckboxTreeViewer) viewer)
+												.setExpandedState(tl, true);
+								}
+							});
+							break;
+						}
+					}
+				}
+				return Status.OK_STATUS;
+			}
+
+		};
+		job.schedule();
 	}
 
 	public void updateCatalog() {
@@ -658,11 +691,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 	private void showInstalled() {
 		viewer.setCheckedElements(installedConectors);
 		checkStateListener.setInstalledFeatures(installedConectors);
-		
+
 	}
-	
-	
-	
 
 	/**
 	 * Invoked whenever the filter text is changed or the user otherwise causes
@@ -674,7 +704,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 		} else {
 			refreshJob.cancel();
 		}
-		if(filterText.getTextControl().getText().trim().length()>0){
+		if (filterText.getTextControl().getText().trim().length() > 0) {
 			setAutoExpandCategories(true);
 		}
 		refreshJob.schedule(refreshJobDelay);
