@@ -402,9 +402,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String result = null;
 		Package p = getPackage(container);
 		if (p != null) {
-			result = p.getAppdir();
+			if ("library".equals(p.getType())) {
+				result = p.getLibdir();
+			} else {
+				result = p.getAppdir();
+			}
 		}
-		if (result == null || "library".equals(p.getType())) {
+		if (result == null) {
 			result = "";
 		}
 		return result;
