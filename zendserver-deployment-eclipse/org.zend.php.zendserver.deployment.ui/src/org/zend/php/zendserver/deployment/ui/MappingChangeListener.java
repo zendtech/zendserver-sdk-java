@@ -7,7 +7,11 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -20,8 +24,10 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.sdklib.descriptor.pkg.Package;
+import org.zend.sdklib.internal.project.ProjectResourcesWriter;
+import org.zend.sdklib.internal.utils.JaxbHelper;
 import org.zend.sdklib.mapping.IMappingEntry.Type;
 import org.zend.sdklib.mapping.IMappingModel;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -155,23 +161,52 @@ public class MappingChangeListener implements IResourceChangeListener {
 			if (project != null) {
 				IDescriptorContainer container = DescriptorContainerManager
 						.getService().openDescriptorContainer(project);
-				IDeploymentDescriptor desc = container.getDescriptorModel();
-				String scripts = desc.getScriptsRoot();
-				if (scripts == null) {
-					if (container.getFile().getParent().findMember("scripts") != null) { //$NON-NLS-1$
-						scripts = "scripts"; //$NON-NLS-1$
+				Package p = getPackage(container.getFile().getLocation()
+						.toFile());
+				if (p != null) {
+					String scriptsDir = p.getScriptsdir();
+					if (scriptsDir == null) {
+						if (container.getFile().getParent()
+								.findMember("scripts") != null) { //$NON-NLS-1$
+							scriptsDir = "scripts"; //$NON-NLS-1$
+						}
 					}
-				}
-				IPath resPath = resource.getProjectRelativePath();
-				if (resPath.segmentCount() > 0
-						&& (resource.getName().equals(scripts) || resPath
-								.segment(0).equals(scripts))) {
-					return false;
+					IPath resPath = resource.getProjectRelativePath();
+					if (resPath.segmentCount() > 0
+							&& (resource.getName().equals(scriptsDir) || resPath
+									.segment(0).equals(scriptsDir))) {
+						return false;
+					}
 				}
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	private Package getPackage(File container) {
+		File descriptorFile = new File(container,
+				ProjectResourcesWriter.DESCRIPTOR);
+		if (!descriptorFile.exists()) {
+			return null;
+		}
+		FileInputStream pkgStream = null;
+		Package p = null;
+		try {
+			pkgStream = new FileInputStream(descriptorFile);
+			p = JaxbHelper.unmarshalPackage(pkgStream);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		} catch (JAXBException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			try {
+				pkgStream.close();
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return p;
 	}
 
 	private boolean checkHiddenFile(IResource resource) {
