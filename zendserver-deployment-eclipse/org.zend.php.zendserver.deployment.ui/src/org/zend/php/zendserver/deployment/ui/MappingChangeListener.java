@@ -69,6 +69,18 @@ public class MappingChangeListener implements IResourceChangeListener {
 			}
 			IMappingModel model = MappingModelFactory
 					.createDefaultModel(project.getLocation().toFile());
+			String scriptsDir = null;
+			IDescriptorContainer container = DescriptorContainerManager
+					.getService().openDescriptorContainer(project);
+			Package p = getPackage(container.getFile().getLocation().toFile());
+			if (p != null) {
+				scriptsDir = p.getScriptsdir();
+				if (scriptsDir == null) {
+					if (container.getFile().getParent().findMember("scripts") != null) { //$NON-NLS-1$
+						scriptsDir = "scripts"; //$NON-NLS-1$
+					}
+				}
+			}
 			if (model == null) {
 				continue;
 			}
@@ -80,12 +92,12 @@ public class MappingChangeListener implements IResourceChangeListener {
 				}
 				switch (d.getKind()) {
 				case IResourceDelta.REMOVED:
-					if (handleRemoved(model, d) && !isDirty) {
+					if (handleRemoved(model, scriptsDir, d) && !isDirty) {
 						isDirty = true;
 					}
 					break;
 				case IResourceDelta.ADDED:
-					if (handleAdded(model, d) && !isDirty) {
+					if (handleAdded(model, scriptsDir, d) && !isDirty) {
 						isDirty = true;
 					}
 					break;
@@ -112,9 +124,10 @@ public class MappingChangeListener implements IResourceChangeListener {
 		return false;
 	}
 
-	private boolean handleAdded(IMappingModel model, IResourceDelta delta) {
+	private boolean handleAdded(IMappingModel model, String scriptsDir,
+			IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		if (checkIfValid(resource, model)) {
+		if (checkIfValid(resource, model, scriptsDir)) {
 			String relativePath = resource.getProjectRelativePath().toString();
 			if (!relativePath.isEmpty()) {
 				return model.addMapping(IMappingModel.APPDIR, Type.INCLUDE,
@@ -124,9 +137,10 @@ public class MappingChangeListener implements IResourceChangeListener {
 		return false;
 	}
 
-	private boolean handleRemoved(IMappingModel model, IResourceDelta delta) {
+	private boolean handleRemoved(IMappingModel model, String scriptsDir,
+			IResourceDelta delta) {
 		IResource resource = delta.getResource();
-		if (checkIfValid(resource, model)) {
+		if (checkIfValid(resource, model, scriptsDir)) {
 			String relativePath = resource.getProjectRelativePath().toString();
 			return model.removeMapping(IMappingModel.APPDIR, Type.INCLUDE,
 					relativePath);
@@ -134,7 +148,8 @@ public class MappingChangeListener implements IResourceChangeListener {
 		return false;
 	}
 
-	private boolean checkIfValid(IResource resource, IMappingModel model) {
+	private boolean checkIfValid(IResource resource, IMappingModel model,
+			String scriptsDir) {
 		if (resource != null) {
 			String name = resource.getName();
 			if (checkHiddenFile(resource)) {
@@ -146,7 +161,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 			if (name.equals(DescriptorContainerManager.DESCRIPTOR_PATH)) {
 				return false;
 			}
-			
+
 			try {
 				String[] folders = model.getFolders(resource
 						.getProjectRelativePath().toString());
@@ -159,31 +174,18 @@ public class MappingChangeListener implements IResourceChangeListener {
 
 			IProject project = resource.getProject();
 			if (project != null) {
-				IDescriptorContainer container = DescriptorContainerManager
-						.getService().openDescriptorContainer(project);
-				Package p = getPackage(container.getFile().getLocation()
-						.toFile());
-				if (p != null) {
-					String scriptsDir = p.getScriptsdir();
-					if (scriptsDir == null) {
-						if (container.getFile().getParent()
-								.findMember("scripts") != null) { //$NON-NLS-1$
-							scriptsDir = "scripts"; //$NON-NLS-1$
-						}
-					}
-					IPath resPath = resource.getProjectRelativePath();
-					if (resPath.segmentCount() > 0
-							&& (resource.getName().equals(scriptsDir) || resPath
-									.segment(0).equals(scriptsDir))) {
-						return false;
-					}
+				IPath resPath = resource.getProjectRelativePath();
+				if (resPath.segmentCount() > 0
+						&& (resource.getName().equals(scriptsDir) || resPath
+								.segment(0).equals(scriptsDir))) {
+					return false;
 				}
 			}
 			return true;
 		}
 		return false;
 	}
-	
+
 	private Package getPackage(File container) {
 		File descriptorFile = new File(container,
 				ProjectResourcesWriter.DESCRIPTOR);
@@ -237,7 +239,7 @@ public class MappingChangeListener implements IResourceChangeListener {
 		}
 		return false;
 	}
-	
+
 	public static boolean isExcludedFromBuildpath(IProject project, IPath path) {
 		IBuildpathEntry[] buildpathEntries = DLTKCore.create(project)
 				.readRawBuildpath();
