@@ -70,7 +70,7 @@ public class RevertUtil {
 		Job job = new UIJob("") {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				PdtStats.visit("http://updates.zend.com/studiostats/?downgrade");
+				PdtStats.visit("http://updates.zend.com/studio/pdt/?downgrade");
 				boolean success = doRevert(snapshot);
 				if (success) {
 					postRevertFixes();

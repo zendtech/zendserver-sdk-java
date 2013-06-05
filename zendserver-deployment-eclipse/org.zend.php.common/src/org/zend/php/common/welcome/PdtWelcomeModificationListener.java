@@ -69,7 +69,7 @@ public class PdtWelcomeModificationListener implements
 			WelcomePageFirstTimeStartup.disableFirstStartup(false);
 			closeWelcomeEditor();
 			
-			PdtStats.visit("http://updates.zend.com/studiostats/?upgrade");
+			PdtStats.visit("http://updates.zend.com/studio/pdt/?upgrade");
 		}
 	}
 
