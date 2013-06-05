@@ -34,7 +34,6 @@ public class PdtStats {
 		GetMethod request = new GetMethod(url);
 		try {
 			int response = client.executeMethod(request);
-			System.out.println(response);
 		} catch (HttpException e) {
 			Activator.log(e);
 		} catch (IOException e) {
