@@ -376,37 +376,25 @@ public class ZendCatalogViewer extends FilteredViewer {
 	}
 
 	public void expandStudioCategory() {
-		Job job = new Job(Messages.UpdateCatalogJobName) {
-			protected IStatus run(IProgressMonitor monitor) {
+		Object[] topLevel = ((ZendCatalogContentProvider) viewer
+				.getContentProvider()).getElements(viewer.getInput());
+		for (final Object tl : topLevel) {
+			if (tl instanceof VirtualTreeCategory) {
+				VirtualTreeCategory cat = (VirtualTreeCategory) tl;
+				if (cat.parent.getId().equals(
+						StudioFeaturesCheckStateListener.STUDIO_CORE_IU)) {
 
-				Object[] topLevel = ((ZendCatalogContentProvider) viewer
-						.getContentProvider()).getElements(viewer.getInput());
-				for (final Object tl : topLevel) {
-					if (tl instanceof VirtualTreeCategory) {
-						VirtualTreeCategory cat = (VirtualTreeCategory) tl;
-						if (cat.parent
-								.getId()
-								.equals(StudioFeaturesCheckStateListener.STUDIO_CORE_IU)) {
-							Display.getDefault().asyncExec(new Runnable() {
-
-								public void run() {
-									if (viewer instanceof CheckboxTreeViewer)
-										((CheckboxTreeViewer) viewer)
-												.setExpandedState(tl, true);
-								}
-							});
-							break;
-						}
+					if (viewer instanceof CheckboxTreeViewer) {
+						((CheckboxTreeViewer) viewer)
+								.setExpandedState(tl, true);
+						viewer.refresh();
 					}
 				}
-				return Status.OK_STATUS;
 			}
-
-		};
-		job.schedule();
+		}
 	}
 
-	public void updateCatalog() {
+	public void updateCatalog(final boolean isPDT) {
 		enableHeaderControls(performDiscovery);
 		if (performDiscovery) {
 			Job job = new Job(Messages.UpdateCatalogJobName) {
@@ -466,6 +454,8 @@ public class ZendCatalogViewer extends FilteredViewer {
 									.align(SWT.FILL, SWT.FILL)
 									.applyTo(viewer.getControl());
 							viewer.getControl().getParent().layout();
+							if(isPDT)
+								expandStudioCategory();
 						}
 					});
 

@@ -121,10 +121,8 @@ public class WelcomePageEditor extends WebBrowserEditor {
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
 				if (!editor.isDisposed()) {
-					viewer.updateCatalog();
-					if (getEditorInput() instanceof PdtWelcomePageEditorInput) {
-						viewer.expandStudioCategory();
-					}
+					boolean isPDT = getEditorInput() instanceof PdtWelcomePageEditorInput;
+					viewer.updateCatalog(isPDT);
 				}
 			}
 		});
