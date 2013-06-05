@@ -51,6 +51,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	public static final String EXTENSION = ".zpk";
 
 	private static final int BUFFER = 1024;
+	
+	private static final int STEPS = 10;
 
 	private ZipOutputStream out;
 	private File container;
@@ -59,6 +61,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 
 	private Set<String> addedPaths;
 	private IVariableResolver variableResolver;
+	
+	private int resolution;
+	private int progress;
 
 	public PackageBuilder(File container, File configLocation,
 			IMappingLoader loader, IChangeNotifier notifier) {
@@ -150,9 +155,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			if (!model.isLoaded()) {
 				createDefaultModel();
 			}
+			int totalWork = calculateTotalWork();
+			resolution = (int) totalWork / STEPS;
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Package creation", "Creating " + result.getName()
-							+ " deployment package...", calculateTotalWork()));
+							+ " deployment package...", STEPS));
 			File descriptorFile = new File(configLocation,
 					ProjectResourcesWriter.DESCRIPTOR);
 			addFileToZip(descriptorFile, null, null, null, false);
@@ -345,9 +352,13 @@ public class PackageBuilder extends AbstractChangeNotifier {
 							out.write(data, 0, count);
 						}
 						in.close();
-						notifier.statusChanged(new BasicStatus(
-								StatusCode.PROCESSING, "Package creation",
-								"Creating deployment package...", 1));
+						progress++;
+						if (progress >= resolution) {
+							notifier.statusChanged(new BasicStatus(
+									StatusCode.PROCESSING, "Package creation",
+									"Creating deployment package...", 1));
+							progress = 0;
+						}
 					}
 				}
 			}
