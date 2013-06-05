@@ -155,7 +155,7 @@ public class MultipartRepresentation extends OutputRepresentation {
 	@Override
 	public void write(OutputStream outputStream) throws IOException {
 		statusChanged(new BasicStatus(StatusCode.STARTING, "Package Sending",
-				"Sending package...", contents.length));
+				"Sending package...", WebApiInputStream.STEPS));
 		BioUtils.copy(new WebApiInputStream(this.contents, notifier),
 				outputStream);
 		statusChanged(new BasicStatus(StatusCode.STOPPING, "Package Sending",
