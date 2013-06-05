@@ -2,7 +2,7 @@
 <feature
       id="org.zend.php.feature"
       label="%featureName"
-      version="3.2.0.qualifier"
+      version="3.2.0"
       provider-name="%providerName">
 
    <description>
@@ -14,22 +14,22 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.dltk.core" version="4.0.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.dltk.core.index" version="4.0.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.php" version="3.0.1.qualifier" match="greaterOrEqual"/>
-      <import feature="org.zend.php.zendserver.deployment" version="1.0.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.zend.php.zendserver.deployment.debug" version="1.0.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.common" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.common.ui" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore.edit" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.edit" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.edit.ui" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gef" version="3.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xsd" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xsd.edit" version="2.7.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.eclipse.wst.common.fproj" version="3.3.0.qualifier" match="greaterOrEqual"/>
-      <import feature="org.zend.php.common" version="1.0.0.qualifier" match="greaterOrEqual"/>
+      <import feature="org.eclipse.dltk.core" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.dltk.core.index" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.php" version="3.0.1" match="greaterOrEqual"/>
+      <import feature="org.zend.php.zendserver.deployment" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.zend.php.zendserver.deployment.debug" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common.ui" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore.edit" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit.ui" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef" version="3.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xsd" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xsd.edit" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.wst.common.fproj" version="3.3.0" match="greaterOrEqual"/>
+      <import feature="org.zend.php.common" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
