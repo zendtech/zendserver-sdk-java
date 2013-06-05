@@ -9,7 +9,7 @@ import org.zend.webapi.core.progress.StatusCode;
 
 public class WebApiInputStream extends ByteArrayInputStream {
 
-	public static final int STEPS = 50;
+	public static final int STEPS = 20;
 	
 	private IChangeNotifier notifier;
 	private int totalWork;
