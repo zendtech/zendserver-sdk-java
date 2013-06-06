@@ -62,8 +62,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private SourcePage descriptorSourcePage;
 	private SourcePage propertiesSourcePage;
 	
-	private FormPage automationPage; 
-	
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
 		return new FormToolkit(Activator.getDefault().getFormColors(display));
@@ -76,7 +74,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 					this,
 					new DependenciesMasterDetailsProvider(fModel),
 					"dependencies", Messages.DeploymentDescriptorEditor_Dependencies)); //$NON-NLS-1$
-			automationPage = new AutomationPage(
+			FormPage automationPage = new AutomationPage(
 					DeploymentDescriptorEditor.this, "automation", //$NON-NLS-1$
 					Messages.DeploymentDescriptorEditor_Scripts);
 			ProjectType type = fModel.getDescriptorModel().getType();
@@ -228,6 +226,9 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 				public void run() {
 					try {
+						FormPage automationPage = new AutomationPage(
+								DeploymentDescriptorEditor.this, "automation", //$NON-NLS-1$
+								Messages.DeploymentDescriptorEditor_Scripts);
 						DeploymentDescriptorEditor.this.addPage(2,
 								automationPage);
 					} catch (PartInitException e) {

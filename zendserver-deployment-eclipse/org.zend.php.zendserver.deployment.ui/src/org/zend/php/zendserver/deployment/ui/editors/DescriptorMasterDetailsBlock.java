@@ -143,8 +143,10 @@ public class DescriptorMasterDetailsBlock extends MasterDetailsBlock {
 			public void descriptorChanged(final ChangeEvent event) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						section.setDescription(provider.getDescription());
-						refreshViewer(event.target);
+						if (!section.isDisposed()) {
+							section.setDescription(provider.getDescription());
+							refreshViewer(event.target);
+						}
 					}
 				});
 			}
