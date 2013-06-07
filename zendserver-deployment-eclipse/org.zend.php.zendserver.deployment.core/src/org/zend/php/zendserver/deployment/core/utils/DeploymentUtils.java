@@ -108,9 +108,18 @@ public class DeploymentUtils {
 				.getTargetById(targetId);
 		IEclipsePreferences pref = new ProjectScope(project)
 				.getNode(DeploymentCore.PLUGIN_ID);
-		pref.put("targetId", targetId); //$NON-NLS-1$
-		pref.put("targetHost", target.getHost().toString()); //$NON-NLS-1$
-		pref.put("applicationURL", applicationURL); //$NON-NLS-1$
+		if (target != null) {
+			pref.put("targetId", targetId); //$NON-NLS-1$
+			pref.put("targetHost", target.getHost().toString()); //$NON-NLS-1$
+		} else {
+			pref.remove("targetId"); //$NON-NLS-1$
+			pref.remove("targetHost"); //$NON-NLS-1$
+		}
+		if (applicationURL != null) {
+			pref.put("applicationURL", applicationURL); //$NON-NLS-1$
+		} else {
+			pref.remove("applicationURL"); //$NON-NLS-1$
+		}
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
