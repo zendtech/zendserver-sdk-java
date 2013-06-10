@@ -102,6 +102,7 @@ public abstract class ResourceListSection {
 		viewer = new TableViewer(t);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
+				upadateEnablement();
 				mForm.fireSelectionChanged(spart, event.getSelection());
 				mForm.getForm().reflow(true);
 			}
@@ -133,7 +134,15 @@ public abstract class ResourceListSection {
 		removeButton = createButton(toolkit, buttons,
 				Messages.ResourceListSection_Remove);
 		
+		upadateEnablement();
+		
 		toolkit.paintBordersFor(client);
+	}
+	
+	protected void upadateEnablement() {
+		boolean enabled = !viewer.getSelection().isEmpty();
+		editButton.setEnabled(enabled);
+		removeButton.setEnabled(enabled);
 	}
 
 	private Button createButton(FormToolkit toolkit, Composite buttons,

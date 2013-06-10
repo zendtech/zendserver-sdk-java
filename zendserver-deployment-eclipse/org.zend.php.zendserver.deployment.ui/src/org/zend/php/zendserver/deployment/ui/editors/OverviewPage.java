@@ -147,6 +147,7 @@ public class OverviewPage extends DescriptorEditorPage {
 			protected void removePath(Object element) {
 				String path = (String) element;
 				editor.getModel().getPersistentResources().remove(path);
+				upadateEnablement();
 			}
 		};
 
