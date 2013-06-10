@@ -13,6 +13,13 @@ public class PHPLibrariesProvider implements IProposalProvider {
 		libraries = DLTKCore.getUserLibraryNames(PHPLanguageToolkit
 				.getDefault());
 		Arrays.sort(libraries, String.CASE_INSENSITIVE_ORDER);
+		for (int i = 0; i < libraries.length; i++) {
+			boolean builtIn = DLTKCore.isBuiltInUserLibrary(libraries[i],
+					PHPLanguageToolkit.getDefault());
+			if (builtIn) {
+				libraries[i] += " [built-in]"; //$NON-NLS-1$
+			}
+		}
 	}
 
 	public String[] getNames() {
