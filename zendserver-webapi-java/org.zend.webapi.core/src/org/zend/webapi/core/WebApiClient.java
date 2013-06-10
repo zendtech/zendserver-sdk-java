@@ -21,6 +21,7 @@ import org.zend.webapi.core.configuration.ClientConfiguration;
 import org.zend.webapi.core.connection.auth.WebApiCredentials;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.Bootstrap;
 import org.zend.webapi.core.connection.data.CodeTrace;
 import org.zend.webapi.core.connection.data.CodeTraceFile;
 import org.zend.webapi.core.connection.data.CodeTracingList;
@@ -61,6 +62,7 @@ import org.zend.webapi.internal.core.connection.request.ApplicationRedeployReque
 import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRollbackRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
+import org.zend.webapi.internal.core.connection.request.BootstrapSingleServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
@@ -1732,6 +1734,46 @@ public class WebApiClient {
 					}
 				});
 		return (LibraryFile) handle.getData();
+	}
+	
+	/**
+	 * @return bootstrap result
+	 * @throws WebApiException
+	 * @since 1.3
+	 */
+	public Bootstrap bootstrapSingleServer(final boolean production,
+			final String adminPassword, final String applicationUrl,
+			final String adminEmail, final String developerPassword,
+			final String orderNumber, final String licenseKey,
+			final boolean acceptEula) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.BOOTSTRAP_SINGLE_SERVER,
+				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
+
+					public void init(IRequest request) throws WebApiException {
+						BootstrapSingleServerRequest bootstrapRequest = (BootstrapSingleServerRequest) request;
+						bootstrapRequest.setProduction(production);
+						bootstrapRequest.setAdminPassword(adminPassword);
+						if (applicationUrl != null) {
+							bootstrapRequest.setApplicationUrl(applicationUrl);
+						}
+						if (adminEmail != null) {
+							bootstrapRequest.setAdminEmail(adminEmail);
+						}
+						if (developerPassword != null) {
+							bootstrapRequest
+									.setDeveloperPassword(developerPassword);
+						}
+						if (orderNumber != null) {
+							bootstrapRequest.setOrderNumber(orderNumber);
+						}
+						if (licenseKey != null) {
+							bootstrapRequest.setLicenseKey(licenseKey);
+						}
+						bootstrapRequest.setAcceptEula(acceptEula);
+					}
+				});
+		return (Bootstrap) handle.getData();
 	}
 
 	/**

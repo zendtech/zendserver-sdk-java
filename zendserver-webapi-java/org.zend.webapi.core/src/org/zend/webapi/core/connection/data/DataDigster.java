@@ -1110,6 +1110,34 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean preVisit(Bootstrap bootstrap) {
+		String currentPath = bootstrap.getPrefix();
+		int occurrence = bootstrap.getOccurrence();
+		ApiKey apiKey = new ApiKey(currentPath + "/apiKey", occurrence);
+		bootstrap.setApiKey(apiKey);
+		String value = getValue(currentPath + "/success", occurrence);
+		bootstrap.setSuccess(Boolean.valueOf(value));
+		return true;
+	}
+	
+	@Override
+	public boolean preVisit(ApiKey apiKey) {
+		String currentPath = apiKey.getPrefix();
+		int occurrence = apiKey.getOccurrence();
+		String value = getValue(currentPath + "/id", occurrence);
+		apiKey.setId(Integer.valueOf(value));
+		value = getValue(currentPath + "/username", occurrence);
+		apiKey.setUsername(value);
+		value = getValue(currentPath + "/name", occurrence);
+		apiKey.setName(value);
+		value = getValue(currentPath + "/hash", occurrence);
+		apiKey.setHash(value);
+		value = getValue(currentPath + "/creationTime", occurrence);
+		apiKey.setCreationTime(value);
+		return true;
+	}
 
 	/**
 	 * @param value
@@ -1184,6 +1212,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new LibraryInfo();
 		case LIBRARY_FILE:
 			return new LibraryFile();
+		case BOOTSTRAP:
+			return new Bootstrap();
+		case APIKEY:
+			return new ApiKey();
 		default:
 			return null;
 		}

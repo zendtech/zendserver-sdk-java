@@ -97,7 +97,11 @@ public interface IResponseData {
 		
 		LIBRARY_LIST,
 		
-		LIBRARY_FILE
+		LIBRARY_FILE,
+		
+		APIKEY,
+		
+		BOOTSTRAP
 
 	}
 

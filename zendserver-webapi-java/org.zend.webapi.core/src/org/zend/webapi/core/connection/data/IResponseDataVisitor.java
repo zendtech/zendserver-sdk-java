@@ -190,5 +190,13 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(LibraryFile libraryFile);
 
 	public boolean visit(LibraryFile libraryFile);
+	
+	public boolean visit(Bootstrap bootstrap);
+	
+	public boolean preVisit(Bootstrap bootstrap);
+		
+	public boolean visit(ApiKey apiKey);
+	
+	public boolean preVisit(ApiKey apiKey);
 
 }

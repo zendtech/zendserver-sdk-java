@@ -366,4 +366,20 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean visit(Bootstrap bootstrap) {
+		return true;
+	}
+
+	public boolean preVisit(Bootstrap bootstrap) {
+		return true;
+	}
+
+	public boolean visit(ApiKey apiKey) {
+		return true;
+	}
+
+	public boolean preVisit(ApiKey apiKey) {
+		return true;
+	}
+
 }

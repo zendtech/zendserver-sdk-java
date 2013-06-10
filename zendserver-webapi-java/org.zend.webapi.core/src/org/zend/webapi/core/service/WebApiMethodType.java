@@ -15,6 +15,7 @@ import org.zend.webapi.internal.core.connection.request.ApplicationRedeployReque
 import org.zend.webapi.internal.core.connection.request.ApplicationRemoveRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationRollbackRequest;
 import org.zend.webapi.internal.core.connection.request.ApplicationUpdateRequest;
+import org.zend.webapi.internal.core.connection.request.BootstrapSingleServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterAddServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterDisableServerRequest;
 import org.zend.webapi.internal.core.connection.request.ClusterEnableServerRequest;
@@ -282,7 +283,13 @@ public enum WebApiMethodType {
 	 * @see DownloadLibraryVersionFileRequest
 	 */
 	DOWNLOAD_LIBRARY_VERSION_FILE("downloadLibraryVersionFile",
-			DownloadLibraryVersionFileRequest.class);
+			DownloadLibraryVersionFileRequest.class),
+			
+	/**
+	 * @see BootstrapSingleServerRequest
+	 */
+	BOOTSTRAP_SINGLE_SERVER("bootstrapSingleServer",
+			BootstrapSingleServerRequest.class);
 
 	/**
 	 * Name of the service
