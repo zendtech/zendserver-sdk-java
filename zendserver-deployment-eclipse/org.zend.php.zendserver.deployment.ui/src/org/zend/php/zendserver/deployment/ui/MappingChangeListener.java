@@ -78,6 +78,11 @@ public class MappingChangeListener implements IResourceChangeListener {
 			IResourceDelta[] changedFiles = visitor.getChangedFiles(project);
 			boolean isDirty = false;
 			for (IResourceDelta d : changedFiles) {
+				if (d.getResource().getProjectRelativePath()
+						.segmentCount() == 0) {
+					// means that this is more complex operation, e.g. project creation
+					return;
+				}
 				if (isExcluded(d, project)) {
 					continue;
 				}
