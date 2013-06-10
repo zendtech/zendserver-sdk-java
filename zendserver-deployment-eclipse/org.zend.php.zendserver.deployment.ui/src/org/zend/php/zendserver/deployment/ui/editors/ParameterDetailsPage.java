@@ -146,7 +146,9 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 			}
 		});
 		
-		EditorField description = fields.add(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
+		EditorField description = fields.add(new TextField(null,
+				DeploymentDescriptorPackage.PARAM_DESCRIPTION,
+				Messages.ParameterDetailsPage_Description, SWT.MULTI, false));
 		description.create(client, toolkit);
 		GridData gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;
