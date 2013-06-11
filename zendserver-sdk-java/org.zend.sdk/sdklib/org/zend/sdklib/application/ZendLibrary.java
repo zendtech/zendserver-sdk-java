@@ -9,8 +9,12 @@ package org.zend.sdklib.application;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.bind.JAXBException;
 
@@ -103,10 +107,10 @@ public class ZendLibrary extends ZendConnection {
 	}
 
 	public LibraryList deploy(String path, String configLocation,
-			String targetId) {
+			String targetId, boolean zpkPackage) {
 		if (path != null) {
 			File zendPackage = new File(path);
-			if (!path.endsWith(".zpk")) {
+			if (!zpkPackage) {
 				zendPackage = createPackage(path, configLocation);
 			}
 			try {
@@ -143,7 +147,7 @@ public class ZendLibrary extends ZendConnection {
 	}
 
 	public LibraryList deploy(String path, String targetId) {
-		return deploy(path, path, targetId);
+		return deploy(path, path, targetId, false);
 	}
 
 	public LibraryList synchronize(String path, String configLocation, int id,
@@ -207,9 +211,55 @@ public class ZendLibrary extends ZendConnection {
 			}
 			return getPackageBuilder(path, configLocation, variableResolver)
 					.createDeploymentPackage(tempFile);
-		} else {
-			return file;
+		} else if (file.getName().endsWith(".zpk")
+				|| file.getName().endsWith(".zip")) {
+			File tempUnzipped = null;
+			try {
+				tempUnzipped = unzip(file);
+				File tempFile =  getTempFile("/" + new Random().nextInt());
+				return getPackageBuilder(tempUnzipped.getAbsolutePath(),
+						configLocation, variableResolver)
+						.createDeploymentPackage(tempFile);
+			} finally {
+				if (tempUnzipped != null) {
+					deleteFile(tempUnzipped);
+				}
+			}
 		}
+		return file;
+	}
+
+	public File unzip(File zipFile) {
+		byte[] buffer = new byte[4096];
+		try {
+			File folder = getTempFile("/" + new Random().nextInt());
+			ZipInputStream zipInput = new ZipInputStream(new FileInputStream(
+					zipFile));
+			ZipEntry entry = zipInput.getNextEntry();
+			while (entry != null) {
+				String fileName = entry.getName();
+				File newFile = new File(folder, fileName);
+				System.out.println("file unzip : " + newFile.getAbsoluteFile());
+				if (fileName.endsWith("/")) {
+					newFile.mkdirs();
+				} else {
+					new File(newFile.getParent()).mkdirs();
+					FileOutputStream out = new FileOutputStream(newFile);
+					int length = 0;
+					while ((length = zipInput.read(buffer)) > 0) {
+						out.write(buffer, 0, length);
+					}
+					out.close();
+				}
+				entry = zipInput.getNextEntry();
+			}
+			zipInput.closeEntry();
+			zipInput.close();
+			return folder;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private String getDeploymentPackageName(File directory, File configLocation) {

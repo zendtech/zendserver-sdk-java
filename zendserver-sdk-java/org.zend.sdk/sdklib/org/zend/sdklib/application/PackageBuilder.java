@@ -146,6 +146,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	 */
 	public File createDeploymentPackage(File directory) {
 		try {
+			container = container.getCanonicalFile();
 			File result = getDeploymentPackageFile(directory);
 			if (result == null) {
 				return null;
@@ -287,9 +288,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		for (IMappingEntry entry : entries) {
 			List<IMapping> mappings = entry.getMappings();
 			for (IMapping mapping : mappings) {
-				File resource = new File(
-						new File(container, mapping.getPath())
-								.getCanonicalPath());
+				File resource = new File(container, mapping.getPath());
 
 				if (resource.exists()) {
 					allowFlat &= resource.isDirectory() && entries.size() == 1
