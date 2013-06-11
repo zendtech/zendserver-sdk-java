@@ -67,7 +67,7 @@ public class OpenShiftTarget {
 
 	public enum Type {
 
-		zs6_0_0("zend-server-6"),
+		zs6_0_0("zendserverphp-6"),
 
 		zs5_6_0("zend-5.6"),
 		
@@ -114,7 +114,8 @@ public class OpenShiftTarget {
 	private static final String SSHKEY_DEFAULT_NAME = "zendStudio";
 	private static final String DEFAULT_KEY_NAME = "ZendStudioClient";
 	private static final String USER_INI = "zend-server-user.ini";
-	private static final String ZEND_SERVER_USER_INI_PATH = "zend-5.6/gui/application/data/zend-server-user.ini";
+	private static final String ABSOLUTE_USER_INI_PATH = "/usr/local/zend/gui/application/data/zend-server-user.ini";
+	private static final String RELATIVE_USER_INI_PATH = "zend-5.6/gui/application/data/zend-server-user.ini";
 
 	private String username;
 	private String password;
@@ -554,15 +555,22 @@ public class OpenShiftTarget {
 			channel.connect();
 			ChannelSftp sftpChannel = (ChannelSftp) channel;
 			File tempUserIni = File.createTempFile(USER_INI, ".tmp");
-			sftpChannel.get(ZEND_SERVER_USER_INI_PATH,
+			String userIni = ABSOLUTE_USER_INI_PATH;
+			try {
+			sftpChannel.get(userIni,
 					tempUserIni.getCanonicalPath());
+			} catch (SftpException e) {
+				userIni = RELATIVE_USER_INI_PATH;
+				sftpChannel.get(userIni,
+						tempUserIni.getCanonicalPath());
+			}
 			String secretKey = findExistingSecretKey(DEFAULT_KEY_NAME,
 					tempUserIni);
 			if (secretKey == null) {
 				secretKey = applySecretKey(tempUserIni, DEFAULT_KEY_NAME,
 						generateSecretKey());
 				sftpChannel.put(tempUserIni.getCanonicalPath(),
-						ZEND_SERVER_USER_INI_PATH);
+						userIni);
 			}
 			sftpChannel.exit();
 			session.disconnect();
