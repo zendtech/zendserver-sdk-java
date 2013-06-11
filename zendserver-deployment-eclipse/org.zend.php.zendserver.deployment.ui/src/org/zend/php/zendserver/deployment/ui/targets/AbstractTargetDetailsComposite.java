@@ -322,15 +322,19 @@ public abstract class AbstractTargetDetailsComposite {
 								target = initializer.getTarget();
 							} else {
 								status = initializer.getStatus();
+								continue;
 							}
-							continue;
 						}
 					}
-					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							MessageFormat.format(
-									Messages.TargetDialog_AddingTargetError,
-									e.getMessage()), e);
-					continue;
+					if (target == null) {
+						status = new Status(
+								IStatus.ERROR,
+								Activator.PLUGIN_ID,
+								MessageFormat
+										.format(Messages.TargetDialog_AddingTargetError,
+												e.getMessage()), e);
+						continue;
+					}
 				} catch (WebApiException e) {
 					status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							MessageFormat.format(
