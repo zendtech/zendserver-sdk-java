@@ -146,8 +146,8 @@ public class ZendLibrary extends ZendConnection {
 		return null;
 	}
 
-	public LibraryList deploy(String path, String targetId) {
-		return deploy(path, path, targetId, false);
+	public LibraryList deploy(String path, String targetId, boolean zpkPackage) {
+		return deploy(path, path, targetId, zpkPackage);
 	}
 
 	public LibraryList synchronize(String path, String configLocation, int id,
