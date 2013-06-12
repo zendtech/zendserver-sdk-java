@@ -47,6 +47,8 @@ mac.icns</vmArgsMac>
    <features>
       <feature id="org.eclipse.platform"/>
       <feature id="org.zend.php.feature"/>
+      <feature id="com.zend.php.productivity.pdt"/>
+      <feature id="org.eclipse.php"/>
    </features>
 
 
