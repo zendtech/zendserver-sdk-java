@@ -18,7 +18,7 @@
 --launcher.defaultAction openFile
 -showlocation
 -name
-&quot;Eclipse for PHP Developers&quot;</programArgs>
+&quot;Zend Eclipse for PHP Developers&quot;</programArgs>
       <vmArgs>-Xms128M -Xmx512M</vmArgs>
       <vmArgsMac>-Djava.awt.headless=true -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Xdock:icon=../Resources/
 mac.icns</vmArgsMac>
@@ -31,7 +31,7 @@ mac.icns</vmArgsMac>
       startupProgressRect="10,222,435,15"
       startupMessageRect="13,197,429,15"
       startupForegroundColor="FFFFFF" />
-   <launcher name="eclipse-php">
+   <launcher name="zend-eclipse-php">
       <solaris/>
       <win useIco="false">
          <bmp/>
