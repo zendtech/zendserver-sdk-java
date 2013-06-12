@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="Zend Application Deployment Features"
-      label="All"
+      id="org.zend.php.zendserver.deployment.all"
+      label="Zend Application Deployment Features"
       version="1.0.0.qualifier">
 
    <includes
