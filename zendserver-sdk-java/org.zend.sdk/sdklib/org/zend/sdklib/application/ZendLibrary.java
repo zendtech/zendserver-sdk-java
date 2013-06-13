@@ -239,7 +239,6 @@ public class ZendLibrary extends ZendConnection {
 			while (entry != null) {
 				String fileName = entry.getName();
 				File newFile = new File(folder, fileName);
-				System.out.println("file unzip : " + newFile.getAbsoluteFile());
 				if (fileName.endsWith("/")) {
 					newFile.mkdirs();
 				} else {
