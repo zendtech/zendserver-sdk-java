@@ -15,6 +15,7 @@ import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 
 	public static final String STUDIO_CORE_IU = "org.zend.pdt.discovery.studiocore";
+	public static final String STUDIO_EXTRA = "org.zend.pdt.discovery.studioextra";
 	private CheckboxTreeViewer viewer;
 	private CatalogItem[] initiallyChecked;
 	private List<String> studioSubIds;
@@ -43,7 +44,7 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 		String id = getId(element);
 
 		if (event.getChecked()) {
-			if (!STUDIO_CORE_IU.equals(id)) {
+			if (isStudioFeature(element)) {
 				Object studioElement = getTopLevelElement(STUDIO_CORE_IU);
 				if (studioElement != null) {
 					viewer.setSubtreeChecked(studioElement, true);
@@ -55,9 +56,6 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 					}
 				}
 
-				if ((studioSubIds != null) && (!studioSubIds.contains(id))) {
-					selectedExtraFeatures.add(id);
-				}
 			}
 		} else {
 			if (studioSubIds != null) {
@@ -69,11 +67,9 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 														// can be unchecked if
 														// no extra features is
 														// checked
-					if (!selectedExtraFeatures.isEmpty()) {
+					if (viewer.getChecked(getTopLevelElement(STUDIO_EXTRA))) {
 						viewer.setSubtreeChecked(event.getElement(), true);
 					}
-				} else {
-					selectedExtraFeatures.remove(id);
 				}
 			}
 		}
@@ -88,9 +84,16 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 
 		if (child == null)
 			return;
-
-		Object parent = ((ZendCatalogContentProvider) viewer
-				.getContentProvider()).getParent(child);
+		Object parent = null;
+		if (child instanceof CatalogCategory) {
+			CatalogCategory p = (CatalogCategory) child;
+			if (isSubCategory(p.getId())) {
+				parent = getTopLevelElement(STUDIO_EXTRA);
+			}
+		} else {
+			parent = ((ZendCatalogContentProvider) viewer.getContentProvider())
+					.getParent(child);
+		}
 		if (parent == null || parent instanceof Catalog)
 			return;
 
@@ -106,13 +109,14 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 				break;
 			}
 		}
+		boolean isStudioCore = parent instanceof CatalogCategory && ((CatalogCategory)parent).getId().equals(STUDIO_CORE_IU);
 
-		if (!allSameState) {
+		if (!allSameState && !isStudioCore) {
 			viewer.setGrayChecked(parent, true);
 		} else if (allSameState && baseChildState) {
 			viewer.setGrayed(parent, false);
 			viewer.setChecked(parent, true);
-		} else {
+		} else if(!isStudioCore){
 			viewer.setGrayed(parent, false);
 			viewer.setChecked(parent, false);
 		}
@@ -159,6 +163,31 @@ public class StudioFeaturesCheckStateListener implements ICheckStateListener {
 		}
 
 		return null;
+	}
+
+	private boolean isStudioFeature(Object element) {
+		if (element instanceof VirtualTreeCategory) {
+			VirtualTreeCategory vcat = (VirtualTreeCategory) element;
+			return isStudio(vcat.parent.getId());
+
+		} else if (element instanceof CatalogCategory) {
+			CatalogCategory cat = (CatalogCategory) element;
+			return isStudio(cat.getId());
+
+		} else if (element instanceof CatalogItem) {
+			CatalogItem item = (CatalogItem) element;
+			return isStudio(item.getCategoryId());
+		}
+
+		return false;
+	}
+
+	private boolean isStudio(String id) {
+		return (id.equals(STUDIO_EXTRA) || id.equals(STUDIO_CORE_IU) || isSubCategory(id));
+	}
+	
+	public static boolean isSubCategory(String id) {
+		return (id.contains("-subgroup"));
 	}
 
 	public void setInstalledFeatures(CatalogItem[] installedFeatures) {

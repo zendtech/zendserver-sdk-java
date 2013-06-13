@@ -44,6 +44,12 @@ public class ZendCheckboxTreeLabelProvider implements ILabelProvider {
 				return ToolTipHandler.computeImage(ci.getSource(), ci.getIcon().getImage16());
 			}
 		}
+		if (element instanceof CatalogCategory) {
+			CatalogCategory ci = (CatalogCategory) element;
+			if (ci.getIcon() != null) {
+				return ToolTipHandler.computeImage(ci.getSource(), ci.getIcon().getImage16());
+			}
+		}
 		return null;
 	}
 

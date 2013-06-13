@@ -381,17 +381,21 @@ public class ZendCatalogViewer extends FilteredViewer {
 		for (final Object tl : topLevel) {
 			if (tl instanceof VirtualTreeCategory) {
 				VirtualTreeCategory cat = (VirtualTreeCategory) tl;
-				if (cat.parent.getId().equals(
-						StudioFeaturesCheckStateListener.STUDIO_CORE_IU)) {
-
+				String id = cat.parent.getId();
+				if (id.equals(StudioFeaturesCheckStateListener.STUDIO_CORE_IU)
+						|| id.equals(StudioFeaturesCheckStateListener.STUDIO_EXTRA)) {
 					if (viewer instanceof CheckboxTreeViewer) {
 						((CheckboxTreeViewer) viewer)
 								.setExpandedState(tl, true);
-						viewer.refresh();
+						for (CatalogCategory c : cat.children) {
+							((CheckboxTreeViewer) viewer).setExpandedState(c,
+									true);
+						}
 					}
 				}
 			}
 		}
+		viewer.refresh();
 	}
 
 	public void updateCatalog(final boolean isPDT) {
@@ -454,7 +458,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 									.align(SWT.FILL, SWT.FILL)
 									.applyTo(viewer.getControl());
 							viewer.getControl().getParent().layout();
-							if(isPDT)
+							if (isPDT)
 								expandStudioCategory();
 						}
 					});

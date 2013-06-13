@@ -10,6 +10,7 @@ import org.eclipse.equinox.internal.p2.discovery.Catalog;
 import org.eclipse.equinox.internal.p2.discovery.model.AbstractCatalogItem;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
 import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
+import org.eclipse.equinox.internal.p2.discovery.model.Icon;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -151,7 +152,7 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 				boolean added = false;
 				for (VirtualTreeCategory parent : result) {
 					if (parentId.equals(parent.parent.getId())) {
-						parent.children.add(c);
+						parent.children.add(c);	
 						added = true;
 						break;
 					}
@@ -176,6 +177,9 @@ public class ZendCatalogContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
+		if (element instanceof VirtualTreeCategory) {
+			return ((VirtualTreeCategory)element).parent;
+		}
 		if (element instanceof CatalogCategory) {
 			return catalog;
 		}
