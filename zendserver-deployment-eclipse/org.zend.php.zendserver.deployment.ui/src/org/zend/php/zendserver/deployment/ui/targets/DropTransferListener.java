@@ -18,8 +18,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 public class DropTransferListener extends ViewerDropAdapter {
 
@@ -27,7 +33,8 @@ public class DropTransferListener extends ViewerDropAdapter {
 	private static final String TARGET_ID = "targetId"; //$NON-NLS-1$
 	
 	private static final String DROP_MENU = "dropMenu"; //$NON-NLS-1$
-	private static final String MENU_LOCATION_URI = "menu:org.zend.php.zendserver.deployment.ui.targets.TargetsViewer"; //$NON-NLS-1$
+	private static final String APP_MENU_LOCATION_URI = "menu:org.zend.php.zendserver.deployment.ui.targets.TargetsViewer"; //$NON-NLS-1$
+	private static final String LIBRARY_MENU_LOCATION_URI = "menu:org.zend.php.zendserver.deployment.ui.targets.targetsViewer.Library"; //$NON-NLS-1$
 
 	private Viewer viewer;
 	
@@ -72,7 +79,17 @@ public class DropTransferListener extends ViewerDropAdapter {
 		service.getCurrentState().addVariable(PROJECT_NAME, projName);
 		service.getCurrentState().addVariable(TARGET_ID, target.getId());
 		
-		service.populateContributionManager(cm, MENU_LOCATION_URI);
+		if (isLibrary(resources[0].getProject())) {
+			if (TargetsManager.checkMinVersion(target,
+					ZendServerVersion.byName("6.1.0"))) { //$NON-NLS-1$
+				service.populateContributionManager(cm,
+						LIBRARY_MENU_LOCATION_URI);
+			} else {
+				return false;
+			}
+		} else {
+			service.populateContributionManager(cm, APP_MENU_LOCATION_URI);
+		}
 		cm.update(false);
 		
         menu.setLocation(getCurrentEvent().x, getCurrentEvent().y);
@@ -98,6 +115,13 @@ public class DropTransferListener extends ViewerDropAdapter {
 		boolean isZendTarget = target instanceof IZendTarget;
 		overrideOperation(DND.DROP_COPY);
 		return isSupported && isZendTarget;
+	}
+	
+	private boolean isLibrary(IProject project) {
+		IDescriptorContainer container = DescriptorContainerManager
+				.getService().openDescriptorContainer(project);
+		IDeploymentDescriptor desc = container.getDescriptorModel();
+		return desc.getType() == ProjectType.LIBRARY;
 	}
 
 }
