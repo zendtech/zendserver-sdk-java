@@ -140,6 +140,8 @@ public class ZendLibrary extends ZendConnection {
 				log.error("Error during deploying library to '" + targetId
 						+ "':");
 				log.error("\tpossible error: " + e.getMessage());
+			} finally {
+				deleteFile(getTempFile(path));
 			}
 			return null;
 		}
@@ -201,14 +203,6 @@ public class ZendLibrary extends ZendConnection {
 		}
 		if (file.isDirectory()) {
 			File tempFile = getTempFile(path);
-			String name = getDeploymentPackageName(file, new File(
-					configLocation));
-			if (tempFile.isDirectory()) {
-				File[] children = tempFile.listFiles();
-				if (children.length == 1 && children[0].getName().equals(name)) {
-					return children[0];
-				}
-			}
 			return getPackageBuilder(path, configLocation, variableResolver)
 					.createDeploymentPackage(tempFile);
 		} else if (file.getName().endsWith(".zpk")
@@ -216,7 +210,7 @@ public class ZendLibrary extends ZendConnection {
 			File tempUnzipped = null;
 			try {
 				tempUnzipped = unzip(file);
-				File tempFile =  getTempFile("/" + new Random().nextInt());
+				File tempFile = getTempFile("/" + new Random().nextInt());
 				return getPackageBuilder(tempUnzipped.getAbsolutePath(),
 						configLocation, variableResolver)
 						.createDeploymentPackage(tempFile);
