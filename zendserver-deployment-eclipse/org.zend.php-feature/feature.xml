@@ -30,6 +30,7 @@
       <import feature="org.eclipse.xsd.edit" version="2.7.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.wst.common.fproj" version="3.3.0" match="greaterOrEqual"/>
       <import feature="org.zend.php.common" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="com.zend.php.productivity.pdt" version="10.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
