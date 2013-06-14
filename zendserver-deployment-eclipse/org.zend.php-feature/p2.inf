@@ -1,23 +1,17 @@
 requires.1.namespace = org.eclipse.equinox.p2.iu
-requires.1.name = com.zend.php.productivity.pdt.feature.group
-requires.1.range = [10.1.0, 11.0.0)
+requires.1.name = org.eclipse.php.feature.group
+requires.1.range = [3.2.0, 4.0.0)
 requires.1.optional = true
 requires.1.greedy = true
 
 requires.2.namespace = org.eclipse.equinox.p2.iu
-requires.2.name = org.eclipse.php.feature.group
+requires.2.name = org.zend.php.feature.feature.group
 requires.2.range = [3.2.0, 4.0.0)
 requires.2.optional = true
 requires.2.greedy = true
 
 requires.3.namespace = org.eclipse.equinox.p2.iu
-requires.3.name = org.zend.php.feature.feature.group
-requires.3.range = [3.2.0, 4.0.0)
+requires.3.name = org.eclipse.platform.feature.group
+requires.3.range = [3.8.1, 5.0.0)
 requires.3.optional = true
 requires.3.greedy = true
-
-requires.4.namespace = org.eclipse.equinox.p2.iu
-requires.4.name = org.eclipse.platform.feature.group
-requires.4.range = [3.8.1, 5.0.0)
-requires.4.optional = true
-requires.4.greedy = true
