@@ -106,3 +106,20 @@ requires.18.range = [10.1.0, 11.0.0)
 requires.18.optional = true
 requires.18.greedy = true
 
+requires.19.namespace = org.eclipse.equinox.p2.iu
+requires.19.name = org.eclipse.php.feature.group
+requires.19.range = [3.2.0, 4.0.0)
+requires.19.optional = true
+requires.19.greedy = true
+
+requires.20.namespace = org.eclipse.equinox.p2.iu
+requires.20.name = org.zend.php.feature.feature.group
+requires.20.range = [3.2.0, 4.0.0)
+requires.20.optional = true
+requires.20.greedy = true
+
+requires.21.namespace = org.eclipse.equinox.p2.iu
+requires.21.name = org.eclipse.platform.feature.group
+requires.21.range = [3.8.1, 5.0.0)
+requires.21.optional = true
+requires.21.greedy = true

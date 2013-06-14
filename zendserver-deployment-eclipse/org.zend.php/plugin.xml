@@ -18,13 +18,13 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="Eclipse for PHP Developers">
+            name="Zend Eclipse for PHP Developers">
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
          <property
                name="appName"
-               value="Eclipse for PHP Developers">
+               value="Zend Eclipse for PHP Developers">
          </property>
          <property
                name="aboutText"
