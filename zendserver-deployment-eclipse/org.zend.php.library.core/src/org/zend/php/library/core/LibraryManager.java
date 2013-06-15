@@ -124,7 +124,7 @@ public class LibraryManager {
 				BuildpathEntry.INCLUDE_ALL, BuildpathEntry.EXCLUDE_NONE,
 				new IAccessRule[0], false, new IBuildpathAttribute[0], true);
 		ModelManager.getUserLibraryManager().setUserLibrary(
-				LibraryUtils.createLibraryName(name), version,
+				LibraryUtils.createLibraryName(name), /* version, */
 				new IBuildpathEntry[] { entry }, false,
 				PHPLanguageToolkit.getDefault());
 	}
