@@ -52,13 +52,13 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 		if (data.getRoot().getName().endsWith(".zpk") //$NON-NLS-1$
 				|| new File(data.getRoot(),
 						DescriptorContainerManager.DESCRIPTOR_PATH).exists()) {
-			lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId());
+			lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId(), true);
 		} else {
 			try {
 				File root = LibraryUtils.getTemporaryDescriptor(data.getName(),
 						data.getVersion());
 				lib.deploy(data.getRoot().getAbsolutePath(),
-						root.getAbsolutePath(), data.getTargetId());
+						root.getAbsolutePath(), data.getTargetId(), false);
 			} catch (IOException e) {
 				LibraryCore.log(e);
 			}
