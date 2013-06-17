@@ -120,6 +120,6 @@ requires.20.greedy = true
 
 requires.21.namespace = org.eclipse.equinox.p2.iu
 requires.21.name = org.eclipse.platform.feature.group
-requires.21.range = [3.8.1, 5.0.0)
+requires.21.range = [3.8.1, 4.0.0)
 requires.21.optional = false
 requires.21.greedy = true
