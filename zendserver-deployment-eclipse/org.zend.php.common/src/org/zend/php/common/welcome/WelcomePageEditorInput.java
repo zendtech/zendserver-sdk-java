@@ -2,23 +2,18 @@ package org.zend.php.common.welcome;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.equinox.internal.p2.discovery.model.CatalogCategory;
-import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
-import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 import org.zend.php.common.Activator;
-import org.zend.php.common.StudioFeaturesCheckStateListener;
-import org.zend.php.common.ZendCatalogContentProvider;
 import org.zend.php.common.ZendCatalogViewer;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
@@ -116,23 +111,18 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		}
 
 		URL url = null;
-		String str = memento.getString("url");
-		if (str != null) {
-			try {
-				url = new URL(str);
-				if (!URLExists(url)) {
-					url = FileLocator
-							.find(Activator.getDefault().getBundle(),
-									new Path(
-											"/resources/welcome/PDT-welcome-page.html"),
-									null);
-				}
-			} catch (MalformedURLException e) {
-				String msg = "Malformed URL while initializing browser editor"; //$NON-NLS-1$
-				WebBrowserUIPlugin.logError(msg, e);
-			}
-		}
 
+		if (Platform.getProduct().getId().equals("org.zend.php.product")) {
+			url = FileLocator.find(Activator.getDefault().getBundle(),
+					new Path("/resources/welcome/PDT-welcome-page.html"), null);
+		} else {
+			// TODO we should not have com.zend.php.ui reference here...
+			url = FileLocator
+					.find(Platform.getBundle("com.zend.php.ui"),
+							new Path(
+									"/resources/welcome/index-zend-studio-10-welcome-page.html"), //$NON-NLS-1$
+							null);
+		}
 		String id = memento.getString("id");
 		String name = memento.getString("name");
 		String tooltip = memento.getString("tooltip");
@@ -152,13 +142,19 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		}
 		String progressDialogMsg = memento.getString("progressDialogMsg");
 		WebBrowserEditorInput input = null;
-		if (str.toLowerCase().contains("pdt")) {
-			input = new PdtWelcomePageEditorInput(url,
-					IWorkbenchBrowserSupport.PERSISTENT, "welcomeBrowser");
-		} else {
-			input = new WelcomePageEditorInput(url, style, id,
-					discoveryFileName, showCategories, progressDialogMsg,
-					flatTopLevel, autoExpandCategories);
+		try {
+			if (url.toString().toLowerCase().contains("pdt")) {
+
+				input = new PdtWelcomePageEditorInput(
+						FileLocator.toFileURL(url),
+						IWorkbenchBrowserSupport.PERSISTENT, "welcomeBrowser");
+			} else {
+				input = new WelcomePageEditorInput(FileLocator.toFileURL(url),
+						style, id, discoveryFileName, showCategories,
+						progressDialogMsg, flatTopLevel, autoExpandCategories);
+			}
+		} catch (IOException e) {
+			Activator.log(e);
 		}
 		input.setName(name);
 		input.setToolTipText(tooltip);
@@ -186,4 +182,5 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		}
 		return false;
 	}
+
 }
