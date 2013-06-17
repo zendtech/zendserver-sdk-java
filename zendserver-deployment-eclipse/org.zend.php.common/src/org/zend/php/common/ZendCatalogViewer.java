@@ -648,7 +648,7 @@ public class ZendCatalogViewer extends FilteredViewer {
 			Job job = new Job(Messages.ApplyChanges_JobName) {
 				protected IStatus run(IProgressMonitor monitor) {
 					return pm.modify(monitor, toAddItems, toRemoveItems,
-							Policy.RESTART_POLICY_PROMPT_RESTART_OR_APPLY,
+							Policy.RESTART_POLICY_PROMPT,
 							operationName);
 				}
 			};
