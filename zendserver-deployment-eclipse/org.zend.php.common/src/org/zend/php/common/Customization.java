@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Display;
 
 public class Customization {
 
-	private static final String ORG_ZEND_PHP_CUSTOMIZATION_SITE_URL = "org.zend.php.customization.site.url";
-	private static final String COM_ZEND_PHP_CUSTOMIZATION_SITE_URL = "com.zend.php.customization.site.url";
+	static final String ORG_ZEND_PHP_CUSTOMIZATION_SITE_URL = "org.zend.php.customization.site.url";
+	static final String COM_ZEND_PHP_CUSTOMIZATION_SITE_URL = "com.zend.php.customization.site.url";
 
 	public static void ShowCustomizationDialog() {
 		Display.getDefault().syncExec(new Runnable() {

@@ -122,6 +122,9 @@ public class RevertUtil {
 			p.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench");
 			p.setProperty("osgi.splashPath",
 					"platform:/base/plugins/org.zend.php");
+			// remove the com.zend.php.customization.site.url property -
+			// otherwise future updates to Zend Studio are not possible
+			p.remove(Customization.COM_ZEND_PHP_CUSTOMIZATION_SITE_URL);
 			FileOutputStream fos = new FileOutputStream(config);
 			p.store(fos, null);
 			fos.close();
