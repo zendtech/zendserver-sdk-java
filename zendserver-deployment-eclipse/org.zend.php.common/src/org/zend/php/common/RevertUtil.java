@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.common.core.utils.PDTProductUtils;
 import org.zend.php.common.welcome.PdtStats;
 
 public class RevertUtil {
@@ -90,7 +91,8 @@ public class RevertUtil {
 					return false;
 				}
 			};
-			job.setUser(true);
+			job.setUser(false);
+			job.setSystem(true);
 			job.setPriority(Job.INTERACTIVE);
 			job.schedule();
 			jobManager.join(REVERT_JOB, null);
@@ -118,7 +120,7 @@ public class RevertUtil {
 			FileInputStream fis = new FileInputStream(config);
 			p.load(fis);
 			fis.close();
-			p.setProperty("eclipse.product", "org.zend.php.product");
+			p.setProperty("eclipse.product", PDTProductUtils.PDT_PRODUCT_ID);
 			p.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench");
 			p.setProperty("osgi.splashPath",
 					"platform:/base/plugins/org.zend.php");
@@ -175,7 +177,7 @@ public class RevertUtil {
 		};
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		try {
-			dialog.run(true, true, runnable);
+			dialog.run(true, false, runnable);
 		} catch (InvocationTargetException e) {
 			ProvUI.handleException(e.getCause(), null, StatusManager.SHOW
 					| StatusManager.LOG);

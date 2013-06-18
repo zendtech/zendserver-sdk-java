@@ -2,6 +2,7 @@ package org.zend.php.common.welcome;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -15,6 +16,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.zend.php.common.Activator;
 import org.zend.php.common.ZendCatalogViewer;
+import org.zend.php.common.core.utils.PDTProductUtils;
 
 public class WelcomePageEditorInput extends WebBrowserEditorInput {
 
@@ -110,23 +112,38 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 			style = integer.intValue();
 		}
 
+		String discoveryFileName = memento.getString("discoveryFile");
+		boolean afterProfileChange = (PDTProductUtils.isPDtProduct() && "/directory.xml"
+				.equals(discoveryFileName))
+				|| (!PDTProductUtils.isPDtProduct() && "/pdt_directory.xml"
+						.equals(discoveryFileName));
 		URL url = null;
+		try {
+			url = new URL(memento.getString("url"));
+		} catch (MalformedURLException e1) {
+			Activator.log(e1);
+		}
 
-		if (Platform.getProduct().getId().equals("org.zend.php.product")) {
-			url = FileLocator.find(Activator.getDefault().getBundle(),
-					new Path("/resources/welcome/PDT-welcome-page.html"), null);
-		} else {
-			// TODO we should not have com.zend.php.ui reference here...
-			url = FileLocator
-					.find(Platform.getBundle("com.zend.php.ui"),
-							new Path(
-									"/resources/welcome/index-zend-studio-10-welcome-page.html"), //$NON-NLS-1$
-							null);
+		if (afterProfileChange) {
+			if (PDTProductUtils.isPDtProduct()) {
+				url = FileLocator.find(Activator.getDefault().getBundle(),
+						new Path("/resources/welcome/PDT-welcome-page.html"),
+						null);
+				discoveryFileName = "/pdt_directory.xml";
+			} else {
+				// TODO we should not have com.zend.php.ui reference here...
+				url = FileLocator
+						.find(Platform.getBundle("com.zend.php.ui"),
+								new Path(
+										"/resources/welcome/index-zend-studio-10-welcome-page.html"), //$NON-NLS-1$
+								null);
+				discoveryFileName = "/directory.xml";
+			}
 		}
 		String id = memento.getString("id");
 		String name = memento.getString("name");
 		String tooltip = memento.getString("tooltip");
-		String discoveryFileName = memento.getString("discoveryFile");
+
 		Boolean showCategories = memento.getBoolean("categories");
 		if (showCategories == null) {
 			showCategories = false;
@@ -143,7 +160,7 @@ public class WelcomePageEditorInput extends WebBrowserEditorInput {
 		String progressDialogMsg = memento.getString("progressDialogMsg");
 		WebBrowserEditorInput input = null;
 		try {
-			if (url.toString().toLowerCase().contains("pdt")) {
+			if (url != null && url.toString().toLowerCase().contains("pdt")) {
 
 				input = new PdtWelcomePageEditorInput(
 						FileLocator.toFileURL(url),

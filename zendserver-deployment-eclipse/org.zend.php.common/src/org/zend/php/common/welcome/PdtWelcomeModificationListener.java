@@ -15,30 +15,26 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.common.IProfileModificationListener;
 import org.zend.php.common.RevertUtil;
+import org.zend.php.common.core.utils.PDTProductUtils;
 
 public class PdtWelcomeModificationListener implements
 		IProfileModificationListener {
 
-	private static final String STUDIO_IU = "com.zend.php.ide";
-	private static final String PDT_PRODUCT_ID = "org.zend.php.product";
+	private static final String STUDIO_IU = "com.zend.php.ide.feature.group";
 	private IStatus status;
 
 	public IStatus aboutToChange(final Collection<String> setToAdd,
 			final Collection<String> setToRemove) {
-		status = Status.OK_STATUS;
 
-		if (!isPDtProduct()) { // do nothing, if we're not in PDT product
-			return status;
+		if (!PDTProductUtils.isPDtProduct()) { // do nothing, if we're not in PDT product
+			return Status.OK_STATUS;
 		}
 
-		RevertUtil ru = new RevertUtil();
-		ru.setRevertTimestamp();
-
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				Shell parent = Display.getDefault().getActiveShell();
-				if (setToAdd.contains(STUDIO_IU)) {
+		status = Status.OK_STATUS;
+		if (setToAdd.contains(STUDIO_IU)) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					Shell parent = Display.getDefault().getActiveShell();
 					boolean ok = MessageDialog
 							.openConfirm(
 									parent,
@@ -48,15 +44,16 @@ public class PdtWelcomeModificationListener implements
 						status = Status.CANCEL_STATUS;
 					}
 				}
-			}
-		});
+
+			});
+		}
 
 		return status;
 	}
 
 	public void profileChanged(Collection<String> setToAdd,
 			Collection<String> setToRemove, IStatus status) {
-		if (!isPDtProduct()) { // do nothing, if we're not in PDT product
+		if (!PDTProductUtils.isPDtProduct()) { // do nothing, if we're not in PDT product
 			return;
 		}
 
@@ -99,10 +96,6 @@ public class PdtWelcomeModificationListener implements
 				}
 			}
 		});
-	}
-
-	private boolean isPDtProduct() {
-		return PDT_PRODUCT_ID.equals(Platform.getProduct().getId());
 	}
 
 }
