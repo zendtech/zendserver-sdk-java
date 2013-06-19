@@ -29,7 +29,6 @@ import org.eclipse.equinox.internal.p2.ui.discovery.util.FilteredViewer;
 import org.eclipse.equinox.internal.p2.ui.discovery.util.PatternFilter;
 import org.eclipse.equinox.internal.p2.ui.discovery.util.TextSearchControl;
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogConfiguration;
-import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogFilter;
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.DiscoveryResources;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
@@ -69,7 +68,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
-import org.zend.php.common.welcome.PdtWelcomePageEditorInput;
+import org.zend.php.common.core.utils.PDTProductUtils;
+import org.zend.php.common.welcome.PdtWelcomeModificationListener;
 
 @SuppressWarnings("restriction")
 public class ZendCatalogViewer extends FilteredViewer {
@@ -645,11 +645,14 @@ public class ZendCatalogViewer extends FilteredViewer {
 	protected void doApplyChanges(final List<CatalogItem> toAddItems,
 			final List<CatalogItem> toRemoveItems) {
 		if (!toAddItems.isEmpty() || !toRemoveItems.isEmpty()) {
+			final String operation = toAddItems
+					.contains(PdtWelcomeModificationListener.STUDIO_IU) ? Messages.UpgradingToStudioMsg
+					: this.operationName;
+
 			Job job = new Job(Messages.ApplyChanges_JobName) {
 				protected IStatus run(IProgressMonitor monitor) {
 					return pm.modify(monitor, toAddItems, toRemoveItems,
-							Policy.RESTART_POLICY_PROMPT,
-							operationName);
+							Policy.RESTART_POLICY_PROMPT, operation);
 				}
 			};
 

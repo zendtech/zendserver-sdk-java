@@ -46,7 +46,8 @@ public class Messages extends NLS {
 	public static String ConnectorDiscovery_NoUrlDefined_Msg;
 	public static String ConnectorDiscovery_InvalidUrlDefined_Title;
 	public static String ConnectorDiscovery_InvalidUrlDefined_Msg;
-	
+	public static String UpgradingToStudioMsg;
+	public static String UpdatingZendEclispePDT;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

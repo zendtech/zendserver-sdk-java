@@ -20,7 +20,7 @@ import org.zend.php.common.core.utils.PDTProductUtils;
 public class PdtWelcomeModificationListener implements
 		IProfileModificationListener {
 
-	private static final String STUDIO_IU = "com.zend.php.ide.feature.group";
+	public static final String STUDIO_IU = "com.zend.php.ide.feature.group";
 	private IStatus status;
 
 	public IStatus aboutToChange(final Collection<String> setToAdd,
