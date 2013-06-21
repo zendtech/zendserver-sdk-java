@@ -20,8 +20,7 @@
 -name
 &quot;Zend Eclipse for PHP Developers&quot;</programArgs>
       <vmArgs>-Xms128M -Xmx512M</vmArgs>
-      <vmArgsMac>-Djava.awt.headless=true -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Xdock:icon=../Resources/
-mac.icns</vmArgsMac>
+      <vmArgsMac>-Djava.awt.headless=true -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Xdock:icon=../Resources/Eclipse.icns</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/org.zend.php/icons/eclipse.png" i32="/org.zend.php/icons/eclipse32.png" i48="/org.zend.php/icons/eclipse48.png"/>
@@ -32,6 +31,7 @@ mac.icns</vmArgsMac>
       startupMessageRect="13,197,429,15"
       startupForegroundColor="FFFFFF" />
    <launcher name="zend-eclipse-php">
+      <macosx icon="/org.zend.php/icons/Eclipse.icns"/>
       <solaris/>
       <win useIco="false">
          <bmp/>
