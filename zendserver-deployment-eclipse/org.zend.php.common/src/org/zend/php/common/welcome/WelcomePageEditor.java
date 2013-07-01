@@ -1,5 +1,7 @@
 package org.zend.php.common.welcome;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -14,6 +16,8 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.CloseWindowListener;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
@@ -157,6 +161,40 @@ public class WelcomePageEditor extends WebBrowserEditor {
 							Display.getDefault().asyncExec(runnable);
 						}
 					}
+				}
+			});
+			
+			// Add listener for changes in the browser location. When the user
+			// clicks on a link it should be opened in the external browser.
+			br.addLocationListener(new LocationListener() {
+				
+				public void changing(LocationEvent event) {
+					// check if the user clicked on the "Subscribe" button
+					if (event.location.contains("eloqua")) { //$NON-NLS-1$
+						// The mail subscription service is invoked via a POST
+						// request. We cannot do this in the external browser
+						// using the available SWT API. Therefore, we leave this
+						// execution inside the welcome page.
+						return;
+					}
+					
+					// cancel the change of the location inside the welcome page
+					event.doit = false;
+					
+					try {
+						// open the location in the external browser
+						PlatformUI.getWorkbench().getBrowserSupport()
+								.getExternalBrowser()
+								.openURL(new URL(event.location));
+					} catch (PartInitException e) {
+						Activator.log(e);
+					} catch (MalformedURLException e) {
+						Activator.log(e);
+					}
+				}
+				
+				public void changed(LocationEvent event) {
+					// no need to listen for this event
 				}
 			});
 			initialize(br.getDisplay(), br);
