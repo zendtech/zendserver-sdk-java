@@ -61,4 +61,10 @@ public interface IModelObject {
 	int getOffset(Feature f);
 
 	void setOffset(Feature f, int intValue);
+	
+	/**
+	 * @return <code>true</code> if children nodes should be added before any
+	 *         property, otherwise returns <code>false</code>
+	 */
+	boolean isChildrenFirst();
 }

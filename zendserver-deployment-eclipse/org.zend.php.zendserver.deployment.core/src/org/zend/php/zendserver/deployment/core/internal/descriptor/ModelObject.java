@@ -107,4 +107,8 @@ public abstract class ModelObject implements IModelObject {
 		offsets[Arrays.asList(properties).indexOf(f)] = offset;
 	}
 
+	public boolean isChildrenFirst() {
+		// by default add children after properties
+		return false;
+	}
 }

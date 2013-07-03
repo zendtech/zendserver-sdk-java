@@ -198,26 +198,31 @@ public class ModelSerializer {
 		}
 	}
 	
-	private void writeProperties(Node doc, IModelObject obj, ChangeEvent event) throws XPathExpressionException {
+	private void writeProperties(Node doc, IModelObject obj, ChangeEvent event)
+			throws XPathExpressionException {
 		Node lastAdded = null;
-		if (event == null || event.target == obj) { 
+		if (obj.isChildrenFirst()) {
+			lastAdded = writeChildren(doc, (IModelContainer) obj, event, null);
+		}
+		if (event == null || event.target == obj) {
 			Feature[] props = obj.getPropertyNames();
 			for (Feature feature : props) {
 				String value = obj.get(feature);
-				if ((value == null) || ("".equals(value) && ((feature.flags & Feature.SET_EMPTY_TO_NULL) == Feature.SET_EMPTY_TO_NULL))) { //$NON-NLS-1$
+				if ((value == null)
+						|| ("".equals(value) && ((feature.flags & Feature.SET_EMPTY_TO_NULL) == Feature.SET_EMPTY_TO_NULL))) { //$NON-NLS-1$
 					removeString(doc, feature.xpath, feature.attrName);
 				} else {
-					lastAdded = setString(doc, feature.xpath, feature.attrName, value, lastAdded);
+					lastAdded = setString(doc, feature.xpath, feature.attrName,
+							value, lastAdded);
 				}
 			}
 		}
-		
-		if (obj instanceof IModelContainer) {
+		if (!obj.isChildrenFirst() && obj instanceof IModelContainer) {
 			writeChildren(doc, (IModelContainer) obj, event, lastAdded);
 		}
 	}
 	
-	private void writeChildren(Node doc, IModelContainer model, ChangeEvent event, Node lastAddedNode) throws XPathExpressionException {
+	private Node writeChildren(Node doc, IModelContainer model, ChangeEvent event, Node lastAddedNode) throws XPathExpressionException {
 		if (event == null || event.target == model) {
 			
 			Feature[] features = model.getChildNames();
@@ -269,6 +274,7 @@ public class ModelSerializer {
 				}
 			}
 		}
+		return lastAddedNode;
 	}
 	
 	private Node getDirectChild(Node parent, Node child) {
@@ -452,11 +458,11 @@ public class ModelSerializer {
 		
 		if (attrName != null) {
 			((Element) target).setAttribute(attrName, value);
+			return after;
 		} else {
 			target.setTextContent(value);
+			return target;
 		}
-		
-		return target;
 	}
 	
 	private static String getXPath(String nodePath, String attrName) {

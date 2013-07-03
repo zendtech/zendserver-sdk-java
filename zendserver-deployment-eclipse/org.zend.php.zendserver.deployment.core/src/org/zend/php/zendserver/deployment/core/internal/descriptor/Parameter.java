@@ -208,5 +208,10 @@ public class Parameter  extends ModelContainer implements IParameter {
 				+ ", defaultValue=" + defaultValue + ", description=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ description + ", identical=" + identical + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	@Override
+	public boolean isChildrenFirst() {
+		return true;
+	}
 
 }
