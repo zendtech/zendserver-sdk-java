@@ -15,7 +15,7 @@
    <feature url="features/org.zend.php.zendserver.deployment.debug_1.0.0.qualifier.jar" id="org.zend.php.zendserver.deployment.debug" version="1.0.0.qualifier">
       <category name="org.zend.sdk"/>
    </feature>
-   <bundle url="plugins/org.zend.php.library.core_0.0.0.jar" id="org.zend.php.library.core" version="0.0.0">
+   <!--bundle url="plugins/org.zend.php.library.core_0.0.0.jar" id="org.zend.php.library.core" version="0.0.0">
      <category name="org.zend.sdk"/>
    </bundle>
    <bundle url="plugins/org.zend.php.library.ui_0.0.0.jar" id="org.zend.php.library.ui" version="0.0.0">
@@ -23,6 +23,6 @@
    </bundle>
    <bundle url="plugins/org.zend.php.library.core.tests_0.0.0.jar" id="org.zend.php.library.core.tests" version="0.0.0">
      <category name="org.zend.sdk"/>
-   </bundle>
+   </bundle-->
    <category-def name="org.zend.sdk" label="SDK"/>
 </site>
