@@ -24,6 +24,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,7 +33,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
@@ -71,7 +77,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private String description;
 	private String projectName;
-	
+
 	private List<String> bannedNames;
 	private List<IDeployWizardContribution> contributions;
 
@@ -102,6 +108,22 @@ public class ConfigurationBlock extends AbstractBlock {
 		developmentMode = createLabelWithCheckbox(
 				Messages.ConfigurationBlock_DevelopmentModeLabel, null,
 				getContainer());
+		Link devModeDesc = new Link(getContainer(), SWT.None);
+		devModeDesc.setText(Messages.ConfigurationBlock_DevelopmentModeDesc);
+		FontData fontData = devModeDesc.getFont().getFontData()[0];
+		Font font = new Font(parent.getDisplay(), new FontData(
+				fontData.getName(), fontData.getHeight(), SWT.ITALIC));
+		devModeDesc.setFont(font);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		devModeDesc.setLayoutData(gd);
+		devModeDesc.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IWorkbenchHelpSystem help = PlatformUI.getWorkbench()
+						.getHelpSystem();
+				help.displayHelpResource(e.text);
+			}
+		});
 		warnUpdate = createLabelWithCheckbox(
 				Messages.ConfigurationBlock_WarnUpdatingLabel, null,
 				getContainer());
@@ -214,7 +236,9 @@ public class ConfigurationBlock extends AbstractBlock {
 				IPath file = new Path(baseUrl.getFile());
 				if (file.segmentCount() > 0) {
 					if (bannedNames.contains(file.segment(0))) {
-						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						return new Status(
+								IStatus.ERROR,
+								Activator.PLUGIN_ID,
 								Messages.ConfigurationBlock_LocalAppConflictErrorMessage);
 					}
 				}
@@ -413,8 +437,8 @@ public class ConfigurationBlock extends AbstractBlock {
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		label.setLayoutData(data);
 		Composite appsComposite = new Composite(container, SWT.NULL);
-		appsComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				false));
+		appsComposite
+				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
@@ -606,7 +630,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			Activator.log(e);
 		}
 	}
-	
+
 	private List<IDeployWizardContribution> getContributions() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(

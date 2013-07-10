@@ -62,6 +62,7 @@ public class Messages extends NLS {
 	public static String ConfigurationBlock_ApplicationNameLabel;
 
 	public static String ConfigurationBlock_DevelopmentModeLabel;
+	public static String ConfigurationBlock_DevelopmentModeDesc;
 
 	public static String ConfigurationBlock_LocalAppConflictErrorMessage;
 
