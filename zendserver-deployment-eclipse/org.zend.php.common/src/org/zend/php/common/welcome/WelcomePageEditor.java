@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -44,19 +43,14 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.browser.WebBrowserEditor;
 import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.common.Activator;
-import org.zend.php.common.StudioFeaturesCheckStateListener;
-import org.zend.php.common.ZendCatalogContentProvider;
 import org.zend.php.common.ZendCatalogViewer;
-import org.zend.php.common.ZendCatalogContentProvider.VirtualTreeCategory;
 
 public class WelcomePageEditor extends WebBrowserEditor {
 
@@ -163,12 +157,21 @@ public class WelcomePageEditor extends WebBrowserEditor {
 					}
 				}
 			});
-			
+
 			// Add listener for changes in the browser location. When the user
 			// clicks on a link it should be opened in the external browser.
 			br.addLocationListener(new LocationListener() {
-				
-				public void changing(LocationEvent event) {
+
+				public void changing(LocationEvent event) { //$NON-NLS-1$
+					if (event.location.startsWith("file")) {
+						// On Windows loading the initial content fires location
+						// change event. If the location is a file URL then most
+						// probably we are in this case here we just return -
+						// otherwise the welcome page will be open in external
+						// browser.
+						return;
+					}
+
 					// check if the user clicked on the "Subscribe" button
 					if (event.location.contains("eloqua")) { //$NON-NLS-1$
 						// The mail subscription service is invoked via a POST
@@ -177,10 +180,10 @@ public class WelcomePageEditor extends WebBrowserEditor {
 						// execution inside the welcome page.
 						return;
 					}
-					
+
 					// cancel the change of the location inside the welcome page
 					event.doit = false;
-					
+
 					try {
 						// open the location in the external browser
 						PlatformUI.getWorkbench().getBrowserSupport()
@@ -192,7 +195,7 @@ public class WelcomePageEditor extends WebBrowserEditor {
 						Activator.log(e);
 					}
 				}
-				
+
 				public void changed(LocationEvent event) {
 					// no need to listen for this event
 				}
