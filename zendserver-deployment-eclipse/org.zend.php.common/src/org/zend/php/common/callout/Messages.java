@@ -4,7 +4,7 @@ import org.eclipse.osgi.util.NLS;
 
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.zend.php.ui.callout.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.zend.php.common.callout.messages"; //$NON-NLS-1$
 	public static String MessageWithHelpBody_0;
 	static {
 		// initialize resource bundle
