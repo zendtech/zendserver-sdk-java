@@ -14,6 +14,7 @@ sharedFolder = 'shared'
 repositories {
 	mavenCentral()
 	maven { url "http://maven.restlet.org" }
+	maven { url "http://snapshots.jboss.org/maven2" }
 	maven { url "http://download.eclipse.org/jgit/maven" }
 	flatDir { name 'localRepository' }
 	localRepository { dirs 'lib' }
@@ -64,6 +65,8 @@ dependencies {
 	compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '1.1.0.201109151100-r'
 	compile group: 'org.restlet.jse', name: 'org.restlet', version: '2.0.4'
 	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
+	compile group: 'com.openshift', name: 'openshift-java-client', version: '2.0.1'
+	compile group: 'commons-httpclient', name:'commons-httpclient', version: '3.1'
 	compile name: 'registry'
 	compile name: 'archquery'
 	compile name: 'org.zend.webapi'

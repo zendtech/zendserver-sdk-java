@@ -14,12 +14,14 @@ import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.UpdateTargetCommand;
 import org.zend.sdklib.manager.TargetException;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException, TargetException {
+	public void testExecute() throws ParseError, WebApiException,
+			TargetException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("update target -t dev4 -k newKey -s 000000 -h http://newHost");
 		UpdateTargetCommand command = getCommand(cmdLine);
 		manager.add(getTarget());
@@ -34,8 +36,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteInvalidUrl() throws ParseError, WebApiException, TargetException,
-			MalformedURLException {
+	public void testExecuteInvalidUrl() throws ParseError, WebApiException,
+			TargetException, MalformedURLException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("update target -t dev4 -h a111:/\test1test");
 		UpdateTargetCommand command = getCommand(cmdLine);
 		manager.add(getTarget());
@@ -43,8 +45,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteNoChanges() throws ParseError, WebApiException, TargetException,
-			MalformedURLException {
+	public void testExecuteNoChanges() throws ParseError, WebApiException,
+			TargetException, MalformedURLException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("update target -t dev4");
 		UpdateTargetCommand command = getCommand(cmdLine);
 		manager.add(getTarget());
@@ -52,8 +54,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteProperties() throws ParseError, WebApiException, TargetException,
-			MalformedURLException {
+	public void testExecuteProperties() throws ParseError, WebApiException,
+			TargetException, MalformedURLException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("update target -t dev4 -p "
 				+ this.getClass().getResource("target.properties").getPath());
 		UpdateTargetCommand command = getCommand(cmdLine);
@@ -63,7 +65,8 @@ public class TestUpdateTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testExecuteInvalidPropertiesFile() throws ParseError,
-			WebApiException, TargetException, MalformedURLException {
+			WebApiException, TargetException, MalformedURLException,
+			LicenseExpiredException {
 		CommandLine cmdLine = getLine("update target -t dev4 -p nofilename");
 		UpdateTargetCommand command = getCommand(cmdLine);
 		manager.add(getTarget());

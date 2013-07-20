@@ -21,6 +21,7 @@ import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.ListTargetsCommand;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestListTargetsCommand extends AbstractTargetCommandTest {
@@ -37,7 +38,7 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testTargetAvailable() throws ParseError, MalformedURLException,
-			WebApiException, TargetException {
+			WebApiException, TargetException, LicenseExpiredException {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length != 0);
@@ -50,7 +51,8 @@ public class TestListTargetsCommand extends AbstractTargetCommandTest {
 
 	@Test
 	public void testTargetAvailableDisconnected() throws ParseError,
-			MalformedURLException, WebApiException, TargetException {
+			MalformedURLException, WebApiException, TargetException,
+			LicenseExpiredException {
 		IZendTarget target = getTarget();
 		manager.add(target);
 		assertTrue(manager.getTargets().length != 0);

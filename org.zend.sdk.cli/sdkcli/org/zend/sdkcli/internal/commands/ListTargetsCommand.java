@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.text.MessageFormat;
+
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class ListTargetsCommand extends TargetAwareCommand {
@@ -19,7 +22,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 	public boolean isStatus() {
 		return hasOption(STATUS);
 	}
-	
+
 	@Override
 	public boolean doExecute() {
 		final IZendTarget[] list = getTargetManager().getTargets();
@@ -32,7 +35,8 @@ public class ListTargetsCommand extends TargetAwareCommand {
 		for (IZendTarget target : list) {
 			commandLine.getLog().info("id: " + target.getId());
 			commandLine.getLog().info("\tHost: " + target.getHost());
-			commandLine.getLog().info("\tDefault Server URL: " + target.getDefaultServerURL());
+			commandLine.getLog().info(
+					"\tDefault Server URL: " + target.getDefaultServerURL());
 			commandLine.getLog().info("\tKey: " + target.getKey());
 
 			if (isStatus()) {
@@ -41,6 +45,11 @@ public class ListTargetsCommand extends TargetAwareCommand {
 					connect = target.connect();
 				} catch (WebApiException e) {
 					connect = false;
+				} catch (LicenseExpiredException e) {
+					getLogger()
+							.error(MessageFormat
+									.format("Cannot connect with target {0}. Check if license has not exipred.",
+											target.getId()));
 				}
 				commandLine.getLog()
 						.error("\tStatus: "
