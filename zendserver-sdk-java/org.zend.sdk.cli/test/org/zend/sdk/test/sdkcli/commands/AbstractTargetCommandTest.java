@@ -13,7 +13,10 @@ import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.ITargetLoader;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.values.ServerType;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 public class AbstractTargetCommandTest extends AbstractTest {
 
@@ -26,11 +29,14 @@ public class AbstractTargetCommandTest extends AbstractTest {
 		manager = spy(new TargetsManager(loader));
 	}
 
-	protected IZendTarget getTarget() throws WebApiException {
+	protected IZendTarget getTarget() throws WebApiException,
+			LicenseExpiredException {
 		IZendTarget target = null;
 		try {
 			target = spy(new ZendTarget("dev4", new URL("http://localhost"),
 					"mykey", "123456"));
+			doReturn(true).when(target).connect(WebApiVersion.V1_3,
+					ServerType.ZEND_SERVER);
 			doReturn(true).when(target).connect();
 		} catch (MalformedURLException e) {
 			// ignore

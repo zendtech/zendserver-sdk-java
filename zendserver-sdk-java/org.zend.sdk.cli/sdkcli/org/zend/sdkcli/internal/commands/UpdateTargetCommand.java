@@ -11,10 +11,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * Update an existing target.
@@ -90,8 +92,16 @@ public class UpdateTargetCommand extends TargetAwareCommand {
 					.error("To update a target at least one of the following options is required: h, k, s, p.");
 			return true;
 		}
-		IZendTarget result = getTargetManager().updateTarget(getId(), getHost(),
-				getDefaultServerURL(), getKey(), getSecretKey());
+		IZendTarget result = null;;
+		try {
+			result = getTargetManager().updateTarget(getId(), getHost(),
+					getDefaultServerURL(), getKey(), getSecretKey());
+		} catch (LicenseExpiredException e) {
+			getLogger()
+					.error(MessageFormat
+							.format("Cannot update target {0}. Check if license has not exipred.",
+									getId()));
+		}
 		if (result == null) {
 			return false;
 		}

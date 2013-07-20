@@ -12,12 +12,14 @@ import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.RemoveTargetCommand;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException {
+	public void testExecute() throws ParseError, WebApiException,
+			LicenseExpiredException {
 		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());
@@ -27,7 +29,8 @@ public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteAddFail() throws ParseError, WebApiException {
+	public void testExecuteAddFail() throws ParseError, WebApiException,
+			LicenseExpiredException {
 		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).remove(
@@ -36,7 +39,8 @@ public class TestRemoveTargetCommand extends AbstractTargetCommandTest {
 	}
 
 	@Test
-	public void testExecuteFail() throws ParseError, WebApiException {
+	public void testExecuteFail() throws ParseError, WebApiException,
+			LicenseExpiredException {
 		CommandLine cmdLine = getLine("remove target -t 1");
 		RemoveTargetCommand command = getCommand(cmdLine);
 		doReturn(getTarget()).when(manager).getTargetById(Mockito.anyString());

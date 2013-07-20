@@ -12,19 +12,20 @@ import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.DetectTargetCommand;
 import org.zend.sdklib.manager.TargetException;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 
 public class TestDetectTargetCommand extends AbstractTargetCommandTest {
 
 	@Test
-	public void testExecute() throws ParseError, WebApiException, TargetException, IOException {
+	public void testExecute() throws ParseError, WebApiException,
+			TargetException, IOException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("detect target");
 		DetectTargetCommand command = getCommand(cmdLine);
 		assertNotNull(command);
 		manager.add(getTarget());
-		// assertTrue(command.execute(cmdLine));
+		//assertTrue(command.execute(cmdLine));
 	}
-
 
 	private DetectTargetCommand getCommand(CommandLine cmdLine)
 			throws ParseError {
