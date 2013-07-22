@@ -21,7 +21,7 @@ repositories {
 	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.webapi/build/libs/' }
 	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.sdk/build/libs/' }
 	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi.HEAD/workspace/org.zend.webapi/build/libs/' }
-	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.sdk.HEAD/workspace/org.zend.sdk/build/distributions/' }
+	localRepository { dirs 'http://il-studiosrv1:8080/job/org.zend.sdk.cli/lastSuccessfulBuild/artifact/org.zend.sdk/build/distributions/' }
 }
 
 sourceSets {
