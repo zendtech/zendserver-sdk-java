@@ -17,6 +17,7 @@ import org.zend.sdk.test.sdklib.repository.TestRepositoryXsd;
 import org.zend.sdk.test.sdklib.repository.TestVersionCompare;
 import org.zend.sdk.test.sdklib.repository.TestVersionPattern;
 import org.zend.sdk.test.sdklib.repository.site1.TestJarBasedRepositor;
+import org.zend.sdk.test.sdklib.target.TestApiKeyDetector;
 import org.zend.sdk.test.sdklib.target.TestUserBasedTargetLoader;
 import org.zend.sdk.test.sdklib.target.TestZendTarget;
 
@@ -28,11 +29,11 @@ import org.zend.sdk.test.sdklib.target.TestZendTarget;
 		TestPackageBuilder.class, TestIni.class, TestLibrary.class,
 		TestZendProject.class, TestLogger.class, TestTargetsManager.class,
 		TestUserBasedTargetLoader.class, TestZendTarget.class,
-		TestRepositoryXsd.class, TestJarBasedRepositor.class,
-		TestVersionPattern.class, TestVersionCompare.class,
-		TestDefaultMappingLoader.class, TestMappingModel.class,
-		TestMappingValidator.class, TestZendIssue.class, TestZendMonitor.class,
-		TestRepositoryFactory.class })
+		TestApiKeyDetector.class, TestRepositoryXsd.class,
+		TestJarBasedRepositor.class, TestVersionPattern.class,
+		TestVersionCompare.class, TestDefaultMappingLoader.class,
+		TestMappingModel.class, TestMappingValidator.class,
+		TestZendIssue.class, TestZendMonitor.class, TestRepositoryFactory.class })
 public class AllLibTests {
 
 }
