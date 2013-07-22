@@ -20,8 +20,8 @@ repositories {
 	localRepository { dirs 'lib' }
 	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.webapi/build/libs/' }
 	localRepository { dirs 'file://' + project.rootDir.path + '/../org.zend.sdk/build/libs/' }
-	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi.HEAD/ws/org.zend.webapi/build/libs/' }
-	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.sdk.HEAD/ws/org.zend.sdk/build/libs/' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.webapi.HEAD/workspace/org.zend.webapi/build/libs/' }
+	localRepository { dirs 'file:///disk2/hudson/jobs/org.zend.sdk.HEAD/workspace/org.zend.sdk/build/libs' }
 }
 
 sourceSets {
