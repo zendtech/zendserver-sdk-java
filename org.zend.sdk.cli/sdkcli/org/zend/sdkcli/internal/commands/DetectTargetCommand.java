@@ -148,7 +148,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 				getPassword());
 		String key = getKey();
 		if (key!= null) {
-			manager.setKey(key);
+			//manager.setKey(key);
 		}
 		try {
 			manager.createApiKey(message);
