@@ -60,17 +60,18 @@ public abstract class ApiKeyDetector {
 			String exisitngKeys = getApiKeys(sessionId);
 			Map<String, String> keys = ZendTargetAutoDetect
 					.parseApiKey(exisitngKeys);
-			if (keys.containsKey(DEFAULT_KEY)) {
-				name = DEFAULT_KEY;
-				secretKey = keys.get(DEFAULT_KEY);
+			String keyName = name != null ? name : DEFAULT_KEY;
+			if (keys.containsKey(keyName)) {
+				name = keyName;
+				secretKey = keys.get(keyName);
 				return true;
 			}
 			String content = doCreateApiKey(sessionId);
 			Map<String, String> values = ZendTargetAutoDetect
 					.parseApiKey(content);
-			if (values.containsKey(DEFAULT_KEY)) {
-				name = DEFAULT_KEY;
-				secretKey = values.get(DEFAULT_KEY);
+			if (values.containsKey(keyName)) {
+				name = keyName;
+				secretKey = values.get(keyName);
 			}
 			return true;
 		}
@@ -83,6 +84,10 @@ public abstract class ApiKeyDetector {
 
 	public String getSecretKey() {
 		return secretKey;
+	}
+
+	public void setKey(String key) {
+		this.name = key;
 	}
 
 	public abstract String[] getServerCredentials(String message);
@@ -99,7 +104,7 @@ public abstract class ApiKeyDetector {
 		Map<String, String> params = new HashMap<String, String>();
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put(SESSION_ID, sessionId);
-		params.put(NAME, DEFAULT_KEY);
+		params.put(NAME, name != null ? name : DEFAULT_KEY);
 		params.put(USERNAME, "admin"); //$NON-NLS-1$
 		return executeAddApiKey(getUrl("/Api/apiKeysAddKey"), params, cookies); //$NON-NLS-1$
 	}

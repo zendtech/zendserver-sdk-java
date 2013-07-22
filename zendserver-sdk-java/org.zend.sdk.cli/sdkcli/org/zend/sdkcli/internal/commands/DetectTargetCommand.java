@@ -32,7 +32,6 @@ import org.zend.sdklib.target.LicenseExpiredException;
 public class DetectTargetCommand extends TargetAwareCommand {
 
 	private static final String ID = "t";
-	private static final String SECRET_KEY = "s";
 	private static final String KEY = "k";
 	private static final String USERNAME = "u";
 	private static final String PASSWORD = "p";
@@ -40,11 +39,6 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	@Option(opt = ID, required = false, description = "Id of the new target", argName = "id")
 	public String getId() {
 		return getValue(ID);
-	}
-
-	@Option(opt = SECRET_KEY, required = false, description = "Secret key of the new target (to be applied or used)", argName = "secret-key")
-	public String getSecretKey() {
-		return getValue(SECRET_KEY);
 	}
 
 	@Option(opt = KEY, required = false, description = "Key of the new target (to be applied)", argName = "key")
@@ -66,12 +60,6 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	public boolean doExecute() {
 		final String targetId = getId();
 		final String key = getKey();
-		final String secretKey = getSecretKey();
-
-		// users run this command to apply the generated key
-		if (key != null && secretKey != null) {
-			return applyKey(key, secretKey);
-		}
 
 		// detect localhost
 		return detectLocalhostTarget(targetId, key);
@@ -158,6 +146,10 @@ public class DetectTargetCommand extends TargetAwareCommand {
 	private IZendTarget detectZendServer6(String message) {
 		ApiKeyDetector manager = new CliApiKeyDetector(getUsername(),
 				getPassword());
+		String key = getKey();
+		if (key!= null) {
+			manager.setKey(key);
+		}
 		try {
 			manager.createApiKey(message);
 			TargetsManager tm = getTargetManager();
@@ -178,26 +170,4 @@ public class DetectTargetCommand extends TargetAwareCommand {
 		return null;
 	}
 
-	private boolean applyKey(final String key, final String secretKey) {
-		try {
-			final String appliedSK = getTargetManager().applyKeyToLocalhost(
-					key, secretKey);
-			getLogger().info("Key was generated for localhost target. ");
-			getLogger().info("\tKey: " + key);
-			getLogger().info("\tSecret key: " + appliedSK);
-			getLogger()
-					.info("\tThis key must be kept secret and immediately revoked if "
-							+ "there is any chance that it has been compromised");
-			return true;
-		} catch (IOException e) {
-			getLogger().error(e);
-			getLogger().error(
-					"root privileges are required to run this command.");
-			getLogger().error("Please consider using:");
-			getLogger().error(
-					"\t% sudo " + commandLine.getVerb() + " "
-							+ commandLine.getDirectObject() + " ...");
-		}
-		return false;
-	}
 }
