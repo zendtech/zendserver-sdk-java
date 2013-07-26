@@ -52,28 +52,28 @@
   </repositories>
 
   <modules>
-    <module>../../org.zend.core.notifications</module>
-    <module>../../org.zend.php</module>
-    <module>../../org.zend.php-feature</module>
-    <module>../../org.zend.php.common</module>
-    <module>../../org.zend.php.common-feature</module>
-    <module>../../org.zend.php.zendserver.deployment-feature</module>
-    <module>../../org.zend.php.zendserver.deployment.all</module>
-    <module>../../org.zend.php.zendserver.deployment.core</module>
-    <module>../../org.zend.php.zendserver.deployment.core.tests</module>
-    <module>../../org.zend.php.zendserver.deployment.debug-feature</module>
-    <module>../../org.zend.php.zendserver.deployment.debug.core</module>
-    <module>../../org.zend.php.zendserver.deployment.debug.ui</module>
-    <module>../../org.zend.php.zendserver.deployment.test-feature</module>
-    <module>../../org.zend.php.zendserver.deployment.ui</module>
-    <module>../../org.zend.php.zendserver.monitor.core</module>
-    <module>../../org.zend.php.zendserver.monitor.ui</module>
-    <module>../../org.zend.usagedata</module>
-    <module>../../org.zend.usagedata-feature</module>
-    <module>../../org.zend.usagedata.monitors</module>
-    <module>../../org.zend.usagedata.ui</module>
-    <module>../../org.zend.commons.update-site</module>
-    <module>../../org.zend.php-update-site</module>
+    <module>./../org.zend.core.notifications</module>
+    <module>./../org.zend.php</module>
+    <module>./../org.zend.php-feature</module>
+    <module>./../org.zend.php.common</module>
+    <module>./../org.zend.php.common-feature</module>
+    <module>./../org.zend.php.zendserver.deployment-feature</module>
+    <module>./../org.zend.php.zendserver.deployment.all</module>
+    <module>./../org.zend.php.zendserver.deployment.core</module>
+    <module>./../org.zend.php.zendserver.deployment.core.tests</module>
+    <module>./../org.zend.php.zendserver.deployment.debug-feature</module>
+    <module>./../org.zend.php.zendserver.deployment.debug.core</module>
+    <module>./../org.zend.php.zendserver.deployment.debug.ui</module>
+    <module>./../org.zend.php.zendserver.deployment.test-feature</module>
+    <module>./../org.zend.php.zendserver.deployment.ui</module>
+    <module>./../org.zend.php.zendserver.monitor.core</module>
+    <module>./../org.zend.php.zendserver.monitor.ui</module>
+    <module>./../org.zend.usagedata</module>
+    <module>./../org.zend.usagedata-feature</module>
+    <module>./../org.zend.usagedata.monitors</module>
+    <module>./../org.zend.usagedata.ui</module>
+    <module>./../org.zend.commons.update-site</module>
+    <module>./../org.zend.php-update-site</module>
   </modules>
   <build>
     <plugins>
