@@ -4,8 +4,9 @@
 
 	<parent>
 		<groupId>org.zend</groupId>
-    	<artifactId>zend-sdk</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
+		<artifactId>zend-sdk</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../sdk-releng/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>org.zend.commons.update-site</artifactId>

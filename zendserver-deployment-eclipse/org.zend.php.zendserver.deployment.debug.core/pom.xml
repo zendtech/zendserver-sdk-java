@@ -6,6 +6,7 @@
     <groupId>org.zend</groupId>
     <artifactId>zend-sdk</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../sdk-releng/pom.xml</relativePath>
   </parent>
   <groupId>org.zend</groupId>
   <artifactId>org.zend.php.zendserver.deployment.debug.core</artifactId>
