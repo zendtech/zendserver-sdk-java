@@ -37,7 +37,7 @@
 		<repository>
 			<id>pdt-dev</id>
 			<layout>p2</layout>
-			<url>http://il-studiosrv1:8080/view/Studio%20HEAD/job/org.eclipse.php.HEAD/lastSuccessfulBuild/artifact/result/</url>
+			<url></url>http://il-studiodev2.zend.net/targets/pdt</url>
 		</repository>
 		<repository>
 			<id>orbit</id>
