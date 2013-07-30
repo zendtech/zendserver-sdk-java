@@ -1,6 +1,9 @@
 package org.zend.webapi.internal.core.connection;
 
 import org.restlet.engine.Engine;
+import org.restlet.engine.connector.HttpServerHelper;
+import org.restlet.engine.local.RiapClientHelper;
+import org.restlet.engine.local.RiapServerHelper;
 
 public class WebApiEngine extends Engine {
 
@@ -13,11 +16,11 @@ public class WebApiEngine extends Engine {
 		getRegisteredClients().add(
 				new org.restlet.engine.local.ZipClientHelper(null));
 		getRegisteredClients().add(
-				new org.restlet.engine.riap.RiapClientHelper(null));
+				new RiapClientHelper(null));
 		getRegisteredServers().add(
-				new org.restlet.engine.riap.RiapServerHelper(null));
+				new RiapServerHelper(null));
 		getRegisteredServers().add(
-				new org.restlet.engine.http.connector.HttpServerHelper(null));
+				new HttpServerHelper(null));
 	}
 
 }

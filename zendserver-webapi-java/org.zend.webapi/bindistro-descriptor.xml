@@ -17,11 +17,10 @@
       <directory>${project.build.directory}</directory>
       <outputDirectory>/lib</outputDirectory>
       <includes>
-        <include>org.osgi.core-*.jar</include>
+        <include>org.eclipse.osgi-*.jar</include>
         <include>org.restlet.ext.xml-*.jar</include>
         <include>org.restlet-*.jar</include>
-        <include>org.zend.webapi.jar</include>
-        <include>org.zend.webapi-test.jar</include>
+        <include>org.zend.webapi-*.jar</include>
       </includes>
     </fileSet>
   </fileSets>

@@ -23,7 +23,8 @@ import org.restlet.data.Preference;
 import org.restlet.data.Protocol;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
-import org.restlet.engine.http.header.HeaderConstants;
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
@@ -40,7 +41,6 @@ import org.zend.webapi.internal.core.connection.auth.signature.SignatureExceptio
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
-import org.zend.webapi.internal.core.connection.request.HeaderParameters;
 
 /**
  * WebApi Service Dispatcher
@@ -55,7 +55,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 	public ServiceDispatcher() {
 		this(null);
 	}
-	
+
 	public ServiceDispatcher(Context context) {
 		this.context = context;
 	}
@@ -71,7 +71,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
 			// processing the request
 			ClientResource resource = getResource(request);
-			
+
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
 			if (handle == null) {
@@ -82,19 +82,19 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// digest response
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
-			
+
 			Utils.log("sent " + request.getClass().getSimpleName());
 			Utils.log("resposne code  = " + responseCode);
-		
+
 			if (!request.isExpectedResponseCode(responseCode)) {
-				UnexpectedResponseCode ex = new UnexpectedResponseCode(responseCode, handle);
+				UnexpectedResponseCode ex = new UnexpectedResponseCode(
+						responseCode, handle);
 				Utils.log(ex.getResponseCode().getErrorCode() + " = "
 						+ ex.getResponseCode().getDescription());
 				throw ex;
 			}
-			
+
 			dataDigster.digest();
-			
 
 			// creating the response object
 			response = ResponseFactory.createResponse(request, responseCode,
@@ -121,7 +121,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
 				restlet.setContext(context);
 			}
 		}
-		
+
 		return clientResource;
 	}
 
@@ -137,11 +137,11 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		Request request = new Request();
 
 		request.setProtocol(getProtocol(webApiRequest.getHost()));
-		
+
 		// reference
 		final Reference baseRef = new Reference(webApiRequest.getHost());
-		final Reference reference = new Reference(baseRef,
-				webApiRequest.getUri());
+		final Reference reference = new Reference(baseRef.toString()
+				+ webApiRequest.getUri());
 		request.setResourceRef(reference);
 
 		// method
@@ -165,17 +165,16 @@ public class ServiceDispatcher implements IServiceDispatcher {
 		request.setDate(webApiRequest.getDate());
 
 		// signature
-		Series<Parameter> s = new HeaderParameters();
 		StringBuilder b = new StringBuilder(webApiRequest.getKeyName());
 		b.append("; ");
 		b.append(webApiRequest.getSignature());
-		s.add("X-Zend-Signature", b.toString());
-		request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, s);
-		
-		//timeout
+		Series<Header> headers = new Series<Header>(Header.class);
+		headers.add("X-Zend-Signature", b.toString());
+		request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, headers);
+		// timeout
 		request.getAttributes().put(IRequest.TIMEOUT,
 				webApiRequest.getTimeout());
-		
+
 		// host
 		request.setHostRef(baseRef.getAuthority());
 

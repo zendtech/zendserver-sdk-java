@@ -19,9 +19,9 @@ import java.util.Set;
 
 import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
-import org.restlet.engine.http.header.DispositionWriter;
-import org.restlet.engine.http.header.HeaderConstants;
-import org.restlet.engine.http.header.HeaderUtils;
+import org.restlet.engine.header.DispositionWriter;
+import org.restlet.engine.header.HeaderConstants;
+import org.restlet.engine.header.HeaderUtils;
 import org.restlet.engine.io.BioUtils;
 import org.restlet.representation.OutputRepresentation;
 import org.zend.webapi.core.connection.request.NamedInputStream;

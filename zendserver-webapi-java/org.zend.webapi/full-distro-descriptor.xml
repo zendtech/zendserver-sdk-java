@@ -29,38 +29,21 @@
         <include>**</include>
       </includes>
     </fileSet>
-    <!--junit-->
-    <fileSet>
-      <directory>${project.build.directory}/site</directory>
-      <outputDirectory>/junit</outputDirectory>
-      <includes>
-        <include>*.html</include>
-      </includes>
-    </fileSet>
     <!-- libs -->
     <fileSet>
       <directory>${project.build.directory}</directory>
       <outputDirectory>/lib</outputDirectory>
       <includes>
-        <include>org.osgi.core-*.jar</include>
+        <include>org.eclipse.osgi-*.jar</include>
         <include>org.restlet.ext.xml-*.jar</include>
         <include>org.restlet-*.jar</include>
-        <include>org.zend.webapi.jar</include>
-        <include>org.zend.webapi-test.jar</include>
+        <include>org.zend.webapi-*.jar</include>
       </includes>
     </fileSet>
     <!--source-->
     <fileSet>
       <directory>${project.basedir}/src</directory>
       <outputDirectory>/src</outputDirectory>
-      <includes>
-        <include>**</include>
-      </includes>
-    </fileSet>
-    <!--test-->
-    <fileSet>
-      <directory>${project.basedir}/test</directory>
-      <outputDirectory>/test</outputDirectory>
       <includes>
         <include>**</include>
       </includes>

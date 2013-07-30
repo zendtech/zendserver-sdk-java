@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Zend Server Web API
-Bundle-SymbolicName: org.zend.webapi.core
-Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.zend.webapi
+Bundle-Version: 0.0.23.qualifier
 Bundle-Vendor: Zend Technologies
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.zend.webapi.core;
   uses:="org.zend.webapi.core.service,
    org.zend.webapi.core.connection.auth,
@@ -49,6 +49,7 @@ Export-Package: org.zend.webapi.core;
    org.zend.webapi.core.connection.data,
    org.zend.webapi.core.connection.request,
    org.zend.webapi.core.connection.data.values"
-Bundle-ClassPath: lib/org.restlet.ext.xml.jar,
- lib/org.restlet.jar,
- .
+Bundle-ClassPath: .
+Require-Bundle: org.restlet.ext.xml;visibility:=reexport,
+ org.restlet;visibility:=reexport,
+ org.eclipse.osgi;visibility:=reexport
