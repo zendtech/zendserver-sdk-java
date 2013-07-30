@@ -160,14 +160,16 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			w.writeAllScripts(destination);
 			return;
 		}
-
-		final DeploymentScriptTypes n = DeploymentScriptTypes
-				.byName(withScripts);
-		if (n != null) {
-			w.writeSpecificScript(destination, n);
-		} else {
-			throw new IllegalArgumentException(MessageFormat.format(
-					"script with name {0} cannot be found", withScripts));
+		String[] scriptsNames = withScripts.split("\\|");
+		for (String scriptName : scriptsNames) {
+			final DeploymentScriptTypes n = DeploymentScriptTypes
+					.byName(scriptName.trim());
+			if (n != null) {
+				w.writeSpecificScript(destination, n);
+			} else {
+				throw new IllegalArgumentException(MessageFormat.format(
+						"script with name {0} cannot be found", withScripts));
+			}	
 		}
 		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 				"Application Update", "Creating deployment scripts..."));
