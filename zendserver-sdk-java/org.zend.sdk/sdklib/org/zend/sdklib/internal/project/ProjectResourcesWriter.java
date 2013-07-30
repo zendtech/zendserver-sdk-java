@@ -251,14 +251,16 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 
 	private File getScriptsDirectory(File container) throws IOException {
 		Package pkg = getPackage(container);
+		String scriptFolder = null;
 		if (pkg == null) {
 			// try to find existing scripts
 			File existingFolder = findExistingScripts(container);
 			if (existingFolder != null) {
 				return existingFolder;
 			}
+		} else {
+			scriptFolder = pkg.getScriptsdir();
 		}
-		String scriptFolder = pkg.getScriptsdir();
 		if (scriptFolder == null || scriptFolder.isEmpty()) {
 			scriptFolder = "scripts";
 		}
