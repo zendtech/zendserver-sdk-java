@@ -63,6 +63,16 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 		File dir = null;
 		try {
 			dir = getDirectory(repo);
+			if (dir.exists()) {
+				File[] children = dir.listFiles();
+				if (children != null && children.length > 0) {
+					getLogger()
+							.error(MessageFormat
+									.format("Destination folder {0} already exists and is not an empty directory",
+											dir.getName()));
+					return false;
+				}
+			}
 			clone.setDirectory(dir);
 		} catch (URISyntaxException e) {
 			getLogger().error(e);
@@ -128,6 +138,10 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 	protected File getDirectory(String repo) throws URISyntaxException {
 		String dir = getDir();
 		if (dir != null) {
+			File dirFile = new File(dir);
+			if (dirFile.isAbsolute()) {
+				return dirFile;
+			}
 			return new File(getCurrentDirectory(), dir);
 		}
 		URIish uri = new URIish(repo);
