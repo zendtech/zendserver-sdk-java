@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<errorData>
+  <errorCode>notImplementedByEdition</errorCode>
+  <errorMessage>
+   Method is not implemented by this edition of Zend Server (e.g. cluster related methods on Zend Server)
+  </errorMessage>
+</errorData>

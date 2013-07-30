@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serversList>
+	<serverInfo>
+	  <id>1</id>
+	  <name>newServer</name>
+	  <address>https://www-05.local:10082/ZendServer</address>
+	  <status>restarting</status>
+	  <messageList />
+	</serverInfo>
+</serversList>

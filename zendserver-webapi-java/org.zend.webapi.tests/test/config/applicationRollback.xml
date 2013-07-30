@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationInfo>
+	<id>1</id>
+	<baseUrl>http://example.com/myapp</baseUrl>
+	<appName>Wordpress</appName>
+	<userAppName>Wolfgang's Blog</userAppName>
+	<installedLocation>/usr/local/somewhere</installedLocation>
+	<status>rollingBack</status>
+	<servers>
+		<applicationServer>
+			<id>1</id>
+			<deployedVersion>1.6</deployedVersion>
+			<status>rollingBack</status>
+		</applicationServer>
+		<applicationServer>
+			<id>4</id>
+			<deployedVersion>1.6</deployedVersion>
+			<status>rollingBack</status>
+		</applicationServer>
+		<applicationServer>
+			<id>8</id>
+			<deployedVersion>1.5</deployedVersion>
+			<status>deployed</status>
+		</applicationServer>
+	</servers>
+	<deployedVersions>
+		<deployedVersion>1.6</deployedVersion>
+		<deployedVersion>1.5</deployedVersion>
+	</deployedVersions>
+	<messageList />
+</applicationInfo>
+

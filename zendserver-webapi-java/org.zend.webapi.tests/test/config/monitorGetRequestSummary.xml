@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requestSummary>
+	<eventsCount>1</eventsCount>
+	<codeTracing>5.7002.1</codeTracing>
+	<events>
+		<event>
+			<eventsGroupId>45</eventsGroupId>
+			<type>PHP Error</type>
+			<description>Example description</description>
+			<superGlobals>
+				<get>
+					<parameter>
+						<name>all</name>
+						<value>1</value>
+					</parameter>
+					<parameter>
+						<name>php_warn</name>
+						<value>1</value>
+					</parameter>
+				</get>
+				<post></post>
+				<cookie>
+					<parameter>
+						<name>ZDEDebuggerPresent</name>
+						<value>true</value>
+					</parameter>
+				</cookie>
+				<session></session>
+				<server>
+					<parameter>
+						<name>HTTP_USER_AGENT</name>
+						<value>Wget/1.12 (linux-gnu)</value>
+					</parameter>
+					<parameter>
+						<name>HTTP_ACCEPT</name>
+						<value>*/*</value>
+					</parameter>
+					<parameter>
+						<name>REQUEST_TIME</name>
+						<value>1315396868</value>
+					</parameter>
+				</server>
+			</superGlobals>
+			<severity>normal</severity>
+			<backtrace>
+				<step>
+					<number>0</number>
+					<object></object>
+					<class></class>
+					<function>bt_generator</function>
+					<file>/var/www/test.php</file>
+					<line>293</line>
+				</step>
+			</backtrace>
+		</event>
+	</events>
+</requestSummary>
+	

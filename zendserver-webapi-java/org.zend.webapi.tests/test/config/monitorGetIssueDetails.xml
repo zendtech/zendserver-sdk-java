@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issueDetails>
+	<issue>
+		<id>11</id>
+		<rule>PHP Error</rule>
+		<count>1</count>
+		<lastOccurance>123412341234</lastOccurance>
+		<severity>Warning</severity>
+		<status>Open</status>
+		<generalDetails>
+			<url>http://localhost/test.php</url>
+			<sourceFile>/var/www/test.php</sourceFile>
+			<sourceLine>302</sourceLine>
+			<function>fopen</function>
+			<aggregationHint>123412341234</aggregationHint>
+			<errorString>Permission Denied</errorString>
+			<errorType>E_WARNING</errorType>
+		</generalDetails>
+		<routeDetails>
+			<routeDetail>
+				<key>controller</key>
+				<value>test</value>
+			</routeDetail>
+		</routeDetails>
+	</issue>
+	<eventsGroups>
+		<eventsGroup>
+			<eventsGroupId>134</eventsGroupId>
+			<eventsCount>1</eventsCount>
+			<startTime>123412341234</startTime>
+			<serverId>0</serverId>
+			<class></class>
+			<userData><![CDATA[]]>
+			</userData>
+			<javaBacktrace><![CDATA[]]>
+			</javaBacktrace>
+			<execTime>0</execTime>
+			<avgExecTime>0</avgExecTime>
+			<memUsage>0</memUsage>
+			<avgMemUsage>0</avgMemUsage>
+			<avgOutputSize>0</avgOutputSize>
+			<load>0</load>
+		</eventsGroup>
+	</eventsGroups>
+</issueDetails>

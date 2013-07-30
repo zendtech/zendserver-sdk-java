@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serversList>
+  <serverInfo>
+    <id>12</id>
+    <name>www-01</name>
+    <address>https://www-01.local:10082/ZendServer</address>
+    <status>OK</status>
+    <messageList />
+  </serverInfo>
+  <serverInfo>
+    <id>15</id>
+    <name>www-02</name>
+    <address>https://www-02.local:10082/ZendServer</address>
+    <status>pendingRestart</status>
+    <messageList>
+      <warning>This server is waiting a PHP restart</warning>
+    </messageList>
+  </serverInfo>
+</serversList>

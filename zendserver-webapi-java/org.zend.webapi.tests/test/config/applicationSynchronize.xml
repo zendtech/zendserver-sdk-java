@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationInfo>
+	<id>1</id>
+	<appName>Home CMS</appName>
+	<userAppName>User Name</userAppName>
+	<baseUrl>http://example.com/myapp</baseUrl>
+	<installedLocation>/usr/local/aaa</installedLocation>
+	<status>deployed</status>
+	<servers>
+		<applicationServer>
+			<id>2</id>
+			<deployedVersion>2.14.0</deployedVersion>
+			<status>deployed</status>
+		</applicationServer>
+		<applicationServer>
+			<id>2</id>
+			<deployedVersion>2.14.0</deployedVersion>
+			<status>deployed</status>
+		</applicationServer>
+	</servers>
+	<deployedVersions>
+		<deployedVersion>1.4</deployedVersion>
+		<deployedVersion>1.5</deployedVersion>
+		<deployedVersion>1.6</deployedVersion>
+	</deployedVersions>
+	<messageList />
+</applicationInfo>

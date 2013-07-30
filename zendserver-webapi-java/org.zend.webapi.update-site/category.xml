@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.zend.webapi.feature_1.0.0.qualifier.jar" id="org.zend.webapi.feature" version="1.0.0.qualifier">
+      <category name="org.zend.webapi"/>
+   </feature>
+   <feature url="features/org.zend.webapi.tests.feature_1.0.0.qualifier.jar" id="org.zend.webapi.tests.feature" version="1.0.0.qualifier">
+      <category name="org.zend.tests"/>
+   </feature>
+   <category-def name="org.zend.webapi" label="WebApi"/>
+   <category-def name="org.zend.tests" label="Tests"/>
+</site>

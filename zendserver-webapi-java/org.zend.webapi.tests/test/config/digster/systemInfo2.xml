@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zendServerAPIResponse xmlns="http://www.zend.com/server/api/1.0">
+
+  <requestData>
+    <apiKeyName>angel.eyes</apiKeyName>
+    <method>getSystemInfo</method>
+  </requestData>
+
+  <responseData>
+    <systemInfo>
+      <status>OK</status>
+      <edition>
+        ZendServerCommunityEdition
+      </edition>
+      <zendServerVersion>6.0.1</zendServerVersion>
+      <supportedApiVersions>
+        application/vnd.zend.serverapi+xml;version=1.0,
+        application/vnd.zend.serverapi+xml;version=1.1,
+        application/vnd.zend.serverapi+xml;version=2.0
+      </supportedApiVersions>
+      <phpVersion>5.4.1</phpVersion>
+      <operatingSystem>Linux</operatingSystem>
+      <serverLicenseInfo>
+        <status>notRequired</status>
+        <orderNumber />
+        <validUntil />
+        <serverLimit>0</serverLimit>
+      </serverLicenseInfo>
+      <managerLicenseInfo>
+        <status>notRequired</status>
+        <orderNumber />
+        <validUntil />
+        <serverLimit>0</serverLimit>
+      </managerLicenseInfo>
+      <messageList />
+    </systemInfo>
+  </responseData>
+
+</zendServerAPIResponse>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="Minimal platform" sequenceNumber="96">
+<locations>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.restlet.ext.simple.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.javamail.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.servlet.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.net.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.sdc.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.httpclient.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.jetty.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.ssl.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.atom.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.crypto.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.rdf.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.xml.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.openid.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.html.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.json.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.odata.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.oauth.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.sip.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.jaxrs.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.wadl.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.velocity.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.xstream.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.slf4j.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.freemarker.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.gwt.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.jaxb.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.rome.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.spring.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.lucene.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.jackson.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.xdb.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.jibx.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.fileupload.feature.group" version="2.1.1.v20130116-1036"/>
+<unit id="org.restlet.ext.emf.feature.group" version="2.1.1.v20130116-1036"/>
+<repository location="http://p2.restlet.org/2.1"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.apache.commons.cli" version="1.2.0.v201105210650"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.equinox.executable.feature.group" version="3.6.0.v20121119-201001-7P7OG2BFLWUl7UnqBnO8V4Of"/>
+<repository location="http://download.eclipse.org/releases/juno"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.equinox.core.feature.feature.group" version="1.1.0.v20121002-131448-7K7XFMVF7RZHQ_I9Wl8S7jlHU"/>
+<repository location="http://download.eclipse.org/releases/juno"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.slf4j.jul" version="1.6.4.v20120130-2120"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.mockito" version="1.8.4.v201102171835"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.hamcrest.generator" version="1.1.0.v20090501071000"/>
+<unit id="org.hamcrest.integration" version="1.1.0.v20090501071000"/>
+<unit id="org.hamcrest.library" version="1.1.0.v20090501071000"/>
+<unit id="org.hamcrest.library.source" version="1.1.0.v20090501071000"/>
+<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
+<unit id="org.hamcrest.text" version="1.1.0.v20090501071000"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.junit" version="4.10.0.v4_10_0_v20120426-0900"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="javax.servlet.source" version="3.0.0.v201112011016"/>
+<unit id="javax.servlet" version="3.0.0.v201112011016"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/"/>
+</location>
+</locations>
+<environment>
+<arch>x86_64</arch>
+<nl>en_US</nl>
+</environment>
+<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+<launcherArgs>
+<vmArgs>-Xms128m -Xmx1024m -Dorg.eclipse.swt.browser.UseWebKitGTK=true -Dhelp.lucene.tokenizer=standard -XX:CompileCommand=exclude,org/eclipse/core/internal/dtree/DataTreeNode,forwardDeltaWith -XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt; -XX:CompileCommand=exclude,org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates,instantiateTemplate -XX:CompileCommand=exclude,org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage,addBinding -XX:CompileCommand=exclude,org/python/pydev/editor/codecompletion/revisited/PythonPathHelper,isValidSourceFile -XX:CompileCommand=exclude,org/python/pydev/ui/filetypes/FileTypesPreferencesPage,getDottedValidSourceFiles -XX:CompileCommand=exclude,org/eclipse/tycho/core/osgitools/EquinoxResolver,newState -Dorg.eclipse.equinox.p2.reconciler.dropins.directory=/usr/share/eclipse/dropins</vmArgs>
+</launcherArgs>
+<implicitDependencies>
+<plugin id="org.eclipse.osgi"/>
+</implicitDependencies>
+</target>
