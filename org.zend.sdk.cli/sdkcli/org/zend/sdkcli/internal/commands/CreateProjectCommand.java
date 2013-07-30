@@ -8,6 +8,7 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
@@ -63,8 +64,7 @@ public class CreateProjectCommand extends AbstractCommand {
 			try {
 				result = TemplateApplications.valueOf(value.toUpperCase());
 			} catch (Exception e) {
-				throw new IllegalArgumentException(value
-						+ " is not a valid template name");
+				return null;
 			}
 		}
 		return result;
@@ -76,6 +76,14 @@ public class CreateProjectCommand extends AbstractCommand {
 		if (doOverwite(destinationFolder)) {
 			ZendProject project = new ZendProject(getDestination(),
 					new CliMappingLoader());
+			TemplateApplications template = getTemplate();
+			if (template == null) {
+				getLogger().error(
+						MessageFormat.format(
+								"\"{0}\" is not a valid template name",
+								getValue(TEMPLATE)));
+				return false;
+			}
 			final boolean create = project.create(getName(), getTemplate(),
 					getScripts());
 			if (create) {
