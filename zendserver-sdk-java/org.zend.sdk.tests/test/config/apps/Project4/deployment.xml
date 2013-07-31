@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
+
+	<name>Magento</name>
+	<summary>Magento short description</summary>
+	<description>Magento long description</description>
+	<eula>data/LICENSE.txt</eula>
+	<docroot>public</docroot>
+	<dependencies></dependencies>

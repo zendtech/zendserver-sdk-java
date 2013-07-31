@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://zend-sdk.googlecode.com/site-descriptor/1.0"
+	targetNamespace="http://zend-sdk.googlecode.com/site-descriptor/1.0"
+	elementFormDefault="unqualified">
+
+	<xs:simpleType name="versionType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,3}.\d{1,3}(.\d{1,3})?(.\d{1,3})?" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="rangeType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\(\[]\d{1,3}.\d{1,3}(.\d{1,3})?(.\d{1,3})?(\s)*,(\s)*\d{1,3}.\d{1,3}(.\d{1,3})?(.\d{1,3})?[\)\]]" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+
+	<xs:element name="site">
+		<xs:annotation>
+			<xs:documentation>Site Descriptor</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />                <xs:element ref="application" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element ref="category-def" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="provider-def" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+
+			<xs:attribute name="version" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>Site descriptor format version</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+		</xs:complexType>
+	</xs:element>
+   
+	<xs:element name="application">
+		<xs:annotation>
+			<xs:documentation>Application definition</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="size" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="signature" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="provider" type="xs:string" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="label" type="xs:string" use="required" />
+			<xs:attribute name="version" type="versionType" use="required" />
+			<xs:attribute name="url" type="xs:string" use="required" />
+			<xs:attribute name="update-range" type="rangeType" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="category-def">
+		<xs:annotation>
+			<xs:documentation>Category definition</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="description" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="label" type="xs:string" use="required" />
+
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="provider-def">
+		<xs:annotation>
+			<xs:documentation>Provider definition</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="label" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

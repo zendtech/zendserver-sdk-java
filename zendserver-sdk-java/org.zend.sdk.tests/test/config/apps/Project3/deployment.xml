@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.zend.com/server/deployment-descriptor/1.0"
+	version="1.0">
+
+	<name>Magento</name>
+	<summary>Magento short description</summary>
+	<description>Magento long description</description>
+	<appdir>data</appdir>
+	<eula>data/LICENSE.txt</eula>
+	<docroot>public</docroot>
+	<dependencies></dependencies>
+</package>

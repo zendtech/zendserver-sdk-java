@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.zend.sdk
+Bundle-SymbolicName: org.zend.sdk.tests;singleton:=true
+Bundle-Version: 0.6.0.qualifier
+Bundle-Vendor: Zend Technologies Ltd.
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-BundleShape: dir
+Bundle-ClassPath: .
+Require-Bundle: org.zend.sdk;bundle-version="0.6.0",
+ org.junit;bundle-version="4.10.0",
+ org.mockito;bundle-version="1.8.4",
+ org.restlet;bundle-version="2.1.1",
+ org.restlet.ext.xml;bundle-version="2.1.1",
+ org.zend.webapi,
+ org.zend.webapi.tests,
+ com.jcraft.jsch,
+ org.apache.commons.httpclient,
+ org.zend.sdk,
+ org.zend.sdk,
+ org.zend.sdk

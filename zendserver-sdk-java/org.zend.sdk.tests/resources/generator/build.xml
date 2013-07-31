@@ -1,0 +1,48 @@
+<!--
+    Contributors:
+        Zend Technologies
+ -->
+<project name="Builds JAXB classes" default="main">
+
+	<dirname property="antfile.dir" file="${ant.file}" />
+	<property name="schema.dirname" value="${antfile.dir}/../schemas" />
+	<property name="cacheDirectory" value="${java.io.tmpdir}" />
+	<property name="applications.dir" value="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/" />
+
+	
+	
+	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+		<classpath>
+			<fileset dir="${antfile.dir}/jaxb" includes="*.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="main">
+
+		<xjc destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.repository.site">
+			<produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/repository/site" includes="Application.java" />
+			<schema dir="${schema.dirname}" includes="repository.xsd" />
+		</xjc>
+
+		<xjc destdir="${antfile.dir}../../../sdklib/" package="org.zend.sdklib.descriptor.pkg">
+			<produces dir="${antfile.dir}../../../sdklib/org/zend/sdklib/descriptor/pkg" includes="Package.java" />
+			<binding dir="${antfile.dir}" includes="**/*.xjb" />
+			<schema dir="${schema.dirname}" includes="deployment.xsd" />
+		</xjc>
+
+		<antcall target="fetchQuickStart" />
+	</target>
+
+    <target name="fetchQuickStart" depends="check-exists" unless="zf.present" description="fetch zf quick start" >
+		<get dest="${cacheDirectory}/ZendFrameworkQuickstart.zip" src="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip" usetimestamp="true"/>		
+		<unzip src="${cacheDirectory}/ZendFrameworkQuickstart.zip" dest="${applications.dir}/quickstart" />
+		<move todir="${antfile.dir}/../../sdklib/org/zend/sdklib/internal/project/applications/quickstart" includeemptydirs="true">
+		    <fileset dir="${applications.dir}/quickstart/ZendFrameworkQuickstart-20100208"/>
+		</move>
+    </target>
+
+	<target name="check-exists">
+	    <available file="${applications.dir}/quickstart/.zfproject.xml" property="zf.present"/>
+	</target>
+	
+</project>

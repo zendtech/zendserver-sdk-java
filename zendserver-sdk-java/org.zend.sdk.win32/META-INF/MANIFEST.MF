@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Win32
+Bundle-SymbolicName: org.zend.sdk.win32
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.zend.sdk;bundle-version="0.6.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) )
+Bundle-ClassPath: lib/x86/,
+ lib/x86_64/,
+ lib/registry.jar,
+ .
+Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
+    lib/x86_64/ICE_JNIRegistry.dll; processor=x86_64; osname=win32, *
+Eclipse-BundleShape: dir
