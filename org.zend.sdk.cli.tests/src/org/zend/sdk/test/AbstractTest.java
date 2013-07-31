@@ -13,7 +13,7 @@ import org.zend.sdklib.logger.Log;
 
 public abstract class AbstractTest {
 
-	protected static final String FOLDER = "test/config/apps/";
+	protected static final String FOLDER = "src/config/apps/";
 
 	protected File file;
 
