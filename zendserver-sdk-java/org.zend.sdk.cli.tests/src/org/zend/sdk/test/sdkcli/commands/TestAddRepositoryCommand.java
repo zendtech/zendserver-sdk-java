@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
+import org.zend.sdkcli.internal.commands.AddRepositoryCommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.repository.IRepository;
@@ -33,7 +34,8 @@ public class TestAddRepositoryCommand extends AbstractRepositoryCommandTest {
 		String reposiotryUrl = "file:/" + repositoryFolder.getAbsolutePath();
 		CommandLine line = getLine("add repository -u " + reposiotryUrl
 				+ " -n testRepo");
-		ICommand command = getCommand(line);
+		AddRepositoryCommand command = (AddRepositoryCommand) getCommand(line);
+		Mockito.when(command.getRepositoryManager()).thenReturn(manager);
 		Mockito.when(manager.add((IRepository) Mockito.any())).thenThrow(
 				new SdkException("test"));
 		assertNotNull(command);
