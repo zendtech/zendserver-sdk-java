@@ -1,0 +1,6 @@
+Simple build:
+mvn clean verify -DskipTests
+
+Full build with distribution packages:
+mvn clean install -P packages -DskipTests
+
