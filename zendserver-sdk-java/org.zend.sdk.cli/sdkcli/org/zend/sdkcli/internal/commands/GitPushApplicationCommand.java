@@ -19,9 +19,11 @@ import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
@@ -124,6 +126,9 @@ public class GitPushApplicationCommand extends AbstractGitCommand {
 				// should not occur because '.' is used
 				getLogger().error(e);
 				return false;
+			} catch (GitAPIException e) {
+				getLogger().error(e);
+				return false;
 			}
 
 			CommitCommand commitCommand = git.commit();
@@ -194,6 +199,12 @@ public class GitPushApplicationCommand extends AbstractGitCommand {
 				getLogger().error(e);
 				return false;
 			} catch (URISyntaxException e) {
+				getLogger().error(e);
+				return false;
+			} catch (TransportException e) {
+				getLogger().error(e);
+				return false;
+			} catch (GitAPIException e) {
 				getLogger().error(e);
 				return false;
 			}
