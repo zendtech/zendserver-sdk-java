@@ -16,6 +16,4 @@ Require-Bundle: org.zend.sdk;bundle-version="0.6.0",
  org.zend.webapi.tests,
  com.jcraft.jsch,
  org.apache.commons.httpclient,
- org.zend.sdk,
- org.zend.sdk,
  org.zend.sdk
