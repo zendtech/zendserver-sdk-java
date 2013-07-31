@@ -13,7 +13,10 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -105,6 +108,18 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 			getLogger().error(e);
 			return false;
 		} catch (URISyntaxException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (InvalidRemoteException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (TransportException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (GitAPIException e) {
 			delete(dir);
 			getLogger().error(e);
 			return false;
