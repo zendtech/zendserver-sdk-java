@@ -1,7 +1,0 @@
-#test target properties for dev4
-_secretKey=343441
-_host=http\://localhost
-_defaultServerURL=http\://localhost:8182
-_id=dev4
-_key=mykey
-extra.param=value
