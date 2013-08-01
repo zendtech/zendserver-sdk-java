@@ -33,6 +33,8 @@ public abstract class AbstractGitCommand extends AbstractCommand {
 	private static final String PASSWD = "p";
 	private static final String KEY = "k";
 
+	private boolean askUsername;
+
 	@Option(opt = USER, required = false, description = "User name", argName = "user")
 	public String getUser() {
 		String value = getValue(USER);
@@ -62,7 +64,13 @@ public abstract class AbstractGitCommand extends AbstractCommand {
 				// just continue
 			}
 			if (username == null) {
-				return null;
+				if (askUsername()) {
+					username = String.valueOf(System.console().readLine(
+							"Username: "));
+				}
+				if (username == null) {
+					return null;
+				}
 			}
 		}
 		String password = getPassword();
@@ -78,6 +86,14 @@ public abstract class AbstractGitCommand extends AbstractCommand {
 			}
 		}
 		return new UsernamePasswordCredentialsProvider(username, password);
+	}
+
+	protected boolean askUsername() {
+		return askUsername;
+	}
+
+	protected void setAskUsername(boolean value) {
+		askUsername = value;
 	}
 
 	protected boolean prepareSSHFactory() {
