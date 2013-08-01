@@ -83,8 +83,10 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 		}
 		clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(
 				System.out)));
-		getLogger().info(
-				MessageFormat.format("Cloning into {0}...", dir.getName()));
+		if (!askUsername()) {
+			getLogger().info(
+					MessageFormat.format("Cloning into {0}...", dir.getName()));
+		}
 		String branch = getBranch();
 		if (branch != null) {
 			clone.setBranch(Constants.R_HEADS + branch);
@@ -117,6 +119,13 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 			return false;
 		} catch (TransportException e) {
 			delete(dir);
+			String repoUrl = getRepo();
+			if (repoUrl != null && repoUrl.startsWith("https")) {
+				if (e.getMessage().endsWith("not authorized")) {
+					setAskUsername(true);
+					return doExecute();
+				}
+			}
 			getLogger().error(e);
 			return false;
 		} catch (GitAPIException e) {
