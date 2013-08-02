@@ -126,7 +126,6 @@ public class TestPackageBuilder extends AbstractTest {
 		unzip(result);
 		File parent = result.getParentFile();
 		assertTrue(new File(parent, "/data/public/inner_public").exists());
-		assertTrue(new File(parent, "/data/emptyFolder").exists());
 		assertTrue(new File(parent, "/eula/license.txt").exists());
 		assertTrue(new File(parent, "/icon/appicon.png").exists());
 	}
