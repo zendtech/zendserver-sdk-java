@@ -4,7 +4,7 @@
 
 	<groupId>com.zend</groupId>
 	<artifactId>org.zend.sdk.buildtarget</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>eclipse-target-definition</packaging>
 	
 	<parent>
