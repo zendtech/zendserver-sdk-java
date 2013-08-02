@@ -15,25 +15,111 @@
 		<relativePath>../org.zend.sdk.releng</relativePath>
 	</parent>
 
-	<build>
-		<plugins>
-			<!-- plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
+
+
+	<profiles>
+		<profile>
+			<id>packages</id>
+			<build>
+				<plugins>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<version>${tycho-version}</version>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
-						<configuration>
-							<target>
-								<ant antfile="resources/generator/build.xml" />
-							</target>
-						</configuration>
+						<phase>process-resources</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>mirror</goal>
 						</goals>
 					</execution>
 				</executions>
-			</plugin-->
-		</plugins>
-	</build>
+				<configuration>
+					<source>
+						<repository>
+							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorRestlet/lastSuccessfulBuild/artifact/mirrors/restlet/target/repository</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEgitAndJGit/lastSuccessfulBuild/artifact/mirrors/egit/target/repository</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates42/lastSuccessfulBuild/artifact/mirrors/eclipseupdates42/target/repository</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>http://il-studiodev2.zend.net:8080/job/org.zend.webapi/lastSuccessfulBuild/artifact/org.zend.webapi.update-site/target/repository</url>
+							<layout>p2</layout>
+						</repository>
+					</source>
+
+					<ius>
+						<iu>
+							<id>org.slf4j.api</id>
+						</iu>
+						<iu>
+							<id>org.slf4j.log4j</id>
+						</iu>
+						<iu>
+							<id>org.slf4j.jul</id>
+						</iu>
+						<iu>
+							<id>org.restlet</id>
+						</iu>
+						<iu>
+							<id>org.restlet.ext.xml</id>
+						</iu>
+						<iu>
+							<id>org.eclipse.osgi</id>
+						</iu>
+						<iu>
+							<id>org.eclipse.jgit</id>
+						</iu>
+						<iu>
+							<id>org.apache.log4j</id>
+						</iu>
+						<iu>
+							<id>com.jcraft.jsch</id>
+						</iu>
+						<iu>
+							<id>org.apache.commons.cli</id>
+						</iu>
+						<iu>
+							<id>org.zend.webapi</id>
+						</iu>
+					</ius>
+					<!-- The destination directory to mirror to. -->
+					<destination>${project.build.directory}/repository</destination>
+				</configuration>
+			</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<descriptors>
+							<descriptor>bin-distro-descriptor.xml</descriptor>
+						</descriptors>
+						<finalName>zend-sdk-cli-${project.version}</finalName>
+						<outputDirectory>${project.build.directory}/distros</outputDirectory>
+						<workDirectory>target/assembly/work</workDirectory>
+					</configuration>
+					<executions>
+						<execution>
+							<id>make-assembly</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
