@@ -10,9 +10,14 @@
 
   <repositories>
 		<repository>
-			<id>kepler</id>
+			<id>juno</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/kepler</url>
+			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorJuno/lastSuccessfulBuild/artifact/mirrors/juno/target/repository</url>
+		</repository>
+		<repository>
+			<id>3x</id>
+			<layout>p2</layout>
+			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates38/lastSuccessfulBuild/artifact/mirrors/eclipseupdates38/target/repository</url>
 		</repository>
 		<repository>
 			<id>dltk</id>
@@ -25,9 +30,14 @@
 			<url>http://il-studiodev2.zend.net/targets/webapi</url>
 		</repository>
 		<repository>
+			<id>jgit</id>
+			<layout>p2</layout>
+			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEgitAndJGit/lastSuccessfulBuild/artifact/mirrors/egit/target/repository</url>
+		</repository>
+		<repository>
 			<id>sdk</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/sdk</url>
+			<url>http://il-studiodev2.zend.net:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/org.zend.sdk.update-site/target/repository</url>
 		</repository>
 		<repository>
 			<id>nebula</id>
@@ -42,12 +52,7 @@
 		<repository>
 			<id>orbit</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/</url>
-		</repository>
-		<repository>
-			<id>3x</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/3.8</url>
+			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository</url>
 		</repository>
 		<repository>
 			<id>commons</id>
