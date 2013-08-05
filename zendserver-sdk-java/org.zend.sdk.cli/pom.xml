@@ -90,6 +90,9 @@
 							<id>org.apache.commons.cli</id>
 						</iu>
 						<iu>
+							<id>org.apache.commons.httpclient</id>
+						</iu>
+						<iu>
 							<id>org.zend.webapi</id>
 						</iu>
 					</ius>

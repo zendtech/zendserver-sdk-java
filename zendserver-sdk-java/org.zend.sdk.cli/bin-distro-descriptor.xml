@@ -30,7 +30,7 @@
     </fileSet>
   <fileSet>
       <directory>${project.basedir}/../org.zend.sdk.cli.win32</directory>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>/</outputDirectory>
       <includes>
         <include>lib/**/*</include>
       </includes>
