@@ -28,6 +28,14 @@
         <include>org.zend.sdk-*.jar</include>
       </includes>
     </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../org.zend.sdk/lib</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>jboss-*.jar</include>
+        <include>openshift-*.jar</include>
+      </includes>
+    </fileSet>
   <fileSet>
       <directory>${project.basedir}/../org.zend.sdk.cli.win32</directory>
       <outputDirectory>/</outputDirectory>
@@ -56,8 +64,17 @@
       <directory>${project.basedir}</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>tools/**/*</include>
+        <include>tools/conf/*</include>
+        <include>tools/*.bat</include>
       </includes>
+    </fileSet>
+        <fileSet>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>tools/zend</include>
+      </includes>
+      <fileMode>0755</fileMode>
     </fileSet>
   </fileSets>
 </assembly>
