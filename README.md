@@ -87,7 +87,7 @@ Adding tools/ to your PATH lets you run command line tools without needing to su
 <a name="command_line" />
 ## Command Line
 
-## Introduction
+### Introduction
 zend is an important development tool that lets you:
 
 1. Create, delete, and view Targets. See [Managing Targets](#managing_targets) from the Command Line.
@@ -99,10 +99,10 @@ zend is an important development tool that lets you:
 If you are using Eclipse, the Zend tool's features are integrated, so you should not need to use this tool directly.
 
 <a name="managing_targets" />
-## Managing Targets
+### Managing Targets
 A target is a reference to a container that allows you to host PHP applications. This container can be a set of targets and possibly be managed as a cluster. Developers usually start by adding their target environments such as their localhost sever or any remote server.
 
-## Listing Targets
+### Listing Targets
 To generate a list of targets, use this command:
 
     zend list targets [-s]
@@ -111,7 +111,7 @@ The flag "-s" tells the command line tool to connect to each target and show its
 
 The Zend SDK tool scans the user targets directory looking for valid targets and then generates the list.
 
-## Adding a Target
+### Adding a Target
 You can add a target by passing the target's information in command line arguments to the Zend SDK tool.
 
 To add your localhost (http://localhost) server you have a simple detection method, see more information [here](#managing_targets/#auto_detect).
@@ -146,7 +146,7 @@ Where my_server.properties file has the following contents:
     key=studio
     secretkey= cc14b445ad6ed9041d936b7f363a8e5a525275d3960dbb373f35e97e2abcdab2
 
-## Adding a Zend Developer Cloud Target
+### Adding a Zend Developer Cloud Target
 You can also add your [Zend Developer Cloud](http://www.phpcloud.com/) targets by passing the account's information in command line arguments to the Zend SDK tool.
 
 Given the your Zend Developer Cloud credentials (same as zend.com credentials) you can detect and addall http://*.my.phpcloud.com containers.
@@ -157,7 +157,7 @@ Here's the command-line usage for adding a target:
 
 Using the Zend Developer Cloud API, all containers created by you will be detected automatically and are visible to the Zend SDK.
 
-## Removing a Target
+### Removing a Target
 You can use the zend tool to delete a target. Here is the command usage:
 
     zend remove target -t <id>
@@ -165,7 +165,7 @@ You can use the zend tool to delete a target. Here is the command usage:
 When you issue the command, the zend tool looks for a target matching the specified id deletes the targets reference from the user directory. This should not in any way affect your remote server.
 
 <a name="auto_detect" />
-## Auto-Detecting the localhost Server
+### Auto-Detecting the localhost Server
 Zend SDK tool can help you easily detect your localhost server without requiring to fill in all arguments such as keys and hostname. During detection time two operations are executed:
 
 1. Finding a suitable key, if doesn't exist the tools tries to generate one.
@@ -173,7 +173,7 @@ Zend SDK tool can help you easily detect your localhost server without requiring
 
 To execute the first operation one need to have admin privileges as it requires write access to the Server configuration files.
 
-### Under Linux/Mac:
+#### Under Linux/Mac:
 
 You will need to first run the detect target to generate the key and only then actually apply it with root privileges using sudo (or any su command).
 
@@ -183,8 +183,72 @@ You will need to first run the detect target to generate the key and only then a
     # apply secret key
     $ sudo ./zend detect target -k <key> -s <secret-key>
     
-### Under Windows7:
+#### Under Windows7:
 
 Use the elevate tool that helps to elevate privileges (bundled as part of Zend SDK tool and is located under the same location of the batch file):
 
     elevate zend detect target 
+
+<a name="managing_projects" />
+## Managing Projects
+The default deployable project has to have two files which are required:
+
+- deployment.xml
+- deployment.properties
+
+First file is a deployment descriptor. For more details, see DeploymentDescriptor?.
+
+The second file consists definition of the file mapping. For more details about using deployment.properties file, see [this](#deployment_properites).
+
+### Creating a Project
+Zend SDK allows creating new deployable project which has all required files and a default folder structure. To create new project, use this command:
+
+    zend create project -n <name> [-d <path>] [-t <name>] [-s <script names>]
+
+The flag "-d" can be used if the new project should be created in a different location that the current one (as an argument pass the path to the project destination).
+
+The flag "-t" tells the command line tool to create project based on specified template name. Possible arguments are (use only one of the following):
+
+- simple - simple project structure
+- zend - Zend Application structure
+- quickstart - example Guestbook project
+
+By default (if -t is not used) Zend Application is used as a template.
+
+The flag "-s" tells the command line tool create scripts folder (which is optional and not created by default) with scripts passed as an argument (any of the following names: all|postActivate|postDeactivate|postStage|postUnstage|preActivate|preDeactivate|preStage|preUnstage). All scripts created using this option are empty files with comments how to use them.
+
+## Updating a Project
+Zend SDK allows also to update an existing project to the proper deployable project. To update an existing project, use this command:
+
+    zend update project [-d <path>] [-s <script names>]
+
+By default (command without any option) command line tool treats the current directory as a project root. To specify which application should be updated, use "-d" with a path to the project as an argument (relative to the current location). The flag "-s" has the same behavior as for the project creation (arguments are also the same).
+
+In the result of the project update the following changes are applied:
+
+- Descriptor file is created. Project root folder is taken as a project name.
+- If "-s" option was used, then scripts folder is created
+- Deployment.properties file is created. By default it maps all files from the project to the appdir directory, except descriptor file, scripts directory and files from the default exclusion list (for more details about it, see DeploymentPropertiesFile).
+
+## Clone Project
+Zend SDK allows also to clone project from git repository and update it (if necessary) to the proper deployable project. To clone project from git repository, use this command:
+
+    zend clone project -r <repository> [-d <destination>] [-b <branch>] [-u <user>] [-p <password>] [-k <key>]
+
+By default (command without any optional parameter) command line tool clones a project from specified repository. If "-d" option is used then project is cloned to the specified destination folder. Otherwise, project root folder is created based on repository name. Clone command support two authentication method, user/password and ssh (for github access). In the case of ssh, "-p" option is applied as a passphrase for a private key. After project is cloned then it is updated (see Updating a Project).
+
+In the result of the project clone the following changes are applied:
+
+- Repository is cloned to specified location (or to the default one)
+- Descriptor file is created (if it is not available). Project root folder is taken as a project name.
+- If "-s" option was used, then scripts folder is created
+- Deployment.properties file is created (if descriptor is not available). By default it maps all files from the project to the appdir directory, except descriptor file, scripts directory and files from the default exclusion list (for more details about it, see [this](#deployment_properites)).
+
+## Add Remote
+Zend SDK allows to add new remote to the existing local git repository.
+
+To add new remote, use this command:
+
+    zend add remote -r <repository_url> [-a </path/to/project>]
+
+The flag -a is not required if the current location is a root application folder. New remote name is based on the repository url domain. E.g. for git@github.com:mylogin/testapp.git url new remote will be called "github" and for https://login@login.my.phpcloud.com/git/testapp.git - it will be "phpcloud".
