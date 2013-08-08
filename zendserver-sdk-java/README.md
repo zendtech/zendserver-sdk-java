@@ -463,3 +463,122 @@ It removes specified repository from the local repository storage.
 Zend SDK allows to list available repositories which are in the local repository storage.
 
     zend list repository [-s <repository_url>]
+
+<a name="monitoring_applications" />
+## Monitoring Applications
+Zend SDK (0.6 and up) brings a group of new commands related to monitoring PHP applications deployed on Zend Server (5.6 and up) and phpcloud targets. There are three main groups of them: configuration, codetarcing and events.
+
+#### All command lines listed in this page require Zend SDK 0.6 or up
+First group contains only two commands:
+
+- Enabling Developer Mode
+- Disabling Developer Mode
+
+The second one is focused on code tracing feature:
+
+- Creating Code Trace
+- Deleting Code Trace
+- Listing Code Traces
+- Exporting Code Trace (amf file)
+
+The last one is dedicated to events model:
+
+- Listing events from the server
+- Getting details about an Event
+- Exporting an Event
+
+The Zend SDK tool lets you monitoring applications on the command line. For a complete reference of the command line options that you can use, see the Command Line Tool Reference.
+
+### Enabling Developer Mode
+This command sets the special zend_monitor.developer_mode & zend_monitor.event_generate_trace_file directives. In the result developer mode is enabled on the specified target. When this mode is enabled, each request to the server generate separate event and code trace (there is no event grouping). This mode should be disabled on production server. It is dedicated only for application development.
+
+    zend enable developer-mode -t <target-id> [-r <true|false>]
+
+where:
+
+- -t : Id of the target where developer mode should be enabled.
+- -r : If it is used a php restart is performed as part of the action to apply the new settings according to the passed value. If it is not provided, default value is true.
+
+### Disabling Developer Mode
+Disable the two directives necessary for creating tracing dumps, this action does not disable the code-tracing component. This action unsets the special zend_monitor.developer_mode & zend_monitor.event_generate_trace_file directives. Note that this action does not deactivate the component or any other setting.
+
+    zend disable developer-mode -t <target-id> [-r <true|false>]
+
+where:
+
+- -t : Id of the target where developer mode should be enabled.
+- -r : If it is used a php restart is performed as part of the action to apply the new settings according to the passed value. If it is not provided, default value is true.
+
+### Creating Code Trace
+Create a new code trace for specified URL.
+
+    zend create codetrace -t <target-id> -u <url>
+
+where:
+
+- -t : Id of the target.
+- -u : URL for which code trace should be created.
+
+### Deleting Code Trace
+Delete a code trace.
+
+    zend delete codetrace -t <target-id> -i <codetrace_id>
+
+where:
+
+- -t : Id of the target.
+- -i : Id of the codetrace entry which should be deleted.
+
+### Listing Code Traces
+Retrieve a list of code-tracing files available for download using "Exporting Code Trace" command.
+
+    zend list codetraces -t <target-id> [-a <application_id>]
+
+where:
+
+- -t : Id of the target.
+- -a : List of applications ids for which codetraces should be listed. If it is empty, all applications are considered.
+
+### Exporting Code Trace
+Download the amf file specified by codetracing identifier.
+
+    zend export codetrace -t <target-id> -i <codetrace_id>
+
+where:
+
+- -t : Id of the target.
+- -i : Id of the codetrace entry which should be exported.
+
+### Listing Events from the Server
+Retrieve a list of monitor events according to a preset filter identifier. The filter identifier is shared with Zend Server GUI predefined filters. If filter is not specified, then all available events are listed.
+
+    zend list events -t <target_id> [-f <open|critical|all|performance>]
+
+where:
+
+- -t : Id of the target.
+- -f : Optional filter name. Possible values are open, critical, all and performance. If it is not provided, all events will be listed.
+
+### Getting Details about an Event
+Retrieve an event details according to the id passed as a parameter. Data provided by this command contains all general information about an event and all detailed information about server state during event generation.
+
+    zend get event -t <target_id> -i <event_id>
+
+where:
+
+- -t : Id of the target.
+- -i : Id of the event which details should be retrieved.
+
+### Exporting an Event
+Export an archive containing all of the event's information, event groups and code tracing if available.
+
+    zend export event -t <target_id> -i <event_id>
+
+where:
+
+- -t : Id of the target.
+- -i : Id of the event which should be exported.
+
+where:
+
+- -p : Path to the project root or to the zpk package. If not provided the current directory is used
