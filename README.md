@@ -114,7 +114,7 @@ The Zend SDK tool scans the user targets directory looking for valid targets and
 ### Adding a Target
 You can add a target by passing the target's information in command line arguments to the Zend SDK tool.
 
-To add your localhost (http://localhost) server you have a simple detection method, see more information [here](#managing_targets/#auto_detect).
+To add your localhost (http://localhost) server you have a simple detection method, see more information [here](#auto_detect).
 
 To add target, you issue the command zend add target, with options that specify an id and host name for the new target. In order to work with this target one need to specify the key and secret key as specified in the [Zend Server API Key Managment document](http://files.zend.com/help/Zend-Server-6/content/api_keys.htm). Alternatively you can specify an option file that contains all required information about your target.
 
@@ -217,7 +217,7 @@ By default (if -t is not used) Zend Application is used as a template.
 
 The flag "-s" tells the command line tool create scripts folder (which is optional and not created by default) with scripts passed as an argument (any of the following names: all|postActivate|postDeactivate|postStage|postUnstage|preActivate|preDeactivate|preStage|preUnstage). All scripts created using this option are empty files with comments how to use them.
 
-## Updating a Project
+### Updating a Project
 Zend SDK allows also to update an existing project to the proper deployable project. To update an existing project, use this command:
 
     zend update project [-d <path>] [-s <script names>]
@@ -230,7 +230,7 @@ In the result of the project update the following changes are applied:
 - If "-s" option was used, then scripts folder is created
 - Deployment.properties file is created. By default it maps all files from the project to the appdir directory, except descriptor file, scripts directory and files from the default exclusion list (for more details about it, see DeploymentPropertiesFile).
 
-## Clone Project
+### Clone Project
 Zend SDK allows also to clone project from git repository and update it (if necessary) to the proper deployable project. To clone project from git repository, use this command:
 
     zend clone project -r <repository> [-d <destination>] [-b <branch>] [-u <user>] [-p <password>] [-k <key>]
@@ -244,7 +244,7 @@ In the result of the project clone the following changes are applied:
 - If "-s" option was used, then scripts folder is created
 - Deployment.properties file is created (if descriptor is not available). By default it maps all files from the project to the appdir directory, except descriptor file, scripts directory and files from the default exclusion list (for more details about it, see [this](#deployment_properites)).
 
-## Add Remote
+### Add Remote
 Zend SDK allows to add new remote to the existing local git repository.
 
 To add new remote, use this command:
@@ -252,3 +252,174 @@ To add new remote, use this command:
     zend add remote -r <repository_url> [-a </path/to/project>]
 
 The flag -a is not required if the current location is a root application folder. New remote name is based on the repository url domain. E.g. for git@github.com:mylogin/testapp.git url new remote will be called "github" and for https://login@login.my.phpcloud.com/git/testapp.git - it will be "phpcloud".
+
+<a name="managing_applications" />
+## Managing Applications
+The main operations provided by Zend SDK are related to application management. It uses Zend WebAPI to expose the following operations:
+
+- Deploy an Application
+- Update an Application
+- Remove an Application
+- Redeploy an Application
+- List Applications
+
+Additionally, it also allows to create deployment package.
+
+### Deploying an Application
+Zend SDK allows to deploy a new application to the server or cluster. This process is asynchronous – the initial request will wait until the application is uploaded and verified, and the initial response will show information about the application being deployed – however the staging and activation process will proceed after the response is returned. The user may continue checking the application status using the list applications command until the deployment process is complete.
+
+There are three possible sources of the application which should be deployed. For each of them there are some dedicated options. The common options are described below this section.
+
+#### Local project or zpk package
+    zend deploy application [-p </path/to/project-or-package>] [-b <base-path>] 
+          -t <target-id> [-m </path/to/properties/file>] [-n <app-name>] [-f] [-h <host-name>]
+
+where:
+- -p : Path to the project root or to the zpk package. If not provided the current directory is used
+
+#### Git repository
+
+    zend deploy application -r <repository> [-b <branch>] [-u <user>] [-d <password>] [-k <key>] [-b <base-path>] 
+          -t <target-id> [-m </path/to/properties/file>] [-n <app-name>] [-f] [-h <host-name>]
+
+where:
+
+- -r : Git repository to clone from, e.g. https://ganoro@github.com/ganoro/ExampleProject.git (required).
+- -b : The initial branch to check out when cloning the repository.
+- -u : User name if authentication is required.
+- -d : Password if authentication is required.
+- -k : Path to SSH private key if SSH authentication is used.
+
+#### Zend Repository
+
+    zend deploy application -z <zend-repository> -i <application-id> [-b <base-path>] 
+          -t <target-id> [-m </path/to/properties/file>] [-n <app-name>] [-f] [-h <host-name>]
+
+where:
+
+- -z : Zend Repository URL (required).
+- -i : Application id in specified Zend Repository which should be deployed (required).
+
+The following options are common for all application sources:
+
+- -b : Base path to deploy the application to. will be concatenated to the URL hostname. If not specified, the project name is considered.
+- -p : Path to the project root or to the zpk package. If not provided the current directory is used
+- -t : Id of the target where application should be deployed. If not specified the default target is considered.
+- -m : Path to the properties file which has values for parameters defined in the deployment descriptor.
+- -n : Free text for user defined application identifier. If not specified, the baseUrl parameter will be used.
+- -f : Ignore failures during staging if only some servers reported failures. If all servers report failures the operation will fail in any case. By default any failure will return an error.
+- -h : Specify the virtual host which should be used. If a virtual host with the specified name does not exist, it will be created. By default if virtual host is not specified then the default one will be used (marked as <default-server> in the application url).
+
+### Updating an Application
+Zend SDK allows to update an existing application. The package or project provided must be the same application as the one with specifed id. Additionally any new parameters or new values to existing parameters must be provided. This process is asynchronous – the initial request will wait until the package is uploaded and verified, and the initial response will show information about the new version being deployed – however the staging and activation process will proceed after the response is returned. The user may continue checking the application status using the list applications command until the updating process is complete.
+
+There are three possible sources of the application which should be updated. For each of them there are some dedicated options. The common options are described below this section.
+
+#### Local project or zpk package
+
+    zend update application [-p </path/to/project-or-package>] -a <app-id> [-t <target-id>] 
+            [-m </path/to/properties/file>] [-n <app-name>] [-f]
+
+where:
+
+- -p : Path to the project root or to the zpk package. If not provided the current directory is used
+
+#### Git repository
+
+    zend update application -r <repository> [-b <branch>] [-u <user>] [-p <password>] [-k <key>]
+            -a <app-id> [-t <target-id>] [-m </path/to/properties/file>] [-n <app-name>] [-f]
+
+where:
+
+- -r : Git repository to clone from, e.g. https://ganoro@github.com/ganoro/ExampleProject.git (required).
+- -b : The initial branch to check out when cloning the repository.
+- -u : User name if authentication is required.
+- -d : Password if authentication is required.
+- -k : Path to SSH private key if SSH authentication is used.
+
+#### Zend Repository
+
+    zend update application -z <zend-repository> -i <application-id> -a <app-id> [-t <target-id>] 
+            [-m </path/to/properties/file>] [-n <app-name>] [-f]
+
+where:
+
+- -z : Zend Repository URL (required).
+- -i : Application id in specified Zend Repository which should be deployed (required).
+
+The following options are common for all application sources:
+
+- -a : Id of the application which should be updated (required).
+- -t : Id of the target where application should be deployed. If not specified the default target is considered.
+- -m : Path to the properties file which has values for parameters defined in the deployment descriptor.
+- -f : Ignore failures during staging if only some servers reported failures. If all servers report failures the operation will fail in any case. By default any failure will return an error.
+
+### Removing an Application
+Zend SDK allows to remove/undeploy an existing application. This process is asynchronous – the initial request will start the removal process and the initial response will show information about the application being removed – however the removal process will proceed after the response is returned. The user is expected to continue checking the application status using the list applications command until the removing process is complete. Once the result of list applications will not consist this applications it means that it was removed completely.
+
+To remove application, use this command:
+
+    zend remove application -a <app-id> [-t <target-id>]
+
+This command line removes application with id equals to app-id from the target-id.
+
+### Redeploying an Application
+Zend SDK allows to redeploy an existing application, whether in order to fix a problem or to reset an installation. This process is asynchronous – the initial request will start the redeploy process and the initial response will show information about the application being redeployed – however the redeployment process will proceed after the response is returned. The user may continue checking the application status using the list applications command until the redeploying process is complete.
+
+To redeploy application, use this command:
+
+    zend redeploy application -a <app-id> [-t <target-id>] [-s <server-names>] [-i]
+
+The following options are required:
+
+- -a : Id of the application which should be redeployed
+
+Additionally, there are the following optional options:
+
+- -t : Id of the target where application should be redeployed. If not specified the default target id is considered.
+- -s : List of server IDs. If specified, action will be done only on the subset of servers which are currently members of the cluster.
+- -i : Ignore failures during staging if only some servers reported failures. If all servers report failures the operation will fail in any case. By default any failure will return an error.
+
+### Listing Applications
+Zend SDK allows to get the list of applications currently deployed (or staged) on the server or the cluster and information about each application. If application IDs are specified, will return information about the specified applications. If no IDs are specified, will return information about all applications in the specified target.
+
+To redeploy application, use this command:
+
+    zend list applications [-a <app-id>] [-t <target-id>]
+
+The following options are available:
+
+- -a : List of application IDs. If specified, information will be returned about these applications only. If not specified, information about all applications will be returned. Note that if a non-existing application ID is provided, this action will not fail but instead will return no information about the specific app.
+- -t : Id of the target where application should be redeployed. If not specified the default target id is considered.
+
+### Creating a Package
+Zend SDK allows to create zpk application package. The default package structure consists following files:
+
+- appdir
+- scriptsdir
+- deployment.xml
+
+Where appdir and scriptsdir (optional) are directories defined in a descriptor file (for more details about descriptor file, see DeploymentDescriptor?).
+Package creation process uses deployment.properites (for more details, see DeploymentPropertiesFile). If this file is not defined, then default rules are used:
+
+- all files except files from default exclusion list (for more details, see DeploymentPropertiesFile) and descriptor file are added to appdir folder,
+- if scriptsdir is defined in the descriptor and the folder with this name exists in the project root, it is used as a scriptsdir folder. If it does not exist, scriptsdir is ignored and a warning is displayed.
+To create package, use this command:
+
+    zend create package [-p </path/to/project>] [-d <destination>]
+
+The flag -p should have as an argument path to the project root directory. -d is optional and allows to change the location where package will be created (by default it will be created in the current location).
+
+### Push an Application
+Zend SDK allows to push all local changes to remote git repository. It performs following operations:
+
+- add all new files to the local git repository,
+- commit all changes (removed and added files, modifications in existing files) to the local repository,
+- push local repository changes to the phpCloud remote (called "phpcloud").
+
+To push an application, use this command:
+
+    zend push application [-a </path/to/project>] [-r <remote_name>] [-m <commit_message>] 
+            [-a <author_name:author_email>]  [-u <user>] [-p <password>] [-k <key>]
+
+The flag -a is not required if the current location is a root application folder. By default, remote name is "phpcloud". Commit message provided by -m option is used for all commits to local repository performed during pushing process. If it is not specified, default value is used.
