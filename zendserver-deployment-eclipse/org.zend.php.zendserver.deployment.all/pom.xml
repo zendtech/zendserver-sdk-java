@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.zend</groupId>
-    <artifactId>zend-sdk</artifactId>
+    <artifactId>deployment-releng</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../sdk-releng/pom.xml</relativePath>
+    <relativePath>../deployment-releng/pom.xml</relativePath>
   </parent>
   <groupId>org.zend</groupId>
   <artifactId>org.zend.php.zendserver.deployment.all</artifactId>
