@@ -85,9 +85,9 @@ Adding tools/ to your PATH lets you run command line tools without needing to su
 - On a Mac OS X, look in your home directory for .bash_profile and proceed as for Linux. You can create the .bash_profile if you don't already have one.
 
 <a name="command_line" />
-## Command Line
+# Command Line
 
-### Introduction
+## Introduction
 zend is an important development tool that lets you:
 
 1. Create, delete, and view Targets. See [Managing Targets](#managing_targets) from the Command Line.
@@ -99,7 +99,7 @@ zend is an important development tool that lets you:
 If you are using Eclipse, the Zend tool's features are integrated, so you should not need to use this tool directly.
 
 <a name="managing_targets" />
-### Managing Targets
+## Managing Targets
 A target is a reference to a container that allows you to host PHP applications. This container can be a set of targets and possibly be managed as a cluster. Developers usually start by adding their target environments such as their localhost sever or any remote server.
 
 ### Listing Targets
@@ -423,3 +423,43 @@ To push an application, use this command:
             [-a <author_name:author_email>]  [-u <user>] [-p <password>] [-k <key>]
 
 The flag -a is not required if the current location is a root application folder. By default, remote name is "phpcloud". Commit message provided by -m option is used for all commits to local repository performed during pushing process. If it is not specified, default value is used.
+
+<a name="managing_repositories" />
+## Managing Repositories
+Zend SDK provides some tools for managing Zend Repositories. Currently, following operations are supported:
+
+- Generating Repository
+- Adding Repository
+- Removing Repository
+- Listing Repositories
+
+Information about repositories is stored in a local repository storage. It contains repository descriptors. It is possible to check what repositories are in it by calling 'list repositories' command (described below).
+
+### Generating Repository
+Zend SDK allows to generate new repository.
+
+    zend generate repository -o <destination> -p <path_to_package> -t <path_to_template> [-e <existing_repository>]
+
+This command is responsible for creating new repositories and adding application to repository. There are two possible scenarions:
+
+- There is already existing Zend Repository ("-e" option).
+- There is no Zend Repository.
+
+In the first case new application information is added to specified repository. In the second case, new repository is created in specified destination.
+
+### Adding Repository
+Zend SDK allows to add existing repository the the local repository storage. In the result, added repository will be available for other repository dedicated commands.
+
+    zend add repository -o <repository_url>
+
+### Removing Repository
+Zend SDK allows to remove repository.
+
+    zend remove repository -o <repository_url>
+
+It removes specified repository from the local repository storage.
+
+### Listing Repository
+Zend SDK allows to list available repositories which are in the local repository storage.
+
+    zend list repository [-s <repository_url>]
