@@ -37,23 +37,23 @@
 				<configuration>
 					<source>
 						<repository>
-							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorRestlet/lastSuccessfulBuild/artifact/mirrors/restlet/target/repository</url>
+							<url>http://il-studiodev2.zend.net:8080/job/MirrorRestlet/lastSuccessfulBuild/artifact/mirrors/restlet/target/repository</url>
 							<layout>p2</layout>
 						</repository>
 						<repository>
-							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository</url>
+							<url>http://il-studiodev2.zend.net:8080/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository</url>
 							<layout>p2</layout>
 						</repository>
 						<repository>
-							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEgitAndJGit/lastSuccessfulBuild/artifact/mirrors/egit/target/repository</url>
+							<url>http://il-studiodev2.zend.net:8080/job/MirrorEgitAndJGit/lastSuccessfulBuild/artifact/mirrors/egit/target/repository</url>
 							<layout>p2</layout>
 						</repository>
 						<repository>
-							<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates42/lastSuccessfulBuild/artifact/mirrors/eclipseupdates42/target/repository</url>
+							<url>http://il-studiodev2.zend.net:8080/job/MirrorEclipseUpdates42/lastSuccessfulBuild/artifact/mirrors/eclipseupdates42/target/repository</url>
 							<layout>p2</layout>
 						</repository>
 						<repository>
-							<url>http://il-studiodev2.zend.net:8080/job/org.zend.webapi/lastSuccessfulBuild/artifact/org.zend.webapi.update-site/target/repository</url>
+							<url>http://il-studiodev2.zend.net:8080/job/zendserver-webapi/lastSuccessfulBuild/artifact/org.zend.webapi.update-site/target/repository</url>
 							<layout>p2</layout>
 						</repository>
 					</source>
