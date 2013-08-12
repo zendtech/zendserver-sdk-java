@@ -30,6 +30,7 @@ import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
 import org.zend.sdklib.application.ZendProject.TemplateApplications;
+import org.zend.sdklib.project.DeploymentScriptTypes;
 
 /**
  * Represents create-project command. In the result of calling it new PHP
@@ -94,11 +95,26 @@ public class CreateProjectCommand extends AbstractCommand {
 					new CliMappingLoader());
 			TemplateApplications template = getTemplate();
 			if (template == null) {
-				getLogger().error(
-						MessageFormat.format(
-								"\"{0}\" is not a valid template name",
-								getValue(TEMPLATE)));
+				getLogger()
+						.error(MessageFormat
+								.format("Cannot create a project. \"{0}\" is not a valid template name",
+										getValue(TEMPLATE)));
 				return false;
+			}
+			String scripts = getScripts();
+			if (scripts != null) {
+				String[] scriptsNames = scripts.split(":");
+				for (String scriptName : scriptsNames) {
+					final DeploymentScriptTypes n = DeploymentScriptTypes
+							.byName(scriptName.trim());
+					if (n == null) {
+						getLogger()
+								.error(MessageFormat
+										.format("Cannot create a project. Script with name {0} cannot be found",
+												scriptName));
+						return false;
+					}
+				}
 			}
 			boolean create = false;
 			if (template == TemplateApplications.ZF2) {
@@ -107,10 +123,10 @@ public class CreateProjectCommand extends AbstractCommand {
 						destinationFolder);
 				if (create) {
 					cloneGitModules(destinationFolder);
-					project.update(getScripts());
+					project.update(scripts);
 				}
 			} else {
-				create = project.create(getName(), getTemplate(), getScripts());
+				create = project.create(getName(), getTemplate(), scripts);
 			}
 			if (create) {
 				getLogger().info(
