@@ -71,9 +71,10 @@ public class DeployApplicationCommand extends AbstractDeploymentCommand {
 	protected boolean resolveResult(ApplicationInfo info) {
 		if (info != null) {
 			getLogger()
-					.info(MessageFormat.format(
-							"Application {0} (id {1}) is deployed to {2}",
-							info.getAppName(), info.getId(), info.getBaseUrl()));
+					.info(MessageFormat
+							.format("Application {0} (id {1}) is deployed to {2} (target id {3})",
+									info.getAppName(), info.getId(),
+									info.getBaseUrl(), getTargetId()));
 			return true;
 		}
 		return false;
