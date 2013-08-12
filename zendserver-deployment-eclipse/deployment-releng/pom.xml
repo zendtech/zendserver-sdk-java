@@ -13,14 +13,14 @@
 			<url>http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository</url>
 		</repository>
 		<repository>
-			<id>3x</id>
+			<id>4x</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/job/MirrorEclipseUpdates38/lastSuccessfulBuild/artifact/mirrors/eclipseupdates38/target/repository</url>
+			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates43/lastSuccessfulBuild/artifact/mirrors/eclipseupdates43/target/repository</url>
 		</repository>
 		<repository>
 			<id>dltk</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/dltk</url>
+			<url>http://il-studiodev2.zend.net/targets/zend-dltk</url>
 		</repository>
 		<repository>
 			<id>webapi</id>
@@ -45,7 +45,7 @@
 		<repository>
 			<id>pdt-dev</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/pdt</url>
+			<url>http://il-studiodev2.zend.net/targets/zend-pdt</url>
 		</repository>
 		<repository>
 			<id>orbit</id>
@@ -55,12 +55,11 @@
 		<repository>
 			<id>commons</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/job/commons/lastSuccessfulBuild/artifact/org.zend.commons.update-site/target/repository</url>
+			<url>http://il-studiodev2.zend.net:8080/job/commons/lastSuccessfulBuild/artifact/org.zend.commons-updatesite/target/repository</url>
 		</repository>
   </repositories>
 
   <modules>
-    <module>../org.zend.php-feature</module>
     <module>../org.zend.php.zendserver.deployment-feature</module>
     <module>../org.zend.php.zendserver.deployment.all</module>
     <module>../org.zend.php.zendserver.deployment.core</module>
@@ -72,7 +71,7 @@
     <module>../org.zend.php.zendserver.deployment.ui</module>
     <module>../org.zend.php.zendserver.monitor.core</module>
     <module>../org.zend.php.zendserver.monitor.ui</module>
-    <module>../org.zend.php-update-site</module>
+    <module>../org.zend.php.zendserver.deployment-updatesite</module>
   </modules>
   <build>
     <plugins>
