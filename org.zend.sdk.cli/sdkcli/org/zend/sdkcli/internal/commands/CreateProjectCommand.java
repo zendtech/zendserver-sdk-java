@@ -7,9 +7,25 @@
  *******************************************************************************/
 package org.zend.sdkcli.internal.commands;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
@@ -56,7 +72,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	/**
 	 * @return The project name
 	 */
-	@Option(opt = TEMPLATE, required = false, description = "Template name (zend | quickstart | simple). Default is zend application", argName = "name")
+	@Option(opt = TEMPLATE, required = false, description = "Template name (zend | zf2 | quickstart | simple). Default is zend application", argName = "name")
 	public TemplateApplications getTemplate() {
 		TemplateApplications result = TemplateApplications.getDefault();
 		final String value = getValue(TEMPLATE);
@@ -84,8 +100,18 @@ public class CreateProjectCommand extends AbstractCommand {
 								getValue(TEMPLATE)));
 				return false;
 			}
-			final boolean create = project.create(getName(), getTemplate(),
-					getScripts());
+			boolean create = false;
+			if (template == TemplateApplications.ZF2) {
+				// clone zf2 skeleton application
+				create = cloneRepository(template.getBasePath(),
+						destinationFolder);
+				if (create) {
+					cloneGitModules(destinationFolder);
+					project.update(getScripts());
+				}
+			} else {
+				create = project.create(getName(), getTemplate(), getScripts());
+			}
 			if (create) {
 				getLogger().info(
 						"Project resources were created successfully for "
@@ -94,6 +120,106 @@ public class CreateProjectCommand extends AbstractCommand {
 			return create;
 		}
 		return false;
+	}
+
+	public boolean cloneRepository(String repo, File dir) {
+		CloneCommand clone = new CloneCommand();
+		clone.setURI(repo);
+		clone.setRemote(GitHelper.getRemote(repo));
+		clone.setDirectory(dir);
+		clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(
+				System.out)));
+		getLogger().info(
+				MessageFormat.format("Cloning into {0}...", dir.getName()));
+		try {
+			clone.call();
+		} catch (JGitInternalException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (InvalidRemoteException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (TransportException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		} catch (GitAPIException e) {
+			delete(dir);
+			getLogger().error(e);
+			return false;
+		}
+		return true;
+	}
+
+	private void cloneGitModules(File destinationFolder) {
+		File gitModules = new File(destinationFolder, ".gitmodules");
+		if (gitModules.exists()) {
+			Map<String, String> modules = parseGitModules(gitModules);
+			Set<String> paths = modules.keySet();
+			for (String path : paths) {
+				String url = modules.get(path);
+				File destinationPath = new File(destinationFolder, path);
+				cloneRepository(url, destinationPath);
+				cloneGitModules(destinationPath);
+			}
+		}
+	}
+
+	private Map<String, String> parseGitModules(File file) {
+		Map<String, String> modules = new HashMap<String, String>();
+		List<String> lines = null;
+		try {
+			lines = readGitModules(file);
+		} catch (IOException e) {
+			getLogger().error(
+					MessageFormat.format(
+							"Error during parsing Git modules from {0}",
+							file.getAbsolutePath()));
+		}
+		if (lines != null) {
+			String path = null;
+			String url = null;
+			for (String line : lines) {
+				if (line.startsWith("url")) {
+					url = getEntryValue(line);
+				} else if (line.startsWith("path")) {
+					path = getEntryValue(line);
+				}
+				if (url != null && path != null) {
+					modules.put(path, url);
+					path = null;
+					url = null;
+				}
+			}
+		}
+		return modules;
+	}
+
+	private List<String> readGitModules(File file) throws IOException {
+		List<String> lines = new ArrayList<String>();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				lines.add(line.trim());
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		return lines;
+	}
+
+	private String getEntryValue(String entry) {
+		String[] parts = entry.split("=");
+		if (parts.length == 2) {
+			return parts[1].trim();
+		}
+		return null;
 	}
 
 	/**
