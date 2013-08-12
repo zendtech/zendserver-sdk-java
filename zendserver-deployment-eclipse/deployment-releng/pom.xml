@@ -8,9 +8,9 @@
   <packaging>pom</packaging>
   <repositories>
 		<repository>
-			<id>juno</id>
+			<id>kepler</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/juno/target/repository</url>
+			<url>http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository</url>
 		</repository>
 		<repository>
 			<id>3x</id>
@@ -35,7 +35,7 @@
 		<repository>
 			<id>sdk</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/job/org.zend.sdk/lastSuccessfulBuild/artifact/org.zend.sdk.update-site/target/repository</url>
+			<url>http://il-studiodev2.zend.net:8080/job/zendserver-sdk/lastSuccessfulBuild/artifact/org.zend.sdk.update-site/target/repository</url>
 		</repository>
 		<repository>
 			<id>nebula</id>
@@ -55,7 +55,7 @@
 		<repository>
 			<id>commons</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/job/com.zend.commons/lastSuccessfulBuild/artifact/org.zend.commons.update-site/target/repository</url>
+			<url>http://il-studiodev2.zend.net:8080/job/commons/lastSuccessfulBuild/artifact/org.zend.commons.update-site/target/repository</url>
 		</repository>
   </repositories>
 
