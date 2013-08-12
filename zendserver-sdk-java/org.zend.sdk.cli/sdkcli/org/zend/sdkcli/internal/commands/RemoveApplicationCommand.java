@@ -35,10 +35,11 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 		if (info == null) {
 			return false;
 		}
-		getLogger().info(
-				MessageFormat.format(
-						"Application {0} (id {1}) was removed from {2}",
-						info.getAppName(), info.getId(), info.getBaseUrl()));
+		getLogger()
+				.info(MessageFormat
+						.format("Application {0} (id {1}) was removed from {2} (target id {3})",
+								info.getAppName(), info.getId(),
+								info.getBaseUrl(), getTargetId()));
 		
 		return true;
 	}
