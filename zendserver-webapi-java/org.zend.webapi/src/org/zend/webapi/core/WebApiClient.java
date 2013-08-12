@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.restlet.Context;
 import org.restlet.engine.Engine;
@@ -168,6 +169,7 @@ public class WebApiClient {
 		if (engine == null) {
 			engine = new WebApiEngine();
 			Engine.setInstance(engine);
+			Engine.setRestletLogLevel(Level.OFF);
 		}
 		this.notifier = notifier;
 	}
