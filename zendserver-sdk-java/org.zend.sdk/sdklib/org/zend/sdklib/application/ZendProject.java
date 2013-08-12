@@ -121,7 +121,9 @@ public class ZendProject extends AbstractChangeNotifier {
 
 		SIMPLE("applications/helloworld/"),
 
-		QUICKSTART("applications/quickstart/");
+		QUICKSTART("applications/quickstart/"),
+		
+		ZF2("git://github.com/zendframework/ZendSkeletonApplication.git");
 
 		private final String basePath;
 
