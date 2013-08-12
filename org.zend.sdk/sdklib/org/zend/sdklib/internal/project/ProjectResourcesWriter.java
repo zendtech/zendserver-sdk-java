@@ -160,7 +160,7 @@ public class ProjectResourcesWriter extends AbstractChangeNotifier {
 			w.writeAllScripts(destination);
 			return;
 		}
-		String[] scriptsNames = withScripts.split("\\|");
+		String[] scriptsNames = withScripts.split(":");
 		for (String scriptName : scriptsNames) {
 			final DeploymentScriptTypes n = DeploymentScriptTypes
 					.byName(scriptName.trim());
