@@ -22,7 +22,7 @@
 <unit id="org.eclipse.equinox.executable.feature.group" />
 <unit id="org.eclipse.platform.ide" />
 <unit id="org.eclipse.jdt.feature.group" />
-<repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates42/lastSuccessfulBuild/artifact/mirrors/eclipseupdates42/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
 </location>
 </locations>
 </target>
