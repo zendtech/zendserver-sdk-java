@@ -18,6 +18,7 @@
 <unit id="org.apache.commons.cli" />
 <unit id="org.apache.commons.lang" />
 <unit id="org.apache.commons.logging" />
+<unit id="org.apache.commons.httpclient" />
 <unit id="org.apache.log4j" />
 <unit id="org.slf4j.api" />
 <repository location="http://il-studiodev2.zend.net:8080/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository"/>
