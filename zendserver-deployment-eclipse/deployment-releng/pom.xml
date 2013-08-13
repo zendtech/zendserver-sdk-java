@@ -13,11 +13,6 @@
 			<url>http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository</url>
 		</repository>
 		<repository>
-			<id>4x</id>
-			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates43/lastSuccessfulBuild/artifact/mirrors/eclipseupdates43/target/repository</url>
-		</repository>
-		<repository>
 			<id>zend-dltk</id>
 			<layout>p2</layout>
 			<url>http://il-studiodev2.zend.net:8080/job/zend-dltk/lastSuccessfulBuild/artifact/result</url>
