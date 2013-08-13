@@ -18,14 +18,14 @@
 			<url>http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEclipseUpdates43/lastSuccessfulBuild/artifact/mirrors/eclipseupdates43/target/repository</url>
 		</repository>
 		<repository>
-			<id>dltk</id>
+			<id>zend-dltk</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/zend-dltk</url>
+			<url>http://il-studiodev2.zend.net:8080/job/zend-dltk/lastSuccessfulBuild/artifact/result</url>
 		</repository>
 		<repository>
 			<id>webapi</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/webapi</url>
+			<url>http://il-studiodev2.zend.net:8080/job/zendserver-webapi/lastSuccessfulBuild/artifact/org.zend.webapi.update-site/target/repository</url>
 		</repository>
 		<repository>
 			<id>jgit</id>
@@ -43,9 +43,9 @@
 			<url>http://download.eclipse.org/technology/nebula/snapshot</url>
 		</repository>
 		<repository>
-			<id>pdt-dev</id>
+			<id>zend-pdtv</id>
 			<layout>p2</layout>
-			<url>http://il-studiodev2.zend.net/targets/zend-pdt</url>
+			<url>http://il-studiodev2.zend.net:8080/job/zend-dltk/lastSuccessfulBuild/artifact/result</url>
 		</repository>
 		<repository>
 			<id>orbit</id>
