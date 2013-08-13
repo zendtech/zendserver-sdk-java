@@ -27,7 +27,7 @@
 <unit id="org.eclipse.equinox.executable.feature.group" />
 <unit id="org.eclipse.platform.ide" />
 <unit id="org.eclipse.jdt.feature.group" />
-<repository location="http://il-studiodev2.zend.net:8080/job/MirrorEclipseUpdates43/lastSuccessfulBuild/artifact/mirrors/eclipseupdates43/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.jgit.feature.group" />
