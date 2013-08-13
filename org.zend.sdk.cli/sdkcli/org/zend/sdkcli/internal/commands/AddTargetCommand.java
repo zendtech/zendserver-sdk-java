@@ -139,10 +139,12 @@ public class AddTargetCommand extends TargetAwareCommand {
 			String secretKey = getSecretKey();
 			String host = getHost();
 			File props = getPropertiesFile();
-			if (host == null || ((key == null || secretKey == null) && !props.exists())) {
+			if (host == null
+					|| ((key == null || secretKey == null) && (props == null || !props
+							.exists()))) {
 				getLogger()
 						.error("To create target it is required to provide hostname, key and secret key. "
-								+ "They can be provided through a properties file or as command arguments.");
+								+ "They can be provided through a properties file or as command's arguments.");
 				return false;
 			}
 			if (targetId == null) {
