@@ -37,6 +37,20 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<id>parse-version</id>
+								<goals>
+									<goal>parse-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<version>2.6</version>
@@ -61,7 +75,7 @@
 								<descriptor>bindistro-descriptor.xml</descriptor>
 								<descriptor>full-distro-descriptor.xml</descriptor>
 							</descriptors>
-							<finalName>org.zend.webapi-${project.version}</finalName>
+							<finalName>zendserver-webapi-java-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</finalName>
 							<outputDirectory>${project.build.directory}/distros</outputDirectory>
 							<workDirectory>target/assembly/work</workDirectory>
 						</configuration>
