@@ -9,21 +9,21 @@
 <repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorRestlet/lastSuccessfulBuild/artifact/mirrors/restlet/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.apache.commons.cli"/>
-<unit id="org.slf4j.jul"/>
-<unit id="org.mockito"/>
-<unit id="org.objenesis"/>
-<unit id="org.hamcrest.library"/>
-<unit id="org.hamcrest.text"/>
-<unit id="org.hamcrest.integration"/>
-<unit id="org.hamcrest"/>
-<unit id="javax.servlet"/>
+<unit id="org.apache.commons.cli" version="0.0.0"/>
+<unit id="org.slf4j.jul" version="0.0.0"/>
+<unit id="org.mockito" version="0.0.0"/>
+<unit id="org.objenesis" version="0.0.0"/>
+<unit id="org.hamcrest.library" version="0.0.0"/>
+<unit id="org.hamcrest.text" version="0.0.0"/>
+<unit id="org.hamcrest.integration" version="0.0.0"/>
+<unit id="org.hamcrest" version="0.0.0"/>
+<unit id="javax.servlet" version="0.0.0"/>
 <repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorOrbit/lastSuccessfulBuild/artifact/mirrors/orbit/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">\
-<unit id="org.eclipse.equinox.executable.feature.group" />
-<unit id="org.eclipse.platform.ide" />
-<unit id="org.eclipse.jdt.feature.group" />
+<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.platform.ide" version="0.0.0"/>
+<unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
 <repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
