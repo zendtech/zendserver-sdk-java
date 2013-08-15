@@ -167,7 +167,8 @@ public class AddTargetCommand extends TargetAwareCommand {
 				target = testConnectAndDetectPort(t);
 				IZendTarget[] existingTargets = targetManager.getTargets();
 				for (IZendTarget existingTarget : existingTargets) {
-					if (existingTarget.getHost().equals(target.getHost())) {
+					if (existingTarget.getHost().toString()
+							.equals(target.getHost().toString())) {
 						getLogger()
 								.error(MessageFormat
 										.format("Cannot add target with {0} host. Target with such host already exists.",
