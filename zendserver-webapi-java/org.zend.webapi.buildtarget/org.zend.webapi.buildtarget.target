@@ -2,8 +2,10 @@
 <?pde version="3.8"?><target name="Minimal platform" sequenceNumber="96">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.restlet.feature.group"/>
-<unit id="org.restlet.ext.xml.feature.group"/>
+<unit id="org.restlet.feature.group" version="0.0.0"/>
+<unit id="org.restlet.ext.xml.feature.group" version="0.0.0"/>
+<unit id="org.restlet.ext.ssl.feature.group" version="0.0.0"/>
+<unit id="org.restlet.ext.httpclient.feature.group" version="0.0.0"/>
 <repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorRestlet/lastSuccessfulBuild/artifact/mirrors/restlet/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
@@ -22,6 +24,8 @@
 <unit id="org.eclipse.equinox.executable.feature.group" />
 <unit id="org.eclipse.platform.ide" />
 <unit id="org.eclipse.jdt.feature.group" />
+<unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
+<unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
 <repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
 </location>
 </locations>
