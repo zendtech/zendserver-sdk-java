@@ -52,4 +52,6 @@ Export-Package: org.zend.webapi.core;
 Bundle-ClassPath: .
 Require-Bundle: org.restlet.ext.xml;visibility:=reexport,
  org.restlet;visibility:=reexport,
- org.eclipse.osgi;visibility:=reexport
+ org.eclipse.osgi;visibility:=reexport,
+ org.restlet.ext.httpclient,
+ org.restlet.ext.ssl
