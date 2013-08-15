@@ -107,7 +107,7 @@ public class CreateProjectCommand extends AbstractCommand {
 				for (String scriptName : scriptsNames) {
 					final DeploymentScriptTypes n = DeploymentScriptTypes
 							.byName(scriptName.trim());
-					if (n == null) {
+					if (!"all".equals(scriptName) && n == null) {
 						getLogger()
 								.error(MessageFormat
 										.format("Cannot create a project. Script with name {0} cannot be found",
