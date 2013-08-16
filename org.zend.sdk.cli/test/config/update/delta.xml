@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<delta file="file:///test/config/update/package.zip" size="833">
-	<add file="toCopy" dest="a/b/c" />
-	<add file="folder" dest="a/b" />
-	<remove file="toRemove" />
-</delta>

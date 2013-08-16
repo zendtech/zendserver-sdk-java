@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<versions>
-<version name="0.0.20" range="[0.0.10,0.0.18]" delta="test/config/update/delta.xml" />
-<version name="0.0.22" range="[0.0.18,0.0.20]" delta="test/config/update/delta.xml" />
-</versions>

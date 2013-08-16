@@ -37,8 +37,8 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 				getLogger().error(
 						MessageFormat.format(
 								"Target with id {0} does not exist.", targetId));
+				return false;
 			}
-			return false;
 		}
 		ApplicationInfo info = getApplication().remove(getTargetId(), getApplicationId());
 		

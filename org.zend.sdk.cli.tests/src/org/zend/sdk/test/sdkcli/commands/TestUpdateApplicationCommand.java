@@ -19,23 +19,39 @@ import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ParseError;
 import org.zend.sdkcli.internal.commands.CommandLine;
 import org.zend.sdkcli.internal.commands.UpdateApplicationCommand;
+import org.zend.sdklib.manager.TargetException;
+import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.IResponseData;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 
-public class TestUpdateApplicationCommand extends AbstractWebApiTest {
+public class TestUpdateApplicationCommand extends AbstractWebapiCommandTest {
 
 	@Test
-	public void testExecute() throws WebApiException, IOException, ParseError {
+	public void testExecute() throws WebApiException, IOException, ParseError,
+			TargetException, LicenseExpiredException {
+		CommandLine cmdLine = getLine("update application -p " + FOLDER
+				+ "test-1.0.0.zpk -t 0 -a 0");
+		UpdateApplicationCommand command = getCommand(cmdLine);
+		manager.add(getTarget());
+		when(client.applicationUpdate(anyInt(), any(NamedInputStream.class), anyBoolean(), anyMap())).thenReturn(
+			(ApplicationInfo) getResponseData("applicationUpdate",
+						IResponseData.ResponseType.APPLICATION_INFO));
+		assertTrue(command.execute(cmdLine));
+	}
+	
+	@Test
+	public void testExecuteNoTarget() throws WebApiException, IOException, ParseError,
+			TargetException, LicenseExpiredException {
 		CommandLine cmdLine = getLine("update application -p " + FOLDER
 				+ "test-1.0.0.zpk -t 0 -a 0");
 		UpdateApplicationCommand command = getCommand(cmdLine);
 		when(client.applicationUpdate(anyInt(), any(NamedInputStream.class), anyBoolean(), anyMap())).thenReturn(
 			(ApplicationInfo) getResponseData("applicationUpdate",
 						IResponseData.ResponseType.APPLICATION_INFO));
-		assertTrue(command.execute(cmdLine));
+		assertFalse(command.execute(cmdLine));
 	}
 
 	@Test
@@ -54,6 +70,7 @@ public class TestUpdateApplicationCommand extends AbstractWebApiTest {
 		UpdateApplicationCommand command = spy((UpdateApplicationCommand) CommandFactory
 				.createCommand(cmdLine));
 		assertNotNull(command);
+		when(command.getTargetManager()).thenReturn(manager);
 		doReturn(application).when(command).getApplication();
 		return command;
 	}
