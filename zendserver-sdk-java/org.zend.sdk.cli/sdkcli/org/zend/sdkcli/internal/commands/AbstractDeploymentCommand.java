@@ -218,8 +218,8 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 				getLogger().error(
 						MessageFormat.format(
 								"Target with id {0} does not exist.", targetId));
+				return false;
 			}
-			return false;
 		}
 		getApplication().addStatusChangeListener(new StatusChangeListener());
 		if (getRepositoryName() != null && getAppName() != null) {
