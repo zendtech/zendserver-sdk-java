@@ -23,6 +23,7 @@ import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepository;
 import org.zend.sdklib.repository.site.Application;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
@@ -210,6 +211,16 @@ public abstract class AbstractDeploymentCommand extends ApplicationAwareCommand 
 	@Override
 	public boolean doExecute() {
 		ApplicationInfo info = null;
+		String targetId = getTargetId();
+		if (targetId != null) {
+			IZendTarget target = getTargetManager().getTargetById(targetId);
+			if (target == null) {
+				getLogger().error(
+						MessageFormat.format(
+								"Target with id {0} does not exist.", targetId));
+			}
+			return false;
+		}
 		getApplication().addStatusChangeListener(new StatusChangeListener());
 		if (getRepositoryName() != null && getAppName() != null) {
 			info = repositoryOperation();
