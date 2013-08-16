@@ -10,6 +10,7 @@ package org.zend.sdkcli.internal.commands;
 import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 
 /**
@@ -29,7 +30,16 @@ public class RemoveApplicationCommand extends ApplicationAwareCommand {
 
 	@Override
 	public boolean doExecute() {
-		
+		String targetId = getTargetId();
+		if (targetId != null) {
+			IZendTarget target = getTargetManager().getTargetById(targetId);
+			if (target == null) {
+				getLogger().error(
+						MessageFormat.format(
+								"Target with id {0} does not exist.", targetId));
+			}
+			return false;
+		}
 		ApplicationInfo info = getApplication().remove(getTargetId(), getApplicationId());
 		
 		if (info == null) {
