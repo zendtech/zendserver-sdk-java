@@ -41,7 +41,7 @@ public class ListTargetsCommand extends TargetAwareCommand {
 			commandLine.getLog().info("id: " + target.getId());
 			commandLine.getLog().info("\tHost: " + target.getHost());
 			commandLine.getLog().info(
-					"\tDefault Server URL: " + target.getDefaultServerURL());
+					"\tBase URL: " + target.getDefaultServerURL());
 			commandLine.getLog().info("\tKey: " + target.getKey());
 
 			if (isStatus()) {
