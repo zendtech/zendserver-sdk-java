@@ -1,6 +1,5 @@
 package org.zend.sdk.test.sdkcli.commands;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
@@ -8,7 +7,6 @@ import org.zend.sdk.test.AbstractTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.internal.commands.CommandLine;
-import org.zend.sdkcli.internal.commands.RepositoryAwareCommand;
 import org.zend.sdklib.internal.repository.UserBasedRepositoryLoader;
 import org.zend.sdklib.manager.RepositoryManager;
 import org.zend.sdklib.repository.IRepositoryLoader;
