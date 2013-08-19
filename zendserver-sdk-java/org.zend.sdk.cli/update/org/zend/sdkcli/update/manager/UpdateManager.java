@@ -30,9 +30,10 @@ import org.zend.sdkcli.update.parser.VersionParser;
 public class UpdateManager {
 
 	private static final String VERSION_LOCATION = "/lib/";
-	private static final String VERSIONS_URL = "https://zend-sdk.googlecode.com/svn/trunk/updates/versions.xml";
+	private static final String VERSIONS_URL = "file:///Users/galAnonim/zend/workspaces/new_webapi/updates/versions.xml";
 
 	private Version sdkVersion;
+	private Version newSdkVersion;
 	private List<SdkVersion> versions;
 	private File root;
 	private String versionUrl;
@@ -53,6 +54,13 @@ public class UpdateManager {
 	 */
 	public Version getSdkVersion() {
 		return sdkVersion;
+	}
+	
+	/**
+	 * @return new Zend SDK version
+	 */
+	public Version getNewSdkVersion() {
+		return newSdkVersion;
 	}
 
 	/**
@@ -83,6 +91,7 @@ public class UpdateManager {
 			if (selectedVersion.getDelta().execute(root)) {
 				if (writeNewVersion(root.getAbsolutePath() + VERSION_LOCATION,
 						selectedVersion.getVersion())) {
+					newSdkVersion = selectedVersion.getVersion();
 					return UpdateStatus.SUCCESS;
 				}
 			}
