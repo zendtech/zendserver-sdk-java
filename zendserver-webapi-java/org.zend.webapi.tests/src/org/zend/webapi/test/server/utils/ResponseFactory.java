@@ -23,11 +23,17 @@ public class ResponseFactory {
 				+ TestServerConfiguration.EXAMLE_CONFIG;
 		File file = new File(ServerUtils.createFileName(name));
 		FileInputStream inputStream = new FileInputStream(file);
+		try {
 		int size = (int) file.length();
 		byte content[] = new byte[size];
-		inputStream.read(content);
-		return new FileResponse(code.getCode(),
-				TestServerConfiguration.EXAMLE_CONFIG, size, content);
+			inputStream.read(content);
+			return new FileResponse(code.getCode(),
+					TestServerConfiguration.EXAMLE_CONFIG, size, content);
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
 	}
 
 	public static ServerResponse createCodeTraceResponse(String requestName,
@@ -36,21 +42,33 @@ public class ResponseFactory {
 				+ TestCodeTracingServices.EXAMPLE_CODE_TRACE;
 		File file = new File(ServerUtils.createFileName(name));
 		FileInputStream inputStream = new FileInputStream(file);
-		int size = (int) file.length();
-		byte content[] = new byte[size];
-		inputStream.read(content);
-		return new FileResponse(code.getCode(),
-				TestCodeTracingServices.EXAMPLE_CODE_TRACE, size, content);
+		try {
+			int size = (int) file.length();
+			byte content[] = new byte[size];
+			inputStream.read(content);
+			return new FileResponse(code.getCode(),
+					TestCodeTracingServices.EXAMPLE_CODE_TRACE, size, content);
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
 	}
 	
 	public static ServerResponse createFileResponse(String requestName,
 			ResponseCode code, String folder, String name) throws IOException {
 		File file = new File(ServerUtils.createFileName(folder + name));
 		FileInputStream inputStream = new FileInputStream(file);
-		int size = (int) file.length();
-		byte content[] = new byte[size];
-		inputStream.read(content);
-		return new FileResponse(code.getCode(), name, size, content);
+		try {
+			int size = (int) file.length();
+			byte content[] = new byte[size];
+			inputStream.read(content);
+			return new FileResponse(code.getCode(), name, size, content);
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
 	}
 
 	public static ServiceResponse createResponse(String requestName,
