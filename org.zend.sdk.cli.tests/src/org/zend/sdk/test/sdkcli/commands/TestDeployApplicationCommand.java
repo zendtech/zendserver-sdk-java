@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
-import org.zend.sdk.test.AbstractWebApiTest;
 import org.zend.sdkcli.CommandFactory;
 import org.zend.sdkcli.ICommand;
 import org.zend.sdkcli.ParseError;
