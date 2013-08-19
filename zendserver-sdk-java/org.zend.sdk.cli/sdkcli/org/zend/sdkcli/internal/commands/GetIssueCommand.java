@@ -41,12 +41,12 @@ public class GetIssueCommand extends AbstractMonitorCommand {
 	public boolean doExecute() {
 		IZendIssue zendIssue = getMonitor().get(Integer.valueOf(getId()));
 		List<EventsGroupDetails> eventsGroupsDetails = null;
-		try {
-			eventsGroupsDetails = zendIssue.getGroupDetails();
-		} catch (WebApiException e) {
-			// ignore and just do not display group details
-		}
 		if (zendIssue != null) {
+			try {
+				eventsGroupsDetails = zendIssue.getGroupDetails();
+			} catch (WebApiException e) {
+				// ignore and just do not display group details
+			}
 			Issue issue = zendIssue.getIssue();
 			getLogger().info("last occurance: " + issue.getLastOccurance());
 			getLogger().info("rule:           " + issue.getRule());
