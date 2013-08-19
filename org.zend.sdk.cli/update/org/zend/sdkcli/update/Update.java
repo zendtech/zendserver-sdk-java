@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.sdkcli.update;
 
+import java.text.MessageFormat;
+
 import org.zend.sdkcli.update.manager.UpdateManager;
 
 public class Update {
@@ -27,9 +29,15 @@ public class Update {
 			switch (status) {
 			case SUCCESS:
 				System.out.println("Zend SDK was updated successfully");
+				System.out.println(MessageFormat.format("{0} -> {1}", manager
+						.getSdkVersion().getStringValue(), manager
+						.getNewSdkVersion().getStringValue()));
 				break;
 			case UP_TO_DATE:
-				System.out.println("Zend SDK is up-to-date");
+				System.out.println(MessageFormat.format(
+						"Zend SDK is up-to-date (version {0})", manager
+								.getSdkVersion().getStringValue()));
+				;
 				break;
 			case FAIL:
 				System.out.println("Zend SDK was not updated successfully");
