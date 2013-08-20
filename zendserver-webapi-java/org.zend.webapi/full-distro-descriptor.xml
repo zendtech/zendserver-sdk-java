@@ -36,6 +36,8 @@
       <includes>
         <include>org.eclipse.osgi-*.jar</include>
         <include>org.restlet.ext.xml-*.jar</include>
+        <include>org.restlet.ext.ssl-*.jar</include>
+        <include>org.restlet.ext.httpclient-*.jar</include>
         <include>org.restlet-*.jar</include>
         <include>org.zend.webapi-*.jar</include>
       </includes>

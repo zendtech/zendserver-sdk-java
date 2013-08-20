@@ -22,19 +22,33 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-    <plugin
+
+   <plugin
          id="org.restlet"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-       <plugin
+
+   <plugin
          id="org.restlet.ext.xml"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
+   <plugin
+         id="org.restlet.ext.httpclient"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.restlet.ext.ssl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
