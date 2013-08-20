@@ -19,8 +19,6 @@ The "Hello, World" example below shows how to launch your first application with
 # Installing Zend SDK
 This page describes how to install the Zend SDK and set up your development environment for the first time.
 
-If you encounter any problems during installation, see the [Troubleshooting](#roubleshooting) section at the bottom of this page.
-
 Here's an overview of the steps you must follow to set up the Zend SDK:
 
 1. Prepare your development environment and ensure it meets the system requirements.
