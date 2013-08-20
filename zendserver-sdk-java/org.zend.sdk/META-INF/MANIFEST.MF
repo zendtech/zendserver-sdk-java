@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.zend.sdk
 Bundle-SymbolicName: org.zend.sdk;singleton:=true
-Bundle-Version: 0.6.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: com.ice.jni.registry,
