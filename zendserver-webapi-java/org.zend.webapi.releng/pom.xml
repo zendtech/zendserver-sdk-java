@@ -6,11 +6,10 @@
 	<artifactId>org.zend.webapi.releng</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
-	
+
 	<properties>
 		<tycho-version>0.17.0</tycho-version>
 	</properties>
-	
 	<modules>
 		<module>../org.zend.webapi</module>
 		<module>../org.zend.webapi.update-site</module>
@@ -19,8 +18,6 @@
 		<module>../org.zend.webapi.tests.feature</module>
 		<module>../org.zend.webapi.buildtarget</module>
 	</modules>
-
-
 	<build>
 		<plugins>
 			<plugin>
@@ -30,20 +27,51 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
-            <groupId>org.eclipse.tycho</groupId>
-            <artifactId>target-platform-configuration</artifactId>
-            <version>${tycho-version}</version>
-            <configuration>
-              <target>
-                <artifact>
-                  <groupId>com.zend</groupId>
-                  <artifactId>org.zend.webapi.buildtarget</artifactId>
-                  <version>2.0.0-SNAPSHOT</version>
-                  <classifier>org.zend.webapi.buildtarget</classifier>
-                </artifact>
-              </target>
-            </configuration>
-          </plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<target>
+						<artifact>
+							<groupId>com.zend</groupId>
+							<artifactId>org.zend.webapi.buildtarget</artifactId>
+							<version>2.0.0-SNAPSHOT</version>
+							<classifier>org.zend.webapi.buildtarget</classifier>
+						</artifact>
+					</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<property>
+					<name>sign</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<keystore>${keystore}</keystore>
+							<alias>zend</alias>
+							<storepass>${password}</storepass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
