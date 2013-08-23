@@ -120,4 +120,11 @@
 			</build>
 		</profile>
 	</profiles>
+	<dependencies>
+		<dependency>
+			<groupId>org.zend</groupId>
+			<artifactId>org.zend.sdk</artifactId>
+			<version>[1.0.0,)</version>
+		</dependency>
+	</dependencies>
 </project>
