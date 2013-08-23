@@ -1,89 +1,97 @@
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin</id>
-  <formats>
-    <format>zip</format>
-  </formats>
-  <fileSets>
-  	<!--  lib -->
-    <fileSet>
-      <directory>${project.build.directory}/repository/plugins</directory>
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>bin</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<fileSets>
+		<!-- lib -->
+		<fileSet>
+			<directory>${project.build.directory}/repository/plugins</directory>
+			<outputDirectory>/lib</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/lib</outputDirectory>
+			<includes>
+				<include>sdk.version</include>
+			</includes>
+		</fileSet>
+<!-- 		<fileSet> -->
+<!-- 			<directory>${project.build.directory}</directory> -->
+<!-- 			<outputDirectory>/lib</outputDirectory> -->
+<!-- 			<includes> -->
+<!-- 				<include>org.zend.sdk.cli-*.jar</include> -->
+<!-- 			</includes> -->
+<!-- 		</fileSet> -->
+<!-- 		<fileSet> -->
+<!-- 			<directory>${project.basedir}/../org.zend.sdk/target</directory> -->
+<!-- 			<outputDirectory>/lib</outputDirectory> -->
+<!-- 			<includes> -->
+<!-- 				<include>org.zend.sdk-*.jar</include> -->
+<!-- 			</includes> -->
+<!-- 		</fileSet> -->
+		<fileSet>
+			<directory>${project.basedir}/../org.zend.sdk/lib</directory>
+			<outputDirectory>/lib</outputDirectory>
+			<includes>
+				<include>jboss-*.jar</include>
+				<include>openshift-*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../org.zend.sdk.cli.win32</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>lib/**/*</include>
+			</includes>
+		</fileSet>
+		<!-- README -->
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>README</include>
+			</includes>
+		</fileSet>
+		<!-- resources -->
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>resources/**/*</include>
+			</includes>
+		</fileSet>
+		<!-- tools -->
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>tools/conf/*</include>
+				<include>tools/*.bat</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>tools/zend</include>
+			</includes>
+			<fileMode>0755</fileMode>
+		</fileSet>
+	</fileSets>
+	<dependencySets>
+    <dependencySet>
       <outputDirectory>/lib</outputDirectory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}</directory>
-      <outputDirectory>/lib</outputDirectory>
-      <includes>
-        <include>sdk.version</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.build.directory}</directory>
-      <outputDirectory>/lib</outputDirectory>
-      <includes>
-        <include>org.zend.sdk.cli-*.jar</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/../org.zend.sdk/target</directory>
-      <outputDirectory>/lib</outputDirectory>
-      <includes>
-        <include>org.zend.sdk-*.jar</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/../org.zend.sdk/lib</directory>
-      <outputDirectory>/lib</outputDirectory>
-      <includes>
-        <include>jboss-*.jar</include>
-        <include>openshift-*.jar</include>
-      </includes>
-    </fileSet>
-  <fileSet>
-      <directory>${project.basedir}/../org.zend.sdk.cli.win32</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>lib/**/*</include>
-      </includes>
-    </fileSet>
-    <!-- README -->
-    <fileSet>
-      <directory>${project.basedir}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>README</include>
-      </includes>
-    </fileSet>
-    <!--  resources -->
-    <fileSet>
-      <directory>${project.basedir}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>resources/**/*</include>
-      </includes>
-    </fileSet>
-    <!--  tools -->
-    <fileSet>
-      <directory>${project.basedir}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>tools/conf/*</include>
-        <include>tools/*.bat</include>
-      </includes>
-    </fileSet>
-        <fileSet>
-      <directory>${project.basedir}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>tools/zend</include>
-      </includes>
-      <fileMode>0755</fileMode>
-    </fileSet>
-  </fileSets>
+      <useProjectArtifact>true</useProjectArtifact>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+    </dependencySet>
+  </dependencySets>
 </assembly>
 
 
