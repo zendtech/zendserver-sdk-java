@@ -675,6 +675,8 @@ public class ZendApplication extends ZendConnection {
 
 		if (basePath == null) {
 			basePath = path.getName();
+			int index = basePath.indexOf('-');
+			basePath = basePath.substring(0, index);
 		}
 		if (basePath.startsWith("/")) {
 			basePath = basePath.substring(1);
