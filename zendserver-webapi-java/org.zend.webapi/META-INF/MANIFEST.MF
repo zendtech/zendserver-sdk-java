@@ -55,4 +55,5 @@ Require-Bundle: org.restlet.ext.xml;visibility:=reexport,
  org.eclipse.osgi;visibility:=reexport,
  org.restlet.ext.httpclient,
  org.apache.httpcomponents.httpcore,
+ org.apache.httpcomponents.httpclient,
  org.restlet.ext.ssl
