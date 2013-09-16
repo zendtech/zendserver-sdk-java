@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/openshift-java-client-2.3.0-20130830.125107-1.jar" sourcepath="lib/openshift-java-client-2.3.0-20130830.125107-1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/registry.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/openshift-java-client-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-dmr-1.1.6.Final.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
