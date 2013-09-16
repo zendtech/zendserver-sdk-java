@@ -8,10 +8,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .
 Require-Bundle: org.zend.sdk;bundle-version="0.6.0",
- org.junit;bundle-version="4.10.0",
- org.mockito;bundle-version="1.8.4",
- org.restlet;bundle-version="2.1.1",
- org.restlet.ext.xml;bundle-version="2.1.1",
+ org.junit,
+ org.mockito,
+ org.restlet,
+ org.restlet.ext.xml,
  org.zend.webapi,
  org.zend.webapi.tests,
  com.jcraft.jsch,
