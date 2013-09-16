@@ -29,4 +29,5 @@ Require-Bundle: org.eclipse.jgit,
  org.zend.webapi;visibility:=reexport,
  org.apache.log4j;visibility:=reexport,
  org.apache.commons.cli;visibility:=reexport,
- org.slf4j.jul;bundle-version="1.6.4";visibility:=reexport
+ org.slf4j.jul;bundle-version="1.6.4";visibility:=reexport,
+ org.apache.httpcomponents.httpcore
