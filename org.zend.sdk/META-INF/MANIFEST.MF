@@ -52,4 +52,4 @@ Require-Bundle: org.apache.commons.codec,
  com.jcraft.jsch,
  org.apache.log4j,
  org.zend.webapi;bundle-version="0.0.23",
- org.apache.httpcomponents.httpcore
+ org.apache.httpcomponents.httpclient
