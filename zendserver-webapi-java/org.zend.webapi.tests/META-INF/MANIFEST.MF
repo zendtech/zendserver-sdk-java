@@ -4,7 +4,7 @@ Bundle-Name: Tests
 Bundle-SymbolicName: org.zend.webapi.tests
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.zend.webapi,
- org.mockito;bundle-version="1.8.4",
+ org.mockito,
  org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.hamcrest;core=split;version="1.1.0",
