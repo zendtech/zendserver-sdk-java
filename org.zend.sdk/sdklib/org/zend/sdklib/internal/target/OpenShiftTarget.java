@@ -38,22 +38,24 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.openshift.client.IApplication;
 import com.openshift.client.IApplicationPortForwarding;
-import com.openshift.client.ICartridge;
 import com.openshift.client.IDomain;
-import com.openshift.client.IEmbeddedCartridge;
 import com.openshift.client.IGearProfile;
 import com.openshift.client.IOpenShiftConnection;
 import com.openshift.client.IOpenShiftSSHKey;
 import com.openshift.client.ISSHPublicKey;
 import com.openshift.client.IUser;
+import com.openshift.client.Message;
+import com.openshift.client.Messages;
 import com.openshift.client.OpenShiftConnectionFactory;
 import com.openshift.client.OpenShiftEndpointException;
 import com.openshift.client.OpenShiftException;
 import com.openshift.client.SSHPublicKey;
-import com.openshift.internal.client.Cartridge;
-import com.openshift.internal.client.EmbeddableCartridge;
+import com.openshift.client.cartridge.EmbeddableCartridge;
+import com.openshift.client.cartridge.IEmbeddableCartridge;
+import com.openshift.client.cartridge.IEmbeddedCartridge;
+import com.openshift.client.cartridge.IStandaloneCartridge;
 import com.openshift.internal.client.GearProfile;
-import com.openshift.internal.client.response.Message;
+import com.openshift.internal.client.StandaloneCartridge;
 
 /**
  * Represents OpenShift user account. It allows to detects OpenShift
@@ -226,8 +228,8 @@ public class OpenShiftTarget {
 		try {
 			IDomain d = getDomain();
 			List<String> result = new ArrayList<String>();
-			List<ICartridge> cartridges = d.getUser().getConnection().getStandaloneCartridges();
-			for (ICartridge c : cartridges) {
+			List<IStandaloneCartridge> cartridges = d.getUser().getConnection().getStandaloneCartridges();
+			for (IStandaloneCartridge c : cartridges) {
 				if (Type.create(c.getName()) != Type.UNKNOWN) {
 					result.add(c.getName());
 				}
@@ -284,12 +286,12 @@ public class OpenShiftTarget {
 		IDomain d = getDomain();
 		if (d != null) {
 			IApplication application = d.createApplication(targetName,
-					new Cartridge(cartridgeName), new GearProfile(gearProfile));
+					new StandaloneCartridge(cartridgeName), new GearProfile(gearProfile));
 			if (application != null && mySql) {
-				IEmbeddedCartridge cartridge = application
+				IEmbeddableCartridge cartridge = application
 						.addEmbeddableCartridge(new EmbeddableCartridge(
 								"mysql-5.1"));
-				return cartridge.getCreationLog();
+				return cartridge.getDisplayName();
 			}
 		}
 		return null;
@@ -342,9 +344,10 @@ public class OpenShiftTarget {
 	public static String getOpenShiftMessage(Throwable throwable) {
 		if (throwable instanceof OpenShiftEndpointException) {
 			OpenShiftEndpointException e = (OpenShiftEndpointException) throwable;
-			List<Message> messages = e.getRestResponseMessages();
+			Messages messages = e.getRestResponseMessages();
+			List<Message> all = messages.getAll();
 			StringBuilder result = new StringBuilder();
-			for (Message message : messages) {
+			for (Message message : all) {
 				result.append(message.getText());
 				result.append(". ");
 			}
@@ -501,7 +504,7 @@ public class OpenShiftTarget {
 			if (hasMySqlSupport(container)) {
 				target.addProperty(TARGET_MYSQL_SUPPORT, "true");
 			}
-			ICartridge cartridge = container.getCartridge();
+			IStandaloneCartridge cartridge = container.getCartridge();
 			Type type = Type.create(cartridge.getName());
 			String keyName = null;
 			String secretKey = null;
@@ -615,7 +618,7 @@ public class OpenShiftTarget {
 			List<IApplication> apps = domain.getApplications();
 			if (apps != null && apps.size() > 0) {
 				for (IApplication app : apps) {
-					ICartridge cartridge = app.getCartridge();
+					IStandaloneCartridge cartridge = app.getCartridge();
 					String name = cartridge.getName();
 					if (Type.create(name) != Type.UNKNOWN) {
 						result.add(app);
@@ -663,7 +666,7 @@ public class OpenShiftTarget {
 			throw new SdkException(e);
 		}
 		if (cartridges != null) {
-			for (IEmbeddedCartridge cartridge : cartridges) {
+			for (IEmbeddableCartridge cartridge : cartridges) {
 				if (cartridge.getName().startsWith("mysql")) {
 					return true;
 				}
