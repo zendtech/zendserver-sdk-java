@@ -1,134 +1,22 @@
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.util.List;
-
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.osgi.util.NLS;
-import org.zend.core.notifications.NotificationManager;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
-import org.zend.php.zendserver.deployment.core.tunnel.TunnelException;
-import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.php.zendserver.monitor.core.Activator;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-
-import com.jcraft.jsch.JSchException;
 
 /**
  * Opens SSH tunnel. Expects single String parameter OpenTunnelCommand.CONTAINER
  * with name of container to open tunnel to. Called remotely by Google Chrome
  * extension.
  */
-public class OpenTunnelCommand extends AbstractHandler {
+public class OpenTunnelCommand extends AbstractTunnelHandler {
 
-	protected static final String CONTAINER = "container"; //$NON-NLS-1$
-
-	private IZendTarget target;
-	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String containerName = event.getParameter(CONTAINER);
-
-		if (containerName != null) {
-			target = TargetsManagerService.INSTANCE
-					.getContainerByName(containerName);
-		} else {
-			IEvaluationContext ctx = (IEvaluationContext) event
-					.getApplicationContext();
-			Object element = ctx.getDefaultVariable();
-			if (element instanceof List) {
-				List<?> list = (List<?>) element;
-				if (list.size() > 0) {
-					element = list.get(0);
-				}
-			}
-			if (element instanceof IZendTarget) {
-				target = (IZendTarget) element;
-			}
+		IZendTarget target = getTarget(event);
+		if (target != null) {
+			openTunnel(target);
 		}
-		if (target == null) {
-			throw new ExecutionException(NLS.bind(
-					Messages.OpenTunnelCommand_UnknownContainer, containerName));
-		}
-		NotificationManager.registerProgress(Messages.OpenTunnelCommand_Title,
-				Messages.OpenTunnelCommand_Message,
-				new IRunnableWithProgress() {
-
-					public void run(IProgressMonitor monitor)
-							throws InvocationTargetException,
-							InterruptedException {
-						monitor.beginTask(Messages.OpenTunnelCommand_Message,
-								IProgressMonitor.UNKNOWN);
-						openTunnel(target);
-						monitor.done();
-					}
-
-				}, false);
 		return null;
-	}
-
-	private boolean openTunnel(IZendTarget target) {
-		try {
-			State result = null;
-			if (TargetsManager.isPhpcloud(target)
-					|| TargetsManager.isOpenShift(target)) {
-				result = SSHTunnelManager.getManager().connect(target);
-			}
-			switch (result) {
-			case CONNECTED:
-				String message = MessageFormat.format(
-						Messages.OpenTunnelCommand_TunnelOpenedMessage,
-						target.getId());
-				NotificationManager.registerInfo(
-						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
-						4000);
-				break;
-			case CONNECTING:
-				message = MessageFormat.format(
-						Messages.OpenTunnelCommand_SuccessMessage,
-						target.getId());
-				NotificationManager.registerInfo(
-						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
-						4000);
-				break;
-			case NOT_SUPPORTED:
-				NotificationManager.registerWarning(
-						Messages.OpenTunnelCommand_OpenTunnelTitle,
-						Messages.OpenTunnelCommand_NotSupportedMessage, 4000);
-				break;
-			case ERROR:
-				message = MessageFormat.format(
-						Messages.DeploymentHandler_sshTunnelErrorTitle,
-						target.getId());
-				NotificationManager.registerError(
-						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
-						4000);
-			default:
-				break;
-			}
-			return true;
-		} catch (TunnelException e) {
-			Activator.log(e);
-			String message = e.getMessage();
-			NotificationManager.registerError(
-					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 5000);
-		} catch (JSchException e) {
-			Activator.log(e);
-			String message = MessageFormat.format(
-					Messages.DeploymentHandler_sshTunnelErrorTitle,
-					target.getId());
-			NotificationManager.registerError(
-					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 5000);
-		}
-		return false;
 	}
 
 }
