@@ -58,6 +58,8 @@ public class StartDebugModeHandler extends AbstractTunnelHandler {
 					}
 				}
 			});
+		} else {
+			startDebugMode(target);
 		}
 		return null;
 	}
