@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Zend Server Web API
 Bundle-SymbolicName: org.zend.webapi
 Bundle-Version: 0.0.23.qualifier
-Bundle-Vendor: Zend Technologies
+Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.zend.webapi.core;
   uses:="org.zend.webapi.core.service,
