@@ -15,7 +15,38 @@ The "Hello, World" example below shows how to launch your first application with
 
     # deploy the newly created application to the defined target
     $ zend deploy application
-    
+
+# Downloads
+<table>
+<tr>
+<td>
+Name
+</td>
+<td>
+Version
+</td>
+<td>
+Platforms
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+Zend SDK
+</td>
+<td>
+1.0.0
+</td>
+<td>
+Windows, Linux, Mac OS X
+</td>
+<td>
+<a href="http://downloads.zend.com/zendserver/sdk/zendserver-sdk-cli-1.0.0-bin.zip">download</a>
+</td>
+</tr>
+</table>
+
 # Installing Zend SDK
 This page describes how to install the Zend SDK and set up your development environment for the first time.
 
@@ -32,7 +63,7 @@ Before getting started with the Zend SDK, take a moment to confirm that your dev
 ## Install the SDK
 The SDK starter package is not a full development environment. It includes only the core SDK Tools, which you can use to set up local and remote application servers.
 
-If you haven't already, get the latest version of the SDK starter package from the main (SDK download page) - add a link to the package.
+If you haven't already, get the latest version of the SDK starter package from [there](http://downloads.zend.com/zendserver/sdk/zendserver-sdk-cli-1.0.0-bin.zip).
 
 After you downloaded a .zip or .tgz package , unpack it to a safe location on your machine. By default, the SDK files are unpacked into a directory named zend-sdk-<ver>
 
