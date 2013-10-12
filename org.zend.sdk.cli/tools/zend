@@ -21,7 +21,18 @@ fi
 prog=`dirname "$0"`
 
 #Get path to lib folder which consists all required jars
-libpath="${prog}/../lib/*"
+for f in archquery.jar org.eclipse.jgit_*.jar com.jcraft.jsch_*.jar \
+  org.eclipse.osgi_*.jar javax.xml_*.jar org.restlet_*.jar jboss-dmr-*.jar \
+  org.restlet.ext.httpclient_*.jar openshift-java-client-*.jar org.restlet.ext.ssl_*.jar \
+  org.apache.commons.cli_*.jar org.restlet.ext.xml_*.jar org.apache.commons.codec_*.jar \
+  org.apache.log4j_*.jar org.slf4j.api_*.jar org.apache.commons.codec_*.jar org.slf4j.jul_*.jar \
+  org.apache.commons.httpclient_*.jar org.slf4j.log4j_*.jar org.apache.commons.lang_*.jar \
+  org.zend.sdk-*.jar  org.zend.sdk.cli-*.jar \
+  org.apache.commons.logging_*.jar org.zend.webapi_*.jar org.apache.httpcomponents.httpclient_*.jar \
+  registry.jar org.apache.httpcomponents.httpcore_*.jar org.apache.xerces_*.jar \
+  org.apache.xml.resolver_*.jar ;do
+libpath="${libpath}:"`ls ${prog}/../lib/$f | head -1`
+done
 
 if [ $1 = "update" -a $# = 1 ] ; then
 exec "$java_cmd" -Xmx256M $os_opts -classpath "$jarpath:$libpath" org.zend.sdkcli.update.Update "${prog}/../"
