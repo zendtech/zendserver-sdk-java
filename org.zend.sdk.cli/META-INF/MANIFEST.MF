@@ -19,7 +19,7 @@ Export-Package: org.zend.sdkcli,
  org.zend.sdkhelp.repository,
  org.zend.sdkhelp.update,
  org.zend.sdkhelp.validation
-Require-Bundle: org.eclipse.jgit,
+Require-Bundle: org.eclipse.jgit;bundle-version="3.0.0",
  com.jcraft.jsch;visibility:=reexport,
  org.slf4j.api;visibility:=reexport,
  org.zend.sdk;visibility:=reexport,
