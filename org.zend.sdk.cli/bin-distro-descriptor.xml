@@ -11,6 +11,10 @@
 		<fileSet>
 			<directory>${project.build.directory}/repository/plugins</directory>
 			<outputDirectory>/lib</outputDirectory>
+			<excludes>
+				<exclude>org.apache.commons.codec_1.3.0.*.jar</exclude>
+				<exclude>org.apache.commons.logging_1.0.4.*.jar</exclude>
+			</excludes>
 			<includes>
 				<include>*.jar</include>
 			</includes>
