@@ -35,7 +35,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.jgit.feature.group" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorEgitAndJGit/8/artifact/mirrors/egit/target/repository/"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorEgitAndJGit/lastSuccessfulBuild/artifact/mirrors/egit/target/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.restlet.ext.ssl.feature.group" version="0.0.0"/>
