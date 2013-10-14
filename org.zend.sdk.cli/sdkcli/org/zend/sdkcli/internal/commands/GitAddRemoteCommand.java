@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -71,7 +71,7 @@ public class GitAddRemoteCommand extends AbstractCommand {
 						"Git repository is not available in provided location");
 				return false;
 			}
-			repo = new FileRepository(gitDir);
+			repo = FileRepositoryBuilder.create(gitDir);
 		} catch (IOException e) {
 			getLogger().error(e);
 			return false;
