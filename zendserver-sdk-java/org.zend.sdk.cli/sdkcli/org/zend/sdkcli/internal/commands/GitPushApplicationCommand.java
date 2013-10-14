@@ -27,7 +27,7 @@ import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
-import org.eclipse.jgit.storage.file.FileRepository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
@@ -98,7 +98,7 @@ public class GitPushApplicationCommand extends AbstractGitCommand {
 						"Git repository is not available in provided location");
 				return false;
 			}
-			repo = new FileRepository(getRepo());
+			repo = FileRepositoryBuilder.create(getRepo());
 		} catch (IOException e) {
 			getLogger().error(e);
 			return false;
