@@ -50,9 +50,9 @@ public class ZendTargetAutoDetect {
 	private static final String INSTALL_LOCATION = "InstallLocation";
 	private static final String USER_INI = "zend-server-user.ini";
 	private static final String NEED_TO_ELEVATE = "You need root privileges to run this script!";
-	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found"
-			+ "please refer to http://www.zend.com/server";
-	
+	private static final String MISSING_ZEND_SERVER = "Local Zend Server couldn't be found. Install it first before add it as a target."
+			+ "\nFor more details refer to http://www.zend.com/server.";
+
 	// linux key
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc";
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb";
