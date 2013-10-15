@@ -15,6 +15,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ApiKeyDetector;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
@@ -65,6 +66,12 @@ public class DetectTargetAction extends Action {
 		target = null;
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
 		try {
+			// TODO handle a case when server has older version - elevate + default detection
+			detectZendServer6(null);
+			if (target != null || status.getSeverity() == IStatus.CANCEL
+					|| status.getSeverity() == IStatus.ERROR) {
+				return;
+			}
 			// test if VirtualStore is enabled, and enforce elevated target
 			// creation,
 			// because non-elevated writes ZendServer configuration to
@@ -193,14 +200,25 @@ public class DetectTargetAction extends Action {
 
 	private void detectZendServer6(final String message)
 			throws DetectionException {
+		// check if Zend Server is available at all
+		try {
+			new ZendTargetAutoDetect();
+		} catch (IOException e) {
+			this.status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					e.getMessage(), e);
+			return;
+		}
 		ApiKeyDetector manager = new EclipseApiKeyDetector();
 		try {
-			manager.createApiKey(message);
-			TargetsManager tm = TargetsManagerService.INSTANCE
-					.getTargetManager();
-			this.status = Status.OK_STATUS;
-			target = tm.detectLocalhostTarget(null, manager.getKey(),
-					manager.getSecretKey());
+			if (manager.createApiKey(message)) {
+				TargetsManager tm = TargetsManagerService.INSTANCE
+						.getTargetManager();
+				this.status = Status.OK_STATUS;
+				target = tm.detectLocalhostTarget(null, manager.getKey(),
+						manager.getSecretKey());
+			} else {
+				status = Status.CANCEL_STATUS;
+			}
 		} catch (InvalidCredentialsException e) {
 			detectZendServer6("Provided credentials are not valid."); //$NON-NLS-1$
 		} catch (SdkException e) {
