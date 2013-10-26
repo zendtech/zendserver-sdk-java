@@ -173,7 +173,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 						getLogger()
 								.info(MessageFormat
 										.format("Cannot add target with {0} host. Target with such host already exists"
-												+ "and it will be updated.",
+												+ " and it will be updated.",
 												target.getHost().toString()));
 						//if there is a duplicate, change the id to properly display it to the console.
 						id = existingTarget.getId();
