@@ -173,7 +173,7 @@ public class AddTargetCommand extends TargetAwareCommand {
 								.error(MessageFormat
 										.format("Cannot add target with {0} host. Target with such host already exists.",
 												target.getHost().toString()));
-						return false;
+						continue;
 					}
 				}
 				if (target != null) {
