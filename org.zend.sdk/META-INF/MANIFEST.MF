@@ -42,8 +42,8 @@ Export-Package: com.ice.jni.registry,
  org.zend.sdklib.repository,
  org.zend.sdklib.repository.site,
  org.zend.sdklib.target
-Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
-    lib/x86_64/ICE_JNIRegistry.dll; processor=x86_64; osname=win32, *
+Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; selection-filter="(&(osgi.arch=x86)(osgi.os=win32))",
+    lib/x86_64/ICE_JNIRegistry.dll; selection-filter="(&(osgi.arch=x86_64)(osgi.os=win32))", *
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
  lib/registry.jar,

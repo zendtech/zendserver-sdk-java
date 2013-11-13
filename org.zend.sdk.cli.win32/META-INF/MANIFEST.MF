@@ -9,6 +9,6 @@ Bundle-ClassPath: lib/x86/,
  lib/x86_64/,
  lib/registry.jar,
  .
-Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; processor=x86; osname=win32,
-    lib/x86_64/ICE_JNIRegistry.dll; processor=x86_64; osname=win32, *
+Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; selection-filter="(&(osgi.arch=x86)(osgi.os=win32))",
+    lib/x86_64/ICE_JNIRegistry.dll; selection-filter="(&(osgi.arch=x86_64)(osgi.os=win32))", *
 
