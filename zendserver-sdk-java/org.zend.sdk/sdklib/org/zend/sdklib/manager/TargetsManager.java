@@ -341,7 +341,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 				WebApiException webE = (WebApiException) cause;
 				final ResponseCode responseCode = webE.getResponseCode();
 				if (local != null
-						&& (responseCode == ResponseCode.UNKNOWN_METHOD || responseCode == ResponseCode.PAGE_NOT_FOUND)) {
+						&& (responseCode == null
+								|| responseCode == ResponseCode.UNKNOWN_METHOD || responseCode == ResponseCode.PAGE_NOT_FOUND)) {
 					// try to repeat for zs6
 					try {
 						local.connect(WebApiVersion.V1_3,
