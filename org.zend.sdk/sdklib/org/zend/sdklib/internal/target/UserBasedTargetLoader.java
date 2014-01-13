@@ -190,7 +190,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		targets = sortTargets(targets);
 		for (File file : targets) {
 			final TargetDescriptor d = loadTargetDescriptor(file);
-			if (d.isValid()) {
+			if (d != null && d.isValid()) {
 				File confFile = new File(d.path, CONF_FILENAME);
 				try {
 					InputStream is = new FileInputStream(confFile);
