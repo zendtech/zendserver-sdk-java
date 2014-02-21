@@ -10,7 +10,7 @@
   <modules>
 		<module>../zendserver-webapi-java/org.zend.webapi.releng</module>
 		<module>../zendserver-sdk-java/org.zend.sdk.releng</module>
-		<module>../zendserver-deployment-eclipse/deployment-releng</module>
+		<!--module>../zendserver-deployment-eclipse/deployment-releng</module-->
 		<module>../zendserver-updatesite</module>
   </modules>
   
