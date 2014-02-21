@@ -6,7 +6,12 @@
   <artifactId>deployment-releng</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
- 
+ <parent>
+    <groupId>org.zend</groupId>
+    <artifactId>zendserver-releng</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../zendserver-releng/pom.xml</relativePath>
+  </parent>
   <modules>
     <module>../org.zend.php.zendserver.deployment-feature</module>
     <module>../org.zend.php.zendserver.deployment.all</module>
@@ -19,68 +24,5 @@
     <module>../org.zend.php.zendserver.deployment.ui</module>
     <module>../org.zend.php.zendserver.monitor.core</module>
     <module>../org.zend.php.zendserver.monitor.ui</module>
-    <module>../org.zend.php.zendserver.deployment-updatesite</module>
   </modules>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.17.0</version>
-        <extensions>true</extensions>
-      </plugin>
-	<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>0.17.0</version>
-				<configuration>
-					<environments>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86_64</arch>
-						</environment>
-					</environments>
-					<target>
-						<artifact>
-							<groupId>org.zend</groupId>
-							<artifactId>deployment-releng</artifactId>
-							<version>0.0.1-SNAPSHOT</version>
-							<classifier>deployment-releng</classifier>
-						</artifact>
-					</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>0.17.0</version>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-				</configuration>
-			</plugin>
-    </plugins>
-  </build>
 </project>

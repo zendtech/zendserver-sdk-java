@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='3'>
+  <unit id='201402211107.zendserver.deployment' version='1.0.0.6--cKGVCA7MAGYAMMGGGAq'>
+    <properties size='2'>
+      <property name='org.eclipse.equinox.p2.name' value='Zend Server Deployment Eclipse'/>
+      <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+    </properties>
+    <provides size='1'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='201402211107.zendserver.deployment' version='1.0.0.6--cKGVCA7MAGYAMMGGGAq'/>
+    </provides>
+    <requires size='3'>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.zend.php.zendserver.deployment.feature.group' range='[1.0.0.201402211107,1.0.0.201402211107]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.zend.php.zendserver.deployment.all.feature.group' range='[1.0.0.201402211107,1.0.0.201402211107]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.zend.php.zendserver.deployment.debug.feature.group' range='[1.0.0.201402211107,1.0.0.201402211107]'/>
+    </requires>
+    <touchpoint id='null' version='0.0.0'/>
+  </unit>
+  <unit id='201402211107.org.zend.sdk' version='1.0.0.2--cKG2nh7735A3775553G'>
+    <properties size='2'>
+      <property name='org.eclipse.equinox.p2.name' value='SDK'/>
+      <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+    </properties>
+    <provides size='1'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='201402211107.org.zend.sdk' version='1.0.0.2--cKG2nh7735A3775553G'/>
+    </provides>
+    <requires size='1'>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.zend.sdk.feature.feature.group' range='[1.0.0.201402211107,1.0.0.201402211107]'/>
+    </requires>
+    <touchpoint id='null' version='0.0.0'/>
+  </unit>
+  <unit id='201402211107.org.zend.webapi' version='1.0.0.2--cKKtnh7735A3775553G'>
+    <properties size='2'>
+      <property name='org.eclipse.equinox.p2.name' value='WebApi'/>
+      <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+    </properties>
+    <provides size='1'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='201402211107.org.zend.webapi' version='1.0.0.2--cKKtnh7735A3775553G'/>
+    </provides>
+    <requires size='1'>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.zend.webapi.feature.feature.group' range='[1.0.0.201402211107,1.0.0.201402211107]'/>
+    </requires>
+    <touchpoint id='null' version='0.0.0'/>
+  </unit>
+</units>

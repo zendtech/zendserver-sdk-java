@@ -6,100 +6,22 @@
 	<artifactId>org.zend.sdk.releng</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
-
-	<properties>
-		<tycho-version>0.18.1</tycho-version>
-	</properties>
-
+<parent>
+    <groupId>org.zend</groupId>
+    <artifactId>zendserver-releng</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../zendserver-releng/pom.xml</relativePath>
+  </parent>
 	<modules>
 		<module>../org.zend.sdk</module>
 		<module>../org.zend.sdk.win32</module>
 		<module>../org.zend.sdk.cli</module>
 		<module>../org.zend.sdk.cli.win32</module>
-		<module>../org.zend.sdk.update-site</module>
 		<module>../org.zend.sdk.tests</module>
 		<module>../org.zend.sdk.cli.tests</module>
 		<module>../org.zend.sdk.feature</module>
-		<module>../org.zend.sdk.buildtarget</module>
 	</modules>
 
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<id>parse-version</id>
-						<goals>
-							<goal>parse-version</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<target>
-						<artifact>
-							<groupId>com.zend</groupId>
-							<artifactId>org.zend.sdk.buildtarget</artifactId>
-							<version>1.0.1-SNAPSHOT</version>
-							<classifier>org.zend.sdk.buildtarget</classifier>
-						</artifact>
-					</target>
-					<environments>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86_64</arch>
-						</environment>
-					</environments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<profiles>
 		<profile>
 			<id>sign</id>

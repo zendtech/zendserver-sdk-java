@@ -6,53 +6,18 @@
 	<artifactId>org.zend.webapi.releng</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
-
-	<properties>
-		<tycho-version>0.17.0</tycho-version>
-	</properties>
+<parent>
+    <groupId>org.zend</groupId>
+    <artifactId>zendserver-releng</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../zendserver-releng/pom.xml</relativePath>
+  </parent>
 	<modules>
 		<module>../org.zend.webapi</module>
-		<module>../org.zend.webapi.update-site</module>
 		<module>../org.zend.webapi.tests</module>
 		<module>../org.zend.webapi.feature</module>
 		<module>../org.zend.webapi.tests.feature</module>
-		<module>../org.zend.webapi.buildtarget</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<target>
-						<artifact>
-							<groupId>com.zend</groupId>
-							<artifactId>org.zend.webapi.buildtarget</artifactId>
-							<version>2.0.0-SNAPSHOT</version>
-							<classifier>org.zend.webapi.buildtarget</classifier>
-						</artifact>
-					</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<profiles>
 		<profile>
 			<id>sign</id>

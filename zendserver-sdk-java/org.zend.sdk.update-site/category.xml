@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.zend.sdk.feature_1.0.0.qualifier.jar" id="org.zend.sdk.feature" version="1.0.0.qualifier">
-      <category name="org.zend.sdk"/>
-   </feature>
-   <category-def name="org.zend.sdk" label="SDK"/>
-</site>
