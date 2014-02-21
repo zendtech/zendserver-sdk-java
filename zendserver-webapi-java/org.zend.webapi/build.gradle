@@ -1,0 +1,135 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply from:"file:emma.gradle"
+
+sourceCompatibility = getBuildProperty('source')
+version = getBuildProperty('webapi.version')
+
+srcFolder = 'src'
+testFolder = 'test'
+
+repositories {
+	mavenCentral()
+	maven {
+		url "http://maven.restlet.org"
+	}
+}
+
+defaultTasks 'clean', 'build', 'javadoc', 'createTestJar', 'createBinPackage', 'createSrcPackage'
+
+sourceSets {
+	main {
+		java {
+			srcDir srcFolder
+		}
+	}
+	test {
+		java {
+			srcDir testFolder
+		}
+		resources {
+			srcDir testFolder
+		}
+	}
+}
+
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.+'
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.5'
+	compile group: 'org.restlet.jse', name: 'org.restlet', version: '2.0.4'
+	compile group: 'org.restlet.jse', name: 'org.restlet.ext.xml', version: '2.0.4'
+}
+
+eclipse {
+	classpath.downloadSources = false
+	classpath.file {
+		whenMerged {classpath ->
+			classpath.entries.unique { a, b -> a.kind.equals(b.kind) && a.path.equals(b.path) ? 0 : 1 }
+		}
+	}
+}
+
+test {
+	scanForTestClasses = false
+	include '**/*AllTests.class'
+}
+
+jar {
+	archiveName = project.rootProject.name + '.jar'
+	manifest {
+		from ('META-INF/MANIFEST.MF') {
+			eachEntry { attribute ->
+				if (attribute.key == 'Bundle-Version') {
+					attribute.value = version
+				}
+			}
+		}
+	}
+}
+
+task createTestJar(type: Jar) {
+	archiveName = project.rootProject.name + '.test.jar'
+	from sourceSets.test.output
+	from testFolder
+	exclude '**/*.java'
+	exclude '**/.svnignore'
+	exclude '**/.svn'
+}
+
+task createSourceJar(type: Jar) {
+	archiveName = project.rootProject.name + '-sources.jar'
+	from sourceSets.main.allSource
+}
+
+task createJavadocJar(type: Jar, dependsOn:javadoc) {
+	archiveName = project.rootProject.name + '-javadoc.jar'
+	from javadoc.destinationDir
+}
+
+task createBinPackage(type: Zip) {
+	archiveName = project.rootProject.name + '-' + version + '-bin.zip'
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('examples') {
+		from 'examples'
+	}
+	into('.') {
+		from project.rootDir.path + File.separator + 'docs'
+	}
+}
+
+task createSrcPackage(type: Zip) {
+	into('lib') {
+		from project.libsDir
+		from configurations.compile
+	}
+	into('src') {
+		from srcFolder
+	}
+	into('test') {
+		from testFolder
+	}
+	into('junit') {
+		from project.testReportDir
+		from project.testResultsDir
+	}
+	into('docs') {
+		from project.docsDir
+	}
+	into('examples') {
+		from 'examples'
+	}
+	into('.') {
+		from project.rootDir.path + File.separator + 'docs'
+	}
+}
+
+String getBuildProperty(String name) {
+	props = new Properties()
+	new File('artifacts.properties').withInputStream {
+	  stream -> props.load(stream)
+	}
+	return props[name]
+}

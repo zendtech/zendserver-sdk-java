@@ -1,0 +1,12 @@
+Content-Type: multipart/form-data; boundary=--bla-bla-bla--
+
+----bla-bla-bla--
+Content-Disposition: form-data; name=ignoreSystemMismatch
+
+TRUE
+----bla-bla-bla--
+Content-Disposition: form-data; name=configFile; filename=%filename%
+Content-Type: application/vnd.zend.serverconfig
+
+[...binary data follows...]
+----bla-bla-bla----

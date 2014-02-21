@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.zend.webapi</artifactId>
+	<version>0.0.23-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
+	<parent>
+		<groupId>com.zend</groupId>
+		<artifactId>org.zend.webapi.releng</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../org.zend.webapi.releng</relativePath>
+	</parent>
+
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>packages</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<id>parse-version</id>
+								<goals>
+									<goal>parse-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.6</version>
+						<executions>
+							<execution>
+								<id>copy-dependencies</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.4</version>
+						<configuration>
+							<descriptors>
+								<descriptor>bindistro-descriptor.xml</descriptor>
+								<descriptor>full-distro-descriptor.xml</descriptor>
+							</descriptors>
+							<finalName>zendserver-webapi-java-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</finalName>
+							<outputDirectory>${project.build.directory}/distros</outputDirectory>
+							<workDirectory>target/assembly/work</workDirectory>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<!-- build> <sourceDirectory>${project.basedir}/src</sourceDirectory> <testSourceDirectory>${project.basedir}/test</testSourceDirectory> 
+		<finalName>${project.name}</finalName> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-jar-plugin</artifactId> <version>2.2</version> <executions> 
+		<execution> <id>a2</id> <goals> <goal>jar</goal> </goals> </execution> </executions> 
+		</plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+		<version>2.2</version> <executions> <execution> <id>a1</id> <goals> <goal>test-jar</goal> 
+		</goals> </execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-dependency-plugin</artifactId> <version>2.7</version> <executions> 
+		<execution> <id>copy-dependencies</id> <phase>package</phase> <goals> <goal>copy-dependencies</goal> 
+		</goals> <configuration> <outputDirectory>${project.build.directory}</outputDirectory> 
+		<overWriteReleases>false</overWriteReleases> <overWriteSnapshots>false</overWriteSnapshots> 
+		<overWriteIfNewer>true</overWriteIfNewer> </configuration> </execution> </executions> 
+		</plugin> <plugin> <artifactId>maven-assembly-plugin</artifactId> <version>2.4</version> 
+		<configuration> <descriptors> <descriptor>bindistro-descriptor.xml</descriptor> 
+		<descriptor>full-distro-descriptor.xml</descriptor> </descriptors> <finalName>org.zend.webapi-${project.version}</finalName> 
+		<outputDirectory>${project.build.directory}/output/distro</outputDirectory> 
+		<workDirectory>target/assembly/work</workDirectory> </configuration> <executions> 
+		<execution> <id>make-assembly</id> <phase>package</phase> <goals> <goal>single</goal> 
+		</goals> </execution> </executions> </plugin> </plugins> </build -->
+</project>

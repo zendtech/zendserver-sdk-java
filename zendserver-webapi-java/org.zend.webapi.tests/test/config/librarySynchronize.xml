@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libraryList>
+	<libraryInfo>
+		<libraryId>8</libraryId>
+		<libraryName>library</libraryName>
+		<status>staging</status>
+		<libraryVersions>
+			<libraryVersion>
+				<libraryVersionId>8</libraryVersionId>
+				<version>1.0.0</version>
+				<status>staging</status>
+				<installedLocation><![CDATA[]]>
+				</installedLocation>
+				<isDefinedLibrary></isDefinedLibrary>
+				<creationTime>2013-05-07T13:51:24+02:00</creationTime>
+				<creationTimeTimestamp>1367927484</creationTimeTimestamp>
+				<servers>
+					<libraryServer>
+						<id>0</id>
+						<status>staging</status>
+						<lastMessage><![CDATA[]]>
+						</lastMessage>
+						<lastUpdatedTimestamp>1367927484</lastUpdatedTimestamp>
+					</libraryServer>
+				</servers>
+			</libraryVersion>
+		</libraryVersions>
+	</libraryInfo>
+</libraryList>
