@@ -40,18 +40,25 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
 		app.setVariableResolver(new EclipseVariableResolver());
+		List<IDeploymentContribution> contributions = getContributions();
+		IStatus status = null;
+		for (IDeploymentContribution c : contributions) {
+			status = c.performBefore(monitor, helper);
+			if (status.getSeverity() != IStatus.OK) {
+				return status;
+			}
+		}
 		ApplicationInfo info = performOperation(app, projectPath);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
 		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
-			List<IDeploymentContribution> contributions = getContributions();
-			IStatus status = monitorApplicationStatus(listener,
+			status = monitorApplicationStatus(listener,
 					helper.getTargetId(), info.getId(), app, monitor);
 			if (status.getSeverity() == IStatus.OK) {
 				for (IDeploymentContribution c : contributions) {
-					status = c.performOperation(monitor, helper);
+					status = c.performAfter(monitor, helper);
 					if (status.getSeverity() != IStatus.OK) {
 						return status;
 					}

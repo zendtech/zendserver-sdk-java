@@ -20,6 +20,22 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
  */
 public interface IDeploymentContribution {
 
-	IStatus performOperation(IProgressMonitor monitor, IDeploymentHelper helper);
+	/**
+	 * Perform operation before application is deployed.
+	 * 
+	 * @param monitor
+	 * @param helper
+	 * @return status of performed operation
+	 */
+	IStatus performAfter(IProgressMonitor monitor, IDeploymentHelper helper);
+	
+	/**
+	 * Perform operation before application is deployed.
+	 * 
+	 * @param monitor
+	 * @param helper
+	 * @return status of performed operation
+	 */
+	IStatus performBefore(IProgressMonitor monitor, IDeploymentHelper helper);
 	
 }
