@@ -1,0 +1,535 @@
+SMTP,localhost,PHP_INI_ALL,
+allow_call_time_pass_reference,1,PHP_INI_PERDIR,PHP_INI_ALL in PHP 4.0.0. Removed in PHP 5.4.0;,allow_url_fopen,1,PHP_INI_ALL,PHP_INI_ALL in PHP &lt;= 4.3.4;,,allow_url_include,0,PHP_INI_ALL,PHP_INI_SYSTEM in PHP 5. Available since PHP 5.2.0;,,always_populate_raw_post_data,0,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3. Available since PHP 4.1.0;,,apc.cache_by_default,1,PHP_INI_ALL,PHP_INI_SYSTEM in APC &lt;= 3.0.12. Available since APC 3.0.0;,,apc.enabled,1,PHP_INI_SYSTEM,PHP_INI_SYSTEM in APC 2. PHP_INI_ALL in APC &lt;= 3.0.12;,,apc.enable_cli,0,PHP_INI_SYSTEM,Available since APC 3.0.7;,,apc.file_update_protection,2,PHP_INI_SYSTEM,Available since APC 3.0.6;,,apc.filters,NULL,PHP_INI_SYSTEM,;,,apc.gc_ttl,3600,PHP_INI_SYSTEM,;,,apc.include_once_override,0,PHP_INI_SYSTEM,Available since APC 3.0.12;,,apc.localcache,0,PHP_INI_SYSTEM,Available since APC 3.0.14;,,apc.localcache.size,512,PHP_INI_SYSTEM,Available since APC 3.0.14;,,apc.max_file_size,1M,PHP_INI_SYSTEM,Available since APC 3.0.7;,,apc.mmap_file_mask,NULL,PHP_INI_SYSTEM,;,,apc.num_files_hint,1000,PHP_INI_SYSTEM,;,,apc.optimization,0,PHP_INI_ALL,PHP_INI_SYSTEM in APC 2. Removed in APC 3.0.13;,,apc.report_autofilter,0,PHP_INI_SYSTEM,Available since APC 3.0.11;,,apc.rfc1867,0,PHP_INI_SYSTEM,Available since APC 3.0.13;,,apc.rfc1867_freq,0,PHP_INI_SYSTEM,;,,apc.rfc1867_name,APC_UPLOAD_PROGRESS,PHP_INI_SYSTEM,;,,apc.rfc1867_prefix,upload_,PHP_INI_SYSTEM,;,,apc.shm_segments,1,PHP_INI_SYSTEM,;,,apc.shm_size,30,PHP_INI_SYSTEM,;,,apc.slam_defense,0,PHP_INI_SYSTEM,Available since APC 3.0.0;,,apc.stat,1,PHP_INI_SYSTEM,Available since APC 3.0.10;,,apc.stat_ctime,0,PHP_INI_SYSTEM,Available since APC 3.0.13;,,apc.ttl,0,PHP_INI_SYSTEM,Available since APC 3.0.0;,,apc.user_entries_hint,4096,PHP_INI_SYSTEM,Available since APC 3.0.0;,,apc.user_ttl,0,PHP_INI_SYSTEM,Available since APC 3.0.0;,,apc.write_lock,1,PHP_INI_SYSTEM,Available since APC 3.0.11;,,apd.bitmask,0,PHP_INI_ALL,Removed in apd 0.9;,,apd.dumpdir,NULL,PHP_INI_ALL,;,,apd.statement_tracing,0,PHP_INI_ALL,Available since apd 0.9;,,arg_separator,&amp;,PHP_INI_ALL,Removed in PHP 4.0.6;,,arg_separator.input,&amp;,PHP_INI_PERDIR,Available since PHP 4.0.5;,,arg_separator.output,&amp;,PHP_INI_ALL,Available since PHP 4.0.5;,,asp_tags,0,PHP_INI_PERDIR,PHP_INI_ALL in PHP 4.0.0;,,assert.active,1,PHP_INI_ALL,;,,assert.bail,0,PHP_INI_ALL,;,,assert.callback,NULL,PHP_INI_ALL,;,,assert.quiet_eval,0,PHP_INI_ALL,;,,assert.warning,1,PHP_INI_ALL,
+async_send,0,PHP_INI_ALL,Available since PHP 4.2.0. Removed in PHP 4.3.0
+auto_append_file,NULL,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3
+auto_detect_line_endings,0,PHP_INI_ALL,Available since PHP 4.3.0
+auto_globals_jit,1,PHP_INI_PERDIR,Available since PHP 5.0.0
+auto_prepend_file,NULL,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3
+axis2.client_home,~/work/axisc/c/deply,PHP_INI_ALL,
+axis2.enable_exception,1,PHP_INI_ALL,
+axis2.enable_trace,1,PHP_INI_ALL,
+axis2.log_path,/tmp,PHP_INI_ALL,
+bcmath.scale,0,PHP_INI_ALL,
+bcompiler.enabled,1,PHP_INI_ALL,Available since bcompiler 0.8
+birdstep.max_links,-1,PHP_INI_ALL,Available since PHP 4.2.0
+blenc.key_file,/usr/local/etc/blenckeys,PHP_INI_ALL,
+browscap,NULL,PHP_INI_SYSTEM,
+cgi.check_shebang_line,1,PHP_INI_SYSTEM,Available since PHP 5.2.1
+cgi.discard_path,0,PHP_INI_SYSTEM,Available since PHP 5.3.0
+cgi.fix_pathinfo,1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 5.2.0. Available since PHP 4.3.0
+cgi.force_redirect,1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 5.2.0. Available since PHP 4.2.0
+cgi.nph,0,PHP_INI_ALL,Available since PHP 4.3.5
+cgi.redirect_status_env,NULL,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 5.2.0. Available since PHP 4.2.0
+cgi.rfc2616_headers,0,PHP_INI_ALL,Available since PHP 4.3.0
+child_terminate,0,PHP_INI_ALL,Available since PHP 4.0.5
+cli.pager,,PHP_INI_ALL,Available since PHP 5.4.0
+cli.prompt,\\b \\>; ,PHP_INI_ALL,Available since PHP 5.4.0
+coin_acceptor.auto_initialize,Off,PHP_INI_ALL,Available since coin_acceptor 0.2
+coin_acceptor.auto_reset,On,PHP_INI_ALL,Available since coin_acceptor 0.2
+coin_acceptor.autoreset,On,PHP_INI_ALL,Removed in coin_acceptor 0.2
+coin_acceptor.command_function,Off,PHP_INI_ALL,Available since coin_acceptor 0.3
+coin_acceptor.delay,53132,PHP_INI_ALL,Removed in coin_acceptor 0.2
+coin_acceptor.delay_coins,53132,PHP_INI_ALL,Available since coin_acceptor 0.2
+coin_acceptor.delay_prom,55748,PHP_INI_ALL,Available since coin_acceptor 0.2
+coin_acceptor.device,/dev/ttyS1,PHP_INI_ALL,Removed in coin_acceptor 0.2
+coin_acceptor.lock_on_close,Off,PHP_INI_ALL,Available since coin_acceptor 0.2
+coin_acceptor.start_unlocked,On,PHP_INI_ALL,Available since coin_acceptor 0.2
+com.allow_dcom,0,PHP_INI_SYSTEM,Available since PHP 4.0.5
+com.autoregister_casesensitive,1,PHP_INI_ALL,PHP_INI_SYSTEM in PHP 4. Available since PHP 4.1.0
+com.autoregister_typelib,0,PHP_INI_ALL,PHP_INI_SYSTEM in PHP 4. Available since PHP 4.1.0
+com.code_page,,PHP_INI_ALL,Available since PHP 5.0.0
+com.typelib_file,,PHP_INI_SYSTEM,Available since PHP 4.0.5
+crack.default_dictionary,NULL,PHP_INI_PERDIR,PHP_INI_SYSTEM in crack &lt;= 0.2. Available since PHP 4.0.5. Removed in PHP 5.0.0
+daffodildb.default_host,localhost,PHP_INI_ALL,;/td>
+daffodildb.default_password,daffodil,PHP_INI_ALL,
+daffodildb.default_socket,NULL,PHP_INI_ALL,
+daffodildb.default_user,DAFFODIL,PHP_INI_ALL,
+daffodildb.port,3456,PHP_INI_ALL,
+date.default_latitude,31.7667,PHP_INI_ALL,Available since PHP 5.0.0
+date.default_longitude,35.2333,PHP_INI_ALL,Available since PHP 5.0.0
+date.sunrise_zenith,90.583333,PHP_INI_ALL,Available since PHP 5.0.0
+date.sunset_zenith,90.583333,PHP_INI_ALL,Available since PHP 5.0.0
+date.timezone,,PHP_INI_ALL,Available since PHP 5.1.0
+dba.default_handler,,PHP_INI_ALL,Available since PHP 4.3.3
+dbx.colnames_case,unchanged,PHP_INI_SYSTEM,Available since PHP 4.3.0. Removed in PHP 5.1.0
+default_charset,,PHP_INI_ALL,
+default_mimetype,text/html,PHP_INI_ALL,
+default_socket_timeout,60,PHP_INI_ALL,Available since PHP 4.3.0
+define_syslog_variables,0,PHP_INI_ALL,Removed in PHP 5.4.0
+detect_unicode,1,PHP_INI_ALL,Available since PHP 5.1.0. This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+disable_classes,,,Available since PHP 4.3.2
+disable_functions,,,Available since PHP 4.0.1
+display_errors,1,PHP_INI_ALL,
+display_startup_errors,0,PHP_INI_ALL,Available since PHP 4.0.3
+doc_root,NULL,PHP_INI_SYSTEM,
+docref_ext,,PHP_INI_ALL,Available since PHP 4.3.2
+docref_root,,PHP_INI_ALL,Available since PHP 4.3.0
+enable_dl,1,PHP_INI_SYSTEM,This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+engine,1,PHP_INI_ALL,Available since PHP 4.0.5
+error_append_string,NULL,PHP_INI_ALL,
+error_log,NULL,PHP_INI_ALL,
+error_prepend_string,NULL,PHP_INI_ALL,
+error_reporting,NULL,PHP_INI_ALL,
+etpan.default.charset,utf-8,PHP_INI_ALL,
+etpan.default.protocol,imap,PHP_INI_ALL,
+exif.decode_jis_intel,JIS,PHP_INI_ALL,Available since PHP 4.3.0
+exif.decode_jis_motorola,JIS,PHP_INI_ALL,Available since PHP 4.3.0
+exif.decode_unicode_intel,UCS-2LE,PHP_INI_ALL,Available since PHP 4.3.0
+exif.decode_unicode_motorola,UCS-2BE,PHP_INI_ALL,Available since PHP 4.3.0
+exif.encode_jis,,PHP_INI_ALL,Available since PHP 4.3.0
+exif.encode_unicode,ISO-8859-15,PHP_INI_ALL,Available since PHP 4.3.0
+expect.logfile,,PHP_INI_ALL,
+expect.loguser,1,PHP_INI_ALL, <td class="empty">nbsp
+expect.timeout,10,PHP_INI_ALL,
+expose_php,1,,
+extension,NULL,,
+extension_dir,/path/to/php,PHP_INI_SYSTEM,
+fastcgi.impersonate,0,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 5.2.0. Available since PHP 4.3.0
+fastcgi.logging,1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 5.2.0. Available since PHP 4.4.0
+fbsql.allow_persistant,1,PHP_INI_SYSTEM,Available since PHP 4.0.6. Removed in PHP 4.2.0
+fbsql.allow_persistent,1,PHP_INI_SYSTEM,Available since PHP 4.2.0
+fbsql.autocommit,1,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.batchSize,1000,PHP_INI_SYSTEM,Available since PHP 4.2.0. Removed in PHP 5.1.0
+fbsql.batchsize,1000,PHP_INI_ALL,Available since PHP 5.1.0
+fbsql.default_database,,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.default_database_password,,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.default_host,NULL,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.default_password,,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.default_user,_SYSTEM,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.generate_warnings,0,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.max_connections,128,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.max_links,128,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.max_persistent,-1,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.max_results,128,PHP_INI_SYSTEM,Available since PHP 4.0.6
+fbsql.mbatchSize,1000,PHP_INI_SYSTEM,Available since PHP 4.0.6. Removed in PHP 4.2.0
+fbsql.show_timestamp_decimals,0,PHP_INI_SYSTEM,Available since PHP 5.1.5
+file_uploads,1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 4.2.3. Available since PHP 4.0.3
+filter.default,unsafe_raw,PHP_INI_PERDIR,PHP_INI_ALL in filter &lt;= 0.9.4. Available since PHP 5.2.0
+filter.default_flags,NULL,PHP_INI_PERDIR,PHP_INI_ALL in filter &lt;= 0.9.4. Available since PHP 5.2.0
+from,,PHP_INI_ALL,
+gd.jpeg_ignore_warning,0,PHP_INI_ALL,Available since PHP 5.1.3
+geoip.custom_directory,NULL,PHP_INI_ALL,Available since geoip 1.0.1
+geoip.database_standard,GeoIP.dat,PHP_INI_ALL,Removed in geoip 1.0.1
+gpc_order,GPC,PHP_INI_ALL,Removed in PHP 5.0.0
+hidef.ini_path,(char*)default_ini_path,PHP_INI_SYSTEM,
+highlight.bg</a>/td>,#FFFFFF,PHP_INI_ALL,Removed in PHP 5.4.0
+highlight.comment,#FF8000,PHP_INI_ALL,
+highlight.default,#0000BB,PHP_INI_ALL,
+highlight.html,#000000,PHP_INI_ALL,
+highlight.keyword,#007700,PHP_INI_ALL,
+highlight.string,#DD0000,PHP_INI_ALL,
+html_errors,1,PHP_INI_ALL,PHP_INI_SYSTEM in PHP &lt;= 4.2.3. Available since PHP 4.0.2
+htscanner.config_file,.htaccess,PHP_INI_SYSTEM,
+htscanner.default_docroot,/,PHP_INI_SYSTEM,
+htscanner.default_ttl,300,PHP_INI_SYSTEM,Available since htscanner 0.6.0
+htscanner.stop_on_error,0,PHP_INI_SYSTEM,Available since htscanner 0.7.0
+http.allowed_methods,,PHP_INI_ALL,Available since pecl_http 0.4.0. Removed in pecl_http 1.0.0
+http.allowed_methods_log,,PHP_INI_ALL,Available since pecl_http 0.12.0. Removed in pecl_http 1.0.0
+http.cache_log,,PHP_INI_ALL,Available since pecl_http 0.8.0. Removed in pecl_http 1.0.0
+http.composite_log,,PHP_INI_ALL,Available since pecl_http 0.12.0. Removed in pecl_http 1.0.0
+http.etag.mode,MD5,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.etag_mode,MD5,PHP_INI_ALL,Available since pecl_http 0.12.0. Removed in pecl_http 1.0.0
+http.force_exit,1,PHP_INI_ALL,Available since pecl_http 0.18.0
+http.log.allowed_methods,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.log.cache,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.log.composite,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.log.not_found,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.log.redirect,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.ob_deflate_auto,0,PHP_INI_PERDIR,Available since pecl_http 0.21.0. Removed in pecl_http 1.0.0
+http.ob_deflate_flags,0,PHP_INI_ALL,Available since pecl_http 0.21.0. Removed in pecl_http 1.0.0
+http.ob_inflate_auto,0,PHP_INI_PERDIR,Available since pecl_http 0.21.0. Removed in pecl_http 1.0.0
+http.ob_inflate_flags,0,PHP_INI_ALL,Available since pecl_http 0.21.0. Removed in pecl_http 1.0.0
+http.only_exceptions,0,PHP_INI_ALL,Available since pecl_http 0.11.0
+http.persistent.handles.ident,GLOBAL,PHP_INI_ALL,Available since pecl_http 1.5.0
+http.persistent.handles.limit,-1,PHP_INI_SYSTEM,Available since pecl_http 1.5.0
+http.redirect_log,,PHP_INI_ALL,Available since pecl_http 0.12.0. Removed in pecl_http 1.0.0
+http.request.datashare.connect,0,PHP_INI_SYSTEM,Available since pecl_http 1.3.0
+http.request.datashare.cookie,0,PHP_INI_SYSTEM,Available since pecl_http 1.3.0
+http.request.datashare.dns,1,PHP_INI_SYSTEM,Available since pecl_http 1.3.0
+http.request.datashare.ssl,0,PHP_INI_SYSTEM,Available since pecl_http 1.3.0
+http.request.methods.allowed,,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.request.methods.custom,,PHP_INI_PERDIR,Available since pecl_http 1.0.0
+http.send.deflate.start_auto,0,PHP_INI_PERDIR,Available since pecl_http 1.0.0
+http.send.deflate.start_flags,0,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.send.inflate.start_auto,0,PHP_INI_PERDIR,Available since pecl_http 1.0.0
+http.send.inflate.start_flags,0,PHP_INI_ALL,Available since pecl_http 1.0.0
+http.send.not_found_404,1,PHP_INI_ALL,Available since pecl_http 1.0.0
+hyerwave.allow_persistent,0,PHP_INI_SYSTEM,Removed in PHP 4.3.2
+hyperwave.allow_persistent,0,PHP_INI_SYSTEM,Available since PHP 4.3.2. Removed in PHP 5.0.0
+hyperwave.default_port,418,PHP_INI_ALL,Removed in PHP 5.0.0
+ibase.allow_persistent,1,PHP_INI_SYSTEM,
+ibase.dateformat,%Y-%m-%d,PHP_INI_ALL,
+ibase.default_charset,NULL,PHP_INI_ALL,Available since PHP 5.0.0
+ibase.default_db,NULL,PHP_INI_SYSTEM,Available since PHP 5.0.0
+ibase.default_password,NULL,PHP_INI_ALL,
+ibase.default_user,NULL,PHP_INI_ALL,
+ibase.max_links,-1,PHP_INI_SYSTEM,
+ibase.max_persistent,-1,PHP_INI_SYSTEM,
+ibase.timeformat,%H:%M:%S,PHP_INI_ALL,
+ibase.timestampformat,%Y-%m-%d %H:%M:%S,PHP_INI_ALL,
+ibm_db2.binmode,1,PHP_INI_ALL,
+ibm_db2.i5_allow_commit,0,PHP_INI_SYSTEM,Available since ibm_db2 1.4.9
+ibm_db2.i5_dbcs_alloc,0,PHP_INI_SYSTEM,Available since ibm_db2 1.5.0
+ibm_db2.instance_name,NULL,PHP_INI_SYSTEM,Available since ibm_db2 1.0.2
+iconv.input_encoding,ISO-8859-1,PHP_INI_ALL,Available since PHP 4.0.5
+iconv.internal_encoding,ISO-8859-1,PHP_INI_ALL,Available since PHP 4.0.5
+iconv.output_encoding,ISO-8859-1,PHP_INI_ALL,Available since PHP 4.0.5
+ifx.allow_persistent,1,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.blobinfile,1,PHP_INI_ALL,Removed in PHP 5.2.1
+ifx.byteasvarchar,0,PHP_INI_ALL,Removed in PHP 5.2.1
+ifx.charasvarchar,0,PHP_INI_ALL,Removed in PHP 5.2.1
+ifx.default_host,NULL,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.default_password,NULL,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.default_user,NULL,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.max_links,-1,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.max_persistent,-1,PHP_INI_SYSTEM,Removed in PHP 5.2.1
+ifx.nullformat,0,PHP_INI_ALL,Removed in PHP 5.2.1
+ifx.textasvarchar,0,PHP_INI_ALL,Removed in PHP 5.2.1
+ignore_repeated_errors,0,PHP_INI_ALL,Available since PHP 4.3.0
+ignore_repeated_source,0,PHP_INI_ALL,Available since PHP 4.3.0
+ignore_user_abort,0,PHP_INI_ALL,
+imlib2.font_cache_max_size,524288,PHP_INI_ALL,
+imlib2.font_path,/usr/share/php/fonts/,PHP_INI_ALL,
+implicit_flush,0,PHP_INI_ALL,PHP_INI_PERDIR in PHP &lt;= 4.2.3
+include_path,.;/path/to/php/pear,PHP_INI_ALL,
+ingres.allow_persistent,1,PHP_INI_SYSTEM,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.array_index_start,1,PHP_INI_ALL,Available since ingres 1.4.0
+ingres.blob_segment_length,4096,PHP_INI_ALL,Available since ingres 1.2.0
+ingres.cursor_mode,0,PHP_INI_ALL,Available since ingres 1.1
+ingres.default_database,NULL,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.default_password,NULL,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.default_user,NULL,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.max_links,-1,PHP_INI_SYSTEM,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.max_persistent,-1,PHP_INI_SYSTEM,Available since PHP 4.0.2. Removed in PHP 5.1.0
+ingres.report_db_warnings,1,PHP_INI_ALL,Available since ingres 1.1
+ingres.timeout,-1,PHP_INI_ALL,Available since ingres 1.4.0
+ingres.trace_connect,0,PHP_INI_ALL,Available since ingres 1.2.1
+ircg.control_user,nobody,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.1.0
+ircg.keep_alive_interval,60,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.1.0
+ircg.max_format_message_sets,12,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.1.0
+ircg.shared_mem_size,6000000,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.1.0
+ircg.work_dir,/tmp/ircg,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.1.0
+last_modified,0,PHP_INI_ALL,Available since PHP 4.0.5
+ldap.base_dn,NULL,PHP_INI_ALL,Removed in PHP 4.2.0
+ldap.max_links,-1,PHP_INI_SYSTEM,
+log.dbm_dir,,PHP_INI_ALL,Removed in PHP 4.0.1
+log_errors,0,PHP_INI_ALL,
+log_errors_max_len,1024,PHP_INI_ALL,Available since PHP 4.3.0
+magic_quotes_gpc,1,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3. Deprecated in PHP 5.3.0. This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+magic_quotes_runtime,0,PHP_INI_ALL,This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+magic_quotes_sybase,0,PHP_INI_ALL,This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+mail.add_x_header,0,PHP_INI_SYSTEM|PHP_INI_PERDIR,Available since PHP 5.3.0
+mail.force_extra_parameters,NULL,,Available since PHP 5.0.0
+mail.log,,PHP_INI_ALL,Available since PHP 5.3.0
+mailparse.def_charset,us-ascii,PHP_INI_ALL,Available since PHP 4.1.0. Removed in PHP 4.2.0
+max_execution_time,30,PHP_INI_ALL,
+max_file_uploads,20,PHP_INI_SYSTEM,Available since PHP 5.2.12
+max_input_nesting_level,64,PHP_INI_PERDIR,Available since PHP 4.4.8. Removed in PHP 5.0.0
+max_input_time,-1,PHP_INI_PERDIR,Available since PHP 4.3.0
+maxdb.default_db,NULL,PHP_INI_ALL,
+maxdb.default_host,NULL,PHP_INI_ALL,
+maxdb.default_pw,NULL,PHP_INI_ALL,
+maxdb.default_user,NULL,PHP_INI_ALL,
+maxdb.long_readlen,200,PHP_INI_ALL,
+mbstring.detect_order,NULL,PHP_INI_ALL,Available since PHP 4.0.6
+mbstring.encoding_translation,0,PHP_INI_PERDIR,Available since PHP 4.3.0
+mbstring.func_overload,0,PHP_INI_SYSTEM,PHP_INI_SYSTEM in PHP &lt;= 4.2.3; PHP_INI_SYSTEM | PHP_INI_PERDIR from PHP 4.3,  through 5.2.6. Available since PHP 4.2.0
+mbstring.http_input,pass,PHP_INI_ALL,Available since PHP 4.0.6
+mbstring.http_output,pass,PHP_INI_ALL,Available since PHP 4.0.6
+mbstring.internal_encoding,NULL,PHP_INI_ALL,Available since PHP 4.0.6
+mbstring.language,neutral,PHP_INI_ALL,, Available since PHP 4.3.0.; PHP_INI_PERDIR in PHP &lt;= 5.2.6, 
+mbstring.script_encoding,NULL,PHP_INI_ALL,Available since PHP 4.3.0
+mbstring.strict_detection,0,PHP_INI_ALL,Available since PHP 5.1.2
+mbstring.substitute_character,NULL,PHP_INI_ALL,Available since PHP 4.0.6
+mcrypt.algorithms_dir,NULL,PHP_INI_ALL,Available since PHP 4.0.2
+mcrypt.modes_dir,NULL,PHP_INI_ALL,Available since PHP 4.0.2
+memcache.allow_failover,1,PHP_INI_ALL,Available since memcache 2.0.2
+memcache.chunk_size,8192,PHP_INI_ALL,Available since memcache 2.0.2
+memcache.default_port,11211,PHP_INI_ALL,Available since memcache 2.0.2
+memcache.hash_function,crc32,PHP_INI_ALL,Available since memcache 2.2.0
+memcache.hash_strategy,standard,PHP_INI_ALL,Available since memcache 2.2.0
+memcache.max_failover_attempts,20,PHP_INI_ALL,Available since memcache 2.1.0
+memory_limit,128M,PHP_INI_ALL,
+mime_magic.debug,0,PHP_INI_SYSTEM,Available since PHP 5.0.0
+mime_magic.magicfile,/path/to/php/magic.mime,PHP_INI_SYSTEM,Available since PHP 4.3.0
+msql.allow_persistent,1,PHP_INI_ALL,
+msql.max_links,-1,PHP_INI_ALL,
+msql.max_persistent,-1,PHP_INI_ALL,
+mssql.allow_persistent,1,PHP_INI_SYSTEM,
+mssql.batchsize,0,PHP_INI_ALL,Available since PHP 4.0.4
+mssql.charset,,PHP_INI_ALL,Available since PHP 5.1.2
+mssql.compatability_mode,0,PHP_INI_ALL,
+mssql.connect_timeout,5,PHP_INI_ALL,
+mssql.datetimeconvert,1,PHP_INI_ALL,Available since PHP 4.2.0
+mssql.max_links,-1,PHP_INI_SYSTEM,
+mssql.max_persistent,-1,PHP_INI_SYSTEM,
+mssql.max_procs,-1,PHP_INI_ALL,Available since PHP 4.3.0
+mssql.min_error_severity,10,PHP_INI_ALL,
+mssql.min_message_severity,10,PHP_INI_ALL,
+mssql.secure_connection,0,PHP_INI_SYSTEM,Available since PHP 4.3.0
+mssql.textlimit,-1,PHP_INI_ALL,
+mssql.textsize,-1,PHP_INI_ALL,
+mssql.timeout,60,PHP_INI_ALL,Available since PHP 4.1.0
+mysql.allow_persistent,1,PHP_INI_SYSTEM,
+mysql.connect_timeout,60,PHP_INI_ALL,PHP_INI_SYSTEM in PHP &lt;= 4.3.2. Available since PHP 4.3.0
+mysql.default_host,NULL,PHP_INI_ALL,
+mysql.default_password,NULL,PHP_INI_ALL,
+mysql.default_port,NULL,PHP_INI_ALL,
+mysql.default_socket,NULL,PHP_INI_ALL,Available since PHP 4.0.1
+mysql.default_user,NULL,PHP_INI_ALL,
+mysql.max_links,-1,PHP_INI_SYSTEM,
+mysql.max_persistent,-1,PHP_INI_SYSTEM,
+mysql.trace_mode,0,PHP_INI_ALL,Available since PHP 4.3.0
+mysqli.default_host,NULL,PHP_INI_ALL,Available since PHP 5.0.0
+mysqli.default_port,3306,PHP_INI_ALL,Available since PHP 5.0.0
+mysqli.default_pw,NULL,PHP_INI_ALL,Available since PHP 5.0.0
+mysqli.default_socket,NULL,PHP_INI_ALL,Available since PHP 5.0.0
+mysqli.default_user,NULL,PHP_INI_ALL,Available since PHP 5.0.0
+mysqli.max_links,-1,PHP_INI_SYSTEM,Available since PHP 5.0.0
+mysqli.reconnect,0,PHP_INI_SYSTEM,Available since PHP 5.0.0
+namazu.debugmode,0,PHP_INI_ALL,
+namazu.lang,NULL,PHP_INI_ALL,
+namazu.loggingmode,0,PHP_INI_ALL,
+namazu.sortmethod,NULL,PHP_INI_ALL,
+namazu.sortorder,NULL,PHP_INI_ALL,
+nsapi.read_timeout,60,PHP_INI_ALL,Available since PHP 4.3.3
+oci8.default_prefetch,10,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.max_persistent,-1,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.old_oci_close_semantics,0,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.persistent_timeout,-1,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.ping_interval,60,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.privileged_connect,0,PHP_INI_SYSTEM,Available since PHP 5.1.2
+oci8.statement_cache_size,20,PHP_INI_SYSTEM,Available since PHP 5.1.2
+odbc.allow_persistent,1,PHP_INI_SYSTEM,
+odbc.check_persistent,1,PHP_INI_SYSTEM,
+odbc.default_db,NULL,PHP_INI_ALL,
+odbc.default_pw,NULL,PHP_INI_ALL,
+odbc.default_user,NULL,PHP_INI_ALL,
+odbc.defaultbinmode,1,PHP_INI_ALL,
+odbc.defaultlrl,4096,PHP_INI_ALL,
+odbc.max_links,-1,PHP_INI_SYSTEM,
+odbc.max_persistent,-1,PHP_INI_SYSTEM,
+odbtp.datetime_format,object,PHP_INI_ALL,
+odbtp.detach_default_queries,0,PHP_INI_ALL,
+odbtp.guid_format,string,PHP_INI_ALL,Available since odbtp 1.1.3
+odbtp.interface_file,/usr/local/share/odbtp.conf,PHP_INI_ALL,
+odbtp.truncation_errors,1,PHP_INI_ALL,
+open_basedir,NULL,PHP_INI_ALL,PHP_INI_SYSTEM in PHP &lt; 5.2.3
+opendirectory.default_separator,/,PHP_INI_ALL,Removed in opendirectory 0.2.2
+opendirectory.max_refs,-1,PHP_INI_ALL,
+opendirectory.separator,/,PHP_INI_ALL,Available since opendirectory 0.2.2
+oracle.allow_persistent,-1,PHP_INI_ALL,Removed in PHP 5.1.0
+oracle.max_links,-1,PHP_INI_ALL,Removed in PHP 5.1.0
+oracle.max_persistent,-1,PHP_INI_ALL,Removed in PHP 5.1.0
+output_buffering,0,PHP_INI_PERDIR,
+output_handler,NULL,PHP_INI_PERDIR,Available since PHP 4.0.4
+pam.servicename,php,PHP_INI_ALL,
+pcre.backtrack_limit,100000,PHP_INI_ALL,Available since PHP 5.2.0
+pcre.recursion_limit,100000,PHP_INI_ALL,Available since PHP 5.2.0
+pdo_odbc.connection_pooling,strict,PHP_INI_ALL,Available since PHP 5.1.0
+pdo_odbc.db2_instance_name,NULL,PHP_INI_SYSTEM,Available since PHP 5.1.1. This deprecated feature <em class="emphasis">will</em>,certainly be <em class="emphasis">removed</em> in the future
+pfpro.defaulthost,test-payflow.verisign.com,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.defaultport,443,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.defaulttimeout,30,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.proxyaddress,,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.proxylogon,,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.proxypassword,,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pfpro.proxyport,,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 5.1.0
+pgsql.allow_persistent,1,PHP_INI_SYSTEM,
+pgsql.auto_reset_persistent,0,PHP_INI_SYSTEM,Available since PHP 4.2.0
+pgsql.ignore_notice,0,PHP_INI_ALL,Available since PHP 4.3.0
+pgsql.log_notice,0,PHP_INI_ALL,Available since PHP 4.3.0
+pgsql.max_links,-1,PHP_INI_SYSTEM,
+pgsql.max_persistent,-1,PHP_INI_SYSTEM,
+phar.extract_list,,PHP_INI_ALL,Available since phar 1.1.0
+phar.readonly,1,PHP_INI_ALL,
+phar.require_hash,1,PHP_INI_ALL,
+post_max_size,8M,PHP_INI_PERDIR,PHP_INI_SYSTEM in PHP &lt;= 4.2.3. Available since PHP 4.0.3
+precision,14,PHP_INI_ALL,
+printer.default_printer,,PHP_INI_ALL,Available since PHP 4.0.6. Removed in PHP 4.1.1
+python.append_path,,PHP_INI_ALL,
+python.prepend_path,.,PHP_INI_ALL,
+realpath_cache_size,16K,PHP_INI_SYSTEM,Available since PHP 5.1.0
+realpath_cache_ttl,120,PHP_INI_SYSTEM,Available since PHP 5.1.0
+register_argc_argv,1,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3
+register_globals,0,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3. Deprecated in PHP 5.3.0. Removed in PHP 5.4.0
+register_long_arrays,1,PHP_INI_PERDIR,Available since PHP 5.0.0. Deprecated in PHP 5.3.0. Removed in PHP 5.4.0
+report_memleaks,1,PHP_INI_ALL,Available since PHP 4.3.0
+report_zend_debug,1,PHP_INI_ALL,Available since PHP 5.0.0
+request_order,,PHP_INI_SYSTEM|PHP_INI_PERDIR,Added in PHP 5.3.0
+runkit.internal_override,0,PHP_INI_SYSTEM,
+runkit.superglobal,,PHP_INI_PERDIR,
+safe_mode,0,PHP_INI_SYSTEM,Removed in PHP 5.4.0
+safe_mode_allowed_env_vars,PHP_,PHP_INI_SYSTEM,Removed in PHP 5.4.0
+safe_mode_exec_dir,,PHP_INI_SYSTEM,Removed in PHP 5.4.0
+safe_mode_gid,0,PHP_INI_SYSTEM,Available since PHP 4.1.0. Removed in PHP 5.4.0
+safe_mode_include_dir,NULL,PHP_INI_SYSTEM,Available since PHP 4.1.0. Removed in PHP 5.4.0
+safe_mode_protected_env_vars,LD_LIBRARY_PATH,PHP_INI_SYSTEM,Removed in PHP 5.4.0
+sendmail_from,NULL,PHP_INI_ALL,
+sendmail_path,/usr/sbin/sendmail -t -i,PHP_INI_SYSTEM,
+serialize_precision,17,PHP_INI_ALL,,  Available since PHP 4.3.2. Until PHP 5.3.5, the default value was 100., 
+session.auto_start,0,PHP_INI_ALL,
+session.bug_compat_42,1,PHP_INI_ALL,Available since PHP 4.3.0. Removed in PHP 5.4.0
+session.bug_compat_warn,1,PHP_INI_ALL,Available since PHP 4.3.0. Removed in PHP 5.4.0
+session.cache_expire,180,PHP_INI_ALL,
+session.cache_limiter,nocache,PHP_INI_ALL,
+session.cookie_domain,,PHP_INI_ALL,
+session.cookie_httponly,,PHP_INI_ALL,Available since PHP 5.2.0
+session.cookie_lifetime,0,PHP_INI_ALL,
+session.cookie_path,/,PHP_INI_ALL,
+session.cookie_secure,,PHP_INI_ALL,Available since PHP 4.0.4
+session.entropy_file,,PHP_INI_ALL,
+session.entropy_length,0,PHP_INI_ALL,
+session.gc_dividend,100,PHP_INI_ALL,Available since PHP 4.3.0. Removed in PHP 4.3.2
+session.gc_divisor,100,PHP_INI_ALL,Available since PHP 4.3.2
+session.gc_maxlifetime,1440,PHP_INI_ALL,
+session.gc_probability,1,PHP_INI_ALL,
+session.hash_bits_per_character,4,PHP_INI_ALL,Available since PHP 5.0.0
+session.hash_function,0,PHP_INI_ALL,Available since PHP 5.0.0
+session.name,PHPSESSID,PHP_INI_ALL,
+session.referer_check,,PHP_INI_ALL,
+session.save_handler,files,PHP_INI_ALL,
+session.save_path,,PHP_INI_ALL,
+session.serialize_handler,php,PHP_INI_ALL,
+session.use_cookies,1,PHP_INI_ALL,
+session.use_only_cookies,1,PHP_INI_ALL,Available since PHP 4.3.0
+session.use_trans_sid,0,PHP_INI_ALL,PHP_INI_ALL in PHP &lt;= 4.2.3. PHP_INI_PERDIR in PHP &lt; 5. Available since PHP 4.0.3
+session_pgsql.create_table,1,PHP_INI_SYSTEM,
+session_pgsql.db,host=localhost dbname=php_session user=nobody,PHP_INI_SYSTEM,
+session_pgsql.disable,0,PHP_INI_SYSTEM,
+session_pgsql.failover_mode,0,PHP_INI_SYSTEM,
+session_pgsql.gc_interval,3600,PHP_INI_SYSTEM,
+session_pgsql.keep_expired,0,PHP_INI_SYSTEM,
+session_pgsql.sem_file_name,/tmp/php_session_pgsql,PHP_INI_SYSTEM,
+session_pgsql.serializable,0,PHP_INI_SYSTEM,
+session_pgsql.short_circuit,0,PHP_INI_SYSTEM,
+session_pgsql.use_app_vars,0,PHP_INI_SYSTEM,
+session_pgsql.vacuum_interval,21600,PHP_INI_SYSTEM,
+short_open_tag,1,PHP_INI_ALL,PHP_INI_ALL in PHP 4.0.0. PHP_INI_PERDIR in PHP &lt; 5.3.0
+simple_cvs.authMethod,0,PHP_INI_ALL,
+simple_cvs.compressionLevel,0,PHP_INI_ALL,
+simple_cvs.cvsRoot,0,PHP_INI_ALL,
+simple_cvs.host,0,PHP_INI_ALL,
+simple_cvs.moduleName,0,PHP_INI_ALL,
+simple_cvs.userName,0,PHP_INI_ALL,
+simple_cvs.workingDir,0,PHP_INI_ALL,
+smtp_port,25,PHP_INI_ALL,Available since PHP 4.3.0
+soap.wsdl_cache,1,PHP_INI_ALL,Available since PHP 5.1.5
+soap.wsdl_cache_dir,/tmp,PHP_INI_ALL,Available since PHP 5.0.0
+soap.wsdl_cache_enabled,1,PHP_INI_ALL,Available since PHP 5.0.0
+soap.wsdl_cache_limit,5,PHP_INI_ALL,Available since PHP 5.1.5
+soap.wsdl_cache_ttl,86400,PHP_INI_ALL,Available since PHP 5.0.0
+sql.safe_mode,0,PHP_INI_SYSTEM,
+sqlite.assoc_case,0,PHP_INI_ALL,Available since PHP 5.0.0
+sybase.allow_persistent,1,PHP_INI_ALL,PHP_INI_ALL in PHP &lt;= 4.0.2. PHP_INI_SYSTEM in PHP &lt;= 4.0.3
+sybase.hostname,NULL,PHP_INI_ALL,Removed in PHP 4.0.2
+sybase.interface_file,,PHP_INI_ALL,
+sybase.login_timeout,0,PHP_INI_ALL,Removed in PHP 4.0.2
+sybase.max_links,-1,PHP_INI_ALL,PHP_INI_ALL in PHP &lt;= 4.0.2. PHP_INI_SYSTEM in PHP &lt;= 4.0.3
+sybase.max_persistent,-1,PHP_INI_ALL,PHP_INI_ALL in PHP &lt;= 4.0.2. PHP_INI_SYSTEM in PHP &lt;= 4.0.3
+sybase.min_client_severity,10,PHP_INI_ALL,Removed in PHP 4.0.2
+sybase.min_error_severity,10,PHP_INI_ALL,
+sybase.min_message_severity,10,PHP_INI_ALL,
+sybase.min_server_severity,10,PHP_INI_ALL,Removed in PHP 4.0.2
+sybase.timeout,0,PHP_INI_ALL,Removed in PHP 4.0.2
+sybct.allow_persistent,1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 4.0.2. Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.deadlock_retry_count,0,PHP_INI_ALL,Available since PHP 4.3.0
+sybct.hostname,NULL,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.login_timeout,-1,PHP_INI_ALL,Available since PHP 4.0.2
+sybct.max_links,-1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 4.0.2. Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.max_persistent,-1,PHP_INI_SYSTEM,PHP_INI_ALL in PHP &lt;= 4.0.2. Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.min_client_severity,10,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.min_server_severity,10,PHP_INI_ALL,Available since PHP 4.0.2. Removed in PHP 4.0.3
+sybct.packet_size,0,PHP_INI_ALL,Available since PHP 4.3.5
+sybct.timeout,0,PHP_INI_ALL,Available since PHP 4.0.2
+sysvshm.init_mem,10000,PHP_INI_ALL,
+tidy.clean_output,0,PHP_INI_USER,PHP_INI_PERDIR in PHP 5. Available since PHP 5.0.0
+tidy.default_config,,PHP_INI_SYSTEM,Available since PHP 5.0.0
+tr valign="middle">,com.autoregister_verbose,0,PHP_INI_ALL,PHP_INI_SYSTEM in PHP 4. Available since PHP 4.1.0
+track_errors,0,PHP_INI_ALL,
+track_vars,1,PHP_INI_ALL,Removed in PHP 4.0.3
+unserialize_callback_func,NULL,PHP_INI_ALL,Available since PHP 4.2.0
+upload_max_filesize,2M,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 4.2.3
+upload_tmp_dir,NULL,PHP_INI_SYSTEM,
+uploadprogress.file.filename_template,/tmp/upt_%s.txt,PHP_INI_ALL,
+url_rewriter.tags,a=href,area=href,frame=src,form=,fieldset=,PHP_INI_ALL,Available since PHP 4.0.4
+user_agent,NULL,PHP_INI_ALL,Available since PHP 4.3.0
+user_dir,NULL,PHP_INI_SYSTEM,
+user_ini.cache_ttl,300,PHP_INI_SYSTEM,Available since PHP 5.3.0
+user_ini.filename,.user.ini,PHP_INI_SYSTEM,Available since PHP 5.3.0
+valkyrie.auto_validate,0,PHP_INI_ALL,
+valkyrie.config_path,NULL,PHP_INI_ALL,
+variables_order,EGPCS,PHP_INI_PERDIR,PHP_INI_ALL in PHP &lt;= 5.0.5
+velocis.max_links,-1,PHP_INI_ALL,Removed in PHP 4.2.0
+vld.active,0,PHP_INI_SYSTEM,
+vld.execute,1,PHP_INI_SYSTEM,Available since vld 0.8.0
+vld.skip_append,0,PHP_INI_SYSTEM,Available since vld 0.8.0
+vld.skip_prepend,0,PHP_INI_SYSTEM,Available since vld 0.8.0
+xbithack,0,PHP_INI_ALL,Available since PHP 4.0.5
+xdebug.auto_profile,0,PHP_INI_ALL,Removed in Xdebug 2.0.0
+xdebug.auto_profile_mode,0,PHP_INI_ALL,Removed in Xdebug 2.0.0
+xdebug.auto_trace,0,PHP_INI_ALL,
+xdebug.collect_includes,1,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.collect_params,0,PHP_INI_ALL,
+xdebug.collect_return,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.collect_vars,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.default_enable,1,PHP_INI_ALL,PHP_INI_SYSTEM in Xdebug 1
+xdebug.dump.COOKIE,NULL,PHP_INI_ALL,
+xdebug.dump.ENV,NULL,PHP_INI_ALL,
+xdebug.dump.FILES,NULL,PHP_INI_ALL,
+xdebug.dump.GET,NULL,PHP_INI_ALL,
+xdebug.dump.POST,NULL,PHP_INI_ALL,
+xdebug.dump.REQUEST,NULL,PHP_INI_ALL,
+xdebug.dump.SERVER,NULL,PHP_INI_ALL,
+xdebug.dump.SESSION,NULL,PHP_INI_ALL,
+xdebug.dump_globals,1,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.dump_once,1,PHP_INI_ALL,
+xdebug.dump_undefined,0,PHP_INI_ALL,
+xdebug.extended_info,1,PHP_INI_SYSTEM,Available since Xdebug 2.0.0
+xdebug.idekey,,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.manual_url,http://www.php.net,PHP_INI_ALL,
+xdebug.max_nesting_level,100,PHP_INI_ALL,
+xdebug.output_dir,/tmp,PHP_INI_PERDIR,PHP_INI_SYSTEM in Xdebug &lt;= 1.2.0. Removed in Xdebug 2.0.0
+xdebug.profiler_aggregate,0,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.profiler_append,0,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.profiler_enable,0,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.profiler_enable_trigger,0,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.profiler_output_dir,/tmp,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.profiler_output_name,cachegrind.out.%p,PHP_INI_PERDIR,Available since Xdebug 2.0.0
+xdebug.remote_autostart,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.remote_enable,0,PHP_INI_PERDIR,
+xdebug.remote_handler,dbgp,PHP_INI_ALL,
+xdebug.remote_host,localhost,PHP_INI_ALL,
+xdebug.remote_log,,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.remote_mode,req,PHP_INI_ALL,
+xdebug.remote_port,9000,PHP_INI_ALL,
+xdebug.show_exception_trace,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.show_local_vars,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.show_mem_delta,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.trace_format,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.trace_options,0,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.trace_output_dir,/tmp,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.trace_output_name,trace.%c,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.var_display_max_children,128,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.var_display_max_data,512,PHP_INI_ALL,Available since Xdebug 2.0.0
+xdebug.var_display_max_depth,3,PHP_INI_ALL,Available since Xdebug 2.0.0
+xmlrpc_error_number,0,PHP_INI_ALL,Available since PHP 4.1.0
+xmlrpc_errors,0,PHP_INI_SYSTEM,Available since PHP 4.1.0
+xmms.path,/usr/bin/xmms,PHP_INI_ALL,
+xmms.session,0,PHP_INI_ALL,
+y2k_compliance,1,PHP_INI_ALL,
+yami.response.timeout,5,PHP_INI_ALL,Available since yami 1.0.1
+yaz.keepalive,120,PHP_INI_ALL,
+yaz.log_file,NULL,PHP_INI_ALL,Available since PHP 4.3.0. Removed in PHP 5.0.0
+yaz.log_mask,NULL,PHP_INI_ALL,Available since yaz 1.0.3
+yaz.max_links,100,PHP_INI_ALL,Available since PHP 4.3.0. Removed in PHP 5.0.0
+zend.enable_gc,1,PHP_INI_ALL,Available since PHP 5.3.0
+zend.multibyte,0,PHP_INI_PERDIR,Available since PHP 5.4.0
+zend.ze1_compatibility_mode,0,PHP_INI_ALL,Available since PHP 5.0.0. Removed in PHP 5.3.0
+zend_extension,NULL,,
+zend_extension_debug,NULL,,
+zend_extension_debug_ts,NULL,,
+zend_extension_ts,NULL,,
+zlib.output_compression,0,PHP_INI_ALL,Available since PHP 4.0.5
+zlib.output_compression_level,-1,PHP_INI_ALL,Available since PHP 4.3.0
+zlib.output_handler,,PHP_INI_ALL,Available since PHP 4.3.0

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.zend.php.zendserver.deployment.autoDeploy" name="Auto Deploy" schema="schema/org.zend.php.zendserver.deployment.autoDeploy.exsd"/>
+   <extension-point id="deploymentContribution" name="Deployment Process Contribution" schema="schema/deploymentContribution.exsd"/>
+
+</plugin>

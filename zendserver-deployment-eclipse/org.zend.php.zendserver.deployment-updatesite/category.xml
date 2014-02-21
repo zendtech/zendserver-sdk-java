@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.zend.php.zendserver.deployment.debug_0.0.0.jar" id="org.zend.php.zendserver.deployment.debug" version="0.0.0">
+      <category name="zendserver.deployment"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment_0.0.0.jar" id="org.zend.php.zendserver.deployment" version="0.0.0">
+      <category name="zendserver.deployment"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment.all_0.0.0.jar" id="org.zend.php.zendserver.deployment.all" version="0.0.0">
+      <category name="zendserver.deployment"/>
+   </feature>
+   <feature url="features/org.zend.php.zendserver.deployment.test_0.0.0.jar" id="org.zend.php.zendserver.deployment.test" version="0.0.0">
+      <category name="zendserver.deployment"/>
+   </feature>
+   <category-def name="zendserver.deployment" label="Zend Server Deployment Eclipse"/>
+</site>

@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Zend Application Deployment Debuger UI Plug-in
+Bundle-SymbolicName: org.zend.php.zendserver.deployment.debug.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.zend.php.zendserver.deployment.debug.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.zend.php.zendserver.deployment.core,
+ org.eclipse.core.resources,
+ org.eclipse.ui.forms,
+ org.zend.php.zendserver.deployment.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.core.expressions,
+ org.eclipse.php.debug.ui,
+ org.zend.php.zendserver.deployment.ui,
+ com.jcraft.jsch,
+ org.eclipse.php.debug.core,
+ org.eclipse.ui.ide,
+ org.zend.php.zendserver.monitor.core,
+ org.zend.core.notifications,
+ org.eclipse.php.server.ui,
+ org.eclipse.help
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Zend Technologies Ltd.
+Export-Package: org.zend.php.zendserver.deployment.debug.ui.commands,
+ org.zend.php.zendserver.deployment.debug.ui.config,
+ org.zend.php.zendserver.deployment.debug.ui.contributions,
+ org.zend.php.zendserver.deployment.debug.ui.listeners,
+ org.zend.php.zendserver.deployment.debug.ui.wizards

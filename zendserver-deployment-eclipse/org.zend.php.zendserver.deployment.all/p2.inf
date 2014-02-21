@@ -1,0 +1,25 @@
+ units.1.id=com.zend.php.zendserver.deployment.categoryIU
+ units.1.version=$version$
+ units.1.provides.1.namespace=org.eclipse.equinox.p2.iu
+ units.1.provides.1.name=com.zend.php.zendserver.deployment.categoryIU
+ units.1.provides.1.version=$version$
+ units.1.properties.1.name=org.eclipse.equinox.p2.type.category
+ units.1.properties.1.value=true
+ units.1.properties.2.name=org.eclipse.equinox.p2.name
+ units.1.properties.2.value=Zend Application Deployment Toolkit for Eclipse
+ units.1.requires.1.namespace=org.eclipse.equinox.p2.iu
+ units.1.requires.1.name=org.zend.php.zendserver.deployment.feature.group
+ units.1.requires.1.greedy=true
+ 
+ units.2.id=com.zend.php.zendserver.deployment.debug.categoryIU
+ units.2.version=$version$
+ units.2.provides.1.namespace=org.eclipse.equinox.p2.iu
+ units.2.provides.1.name=com.zend.php.zendserver.deployment.debug.categoryIU
+ units.2.provides.1.version=$version$
+ units.2.properties.1.name=org.eclipse.equinox.p2.type.category
+ units.2.properties.1.value=true
+ units.2.properties.2.name=org.eclipse.equinox.p2.name
+ units.2.properties.2.value=Zend Application Deployment (PDT Integration)
+ units.2.requires.1.namespace=org.eclipse.equinox.p2.iu
+ units.2.requires.1.name=org.zend.php.zendserver.deployment.debug.feature.group
+ units.2.requires.1.greedy=true

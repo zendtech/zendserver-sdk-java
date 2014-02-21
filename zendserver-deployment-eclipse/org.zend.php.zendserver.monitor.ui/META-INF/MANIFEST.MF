@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Monitor
+Bundle-SymbolicName: org.zend.php.zendserver.monitor.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.zend.php.zendserver.monitor.internal.ui.Activator
+Bundle-Vendor: Zend Technologies Ltd.
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.zend.sdk,
+ org.zend.php.zendserver.deployment.core,
+ org.zend.core.notifications,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface.text,
+ org.eclipse.ui.ide,
+ org.zend.php.zendserver.monitor.core,
+ org.apache.commons.httpclient,
+ org.apache.commons.lang,
+ org.eclipse.core.expressions,
+ org.zend.php.zendserver.deployment.ui,
+ org.eclipse.core.filesystem
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.zend.php.zendserver.monitor.ui

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Zend Application Deployment Debugger Core Plug-in
+Bundle-SymbolicName: org.zend.php.zendserver.deployment.debug.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.zend.php.zendserver.deployment.debug.core.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.zend.php.zendserver.deployment.core,
+ org.eclipse.debug.core,
+ org.eclipse.php.debug.core,
+ org.eclipse.php.server.core
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.zend.php.zendserver.deployment.debug.core,
+ org.zend.php.zendserver.deployment.debug.core.config,
+ org.zend.php.zendserver.deployment.debug.core.jobs
+Bundle-Vendor: Zend Technologies Ltd.

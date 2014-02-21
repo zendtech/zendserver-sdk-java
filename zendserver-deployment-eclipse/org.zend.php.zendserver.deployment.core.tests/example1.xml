@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package packagerversion="1.4.11" version="2.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.zend.com packageDescriptor.xsd">
+
+  <name>Magento</name>
+  <summary>Magento short description</summary>
+  <description>Magento long description</description>
+  <version>
+    <release>1.4.1.1</release>    
+  </version>
+  <eula>data/LICENSE.txt</eula>
+  <docroot></docroot>
+  <scriptsdir></scriptsdir>
+  <dependencies>
+    <required>
+	
+      <php>
+        <min>5.2.13</min>
+      </php>
+	  
+      <extension>
+		<name>pdo_mysql</name>        
+      </extension>
+	  <extension>
+		<name>curl</name>        
+      </extension>
+	  <extension>
+		<name>gd</name>        
+      </extension>
+	  <extension>
+		<name>mcrypt</name>        
+      </extension>
+	  <extension>
+		<name>pdo</name>        
+      </extension>
+	  <extension>
+		<name>dom</name>        
+      </extension>
+	  <extension>
+		<name>hash</name>        
+      </extension>
+	  <extension>
+		<name>iconv</name>        
+      </extension>
+	  <extension>
+		<name>pcre</name>        
+      </extension>
+	  <extension>
+		<name>simplexml</name>        
+      </extension>
+	  
+	  <directive>
+		<name>safe_mode</name>
+		<equals>off</equals>
+      </directive>
+	  
+    </required>
+  </dependencies>
+  
+  <variables>
+    <variable name="LS" value="ls -l"/>
+  <variable name="UNAME" value="uname -a -l"/>
+  </variables>
+  <parameters>
+    <parameter id="locale"
+    display="Localization.Locale Settings.Locale"
+    required="true" type="ID_LOCALE">
+      <description>
+       
+      </description>
+    </parameter>
+    <parameter id="timezone"
+    display="Localization.Locale Settings.Time Zone"
+    required="true" type="ID_TIMEZONE">
+      <description>
+	  
+      </description>
+    </parameter>
+    <parameter id="currency"
+    display="Localization.Locale Settings.Default Currency"
+    required="true" type="ID_CURRENCY">
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="db_host"
+    display="Configuration.Database Connection.Host"
+    required="true" type="string">
+      <description>
+        You can specify server port, ex.: localhost:3307 If
+        you are not using default UNIX socket, you can specify it
+        here instead of host, ex.:
+        /var/run/mysqld/mysqld.sock
+      </description>
+    </parameter>
+    <parameter id="db_name"
+    display="Configuration.Database Connection.Database Name"
+    required="true" type="string">
+      <defaultvalue>magento</defaultvalue>
+      <description>
+       
+      </description>
+    </parameter>
+    <parameter id="db_username"
+    display="Configuration.Database Connection.User Name"
+    required="true" type="string">
+      <defaultvalue>root</defaultvalue>
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="db_password"
+    display="Configuration.Database Connection.User Password"
+    required="false" type="string">
+      <defaultvalue></defaultvalue>
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="db_tables_prefix"
+    display="Configuration.Database Connection.Tables Prefix"
+    required="false" type="string">
+      <defaultvalue></defaultvalue>
+      <description>
+        
+        (Optional. Leave blank for no prefix)
+      </description>
+    </parameter>
+    <parameter id="base_url"
+    display="Configuration.Web access options.Base URL"
+    required="true" type="string">
+      <defaultvalue>
+      $(WEBSERVER_SCHEMA)://$(WEBSERVER_HOSTNAME)/$(WEBSERVER_PATH)</defaultvalue>
+      <description>
+        <short></short>
+        <long></long>
+      </description>
+    </parameter>
+    <parameter id="admin_path"
+    display="Configuration.Web access options.Admin Path"
+    required="true" type="string">
+      <defaultvalue>admin</defaultvalue>
+      <description>
+        Additional path added after Base URL to access your
+        Administrative Panel (e.g. admin, backend, control
+        etc.)
+      </description>
+    </parameter>
+    <parameter id="skip_base"
+    display="Configuration.Web access options.Skip Base URL Validation Before the Next Step"
+    required="false" type="checkbox">
+      <defaultvalue>false</defaultvalue>
+      <description>
+        Check this box only if it is not possible to
+        automatically validate the Base URL.
+      </description>
+    </parameter>
+    <parameter id="use_apache_rewrites"
+    display="Configuration.Web access options.Skip Base URL Validation Before the Next Step"
+    required="false" type="checkbox">
+      <defaultvalue>false</defaultvalue>
+      <condition>
+        <webserverCondition type="apache" />
+      </condition>
+      <description>
+      	You could enable this option to use web server
+        rewrites functionality for improved search engines
+        optimization. Please make sure that mod_rewrite is enabled
+        in Apache configuration.
+      </description>
+    </parameter>
+    <parameter id="use_ssl"
+    display="Configuration.Web access options.Use Secure URLs (SSL)"
+    required="false" type="checkbox">
+      <defaultvalue>false</defaultvalue>
+      <description>
+        Enable this option only if you have SSL
+        available.
+      </description>
+    </parameter>
+    <parameter id="session_save_data"
+    display="Configuration.Session Storage Options.Save Session Data In"
+    required="true" type="choice">
+      <validation>
+        <enums>
+          <enum>File System</enum>
+          <enum>Database</enum>
+        </enums>
+      </validation>
+      <defaultvalue>File System</defaultvalue>
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="first_name"
+    display="Create Admin Account.Personal Information.First Name"
+    required="true" type="string">
+      <description>
+       
+      </description>
+    </parameter>
+    <parameter id="last_name"
+    display="Create Admin Account.Personal Information.Last Name"
+    required="true" type="string">
+      <description>
+       
+      </description>
+    </parameter>
+    <parameter id="email"
+    display="Create Admin Account.Personal Information.Email"
+    required="true" type="email">
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="login_username"
+    display="Create Admin Account.Login Information.Username"
+    required="true" type="string">
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="login_password"
+    display="Create Admin Account.Login Information.Password"
+    required="true" type="password">
+      <description>
+        
+      </description>
+    </parameter>
+    <parameter id="login_confirm_password"
+    display="Create Admin Account.Login Information.Confirm Password"
+    required="true" type="password">
+      <description>
+       
+      </description>
+    </parameter>
+    <parameter id="encription_key"
+    display="Create Admin Account.Encription Key"
+    required="false" type="string">
+      <description>
+        
+      </description>
+    </parameter>   
+  </parameters>
+</package>

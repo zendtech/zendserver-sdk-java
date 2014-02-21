@@ -1,0 +1,76 @@
+Core,Core PHP functionality
+bcmath,Arbitrary precision mathematics functions based on the bcmatch (Binary Calculator) library
+bz2,The bzip2 functions are used to transparently read and write bzip2 (.bz2) compressed files and streams
+calendar,The calendar extension provides functions that simplify conversion between different calendar formats
+cgi-fcgi,Built-in PHP CGI/FastCGI Server API
+com_dotnet,Built-in Component Object Model - An interface to Microsoft's COM / .NET environment
+ctype,Built-in Character Classifications - Checks whether a character or string falls into a certain character class according to the current locale
+curl,Enables you to connect to and communicate with different types of servers using various protocols - for example HTTP and FTP
+date,Enables various date and time related functions that can handle retrieving the time, date formatting and more
+dom,Enables operating on an XML document using the Document Object Model (DOM) API
+ereg,Provides a set of string pattern matching functions using POSIX extended regular expressions.
+exif,Enables access to image EXIF (Exchangeable Image File Format) meta data
+fileinfo,Allows retrieval of information regarding many different file types. This information includes file type and encoding, as well as more specific information such as dimensions, quality or length
+filter,Provides a set of functions for validating and filtering data coming from insecure sources, such as user inputs
+ftp,Provides low-level client access to FTP (File Transfer Protocol) servers
+gd,Enables creation, manipulation and streaming of images and graphics in various formats
+gettext,Provides a set of functions that allow internationalization of PHP applications through the GNU gettext API
+gmp,These functions allow you to work with arbitrary-length integers using the GNU MP library
+hash,Enables direct or incremental processing of arbitrary length messages using a variety of hashing algorithms
+ibm_db2,Provides functions that enable you to access the IBM DB2 Universal Database, IBM Cloudscape, and Apache Derby databases using the DB2 Call Level Interface
+iconv,Enables conversion between different character sets using the iconv library
+imagick,Enables image creation and manipulation using the ImageMagick API
+imap,Provides mail and news access through the IMAP, POP3 and NNTP protocols
+intl,Provides Unicode and global localization support to PHP applications using the ICU library
+json,Implements the JavaScript Object Notation (JSON) data-interchange format
+ldap,Provides access to LDAP (Lightweight Directory Access Protocol) based directory servers; Based on the OpenLDAP library
+libxml,Provides basic API and infrastructure for other XML processing extensions
+mbstring,Enables manipulation of strings encoded in multi-byte character encoding schemes
+mcrypt,Provides support for multiple encryption algorithms using the mcrypt library
+memcache,Provides access to memcached - a highly efficient memory based caching daemon
+mssql,Provides access to MS SQL Server database; Based on the open-source FreeTDS library
+mysql,Provides legacy access to MySQL database servers. For new applications it is recommended to use the 'mysqli' extension
+mysqli,MySQL Improved - Provides access to MySQL database servers. Enables the functionality provided by MySQL 4.1 and above
+mysqlnd,MySQL Native Driver - provides a PHP-native underlying infrastructure for all MySQL extensions
+oci8,Oracle Call Interface - Provides access to Oracle database servers, supporting many of the advanced features provided by Oracle servers
+odbc,Provides access to several database servers through the Unified ODBC interface
+openssl,This module utilizes the OpenSSL library for generation and verification of signatures and for encrypting and decrypting data and streams
+pcntl,Process Control Functions - Process Control support in PHP implements the Unix style of process creation, program execution, signal handling and process termination
+pcre,Provides a set of functions for string matching and manipulation based on Perl Compatible Regular Expressions syntax
+pdo,Base PDO (PHP Data Objects) Driver - Defines a lightweight, consistent interface for accessing databases in PHP
+pdo_dblib,PDO (PHP Data Objects) driver that enable access from PHP to MSSQL and other databases accessible through the FreeDTS interface
+pdo_ibm,PDO (PHP Data Objects) driver that enable access from PHP to IBM databases
+pdo_informix,PDO (PHP Data Objects) driver that enable access from PHP to Informix database servers
+pdo_mysql,PDO (PHP Data Objects) driver that enable access from PHP to MySQL database servers
+pdo_oci,,PDO (PHP Data Objects) driver that enable access from PHP to Oracle database servers using the OCI library
+pdo_odbc,PDO (PHP Data Objects) driver that enable access from PHP to different databases through ODBC drivers or through the IBM DB2 Call Level Interface (DB2 CLI) library
+pdo_pgsql,Built-in,PDO (PHP Data Objects) driver that enable access from PHP to PostgreSQL database servers
+pdo_sqlite,PDO (PHP Data Objects) driver that enable access from PHP to SQLite database files
+pgsql,Provides access to PostgreSQL database servers
+phar,Allows running of complete PHP applications out of .phar package files
+posix,Contains an interface to functions defined in the IEEE 1003.1 (POSIX.1) standards document which are not accessible through other means
+reflection,Adds the ability to reverse-engineer classes, interfaces, functions and methods as well as extensions
+session,Enables data persistence between consecutive requests of the same user session
+shmop,Shared Memory - Shmop is an easy-to-use set of functions that allows PHP to read, write, create and delete Unix shared memory segments
+simplexml,The SimpleXML extension provides a very simple and easily usable toolset to convert XML to an object that can be processed with normal property selectors and array iterators
+soap,The SOAP extension can be used to implement SOAP Servers and Clients
+sockets,The socket extension implements a set of low-level socket communication functions, providing the possibility to act as a socket server as well as a client
+spl,SPL is a collection of interfaces and classes that can be used to solve standard problems
+sqlite,Enables usage of the SQLite Embeddable SQL Database Engine. Can be used for SQL database access without running a separate RDBMS process
+sqlsrv,Provides access to Microsoft SQL Server 2005 database servers. Developed by Microsoft
+standard,Standard PHP functions
+sysvmsg,Enables System V messages support - The messaging functions may be used to send and receive messages to/from other processes. They provide a simple and effective means of exchanging data between processes, without the need for setting up an alternative using Unix domain sockets
+sysvsem,Enables System V semaphore support - Semaphores may be used to provide exclusive access to resources on the current machine, or to limit the number of processes that may simultaneously use a resource
+sysvshm,Enables System V shared memory support - Shared memory may be used to provide access to global variables
+tidy,Tidy HTML Clean and Repair - enables you to not only clean and otherwise manipulate HTML documents, but also traverse the document tree
+tokenizer,The tokenizer functions provide an interface to the PHP tokenizer embedded in the Zend Engine. Using these functions you may write your own PHP source analyzing or modification tools without having to deal with the language specification at the lexical level
+uploadprogress,Provides a mechanism for keeping track and showing progress when uploading files
+wddx,WDDX (Web Distributed Data Exchange) - These functions are intended for work with the WDDX data exchange format
+win32service,Allows management of Windows Services using PHP API
+xml,Enables the creation of event-based XML document parsers using the SAX XML interface
+xmlreader,The XMLReader extension is an XML Pull parser. The reader acts as a cursor going forward on the document stream and stopping at each node on the way.
+xmlrpc,Provides a set of functions that can be used to write XML-RPC servers and clients
+xmlwriter,Built-in,Provides a non-cached, forward-only writer for generating streams or files containing XML data in an efficient manner
+xsl,The XSL extension implements the XSL standard, performing XSLT transformations using the libxslt library
+zip,ZIP Archives - Enables you to transparently read ZIP compressed archives and the files inside them
+zlib,Enables you to transparently read and write gzip (.gz) compressed files, through versions of most of the filesystem functions which work with gzip-compressed files

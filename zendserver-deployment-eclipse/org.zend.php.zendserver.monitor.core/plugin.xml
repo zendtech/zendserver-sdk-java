@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="notificationProvider" name="Provide Notification UI" schema="schema/notificationProvider.exsd"/>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.zend.php.zendserver.monitor.internal.core.Startup">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.zend.php.zendserver.monitor.internal.TargetsMonitorPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.zend.php.zendserver.deployment.core.targetsManagerListener">
+      <listener
+            class="org.zend.php.zendserver.monitor.internal.core.TargetsManagerListener">
+      </listener>
+   </extension>
+
+</plugin>
