@@ -21,18 +21,6 @@
   <build>
     <plugins>
 	<plugin>
-            <groupId>net.java.maven-incremental-build</groupId>
-			<artifactId>incremental-build-plugin</artifactId>
-			<version>1.6</version>
-            <executions>
-				<execution>
-					<goals>
-						<goal>incremental-build</goal>
-					</goals>
-				</execution>
-            </executions>
-    </plugin>
-	<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>1.5</version>
