@@ -6,7 +6,7 @@
   <artifactId>deployment-releng</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
- <parent>
+<parent>
     <groupId>org.zend</groupId>
     <artifactId>zendserver-releng</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
