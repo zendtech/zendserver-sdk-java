@@ -47,7 +47,14 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 		ApplicationsList list = app.getStatus(helper.getTargetId());
 		List<ApplicationInfo> infos = list.getApplicationsInfo();
 		if (infos != null) {
-			URL baseURL = helper.getBaseURL();
+			String urlString = helper.getBaseURL().toString();
+			urlString = removeSlash(urlString);
+			URL baseURL = null;
+			try {
+				baseURL = new URL(urlString);
+			} catch (MalformedURLException e) {
+				// cannot occur
+			}
 			possibleURLs.add(baseURL);
 			initLocalUrls(baseURL);
 			if (helper.isDefaultServer()) {
@@ -63,17 +70,22 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 				}
 			}
 			for (ApplicationInfo info : infos) {
-				URL baseUrl = null;
-				try {
-					baseUrl = new URL(info.getBaseUrl());
-				} catch (MalformedURLException e) {
-					// / ignore
-				}
-				for (URL url : possibleURLs) {
-					if (compareURLs(url, baseUrl)) {
-						helper.setAppId(info.getId());
-						helper.setInstalledLocation(info.getInstalledLocation());
-						return new SdkStatus(listener.getStatus());
+				String appUrl = info.getBaseUrl();
+				if (appUrl != null) {
+					appUrl = removeSlash(appUrl);
+					URL baseUrl = null;
+					try {
+						baseUrl = new URL(appUrl);
+					} catch (MalformedURLException e) {
+						// / ignore
+					}
+					for (URL url : possibleURLs) {
+						if (compareURLs(url, baseUrl)) {
+							helper.setAppId(info.getId());
+							helper.setInstalledLocation(info
+									.getInstalledLocation());
+							return new SdkStatus(listener.getStatus());
+						}
 					}
 				}
 			}
@@ -122,6 +134,13 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 			return true;
 		}
 		return false;
+	}
+
+	private String removeSlash(String url) {
+		if (url.endsWith("/")) { //$NON-NLS-1$
+			return url.substring(0, url.length() - 1);
+		}
+		return url;
 	}
 
 }
