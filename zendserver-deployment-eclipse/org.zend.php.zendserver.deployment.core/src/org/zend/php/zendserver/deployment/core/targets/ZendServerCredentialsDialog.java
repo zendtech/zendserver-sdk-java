@@ -33,16 +33,23 @@ public class ZendServerCredentialsDialog extends Dialog {
 	private String password;
 	private String username;
 	private String message;
-	
+	private String name;
+
 	public ZendServerCredentialsDialog(Shell parentShell, String title,
-			String message) {
+			String message, String name) {
 		super(parentShell);
 		this.title = title;
 		this.message = message;
+		this.name = name;
+	}
+
+	public ZendServerCredentialsDialog(Shell parentShell, String title,
+			String message) {
+		this(parentShell, title, null, null);
 	}
 
 	public ZendServerCredentialsDialog(Shell parentShell, String title) {
-		this(parentShell, title, null);
+		this(parentShell, title, null, null);
 	}
 
 	public String getPassword() {
@@ -79,19 +86,41 @@ public class ZendServerCredentialsDialog extends Dialog {
 		layout.numColumns = 2;
 		if (message != null) {
 			Label messageLabel = new Label(comp, SWT.NONE);
+			messageLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+					false));
 			messageLabel.setText(message);
 			messageLabel.setForeground(Display.getDefault().getSystemColor(
 					SWT.COLOR_RED));
 			messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 					false, 2, 1));
 		}
+		if (name != null) {
+			int index = name.lastIndexOf('-');
+			if (index != -1) {
+				name = name.substring(0, index);
+				index = name.lastIndexOf('/');
+				if (index != -1) {
+					name = name.substring(index + 1);
+				}
+			}
+			Label appLabel = new Label(comp, SWT.RIGHT);
+			appLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+					false));
+			appLabel.setText(Messages.ZendServerCredentialsDialog_Application);
+			Label appName = new Label(comp, SWT.RIGHT);
+			appName.setText(name);
+		}
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
 		usernameLabel.setText(Messages.ZendServerCredentialsDialog_0);
+		usernameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+				false));
 		usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		usernameText.setLayoutData(data);
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
 		passwordLabel.setText(Messages.ZendServerCredentialsDialog_1);
+		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+				false));
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		passwordText.setLayoutData(data);
 		getShell().setText(title);

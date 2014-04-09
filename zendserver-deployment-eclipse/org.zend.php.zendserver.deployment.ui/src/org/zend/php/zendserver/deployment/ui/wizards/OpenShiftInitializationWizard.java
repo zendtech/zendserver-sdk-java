@@ -86,18 +86,18 @@ public class OpenShiftInitializationWizard extends Wizard {
 					monitor.beginTask(
 							Messages.OpenShiftInitializationWizard_JobTitle,
 							IProgressMonitor.UNKNOWN);
-					if (Type.create(data.getGearProfile()) == Type.UNKNOWN) {
+					if (data.getCartridge() == null
+							|| data.getCartridge() == Type.UNKNOWN) {
 						String val = target
 								.getProperty(OpenShiftTarget.GEAR_PROFILE);
 						if (val != null) {
-							data.setGearProfile(val);
+							data.setCartridge(Type.create(val));
 						}
 					}
 					OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(
 							getName(), getDomain(), OpenShiftTarget
 									.getLibraDomain(), data.getPassword(), data
-									.getConfirmPassword(), data
-									.getGearProfile());
+									.getConfirmPassword(), data.getCartridge());
 					IStatus status = initializer.initialize();
 					if (status.getSeverity() == IStatus.ERROR) {
 						throw new InvocationTargetException(new Exception(

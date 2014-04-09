@@ -48,48 +48,55 @@ public abstract class ApiKeyDetector {
 		this.password = password;
 		this.serverUrl = serverUrl;
 	}
-	
+
 	public ApiKeyDetector(String username, String password) {
 		this(username, password, null);
 	}
-	
+
 	public ApiKeyDetector(String serverUrl) {
 		this(null, null, serverUrl);
 	}
 
 	public boolean createApiKey(String validationMessage) throws SdkException {
-		if (!isBootstrapped()) {
-			throw new NoBootstrapException();
-		}
-		if (username == null && password == null) {
-			String[] credentials = getServerCredentials(validationMessage);
-			if (credentials == null || credentials.length != 2) {
-				return false;
+		try {
+			if (!isBootstrapped()) {
+				throw new NoBootstrapException();
 			}
-			username = credentials[0];
-			password = credentials[1];
-		}
-		String sessionId = login();
-		if (sessionId != null) {
-			String exisitngKeys = getApiKeys(sessionId);
-			Map<String, String> keys = ZendTargetAutoDetect
-					.parseApiKey(exisitngKeys);
-			String keyName = name != null ? name : DEFAULT_KEY;
-			if (keys.containsKey(keyName)) {
-				name = keyName;
-				secretKey = keys.get(keyName);
+			if (username == null && password == null) {
+				String[] credentials = getServerCredentials(serverUrl,
+						validationMessage);
+				if (credentials == null || credentials.length != 2) {
+					return false;
+				}
+				username = credentials[0];
+				password = credentials[1];
+			}
+			String sessionId = login();
+			if (sessionId != null) {
+				String exisitngKeys = getApiKeys(sessionId);
+				Map<String, String> keys = ZendTargetAutoDetect
+						.parseApiKey(exisitngKeys);
+				String keyName = name != null ? name : DEFAULT_KEY;
+				if (keys.containsKey(keyName)) {
+					name = keyName;
+					secretKey = keys.get(keyName);
+					return true;
+				}
+				String content = doCreateApiKey(sessionId);
+				Map<String, String> values = ZendTargetAutoDetect
+						.parseApiKey(content);
+				if (values.containsKey(keyName)) {
+					name = keyName;
+					secretKey = values.get(keyName);
+				}
 				return true;
 			}
-			String content = doCreateApiKey(sessionId);
-			Map<String, String> values = ZendTargetAutoDetect
-					.parseApiKey(content);
-			if (values.containsKey(keyName)) {
-				name = keyName;
-				secretKey = values.get(keyName);
-			}
-			return true;
+			throw new SdkException(
+					"Could not connect with a local Zend Server.");
+		} finally {
+			username = null;
+			password = null;
 		}
-		throw new SdkException("Could not connect with a local Zend Server.");
 	}
 
 	private boolean isBootstrapped() throws SdkException {
@@ -131,7 +138,8 @@ public abstract class ApiKeyDetector {
 		this.serverUrl = serverUrl;
 	}
 
-	public abstract String[] getServerCredentials(String message);
+	public abstract String[] getServerCredentials(String serverUrl,
+			String validationMessage);
 
 	private String login() throws SdkException {
 		Map<String, String> params = new HashMap<String, String>();

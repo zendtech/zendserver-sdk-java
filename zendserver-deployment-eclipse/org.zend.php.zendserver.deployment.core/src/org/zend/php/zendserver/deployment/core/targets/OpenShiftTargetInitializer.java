@@ -56,22 +56,22 @@ public class OpenShiftTargetInitializer {
 	private String libraDomain;
 	private String password;
 	private String confirmPassword;
-	private Type gearProfile;
+	private Type type;
 
 	public OpenShiftTargetInitializer(String name, String domain,
 			String libraDomain, String password, String confirmPassword,
-			String gearProfile) {
+			Type type) {
 		super();
 		this.name = name;
 		this.domain = domain;
 		this.libraDomain = libraDomain;
 		this.password = password;
 		this.confirmPassword = confirmPassword;
-		this.gearProfile = Type.create(gearProfile);
+		this.type = type;
 	}
 
 	public IStatus initialize() {
-		switch (gearProfile) {
+		switch (type) {
 		case zs5_6_0:
 			init();
 			String sessionId = acceptEula();
@@ -96,15 +96,16 @@ public class OpenShiftTargetInitializer {
 			}
 		case zs6_0_0:
 		case zs6_1_0:
-			WebApiCredentials credentials = new BasicCredentials("tempKey", "tempSecret");
+			WebApiCredentials credentials = new BasicCredentials("tempKey", //$NON-NLS-1$
+					"tempSecret"); //$NON-NLS-1$
 			try {
 				WebApiClient client = new WebApiClient(credentials,
 						getServerUrl() + ":80", //$NON-NLS-1$
 						SSLContextInitializer.instance.getRestletContext());
 				client.setCustomVersion(WebApiVersion.V1_3);
 				client.setServerType(ServerType.ZEND_SERVER);
-				Bootstrap result = client.bootstrapSingleServer(false, password, null, null, null,
-						null, null, true);
+				Bootstrap result = client.bootstrapSingleServer(false,
+						password, null, null, null, null, null, true);
 				if (result.getSuccess()) {
 					return Status.OK_STATUS;
 				}
@@ -114,9 +115,12 @@ public class OpenShiftTargetInitializer {
 				DeploymentCore.log(e);
 			}
 		}
-		return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
-				MessageFormat.format("{0} gear profile is unsupported.",
-						gearProfile.getName()));
+		return new Status(
+				IStatus.ERROR,
+				DeploymentCore.PLUGIN_ID,
+				MessageFormat
+						.format(Messages.OpenShiftTargetInitializer_UnsupportedCartridgeMessage,
+								type.getName()));
 	}
 
 	private void init() {

@@ -105,7 +105,7 @@ public class OpenShiftTargetWizard extends Wizard {
 								data.getName(), domain, libraDomain, data
 										.getPassword(), data
 										.getConfirmPassword(), data
-										.getGearProfile());
+										.getCartridge());
 						IStatus status = initializer.initialize();
 						if (status.getSeverity() == IStatus.ERROR) {
 							throw new InvocationTargetException(new Exception(

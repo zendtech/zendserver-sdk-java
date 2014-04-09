@@ -29,6 +29,7 @@ import java.util.Random;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.InvalidCredentialsException;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -40,6 +41,7 @@ import com.openshift.client.IApplication;
 import com.openshift.client.IApplicationPortForwarding;
 import com.openshift.client.IDomain;
 import com.openshift.client.IGearProfile;
+import com.openshift.client.IHttpClient;
 import com.openshift.client.IOpenShiftConnection;
 import com.openshift.client.IOpenShiftSSHKey;
 import com.openshift.client.ISSHPublicKey;
@@ -70,11 +72,11 @@ public class OpenShiftTarget {
 	public enum Type {
 
 		zs5_6_0("zend-5.6"),
-		
+
 		zs6_0_0("zendserverphp-6"),
-		
+
 		zs6_1_0("zend-6.1"),
-		
+
 		UNKNOWN("");
 
 		private String name;
@@ -86,20 +88,20 @@ public class OpenShiftTarget {
 		public String getName() {
 			return name;
 		}
-		
+
 		public static Type create(String name) {
 			if (name == null) {
 				return UNKNOWN;
 			}
 			Type[] values = values();
-			for (Type type: values) {
+			for (Type type : values) {
 				if (name.equals(type.getName())) {
 					return type;
 				}
 			}
 			return UNKNOWN;
 		}
-		
+
 	}
 
 	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer";
@@ -114,7 +116,7 @@ public class OpenShiftTarget {
 	public static final String TARGET_INTERNAL_HOST = "openshift.internalHost";
 	public static final String TARGET_MYSQL_SUPPORT = "openshift.mysql";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
-	
+
 	public static final String BOOTSTRAP = ZendTarget.TEMP + "bootstrap";
 	public static final String GEAR_PROFILE = ZendTarget.TEMP + "gearProfile";
 	public static final String TEMP_PASSWORD = ZendTarget.TEMP
@@ -139,7 +141,7 @@ public class OpenShiftTarget {
 		this.password = password;
 		this.apiKeyDetector = apiKeyDetector;
 	}
-	
+
 	public OpenShiftTarget(String username, String password) {
 		this(username, password, null);
 	}
@@ -230,12 +232,13 @@ public class OpenShiftTarget {
 			throw new SdkException(e);
 		}
 	}
-	
+
 	public List<String> getZendCartridges() throws SdkException {
 		try {
 			IDomain d = getDomain();
 			List<String> result = new ArrayList<String>();
-			List<IStandaloneCartridge> cartridges = d.getUser().getConnection().getStandaloneCartridges();
+			List<IStandaloneCartridge> cartridges = d.getUser().getConnection()
+					.getStandaloneCartridges();
 			for (IStandaloneCartridge c : cartridges) {
 				if (Type.create(c.getName()) != Type.UNKNOWN) {
 					result.add(c.getName());
@@ -292,18 +295,31 @@ public class OpenShiftTarget {
 			String cartridgeName) throws SdkException {
 		IDomain d = getDomain();
 		if (d != null) {
-			IApplication application = d.createApplication(targetName,
-					new StandaloneCartridge(cartridgeName), new GearProfile(gearProfile));
-			if (application != null && mySql) {
-				IEmbeddableCartridge cartridge = application
-						.addEmbeddableCartridge(new EmbeddableCartridge(
-								"mysql-5.1"));
-				return cartridge.getDisplayName();
+			String oldValue = System
+					.getProperty(IHttpClient.SYSPROP_OPENSHIFT_READ_TIMEOUT);
+			try {
+				System.setProperty(IHttpClient.SYSPROP_OPENSHIFT_READ_TIMEOUT,
+						String.valueOf(1000000));
+				IApplication application = d.createApplication(targetName,
+						new StandaloneCartridge(cartridgeName),
+						new GearProfile(gearProfile));
+				if (application != null && mySql) {
+					IEmbeddableCartridge cartridge = application
+							.addEmbeddableCartridge(new EmbeddableCartridge(
+									"mysql-5.1"));
+					return cartridge.getDisplayName();
+				}
+			} finally {
+				if (oldValue != null) {
+					System.setProperty(
+							IHttpClient.SYSPROP_OPENSHIFT_READ_TIMEOUT,
+							oldValue);
+				}
 			}
 		}
 		return null;
 	}
-	
+
 	public Type getGearProfile(String appName) throws SdkException {
 		IDomain d = getDomain();
 		if (d != null) {
@@ -373,9 +389,8 @@ public class OpenShiftTarget {
 		}
 		return throwable.getMessage();
 	}
-	
-	public void setupWebApiKeyZend6(IZendTarget target)
-			throws SdkException {
+
+	public void setupWebApiKeyZend6(IZendTarget target) throws SdkException {
 		ZendTarget t = (ZendTarget) target;
 		if (getApiKeyZend6(null, target.getHost().toString())) {
 			t.setKey(apiKeyDetector.getKey());
@@ -511,7 +526,8 @@ public class OpenShiftTarget {
 						url.getFile());
 			}
 			String id = uniqueId + '_' + i++;
- 			ZendTarget target = new ZendTarget(id, url, new URL(host), "", "", true);
+			ZendTarget target = new ZendTarget(id, url, new URL(host), "", "",
+					true);
 			String name = container.getName();
 			if (name != null && name.length() > 0) {
 				target.addProperty(TARGET_CONTAINER, name);
@@ -546,10 +562,10 @@ public class OpenShiftTarget {
 			case zs6_0_0:
 			case zs6_1_0:
 				try {
-				if (getApiKeyZend6(null, host)) {
-					keyName = apiKeyDetector.getKey();
-					secretKey = apiKeyDetector.getSecretKey();
-				}
+					if (getApiKeyZend6(null, host)) {
+						keyName = apiKeyDetector.getKey();
+						secretKey = apiKeyDetector.getSecretKey();
+					}
 				} catch (NoBootstrapException e) {
 					target.addProperty(BOOTSTRAP, "true");
 					target.addProperty(TEMP_PASSWORD, password);
@@ -569,18 +585,14 @@ public class OpenShiftTarget {
 		return (IZendTarget[]) result.toArray(new IZendTarget[result.size()]);
 	}
 
-	private boolean getApiKeyZend6(String message, String host) throws SdkException {
+	private boolean getApiKeyZend6(String message, String host)
+			throws SdkException {
 		try {
 			apiKeyDetector.setServerUrl(host + "/ZendServer"); //$NON-NLS-1$
 			return apiKeyDetector.createApiKey(message);
-		} catch (NoBootstrapException e) {
-				throw e;
-		} catch (SdkException e) {
-			if ("invalid credentials".equals(e.getMessage())) { //$NON-NLS-1$
-				return getApiKeyZend6("Provided credentials are not valid.", host); //$NON-NLS-1$
-			} else {
-				throw e;
-			}
+		} catch (InvalidCredentialsException e) {
+			return getApiKeyZend6(
+					"Provided credentials are not valid.", host); //$NON-NLS-1$
 		}
 	}
 
@@ -600,20 +612,17 @@ public class OpenShiftTarget {
 			File tempUserIni = File.createTempFile(USER_INI, ".tmp");
 			String userIni = ABSOLUTE_USER_INI_PATH;
 			try {
-			sftpChannel.get(userIni,
-					tempUserIni.getCanonicalPath());
+				sftpChannel.get(userIni, tempUserIni.getCanonicalPath());
 			} catch (SftpException e) {
 				userIni = RELATIVE_USER_INI_PATH;
-				sftpChannel.get(userIni,
-						tempUserIni.getCanonicalPath());
+				sftpChannel.get(userIni, tempUserIni.getCanonicalPath());
 			}
 			String secretKey = findExistingSecretKey(DEFAULT_KEY_NAME,
 					tempUserIni);
 			if (secretKey == null) {
 				secretKey = applySecretKey(tempUserIni, DEFAULT_KEY_NAME,
 						generateSecretKey());
-				sftpChannel.put(tempUserIni.getCanonicalPath(),
-						userIni);
+				sftpChannel.put(tempUserIni.getCanonicalPath(), userIni);
 			}
 			sftpChannel.exit();
 			session.disconnect();
