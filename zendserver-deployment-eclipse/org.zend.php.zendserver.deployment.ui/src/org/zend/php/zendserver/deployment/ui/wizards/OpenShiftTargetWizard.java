@@ -102,8 +102,10 @@ public class OpenShiftTargetWizard extends Wizard {
 						String domain = data.getTarget().getDomainName();
 						String libraDomain = data.getTarget().getLibraDomain();
 						OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(
-								data.getName(), domain, libraDomain, data.getPassword(),
-								data.getConfirmPassword());
+								data.getName(), domain, libraDomain, data
+										.getPassword(), data
+										.getConfirmPassword(), data
+										.getCartridge());
 						IStatus status = initializer.initialize();
 						if (status.getSeverity() == IStatus.ERROR) {
 							throw new InvocationTargetException(new Exception(
