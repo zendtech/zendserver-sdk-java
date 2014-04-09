@@ -25,6 +25,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
 import org.zend.sdklib.SdkException;
+import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -310,6 +311,19 @@ public abstract class AbstractTargetDetailsComposite {
 			}
 
 			if (target.isTemporary()) {
+				if (TargetsManager.isOpenShift(target)
+						&& Boolean.valueOf(target
+								.getProperty(OpenShiftTarget.BOOTSTRAP))) {
+					OpenShiftInitializer initializer = new OpenShiftInitializer(
+							target, monitor);
+					initializer.init();
+					if (status == null) {
+						target = initializer.getTarget();
+					} else {
+						status = initializer.getStatus();
+						continue;
+					}
+				}
 				try {
 					target = testConnectAndDetectPort(target, monitor);
 				} catch (UnexpectedResponseCode e) {

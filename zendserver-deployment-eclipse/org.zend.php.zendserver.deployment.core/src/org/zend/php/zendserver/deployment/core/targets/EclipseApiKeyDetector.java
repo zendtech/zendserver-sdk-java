@@ -28,6 +28,10 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 	private String username;
 	private String password;
 
+	public EclipseApiKeyDetector(String username, String password) {
+		super(username, password, getLocalServerUrl());
+	}
+	
 	public EclipseApiKeyDetector() {
 		super(getLocalServerUrl());
 	}
@@ -54,13 +58,13 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 		return null;
 	}
 
-	public String[] getServerCredentials(final String message) {
+	public String[] getServerCredentials(final String serverName, final String message) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
 				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
 						Display.getDefault().getActiveShell(),
-						"Zend Server Credentials", message); //$NON-NLS-1$
+						"Zend Server Credentials", message, serverName); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					username = dialog.getUsername();
 					password = dialog.getPassword();
