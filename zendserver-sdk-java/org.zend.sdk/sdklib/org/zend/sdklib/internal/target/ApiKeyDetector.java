@@ -43,18 +43,32 @@ public abstract class ApiKeyDetector {
 	private String name;
 	private String secretKey;
 
-	public ApiKeyDetector(String serverUrl) {
-		super();
+	public ApiKeyDetector(String username, String password, String serverUrl) {
+		this.username = username;
+		this.password = password;
 		this.serverUrl = serverUrl;
+	}
+	
+	public ApiKeyDetector(String username, String password) {
+		this(username, password, null);
+	}
+	
+	public ApiKeyDetector(String serverUrl) {
+		this(null, null, serverUrl);
 	}
 
 	public boolean createApiKey(String validationMessage) throws SdkException {
-		String[] credentials = getServerCredentials(validationMessage);
-		if (credentials == null || credentials.length != 2) {
-			return false;
+		if (!isBootstrapped()) {
+			throw new NoBootstrapException();
 		}
-		username = credentials[0];
-		password = credentials[1];
+		if (username == null && password == null) {
+			String[] credentials = getServerCredentials(validationMessage);
+			if (credentials == null || credentials.length != 2) {
+				return false;
+			}
+			username = credentials[0];
+			password = credentials[1];
+		}
 		String sessionId = login();
 		if (sessionId != null) {
 			String exisitngKeys = getApiKeys(sessionId);
@@ -78,6 +92,29 @@ public abstract class ApiKeyDetector {
 		throw new SdkException("Could not connect with a local Zend Server.");
 	}
 
+	private boolean isBootstrapped() throws SdkException {
+		HttpClient client = new HttpClient();
+		HttpMethodBase method = new GetMethod(getUrl("/Login"));
+		if (method != null) {
+			int statusCode = -1;
+			try {
+				statusCode = client.executeMethod(method);
+				if (statusCode == 200) {
+					String responseContent = new String(
+							method.getResponseBody());
+					if (!responseContent.contains("BootstrapWizard")) {
+						return true;
+					}
+				}
+			} catch (IOException e) {
+				throw new SdkException(e);
+			} finally {
+				method.releaseConnection();
+			}
+		}
+		return false;
+	}
+
 	public String getKey() {
 		return name;
 	}
@@ -88,6 +125,10 @@ public abstract class ApiKeyDetector {
 
 	public void setKey(String key) {
 		this.name = key;
+	}
+
+	public void setServerUrl(String serverUrl) {
+		this.serverUrl = serverUrl;
 	}
 
 	public abstract String[] getServerCredentials(String message);

@@ -54,8 +54,8 @@ import com.openshift.client.cartridge.EmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
 import com.openshift.client.cartridge.IStandaloneCartridge;
+import com.openshift.client.cartridge.StandaloneCartridge;
 import com.openshift.internal.client.GearProfile;
-import com.openshift.internal.client.StandaloneCartridge;
 
 /**
  * Represents OpenShift user account. It allows to detects OpenShift
@@ -69,9 +69,11 @@ public class OpenShiftTarget {
 
 	public enum Type {
 
-		zs6_0_0("zendserverphp-6"),
-
 		zs5_6_0("zend-5.6"),
+		
+		zs6_0_0("zendserverphp-6"),
+		
+		zs6_1_0("zend-6.1"),
 		
 		UNKNOWN("");
 
@@ -112,6 +114,11 @@ public class OpenShiftTarget {
 	public static final String TARGET_INTERNAL_HOST = "openshift.internalHost";
 	public static final String TARGET_MYSQL_SUPPORT = "openshift.mysql";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
+	
+	public static final String BOOTSTRAP = ZendTarget.TEMP + "bootstrap";
+	public static final String GEAR_PROFILE = ZendTarget.TEMP + "gearProfile";
+	public static final String TEMP_PASSWORD = ZendTarget.TEMP
+			+ "openshift.username";
 
 	private static final String SSHKEY_DEFAULT_NAME = "zendStudio";
 	private static final String DEFAULT_KEY_NAME = "ZendStudioClient";
@@ -296,6 +303,17 @@ public class OpenShiftTarget {
 		}
 		return null;
 	}
+	
+	public Type getGearProfile(String appName) throws SdkException {
+		IDomain d = getDomain();
+		if (d != null) {
+			IApplication application = d.getApplicationByName(appName);
+			if (application != null) {
+				return Type.create(application.getGearProfile().getName());
+			}
+		}
+		return null;
+	}
 
 	public static boolean hasDatabaseSupport(IZendTarget target) {
 		return target.getProperty(TARGET_MYSQL_SUPPORT) != null;
@@ -354,6 +372,15 @@ public class OpenShiftTarget {
 			return result.toString();
 		}
 		return throwable.getMessage();
+	}
+	
+	public void setupWebApiKeyZend6(IZendTarget target)
+			throws SdkException {
+		ZendTarget t = (ZendTarget) target;
+		if (getApiKeyZend6(null, target.getHost().toString())) {
+			t.setKey(apiKeyDetector.getKey());
+			t.setSecretKey(apiKeyDetector.getSecretKey());
+		}
 	}
 
 	public String getDomainName() throws SdkException {
@@ -505,7 +532,9 @@ public class OpenShiftTarget {
 				target.addProperty(TARGET_MYSQL_SUPPORT, "true");
 			}
 			IStandaloneCartridge cartridge = container.getCartridge();
-			Type type = Type.create(cartridge.getName());
+			String gearProfile = cartridge.getName();
+			Type type = Type.create(gearProfile);
+			target.addProperty(GEAR_PROFILE, gearProfile);
 			String keyName = null;
 			String secretKey = null;
 			switch (type) {
@@ -515,9 +544,17 @@ public class OpenShiftTarget {
 						keyBuilder);
 				break;
 			case zs6_0_0:
-				if (getApiKeyZS6(null)) {
+			case zs6_1_0:
+				try {
+				if (getApiKeyZend6(null, host)) {
 					keyName = apiKeyDetector.getKey();
 					secretKey = apiKeyDetector.getSecretKey();
+				}
+				} catch (NoBootstrapException e) {
+					target.addProperty(BOOTSTRAP, "true");
+					target.addProperty(TEMP_PASSWORD, password);
+					keyName = "tempKey";
+					secretKey = "tempSecret";
 				}
 				break;
 			default:
@@ -532,12 +569,15 @@ public class OpenShiftTarget {
 		return (IZendTarget[]) result.toArray(new IZendTarget[result.size()]);
 	}
 
-	private boolean getApiKeyZS6(String message) throws SdkException {
+	private boolean getApiKeyZend6(String message, String host) throws SdkException {
 		try {
+			apiKeyDetector.setServerUrl(host + "/ZendServer"); //$NON-NLS-1$
 			return apiKeyDetector.createApiKey(message);
+		} catch (NoBootstrapException e) {
+				throw e;
 		} catch (SdkException e) {
 			if ("invalid credentials".equals(e.getMessage())) { //$NON-NLS-1$
-				return getApiKeyZS6("Provided credentials are not valid."); //$NON-NLS-1$
+				return getApiKeyZend6("Provided credentials are not valid.", host); //$NON-NLS-1$
 			} else {
 				throw e;
 			}

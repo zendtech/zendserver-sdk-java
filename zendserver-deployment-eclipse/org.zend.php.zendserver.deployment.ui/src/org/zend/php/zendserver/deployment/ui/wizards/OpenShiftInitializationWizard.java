@@ -14,9 +14,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.OpenShiftTargetInitializer;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
+import org.zend.sdklib.internal.target.OpenShiftTarget.Type;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -83,14 +86,33 @@ public class OpenShiftInitializationWizard extends Wizard {
 					monitor.beginTask(
 							Messages.OpenShiftInitializationWizard_JobTitle,
 							IProgressMonitor.UNKNOWN);
+					if (Type.create(data.getGearProfile()) == Type.UNKNOWN) {
+						String val = target
+								.getProperty(OpenShiftTarget.GEAR_PROFILE);
+						if (val != null) {
+							data.setGearProfile(val);
+						}
+					}
 					OpenShiftTargetInitializer initializer = new OpenShiftTargetInitializer(
-							getName(), getDomain(), data.getTarget()
+							getName(), getDomain(), OpenShiftTarget
 									.getLibraDomain(), data.getPassword(), data
-									.getConfirmPassword());
+									.getConfirmPassword(), data
+									.getGearProfile());
 					IStatus status = initializer.initialize();
 					if (status.getSeverity() == IStatus.ERROR) {
 						throw new InvocationTargetException(new Exception(
 								status.getMessage()));
+					}
+					if (Boolean.valueOf(target
+							.getProperty(OpenShiftTarget.BOOTSTRAP))) {
+						try {
+							OpenShiftTarget osTarget = new OpenShiftTarget(
+									null, null, new EclipseApiKeyDetector(
+											"admin", data.getPassword())); //$NON-NLS-1$
+							osTarget.setupWebApiKeyZend6(target);
+						} catch (SdkException e) {
+							osPage.setErrorMessage(e.getMessage());
+						}
 					}
 					monitor.done();
 				}
