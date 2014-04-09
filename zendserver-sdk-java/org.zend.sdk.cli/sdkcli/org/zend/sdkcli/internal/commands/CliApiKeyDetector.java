@@ -24,7 +24,7 @@ public class CliApiKeyDetector extends ApiKeyDetector {
 		this.password = password;
 	}
 
-	public String[] getServerCredentials(final String message) {
+	public String[] getServerCredentials(final String message, String serverName) {
 		if (username == null || password == null) {
 			System.console().printf("Zend Server Credentials:\n");
 		}
