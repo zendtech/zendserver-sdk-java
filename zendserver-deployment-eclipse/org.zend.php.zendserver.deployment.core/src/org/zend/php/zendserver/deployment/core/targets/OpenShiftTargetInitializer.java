@@ -8,7 +8,9 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +25,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
+import org.zend.sdklib.internal.target.OpenShiftTarget.Type;
+import org.zend.sdklib.internal.target.SSLContextInitializer;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.auth.BasicCredentials;
+import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.Bootstrap;
+import org.zend.webapi.core.connection.data.values.ServerType;
+import org.zend.webapi.core.connection.data.values.WebApiVersion;
 
 /**
  * OpenShift target initializer. It should be called for newly created OpenShift
@@ -45,39 +56,71 @@ public class OpenShiftTargetInitializer {
 	private String libraDomain;
 	private String password;
 	private String confirmPassword;
+	private Type type;
 
-	public OpenShiftTargetInitializer(String name, String domain, String libraDomain,
-			String password, String confirmPassword) {
+	public OpenShiftTargetInitializer(String name, String domain,
+			String libraDomain, String password, String confirmPassword,
+			Type type) {
 		super();
 		this.name = name;
 		this.domain = domain;
 		this.libraDomain = libraDomain;
 		this.password = password;
 		this.confirmPassword = confirmPassword;
+		this.type = type;
 	}
 
 	public IStatus initialize() {
-		init();
-		String sessionId = acceptEula();
-		if (sessionId != null) {
-			if (setPassword(sessionId) == 302) {
-				if (acceptLicense(sessionId) == 302) {
-					return Status.OK_STATUS;
-				} else
+		switch (type) {
+		case zs5_6_0:
+			init();
+			String sessionId = acceptEula();
+			if (sessionId != null) {
+				if (setPassword(sessionId) == 302) {
+					if (acceptLicense(sessionId) == 302) {
+						return Status.OK_STATUS;
+					} else
+						return new Status(
+								IStatus.ERROR,
+								DeploymentCore.PLUGIN_ID,
+								Messages.OpenShiftTargetInitializer_AcceptLicenseFailed);
+				} else {
 					return new Status(
 							IStatus.ERROR,
 							DeploymentCore.PLUGIN_ID,
-							Messages.OpenShiftTargetInitializer_AcceptLicenseFailed);
+							Messages.OpenShiftTargetInitializer_SettingPasswordFailed);
+				}
 			} else {
-				return new Status(
-						IStatus.ERROR,
-						DeploymentCore.PLUGIN_ID,
-						Messages.OpenShiftTargetInitializer_SettingPasswordFailed);
+				return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
+						Messages.OpenShiftTargetInitializer_InitSessionFailed);
 			}
-		} else {
-			return new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
-					Messages.OpenShiftTargetInitializer_InitSessionFailed);
+		case zs6_0_0:
+		case zs6_1_0:
+			WebApiCredentials credentials = new BasicCredentials("tempKey", //$NON-NLS-1$
+					"tempSecret"); //$NON-NLS-1$
+			try {
+				WebApiClient client = new WebApiClient(credentials,
+						getServerUrl() + ":80", //$NON-NLS-1$
+						SSLContextInitializer.instance.getRestletContext());
+				client.setCustomVersion(WebApiVersion.V1_3);
+				client.setServerType(ServerType.ZEND_SERVER);
+				Bootstrap result = client.bootstrapSingleServer(false,
+						password, null, null, null, null, null, true);
+				if (result.getSuccess()) {
+					return Status.OK_STATUS;
+				}
+			} catch (MalformedURLException e) {
+				DeploymentCore.log(e);
+			} catch (WebApiException e) {
+				DeploymentCore.log(e);
+			}
 		}
+		return new Status(
+				IStatus.ERROR,
+				DeploymentCore.PLUGIN_ID,
+				MessageFormat
+						.format(Messages.OpenShiftTargetInitializer_UnsupportedCartridgeMessage,
+								type.getName()));
 	}
 
 	private void init() {
@@ -87,9 +130,7 @@ public class OpenShiftTargetInitializer {
 			DeploymentCore.log(e);
 		}
 		HttpClient client = new HttpClient();
-		HttpMethodBase method = createGetRequest(
-				"http://" + name + "-" + domain + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ libraDomain,
+		HttpMethodBase method = createGetRequest(getServerUrl(),
 				new HashMap<String, String>());
 		try {
 			client.executeMethod(method);
@@ -105,6 +146,10 @@ public class OpenShiftTargetInitializer {
 		} finally {
 			method.releaseConnection();
 		}
+	}
+
+	private String getServerUrl() {
+		return "http://" + name + "-" + domain + "." + libraDomain; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private int acceptLicense(String sessionId) {

@@ -22,6 +22,7 @@ public class Messages extends NLS {
 	public static String OpenShiftTargetInitializer_AcceptLicenseFailed;
 	public static String OpenShiftTargetInitializer_InitSessionFailed;
 	public static String OpenShiftTargetInitializer_SettingPasswordFailed;
+	public static String OpenShiftTargetInitializer_UnsupportedCartridgeMessage;
 	public static String OpenShiftTunnel_CannotFindKey;
 	public static String TargetDatabase_1;
 	public static String TargetDatabase_ProfileName;
