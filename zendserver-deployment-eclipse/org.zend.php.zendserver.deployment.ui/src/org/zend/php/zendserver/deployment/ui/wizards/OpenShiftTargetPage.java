@@ -84,7 +84,9 @@ public class OpenShiftTargetPage extends WizardPage {
 		}
 		createPasswordGroup(container);
 		setControl(container);
-		initializeValues();
+		if (!init) {
+			initializeValues();
+		}
 		setPageComplete(validatePage());
 	}
 
