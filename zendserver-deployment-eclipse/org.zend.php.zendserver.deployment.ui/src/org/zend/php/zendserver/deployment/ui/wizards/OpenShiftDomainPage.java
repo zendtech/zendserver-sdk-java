@@ -34,8 +34,7 @@ public class OpenShiftDomainPage extends WizardPage {
 		super(Messages.OpenShiftDomainPage_PageTitle);
 		setDescription(Messages.OpenShiftDomainPage_EnterNameMessage);
 		setTitle(Messages.OpenShiftDomainPage_PageDescription);
-		this.target = new OpenShiftTarget(wizard.getUsername(),
-				wizard.getPassword());
+		this.target = data.getTarget();
 	}
 
 	public void createControl(Composite parent) {
