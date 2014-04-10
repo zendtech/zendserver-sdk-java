@@ -43,6 +43,7 @@ import com.openshift.client.IDomain;
 import com.openshift.client.IGearProfile;
 import com.openshift.client.IHttpClient;
 import com.openshift.client.IOpenShiftConnection;
+import com.openshift.client.IOpenShiftResource;
 import com.openshift.client.IOpenShiftSSHKey;
 import com.openshift.client.ISSHPublicKey;
 import com.openshift.client.IUser;
@@ -313,6 +314,10 @@ public class OpenShiftTarget {
 					IEmbeddableCartridge cartridge = application
 							.addEmbeddableCartridge(new EmbeddableCartridge(
 									"mysql-5.1"));
+					if (cartridge instanceof IOpenShiftResource) {
+						return ((IOpenShiftResource) cartridge).getMessages()
+								.toString();
+					}
 					return cartridge.getDisplayName();
 				}
 			} finally {
