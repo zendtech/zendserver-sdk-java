@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -49,6 +50,7 @@ public class OpenShiftTargetPage extends WizardPage {
 
 	private boolean init;
 	private String description;
+	private Combo mysqlCombo;
 
 	protected OpenShiftTargetPage(OpenShiftTargetWizard wizard,
 			OpenShiftTargetData data) {
@@ -56,8 +58,7 @@ public class OpenShiftTargetPage extends WizardPage {
 		this.description = Messages.OpenShiftTargetPage_PageDescription;
 		setDescription(Messages.OpenShiftTargetPage_EnterNameMessage);
 		setTitle(Messages.OpenShiftTargetPage_PageTitle);
-		this.target = new OpenShiftTarget(wizard.getUsername(),
-				wizard.getPassword());
+		this.target = data.getTarget();
 		this.data = data;
 	}
 
@@ -79,9 +80,9 @@ public class OpenShiftTargetPage extends WizardPage {
 		container.setLayout(layout);
 		if (!init) {
 			createTargetGroup(container);
+			createMySqlGroup(container);
 		}
 		createPasswordGroup(container);
-		// platformsViewer = createPlatformsSection(container);
 		setControl(container);
 		initializeValues();
 		setPageComplete(validatePage());
@@ -92,28 +93,42 @@ public class OpenShiftTargetPage extends WizardPage {
 		if (visible) {
 			if (targetNameText != null) {
 				targetNameText.setFocus();
-			} else{
+			} else {
 				zsPassword.setFocus();
 			}
 		}
 	}
 
 	public void initializeValues() {
-		if (data.getGearProfiles() != null && data.getGearProfiles().size() > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-
-				public void run() {
-					for (String profile : data.getGearProfiles()) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				List<String> profiles = data.getGearProfiles();
+				if (profiles != null && profiles.size() > 0) {
+					for (String profile : profiles) {
 						gearProfileCombo.add(profile);
 					}
 					gearProfileCombo.select(0);
-					for (String name : data.getZendCartridges()) {
-						cartridgesCombo.add(name);
-					}
-					cartridgesCombo.select(data.getZendCartridges().size() - 1);
 				}
-			});
-		}
+				Type[] types = Type.values();
+				int counter = 0;
+				for (Type type : types) {
+					if (type.isSupported()) {
+						cartridgesCombo.add(type.getName());
+						counter++;
+					}
+				}
+				if (counter > 0) {
+					cartridgesCombo.select(counter - 1);
+				}
+				List<String> mysqlCartridges = data.getMysqlCartridges();
+				if (mysqlCartridges != null && mysqlCartridges.size() > 0) {
+					for (String cartridge : mysqlCartridges) {
+						mysqlCombo.add(cartridge);
+					}
+					mysqlCombo.select(mysqlCartridges.size() - 1);
+				}
+			}
+		});
 	}
 
 	public void updateData() {
@@ -128,6 +143,7 @@ public class OpenShiftTargetPage extends WizardPage {
 		}
 		if (mySqlButton != null) {
 			data.setMySQLSupport(mySqlButton.getSelection());
+			data.setMySqlCartridge(mysqlCombo.getText());
 		}
 		if (zsPassword != null) {
 			data.setPassword(zsPassword.getText());
@@ -195,11 +211,33 @@ public class OpenShiftTargetPage extends WizardPage {
 		targetNameText = createLabelWithText(
 				Messages.OpenShiftTargetPage_TargetNameLabel, false,
 				targetGroup);
-		cartridgesCombo = createLabelWithCombo(
-				Messages.OpenShiftTargetPage_0, targetGroup);
+		cartridgesCombo = createLabelWithCombo(Messages.OpenShiftTargetPage_0,
+				targetGroup, true);
 		gearProfileCombo = createLabelWithCombo(
-				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup);
-		mySqlButton = createMySqlSection(targetGroup);
+				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup,
+				true);
+	}
+
+	private void createMySqlGroup(Composite container) {
+		Group mysqlGroup = new Group(container, SWT.NONE);
+		mysqlGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
+				2, 1));
+		mysqlGroup.setLayout(new GridLayout(2, false));
+		mysqlGroup.setText(Messages.OpenShiftTargetPage_MySQLSection);
+		mySqlButton = new Button(mysqlGroup, SWT.CHECK);
+		mySqlButton.setText(Messages.OpenShiftTargetPage_AddMySQLLabel);
+		mySqlButton
+				.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		mySqlButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				mysqlCombo.setEnabled(mySqlButton.getSelection());
+				setPageComplete(validatePage());
+			}
+		});
+		mysqlCombo = createLabelWithCombo(
+				Messages.OpenShiftTargetPage_MySQLVersion, mysqlGroup, true);
+		mysqlCombo.setEnabled(false);
 	}
 
 	private void createPasswordGroup(Composite container) {
@@ -253,25 +291,8 @@ public class OpenShiftTargetPage extends WizardPage {
 		return text;
 	}
 
-	private Button createMySqlSection(Composite container) {
-		Label label = new Label(container, SWT.NONE);
-		GridData gd = new GridData(SWT.FILL, SWT.LEFT, false, false);
-		gd.widthHint = 100;
-		label.setLayoutData(gd);
-		Button mySqlButton = new Button(container, SWT.CHECK);
-		mySqlButton.setText(Messages.OpenShiftTargetPage_AddMySQLLabel);
-		mySqlButton
-				.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-		mySqlButton.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				setPageComplete(validatePage());
-			}
-		});
-		return mySqlButton;
-	}
-
-	private Combo createLabelWithCombo(String labelText, Composite container) {
+	private Combo createLabelWithCombo(String labelText, Composite container,
+			boolean readOnly) {
 		Composite parent = new Composite(container, SWT.NONE);
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 		GridLayout layout = new GridLayout(2, false);
@@ -283,7 +304,11 @@ public class OpenShiftTargetPage extends WizardPage {
 		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);
-		Combo combo = new Combo(parent, SWT.BORDER | SWT.SINGLE);
+		int style = SWT.BORDER | SWT.SINGLE;
+		if (readOnly) {
+			style += SWT.READ_ONLY;
+		}
+		Combo combo = new Combo(parent, style);
 		combo.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -293,40 +318,5 @@ public class OpenShiftTargetPage extends WizardPage {
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return combo;
 	}
-
-	/*
-	 * private TableViewer createPlatformsSection(Composite container) {
-	 * Composite parent = new Composite(container, SWT.NONE);
-	 * parent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
-	 * GridLayout layout = new GridLayout(2, false); layout.marginWidth = 0;
-	 * layout.marginHeight = 0; parent.setLayout(layout); Label label = new
-	 * Label(parent, SWT.NONE); label.setText("Cartridges:"); GridData gd = new
-	 * GridData(SWT.LEFT, SWT.CENTER, false, true); gd.widthHint = 100;
-	 * label.setLayoutData(gd); CheckboxTableViewer viewer =
-	 * CheckboxTableViewer.newCheckList(parent, SWT.CHECK | SWT.BORDER |
-	 * SWT.V_SCROLL | SWT.SINGLE); viewer.setContentProvider(new
-	 * IStructuredContentProvider() {
-	 * 
-	 * public void dispose() { }
-	 * 
-	 * public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-	 * { }
-	 * 
-	 * public Object[] getElements(Object inputElement) { try { return
-	 * target.getCartridges(); } catch (SdkException e) { Activator.log(e); }
-	 * return new Object[0]; } }); viewer.setLabelProvider(new
-	 * ColumnLabelProvider() {
-	 * 
-	 * public String getText(Object element) { return
-	 * target.getCartridgeLabel(element); } }); final Table table =
-	 * viewer.getTable(); table.setHeaderVisible(false);
-	 * table.setLinesVisible(true); table.setLayoutData(new
-	 * GridData(GridData.FILL_HORIZONTAL));
-	 * viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-	 * 
-	 * public void selectionChanged(SelectionChangedEvent event) {
-	 * 
-	 * } }); return viewer; }
-	 */
 
 }

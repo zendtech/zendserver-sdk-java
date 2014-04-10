@@ -28,19 +28,14 @@ import org.zend.sdklib.internal.target.OpenShiftTarget;
  */
 public class OpenShiftTargetWizard extends Wizard {
 
-	private String username;
-	private String password;
 	private OpenShiftTargetData data;
 
 	private OpenShiftTargetPage osPage;
 	private OpenShiftDomainPage domainPage;
 	private OpenShiftEulaPage eulaPage;
 
-	public OpenShiftTargetWizard(String username, String password,
-			OpenShiftTargetData data) {
+	public OpenShiftTargetWizard(OpenShiftTargetData data) {
 		super();
-		this.username = username;
-		this.password = password;
 		this.data = data;
 		if (data.getGearProfiles().isEmpty()) {
 			this.domainPage = new OpenShiftDomainPage(this, data);
@@ -98,6 +93,7 @@ public class OpenShiftTargetWizard extends Wizard {
 						final String message = data.getTarget().create(
 								data.getName(), data.getGearProfile(),
 								data.hasMySQLSupport(),
+								data.getMySqlCartridge(),
 								data.getCartridge().getName());
 						String domain = data.getTarget().getDomainName();
 						String libraDomain = data.getTarget().getLibraDomain();
@@ -140,14 +136,6 @@ public class OpenShiftTargetWizard extends Wizard {
 			Activator.log(e);
 		}
 		return true;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 
 }

@@ -43,6 +43,7 @@ import com.openshift.client.IDomain;
 import com.openshift.client.IGearProfile;
 import com.openshift.client.IHttpClient;
 import com.openshift.client.IOpenShiftConnection;
+import com.openshift.client.IOpenShiftResource;
 import com.openshift.client.IOpenShiftSSHKey;
 import com.openshift.client.ISSHPublicKey;
 import com.openshift.client.IUser;
@@ -71,22 +72,28 @@ public class OpenShiftTarget {
 
 	public enum Type {
 
-		zs5_6_0("zend-5.6"),
+		zs5_6_0("zend-5.6", false),
 
-		zs6_0_0("zendserverphp-6"),
+		zs6_0_0("zendserverphp-6", false),
 
-		zs6_1_0("zend-6.1"),
+		zs6_1_0("zend-6.1", true),
 
-		UNKNOWN("");
+		UNKNOWN("", false);
 
 		private String name;
+		private boolean supported;
 
-		private Type(String name) {
+		private Type(String name, boolean supported) {
 			this.name = name;
+			this.supported = supported;
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public boolean isSupported() {
+			return supported;
 		}
 
 		public static Type create(String name) {
@@ -250,6 +257,24 @@ public class OpenShiftTarget {
 		}
 	}
 
+	public List<String> getMySqlCartridges() throws SdkException {
+		try {
+			IDomain d = getDomain();
+			List<String> result = new ArrayList<String>();
+			List<IEmbeddableCartridge> cartridges = d.getUser().getConnection()
+					.getEmbeddableCartridges();
+			for (IEmbeddableCartridge c : cartridges) {
+				String name = c.getName();
+				if (name != null && name.trim().startsWith("mysql")) {
+					result.add(c.getName());
+				}
+			}
+			return result;
+		} catch (OpenShiftException e) {
+			throw new SdkException(e);
+		}
+	}
+
 	public boolean hasDomain() throws SdkException {
 		try {
 			IOpenShiftConnection connection = null;
@@ -292,7 +317,7 @@ public class OpenShiftTarget {
 	}
 
 	public String create(String targetName, String gearProfile, boolean mySql,
-			String cartridgeName) throws SdkException {
+			String mysqlCartidge, String cartridgeName) throws SdkException {
 		IDomain d = getDomain();
 		if (d != null) {
 			String oldValue = System
@@ -306,7 +331,11 @@ public class OpenShiftTarget {
 				if (application != null && mySql) {
 					IEmbeddableCartridge cartridge = application
 							.addEmbeddableCartridge(new EmbeddableCartridge(
-									"mysql-5.1"));
+									mysqlCartidge));
+					if (cartridge instanceof IOpenShiftResource) {
+						return ((IOpenShiftResource) cartridge).getMessages()
+								.toString();
+					}
 					return cartridge.getDisplayName();
 				}
 			} finally {
@@ -591,8 +620,7 @@ public class OpenShiftTarget {
 			apiKeyDetector.setServerUrl(host + "/ZendServer"); //$NON-NLS-1$
 			return apiKeyDetector.createApiKey(message);
 		} catch (InvalidCredentialsException e) {
-			return getApiKeyZend6(
-					"Provided credentials are not valid.", host); //$NON-NLS-1$
+			return getApiKeyZend6("Provided credentials are not valid.", host); //$NON-NLS-1$
 		}
 	}
 
