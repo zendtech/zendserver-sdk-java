@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -92,28 +93,35 @@ public class OpenShiftTargetPage extends WizardPage {
 		if (visible) {
 			if (targetNameText != null) {
 				targetNameText.setFocus();
-			} else{
+			} else {
 				zsPassword.setFocus();
 			}
 		}
 	}
 
 	public void initializeValues() {
-		if (data.getGearProfiles() != null && data.getGearProfiles().size() > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-
-				public void run() {
-					for (String profile : data.getGearProfiles()) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				List<String> profiles = data.getGearProfiles();
+				if (profiles != null && profiles.size() > 0) {
+					for (String profile : profiles) {
 						gearProfileCombo.add(profile);
 					}
 					gearProfileCombo.select(0);
-					for (String name : data.getZendCartridges()) {
-						cartridgesCombo.add(name);
-					}
-					cartridgesCombo.select(data.getZendCartridges().size() - 1);
 				}
-			});
-		}
+				Type[] types = Type.values();
+				int counter = 0;
+				for (Type type : types) {
+					if (type.isSupported()) {
+						cartridgesCombo.add(type.getName());
+						counter++;
+					}
+				}
+				if (counter > 0) {
+					cartridgesCombo.select(counter - 1);
+				}
+			}
+		});
 	}
 
 	public void updateData() {
@@ -195,10 +203,11 @@ public class OpenShiftTargetPage extends WizardPage {
 		targetNameText = createLabelWithText(
 				Messages.OpenShiftTargetPage_TargetNameLabel, false,
 				targetGroup);
-		cartridgesCombo = createLabelWithCombo(
-				Messages.OpenShiftTargetPage_0, targetGroup);
+		cartridgesCombo = createLabelWithCombo(Messages.OpenShiftTargetPage_0,
+				targetGroup, true);
 		gearProfileCombo = createLabelWithCombo(
-				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup);
+				Messages.OpenShiftTargetPage_GearProfileLabel, targetGroup,
+				true);
 		mySqlButton = createMySqlSection(targetGroup);
 	}
 
@@ -271,7 +280,8 @@ public class OpenShiftTargetPage extends WizardPage {
 		return mySqlButton;
 	}
 
-	private Combo createLabelWithCombo(String labelText, Composite container) {
+	private Combo createLabelWithCombo(String labelText, Composite container,
+			boolean readOnly) {
 		Composite parent = new Composite(container, SWT.NONE);
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 		GridLayout layout = new GridLayout(2, false);
@@ -283,7 +293,11 @@ public class OpenShiftTargetPage extends WizardPage {
 		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);
-		Combo combo = new Combo(parent, SWT.BORDER | SWT.SINGLE);
+		int style = SWT.BORDER | SWT.SINGLE;
+		if (readOnly) {
+			style += SWT.READ_ONLY;
+		}
+		Combo combo = new Combo(parent, style);
 		combo.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {

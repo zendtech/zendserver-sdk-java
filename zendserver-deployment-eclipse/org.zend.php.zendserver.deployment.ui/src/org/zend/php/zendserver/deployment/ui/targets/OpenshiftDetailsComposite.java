@@ -303,7 +303,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	private void openTargetWizard() {
 		final List<String> gearProfiles = new ArrayList<String>();
 		final List<String> zendTargets = new ArrayList<String>();
-		final List<String> zendCartridges = new ArrayList<String>();
 		final String username = usernameText.getText();
 		final String password = passwordText.getText();
 		if (username == null || username.trim().length() == 0
@@ -312,8 +311,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			return;
 		}
 		try {
-			doOpenTargetWizard(gearProfiles, zendTargets, zendCartridges,
-					username, password);
+			doOpenTargetWizard(gearProfiles, zendTargets, username, password);
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 			Throwable a = e.getTargetException();
@@ -327,9 +325,9 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	private void doOpenTargetWizard(final List<String> gearProfiles,
-			final List<String> zendTargets, final List<String> zendCartridges,
-			final String username, final String password)
-			throws InvocationTargetException, InterruptedException {
+			final List<String> zendTargets, final String username,
+			final String password) throws InvocationTargetException,
+			InterruptedException {
 		runnableContext.run(true, false, new IRunnableWithProgress() {
 
 			public void run(IProgressMonitor monitor)
@@ -341,7 +339,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 					if (target.hasDomain()) {
 						gearProfiles.addAll(target.getAvaliableGearProfiles());
 						zendTargets.addAll(target.getAllZendTargets());
-						zendCartridges.addAll(target.getZendCartridges());
 					}
 					Display.getDefault().asyncExec(new Runnable() {
 
@@ -349,16 +346,16 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							OpenShiftTargetData data = new OpenShiftTargetData();
 							data.setGearProfiles(gearProfiles);
 							data.setZendTargets(zendTargets);
-							data.setZendCartridges(zendCartridges);
 							Shell shell = PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getShell();
 							WizardDialog dialog = new OpenShiftTargetWizardDialog(
-									shell, new OpenShiftTargetWizard(
-											username, password, data), data);
+									shell, new OpenShiftTargetWizard(username,
+											password, data), data);
 							if (dialog.open() == Window.OK) {
 								setMessage(Messages.OpenshiftDetailsComposite_5);
 							}
-							changeSupport.firePropertyChange(PROP_MODIFY, null, validatePage());
+							changeSupport.firePropertyChange(PROP_MODIFY, null,
+									validatePage());
 						}
 					});
 				} catch (final SdkException e) {

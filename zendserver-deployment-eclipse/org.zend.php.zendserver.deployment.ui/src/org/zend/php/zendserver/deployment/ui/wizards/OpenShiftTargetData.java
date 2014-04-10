@@ -28,7 +28,6 @@ public class OpenShiftTargetData {
 	private OpenShiftTarget target;
 	private List<String> gearProfiles;
 	private List<String> zendTargets;
-	private List<String> zendCartridges;
 	private boolean eula;
 	private String password;
 	private String confirmPassword;
@@ -104,14 +103,6 @@ public class OpenShiftTargetData {
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
-	}
-	
-	public List<String> getZendCartridges() {
-		return zendCartridges;
-	}
-	
-	public void setZendCartridges(List<String> zendCartridges) {
-		this.zendCartridges = zendCartridges;
 	}
 
 	public OpenShiftTarget.Type getCartridge() {

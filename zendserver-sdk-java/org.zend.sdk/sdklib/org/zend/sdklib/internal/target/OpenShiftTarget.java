@@ -71,22 +71,28 @@ public class OpenShiftTarget {
 
 	public enum Type {
 
-		zs5_6_0("zend-5.6"),
+		zs5_6_0("zend-5.6", false),
 
-		zs6_0_0("zendserverphp-6"),
+		zs6_0_0("zendserverphp-6", false),
 
-		zs6_1_0("zend-6.1"),
+		zs6_1_0("zend-6.1", true),
 
-		UNKNOWN("");
+		UNKNOWN("", false);
 
 		private String name;
+		private boolean supported;
 
-		private Type(String name) {
+		private Type(String name, boolean supported) {
 			this.name = name;
+			this.supported = supported;
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public boolean isSupported() {
+			return supported;
 		}
 
 		public static Type create(String name) {
@@ -591,8 +597,7 @@ public class OpenShiftTarget {
 			apiKeyDetector.setServerUrl(host + "/ZendServer"); //$NON-NLS-1$
 			return apiKeyDetector.createApiKey(message);
 		} catch (InvalidCredentialsException e) {
-			return getApiKeyZend6(
-					"Provided credentials are not valid.", host); //$NON-NLS-1$
+			return getApiKeyZend6("Provided credentials are not valid.", host); //$NON-NLS-1$
 		}
 	}
 
