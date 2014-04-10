@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.zend.sdklib.manager.TargetsManager;
 
 /**
  * Zend Server credentials dialog for local target detection.
@@ -94,7 +95,7 @@ public class ZendServerCredentialsDialog extends Dialog {
 			messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 					false, 2, 1));
 		}
-		if (name != null) {
+		if (name != null && TargetsManager.isOpenShift(name)) {
 			int index = name.lastIndexOf('-');
 			if (index != -1) {
 				name = name.substring(0, index);
