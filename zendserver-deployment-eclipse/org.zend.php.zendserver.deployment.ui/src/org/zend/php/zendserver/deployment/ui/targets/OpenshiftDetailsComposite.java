@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,7 +63,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	private Text passwordText;
 	private Text privateKeyText;
 	private String uploadedKeyName;
-	
+
 	private IStatus status;
 
 	public Composite create(Composite parent) {
@@ -97,19 +96,20 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		passwordText.setLayoutData(layoutData);
 		passwordText.setToolTipText(Messages.OpenshiftDetailsComposite_2);
 		passwordText.addModifyListener(modifyListener);
-		
+
 		Button restorePassword = new Button(composite, SWT.PUSH);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		layoutData.minimumWidth = 80;
 		restorePassword.setLayoutData(layoutData);
-		restorePassword.setText(Messages.DevCloudDetailsComposite_RestorePassword);
+		restorePassword
+				.setText(Messages.DevCloudDetailsComposite_RestorePassword);
 		restorePassword.addSelectionListener(new SelectionAdapter() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				Program.launch(RESTORE_PASSWORD_URL);
 			}
 		});
-		
+
 		Composite newButtonsGroup = new Composite(composite, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
 		newButtonsGroup.setLayoutData(layoutData);
@@ -118,24 +118,24 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		gd.marginHeight = 0;
 		gd.horizontalSpacing = 0;
 		newButtonsGroup.setLayout(gd);
-		
+
 		Button createAccount = new Button(newButtonsGroup, SWT.PUSH);
 		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		createAccount.setLayoutData(layoutData);
 		createAccount.setText(Messages.OpenshiftDetailsComposite_3);
 		createAccount.addSelectionListener(new SelectionAdapter() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				Program.launch(CREATE_ACCOUNT_URL);
 			}
 		});
-		
+
 		Button createTarget = new Button(newButtonsGroup, SWT.PUSH);
 		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		createTarget.setLayoutData(layoutData);
 		createTarget.setText(Messages.OpenshiftDetailsComposite_4);
 		createTarget.addSelectionListener(new SelectionAdapter() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				openTargetWizard();
 			}
@@ -218,7 +218,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		String password = data[1];
 		String privateKey = data[2];
 
-		OpenShiftTarget detect = new OpenShiftTarget(username, password, new EclipseApiKeyDetector());
+		OpenShiftTarget detect = new OpenShiftTarget(username, password,
+				new EclipseApiKeyDetector());
 		monitor.subTask("Validating account information"); //$NON-NLS-1$
 
 		if (username == null || username.trim().length() == 0) {
@@ -301,8 +302,6 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 	}
 
 	private void openTargetWizard() {
-		final List<String> gearProfiles = new ArrayList<String>();
-		final List<String> zendTargets = new ArrayList<String>();
 		final String username = usernameText.getText();
 		final String password = passwordText.getText();
 		if (username == null || username.trim().length() == 0
@@ -311,7 +310,8 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 			return;
 		}
 		try {
-			doOpenTargetWizard(gearProfiles, zendTargets, username, password);
+			OpenShiftTarget target = new OpenShiftTarget(username, password);
+			doOpenTargetWizard(target);
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 			Throwable a = e.getTargetException();
@@ -324,33 +324,33 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 		}
 	}
 
-	private void doOpenTargetWizard(final List<String> gearProfiles,
-			final List<String> zendTargets, final String username,
-			final String password) throws InvocationTargetException,
-			InterruptedException {
+	private void doOpenTargetWizard(final OpenShiftTarget target)
+			throws InvocationTargetException, InterruptedException {
 		runnableContext.run(true, false, new IRunnableWithProgress() {
-
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				OpenShiftTarget target = new OpenShiftTarget(username, password);
 				monitor.beginTask("Retrieving data from OpenShift account...", //$NON-NLS-1$
 						IProgressMonitor.UNKNOWN);
 				try {
+					final OpenShiftTargetData data = new OpenShiftTargetData();
+					data.setTarget(target);
 					if (target.hasDomain()) {
-						gearProfiles.addAll(target.getAvaliableGearProfiles());
-						zendTargets.addAll(target.getAllZendTargets());
+						data.setGearProfiles(target.getAvaliableGearProfiles());
+						data.setZendTargets(target.getAllZendTargets());
+						data.setMySqlCartridges(target.getMySqlCartridges());
+					} else {
+						data.setGearProfiles(new ArrayList<String>());
+						data.setZendTargets(new ArrayList<String>());
+						data.setMySqlCartridges(new ArrayList<String>());
 					}
 					Display.getDefault().asyncExec(new Runnable() {
 
 						public void run() {
-							OpenShiftTargetData data = new OpenShiftTargetData();
-							data.setGearProfiles(gearProfiles);
-							data.setZendTargets(zendTargets);
 							Shell shell = PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getShell();
 							WizardDialog dialog = new OpenShiftTargetWizardDialog(
-									shell, new OpenShiftTargetWizard(username,
-											password, data), data);
+									shell, new OpenShiftTargetWizard(data),
+									data);
 							if (dialog.open() == Window.OK) {
 								setMessage(Messages.OpenshiftDetailsComposite_5);
 							}
@@ -387,13 +387,10 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 
 			file = tmpFile.getAbsolutePath();
 
-			boolean confirm = MessageDialog
-					.openConfirm(
-							privateKeyText.getShell(),
-							Messages.OpenshiftDetailsComposite_6,
-							Messages.bind(
-									Messages.OpenshiftDetailsComposite_7,
-									file));
+			boolean confirm = MessageDialog.openConfirm(
+					privateKeyText.getShell(),
+					Messages.OpenshiftDetailsComposite_6,
+					Messages.bind(Messages.OpenshiftDetailsComposite_7, file));
 			if (!confirm) {
 				return;
 			}
@@ -415,7 +412,7 @@ public class OpenshiftDetailsComposite extends AbstractTargetDetailsComposite {
 							e.getMessage(), e), StatusManager.SHOW);
 		}
 	}
-	
+
 	@Override
 	protected boolean validatePage() {
 		if (usernameText != null && usernameText.getText().trim().isEmpty()) {

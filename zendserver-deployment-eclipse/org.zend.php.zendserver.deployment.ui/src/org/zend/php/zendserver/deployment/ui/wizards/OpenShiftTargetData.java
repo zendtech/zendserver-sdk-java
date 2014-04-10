@@ -18,13 +18,14 @@ import org.zend.sdklib.internal.target.OpenShiftTarget;
  * New OpenShift target wizard data.
  * 
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
 public class OpenShiftTargetData {
 
 	private String name;
 	private String gearProfile;
 	private boolean hasMySQLSupport;
+	private String mysqlCartridge;
 	private OpenShiftTarget target;
 	private List<String> gearProfiles;
 	private List<String> zendTargets;
@@ -32,6 +33,7 @@ public class OpenShiftTargetData {
 	private String password;
 	private String confirmPassword;
 	private OpenShiftTarget.Type cartridge;
+	private List<String> mysqlCartridges;
 
 	public String getName() {
 		return name;
@@ -108,9 +110,25 @@ public class OpenShiftTargetData {
 	public OpenShiftTarget.Type getCartridge() {
 		return cartridge;
 	}
-	
+
 	public void setCartridge(OpenShiftTarget.Type cartridge) {
 		this.cartridge = cartridge;
 	}
-	
+
+	public List<String> getMysqlCartridges() {
+		return mysqlCartridges;
+	}
+
+	public void setMySqlCartridges(List<String> mySqlCartridges) {
+		this.mysqlCartridges = mySqlCartridges;
+	}
+
+	public String getMySqlCartridge() {
+		return mysqlCartridge;
+	}
+
+	public void setMySqlCartridge(String mysqlCartridge) {
+		this.mysqlCartridge = mysqlCartridge;
+	}
+
 }

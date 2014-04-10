@@ -257,6 +257,24 @@ public class OpenShiftTarget {
 		}
 	}
 
+	public List<String> getMySqlCartridges() throws SdkException {
+		try {
+			IDomain d = getDomain();
+			List<String> result = new ArrayList<String>();
+			List<IEmbeddableCartridge> cartridges = d.getUser().getConnection()
+					.getEmbeddableCartridges();
+			for (IEmbeddableCartridge c : cartridges) {
+				String name = c.getName();
+				if (name != null && name.trim().startsWith("mysql")) {
+					result.add(c.getName());
+				}
+			}
+			return result;
+		} catch (OpenShiftException e) {
+			throw new SdkException(e);
+		}
+	}
+
 	public boolean hasDomain() throws SdkException {
 		try {
 			IOpenShiftConnection connection = null;
@@ -299,7 +317,7 @@ public class OpenShiftTarget {
 	}
 
 	public String create(String targetName, String gearProfile, boolean mySql,
-			String cartridgeName) throws SdkException {
+			String mysqlCartidge, String cartridgeName) throws SdkException {
 		IDomain d = getDomain();
 		if (d != null) {
 			String oldValue = System
@@ -313,7 +331,7 @@ public class OpenShiftTarget {
 				if (application != null && mySql) {
 					IEmbeddableCartridge cartridge = application
 							.addEmbeddableCartridge(new EmbeddableCartridge(
-									"mysql-5.1"));
+									mysqlCartidge));
 					if (cartridge instanceof IOpenShiftResource) {
 						return ((IOpenShiftResource) cartridge).getMessages()
 								.toString();
