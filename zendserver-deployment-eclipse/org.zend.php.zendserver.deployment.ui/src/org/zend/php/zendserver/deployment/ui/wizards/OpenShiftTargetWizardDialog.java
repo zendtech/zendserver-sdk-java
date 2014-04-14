@@ -8,8 +8,6 @@
 package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -62,17 +60,15 @@ public class OpenShiftTargetWizardDialog extends WizardDialog {
 									IProgressMonitor.UNKNOWN);
 							target.createDomain(domainName);
 							init = true;
-							final List<String> gearProfiles = new ArrayList<String>();
-							final List<String> zendTargets = new ArrayList<String>();
-							gearProfiles.addAll(target
-									.getAvaliableGearProfiles());
-							zendTargets.addAll(target.getAllZendTargets());
 							IWizardPage page = getWizard().getNextPage(
 									domainPage);
 							if (page instanceof OpenShiftTargetPage) {
+								data.setZendTargets(target.getAllZendTargets());
+								data.setGearProfiles(target
+										.getAvaliableGearProfiles());
+								data.setMySqlCartridges(target
+										.getMySqlCartridges());
 								OpenShiftTargetPage osPage = (OpenShiftTargetPage) page;
-								data.setZendTargets(zendTargets);
-								data.setGearProfiles(gearProfiles);
 								osPage.initializeValues();
 							}
 							monitor.done();
