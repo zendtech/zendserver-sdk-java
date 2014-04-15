@@ -7,10 +7,13 @@
  *******************************************************************************/
 package org.zend.webapi.internal.core.connection.exception;
 
+import java.io.IOException;
+
 import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.w3c.dom.Node;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -40,6 +43,12 @@ public class UnexpectedResponseCode extends WebApiException {
 				code = ResponseCode.INTERNAL_SERVER_ERROR;
 				break;
 			default:
+				WebApiClient.logError("unknown response code: " + httpCode);
+				try {
+					WebApiClient.logError("unknown response content:\n" + handle.getText());
+				} catch (IOException e) {
+					// ignore
+				}
 				code = ResponseCode.PAGE_NOT_FOUND;
 			}
 			this.errorCode = code.getErrorCode();

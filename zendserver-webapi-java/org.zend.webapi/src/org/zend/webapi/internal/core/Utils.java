@@ -29,14 +29,7 @@ public class Utils {
 
 	private static final String HASH_ALGORITHM = "HmacSHA256";
 	
-	private static final boolean DEBUG;
-	
 	public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
-	
-	static {
-		String val = System.getProperty("org.zend.webapi.debug");
-		DEBUG = val != null ? Boolean.valueOf(val) : false;
-	}
 
 	/**
 	 * Encryption of a given text using the provided secretKey
@@ -86,11 +79,5 @@ public class Utils {
 	public static String getFormattedDate(Date date) {
 		return DateUtils.format(date, DateUtils.FORMAT_RFC_1123.get(0));
 	}
-	
-	public static void log(String message) {
-		if (DEBUG) {
-			System.out.println("WebAPI debug: " + message);
-		}
-	}
-	
+		
 }

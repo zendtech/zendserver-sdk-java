@@ -54,7 +54,6 @@ import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.progress.IChangeNotifier;
 import org.zend.webapi.core.service.IRequestListener;
 import org.zend.webapi.core.service.WebApiMethodType;
-import org.zend.webapi.internal.core.Utils;
 import org.zend.webapi.internal.core.connection.ServiceDispatcher;
 import org.zend.webapi.internal.core.connection.WebApiEngine;
 import org.zend.webapi.internal.core.connection.request.ApplicationDeployRequest;
@@ -112,9 +111,18 @@ import org.zend.webapi.internal.core.connection.request.StudioStartProfileReques
  */
 public class WebApiClient {
 
+	private static final boolean DEBUG;
+
 	private static final WebApiVersion DEFAULT_VERSION = WebApiVersion.V1_1;
 
 	private static Engine engine = null;
+
+	private static IWebApiLogger logger;
+
+	static {
+		String val = System.getProperty("org.zend.webapi.debug");
+		DEBUG = val != null ? Boolean.valueOf(val) : false;
+	}
 
 	/**
 	 * credentials of this client
@@ -135,9 +143,9 @@ public class WebApiClient {
 	 * Progress notifier
 	 */
 	private IChangeNotifier notifier;
-	
+
 	private WebApiVersion customVersion;
-	
+
 	private ServerType serverType;
 
 	private static boolean listenersDisabled;
@@ -280,11 +288,12 @@ public class WebApiClient {
 				WebApiMethodType.CLUSTER_GET_SERVER_STATUS,
 				getVersion(WebApiVersion.V1_1), servers.length == 0 ? null
 						: new IRequestInitializer() {
-					public void init(IRequest request) throws WebApiException {
-						((ClusterGetServerStatusRequest) request)
-								.setServers(servers);
-					}
-				});
+							public void init(IRequest request)
+									throws WebApiException {
+								((ClusterGetServerStatusRequest) request)
+										.setServers(servers);
+							}
+						});
 		return (ServersList) handle.getData();
 	}
 
@@ -490,11 +499,13 @@ public class WebApiClient {
 		final IResponse handle = this.handle(WebApiMethodType.RESTART_PHP,
 				getVersion(WebApiVersion.V1_1), servers == null ? null
 						: new IRequestInitializer() {
-					public void init(IRequest request) throws WebApiException {
-						((RestartPhpRequest) request).setServers(servers)
-								.setParallelRestart(parallelRestart);
-					}
-				});
+							public void init(IRequest request)
+									throws WebApiException {
+								((RestartPhpRequest) request).setServers(
+										servers).setParallelRestart(
+										parallelRestart);
+							}
+						});
 		return (ServersList) handle.getData();
 	}
 
@@ -598,11 +609,12 @@ public class WebApiClient {
 				WebApiMethodType.APPLICATION_GET_STATUS,
 				getVersion(WebApiVersion.V1_1), applications.length == 0 ? null
 						: new IRequestInitializer() {
-					public void init(IRequest request) throws WebApiException {
-						((ApplicationGetStatusRequest) request)
-								.setApplications(applications);
-					}
-				});
+							public void init(IRequest request)
+									throws WebApiException {
+								((ApplicationGetStatusRequest) request)
+										.setApplications(applications);
+							}
+						});
 		return (ApplicationsList) handle.getData();
 	}
 
@@ -1342,8 +1354,8 @@ public class WebApiClient {
 			throws WebApiException {
 		final WebApiVersion version = getVersion(WebApiVersion.V1_2);
 		final IResponse handle = this.handle(
-				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
-				version, new IRequestInitializer() {
+				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS, version,
+				new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						MonitorGetIssueDetailsRequest monitorRequest = (MonitorGetIssueDetailsRequest) request;
@@ -1355,7 +1367,7 @@ public class WebApiClient {
 				});
 		return (IssueDetails) handle.getData();
 	}
-	
+
 	/**
 	 * Retrieve an issue's details according to the issueId passed as a
 	 * parameter. Additional information about event groups is also displayed.
@@ -1367,8 +1379,8 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.2
 	 */
-	public IssueDetails monitorGetIssueDetails(final int issueId, final int limit)
-			throws WebApiException {
+	public IssueDetails monitorGetIssueDetails(final int issueId,
+			final int limit) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.MONITOR_GET_ISSUE_DETAILS,
 				getVersion(WebApiVersion.V1_2), new IRequestInitializer() {
@@ -1559,7 +1571,7 @@ public class WebApiClient {
 			throws WebApiException {
 		return studioStartProfile(eventsGroupId, null);
 	}
-	
+
 	/**
 	 * Start debug mode on the target server.
 	 * 
@@ -1567,9 +1579,8 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.3
 	 */
-	public DebugMode studioStartDebugMode(
-			final String[] filters, final Map<String, String> options)
-			throws WebApiException {
+	public DebugMode studioStartDebugMode(final String[] filters,
+			final Map<String, String> options) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.STUDIO_START_DEBUG_MODE,
 				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
@@ -1594,8 +1605,7 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.3
 	 */
-	public DebugMode studioStopDebugMode()
-			throws WebApiException {
+	public DebugMode studioStopDebugMode() throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.STUDIO_STOP_DEBUG_MODE,
 				getVersion(WebApiVersion.V1_3), null);
@@ -1609,14 +1619,13 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.3
 	 */
-	public DebugMode studioIsDebugModeEnabled()
-			throws WebApiException {
+	public DebugMode studioIsDebugModeEnabled() throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.STUDIO_IS_DEBUG_MODE_ENABLED,
 				getVersion(WebApiVersion.V1_3), null);
 		return (DebugMode) handle.getData();
 	}
-	
+
 	/**
 	 * Get the list of libraries currently deployed on the server or the cluster
 	 * and information about each library’s available versions. If library IDs
@@ -1643,7 +1652,7 @@ public class WebApiClient {
 						});
 		return (LibraryList) handle.getData();
 	}
-	
+
 	/**
 	 * Get the library version id that is deployed on the server or the cluster
 	 * and information about that version and its library.
@@ -1666,7 +1675,7 @@ public class WebApiClient {
 				});
 		return (LibraryList) handle.getData();
 	}
-	
+
 	/**
 	 * Deploy a new library version to the server or cluster. This process is
 	 * asynchronous – the initial request will wait until the library is
@@ -1694,7 +1703,7 @@ public class WebApiClient {
 				});
 		return (LibraryList) handle.getData();
 	}
-	
+
 	/**
 	 * @return information about synchronized library
 	 * @throws WebApiException
@@ -1715,7 +1724,7 @@ public class WebApiClient {
 				});
 		return (LibraryList) handle.getData();
 	}
-	
+
 	/**
 	 * Download the zpk file specified by library version identifier.
 	 * 
@@ -1737,7 +1746,7 @@ public class WebApiClient {
 				});
 		return (LibraryFile) handle.getData();
 	}
-	
+
 	/**
 	 * @return bootstrap result
 	 * @throws WebApiException
@@ -1824,8 +1833,8 @@ public class WebApiClient {
 		if (initializer != null) {
 			initializer.init(request);
 		}
-		
-		Utils.log("sending " + request.getClass().getSimpleName());
+
+		logInfo("sending " + request.getClass().getSimpleName());
 
 		if (!listenersDisabled) {
 			synchronized (preListeners) {
@@ -1852,15 +1861,15 @@ public class WebApiClient {
 		// return response data to caller
 		return response;
 	}
-	
+
 	public void setServerType(ServerType serverType) {
 		this.serverType = serverType;
 	}
-	
+
 	public void setCustomVersion(WebApiVersion customVersion) {
 		this.customVersion = customVersion;
 	}
-	
+
 	public static synchronized void disableListeners() {
 		listenersDisabled = true;
 	}
@@ -1924,7 +1933,69 @@ public class WebApiClient {
 			}
 		}
 	}
-	
+
+	public static synchronized void setLogger(IWebApiLogger logger) {
+		WebApiClient.logger = logger;
+	}
+
+	/**
+	 * Log an error message.
+	 * 
+	 * @param message
+	 */
+	public static synchronized void logError(String message) {
+		if (logger != null) {
+			logger.logError(message);
+		}
+	}
+
+	/**
+	 * Log an exception.
+	 * 
+	 * @param e
+	 */
+	public static synchronized void logError(Throwable e) {
+		if (logger != null) {
+			logger.logError(e);
+		}
+	}
+
+	/**
+	 * Log an exception with error message.
+	 * 
+	 * @param message
+	 * @param e
+	 */
+	public static synchronized void logError(String message, Throwable e) {
+		if (logger != null) {
+			logger.logError(message, e);
+		}
+	}
+
+	/**
+	 * Log a warning message. It is logged only if
+	 * <code>org.zend.webapi.debug</code> system property is <code>true</code>.
+	 * 
+	 * @param message
+	 */
+	public static synchronized void logWarning(String message) {
+		if (logger != null && DEBUG) {
+			logger.logWarning(message);
+		}
+	}
+
+	/**
+	 * Log a message. It is logged only if <code>org.zend.webapi.debug</code>
+	 * system property is <code>true</code>.
+	 * 
+	 * @param message
+	 */
+	public static void logInfo(String message) {
+		if (logger != null && DEBUG) {
+			logger.logInfo(message);
+		}
+	}
+
 	private WebApiVersion getVersion(WebApiVersion preferedVersion) {
 		if (customVersion != null && customVersion != WebApiVersion.UNKNOWN
 				&& customVersion.compareTo(preferedVersion) > 0) {
@@ -1932,7 +2003,7 @@ public class WebApiClient {
 		}
 		return preferedVersion;
 	}
-	
+
 	private ServerType getServerType() {
 		if (serverType == null) {
 			return ServerType.ZEND_SERVER_MANAGER;
