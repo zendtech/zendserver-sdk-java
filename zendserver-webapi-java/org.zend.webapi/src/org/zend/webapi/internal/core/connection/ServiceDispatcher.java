@@ -28,6 +28,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.restlet.util.Series;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.DataDigster;
 import org.zend.webapi.core.connection.dispatch.IServiceDispatcher;
@@ -35,7 +36,6 @@ import org.zend.webapi.core.connection.request.IRequest;
 import org.zend.webapi.core.connection.request.RequestParameter;
 import org.zend.webapi.core.connection.response.IResponse;
 import org.zend.webapi.core.connection.response.ResponseFactory;
-import org.zend.webapi.internal.core.Utils;
 import org.zend.webapi.internal.core.connection.auth.signature.SignatureException;
 import org.zend.webapi.internal.core.connection.exception.InternalWebApiException;
 import org.zend.webapi.internal.core.connection.exception.UnexpectedResponseCode;
@@ -74,7 +74,9 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			// getting the low-level response representation
 			final Representation handle = resource.handle();
 			if (handle == null) {
-				throw new WebApiCommunicationError();
+				WebApiException e = new WebApiCommunicationError();
+				WebApiClient.logError(e);
+				throw e;
 			}
 
 			final DataDigster dataDigster = new DataDigster(request, handle);
@@ -82,14 +84,14 @@ public class ServiceDispatcher implements IServiceDispatcher {
 			final Status status = resource.getStatus();
 			int responseCode = status.getCode();
 
-			Utils.log("sent " + request.getClass().getSimpleName());
-			Utils.log("resposne code  = " + responseCode);
+			WebApiClient.logInfo("sent " + request.getClass().getSimpleName());
+			WebApiClient.logInfo("resposne code  = " + responseCode);
 
 			if (!request.isExpectedResponseCode(responseCode)) {
 				UnexpectedResponseCode ex = new UnexpectedResponseCode(
 						responseCode, handle);
-				Utils.log(ex.getResponseCode().getErrorCode() + " = "
-						+ ex.getResponseCode().getDescription());
+				WebApiClient.logError(ex.getResponseCode().getErrorCode()
+						+ " = " + ex.getResponseCode().getDescription());
 				throw ex;
 			}
 
