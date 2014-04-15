@@ -159,11 +159,15 @@ public class OpenShiftTargetPage extends WizardPage {
 	private boolean validatePage() {
 		setErrorMessage(null);
 		if (targetNameText != null) {
-			if (targetNameText.getText().isEmpty()) {
+			String name = targetNameText.getText();
+			if (name.isEmpty()) {
 				setMessage(Messages.OpenShiftTargetPage_EnterNameMessage);
 				return false;
 			}
-			String name = targetNameText.getText();
+			if (!name.matches("^[\\p{Alnum}]*$")) { //$NON-NLS-1$
+				setErrorMessage(Messages.OpenShiftTargetPage_AlphanumericError);
+				return false;
+			}
 			for (String existingTarget : data.getZendTargets()) {
 				if (existingTarget.equalsIgnoreCase(name)) {
 					setErrorMessage(Messages.OpenShiftTargetPage_SameTargetErrorMessage);
