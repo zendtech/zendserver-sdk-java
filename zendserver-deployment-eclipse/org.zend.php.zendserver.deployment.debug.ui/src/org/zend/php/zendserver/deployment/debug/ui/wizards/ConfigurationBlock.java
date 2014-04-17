@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -619,7 +618,8 @@ public class ConfigurationBlock extends AbstractBlock {
 			URL updatedUrl = null;
 			if (oldUrl == null) {
 				updatedUrl = new URL(serverBaseUrl.getProtocol(),
-						serverBaseUrl.getHost(), serverBaseUrl.getPort(), "/"); //$NON-NLS-1$
+						serverBaseUrl.getHost(), serverBaseUrl.getPort(),
+						'/' + applicationNameCombo.getText());
 			} else {
 				updatedUrl = new URL(serverBaseUrl.getProtocol(),
 						serverBaseUrl.getHost(), serverBaseUrl.getPort(),
