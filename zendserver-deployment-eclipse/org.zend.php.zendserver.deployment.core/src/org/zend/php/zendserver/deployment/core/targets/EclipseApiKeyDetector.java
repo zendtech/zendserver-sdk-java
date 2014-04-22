@@ -55,7 +55,7 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 			DeploymentCore.log(e);
 			// do nothing and return null
 		}
-		return null;
+		return "http://localhost:10081/ZendServer"; //$NON-NLS-1$
 	}
 
 	public String[] getServerCredentials(final String serverName, final String message) {
