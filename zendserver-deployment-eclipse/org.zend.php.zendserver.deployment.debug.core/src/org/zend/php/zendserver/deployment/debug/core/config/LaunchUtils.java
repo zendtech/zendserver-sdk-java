@@ -132,16 +132,7 @@ public class LaunchUtils {
 		Server server = DeploymentUtils.findExistingServer(target);
 		wc.setAttribute(Server.NAME, server.getName());
 		ServersManager.setDefaultServer(project, server);
-		ProjectScope projectScope = new ProjectScope(project);
-		IEclipsePreferences node = projectScope
-				.getNode(IPHPDebugConstants.DEBUG_QUALIFIER);
-		node.putBoolean(IPHPDebugConstants.DEBUG_PER_PROJECT, true);
-		try {
-			node.flush();
-		} catch (BackingStoreException e) {
-			Activator.log(e);
-		}
-
+		
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
 		URL baseURL = helper.getBaseURL();

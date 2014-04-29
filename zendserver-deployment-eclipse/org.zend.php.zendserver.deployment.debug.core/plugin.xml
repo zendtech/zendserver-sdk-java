@@ -3,5 +3,11 @@
 <plugin>
    <extension-point id="org.zend.php.zendserver.deployment.autoDeploy" name="Auto Deploy" schema="schema/org.zend.php.zendserver.deployment.autoDeploy.exsd"/>
    <extension-point id="deploymentContribution" name="Deployment Process Contribution" schema="schema/deploymentContribution.exsd"/>
+   <extension
+         point="org.zend.php.zendserver.deployment.debug.core.deploymentContribution">
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.core.config.UpdateServerContribution">
+      </contribution>
+   </extension>
 
 </plugin>
