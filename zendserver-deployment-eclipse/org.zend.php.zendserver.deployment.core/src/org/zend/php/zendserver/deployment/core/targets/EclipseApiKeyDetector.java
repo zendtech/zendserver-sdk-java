@@ -28,10 +28,19 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 	private String username;
 	private String password;
 
+	public EclipseApiKeyDetector(String username, String password,
+			String serverUrl) {
+		super(username, password, serverUrl);
+	}
+
 	public EclipseApiKeyDetector(String username, String password) {
 		super(username, password, getLocalServerUrl());
 	}
-	
+
+	public EclipseApiKeyDetector(String serverUrl) {
+		super(serverUrl);
+	}
+
 	public EclipseApiKeyDetector() {
 		super(getLocalServerUrl());
 	}
@@ -58,7 +67,8 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 		return "http://localhost:10081/ZendServer"; //$NON-NLS-1$
 	}
 
-	public String[] getServerCredentials(final String serverName, final String message) {
+	public String[] getServerCredentials(final String serverName,
+			final String message) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
