@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.ui.ServerEditDialog;
+import org.eclipse.php.internal.server.ui.ServerEditPage;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
@@ -159,7 +159,7 @@ public class DebugModeCompositeFragment extends CompositeFragment {
 		// .getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 
 		if (isForEditing) {
-			setData(((ServerEditDialog) controlHandler).getServer());
+			setData(((ServerEditPage) controlHandler).getServer());
 		}
 		createControl(isForEditing);
 	}
@@ -263,7 +263,7 @@ public class DebugModeCompositeFragment extends CompositeFragment {
 		GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false,
 				2, 1);
 		filtersLabel.setLayoutData(gd);
-		filtersLabel.setText(Messages.DebugModeCompositeFragment_DebugModeDesc);
+		filtersLabel.setText("aaa");
 		viewer = new TableViewer(filtersSection, SWT.SINGLE | SWT.BORDER);
 		viewer.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));

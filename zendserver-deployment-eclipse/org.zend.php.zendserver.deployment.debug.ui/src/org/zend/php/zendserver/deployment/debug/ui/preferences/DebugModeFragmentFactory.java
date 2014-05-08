@@ -38,7 +38,7 @@ public class DebugModeFragmentFactory implements ICompositeFragmentFactory {
 
 	public boolean isSupported(Object element) {
 		IServerType type = ServerTypesManager.getInstance().getType(
-				ZendServerType.ZEND_SERVER);
+				ZendServerType.ID);
 		return type != null && type.isCompatible((Server) element);
 	}
 
