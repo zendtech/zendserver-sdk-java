@@ -19,7 +19,8 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.server.ui.types.ServerTypesManager;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.actions.IActionContribution;
 import org.zend.php.server.ui.types.LocalApacheType;
 
@@ -44,7 +45,7 @@ public class RefreshApacheAction implements IActionContribution {
 	public ImageDescriptor getIcon() {
 		return ServersUI.getImageDescriptor(ServersUI.REFRESH_APACHE_ICON);
 	}
-	
+
 	@Override
 	public boolean isAvailable(Server server) {
 		return true;

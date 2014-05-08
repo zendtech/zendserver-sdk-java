@@ -19,7 +19,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -29,8 +30,7 @@ import org.zend.php.server.ui.ServersUI;
 public class LocalApacheType implements IServerType {
 
 	public static final String ID = "org.zend.php.server.ui.types.LocalApacheType"; //$NON-NLS-1$
-	
-	public static final String LOCAL_APACHE = "Local Apache HTTP Server"; //$NON-NLS-1$
+
 	public static final String LOCATION = "apache2Location"; //$NON-NLS-1$
 
 	private static final String DEFAULT_BASE_URL = "http://localhost"; //$NON-NLS-1$
@@ -40,10 +40,10 @@ public class LocalApacheType implements IServerType {
 	public String getId() {
 		return ID;
 	}
-	
+
 	@Override
 	public String getName() {
-		return LOCAL_APACHE;
+		return Messages.LocalApacheType_Name;
 	}
 
 	@Override

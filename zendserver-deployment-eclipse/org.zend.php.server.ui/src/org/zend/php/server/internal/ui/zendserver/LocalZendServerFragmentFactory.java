@@ -20,13 +20,17 @@ import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.internal.ui.apache.LocalApacheCompositeFragment;
 import org.zend.php.server.internal.ui.apache.LocalApacheWizardFragment;
-import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.server.ui.types.LocalZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
-public class LocalZendServerFragmentFactory implements ICompositeFragmentFactory {
+@SuppressWarnings("restriction")
+public class LocalZendServerFragmentFactory implements
+		ICompositeFragmentFactory {
+
+	private static final String ID = "org.zend.php.server.ui.apache.LocalApacheFragmentFactory"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -54,14 +58,14 @@ public class LocalZendServerFragmentFactory implements ICompositeFragmentFactory
 
 	public boolean isSupported(Object element) {
 		IServerType type = ServerTypesManager.getInstance().getType(
-				LocalApacheType.LOCAL_APACHE);
+				LocalZendServerType.ID);
 		return type != null && type.isCompatible((Server) element);
 	}
 
 	public String getId() {
-		return "org.zend.php.server.ui.apache.LocalApacheFragmentFactory";
+		return ID;
 	}
-	
+
 	public boolean isSettings() {
 		return false;
 	}

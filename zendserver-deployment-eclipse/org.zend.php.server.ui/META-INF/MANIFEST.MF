@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PHP Servers GUI
 Bundle-SymbolicName: org.zend.php.server.ui;singleton:=true
 Bundle-Version: 11.0.0.qualifier
-Bundle-Activator: org.zend.php.server.ui.ServersUI
+Bundle-Activator: org.zend.php.server.internal.ui.ServersUI
 Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -15,6 +15,5 @@ Require-Bundle: org.eclipse.ui,
  com.zend.php.zendserver.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.zend.php.server.ui,
- org.zend.php.server.ui.actions,
+Export-Package: org.zend.php.server.ui.actions,
  org.zend.php.server.ui.types

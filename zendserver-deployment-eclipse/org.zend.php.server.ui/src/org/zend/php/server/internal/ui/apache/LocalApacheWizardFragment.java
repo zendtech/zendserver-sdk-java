@@ -16,12 +16,13 @@ import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.internal.ui.wizards.WizardModel;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class LocalApacheWizardFragment extends WizardFragment {

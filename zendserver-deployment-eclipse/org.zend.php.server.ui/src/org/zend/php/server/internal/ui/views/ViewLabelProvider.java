@@ -17,11 +17,12 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.server.ui.types.ServerTypesManager;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
 @SuppressWarnings("restriction")
 class ViewLabelProvider extends LabelProvider {
@@ -53,5 +54,5 @@ class ViewLabelProvider extends LabelProvider {
 		}
 		return super.getImage(obj);
 	}
-	
+
 }

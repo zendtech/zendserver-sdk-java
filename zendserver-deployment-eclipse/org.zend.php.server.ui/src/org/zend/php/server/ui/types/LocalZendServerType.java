@@ -14,16 +14,17 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014
  * 
  */
+@SuppressWarnings("restriction")
 public class LocalZendServerType implements IServerType {
 
-	public static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$
-	public static final String LOCAL_ZEND_SERVER = "Local Zend Server";
+	public static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$ 
 
 	@Override
 	public String getId() {
@@ -32,17 +33,17 @@ public class LocalZendServerType implements IServerType {
 
 	@Override
 	public String getName() {
-		return LOCAL_ZEND_SERVER;
+		return Messages.LocalZendServerType_Name;
 	}
 
 	@Override
 	public Image getViewIcon() {
-		return ServersUI.getDefault().getImage("icons/obj16/zend_server.png");
+		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
 	}
 
 	@Override
 	public ImageDescriptor getWizardImage() {
-		return ServersUI.getImageDescriptor("icons/wizban/zend_server_wiz.png");
+		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
 	}
 
 	@Override

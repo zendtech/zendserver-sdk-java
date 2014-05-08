@@ -22,7 +22,7 @@ import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class LocalApacheFragmentFactory implements ICompositeFragmentFactory {
@@ -55,14 +55,14 @@ public class LocalApacheFragmentFactory implements ICompositeFragmentFactory {
 
 	public boolean isSupported(Object element) {
 		IServerType type = ServerTypesManager.getInstance().getType(
-				LocalApacheType.LOCAL_APACHE);
+				LocalApacheType.ID);
 		return type != null && type.isCompatible((Server) element);
 	}
 
 	public String getId() {
 		return ID;
 	}
-	
+
 	public boolean isSettings() {
 		return false;
 	}

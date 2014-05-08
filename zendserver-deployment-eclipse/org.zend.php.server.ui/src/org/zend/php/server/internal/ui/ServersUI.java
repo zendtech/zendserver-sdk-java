@@ -8,7 +8,7 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.server.ui;
+package org.zend.php.server.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -34,9 +34,10 @@ public class ServersUI extends AbstractUIPlugin {
 	public static final String REMOVE_ICON = "icons/obj16/remove.gif"; //$NON-NLS-1$
 
 	public static final String DEFAULT_SERVER_ICON = "icons/obj16/default_server.png"; //$NON-NLS-1$
-	
+
 	public static final String ZEND_SERVER_ICON = "icons/obj16/zend_server.png"; //$NON-NLS-1$
-	
+	public static final String ZEND_SERVER_WIZ = "icons/wizban/zend_server_wiz.png"; //$NON-NLS-1$
+
 	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$	
 	public static final String REFRESH_APACHE_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
 

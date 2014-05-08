@@ -32,7 +32,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
@@ -64,11 +65,11 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 	public LocalApacheCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing);
-		setDisplayName(LocalApacheType.LOCAL_APACHE);
-		setTitle(LocalApacheType.LOCAL_APACHE);
+		setDisplayName(Messages.LocalApacheCompositeFragment_Title);
+		setTitle(Messages.LocalApacheCompositeFragment_Title);
 		setDescription(Messages.LocalApacheCompositeFragment_Desc);
 
-		controlHandler.setTitle(LocalApacheType.LOCAL_APACHE);
+		controlHandler.setTitle(Messages.LocalApacheCompositeFragment_Title);
 		controlHandler
 				.setDescription(Messages.LocalApacheCompositeFragment_Desc);
 
@@ -130,12 +131,11 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 						IMessageProvider.ERROR);
 				return;
 			}
-			/*if (checkServerName(name)) {
-				setMessage(
-						Messages.LocalApacheCompositeFragment_NameConflictMessage,
-						IMessageProvider.ERROR);
-				return;
-			}*/
+			/*
+			 * if (checkServerName(name)) { setMessage(
+			 * Messages.LocalApacheCompositeFragment_NameConflictMessage,
+			 * IMessageProvider.ERROR); return; }
+			 */
 		}
 		if (location != null) {
 			File binFile = new File(location, BIN);
@@ -242,7 +242,7 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 			String location = server.getAttribute(LocalApacheType.LOCATION, ""); //$NON-NLS-1$
 			locationText.setText(location);
 		}
-		setTitle(LocalApacheType.LOCAL_APACHE);
+		setTitle(Messages.LocalApacheCompositeFragment_Title);
 		controlHandler.setTitle(getTitle());
 	}
 

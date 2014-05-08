@@ -14,7 +14,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -23,9 +24,7 @@ import org.zend.php.server.ui.ServersUI;
 @SuppressWarnings("restriction")
 public class ZendServerType implements IServerType {
 
-	private static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$
-
-	public static final String ZEND_SERVER = "Zend Server"; //$NON-NLS-1$
+	public static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$
 
 	@Override
 	public String getId() {
@@ -34,7 +33,7 @@ public class ZendServerType implements IServerType {
 
 	@Override
 	public String getName() {
-		return ZEND_SERVER;
+		return Messages.ZendServerType_Name;
 	}
 
 	@Override
@@ -44,8 +43,7 @@ public class ZendServerType implements IServerType {
 
 	@Override
 	public ImageDescriptor getWizardImage() {
-		// TODO set correct wizard image
-		return ServersUI.getImageDescriptor("icons/wizban/zend_server_wiz.png");
+		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
 	}
 
 	@Override
