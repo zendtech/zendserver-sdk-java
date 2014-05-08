@@ -9,6 +9,7 @@ import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
+import org.zend.webapi.core.IWebApiLogger;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.service.IRequestListener;
 
@@ -48,6 +49,39 @@ public class DeploymentCore extends Plugin {
 		sdkManager = new SdkManager();
 		containerListener = new PhpcloudContainerListener();
 		WebApiClient.registerPreRequestListener(containerListener);
+		WebApiClient.setLogger(new IWebApiLogger() {
+
+			@Override
+			public void logWarning(String message) {
+				getLog().log(
+						new Status(IStatus.WARNING, "org.zend.webapi", message));//$NON-NLS-1$
+			}
+
+			@Override
+			public void logInfo(String message) {
+				getLog().log(
+						new Status(IStatus.INFO, "org.zend.webapi", message));//$NON-NLS-1$
+			}
+
+			@Override
+			public void logError(String message, Throwable e) {
+				getLog().log(
+						new Status(IStatus.ERROR, "org.zend.webapi", message, e));//$NON-NLS-1$
+			}
+
+			@Override
+			public void logError(Throwable e) {
+				getLog().log(
+						new Status(IStatus.ERROR, "org.zend.webapi", e //$NON-NLS-1$
+								.getMessage(), e));
+			}
+
+			@Override
+			public void logError(String message) {
+				getLog().log(
+						new Status(IStatus.ERROR, "org.zend.webapi", message));//$NON-NLS-1$
+			}
+		});
 	}
 
 	/*

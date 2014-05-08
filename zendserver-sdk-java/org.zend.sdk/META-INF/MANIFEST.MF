@@ -48,7 +48,7 @@ Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
  lib/registry.jar,
  lib/jboss-dmr-1.1.6.Final.jar,
- lib/openshift-java-client-2.3.0-20130830.125107-1.jar
+ lib/openshift-java-client-2.5.0.Final.jar
 Require-Bundle: org.apache.commons.codec,
  org.apache.commons.httpclient,
  org.apache.commons.logging,

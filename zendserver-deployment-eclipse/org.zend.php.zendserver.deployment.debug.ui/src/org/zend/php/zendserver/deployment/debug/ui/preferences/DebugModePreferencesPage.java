@@ -379,9 +379,12 @@ public class DebugModePreferencesPage extends PreferencePage implements
 				input.put(id, new ArrayList<String>());
 			}
 		}
-		String id = targetsCombo.getSelected().getId();
-		viewer.setInput(input.get(id));
-		viewer.refresh();
+		IZendTarget selectedTarget = targetsCombo.getSelected();
+		if (selectedTarget != null) {
+			String id = targetsCombo.getSelected().getId();
+			viewer.setInput(input.get(id));
+			viewer.refresh();
+		}
 	}
 
 	private void removeElement(ISelection selection) {

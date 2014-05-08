@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String OpenShiftTargetPage_0;
 	public static String OpenShiftTargetPage_12;
 	public static String OpenShiftTargetPage_AddMySQLLabel;
+	public static String OpenShiftTargetPage_AlphanumericError;
 	public static String OpenShiftTargetPage_ConfirmationMessage;
 	public static String OpenShiftTargetPage_ConfirmLabel;
 	public static String OpenShiftTargetPage_ContainSpacesError;
@@ -47,6 +48,8 @@ public class Messages extends NLS {
 	public static String OpenShiftTargetPage_EnterPasswordMessage;
 	public static String OpenShiftTargetPage_GearProfileLabel;
 	public static String OpenShiftTargetPage_InitDescription;
+	public static String OpenShiftTargetPage_MySQLSection;
+	public static String OpenShiftTargetPage_MySQLVersion;
 	public static String OpenShiftTargetPage_PageDescription;
 	public static String OpenShiftTargetPage_PageTitle;
 	public static String OpenShiftTargetPage_PasswordDescription;

@@ -132,7 +132,7 @@ public class LaunchUtils {
 		Server server = DeploymentUtils.findExistingServer(target);
 		wc.setAttribute(Server.NAME, server.getName());
 		ServersManager.setDefaultServer(project, server);
-
+		
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
 		URL baseURL = helper.getBaseURL();
