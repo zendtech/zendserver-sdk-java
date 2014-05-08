@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.ui.ServerEditDialog;
+import org.eclipse.php.internal.server.ui.ServerEditPage;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
@@ -114,7 +114,7 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 		// .getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
 
 		if (isForEditing) {
-			setData(((ServerEditDialog) controlHandler).getServer());
+			setData(((ServerEditPage) controlHandler).getServer());
 		}
 		createControl(isForEditing);
 	}
