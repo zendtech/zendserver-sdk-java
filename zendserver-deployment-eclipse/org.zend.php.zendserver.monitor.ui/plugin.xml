@@ -85,6 +85,17 @@
    </propertyTester>
 </extension>
 <extension
+         id="com.zend.php.platform.ui.platformWizardFragment"
+         name="Application Monitoring"
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.monitor.ui.preferences.MonitoringFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
+            name="Application Monitorng Fragment"
+            placeAfter="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"/>
+   </extension>
+<extension
       point="org.eclipse.ui.commands">
    <command
          defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.StartMonitorHandler"
@@ -101,5 +112,12 @@
          id="org.zend.php.zendserver.monitor.ui.monitoringPreferences"
          name="%command.name.1">
    </command>
+</extension>
+<extension
+      point="org.zend.php.server.ui.actionContributions">
+   <action
+         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction"
+         serverType="org.zend.php.server.ui.types.ZendServerType">
+   </action>
 </extension>
 </plugin>
