@@ -213,5 +213,15 @@
             name="target">
       </listener>
    </extension>
-
+ <extension
+         id="com.zend.php.platform.ui.platformWizardFragment"
+         name="Deployment"
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.deployment.ui.preferences.DeploymentFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
+            name="Deployment Wizard Fragment"
+            placeAfter="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"/>
+   </extension>
 </plugin>
