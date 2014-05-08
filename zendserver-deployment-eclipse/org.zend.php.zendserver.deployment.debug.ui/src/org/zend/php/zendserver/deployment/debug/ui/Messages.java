@@ -74,6 +74,38 @@ public class Messages extends NLS {
 
 	public static String ConfigurationBlock_WarnUpdatingLabel;
 
+	public static String DebugModeAction_NoTargetMessage;
+
+	public static String DebugModeAction_StartLabel;
+
+	public static String DebugModeAction_StopLabel;
+
+	public static String DebugModeCompositeFragment_AddLabel;
+
+	public static String DebugModeCompositeFragment_DebugModeDesc;
+
+	public static String DebugModeCompositeFragment_DebugModeLabel;
+
+	public static String DebugModeCompositeFragment_EditLabel;
+
+	public static String DebugModeCompositeFragment_EnterFilter;
+
+	public static String DebugModeCompositeFragment_InvalidPort;
+
+	public static String DebugModeCompositeFragment_InvalidUrl;
+
+	public static String DebugModeCompositeFragment_ModifyFilter;
+
+	public static String DebugModeCompositeFragment_PageDesc;
+
+	public static String DebugModeCompositeFragment_RemoveLabel;
+
+	public static String DebugModeCompositeFragment_RestartJobDesc;
+
+	public static String DebugModeCompositeFragment_RestartJobTitle;
+
+	public static String DebugModeCompositeFragment_RestartQuestion;
+
 	public static String DebugModeHandler_DebugModeLabel;
 
 	public static String DeploymentHandler_ApplicationNameErrorMessage;
@@ -138,6 +170,8 @@ public class Messages extends NLS {
 	public static String DebugModePreferencesPage_URLValidationError;
 
 	public static String DebugModePreferencesPage_URLValidationPortError;
+
+	public static String SSHTunnelAction_Label;
 
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;
 

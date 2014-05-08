@@ -293,5 +293,26 @@
             name="%page.name">
       </page>
    </extension>
-
+<extension
+         id="com.zend.php.platform.ui.platformWizardFragment"
+         name="Application Monitoring"
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory"
+            name="Debug Mode Fragment"
+            placeAfter="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"/>
+   </extension>
+<extension
+      point="org.zend.php.server.ui.actionContributions">
+   <action
+         class="org.zend.php.zendserver.deployment.debug.ui.actions.DebugModeAction"
+         serverType="org.zend.php.server.ui.types.ZendServerType">
+   </action>
+   <action
+         class="org.zend.php.zendserver.deployment.debug.ui.actions.SSHTunnelAction"
+         serverType="org.zend.php.server.ui.types.ZendServerType">
+   </action>
+</extension>
 </plugin>
