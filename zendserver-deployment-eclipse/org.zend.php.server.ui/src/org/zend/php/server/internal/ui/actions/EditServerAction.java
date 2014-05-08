@@ -17,9 +17,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.internal.server.ui.ServerEditDialog;
+import org.eclipse.php.internal.server.ui.ServerEditWizard;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.internal.ui.Messages;
@@ -47,8 +48,11 @@ public class EditServerAction extends AbstractServerAction implements
 		if (!toEdit.isEmpty()) {
 			IWorkbenchWindow window = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow();
-			ServerEditDialog dialog = new ServerEditDialog(window.getShell(),
+			ServerEditWizard wizard = new ServerEditWizard(
 					(Server) toEdit.get(0));
+			WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+			// ServerEditDialog dialog = new ServerEditDialog(window.getShell(),
+			// (Server) toEdit.get(0));
 			if (dialog.open() == Window.CANCEL) {
 				return;
 			}
