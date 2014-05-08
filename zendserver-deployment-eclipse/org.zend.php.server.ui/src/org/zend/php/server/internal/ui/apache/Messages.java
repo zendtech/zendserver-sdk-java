@@ -29,6 +29,9 @@ public class Messages extends NLS {
 	public static String LocalApacheCompositeFragment_NameEmptyMessage;
 	public static String LocalApacheCompositeFragment_NameLabel;
 	public static String LocalApacheWizardFragment_CompositeNoinitMessage;
+	public static String RefreshApacheAction_JobDesc;
+	public static String RefreshApacheAction_JobName;
+	public static String RefreshApacheAction_RefreshLabel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

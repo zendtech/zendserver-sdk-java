@@ -32,7 +32,7 @@ public class RemoveServerAction extends AbstractServerAction implements
 
 	public RemoveServerAction(ISelectionProvider provider) {
 		super(Messages.RemoveServerAction_RemoveLabel, ServersUI
-				.getImageDescriptor(ServersUI.REFRESH_ICON), provider);
+				.getImageDescriptor(ServersUI.REMOVE_ICON), provider);
 		provider.addSelectionChangedListener(this);
 	}
 

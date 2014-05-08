@@ -8,48 +8,58 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.server.internal.ui.actions;
-
-import java.util.List;
+package org.zend.php.server.internal.ui.apache;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.server.ui.types.ServerTypesManager;
 import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.ui.actions.IActionContribution;
 import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
+ * Contribution to action which is responsible for refreshing local Apache HTTP
+ * Server configuration settings.
+ * 
  * @author Wojciech Galanciak, 2014
  * 
  */
 @SuppressWarnings("restriction")
-public class RefreshLocalApacheAction extends AbstractServerAction {
+public class RefreshApacheAction implements IActionContribution {
 
-	public RefreshLocalApacheAction(ISelectionProvider provider) {
-		super(Messages.RefreshLocalApacheAction_RefreshApacheLabel, ServersUI
-				.getImageDescriptor(ServersUI.REFRESH_APACHE_ICON));
+	private Server server;
+
+	@Override
+	public String getLabel() {
+		return Messages.RefreshApacheAction_RefreshLabel;
+	}
+
+	@Override
+	public ImageDescriptor getIcon() {
+		return ServersUI.getImageDescriptor(ServersUI.REFRESH_APACHE_ICON);
+	}
+	
+	@Override
+	public boolean isAvailable(Server server) {
+		return true;
 	}
 
 	@Override
 	public void run() {
-		List<Server> toRefresh = getSelection();
-		if (!toRefresh.isEmpty()) {
-			final Server server = toRefresh.get(0);
+		if (server != null) {
 			IServerType serverType = ServerTypesManager.getInstance().getType(
 					server);
 			if (LocalApacheType.ID.equals(serverType.getId())) {
-				Job refreshJob = new Job(
-						Messages.RefreshLocalApacheAction_JobName) {
+				Job refreshJob = new Job(Messages.RefreshApacheAction_JobName) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask(
-								Messages.RefreshLocalApacheAction_JobDesc,
+						monitor.beginTask(Messages.RefreshApacheAction_JobDesc,
 								IProgressMonitor.UNKNOWN);
 						LocalApacheType.parseAttributes(server);
 						ServersManager.save();
@@ -61,6 +71,11 @@ public class RefreshLocalApacheAction extends AbstractServerAction {
 				refreshJob.schedule();
 			}
 		}
+	}
+
+	@Override
+	public void setServer(Server server) {
+		this.server = server;
 	}
 
 }

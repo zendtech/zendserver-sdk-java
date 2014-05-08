@@ -28,14 +28,17 @@ public class ServersUI extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.zend.php.server.ui"; //$NON-NLS-1$
 
-	public static final String ADD_ICON = "icons/obj16/add_server.gif"; //$NON-NLS-1$
-	public static final String EDIT_ICON = "icons/obj16/edit_server.gif"; //$NON-NLS-1$
+	public static final String ADD_ICON = "icons/obj16/add.gif"; //$NON-NLS-1$
+	public static final String EDIT_ICON = "icons/obj16/edit.gif"; //$NON-NLS-1$
 	public static final String REFRESH_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
-	public static final String REFRESH_APACHE_ICON = "icons/obj16/remove_server.gif"; //$NON-NLS-1$
+	public static final String REMOVE_ICON = "icons/obj16/remove.gif"; //$NON-NLS-1$
 
 	public static final String DEFAULT_SERVER_ICON = "icons/obj16/default_server.png"; //$NON-NLS-1$
-	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$
+	
 	public static final String ZEND_SERVER_ICON = "icons/obj16/zend_server.png"; //$NON-NLS-1$
+	
+	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$	
+	public static final String REFRESH_APACHE_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ServersUI plugin;

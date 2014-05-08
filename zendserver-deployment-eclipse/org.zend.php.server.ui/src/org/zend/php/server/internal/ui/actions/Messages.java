@@ -16,9 +16,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.server.internal.ui.actions.messages"; //$NON-NLS-1$
 	public static String AddServerAction_AddLabel;
 	public static String EditServerAction_EditLabel;
-	public static String RefreshLocalApacheAction_JobDesc;
-	public static String RefreshLocalApacheAction_JobName;
-	public static String RefreshLocalApacheAction_RefreshApacheLabel;
 	public static String RemoveServerAction_RemoveLabel;
 	static {
 		// initialize resource bundle

@@ -178,7 +178,7 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 				IServerType type = ServerTypesManager.getInstance().getType(
 						server);
 				IAction[] actions = ActionContributionsManager.getInstance()
-						.getActions(type, getSelectionProvider());
+						.getActions(type, server);
 				if (actions != null) {
 					for (IAction action : actions) {
 						manager.add(action);

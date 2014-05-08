@@ -71,5 +71,12 @@
             name="Local Apache HTTP Server Fragment">
       </wizardAndCompositeFragment>
    </extension>
+   <extension
+         point="org.zend.php.server.ui.actionContributions">
+      <action
+            class="org.zend.php.server.internal.ui.apache.RefreshApacheAction"
+            serverType="org.zend.php.server.ui.types.LocalApacheType">
+      </action>
+   </extension>
 
 </plugin>

@@ -21,23 +21,32 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.actions.IActionContribution;
 
+/**
+ * Service class responsible for managing actions contributed for different
+ * server types. Contributions are provided by <code>actionContributions</code>
+ * extension point.
+ * 
+ * @author Wojciech Galanciak, 2014
+ * @see IServerType
+ * @see IActionContribution
+ * 
+ */
+@SuppressWarnings("restriction")
 public class ActionContributionsManager {
 
 	private class ActionWrapper extends Action {
 
 		private IActionContribution contribution;
 
-		public ActionWrapper(IActionContribution contribution) {
-			super(contribution.getName(), contribution.getIcon());
+		public ActionWrapper(IActionContribution contribution, Server server) {
+			super(contribution.getLabel(), contribution.getIcon());
 			this.contribution = contribution;
+			this.contribution.setServer(server);
 		}
 
 		@Override
@@ -51,43 +60,38 @@ public class ActionContributionsManager {
 	private Map<IActionContribution, String> contributions;
 
 	private ActionContributionsManager() {
+		init();
 	}
 
+	/**
+	 * @return {@link ActionContributionsManager} instance
+	 */
 	public static synchronized ActionContributionsManager getInstance() {
 		if (manager == null) {
 			manager = new ActionContributionsManager();
-			manager.init();
 		}
 		return manager;
 	}
 
-	public IAction[] getActions(IServerType type, ISelectionProvider provider) {
-		List<Server> selection = getSelection(provider);
+	/**
+	 * Get list of actions which were contributed for specified server type.
+	 * 
+	 * @param type
+	 *            {@link IServerType} instance
+	 * @param server
+	 *            {@link Server} instance
+	 * @return array of {@link IAction}
+	 */
+	public IAction[] getActions(IServerType type, Server server) {
 		List<IAction> result = new ArrayList<IAction>();
 		Set<IActionContribution> actions = contributions.keySet();
 		for (IActionContribution action : actions) {
-			if (type.getId().equals(contributions.get(action))) {
-				action.setSelection(selection);
-				result.add(new ActionWrapper(action));
+			if (type.getId().equals(contributions.get(action))
+					&& action.isAvailable(server)) {
+				result.add(new ActionWrapper(action, server));
 			}
 		}
 		return result.toArray(new IAction[result.size()]);
-	}
-
-	protected List<Server> getSelection(ISelectionProvider provider) {
-		List<Server> result = new ArrayList<Server>();
-		if (provider != null) {
-			ISelection selection = provider.getSelection();
-			if (selection != null && !selection.isEmpty()) {
-				List<?> list = ((IStructuredSelection) selection).toList();
-				for (Object object : list) {
-					if (object instanceof Server) {
-						result.add((Server) object);
-					}
-				}
-			}
-		}
-		return result;
 	}
 
 	private void init() {
