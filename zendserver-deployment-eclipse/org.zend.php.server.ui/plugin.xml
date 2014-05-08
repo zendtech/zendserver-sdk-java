@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="actionContributions" name="Server Action Contributions" schema="schema/actionContributions.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.zend.php.server.ui"
+            name="PHP Servers">
+      </category>
+      <view
+            category="org.zend.php.server.ui"
+            class="org.zend.php.server.internal.ui.views.ServersView"
+            icon="icons/obj16/servers_view.gif"
+            id="org.zend.php.server.ui.views.ServersView"
+            name="PHP Servers">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.php.perspective">
+         <view
+               id="com.zend.php.server.internal.ui.views.ServersView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.php.server.ui.serverTypes">
+      <type
+            class="org.zend.php.server.ui.types.ZendServerType"
+            id="org.zend.php.server.ui.types.ZendServerType">
+         <wizardFragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
+         </wizardFragment>
+            <wizardFragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
+            </wizardFragment>
+            <wizardFragment
+                  id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
+            </wizardFragment>
+            <wizardFragment
+                  id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
+            </wizardFragment>
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.php.server.ui.serverTypes">
+      <type
+            class="org.zend.php.server.ui.types.LocalApacheType"
+            id="org.zend.php.server.ui.types.LocalApacheType">
+         <wizardFragment
+               id="org.zend.php.server.ui.apache.LocalApacheFragmentFactory">
+         </wizardFragment>
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.server.internal.ui.apache.LocalApacheFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.server.ui.apache.LocalApacheFragmentFactory"
+            name="Local Apache HTTP Server Fragment">
+      </wizardAndCompositeFragment>
+   </extension>
+
+</plugin>

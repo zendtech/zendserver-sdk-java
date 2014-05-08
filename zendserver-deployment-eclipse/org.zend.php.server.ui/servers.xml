@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servers>
+	<server>
+		<name>Default PHP Web Server</name>
+		<hostname>localhost</hostname>
+		<base_url>http\://localhost</base_url>
+		<serverType>none</serverType>
+	</server>
+	<server>
+		<zendserver_default_port>10081</zendserver_default_port>
+		<port>9998</port>
+		<tunnelAuthUsername></tunnelAuthUsername>
+		<zendserver_enabled>false</zendserver_enabled>
+		<hostname>localhost</hostname>
+		<autoConnectTunnel>false</autoConnectTunnel>
+		<base_url>http\://localhost</base_url>
+		<tunnelAuthPassword></tunnelAuthPassword>
+		<zendserver_userdefaulturl>true</zendserver_userdefaulturl>
+		<tunnelEnabled>false</tunnelEnabled>
+		<tunnelReturnHost></tunnelReturnHost>
+		<zendserver_password></zendserver_password>
+		<zendserver_defaulturl>/ZendServer</zendserver_defaulturl>
+		<name>apache</name>
+		<document_root></document_root>
+	</server>
+	<server>
+		<zendserver_default_port>10081</zendserver_default_port>
+		<port>10088</port>
+		<zendserver_defaulturl>/ZendServer</zendserver_defaulturl>
+		<name>Local Zend Server</name>
+		<zendserver_enabled>true</zendserver_enabled>
+		<hostname>localhost</hostname>
+		<base_url>http\://localhost</base_url>
+		<document_root>/usr/local/zend/apache2/htdocs</document_root>
+		<InstallLocation>/usr/local/zend</InstallLocation>
+		<serverType>Zend Server</serverType>
+		<key>ZendStudio</key>
+		<secretKey>1c6209fd9b636834f1ff663cf3b28b3b61b093aaf35888dd6caac40d131b0906d35e2794b2a256f37fda6d6f6f9d8125a5bdb5ad96a468149df26ae48f31512e81f275355141a17fce3fa496570ebdd1
+		</secretKey>
+		<serverVersion>6.3.0</serverVersion>
+		<supportedApiVersions>[UNKNOWN]</supportedApiVersions>
+		<edition>ZEND_SERVER</edition>
+		<serverName>Local Zend Server</serverName>
+		<host>http\://localhost\:10081</host>
+		<phpVersion>5.5.7</phpVersion>
+		<operatingSystem>Darwin</operatingSystem>
+		<encrypted>true</encrypted>
+		<defaultServerURL>http\://localhost\:10088</defaultServerURL>
+	</server>
+</servers>
