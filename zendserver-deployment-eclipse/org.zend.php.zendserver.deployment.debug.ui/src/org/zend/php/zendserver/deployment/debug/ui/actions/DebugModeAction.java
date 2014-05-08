@@ -50,7 +50,7 @@ public class DebugModeAction extends AbstractTunnelHelper implements
 	}
 
 	public String getLabel() {
-		IZendTarget target = getTarget();
+		IZendTarget target = getTarget(server);
 		if (target != null) {
 			if (DebugModeManager.getManager().isInDebugMode(target)) {
 				return Messages.DebugModeAction_StopLabel;
@@ -63,7 +63,7 @@ public class DebugModeAction extends AbstractTunnelHelper implements
 	}
 
 	public boolean isAvailable(Server server) {
-		return getTarget() != null;
+		return getTarget(server) != null;
 	}
 
 	public ImageDescriptor getIcon() {
@@ -71,7 +71,7 @@ public class DebugModeAction extends AbstractTunnelHelper implements
 	}
 
 	public void run() {
-		IZendTarget target = getTarget();
+		IZendTarget target = getTarget(server);
 		if (target != null) {
 			if (!DebugModeManager.getManager().isInDebugMode(target)) {
 				start(target);
@@ -117,7 +117,7 @@ public class DebugModeAction extends AbstractTunnelHelper implements
 		}
 	}
 
-	private IZendTarget getTarget() {
+	private IZendTarget getTarget(Server server) {
 		if (server != null) {
 			TargetsManager manager = TargetsManagerService.INSTANCE
 					.getTargetManager();

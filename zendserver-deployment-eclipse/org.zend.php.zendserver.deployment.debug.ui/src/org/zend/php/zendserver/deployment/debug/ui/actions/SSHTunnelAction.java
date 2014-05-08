@@ -41,8 +41,8 @@ public class SSHTunnelAction extends AbstractTunnelHelper implements
 	}
 
 	public boolean isAvailable(Server server) {
-		IZendTarget target = getTarget();
-		return getTarget() != null
+		IZendTarget target = getTarget(server);
+		return getTarget(server) != null
 				&& (TargetsManager.isOpenShift(target) || TargetsManager
 						.isPhpcloud(target));
 	}
@@ -52,7 +52,7 @@ public class SSHTunnelAction extends AbstractTunnelHelper implements
 	}
 
 	public void run() {
-		IZendTarget target = getTarget();
+		IZendTarget target = getTarget(server);
 		if (target != null) {
 			if (TargetsManager.isOpenShift(target)
 					|| TargetsManager.isPhpcloud(target)) {
@@ -61,7 +61,7 @@ public class SSHTunnelAction extends AbstractTunnelHelper implements
 		}
 	}
 
-	private IZendTarget getTarget() {
+	private IZendTarget getTarget(Server server) {
 		if (server != null) {
 			TargetsManager manager = TargetsManagerService.INSTANCE
 					.getTargetManager();

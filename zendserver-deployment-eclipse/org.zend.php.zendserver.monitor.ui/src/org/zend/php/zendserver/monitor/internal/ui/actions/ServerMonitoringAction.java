@@ -33,7 +33,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public String getLabel() {
-		IZendTarget target = getTarget();
+		IZendTarget target = getTarget(server);
 		if (target != null) {
 			IEclipsePreferences prefs = InstanceScope.INSTANCE
 					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
@@ -49,7 +49,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public boolean isAvailable(Server server) {
-		return getTarget() != null;
+		return getTarget(server) != null;
 	}
 
 	public ImageDescriptor getIcon() {
@@ -57,7 +57,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public void run() {
-		IZendTarget target = getTarget();
+		IZendTarget target = getTarget(server);
 		if (target != null) {
 			IEclipsePreferences prefs = InstanceScope.INSTANCE
 					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
@@ -75,7 +75,7 @@ public class ServerMonitoringAction implements IActionContribution {
 		return false;
 	}
 
-	private IZendTarget getTarget() {
+	private IZendTarget getTarget(Server server) {
 		if (server != null) {
 			TargetsManager manager = TargetsManagerService.INSTANCE
 					.getTargetManager();

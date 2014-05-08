@@ -46,7 +46,6 @@ public class ActionContributionsManager {
 		public ActionWrapper(IActionContribution contribution, Server server) {
 			super(contribution.getLabel(), contribution.getIcon());
 			this.contribution = contribution;
-			this.contribution.setServer(server);
 		}
 
 		@Override
@@ -88,6 +87,7 @@ public class ActionContributionsManager {
 		for (IActionContribution action : actions) {
 			if (type.getId().equals(contributions.get(action))
 					&& action.isAvailable(server)) {
+				action.setServer(server);
 				result.add(new ActionWrapper(action, server));
 			}
 		}
