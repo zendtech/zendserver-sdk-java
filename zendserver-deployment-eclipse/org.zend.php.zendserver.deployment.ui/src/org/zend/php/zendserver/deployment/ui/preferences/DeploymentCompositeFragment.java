@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.ui.ServerEditPage;
-import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -27,12 +25,12 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -49,7 +47,7 @@ import org.zend.sdklib.target.LicenseExpiredException;
  * 
  */
 @SuppressWarnings("restriction")
-public class DeploymentCompositeFragment extends CompositeFragment {
+public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 	private static final String DEFAULT_HOST = "http://"; //$NON-NLS-1$
 
@@ -74,43 +72,20 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 	 */
 	public DeploymentCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
-		super(parent, handler, isForEditing);
-
-		setDisplayName(Messages.DeploymentCompositeFragment_Title);
-
-		setTitle(Messages.DeploymentCompositeFragment_Title);
-		setDescription(Messages.DeploymentCompositeFragment_Description);
-
-		controlHandler.setTitle(Messages.DeploymentCompositeFragment_Title);
-		controlHandler
-				.setDescription(Messages.DeploymentCompositeFragment_Description);
-
-		controlHandler.setImageDescriptor(Activator
-				.getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-
-		if (isForEditing) {
-			setData(((ServerEditPage) controlHandler).getServer());
-		}
+		super(parent, handler, isForEditing,
+				Messages.DeploymentCompositeFragment_Title,
+				Messages.DeploymentCompositeFragment_Description);
 		createControl(isForEditing);
 	}
 
-	/**
-	 * Override the super setData to handle only Server types.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given object is not a {@link Server}
-	 */
 	@Override
 	public void setData(Object server) throws IllegalArgumentException {
-		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(""); //$NON-NLS-1$
-		}
-		if (server != null && hostText != null && !hostText.isDisposed()) {
-			String suggestedHost = DEFAULT_HOST + ((Server) server).getHost()
+		super.setData(server);
+		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
+			String suggestedHost = DEFAULT_HOST + getServer().getHost()
 					+ ":10081"; //$NON-NLS-1$
 			hostText.setText(suggestedHost);
 		}
-		super.setData(server);
 	}
 
 	@Override
@@ -168,44 +143,7 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 	}
 
 	@Override
-	public boolean isComplete() {
-		return super.isComplete();
-	}
-
-	/**
-	 * Returns the Server that is attached to this fragment.
-	 * 
-	 * @return The attached Server.
-	 */
-	private Server getServer() {
-		return (Server) getData();
-	}
-
-	private void saveValues() {
-		ZendTarget t = (ZendTarget) target;
-		Server server = getServer();
-		if (server != null) {
-			t.setServerName(server.getName());
-			try {
-				t.setHost(new URL(hostText.getText()));
-				t.setDefaultServerURL(new URL(server.getBaseURL()));
-			} catch (MalformedURLException e) {
-				Activator.log(e);
-			}
-			t.setKey(keyText.getText());
-			t.setSecretKey(secretText.getText());
-		}
-	}
-
-	private void createControl(boolean isForEditing) {
-		// set layout for this composite (whole page)
-		GridLayout pageLayout = new GridLayout();
-		setLayout(pageLayout);
-
-		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setLayout(new GridLayout(3, false));
-
+	protected void createControl(Composite parent) {
 		ModifyListener modifyListener = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
@@ -214,30 +152,30 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 			}
 		};
 
-		Label label = new Label(composite, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.DeploymentCompositeFragment_Host);
-		hostText = new Text(composite, SWT.BORDER);
+		hostText = new Text(parent, SWT.BORDER);
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
 				2, 1));
 		hostText.addModifyListener(modifyListener);
 		hostText.setText(DEFAULT_HOST);
 		hostText.setSelection(hostText.getText().length());
 
-		label = new Label(composite, SWT.NONE);
+		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.DeploymentCompositeFragment_KeyName);
-		keyText = new Text(composite, SWT.BORDER);
+		keyText = new Text(parent, SWT.BORDER);
 		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
 				2, 1));
 		keyText.addModifyListener(modifyListener);
 
-		label = new Label(composite, SWT.NONE);
+		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.DeploymentCompositeFragment_KeySecret);
-		secretText = new Text(composite, SWT.BORDER);
+		secretText = new Text(parent, SWT.BORDER);
 		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
 				false, 2, 1));
 		secretText.addModifyListener(modifyListener);
 
-		Button detectButton = new Button(composite, SWT.PUSH);
+		Button detectButton = new Button(parent, SWT.PUSH);
 		detectButton.setText(Messages.DeploymentCompositeFragment_DetectLabel);
 		detectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,28 +183,10 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 				handleDetect(hostText.getText());
 			}
 		});
-		init();
 	}
 
-	private void setMessage(String message, int type) {
-		controlHandler.setMessage(message, type);
-		setComplete(type != IMessageProvider.ERROR);
-		controlHandler.update();
-	}
-
-	private void updateData() {
-		if (hostText != null) {
-			host = hostText.getText();
-		}
-		if (keyText != null) {
-			key = keyText.getText();
-		}
-		if (secretText != null) {
-			secret = secretText.getText();
-		}
-	}
-
-	private void init() {
+	@Override
+	protected void init() {
 		TargetsManager manager = TargetsManagerService.INSTANCE
 				.getTargetManager();
 		Server server = getServer();
@@ -289,6 +209,34 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 		if (target == null) {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
+		}
+	}
+
+	private void saveValues() {
+		ZendTarget t = (ZendTarget) target;
+		Server server = getServer();
+		if (server != null) {
+			t.setServerName(server.getName());
+			try {
+				t.setHost(new URL(hostText.getText()));
+				t.setDefaultServerURL(new URL(server.getBaseURL()));
+			} catch (MalformedURLException e) {
+				Activator.log(e);
+			}
+			t.setKey(keyText.getText());
+			t.setSecretKey(secretText.getText());
+		}
+	}
+
+	private void updateData() {
+		if (hostText != null) {
+			host = hostText.getText();
+		}
+		if (keyText != null) {
+			key = keyText.getText();
+		}
+		if (secretText != null) {
+			secret = secretText.getText();
 		}
 	}
 

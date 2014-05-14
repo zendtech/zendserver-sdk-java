@@ -64,6 +64,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 		super(parent, handler, isForEditing,
 				Messages.LocalApacheCompositeFragment_Title,
 				Messages.LocalApacheCompositeFragment_Desc);
+		createControl(isForEditing);
 	}
 
 	/**

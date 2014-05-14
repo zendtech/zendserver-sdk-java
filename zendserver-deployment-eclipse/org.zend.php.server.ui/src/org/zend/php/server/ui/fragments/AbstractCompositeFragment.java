@@ -45,7 +45,6 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 		if (isForEditing) {
 			setData(((ServerEditPage) controlHandler).getServer());
 		}
-		createControl(isForEditing);
 	}
 
 	/**

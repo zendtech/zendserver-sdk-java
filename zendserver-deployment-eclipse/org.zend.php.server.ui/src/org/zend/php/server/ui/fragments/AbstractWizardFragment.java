@@ -10,6 +10,7 @@ package org.zend.php.server.ui.fragments;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
+import org.eclipse.php.internal.ui.wizards.CompositeWizardFragment;
 import org.eclipse.php.internal.ui.wizards.IWizardHandle;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.php.internal.ui.wizards.WizardFragment;
@@ -25,7 +26,7 @@ import org.zend.php.server.internal.ui.ServersUI;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractWizardFragment extends WizardFragment {
+public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 
 	protected CompositeFragment composite;
 	protected Server server;

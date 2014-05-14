@@ -47,6 +47,7 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 		super(parent, handler, isForEditing,
 				Messages.LocalZendServerCompositeFragment_Name,
 				Messages.LocalZendServerCompositeFragment_Desc);
+		createControl(isForEditing);
 	}
 
 	/**

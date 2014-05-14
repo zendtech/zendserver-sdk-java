@@ -8,71 +8,22 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.preferences;
 
-import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.ui.wizards.IWizardHandle;
+import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
-import org.eclipse.php.internal.ui.wizards.WizardFragment;
-import org.eclipse.php.internal.ui.wizards.WizardModel;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.server.ui.fragments.AbstractWizardFragment;
 
 /**
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
 @SuppressWarnings("restriction")
-public class DebugModeWizardFragment extends WizardFragment {
-
-	protected DebugModeCompositeFragment composite;
-	protected Server server = null;
-
-	public Composite getComposite() {
-		return composite;
-	}
+public class DebugModeWizardFragment extends AbstractWizardFragment {
 
 	@Override
-	public Composite createComposite(Composite parent, IWizardHandle wizard) {
-		composite = new DebugModeCompositeFragment(parent,
-				new WizardControlWrapper(wizard), false);
-		return composite;
-	}
-
-	@Override
-	public void enter() {
-		if (composite != null) {
-			try {
-				server = (Server) getWizardModel()
-						.getObject(WizardModel.SERVER);
-				if (server != null) {
-					composite.setData(server);
-				}
-			} catch (Exception e) {
-				Activator.log(e);
-			}
-		}
-	}
-
-	@Override
-	public boolean hasComposite() {
-		return true;
-	}
-
-	@Override
-	public boolean isComplete() {
-		if (composite == null) {
-			return super.isComplete();
-		}
-		return super.isComplete() && composite.isComplete();
-	}
-
-	@Override
-	public void exit() {
-		try {
-			if (composite != null) {
-				composite.performOk();
-			}
-		} catch (Exception e) {
-		}
+	protected CompositeFragment createComposite(Composite parent,
+			WizardControlWrapper wrapper) {
+		return new DebugModeCompositeFragment(parent, wrapper, false);
 	}
 
 }

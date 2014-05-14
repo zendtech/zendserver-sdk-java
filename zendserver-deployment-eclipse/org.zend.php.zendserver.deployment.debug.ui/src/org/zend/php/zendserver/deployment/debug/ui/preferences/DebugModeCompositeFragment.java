@@ -34,8 +34,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.ui.ServerEditPage;
-import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,6 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.core.notifications.NotificationManager;
+import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
@@ -58,7 +57,7 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  */
 @SuppressWarnings("restriction")
-public class DebugModeCompositeFragment extends CompositeFragment {
+public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
 	private class URLInputValidator implements IInputValidator {
 
@@ -138,53 +137,14 @@ public class DebugModeCompositeFragment extends CompositeFragment {
 	 */
 	public DebugModeCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
-		super(parent, handler, isForEditing);
+		super(parent, handler, isForEditing,
+				Messages.DebugModeCompositeFragment_DebugModeLabel,
+				Messages.DebugModeCompositeFragment_PageDesc);
 		this.prefs = InstanceScope.INSTANCE
 				.getNode(DebugModeManager.DEBUG_MODE_NODE);
 		this.defaultPrefs = DefaultScope.INSTANCE
 				.getNode(DebugModeManager.DEBUG_MODE_NODE);
-
-		setDisplayName(Messages.DebugModeCompositeFragment_DebugModeLabel);
-
-		setTitle(Messages.DebugModeCompositeFragment_DebugModeLabel);
-		setDescription(Messages.DebugModeCompositeFragment_PageDesc);
-
-		controlHandler
-				.setTitle(Messages.DebugModeCompositeFragment_DebugModeLabel);
-		controlHandler
-				.setDescription(Messages.DebugModeCompositeFragment_PageDesc);
-
-		// TODO add correct icon
-		// controlHandler.setImageDescriptor(Activator
-		// .getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-
-		if (isForEditing) {
-			setData(((ServerEditPage) controlHandler).getServer());
-		}
 		createControl(isForEditing);
-	}
-
-	/**
-	 * Override the super setData to handle only Server types.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given object is not a {@link Server}
-	 */
-	@Override
-	public void setData(Object server) throws IllegalArgumentException {
-		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(""); //$NON-NLS-1$
-		}
-		super.setData(server);
-	}
-
-	/**
-	 * Returns the Server that is attached to this fragment.
-	 * 
-	 * @return The attached Server.
-	 */
-	public Server getServer() {
-		return (Server) getData();
 	}
 
 	@Override
@@ -232,36 +192,23 @@ public class DebugModeCompositeFragment extends CompositeFragment {
 		return true;
 	}
 
-	/**
-	 * Create the page
-	 */
-	protected void createControl(boolean isForEditing) {
-		GridLayout pageLayout = new GridLayout();
-		setLayout(pageLayout);
-		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setLayout(new GridLayout(2, false));
-		createFiltersSection(composite);
-		init();
-	}
-
 	protected void setMessage(String message, int type) {
 		controlHandler.setMessage(message, type);
 		setComplete(type != IMessageProvider.ERROR);
 		controlHandler.update();
 	}
 
-	private void createFiltersSection(Composite parent) {
+	@Override
+	protected void createControl(Composite parent) {
 		Composite filtersSection = new Composite(parent, SWT.NONE);
 		filtersSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 2, 1));
+				true, 3, 1));
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginWidth = 0;
 		gl.marginHeight = 0;
 		filtersSection.setLayout(gl);
 		Label filtersLabel = new Label(filtersSection, SWT.WRAP);
-		GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false,
-				2, 1);
+		GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1);
 		filtersLabel.setLayoutData(gd);
 		filtersLabel.setText("aaa");
 		viewer = new TableViewer(filtersSection, SWT.SINGLE | SWT.BORDER);
@@ -348,8 +295,9 @@ public class DebugModeCompositeFragment extends CompositeFragment {
 		removeButton.setEnabled(false);
 		modifyButton.setEnabled(false);
 	}
-
-	private void init() {
+	
+	@Override
+	protected void init() {
 		TargetsManager manager = TargetsManagerService.INSTANCE
 				.getTargetManager();
 		Server server = getServer();

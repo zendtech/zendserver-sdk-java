@@ -25,8 +25,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.ui.ServerEditPage;
-import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -41,6 +39,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.internal.ui.Activator;
@@ -54,7 +53,7 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
  * 
  */
 @SuppressWarnings("restriction")
-public class MonitoringCompositeFragment extends CompositeFragment {
+public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 
 	private class URLInputValidator implements IInputValidator {
 
@@ -98,48 +97,10 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 	 */
 	public MonitoringCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
-		super(parent, handler, isForEditing);
-
-		setDisplayName(Messages.MonitoringCompositeFragment_Title);
-
-		setTitle(Messages.MonitoringCompositeFragment_Title);
-		setDescription(Messages.MonitoringCompositeFragment_Description);
-
-		controlHandler.setTitle(Messages.MonitoringCompositeFragment_Title);
-		controlHandler
-				.setDescription(Messages.MonitoringCompositeFragment_Description);
-
-		// TODO add correct icon
-		// controlHandler.setImageDescriptor(Activator
-		// .getImageDescriptor(Activator.IMAGE_WIZBAN_DEP));
-
-		if (isForEditing) {
-			setData(((ServerEditPage) controlHandler).getServer());
-		}
+		super(parent, handler, isForEditing,
+				Messages.MonitoringCompositeFragment_Title,
+				Messages.MonitoringCompositeFragment_Description);
 		createControl(isForEditing);
-	}
-
-	/**
-	 * Override the super setData to handle only Server types.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given object is not a {@link Server}
-	 */
-	@Override
-	public void setData(Object server) throws IllegalArgumentException {
-		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(""); //$NON-NLS-1$
-		}
-		super.setData(server);
-	}
-
-	/**
-	 * Returns the Server that is attached to this fragment.
-	 * 
-	 * @return The attached Server.
-	 */
-	public Server getServer() {
-		return (Server) getData();
 	}
 
 	/**
@@ -199,34 +160,65 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 		}
 		setMessage(getDescription(), IMessageProvider.NONE);
 	}
-	
+
 	@Override
 	public boolean isComplete() {
 		return true;
 	}
-
-	/**
-	 * Create the page
-	 */
-	protected void createControl(boolean isForEditing) {
-		// set layout for this composite (whole page)
-		GridLayout pageLayout = new GridLayout();
-		setLayout(pageLayout);
-		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		composite.setLayout(new GridLayout(2, false));
-		createFiltersSection(composite);
-		createSeveritySection(composite);
-		createDelaySection(composite);
-		init();
-	}
-
-	protected void setMessage(String message, int type) {
-		controlHandler.setMessage(message, type);
-		setComplete(type != IMessageProvider.ERROR);
-		controlHandler.update();
+	
+	@Override
+	protected void createControl(Composite parent) {
+		createFiltersSection(parent);
+		createSeveritySection(parent);
+		createDelaySection(parent);
 	}
 	
+	@Override
+	protected void init() {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
+		Server server = getServer();
+		if (server != null) {
+			String serverName = server.getName();
+			IZendTarget[] targets = manager.getTargets();
+			for (IZendTarget target : targets) {
+				if (serverName.equals(target.getServerName())) {
+					this.target = target;
+					break;
+				}
+			}
+		}
+		if (target != null) {
+			String id = target.getId();
+			IEclipsePreferences prefs = MonitorManager.getPreferences();
+			List<String> value = MonitorManager.getFilters(id);
+			if (value != null && !value.isEmpty()) {
+				input = value;
+			} else {
+				input = new ArrayList<String>();
+			}
+			String key = MonitorManager.getHideKey(id);
+			hide = prefs.getBoolean(key, false);
+			key = MonitorManager.getHideTimeKey(id);
+			delay = prefs.getInt(key, 10);
+			severities = new boolean[3];
+			for (int i = 0; i < severityButtons.length; i++) {
+				String nodeName = getNodeName(severityButtons[i]);
+				key = id + '.' + nodeName;
+				severities[i] = prefs.getBoolean(key, true);
+			}
+			viewer.setInput(input);
+			viewer.refresh();
+
+			for (int i = 0; i < severityButtons.length; i++) {
+				severityButtons[i].setSelection(severities[i]);
+			}
+			hideButton.setSelection(hide);
+			delayText.setEnabled(hideButton.getSelection());
+			delayText.setText(String.valueOf(delay));
+		}
+	}
+
 	private String getNodeName(Button button) {
 		return button.getText();
 	}
@@ -245,7 +237,7 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 	private void createSeveritySection(Composite composite) {
 		Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
-				2, 1));
+				3, 1));
 		container.setLayout(new GridLayout(1, true));
 		Label label = new Label(container, SWT.WRAP);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -278,7 +270,7 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 	private void createDelaySection(Composite composite) {
 		Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
-				2, 1));
+				3, 1));
 		container.setLayout(new GridLayout(1, true));
 		hideButton = new Button(container, SWT.CHECK);
 		hideButton.setText(Messages.MonitoringCompositeFragment_HideLabel);
@@ -322,7 +314,7 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 	private void createFiltersSection(Composite parent) {
 		Composite filtersSection = new Composite(parent, SWT.NONE);
 		filtersSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 2, 1));
+				true, 3, 1));
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginWidth = 0;
 		gl.marginHeight = 0;
@@ -428,51 +420,6 @@ public class MonitoringCompositeFragment extends CompositeFragment {
 			input.remove((String) elem);
 		}
 		viewer.refresh();
-	}
-
-	private void init() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		Server server = getServer();
-		if (server != null) {
-			String serverName = server.getName();
-			IZendTarget[] targets = manager.getTargets();
-			for (IZendTarget target : targets) {
-				if (serverName.equals(target.getServerName())) {
-					this.target = target;
-					break;
-				}
-			}
-		}
-		if (target != null) {
-			String id = target.getId();
-			IEclipsePreferences prefs = MonitorManager.getPreferences();
-			List<String> value = MonitorManager.getFilters(id);
-			if (value != null && !value.isEmpty()) {
-				input = value;
-			} else {
-				input = new ArrayList<String>();
-			}
-			String key = MonitorManager.getHideKey(id);
-			hide = prefs.getBoolean(key, false);
-			key = MonitorManager.getHideTimeKey(id);
-			delay = prefs.getInt(key, 10);
-			severities = new boolean[3];
-			for (int i = 0; i < severityButtons.length; i++) {
-				String nodeName = getNodeName(severityButtons[i]);
-				key = id + '.' + nodeName;
-				severities[i] = prefs.getBoolean(key, true);
-			}
-			viewer.setInput(input);
-			viewer.refresh();
-
-			for (int i = 0; i < severityButtons.length; i++) {
-				severityButtons[i].setSelection(severities[i]);
-			}
-			hideButton.setSelection(hide);
-			delayText.setEnabled(hideButton.getSelection());
-			delayText.setText(String.valueOf(delay));
-		}
 	}
 
 }
