@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2014 Zend Technologies Ltd.
+ * Copyright (c) 2014 Zend Technologies.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *    Zend Technologies Ltd. - initial API and implementation
+ * are the copyright of Zend Technologies and is protected under
+ * copyright laws of the United States.
+ * You must not copy, adapt or redistribute this document for 
+ * any use. 
+ *
  *******************************************************************************/
-package org.zend.php.server.internal.ui.apache;
+package org.zend.php.zendserver.deployment.ui.zendserver;
 
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
@@ -16,18 +15,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
 
 /**
- * Wizard fragment for local Apache HTTP Server.
- * 
  * @author Wojciech Galanciak, 2014
  * 
  */
 @SuppressWarnings("restriction")
-public class LocalApacheWizardFragment extends AbstractWizardFragment {
+public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 
 	@Override
 	protected CompositeFragment createComposite(Composite parent,
 			WizardControlWrapper wrapper) {
-		return new LocalApacheCompositeFragment(parent, wrapper, false);
+		return new LocalZendServerCompositeFragment(parent, wrapper, false);
 	}
 
 }

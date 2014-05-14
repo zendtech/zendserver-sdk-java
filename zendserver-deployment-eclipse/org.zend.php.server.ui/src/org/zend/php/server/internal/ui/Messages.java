@@ -19,12 +19,13 @@ public class Messages extends NLS {
 	public static String LocalApacheCompositeFragment_NameEmptyMessage;
 	public static String LocalApacheCompositeFragment_NameLabel;
 	public static String LocalApacheCompositeFragment_Title;
-	public static String LocalApacheWizardFragment_CompositeNoinitMessage;
 	public static String RefreshApacheAction_JobDesc;
 	public static String RefreshApacheAction_JobName;
 	public static String RefreshApacheAction_RefreshLabel;
 	public static String AddServerAction_AddLabel;
 	public static String EditServerAction_EditLabel;
+	public static String OpenShiftServerType_Name;
+	public static String PhpcloudServerType_Name;
 	public static String RemoveServerAction_RemoveLabel;
 	static {
 		// initialize resource bundle

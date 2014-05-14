@@ -184,7 +184,7 @@ public class DeploymentUtils {
 					return server;
 				}
 			}
-			return createPHPServer(target.getDefaultServerURL(), target);
+			return null;
 		} catch (MalformedURLException e) {
 			DeploymentCore.log(e);
 			// do nothing and return null

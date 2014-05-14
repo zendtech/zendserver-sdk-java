@@ -19,6 +19,13 @@ public class Messages extends NLS {
 	public static String DeploymentTester_NullTarget;
 	public static String DeploymentTester_TestingPortSubTask;
 	public static String DeploymentTester_UnexpectedError;
+	public static String LocalTargetDetector_CompleteMessage;
+	public static String LocalTargetDetector_CompleteTitle;
+	public static String LocalTargetDetector_InvalidCredentialsMessage;
+	public static String LocalTargetDetector_SeeDocMessage;
+	public static String LocalTargetDetector_UnsupportedMessage;
+	public static String LocalTargetDetector_UnsupportedTitle;
+	public static String LocalTargetDetector_WindowsPriviligesMessage;
 	public static String OpenShiftPreferencesPage_0;
 	public static String OpenShiftPreferencesPage_1;
 	static {

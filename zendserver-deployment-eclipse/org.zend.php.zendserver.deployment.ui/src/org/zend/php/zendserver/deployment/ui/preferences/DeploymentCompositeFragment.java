@@ -59,6 +59,10 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 	private Text keyText;
 	private Text secretText;
 
+	private String host;
+	private String key;
+	private String secret;
+
 	private IZendTarget target;
 
 	/**
@@ -111,6 +115,14 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 
 	@Override
 	public boolean performOk() {
+		if (target != null) {
+			URL targetHost = target.getHost();
+			if (targetHost != null && host.equals(targetHost.toString())
+					&& key.equals(target.getKey())
+					&& secret.equals(target.getSecretKey())) {
+				return true;
+			}
+		}
 		saveValues();
 		try {
 			controlHandler.run(true, true, new IRunnableWithProgress() {
@@ -137,17 +149,17 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 
 	@Override
 	public void validate() {
-		if (hostText != null && hostText.getText().trim().isEmpty()) {
+		if (host != null && host.trim().isEmpty()) {
 			setMessage(Messages.DeploymentCompositeFragment_EmptyHostMessage,
 					IMessageProvider.ERROR);
 			return;
 		}
-		if (keyText != null && keyText.getText().trim().isEmpty()) {
+		if (key != null && key.trim().isEmpty()) {
 			setMessage(Messages.DeploymentCompositeFragment_EmptyKeyMessage,
 					IMessageProvider.ERROR);
 			return;
 		}
-		if (secretText != null && secretText.getText().trim().isEmpty()) {
+		if (secret != null && secret.trim().isEmpty()) {
 			setMessage(Messages.DeploymentCompositeFragment_EmptySecretMessage,
 					IMessageProvider.ERROR);
 			return;
@@ -197,6 +209,7 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 		ModifyListener modifyListener = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
+				updateData();
 				validate();
 			}
 		};
@@ -239,6 +252,18 @@ public class DeploymentCompositeFragment extends CompositeFragment {
 		controlHandler.setMessage(message, type);
 		setComplete(type != IMessageProvider.ERROR);
 		controlHandler.update();
+	}
+
+	private void updateData() {
+		if (hostText != null) {
+			host = hostText.getText();
+		}
+		if (keyText != null) {
+			key = keyText.getText();
+		}
+		if (secretText != null) {
+			secret = secretText.getText();
+		}
 	}
 
 	private void init() {

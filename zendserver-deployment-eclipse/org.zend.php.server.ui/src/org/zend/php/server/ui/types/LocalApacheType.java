@@ -23,6 +23,8 @@ import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
 
 /**
+ * Representation of local Apache HTTP Server type.
+ * 
  * @author Wojciech Galanciak, 2014
  * 
  */
@@ -55,12 +57,6 @@ public class LocalApacheType implements IServerType {
 	public ImageDescriptor getWizardImage() {
 		// TODO return correct apache wizard image
 		return ServersUI.getImageDescriptor("icons/wizban/zend_server_wiz.png");
-	}
-
-	@Override
-	public boolean isCompatible(Server server) {
-		String serverType = server.getAttribute(IServerType.TYPE, null);
-		return getId().equals(serverType);
 	}
 
 	public static void parseAttributes(Server server) {

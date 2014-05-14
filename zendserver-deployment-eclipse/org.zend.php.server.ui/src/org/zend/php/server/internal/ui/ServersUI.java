@@ -40,6 +40,8 @@ public class ServersUI extends AbstractUIPlugin {
 
 	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$	
 	public static final String REFRESH_APACHE_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
+	
+	public static final String OPENSHIFT_ICON = "icons/obj16/openshift.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ServersUI plugin;

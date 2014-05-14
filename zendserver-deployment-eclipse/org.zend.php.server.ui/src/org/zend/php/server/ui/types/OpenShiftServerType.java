@@ -17,14 +17,14 @@ import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
 
 /**
- * Representation of Zend Server type.
+ * Representation of OpenShift server type.
  * 
  * @author Wojciech Galanciak, 2014
  * 
  */
-public class ZendServerType implements IServerType {
+public class OpenShiftServerType implements IServerType {
 
-	public static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$
+	public static final String ID = "org.zend.php.server.ui.types.OpenShiftServerType"; //$NON-NLS-1$
 
 	@Override
 	public String getId() {
@@ -33,16 +33,17 @@ public class ZendServerType implements IServerType {
 
 	@Override
 	public String getName() {
-		return Messages.ZendServerType_Name;
+		return Messages.OpenShiftServerType_Name;
 	}
 
 	@Override
 	public Image getViewIcon() {
-		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
+		return ServersUI.getDefault().getImage(ServersUI.OPENSHIFT_ICON);
 	}
 
 	@Override
 	public ImageDescriptor getWizardImage() {
+		// TODO set a correct wizard image
 		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
 	}
 

@@ -15,9 +15,6 @@ import java.io.File;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.internal.server.ui.ServerEditDialog;
-import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,7 +22,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -34,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
@@ -41,7 +38,7 @@ import org.zend.php.server.ui.types.LocalApacheType;
  * 
  */
 @SuppressWarnings("restriction")
-public class LocalApacheCompositeFragment extends CompositeFragment {
+public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 
 	public static String ID = "org.zend.php.server.ui.apache.LocalApacheCompositeFragment"; //$NON-NLS-1$
 
@@ -64,41 +61,9 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 	 */
 	public LocalApacheCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
-		super(parent, handler, isForEditing);
-		setDisplayName(Messages.LocalApacheCompositeFragment_Title);
-		setTitle(Messages.LocalApacheCompositeFragment_Title);
-		setDescription(Messages.LocalApacheCompositeFragment_Desc);
-
-		controlHandler.setTitle(Messages.LocalApacheCompositeFragment_Title);
-		controlHandler
-				.setDescription(Messages.LocalApacheCompositeFragment_Desc);
-
-		if (isForEditing) {
-			setData(((ServerEditDialog) controlHandler).getServer());
-		}
-		createControl(isForEditing);
-	}
-
-	/**
-	 * Override the super setData to handle only Server types.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given object is not a {@link Server}
-	 */
-	public void setData(Object server) throws IllegalArgumentException {
-		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(""); //$NON-NLS-1$
-		}
-		super.setData(server);
-	}
-
-	/**
-	 * Returns the Server that is attached to this fragment.
-	 * 
-	 * @return The attached Server.
-	 */
-	public Server getServer() {
-		return (Server) getData();
+		super(parent, handler, isForEditing,
+				Messages.LocalApacheCompositeFragment_Title,
+				Messages.LocalApacheCompositeFragment_Desc);
 	}
 
 	/**
@@ -112,6 +77,7 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 	public boolean performOk() {
 		try {
 			saveValues();
+			LocalApacheType.parseAttributes(getServer());
 			return true;
 		} catch (Throwable e) {
 			ServersUI.logError(e);
@@ -150,18 +116,8 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 		setMessage(getDescription(), IMessageProvider.NONE);
 	}
 
-	/**
-	 * Create the page
-	 */
-	protected void createControl(boolean isForEditing) {
-		// set layout for this composite (whole page)
-		GridLayout pageLayout = new GridLayout();
-		setLayout(pageLayout);
-
-		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setLayout(new GridLayout(3, false));
-
+	@Override
+	protected void createControl(Composite parent) {
 		ModifyListener modifyListener = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
@@ -170,23 +126,23 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 			}
 		};
 
-		Label label = new Label(composite, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.LocalApacheCompositeFragment_NameLabel);
-		serverNameText = new Text(composite, SWT.BORDER);
+		serverNameText = new Text(parent, SWT.BORDER);
 		serverNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 2, 1));
 		serverNameText.addModifyListener(modifyListener);
 
-		label = new Label(composite, SWT.NONE);
+		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.LocalApacheCompositeFragment_LocationLabel);
-		locationText = new Text(composite, SWT.BORDER);
+		locationText = new Text(parent, SWT.BORDER);
 		locationText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 		locationText
 				.setToolTipText(Messages.LocalApacheCompositeFragment_LocationTooltip);
 		locationText.addModifyListener(modifyListener);
 
-		browseButton = new Button(composite, SWT.BORDER);
+		browseButton = new Button(parent, SWT.BORDER);
 		browseButton.setText(Messages.LocalApacheCompositeFragment_BrowseLabel);
 		browseButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
@@ -203,39 +159,15 @@ public class LocalApacheCompositeFragment extends CompositeFragment {
 			}
 
 		});
-		new Label(composite, SWT.NONE);
-		Label examplePathLabel = new Label(composite, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		Label examplePathLabel = new Label(parent, SWT.NONE);
 		examplePathLabel.setText(getExamplePath());
 		examplePathLabel.setForeground(Display.getDefault().getSystemColor(
 				SWT.COLOR_DARK_GRAY));
-
-		init();
 	}
 
-	protected void setMessage(String message, int type) {
-		controlHandler.setMessage(message, type);
-		setComplete(type != IMessageProvider.ERROR);
-		controlHandler.update();
-	}
-
-	private boolean checkServerName(String name) {
-		name = name.trim();
-		if (name.equals(getServer().getName())) {
-			return true;
-		}
-		Server[] allServers = ServersManager.getServers();
-		if (allServers != null) {
-			int size = allServers.length;
-			for (int i = 0; i < size; i++) {
-				Server server = allServers[i];
-				if (name.equals(server.getName()))
-					return false;
-			}
-		}
-		return true;
-	}
-
-	private void init() {
+	@Override
+	protected void init() {
 		Server server = getServer();
 		if (server != null) {
 			serverNameText.setText(server.getName());

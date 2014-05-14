@@ -6,28 +6,29 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.server.ui.fragments;
 
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IWizardHandle;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.internal.ui.wizards.WizardModel;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
+ * Abstract wizard fragment with basic implementation. It is intended to extend
+ * this class to provide different implementations of {@link WizardFragment}.
+ * 
  * @author Wojciech Galanciak, 2014
- *
+ * 
  */
 @SuppressWarnings("restriction")
-public class DeploymentWizardFragment extends WizardFragment {
+public abstract class AbstractWizardFragment extends WizardFragment {
 
-	protected DeploymentCompositeFragment composite;
-	protected Server server = null;
-
-	public DeploymentWizardFragment() {
-	}
+	protected CompositeFragment composite;
+	protected Server server;
 
 	public Composite getComposite() {
 		return composite;
@@ -35,8 +36,7 @@ public class DeploymentWizardFragment extends WizardFragment {
 
 	@Override
 	public Composite createComposite(Composite parent, IWizardHandle wizard) {
-		composite = new DeploymentCompositeFragment(parent,
-				new WizardControlWrapper(wizard), false);
+		composite = createComposite(parent, new WizardControlWrapper(wizard));
 		return composite;
 	}
 
@@ -50,7 +50,7 @@ public class DeploymentWizardFragment extends WizardFragment {
 					composite.setData(server);
 				}
 			} catch (Exception e) {
-				Activator.log(e);
+				ServersUI.logError(e);
 			}
 		}
 	}
@@ -71,12 +71,24 @@ public class DeploymentWizardFragment extends WizardFragment {
 	@Override
 	public void exit() {
 		try {
-			if (composite != null) {
+			if (composite != null && composite.isComplete()) {
 				composite.performOk();
 			}
 		} catch (Exception e) {
-			System.out.println();
 		}
 	}
+
+	/**
+	 * Create composite fragment specific to particular implementation of
+	 * {@link AbstractWizardFragment}.
+	 * 
+	 * @param parent
+	 *            parent composite
+	 * @param wrapper
+	 *            {@link WizardControlWrapper}
+	 * @return
+	 */
+	protected abstract CompositeFragment createComposite(Composite parent,
+			WizardControlWrapper wrapper);
 
 }

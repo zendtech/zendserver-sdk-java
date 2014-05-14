@@ -314,5 +314,9 @@
          class="org.zend.php.zendserver.deployment.debug.ui.actions.SSHTunnelAction"
          serverType="org.zend.php.server.ui.types.ZendServerType">
    </action>
+   <action
+         class="org.zend.php.zendserver.deployment.debug.ui.actions.DebugModeAction"
+         serverType="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+   </action>
 </extension>
 </plugin>

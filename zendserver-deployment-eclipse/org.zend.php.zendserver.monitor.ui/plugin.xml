@@ -119,5 +119,9 @@
          class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction"
          serverType="org.zend.php.server.ui.types.ZendServerType">
    </action>
+   <action
+         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction"
+         serverType="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+   </action>
 </extension>
 </plugin>
