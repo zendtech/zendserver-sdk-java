@@ -90,6 +90,8 @@ public class Messages extends NLS {
 
 	public static String DebugModeCompositeFragment_EnterFilter;
 
+	public static String DebugModeCompositeFragment_FilterSectionLabel;
+
 	public static String DebugModeCompositeFragment_InvalidPort;
 
 	public static String DebugModeCompositeFragment_InvalidUrl;

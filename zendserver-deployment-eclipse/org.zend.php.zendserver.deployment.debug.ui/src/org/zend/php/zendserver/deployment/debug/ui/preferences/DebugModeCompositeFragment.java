@@ -208,9 +208,12 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 		gl.marginHeight = 0;
 		filtersSection.setLayout(gl);
 		Label filtersLabel = new Label(filtersSection, SWT.WRAP);
-		GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, false);
+		gd.widthHint = 400;
+		gd.horizontalSpan = 2;
 		filtersLabel.setLayoutData(gd);
-		filtersLabel.setText("aaa");
+		filtersLabel
+				.setText(Messages.DebugModeCompositeFragment_FilterSectionLabel);
 		viewer = new TableViewer(filtersSection, SWT.SINGLE | SWT.BORDER);
 		viewer.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -295,7 +298,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 		removeButton.setEnabled(false);
 		modifyButton.setEnabled(false);
 	}
-	
+
 	@Override
 	protected void init() {
 		TargetsManager manager = TargetsManagerService.INSTANCE
