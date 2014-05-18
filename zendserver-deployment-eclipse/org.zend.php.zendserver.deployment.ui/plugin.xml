@@ -264,4 +264,22 @@
             name="Local Zend Server Fragment">
       </wizardAndCompositeFragment>
    </extension>
+   <extension
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.deployment.ui.preferences.PhpcloudFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.deployment.ui.preferences.PhpcloudFragmentFactory"
+            name="Zend Developer Cloud Fragment">
+      </wizardAndCompositeFragment>
+   </extension>
+    <extension
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
+            name="RedHat OpenShift Fragment">
+      </wizardAndCompositeFragment>
+   </extension>
 </plugin>

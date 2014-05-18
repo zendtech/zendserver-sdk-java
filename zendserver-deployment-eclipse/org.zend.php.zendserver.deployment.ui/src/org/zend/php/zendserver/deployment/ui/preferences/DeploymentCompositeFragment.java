@@ -79,16 +79,6 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	public void setData(Object server) throws IllegalArgumentException {
-		super.setData(server);
-		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
-			String suggestedHost = DEFAULT_HOST + getServer().getHost()
-					+ ":10081"; //$NON-NLS-1$
-			hostText.setText(suggestedHost);
-		}
-	}
-
-	@Override
 	public boolean performOk() {
 		if (target != null) {
 			URL targetHost = target.getHost();
@@ -209,6 +199,9 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		if (target == null) {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
+			String suggestedHost = DEFAULT_HOST + getServer().getHost()
+					+ ":10081"; //$NON-NLS-1$
+			hostText.setText(suggestedHost);
 		}
 	}
 
