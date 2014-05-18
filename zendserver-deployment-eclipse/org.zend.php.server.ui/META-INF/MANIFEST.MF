@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.php.server.ui,
  org.eclipse.nebula.widgets.gallery,
  org.eclipse.php.ui,
- com.zend.php.zendserver.core
+ com.zend.php.zendserver.core,
+ org.eclipse.php.debug.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.server.ui.actions,

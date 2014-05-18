@@ -59,6 +59,13 @@ public class LocalApacheType implements IServerType {
 		return ServersUI.getImageDescriptor("icons/wizban/zend_server_wiz.png");
 	}
 
+	/**
+	 * Parse document root and base URL settings from httpd.conf file for
+	 * specified server.
+	 * 
+	 * @param server
+	 *            {@link Server} instance
+	 */
 	public static void parseAttributes(Server server) {
 		String location = server.getAttribute(LOCATION, null);
 		if (location != null) {
@@ -86,6 +93,7 @@ public class LocalApacheType implements IServerType {
 						}
 					}
 				}
+				server.setDebuggerId(ServerTypeUtils.getLocalDebuggerId(server));
 			} catch (IOException e) {
 			} finally {
 				if (httpdReader != null) {
