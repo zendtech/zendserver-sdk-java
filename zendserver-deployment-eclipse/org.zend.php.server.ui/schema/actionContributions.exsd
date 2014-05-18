@@ -49,6 +49,9 @@
 
    <element name="action">
       <complexType>
+         <sequence>
+            <element ref="serverType" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -59,7 +62,12 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="serverType" type="string" use="required">
+      </complexType>
+   </element>
+
+   <element name="serverType">
+      <complexType>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   

@@ -56,7 +56,7 @@ public class ActionContributionsManager {
 	}
 
 	private static ActionContributionsManager manager;
-	private Map<IActionContribution, String> contributions;
+	private Map<IActionContribution, List<String>> contributions;
 
 	private ActionContributionsManager() {
 		init();
@@ -85,8 +85,8 @@ public class ActionContributionsManager {
 		List<IAction> result = new ArrayList<IAction>();
 		Set<IActionContribution> actions = contributions.keySet();
 		for (IActionContribution action : actions) {
-			if (type.getId().equals(contributions.get(action))
-					&& action.isAvailable(server)) {
+			List<String> types = contributions.get(action);
+			if (types.contains(type.getId()) && action.isAvailable(server)) {
 				action.setServer(server);
 				result.add(new ActionWrapper(action, server));
 			}
@@ -99,16 +99,14 @@ public class ActionContributionsManager {
 			IConfigurationElement[] elements = Platform.getExtensionRegistry()
 					.getConfigurationElementsFor(
 							"org.zend.php.server.ui.actionContributions"); //$NON-NLS-1$
-			contributions = new HashMap<IActionContribution, String>();
+			contributions = new HashMap<IActionContribution, List<String>>();
 			for (IConfigurationElement element : elements) {
 				if ("action".equals(element.getName())) { //$NON-NLS-1$
 					try {
-						Object contribution = element
-								.createExecutableExtension("class"); //$NON-NLS-1$
-						if (contribution instanceof IActionContribution) {
-							contributions.put(
-									(IActionContribution) contribution,
-									element.getAttribute("serverType")); //$NON-NLS-1$
+						Object obj = element.createExecutableExtension("class"); //$NON-NLS-1$
+						if (obj instanceof IActionContribution) {
+							contributions.put((IActionContribution) obj,
+									getTypes(element));
 						}
 					} catch (CoreException e) {
 						ServersUI.logError(e);
@@ -116,6 +114,18 @@ public class ActionContributionsManager {
 				}
 			}
 		}
+	}
+
+	private List<String> getTypes(IConfigurationElement element) {
+		List<String> result = new ArrayList<String>();
+		IConfigurationElement[] fragments = element.getChildren();
+		for (IConfigurationElement fragment : fragments) {
+			if ("serverType".equals(fragment.getName())) { //$NON-NLS-1$
+				String id = fragment.getAttribute("id"); //$NON-NLS-1$
+				result.add(id);
+			}
+		}
+		return result;
 	}
 
 }

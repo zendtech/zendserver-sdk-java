@@ -116,12 +116,19 @@
 <extension
       point="org.zend.php.server.ui.actionContributions">
    <action
-         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction"
-         serverType="org.zend.php.server.ui.types.ZendServerType">
-   </action>
-   <action
-         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction"
-         serverType="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction">
+      <serverType
+            id="org.zend.php.server.ui.types.ZendServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.server.ui.types.OpenShiftServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.server.ui.types.PhpcloudServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+      </serverType>
    </action>
 </extension>
 </plugin>

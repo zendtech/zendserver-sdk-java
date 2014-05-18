@@ -342,10 +342,11 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 							.getTargetManager();
 					Server toAdd = null;
 					for (IZendTarget target : finalTargets) {
-						URL baseUrl = new URL("http", target.getHost() //$NON-NLS-1$
-								.getHost(), ""); //$NON-NLS-1$
+						String host = target.getHost().getHost();
+						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						ZendTarget t = (ZendTarget) target;
 						Server server = new Server();
+						server.setHost(host);
 						server.setName(target.getHost().getHost());
 						server.setBaseURL(baseUrl.toString());
 						server.setAttribute(IServerType.TYPE,
@@ -356,8 +357,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						ServersManager.addServer(server);
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());
-						// TODO set ZendDebugger id
-						// server.setDebuggerId(debuggerId);
 						if (manager.getTargetById(target.getId()) != null) {
 							manager.updateTarget(target, true);
 						} else {
