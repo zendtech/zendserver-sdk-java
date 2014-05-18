@@ -22,7 +22,6 @@ import org.zend.php.server.internal.ui.ServersUI;
  * @author Wojciech Galanciak, 2014
  * 
  */
-@SuppressWarnings("restriction")
 public class PhpcloudServerType implements IServerType {
 
 	public static final String ID = "org.zend.php.server.ui.types.PhpcloudServerType"; //$NON-NLS-1$
@@ -40,13 +39,12 @@ public class PhpcloudServerType implements IServerType {
 	@Override
 	public Image getViewIcon() {
 		// TODO set a correct icon
-		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
+		return ServersUI.getDefault().getImage(ServersUI.PHPCLOUD_ICON);
 	}
 
 	@Override
 	public ImageDescriptor getWizardImage() {
-		// TODO set a correct wizard image
-		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
+		return ServersUI.getImageDescriptor(ServersUI.PHPCLOUD_WIZ);
 	}
 
 }

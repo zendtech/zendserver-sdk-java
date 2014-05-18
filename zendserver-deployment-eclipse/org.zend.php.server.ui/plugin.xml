@@ -106,6 +106,24 @@
       <type
             class="org.zend.php.server.ui.types.OpenShiftServerType"
             id="org.zend.php.server.ui.types.OpenShiftServerType">
+            <wizard>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory">
+            </fragment>
+         </wizard>
+         <settings>
+            <fragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
+	         </fragment>
+            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
+            </fragment>
+            <fragment
+                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
+            </fragment>
+            <fragment
+                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
+            </fragment>
+         </settings>
       </type>
    </extension>
    <extension
@@ -113,6 +131,24 @@
       <type
             class="org.zend.php.server.ui.types.PhpcloudServerType"
             id="org.zend.php.server.ui.types.PhpcloudServerType">
+         <wizard>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.preferences.PhpcloudFragmentFactory">
+            </fragment>
+         </wizard>
+         <settings>
+            <fragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
+	         </fragment>
+            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
+            </fragment>
+            <fragment
+                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
+            </fragment>
+            <fragment
+                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
+            </fragment>
+         </settings>
       </type>
    </extension>
 

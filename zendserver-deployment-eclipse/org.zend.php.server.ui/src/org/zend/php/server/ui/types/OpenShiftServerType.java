@@ -43,8 +43,7 @@ public class OpenShiftServerType implements IServerType {
 
 	@Override
 	public ImageDescriptor getWizardImage() {
-		// TODO set a correct wizard image
-		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
+		return ServersUI.getImageDescriptor(ServersUI.OPENSHIFT_WIZ);
 	}
 
 }

@@ -55,8 +55,7 @@ public class LocalApacheType implements IServerType {
 
 	@Override
 	public ImageDescriptor getWizardImage() {
-		// TODO return correct apache wizard image
-		return ServersUI.getImageDescriptor("icons/wizban/zend_server_wiz.png");
+		return ServersUI.getImageDescriptor(ServersUI.APACHE_SERVER_WIZ);
 	}
 
 	/**

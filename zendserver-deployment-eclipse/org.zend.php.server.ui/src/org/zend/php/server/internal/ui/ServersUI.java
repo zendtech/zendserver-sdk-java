@@ -38,10 +38,15 @@ public class ServersUI extends AbstractUIPlugin {
 	public static final String ZEND_SERVER_ICON = "icons/obj16/zend_server.png"; //$NON-NLS-1$
 	public static final String ZEND_SERVER_WIZ = "icons/wizban/zend_server_wiz.png"; //$NON-NLS-1$
 
-	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$	
+	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$
+	public static final String APACHE_SERVER_WIZ = "icons/wizban/local_apache_wiz.png"; //$NON-NLS-1$
 	public static final String REFRESH_APACHE_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
-	
+
 	public static final String OPENSHIFT_ICON = "icons/obj16/openshift.png"; //$NON-NLS-1$
+	public static final String OPENSHIFT_WIZ = "icons/wizban/openshift_wiz.png"; //$NON-NLS-1$
+	
+	public static final String PHPCLOUD_ICON = "icons/obj16/phpcloud.png"; //$NON-NLS-1$
+	public static final String PHPCLOUD_WIZ = "icons/wizban/phpcloud_wiz.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ServersUI plugin;
