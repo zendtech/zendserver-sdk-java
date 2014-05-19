@@ -90,7 +90,7 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 
 	protected abstract void init();
 
-	protected void setMessage(String message, int type) {
+	public void setMessage(String message, int type) {
 		controlHandler.setMessage(message, type);
 		setComplete(type != IMessageProvider.ERROR);
 		controlHandler.update();

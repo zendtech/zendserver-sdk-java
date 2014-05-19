@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.zend.php.server.ui.fragments;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.CompositeWizardFragment;
@@ -70,13 +72,19 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 	}
 
 	@Override
-	public void exit() {
+	public void performFinish(IProgressMonitor monitor) throws CoreException {
+		super.performFinish(monitor);
 		try {
 			if (composite != null && composite.isComplete()) {
 				composite.performOk();
 			}
 		} catch (Exception e) {
 		}
+	}
+	
+
+	protected void setMessage(String message, int severity) {
+		((AbstractCompositeFragment) composite).setMessage(message, severity);
 	}
 
 	/**

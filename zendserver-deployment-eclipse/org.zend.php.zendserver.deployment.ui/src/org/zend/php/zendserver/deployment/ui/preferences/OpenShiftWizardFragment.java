@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.preferences;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +26,12 @@ public class OpenShiftWizardFragment extends AbstractWizardFragment {
 	protected CompositeFragment createComposite(Composite parent,
 			WizardControlWrapper wrapper) {
 		return new OpenShiftCompositeFragment(parent, wrapper, false);
+	}
+
+	@Override
+	public void performFinish(IProgressMonitor monitor) throws CoreException {
+		super.performFinish(monitor);
+		((OpenShiftCompositeFragment) composite).detectServers(monitor);
 	}
 
 }

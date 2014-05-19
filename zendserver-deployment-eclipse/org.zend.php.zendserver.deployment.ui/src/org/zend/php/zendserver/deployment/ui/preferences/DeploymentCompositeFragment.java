@@ -78,6 +78,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		createControl(isForEditing);
 	}
 
+	public IZendTarget getTarget() {
+		return target;
+	}
+
 	@Override
 	public boolean performOk() {
 		if (target != null) {
@@ -167,6 +171,8 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 		Button detectButton = new Button(parent, SWT.PUSH);
 		detectButton.setText(Messages.DeploymentCompositeFragment_DetectLabel);
+		detectButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 3, 1));
 		detectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -182,9 +188,6 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		Server server = getServer();
 		if (server != null) {
 			String serverName = server.getName();
-			controlHandler
-					.setDescription(Messages.DeploymentCompositeFragment_Description);
-			controlHandler.setTitle(Messages.DeploymentCompositeFragment_Title);
 			IZendTarget[] targets = manager.getTargets();
 			for (IZendTarget target : targets) {
 				if (serverName.equals(target.getServerName())) {
@@ -199,9 +202,18 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		if (target == null) {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
-			String suggestedHost = DEFAULT_HOST + getServer().getHost()
-					+ ":10081"; //$NON-NLS-1$
-			hostText.setText(suggestedHost);
+		}
+	}
+
+	@Override
+	public void setData(Object server) throws IllegalArgumentException {
+		super.setData(server);
+		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
+			if (DEFAULT_HOST.equals(hostText.getText())) {
+				String suggestedHost = DEFAULT_HOST + getServer().getHost()
+						+ ":10081"; //$NON-NLS-1$
+				hostText.setText(suggestedHost);
+			}
 		}
 	}
 
@@ -211,13 +223,13 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		if (server != null) {
 			t.setServerName(server.getName());
 			try {
-				t.setHost(new URL(hostText.getText()));
+				t.setHost(new URL(host));
 				t.setDefaultServerURL(new URL(server.getBaseURL()));
 			} catch (MalformedURLException e) {
 				Activator.log(e);
 			}
-			t.setKey(keyText.getText());
-			t.setSecretKey(secretText.getText());
+			t.setKey(key);
+			t.setSecretKey(secret);
 		}
 	}
 

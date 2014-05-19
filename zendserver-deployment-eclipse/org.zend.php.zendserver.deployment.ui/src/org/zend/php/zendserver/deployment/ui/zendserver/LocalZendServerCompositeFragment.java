@@ -9,12 +9,7 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.zendserver;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
@@ -25,9 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
-import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
-import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.preferences.LocalTargetDetector;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -58,43 +50,8 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 	}
 
 	public boolean performOk() {
-		try {
-			saveValues();
-			final Server server = ZendServerManager.getInstance()
-					.getLocalZendServer(getServer());
-			if (server != null) {
-				String location = server.getAttribute(
-						ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-				if (location == null || location.isEmpty()) {
-					setMessage(
-							Messages.LocalZendServerCompositeFragment_CannotDetectError,
-							IMessageProvider.ERROR);
-					return false;
-				}
-			}
-			// TODO do not launch it when not finished (back to previous page)
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(
-							Messages.LocalZendServerCompositeFragment_DetectTitle,
-							IProgressMonitor.UNKNOWN);
-
-					LocalTargetDetector detector = new LocalTargetDetector(
-							server);
-					detector.detect();
-					if (detector.getStatus().getSeverity() != IStatus.OK) {
-						
-					}
-				}
-			});
-
-			return true;
-		} catch (Throwable e) {
-			Activator.log(e);
-			return false;
-		}
+		saveValues();
+		return true;
 	}
 
 	public String getId() {
@@ -143,8 +100,6 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 		if (server != null) {
 			serverNameText.setText(server.getName());
 		}
-		setTitle(Messages.LocalZendServerCompositeFragment_Name);
-		controlHandler.setTitle(getTitle());
 	}
 
 	private void updateData() {

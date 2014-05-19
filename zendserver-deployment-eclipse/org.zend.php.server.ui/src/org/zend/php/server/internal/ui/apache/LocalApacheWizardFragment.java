@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.apache;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
+import org.zend.php.server.ui.types.LocalApacheType;
 
 /**
  * Wizard fragment for local Apache HTTP Server.
@@ -28,6 +31,12 @@ public class LocalApacheWizardFragment extends AbstractWizardFragment {
 	protected CompositeFragment createComposite(Composite parent,
 			WizardControlWrapper wrapper) {
 		return new LocalApacheCompositeFragment(parent, wrapper, false);
+	}
+
+	@Override
+	public void performFinish(IProgressMonitor monitor) throws CoreException {
+		super.performFinish(monitor);
+		LocalApacheType.parseAttributes(server);
 	}
 
 }

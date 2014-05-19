@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.PortForwardingWizard;
 
 /**
@@ -117,13 +116,8 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	public boolean performOk() {
-		try {
-			saveValues();
-			return true;
-		} catch (Throwable e) {
-			Activator.log(e);
-			return false;
-		}
+		saveValues();
+		return true;
 	}
 
 	public String getId() {
@@ -186,8 +180,6 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void init() {
-		setTitle(Messages.TunnelingCompositeFragment_Title);
-		controlHandler.setTitle(getTitle());
 		Server server = getServer();
 		if (server != null) {
 			config = SSHTunnelConfiguration.read(server);

@@ -5,6 +5,8 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.php.internal.server.core.manager.IServersManagerListener;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
 import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
@@ -13,6 +15,7 @@ import org.zend.webapi.core.IWebApiLogger;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.service.IRequestListener;
 
+@SuppressWarnings("restriction")
 public class DeploymentCore extends Plugin {
 
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.core"; //$NON-NLS-1$
@@ -24,8 +27,10 @@ public class DeploymentCore extends Plugin {
 	private static DeploymentCore plugin;
 
 	private SdkManager sdkManager;
-	
+
 	private IRequestListener containerListener;
+
+	private IServersManagerListener serversListener;
 
 	public DeploymentCore() {
 		super();
@@ -43,6 +48,7 @@ public class DeploymentCore extends Plugin {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@SuppressWarnings("restriction")
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DeploymentCore.context = context;
@@ -71,9 +77,8 @@ public class DeploymentCore extends Plugin {
 
 			@Override
 			public void logError(Throwable e) {
-				getLog().log(
-						new Status(IStatus.ERROR, "org.zend.webapi", e //$NON-NLS-1$
-								.getMessage(), e));
+				getLog().log(new Status(IStatus.ERROR, "org.zend.webapi", e //$NON-NLS-1$
+						.getMessage(), e));
 			}
 
 			@Override
@@ -82,6 +87,8 @@ public class DeploymentCore extends Plugin {
 						new Status(IStatus.ERROR, "org.zend.webapi", message));//$NON-NLS-1$
 			}
 		});
+		serversListener = new ServersManagerListener();
+		ServersManager.addManagerListener(serversListener);
 	}
 
 	/*
@@ -95,6 +102,7 @@ public class DeploymentCore extends Plugin {
 		DeploymentCore.context = null;
 		SSHTunnelManager.getManager().disconnectAll();
 		WebApiClient.unregisterPreRequestListener(containerListener);
+		ServersManager.removeManagerListener(serversListener);
 	}
 
 	/**

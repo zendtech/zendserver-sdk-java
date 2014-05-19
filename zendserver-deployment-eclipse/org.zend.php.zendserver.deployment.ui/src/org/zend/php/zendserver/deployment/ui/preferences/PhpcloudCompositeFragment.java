@@ -10,7 +10,6 @@ package org.zend.php.zendserver.deployment.ui.preferences;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
@@ -98,22 +96,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public boolean performOk() {
-		try {
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					detectServers(monitor);
-				}
-
-			});
-		} catch (InvocationTargetException e) {
-			Activator.log(e);
-			return false;
-		} catch (InterruptedException e) {
-			Activator.log(e);
-			return false;
-		}
 		return isComplete();
 	}
 
@@ -271,6 +253,84 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		shouldStoreButton.setSelection(true);
 	}
 
+	protected void detectServers(IProgressMonitor monitor) {
+		try {
+			IZendTarget[] targets = createTargets(monitor);
+			if (targets != null) {
+				TargetConnectionTester tester = new TargetConnectionTester();
+				IStatus status = tester.testConnection(targets, monitor);
+				switch (status.getSeverity()) {
+				case IStatus.OK:
+					ArrayList<IZendTarget> finalTargets = tester
+							.getFinalTargets();
+					TargetsManager manager = TargetsManagerService.INSTANCE
+							.getTargetManager();
+					boolean dataInitialized = false;
+					for (IZendTarget target : finalTargets) {
+						String host = target.getHost().getHost();
+						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ZendTarget t = (ZendTarget) target;
+						Server server = null;
+						if (dataInitialized) {
+							server = new Server();
+						} else {
+							server = getServer();
+						}
+						server.setHost(host);
+						server.setName(target.getHost().getHost());
+						server.setBaseURL(baseUrl.toString());
+						server.setAttribute(IServerType.TYPE,
+								PhpcloudServerType.ID);
+						setupSSHConfiguration(server, target);
+						if (dataInitialized) {
+							ServersManager.addServer(server);
+						} else {
+							dataInitialized = true;
+						}
+						ServersManager.addServer(server);
+						t.setDefaultServerURL(baseUrl);
+						t.setServerName(server.getName());
+
+						if (manager.getTargetById(t.getId()) != null) {
+							manager.remove(manager.getTargetById(t.getId()));
+						}
+						try {
+							manager.add(copy(t), true);
+						} catch (TargetException e) {
+							// cannot occur, suppress connection
+						} catch (LicenseExpiredException e) {
+							// cannot occur, suppress connection
+						}
+					}
+					ServersManager.save();
+					break;
+				case IStatus.WARNING:
+					final String warning = status.getMessage();
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							setMessage(warning, IMessageProvider.WARNING);
+						}
+					});
+					break;
+				case IStatus.ERROR:
+					final String error = status.getMessage();
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							setMessage(error, IMessageProvider.ERROR);
+						}
+					});
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (CoreException e) {
+			setMessage(e.getMessage(), IMessageProvider.ERROR);
+		} catch (IOException e) {
+			setMessage(e.getMessage(), IMessageProvider.ERROR);
+		}
+	}
+
 	private void updateData() {
 		if (usernameText != null) {
 			username = usernameText.getText();
@@ -329,84 +389,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 			}
 		}
 		return zts;
-	}
-
-	private void detectServers(IProgressMonitor monitor) {
-		try {
-			IZendTarget[] targets = createTargets(monitor);
-			if (targets != null) {
-				TargetConnectionTester tester = new TargetConnectionTester();
-				IStatus status = tester.testConnection(targets, monitor);
-				switch (status.getSeverity()) {
-				case IStatus.OK:
-					ArrayList<IZendTarget> finalTargets = tester
-							.getFinalTargets();
-					TargetsManager manager = TargetsManagerService.INSTANCE
-							.getTargetManager();
-					boolean dataInitialized = false;
-					for (IZendTarget target : finalTargets) {
-						String host = target.getHost().getHost();
-						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ZendTarget t = (ZendTarget) target;
-						Server server = null;
-						if (dataInitialized) {
-							server = new Server();
-						} else {
-							server = getServer();
-						}
-						server.setHost(host);
-						server.setName(target.getHost().getHost());
-						server.setBaseURL(baseUrl.toString());
-						server.setAttribute(IServerType.TYPE,
-								PhpcloudServerType.ID);
-						setupSSHConfiguration(server, target);
-						if (dataInitialized) {
-							ServersManager.addServer(server);
-						} else {
-							dataInitialized = true;
-						}
-						ServersManager.addServer(server);
-						t.setDefaultServerURL(baseUrl);
-						t.setServerName(server.getName());
-						if (manager.getTargetById(target.getId()) != null) {
-							manager.updateTarget(target, true);
-						} else {
-							try {
-								manager.add(target, true);
-							} catch (TargetException e) {
-								// cannot occur, suppress connection
-							} catch (LicenseExpiredException e) {
-								// cannot occur, suppress connection
-							}
-						}
-					}
-					ServersManager.save();
-					break;
-				case IStatus.WARNING:
-					final String warning = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(warning, IMessageProvider.WARNING);
-						}
-					});
-					break;
-				case IStatus.ERROR:
-					final String error = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(error, IMessageProvider.ERROR);
-						}
-					});
-					break;
-				default:
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			setMessage(e.getMessage(), IMessageProvider.ERROR);
-		} catch (IOException e) {
-			setMessage(e.getMessage(), IMessageProvider.ERROR);
-		}
 	}
 
 	private void setupSSHConfiguration(Server server, IZendTarget target) {
@@ -470,6 +452,16 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e), StatusManager.SHOW);
 		}
+	}
+
+	private IZendTarget copy(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), false);
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
 	}
 
 }

@@ -145,62 +145,62 @@ public class TargetConnectionTester {
 				continue;
 			}
 
-			if (target.isTemporary()) {
-				if (TargetsManager.isOpenShift(target)
-						&& Boolean.valueOf(target
-								.getProperty(OpenShiftTarget.BOOTSTRAP))) {
-					OpenShiftInitializer initializer = new OpenShiftInitializer(
-							target, monitor);
-					initializer.init();
-					if (status == null) {
-						target = initializer.getTarget();
-					} else {
-						status = initializer.getStatus();
-						continue;
-					}
-				}
-				try {
-					target = testConnectAndDetectPort(target, monitor);
-				} catch (UnexpectedResponseCode e) {
-					if (TargetsManager.isOpenShift(target)) {
-						if (e.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
-							OpenShiftInitializer initializer = new OpenShiftInitializer(
-									target, monitor);
-							initializer.init();
-							if (status == null) {
-								target = initializer.getTarget();
-							} else {
-								status = initializer.getStatus();
-								continue;
-							}
-						}
-					}
-					if (target == null) {
-						status = getError(MessageFormat.format(
-								Messages.DeploymentTester_UnexpectedError,
-								e.getMessage()), e);
-						continue;
-					} else {
-						status = getError(e.getMessage());
-						continue;
-					}
-				} catch (WebApiException e) {
-					status = getError(MessageFormat.format(
-							Messages.DeploymentTester_UnexpectedError,
-							e.getMessage()), e);
-					continue;
-				} catch (RuntimeException e) {
-					status = getError(MessageFormat.format(
-							Messages.DeploymentTester_UnexpectedError,
-							e.getMessage()), e);
-					continue;
-				} catch (LicenseExpiredException e) {
-					status = getError(MessageFormat.format(
-							Messages.DeploymentTester_UnexpectedError,
-							e.getMessage()), e);
+			// if (target.isTemporary()) {
+			if (TargetsManager.isOpenShift(target)
+					&& Boolean.valueOf(target
+							.getProperty(OpenShiftTarget.BOOTSTRAP))) {
+				OpenShiftInitializer initializer = new OpenShiftInitializer(
+						target, monitor);
+				initializer.init();
+				if (status == null) {
+					target = initializer.getTarget();
+				} else {
+					status = initializer.getStatus();
 					continue;
 				}
 			}
+			try {
+				target = testConnectAndDetectPort(target, monitor);
+			} catch (UnexpectedResponseCode e) {
+				if (TargetsManager.isOpenShift(target)) {
+					if (e.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
+						OpenShiftInitializer initializer = new OpenShiftInitializer(
+								target, monitor);
+						initializer.init();
+						if (status == null) {
+							target = initializer.getTarget();
+						} else {
+							status = initializer.getStatus();
+							continue;
+						}
+					}
+				}
+				if (target == null) {
+					status = getError(MessageFormat.format(
+							Messages.DeploymentTester_UnexpectedError,
+							e.getMessage()), e);
+					continue;
+				} else {
+					status = getError(e.getMessage());
+					continue;
+				}
+			} catch (WebApiException e) {
+				status = getError(MessageFormat.format(
+						Messages.DeploymentTester_UnexpectedError,
+						e.getMessage()), e);
+				continue;
+			} catch (RuntimeException e) {
+				status = getError(MessageFormat.format(
+						Messages.DeploymentTester_UnexpectedError,
+						e.getMessage()), e);
+				continue;
+			} catch (LicenseExpiredException e) {
+				status = getError(MessageFormat.format(
+						Messages.DeploymentTester_UnexpectedError,
+						e.getMessage()), e);
+				continue;
+			}
+			// }
 			if (target != null) {
 				finalTargets.add(copy((ZendTarget) target));
 			}
@@ -232,8 +232,8 @@ public class TargetConnectionTester {
 					// should never happen, just replacing a port
 				}
 				monitor.subTask(MessageFormat.format(
-						Messages.DeploymentTester_TestingPortSubTask, port,
-						target.getHost().getHost()));
+						Messages.DeploymentTester_TestingPortSubTask, target
+								.getHost().getHost(), String.valueOf(port)));
 				try {
 					return testTargetConnection(target);
 				} catch (WebApiException e) {

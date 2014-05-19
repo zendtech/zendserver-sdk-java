@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.LocalApacheType;
 
@@ -76,14 +75,8 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	public boolean performOk() {
-		try {
-			saveValues();
-			LocalApacheType.parseAttributes(getServer());
-			return true;
-		} catch (Throwable e) {
-			ServersUI.logError(e);
-			return false;
-		}
+		saveValues();
+		return true;
 	}
 
 	public String getId() {
@@ -175,8 +168,6 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 			String location = server.getAttribute(LocalApacheType.LOCATION, ""); //$NON-NLS-1$
 			locationText.setText(location);
 		}
-		setTitle(Messages.LocalApacheCompositeFragment_Title);
-		controlHandler.setTitle(getTitle());
 	}
 
 	private void updateData() {

@@ -99,21 +99,6 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public boolean performOk() {
-		try {
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					detectServers(monitor);
-				}
-			});
-		} catch (InvocationTargetException e) {
-			Activator.log(e);
-			return false;
-		} catch (InterruptedException e) {
-			Activator.log(e);
-			return false;
-		}
 		return isComplete();
 	}
 
@@ -296,6 +281,81 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 	protected void init() {
 	}
 
+	protected void detectServers(IProgressMonitor monitor) {
+		try {
+			IZendTarget[] targets = createTargets(monitor);
+			if (targets != null) {
+				TargetConnectionTester tester = new TargetConnectionTester();
+				IStatus status = tester.testConnection(targets, monitor);
+				switch (status.getSeverity()) {
+				case IStatus.OK:
+					ArrayList<IZendTarget> finalTargets = tester
+							.getFinalTargets();
+					TargetsManager manager = TargetsManagerService.INSTANCE
+							.getTargetManager();
+					boolean dataInitialized = false;
+					for (IZendTarget target : finalTargets) {
+						URL baseUrl = new URL("http", target.getHost() //$NON-NLS-1$
+								.getHost(), ""); //$NON-NLS-1$
+						ZendTarget t = (ZendTarget) target;
+						Server server = null;
+						if (dataInitialized) {
+							server = new Server();
+						} else {
+							server = getServer();
+						}
+						server.setName(target.getHost().getHost());
+						server.setBaseURL(baseUrl.toString());
+						server.setAttribute(IServerType.TYPE,
+								OpenShiftServerType.ID);
+						setupSSHConfiguration(server, target);
+						if (dataInitialized) {
+							ServersManager.addServer(server);
+						} else {
+							dataInitialized = true;
+						}
+						t.setDefaultServerURL(baseUrl);
+						t.setServerName(server.getName());
+						if (manager.getTargetById(t.getId()) != null) {
+							manager.remove(manager.getTargetById(t.getId()));
+						}
+						try {
+							manager.add(copy(t), true);
+						} catch (TargetException e) {
+							// cannot occur, suppress connection
+						} catch (LicenseExpiredException e) {
+							// cannot occur, suppress connection
+						}
+					}
+					ServersManager.save();
+					break;
+				case IStatus.WARNING:
+					final String warning = status.getMessage();
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							setMessage(warning, IMessageProvider.WARNING);
+						}
+					});
+					break;
+				case IStatus.ERROR:
+					final String error = status.getMessage();
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							setMessage(error, IMessageProvider.ERROR);
+						}
+					});
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (CoreException e) {
+			setMessage(e.getMessage(), IMessageProvider.ERROR);
+		} catch (IOException e) {
+			setMessage(e.getMessage(), IMessageProvider.ERROR);
+		}
+	}
+
 	private void updateData() {
 		if (usernameText != null) {
 			username = usernameText.getText();
@@ -469,82 +529,6 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		}
 	}
 
-	private void detectServers(IProgressMonitor monitor) {
-		try {
-			IZendTarget[] targets = createTargets(monitor);
-			if (targets != null) {
-				TargetConnectionTester tester = new TargetConnectionTester();
-				IStatus status = tester.testConnection(targets, monitor);
-				switch (status.getSeverity()) {
-				case IStatus.OK:
-					ArrayList<IZendTarget> finalTargets = tester
-							.getFinalTargets();
-					TargetsManager manager = TargetsManagerService.INSTANCE
-							.getTargetManager();
-					boolean dataInitialized = false;
-					for (IZendTarget target : finalTargets) {
-						URL baseUrl = new URL("http", target.getHost() //$NON-NLS-1$
-								.getHost(), ""); //$NON-NLS-1$
-						ZendTarget t = (ZendTarget) target;
-						Server server = null;
-						if (dataInitialized) {
-							server = new Server();
-						} else {
-							server = getServer();
-						}
-						server.setName(target.getHost().getHost());
-						server.setBaseURL(baseUrl.toString());
-						server.setAttribute(IServerType.TYPE,
-								OpenShiftServerType.ID);
-						setupSSHConfiguration(server, target);
-						if (dataInitialized) {
-							ServersManager.addServer(server);
-						} else {
-							dataInitialized = true;
-						}
-						t.setDefaultServerURL(baseUrl);
-						t.setServerName(server.getName());
-						if (manager.getTargetById(target.getId()) != null) {
-							manager.updateTarget(target, true);
-						} else {
-							try {
-								manager.add(target, true);
-							} catch (TargetException e) {
-								// cannot occur, suppress connection
-							} catch (LicenseExpiredException e) {
-								// cannot occur, suppress connection
-							}
-						}
-					}
-					ServersManager.save();
-					break;
-				case IStatus.WARNING:
-					final String warning = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(warning, IMessageProvider.WARNING);
-						}
-					});
-					break;
-				case IStatus.ERROR:
-					final String error = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(error, IMessageProvider.ERROR);
-						}
-					});
-					break;
-				default:
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			setMessage(e.getMessage(), IMessageProvider.ERROR);
-		} catch (IOException e) {
-			setMessage(e.getMessage(), IMessageProvider.ERROR);
-		}
-	}
-
 	private void setupSSHConfiguration(Server server, IZendTarget target) {
 		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
 		config.setEnabled(true);
@@ -562,6 +546,16 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 				3306));
 		config.setPortForwardings(portForwardings);
 		config.store(server);
+	}
+
+	private IZendTarget copy(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), false);
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
 	}
 
 }

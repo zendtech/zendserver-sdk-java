@@ -49,6 +49,7 @@ import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -166,7 +167,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 			try {
 				prefs.flush();
 			} catch (BackingStoreException e) {
-				org.zend.php.zendserver.deployment.debug.ui.Activator.log(e);
+				Activator.log(e);
 			}
 			if (askForRestart(target)) {
 				Job restartJob = new RestartJob();
@@ -190,12 +191,6 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 	@Override
 	public boolean isComplete() {
 		return true;
-	}
-
-	protected void setMessage(String message, int type) {
-		controlHandler.setMessage(message, type);
-		setComplete(type != IMessageProvider.ERROR);
-		controlHandler.update();
 	}
 
 	@Override
