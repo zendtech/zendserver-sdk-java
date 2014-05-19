@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String Sdk_InvalidLocation;
 	public static String SdkManager_InstallError;
 	public static String SdkManager_UninstallError;
+	public static String SSHTunnel_ConnectionError;
 	public static String ZendDevCloudTunnel_1;
 	public static String ZendDevCloudTunnel_CannotFindKey;
 	public static String ZendServerDependency_UnknownGetDependency;

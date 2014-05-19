@@ -13,11 +13,10 @@ package org.zend.php.zendserver.deployment.debug.ui.actions;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.ui.actions.IActionContribution;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
-import org.zend.sdklib.manager.TargetsManager;
-import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Contribution to the action which is responsible for opening SSH tunnel for
@@ -37,14 +36,16 @@ public class SSHTunnelAction extends AbstractTunnelHelper implements
 	}
 
 	public String getLabel() {
-		return Messages.SSHTunnelAction_Label;
+		if (SSHTunnelManager.getManager().isConnected(server.getHost())) {
+			return "Close SSH Tunnel";
+		} else {
+			return Messages.SSHTunnelAction_OpenLabel;
+		}
 	}
 
 	public boolean isAvailable(Server server) {
-		IZendTarget target = getTarget(server);
-		return getTarget(server) != null
-				&& (TargetsManager.isOpenShift(target) || TargetsManager
-						.isPhpcloud(target));
+		SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
+		return config.isEnabled();
 	}
 
 	public ImageDescriptor getIcon() {
@@ -52,30 +53,13 @@ public class SSHTunnelAction extends AbstractTunnelHelper implements
 	}
 
 	public void run() {
-		IZendTarget target = getTarget(server);
-		if (target != null) {
-			if (TargetsManager.isOpenShift(target)
-					|| TargetsManager.isPhpcloud(target)) {
-				openTunnel(target);
-			}
-		}
-	}
-
-	private IZendTarget getTarget(Server server) {
 		if (server != null) {
-			TargetsManager manager = TargetsManagerService.INSTANCE
-					.getTargetManager();
-			if (server != null) {
-				String serverName = server.getName();
-				IZendTarget[] targets = manager.getTargets();
-				for (IZendTarget target : targets) {
-					if (serverName.equals(target.getServerName())) {
-						return target;
-					}
-				}
+			if (SSHTunnelManager.getManager().isConnected(server.getHost())) {
+				closeTunnel(server.getHost());
+			} else {
+				openTunnel(SSHTunnelConfiguration.read(server));
 			}
 		}
-		return null;
 	}
 
 }

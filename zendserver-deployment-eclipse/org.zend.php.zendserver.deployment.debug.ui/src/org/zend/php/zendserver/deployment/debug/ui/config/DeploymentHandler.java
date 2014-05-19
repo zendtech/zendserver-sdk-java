@@ -17,6 +17,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -27,7 +29,8 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
@@ -356,9 +359,13 @@ public class DeploymentHandler {
 		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IZendTarget target = TargetsManagerService.INSTANCE
 					.getTargetManager().getTargetById(helper.getTargetId());
+			String serverName = target.getServerName();
+			Server server = ServersManager.getServer(serverName);
+			SSHTunnelConfiguration config = SSHTunnelConfiguration
+					.read(server);
 			try {
 				State result = null;
-				result = SSHTunnelManager.getManager().connect(target);
+				result = SSHTunnelManager.getManager().connect(config);
 				if (result != null) {
 					switch (result) {
 					case CONNECTING:

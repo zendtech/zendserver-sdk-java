@@ -25,20 +25,23 @@ import org.eclipse.datatools.connectivity.drivers.DriverManager;
 import org.eclipse.datatools.connectivity.drivers.IPropertySet;
 import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCConnectionProfileConstants;
 import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCDriverDefinitionConstants;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
 public abstract class TargetDatabase implements ITargetDatabase {
 
@@ -48,10 +51,10 @@ public abstract class TargetDatabase implements ITargetDatabase {
 
 	protected IZendTarget target;
 	protected String profileId;
-	
+
 	protected String password;
 	protected boolean savePassword;
-	
+
 	protected TargetsDatabaseManager manager;
 	protected IConnectionProfile profile;
 
@@ -249,7 +252,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -297,12 +300,15 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	protected abstract String getUsername();
 
 	protected abstract String getDatabaseName();
-	
+
 	protected abstract String getProfilePrefix();
 
 	private boolean connectTunnel() {
 		try {
-			State result = SSHTunnelManager.getManager().connect(target);
+			String serverName = target.getServerName();
+			Server server = ServersManager.getServer(serverName);
+			SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
+			State result = SSHTunnelManager.getManager().connect(config);
 			switch (result) {
 			case CONNECTING:
 			case CONNECTED:
@@ -370,11 +376,16 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	}
 
 	private boolean isTunnelAvailable() {
-		return SSHTunnelManager.getManager().isAvailable(target);
+		String serverName = target.getServerName();
+		Server server = ServersManager.getServer(serverName);
+		return SSHTunnelManager.getManager().isConnected(server.getHost());
 	}
 
 	private void validatePort() {
-		int port = SSHTunnelManager.getManager().getDatabasePort(target);
+		String serverName = target.getServerName();
+		Server server = ServersManager.getServer(serverName);
+		int port = SSHTunnelManager.getManager().getDatabasePort(
+				server.getHost());
 		Properties properties = profile.getBaseProperties();
 		String url = properties
 				.getProperty(IJDBCDriverDefinitionConstants.URL_PROP_ID);
@@ -396,7 +407,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 
 	}
-	
+
 	private void savePassword() {
 		Properties props = profile.getBaseProperties();
 		if (savePassword) {

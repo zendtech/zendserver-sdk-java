@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
@@ -46,14 +48,17 @@ public class StartDebugModeHandler extends AbstractTunnelHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IZendTarget target = getTarget(event);
+		String serverName = target.getServerName();
+		final Server server = ServersManager.getServer(serverName);
 		if (TargetsManager.isOpenShift(target)
 				|| TargetsManager.isPhpcloud(target)
-				&& !SSHTunnelManager.getManager().isAvailable(target)) {
+				&& !SSHTunnelManager.getManager().isConnected(server.getHost())) {
 			final IZendTarget finalTarget = target;
 			openTunnel(target, new INotificationChangeListener() {
 
 				public void statusChanged(INotification notification) {
-					if (SSHTunnelManager.getManager().isAvailable(finalTarget)) {
+					if (SSHTunnelManager.getManager().isConnected(
+							server.getHost())) {
 						startDebugMode(finalTarget);
 					}
 				}

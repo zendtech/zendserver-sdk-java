@@ -173,7 +173,7 @@ public class Messages extends NLS {
 
 	public static String DebugModePreferencesPage_URLValidationPortError;
 
-	public static String SSHTunnelAction_Label;
+	public static String SSHTunnelAction_OpenLabel;
 
 	public static String StartDebugModeHandler_DebugStartedQuestionMessage;
 

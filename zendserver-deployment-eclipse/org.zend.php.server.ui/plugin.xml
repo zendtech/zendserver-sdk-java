@@ -82,6 +82,9 @@
              <fragment
                    id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
              </fragment>
+             <fragment
+                   id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
+             </fragment>
 	       </settings>
       </type>
    </extension>
@@ -125,6 +128,9 @@
             <fragment
                   id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
             </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
+            </fragment>
          </settings>
       </type>
    </extension>
@@ -149,6 +155,9 @@
             </fragment>
             <fragment
                   id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
+            </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
             </fragment>
          </settings>
       </type>

@@ -74,6 +74,30 @@ public class Messages extends NLS {
 	public static String PhpcloudCompositeFragment_Title;
 	public static String PhpcloudCompositeFragment_UsernameLabel;
 	public static String PhpcloudCompositeFragment_UsernameTooltip;
+	public static String TunnelingCompositeFragment_AddLabel;
+	public static String TunnelingCompositeFragment_BrowseLabel;
+	public static String TunnelingCompositeFragment_CredentialsLabel;
+	public static String TunnelingCompositeFragment_Desc;
+	public static String TunnelingCompositeFragment_EditLabel;
+	public static String TunnelingCompositeFragment_EmptyUsernameError;
+	public static String TunnelingCompositeFragment_EnableLabel;
+	public static String TunnelingCompositeFragment_ForwardingLabel;
+	public static String TunnelingCompositeFragment_InvalidProxyPortError;
+	public static String TunnelingCompositeFragment_KeyLabel;
+	public static String TunnelingCompositeFragment_KeyTooltip;
+	public static String TunnelingCompositeFragment_LocalAddrLabel;
+	public static String TunnelingCompositeFragment_LocalPortLabel;
+	public static String TunnelingCompositeFragment_NoPathNorPasswordError;
+	public static String TunnelingCompositeFragment_PasswordLabel;
+	public static String TunnelingCompositeFragment_ProxyHostLabel;
+	public static String TunnelingCompositeFragment_ProxyLabel;
+	public static String TunnelingCompositeFragment_ProxyPort;
+	public static String TunnelingCompositeFragment_RemoteAddrLabel;
+	public static String TunnelingCompositeFragment_RemotePortLabel;
+	public static String TunnelingCompositeFragment_RemoveLabel;
+	public static String TunnelingCompositeFragment_SideLabel;
+	public static String TunnelingCompositeFragment_Title;
+	public static String TunnelingCompositeFragment_UsernameLabel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

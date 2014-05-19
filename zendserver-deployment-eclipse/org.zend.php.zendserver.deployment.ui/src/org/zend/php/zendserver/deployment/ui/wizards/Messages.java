@@ -69,6 +69,26 @@ public class Messages extends NLS {
 	public static String PackageExportWizard_0;
 	public static String PackageExportWizard_1;
 
+	public static String PortForwardingPage_CreateDesc;
+	public static String PortForwardingPage_CreateTitle;
+	public static String PortForwardingPage_EditDesc;
+	public static String PortForwardingPage_EditTitle;
+	public static String PortForwardingPage_InvalidLocalPortError;
+	public static String PortForwardingPage_InvalidRemotePortError;
+	public static String PortForwardingPage_LocalAddressLabel;
+	public static String PortForwardingPage_LocalPortLabel;
+	public static String PortForwardingPage_ProvideMessage;
+	public static String PortForwardingPage_RemoteAddressLabel;
+	public static String PortForwardingPage_RemotePortLabel;
+	public static String PortForwardingPage_ResultLabel;
+	public static String PortForwardingPage_SideLabel;
+	public static String PortForwardingPage_SpecifyLocalAddressMessage;
+	public static String PortForwardingPage_SpecifyLocalPortMessage;
+	public static String PortForwardingPage_SpecifyRemoteAddressMessage;
+	public static String PortForwardingPage_SpecifyRemotePortMessage;
+	public static String PortForwardingWizard_CreateTitle;
+	public static String PortForwardingWizard_EditTitle;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) May 18, 2011 Zend Technologies Ltd. 
+ * Copyright (c) 2014 Zend Technologies Ltd. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,28 +9,51 @@ package org.zend.php.zendserver.deployment.core.tunnel;
 
 import com.jcraft.jsch.UserInfo;
 
-public class EmptyUserInfo implements UserInfo {
+/**
+ * Simple implementation of {@link UserInfo} interface. It provides user
+ * password.
+ * 
+ * @author Wojciech Galanciak, 2014
+ * 
+ */
+public class SimpleUserInfo implements UserInfo {
 
+	private String password;
+
+	public SimpleUserInfo() {
+	}
+
+	public SimpleUserInfo(String password) {
+		super();
+		this.password = password;
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
 	public String getPassphrase() {
 		return null;
 	}
 
-	public String getPassword() {
-		return null;
-	}
-
+	@Override
 	public boolean promptPassword(String message) {
 		return false;
 	}
 
+	@Override
 	public boolean promptPassphrase(String message) {
 		return false;
 	}
 
+	@Override
 	public boolean promptYesNo(String message) {
 		return true;
 	}
 
+	@Override
 	public void showMessage(String message) {
 	}
 

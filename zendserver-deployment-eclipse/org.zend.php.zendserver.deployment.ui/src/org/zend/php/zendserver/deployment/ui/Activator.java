@@ -93,6 +93,8 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	
 	public static final String IMAGE_ZEND_SERVER_ICON = "icons/obj16/zend_server.png"; //$NON-NLS-1$
 	public static final String IMAGE_ZEND_SERVER_WIZ = "icons/wizban/zend_server_wiz.png"; //$NON-NLS-1$
+	
+	public static final String IMAGE_PORT_FORWARDING_WIZ = "icons/wizban/port_forwarding_wiz.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

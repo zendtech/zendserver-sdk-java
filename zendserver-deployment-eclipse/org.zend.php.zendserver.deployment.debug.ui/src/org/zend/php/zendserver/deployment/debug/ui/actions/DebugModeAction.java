@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
@@ -25,6 +26,7 @@ import org.zend.core.notifications.ui.INotification;
 import org.zend.core.notifications.ui.INotificationChangeListener;
 import org.zend.php.server.ui.actions.IActionContribution;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
@@ -100,14 +102,17 @@ public class DebugModeAction extends AbstractTunnelHelper implements
 	}
 
 	private void start(IZendTarget target) {
-		if (TargetsManager.isOpenShift(target)
-				|| TargetsManager.isPhpcloud(target)
-				&& !SSHTunnelManager.getManager().isAvailable(target)) {
+		String serverName = target.getServerName();
+		final Server server = ServersManager.getServer(serverName);
+		SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
+		if (config.isEnabled()
+				&& !SSHTunnelManager.getManager().isConnected(server.getHost())) {
 			final IZendTarget finalTarget = target;
-			openTunnel(target, new INotificationChangeListener() {
+			openTunnel(config, new INotificationChangeListener() {
 
 				public void statusChanged(INotification notification) {
-					if (SSHTunnelManager.getManager().isAvailable(finalTarget)) {
+					if (SSHTunnelManager.getManager().isConnected(
+							server.getHost())) {
 						startDebugMode(finalTarget);
 					}
 				}

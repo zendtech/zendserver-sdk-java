@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +46,8 @@ import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -340,19 +343,27 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 							.getFinalTargets();
 					TargetsManager manager = TargetsManagerService.INSTANCE
 							.getTargetManager();
-					Server toAdd = null;
+					boolean dataInitialized = false;
 					for (IZendTarget target : finalTargets) {
 						String host = target.getHost().getHost();
 						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						ZendTarget t = (ZendTarget) target;
-						Server server = new Server();
+						Server server = null;
+						if (dataInitialized) {
+							server = new Server();
+						} else {
+							server = getServer();
+						}
 						server.setHost(host);
 						server.setName(target.getHost().getHost());
 						server.setBaseURL(baseUrl.toString());
 						server.setAttribute(IServerType.TYPE,
 								PhpcloudServerType.ID);
-						if (toAdd == null) {
-							toAdd = server;
+						setupSSHConfiguration(server, target);
+						if (dataInitialized) {
+							ServersManager.addServer(server);
+						} else {
+							dataInitialized = true;
 						}
 						ServersManager.addServer(server);
 						t.setDefaultServerURL(baseUrl);
@@ -370,7 +381,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						}
 					}
 					ServersManager.save();
-					setData(toAdd);
 					break;
 				case IStatus.WARNING:
 					final String warning = status.getMessage();
@@ -397,6 +407,27 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		} catch (IOException e) {
 			setMessage(e.getMessage(), IMessageProvider.ERROR);
 		}
+	}
+
+	private void setupSSHConfiguration(Server server, IZendTarget target) {
+		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
+		config.setEnabled(true);
+		String host = server.getHost();
+		String username = host.substring(0, host.indexOf('.'));
+		config.setUsername(username);
+		config.setPrivateKey(target
+				.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH));
+		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
+		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
+				10137));
+		// TODO set correct db port
+		String baseUrl = host.substring(host.indexOf('.'));
+		portForwardings.add(PortForwarding.createLocal(12333, username + "-db" //$NON-NLS-1$
+				+ baseUrl, 3306));
+		config.setPortForwardings(portForwardings);
+		config.setHttpProxyHost(host);
+		config.setHttpProxyPort("21653"); //$NON-NLS-1$
+		config.store(server);
 	}
 
 	private void generateKey() {
