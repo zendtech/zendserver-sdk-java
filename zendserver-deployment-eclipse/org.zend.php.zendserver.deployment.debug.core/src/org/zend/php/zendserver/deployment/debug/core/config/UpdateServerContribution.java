@@ -38,29 +38,32 @@ public class UpdateServerContribution implements IDeploymentContribution {
 
 	public IStatus performAfter(IProgressMonitor monitor,
 			IDeploymentHelper helper) {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(helper.getProjectName());
-		if (project != null) {
-			IZendTarget target = TargetsManagerService.INSTANCE
-					.getTargetManager().getTargetById(helper.getTargetId());
-			if (target != null) {
-				Server server = DeploymentUtils.findExistingServer(target);
-				ServersManager.setDefaultServer(project, server);
-			}
-			String file = helper.getBaseURL().getFile();
-			if (file.isEmpty()) {
-				file = "/"; //$NON-NLS-1$
-			}
-			PHPProjectPreferences.setDefaultBasePath(project, file);
+		String projectName = helper.getProjectName();
+		if (projectName != null && !projectName.isEmpty()) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot()
+					.getProject(projectName);
+			if (project != null) {
+				IZendTarget target = TargetsManagerService.INSTANCE
+						.getTargetManager().getTargetById(helper.getTargetId());
+				if (target != null) {
+					Server server = DeploymentUtils.findExistingServer(target);
+					ServersManager.setDefaultServer(project, server);
+				}
+				String file = helper.getBaseURL().getFile();
+				if (file.isEmpty()) {
+					file = "/"; //$NON-NLS-1$
+				}
+				PHPProjectPreferences.setDefaultBasePath(project, file);
 
-			ProjectScope projectScope = new ProjectScope(project);
-			IEclipsePreferences node = projectScope
-					.getNode(IPHPDebugConstants.DEBUG_QUALIFIER);
-			node.putBoolean(IPHPDebugConstants.DEBUG_PER_PROJECT, true);
-			try {
-				node.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
+				ProjectScope projectScope = new ProjectScope(project);
+				IEclipsePreferences node = projectScope
+						.getNode(IPHPDebugConstants.DEBUG_QUALIFIER);
+				node.putBoolean(IPHPDebugConstants.DEBUG_PER_PROJECT, true);
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
 			}
 		}
 		return Status.OK_STATUS;
