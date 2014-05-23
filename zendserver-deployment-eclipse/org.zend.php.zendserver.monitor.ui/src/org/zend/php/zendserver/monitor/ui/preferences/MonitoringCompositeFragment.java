@@ -122,23 +122,26 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	public boolean performOk() {
 		saveValues();
 		IEclipsePreferences prefs = MonitorManager.getPreferences();
-		String id = target.getId();
-		String oldValue = getValue(MonitorManager.getFilters(id));
-		String newValue = getValue(input);
-		if (oldValue == null || !oldValue.equals(newValue)) {
-			prefs.put(MonitorManager.getFiltersKey(id), newValue);
-			MonitorManager.updateFilters(id);
-		}
-		for (int i = 0; i < severities.length; i++) {
-			String nodeName = getNodeName(severityButtons[i]);
-			prefs.putBoolean(id + '.' + nodeName, severities[i]);
-		}
-		prefs.putBoolean(MonitorManager.getHideKey(id), hide);
-		prefs.putInt(MonitorManager.getHideTimeKey(id), delay);
-		try {
-			prefs.flush();
-		} catch (BackingStoreException e) {
-			Activator.log(e);
+		IZendTarget target = getTarget();
+		if (target != null) {
+			String id = target.getId();
+			String oldValue = getValue(MonitorManager.getFilters(id));
+			String newValue = getValue(input);
+			if (oldValue == null || !oldValue.equals(newValue)) {
+				prefs.put(MonitorManager.getFiltersKey(id), newValue);
+				MonitorManager.updateFilters(id);
+			}
+			for (int i = 0; i < severities.length; i++) {
+				String nodeName = getNodeName(severityButtons[i]);
+				prefs.putBoolean(id + '.' + nodeName, severities[i]);
+			}
+			prefs.putBoolean(MonitorManager.getHideKey(id), hide);
+			prefs.putInt(MonitorManager.getHideTimeKey(id), delay);
+			try {
+				prefs.flush();
+			} catch (BackingStoreException e) {
+				Activator.log(e);
+			}
 		}
 		return true;
 	}
@@ -165,29 +168,19 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	public boolean isComplete() {
 		return true;
 	}
-	
+
 	@Override
 	protected void createControl(Composite parent) {
 		createFiltersSection(parent);
 		createSeveritySection(parent);
 		createDelaySection(parent);
 	}
-	
+
 	@Override
 	protected void init() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		Server server = getServer();
-		if (server != null) {
-			String serverName = server.getName();
-			IZendTarget[] targets = manager.getTargets();
-			for (IZendTarget target : targets) {
-				if (serverName.equals(target.getServerName())) {
-					this.target = target;
-					break;
-				}
-			}
-		}
+		target = getTarget();
+		severities = new boolean[] { true, true, true };
+		input = new ArrayList<String>();
 		if (target != null) {
 			String id = target.getId();
 			IEclipsePreferences prefs = MonitorManager.getPreferences();
@@ -207,16 +200,31 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 				key = id + '.' + nodeName;
 				severities[i] = prefs.getBoolean(key, true);
 			}
-			viewer.setInput(input);
-			viewer.refresh();
-
-			for (int i = 0; i < severityButtons.length; i++) {
-				severityButtons[i].setSelection(severities[i]);
-			}
 			hideButton.setSelection(hide);
 			delayText.setEnabled(hideButton.getSelection());
 			delayText.setText(String.valueOf(delay));
 		}
+		for (int i = 0; i < severityButtons.length; i++) {
+			severityButtons[i].setSelection(severities[i]);
+		}
+		viewer.setInput(input);
+		viewer.refresh();
+	}
+
+	private IZendTarget getTarget() {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
+		Server server = getServer();
+		if (server != null) {
+			String serverName = server.getName();
+			IZendTarget[] targets = manager.getTargets();
+			for (IZendTarget target : targets) {
+				if (serverName.equals(target.getServerName())) {
+					return target;
+				}
+			}
+		}
+		return null;
 	}
 
 	private String getNodeName(Button button) {

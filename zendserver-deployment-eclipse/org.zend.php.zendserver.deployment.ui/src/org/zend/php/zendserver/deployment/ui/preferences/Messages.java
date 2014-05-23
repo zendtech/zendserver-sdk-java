@@ -10,6 +10,7 @@ public class Messages extends NLS {
 	public static String DeploymentCompositeFragment_EmptyHostMessage;
 	public static String DeploymentCompositeFragment_EmptyKeyMessage;
 	public static String DeploymentCompositeFragment_EmptySecretMessage;
+	public static String DeploymentCompositeFragment_EnableLabel;
 	public static String DeploymentCompositeFragment_Host;
 	public static String DeploymentCompositeFragment_KeyName;
 	public static String DeploymentCompositeFragment_KeySecret;

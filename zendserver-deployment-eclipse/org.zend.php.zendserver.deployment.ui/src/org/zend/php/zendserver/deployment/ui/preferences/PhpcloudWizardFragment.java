@@ -29,9 +29,13 @@ public class PhpcloudWizardFragment extends AbstractWizardFragment {
 	}
 
 	@Override
-	public void performFinish(IProgressMonitor monitor) throws CoreException {
-		super.performFinish(monitor);
-		((PhpcloudCompositeFragment) composite).detectServers(monitor);
+	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
+		boolean result = super.performFinish(monitor);
+		if (result) {
+			((PhpcloudCompositeFragment) composite).detectServers(monitor);
+			return composite.isComplete();
+		}
+		return result;
 	}
 
 }

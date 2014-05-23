@@ -35,29 +35,38 @@ public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 	}
 
 	@Override
-	public void performFinish(IProgressMonitor monitor) throws CoreException {
-		super.performFinish(monitor);
-		monitor.beginTask(
-				Messages.LocalZendServerCompositeFragment_DetectTitle,
-				IProgressMonitor.UNKNOWN);
-		final Server server = ZendServerManager.getInstance()
-				.getLocalZendServer(this.server);
-		if (server != null) {
-			String location = server.getAttribute(
-					ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-			if (location == null || location.isEmpty()) {
+	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
+		boolean result = super.performFinish(monitor);
+		if (result) {
+			monitor.beginTask(
+					Messages.LocalZendServerCompositeFragment_DetectTitle,
+					IProgressMonitor.UNKNOWN);
+			final Server server = ZendServerManager.getInstance()
+					.getLocalZendServer(this.server);
+			if (server != null) {
+				String location = server.getAttribute(
+						ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
+				if (location == null || location.isEmpty()) {
+					setMessage(
+							Messages.LocalZendServerCompositeFragment_CannotDetectError,
+							IMessageProvider.ERROR);
+				} else {
+					LocalTargetDetector detector = new LocalTargetDetector(
+							this.server);
+					detector.detect();
+					if (detector.getStatus().getSeverity() != IStatus.OK) {
+						setMessage(detector.getStatus().getMessage(),
+								IMessageProvider.ERROR);
+					}
+				}
+			} else {
 				setMessage(
 						Messages.LocalZendServerCompositeFragment_CannotDetectError,
 						IMessageProvider.ERROR);
-			} else {
-				LocalTargetDetector detector = new LocalTargetDetector(
-						this.server);
-				detector.detect();
-				if (detector.getStatus().getSeverity() != IStatus.OK) {
-
-				}
 			}
+			return composite.isComplete();
 		}
+		return result;
 	}
 
 }

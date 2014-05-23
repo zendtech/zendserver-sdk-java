@@ -151,28 +151,32 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 	@Override
 	public boolean performOk() {
 		boolean dirty = false;
-		String id = target.getId();
-		String oldValue = prefs.get(id, defaultPrefs.get(id, (String) null));
-		String newValue = getValue(input);
-		if (newValue == null && oldValue != null) {
-			prefs.remove(id);
-			dirty = true;
-		}
-		if (newValue != null
-				&& (oldValue == null || !oldValue.equals(newValue))) {
-			prefs.put(id, newValue);
-			dirty = true;
-		}
-		if (dirty) {
-			try {
-				prefs.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
+		IZendTarget target = getTarget();
+		if (target != null) {
+			String id = target.getId();
+			String oldValue = prefs
+					.get(id, defaultPrefs.get(id, (String) null));
+			String newValue = getValue(input);
+			if (newValue == null && oldValue != null) {
+				prefs.remove(id);
+				dirty = true;
 			}
-			if (askForRestart(target)) {
-				Job restartJob = new RestartJob();
-				restartJob.setUser(true);
-				restartJob.schedule();
+			if (newValue != null
+					&& (oldValue == null || !oldValue.equals(newValue))) {
+				prefs.put(id, newValue);
+				dirty = true;
+			}
+			if (dirty) {
+				try {
+					prefs.flush();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
+				if (askForRestart(target)) {
+					Job restartJob = new RestartJob();
+					restartJob.setUser(true);
+					restartJob.schedule();
+				}
 			}
 		}
 		return true;
@@ -296,27 +300,14 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void init() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		Server server = getServer();
-		if (server != null) {
-			String serverName = server.getName();
-			IZendTarget[] targets = manager.getTargets();
-			for (IZendTarget target : targets) {
-				if (serverName.equals(target.getServerName())) {
-					this.target = target;
-					break;
-				}
-			}
-		}
+		target = getTarget();
+		input = new ArrayList<String>();
 		if (target != null) {
 			String id = target.getId();
 			String value = prefs.get(id, defaultPrefs.get(id, (String) null));
 			if (value != null && !value.trim().isEmpty()) {
 				String[] segments = value.split(","); //$NON-NLS-1$
 				input = new ArrayList<String>(Arrays.asList(segments));
-			} else {
-				input = new ArrayList<String>();
 			}
 		}
 		viewer.setInput(input);
@@ -357,6 +348,22 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 											target.getHost().getHost()));
 		}
 		return false;
+	}
+
+	private IZendTarget getTarget() {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
+		Server server = getServer();
+		if (server != null) {
+			String serverName = server.getName();
+			IZendTarget[] targets = manager.getTargets();
+			for (IZendTarget target : targets) {
+				if (serverName.equals(target.getServerName())) {
+					return target;
+				}
+			}
+		}
+		return null;
 	}
 
 }

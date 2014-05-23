@@ -72,16 +72,13 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 	}
 
 	@Override
-	public void performFinish(IProgressMonitor monitor) throws CoreException {
-		super.performFinish(monitor);
-		try {
-			if (composite != null && composite.isComplete()) {
-				composite.performOk();
-			}
-		} catch (Exception e) {
+	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
+		boolean result = super.performFinish(monitor);
+		if (composite != null && composite.isComplete()) {
+			result = composite.performOk();
 		}
+		return result;
 	}
-	
 
 	protected void setMessage(String message, int severity) {
 		((AbstractCompositeFragment) composite).setMessage(message, severity);

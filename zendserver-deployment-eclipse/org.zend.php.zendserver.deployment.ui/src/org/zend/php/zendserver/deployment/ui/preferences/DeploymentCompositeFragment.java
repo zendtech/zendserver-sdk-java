@@ -53,15 +53,19 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.DeploymentCompositeFragment"; //$NON-NLS-1$
 
+	private Button enableButton;
 	private Text hostText;
 	private Text keyText;
 	private Text secretText;
 
+	private boolean enable;
 	private String host;
 	private String key;
 	private String secret;
 
 	private IZendTarget target;
+
+	private Button detectButton;
 
 	/**
 	 * PlatformCompositeFragment constructor
@@ -84,6 +88,19 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public boolean performOk() {
+		if (!enable) {
+			if (target != null) {
+				TargetsManager manager = TargetsManagerService.INSTANCE
+						.getTargetManager();
+				if (manager.getTargetById(target.getId()) != null) {
+					manager.remove(target);
+				}
+			}
+			return true;
+		}
+		if (!isForEditing()) {
+			return isComplete();
+		}
 		if (target != null) {
 			URL targetHost = target.getHost();
 			if (targetHost != null && host.equals(targetHost.toString())
@@ -92,7 +109,6 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 				return true;
 			}
 		}
-		saveValues();
 		try {
 			controlHandler.run(true, true, new IRunnableWithProgress() {
 
@@ -118,181 +134,39 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public void validate() {
-		if (host != null && host.trim().isEmpty()) {
-			setMessage(Messages.DeploymentCompositeFragment_EmptyHostMessage,
-					IMessageProvider.ERROR);
-			return;
-		}
-		if (key != null && key.trim().isEmpty()) {
-			setMessage(Messages.DeploymentCompositeFragment_EmptyKeyMessage,
-					IMessageProvider.ERROR);
-			return;
-		}
-		if (secret != null && secret.trim().isEmpty()) {
-			setMessage(Messages.DeploymentCompositeFragment_EmptySecretMessage,
-					IMessageProvider.ERROR);
-			return;
+		if (enableButton.getSelection()) {
+			if (host != null && host.trim().isEmpty()) {
+				setMessage(
+						Messages.DeploymentCompositeFragment_EmptyHostMessage,
+						IMessageProvider.ERROR);
+				return;
+			}
+			if (key != null && key.trim().isEmpty()) {
+				setMessage(
+						Messages.DeploymentCompositeFragment_EmptyKeyMessage,
+						IMessageProvider.ERROR);
+				return;
+			}
+			if (secret != null && secret.trim().isEmpty()) {
+				setMessage(
+						Messages.DeploymentCompositeFragment_EmptySecretMessage,
+						IMessageProvider.ERROR);
+				return;
+			}
 		}
 		setMessage(getDescription(), IMessageProvider.NONE);
 	}
 
-	@Override
-	protected void createControl(Composite parent) {
-		ModifyListener modifyListener = new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				updateData();
-				validate();
-			}
-		};
-
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(Messages.DeploymentCompositeFragment_Host);
-		hostText = new Text(parent, SWT.BORDER);
-		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
-				2, 1));
-		hostText.addModifyListener(modifyListener);
-		hostText.setText(DEFAULT_HOST);
-		hostText.setSelection(hostText.getText().length());
-
-		label = new Label(parent, SWT.NONE);
-		label.setText(Messages.DeploymentCompositeFragment_KeyName);
-		keyText = new Text(parent, SWT.BORDER);
-		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
-				2, 1));
-		keyText.addModifyListener(modifyListener);
-
-		label = new Label(parent, SWT.NONE);
-		label.setText(Messages.DeploymentCompositeFragment_KeySecret);
-		secretText = new Text(parent, SWT.BORDER);
-		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false, 2, 1));
-		secretText.addModifyListener(modifyListener);
-
-		Button detectButton = new Button(parent, SWT.PUSH);
-		detectButton.setText(Messages.DeploymentCompositeFragment_DetectLabel);
-		detectButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false, 3, 1));
-		detectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleDetect(hostText.getText());
-			}
-		});
-	}
-
-	@Override
-	protected void init() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		Server server = getServer();
-		if (server != null) {
-			String serverName = server.getName();
-			IZendTarget[] targets = manager.getTargets();
-			for (IZendTarget target : targets) {
-				if (serverName.equals(target.getServerName())) {
-					this.target = target;
-					hostText.setText(target.getHost().toString());
-					keyText.setText(target.getKey());
-					secretText.setText(target.getSecretKey());
-					break;
-				}
+	public void performTesting(IProgressMonitor monitor) {
+		if (target != null) {
+			URL targetHost = target.getHost();
+			if (targetHost != null && host.equals(targetHost.toString())
+					&& key.equals(target.getKey())
+					&& secret.equals(target.getSecretKey())) {
+				return;
 			}
 		}
-		if (target == null) {
-			String id = manager.createUniqueId(null);
-			target = new ZendTarget(id, null, null, null, true);
-		}
-	}
-
-	@Override
-	public void setData(Object server) throws IllegalArgumentException {
-		super.setData(server);
-		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
-			if (DEFAULT_HOST.equals(hostText.getText())) {
-				String suggestedHost = DEFAULT_HOST + getServer().getHost()
-						+ ":10081"; //$NON-NLS-1$
-				hostText.setText(suggestedHost);
-			}
-		}
-	}
-
-	private void saveValues() {
-		ZendTarget t = (ZendTarget) target;
-		Server server = getServer();
-		if (server != null) {
-			t.setServerName(server.getName());
-			try {
-				t.setHost(new URL(host));
-				t.setDefaultServerURL(new URL(server.getBaseURL()));
-			} catch (MalformedURLException e) {
-				Activator.log(e);
-			}
-			t.setKey(key);
-			t.setSecretKey(secret);
-		}
-	}
-
-	private void updateData() {
-		if (hostText != null) {
-			host = hostText.getText();
-		}
-		if (keyText != null) {
-			key = keyText.getText();
-		}
-		if (secretText != null) {
-			secret = secretText.getText();
-		}
-	}
-
-	private IZendTarget copyTemp(ZendTarget t) {
-		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
-				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), true);
-		String[] keys = t.getPropertiesKeys();
-		for (String key : keys) {
-			target.addProperty(key, t.getProperty(key));
-		}
-		return target;
-	}
-
-	private void handleDetect(final String host) {
-		try {
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(
-								Messages.DeploymentCompositeFragment_DetectingCredentials,
-								IProgressMonitor.UNKNOWN);
-						final ApiKeyDetector detector = new EclipseApiKeyDetector(
-								host + "/ZendServer"); //$NON-NLS-1$
-						detector.createApiKey(null);
-						Display.getDefault().asyncExec(new Runnable() {
-
-							public void run() {
-								String key = detector.getKey();
-								String secret = detector.getSecretKey();
-								if (key != null && secret != null) {
-									keyText.setText(key);
-									secretText.setText(secret);
-								}
-							}
-						});
-					} catch (SdkException e) {
-						Activator.log(e);
-					}
-				}
-			});
-			validate();
-		} catch (InvocationTargetException e) {
-			Activator.log(e);
-		} catch (InterruptedException e) {
-			Activator.log(e);
-		}
-	}
-
-	private void performTesting(IProgressMonitor monitor) {
+		saveValues();
 		monitor.beginTask(
 				Messages.DeploymentCompositeFragment_TestingConnection,
 				IProgressMonitor.UNKNOWN);
@@ -357,6 +231,185 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public void setData(Object server) throws IllegalArgumentException {
+		super.setData(server);
+		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
+			if (DEFAULT_HOST.equals(hostText.getText())) {
+				String suggestedHost = DEFAULT_HOST + getServer().getHost()
+						+ ":10081"; //$NON-NLS-1$
+				hostText.setText(suggestedHost);
+			}
+		}
+	}
+
+	@Override
+	protected void createControl(Composite parent) {
+		ModifyListener modifyListener = new ModifyListener() {
+
+			public void modifyText(ModifyEvent e) {
+				updateData();
+				validate();
+			}
+		};
+		enableButton = new Button(parent, SWT.CHECK);
+		enableButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+				false, 3, 1));
+		enableButton.setText(Messages.DeploymentCompositeFragment_EnableLabel);
+		enableButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateState(enableButton.getSelection());
+			}
+		});
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(Messages.DeploymentCompositeFragment_Host);
+		hostText = new Text(parent, SWT.BORDER);
+		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
+				2, 1));
+		hostText.addModifyListener(modifyListener);
+		hostText.setText(DEFAULT_HOST);
+		hostText.setSelection(hostText.getText().length());
+
+		label = new Label(parent, SWT.NONE);
+		label.setText(Messages.DeploymentCompositeFragment_KeyName);
+		keyText = new Text(parent, SWT.BORDER);
+		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
+				2, 1));
+		keyText.addModifyListener(modifyListener);
+
+		label = new Label(parent, SWT.NONE);
+		label.setText(Messages.DeploymentCompositeFragment_KeySecret);
+		secretText = new Text(parent, SWT.BORDER);
+		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+				false, 2, 1));
+		secretText.addModifyListener(modifyListener);
+
+		detectButton = new Button(parent, SWT.PUSH);
+		detectButton.setText(Messages.DeploymentCompositeFragment_DetectLabel);
+		detectButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 3, 1));
+		detectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleDetect(hostText.getText());
+			}
+		});
+	}
+
+	@Override
+	protected void init() {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
+		Server server = getServer();
+		if (server != null) {
+			String serverName = server.getName();
+			IZendTarget[] targets = manager.getTargets();
+			for (IZendTarget target : targets) {
+				if (serverName.equals(target.getServerName())) {
+					this.target = target;
+					hostText.setText(target.getHost().toString());
+					keyText.setText(target.getKey());
+					secretText.setText(target.getSecretKey());
+					enableButton.setSelection(true);
+					updateState(true);
+					break;
+				}
+			}
+		}
+		if (target == null) {
+			String id = manager.createUniqueId(null);
+			target = new ZendTarget(id, null, null, null, true);
+			enableButton.setSelection(false);
+			updateState(false);
+		}
+	}
+
+	private void saveValues() {
+		ZendTarget t = (ZendTarget) target;
+		Server server = getServer();
+		if (server != null) {
+			t.setServerName(server.getName());
+			try {
+				t.setHost(new URL(host));
+				t.setDefaultServerURL(new URL(server.getBaseURL()));
+			} catch (MalformedURLException e) {
+				Activator.log(e);
+			}
+			t.setKey(key);
+			t.setSecretKey(secret);
+		}
+	}
+
+	private void updateData() {
+		if (enableButton != null) {
+			enable = enableButton.getSelection();
+		}
+		if (hostText != null) {
+			host = hostText.getText();
+		}
+		if (keyText != null) {
+			key = keyText.getText();
+		}
+		if (secretText != null) {
+			secret = secretText.getText();
+		}
+	}
+
+	private IZendTarget copyTemp(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), true);
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
+	}
+
+	private void handleDetect(final String host) {
+		try {
+			controlHandler.run(true, true, new IRunnableWithProgress() {
+
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
+					try {
+						monitor.beginTask(
+								Messages.DeploymentCompositeFragment_DetectingCredentials,
+								IProgressMonitor.UNKNOWN);
+						final ApiKeyDetector detector = new EclipseApiKeyDetector(
+								host + "/ZendServer"); //$NON-NLS-1$
+						detector.createApiKey(null);
+						Display.getDefault().asyncExec(new Runnable() {
+
+							public void run() {
+								String key = detector.getKey();
+								String secret = detector.getSecretKey();
+								if (key != null && secret != null) {
+									keyText.setText(key);
+									secretText.setText(secret);
+								}
+							}
+						});
+					} catch (SdkException e) {
+						Activator.log(e);
+					}
+				}
+			});
+			validate();
+		} catch (InvocationTargetException e) {
+			Activator.log(e);
+		} catch (InterruptedException e) {
+			Activator.log(e);
+		}
+	}
+
+	private void updateState(boolean enabled) {
+		hostText.setEnabled(enabled);
+		keyText.setEnabled(enabled);
+		secretText.setEnabled(enabled);
+		detectButton.setEnabled(enabled);
 	}
 
 }

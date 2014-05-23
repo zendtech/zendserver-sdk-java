@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.server.ui.ServerEditPage;
+import org.eclipse.php.internal.server.ui.ServersPluginImages;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
@@ -41,6 +42,7 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 
 		controlHandler.setTitle(title);
 		controlHandler.setDescription(description);
+		controlHandler.setImageDescriptor(ServersPluginImages.DESC_WIZ_SERVER);
 
 		if (isForEditing) {
 			setData(((ServerEditPage) controlHandler).getServer());

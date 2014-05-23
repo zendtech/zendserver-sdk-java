@@ -34,9 +34,12 @@ public class LocalApacheWizardFragment extends AbstractWizardFragment {
 	}
 
 	@Override
-	public void performFinish(IProgressMonitor monitor) throws CoreException {
-		super.performFinish(monitor);
+	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
+		boolean result = super.performFinish(monitor);
+		if (result) {
 		LocalApacheType.parseAttributes(server);
+		}
+		return result;
 	}
 
 }
