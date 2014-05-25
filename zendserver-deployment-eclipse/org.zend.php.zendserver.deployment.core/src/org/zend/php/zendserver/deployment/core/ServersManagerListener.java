@@ -11,6 +11,7 @@ package org.zend.php.zendserver.deployment.core;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.IServersManagerListener;
 import org.eclipse.php.internal.server.core.manager.ServerManagerEvent;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
@@ -30,7 +31,8 @@ public class ServersManagerListener implements IServersManagerListener {
 	@Override
 	public void serverRemoved(ServerManagerEvent event) {
 		Server removedServer = event.getServer();
-		if (removedServer != null) {
+		if (removedServer != null
+				&& ServersManager.getServer(removedServer.getName()) == null) {
 			String name = removedServer.getName();
 			TargetsManager manager = TargetsManagerService.INSTANCE
 					.getTargetManager();
@@ -46,7 +48,6 @@ public class ServersManagerListener implements IServersManagerListener {
 				manager.remove(toRemove);
 			}
 		}
-
 	}
 
 	@Override

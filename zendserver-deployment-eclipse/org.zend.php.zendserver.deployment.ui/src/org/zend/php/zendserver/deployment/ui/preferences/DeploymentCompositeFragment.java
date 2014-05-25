@@ -384,7 +384,6 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 									keyText.setText(key);
 									secretText.setText(secret);
 								}
-								validate();
 							}
 						});
 					} catch (SdkException e) {
@@ -398,6 +397,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 					}
 				}
 			});
+			validate();
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 		} catch (InterruptedException e) {

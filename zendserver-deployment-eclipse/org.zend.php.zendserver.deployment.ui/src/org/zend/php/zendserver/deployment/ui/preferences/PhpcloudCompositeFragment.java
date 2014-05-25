@@ -261,6 +261,8 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 				IStatus status = tester.testConnection(targets, monitor);
 				switch (status.getSeverity()) {
 				case IStatus.OK:
+					TargetsManagerService.INSTANCE.getTargetManager()
+							.removeAllTemporary();
 					ArrayList<IZendTarget> finalTargets = tester
 							.getFinalTargets();
 					TargetsManager manager = TargetsManagerService.INSTANCE
@@ -287,23 +289,22 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						} else {
 							dataInitialized = true;
 						}
-						ServersManager.addServer(server);
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());
-
 						IZendTarget existingTarget = manager.getTargetById(t
 								.getId());
-						if (existingTarget != null) {
-							manager.updateTarget(t, true);
-						} else {
-							try {
-								manager.add(t, true);
-							} catch (TargetException e) {
-								// cannot occur, suppress connection
-							} catch (LicenseExpiredException e) {
-								// cannot occur, suppress connection
+						try {
+							if (existingTarget != null) {
+								manager.updateTarget(copy(t), true);
+							} else {
+								manager.add(copy(t), true);
 							}
+						} catch (TargetException e) {
+							// cannot occur, suppress connection
+						} catch (LicenseExpiredException e) {
+							// cannot occur, suppress connection
 						}
+						ServersManager.addServer(server);
 					}
 					ServersManager.save();
 					break;
@@ -321,6 +322,9 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 			setMessage(e.getMessage(), IMessageProvider.ERROR);
 		} catch (IOException e) {
 			setMessage(e.getMessage(), IMessageProvider.ERROR);
+		} finally {
+			TargetsManagerService.INSTANCE.getTargetManager()
+					.removeAllTemporary();
 		}
 	}
 
@@ -345,43 +349,76 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		monitor.beginTask(
 				Messages.PhpcloudCompositeFragment_DetectingContainersTitle,
 				IProgressMonitor.UNKNOWN);
-		IZendTarget[] target = null;
+		IZendTarget[] targets = null;
 		try {
-			target = detect.detectTarget(username, password, privateKey);
+			targets = detect.detectTarget(username, password, privateKey);
 		} catch (SdkException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
-		if (target == null || target.length == 0) {
+		if (targets == null || targets.length == 0) {
 			return null;
 		}
 
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		ZendTarget[] zts = new ZendTarget[target.length];
+		ZendTarget[] updatedTargets = new ZendTarget[targets.length];
 
 		String uniqueId = tm.createUniqueId(null);
-		for (int i = 0; i < target.length; i++) {
-			zts[i] = new ZendTarget(uniqueId + "_" + i, target[i].getHost(), //$NON-NLS-1$
-					target[i].getDefaultServerURL(), target[i].getKey(),
-					target[i].getSecretKey(), true);
-			zts[i].addProperty(ZendDevCloud.TARGET_USERNAME, username);
-			zts[i].addProperty(ZendDevCloud.STORE_PASSWORD,
+		for (int i = 0; i < targets.length; i++) {
+			IZendTarget target = targets[i];
+			IZendTarget existingTarget = findExistingTarget(target);
+			if (existingTarget != null) {
+				updatedTargets[i] = (ZendTarget) existingTarget;
+			} else {
+				updatedTargets[i] = new ZendTarget(uniqueId + '_' + i,
+						target.getHost(), target.getDefaultServerURL(),
+						target.getKey(), target.getSecretKey(), true);
+			}
+			updatedTargets[i].addProperty(ZendDevCloud.TARGET_USERNAME,
+					username);
+			updatedTargets[i].addProperty(ZendDevCloud.STORE_PASSWORD,
 					String.valueOf(shouldStore));
-			zts[i].addProperty(ZendDevCloud.TARGET_PASSWORD, password);
-			zts[i].addProperty(ZendDevCloud.TARGET_CONTAINER,
-					target[i].getProperty(ZendDevCloud.TARGET_CONTAINER));
-			zts[i].addProperty(ZendDevCloud.TARGET_TOKEN,
-					target[i].getProperty(ZendDevCloud.TARGET_TOKEN));
-			zts[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKey);
+			updatedTargets[i].addProperty(ZendDevCloud.TARGET_PASSWORD,
+					password);
+			updatedTargets[i].addProperty(ZendDevCloud.TARGET_CONTAINER,
+					target.getProperty(ZendDevCloud.TARGET_CONTAINER));
+			updatedTargets[i].addProperty(ZendDevCloud.TARGET_TOKEN,
+					target.getProperty(ZendDevCloud.TARGET_TOKEN));
+			updatedTargets[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH,
+					privateKey);
 			try {
-				tm.add(zts[i], true);
+				if (existingTarget != null) {
+					tm.updateTarget(updatedTargets[i], true);
+				} else {
+					tm.add(updatedTargets[i], true);
+				}
 			} catch (TargetException e) {
 				// should not appear cause we do not try to connect to it
 			} catch (LicenseExpiredException e) {
 				// should not appear cause we do not try to connect to it
 			}
 		}
-		return zts;
+		return updatedTargets;
+	}
+
+	/**
+	 * Check if there is already a target with specified host URL
+	 * 
+	 * @param target
+	 * @return {@link IZendTarget} instance which has specified URL or
+	 *         <code>null</code> if such target does not exist
+	 */
+	private IZendTarget findExistingTarget(IZendTarget target) {
+		TargetsManager manager = TargetsManagerService.INSTANCE
+				.getTargetManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget t : targets) {
+			if (TargetsManager.isPhpcloud(t)
+					&& t.getHost().getHost().equals(target.getHost().getHost())) {
+				return t;
+			}
+		}
+		return null;
 	}
 
 	private void setupSSHConfiguration(Server server, IZendTarget target) {
@@ -445,6 +482,16 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e), StatusManager.SHOW);
 		}
+	}
+
+	private IZendTarget copy(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey());
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
 	}
 
 }
