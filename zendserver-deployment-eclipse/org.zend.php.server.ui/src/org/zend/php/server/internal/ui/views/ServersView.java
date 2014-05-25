@@ -43,7 +43,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.zend.php.server.internal.ui.actions.ActionContributionsManager;
 import org.zend.php.server.internal.ui.actions.AddServerAction;
 import org.zend.php.server.internal.ui.actions.EditServerAction;
+import org.zend.php.server.internal.ui.actions.OpenDatabaseConnectionAction;
 import org.zend.php.server.internal.ui.actions.RemoveServerAction;
+import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -132,7 +134,17 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				editAction.run();
+				ISelection selection = event.getSelection();
+				Object[] selectedElements = ((IStructuredSelection) selection)
+						.toArray();
+				if (selectedElements.length == 1
+						&& selectedElements[0] instanceof ITargetDatabase) {
+					OpenDatabaseConnectionAction action = new OpenDatabaseConnectionAction(
+							(ITargetDatabase) selectedElements[0]);
+					action.run();
+				} else {
+					editAction.run();
+				}
 			}
 		});
 	}
