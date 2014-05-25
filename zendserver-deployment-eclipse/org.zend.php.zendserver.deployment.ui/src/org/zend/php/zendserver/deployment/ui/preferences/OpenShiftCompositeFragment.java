@@ -296,39 +296,43 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 							.getTargetManager();
 					boolean dataInitialized = false;
 					for (IZendTarget target : finalTargets) {
-						URL baseUrl = new URL("http", target.getHost() //$NON-NLS-1$
-								.getHost(), ""); //$NON-NLS-1$
+						String host = target.getHost().getHost();
+						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						ZendTarget t = (ZendTarget) target;
 						Server server = null;
-						if (dataInitialized) {
-							server = new Server();
+						Server existingServer = getExistingServer(host);
+						if (existingServer != null) {
+							server = existingServer;
 						} else {
-							server = getServer();
+							server = new Server();
+							server.setName(host);
 						}
+						server.setHost(host);
 						server.setName(target.getHost().getHost());
 						server.setBaseURL(baseUrl.toString());
 						server.setAttribute(IServerType.TYPE,
 								OpenShiftServerType.ID);
 						setupSSHConfiguration(server, target);
-						if (dataInitialized) {
-							ServersManager.addServer(server);
-						} else {
-							dataInitialized = true;
-						}
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());
 						IZendTarget existingTarget = manager.getTargetById(t
 								.getId());
-						if (existingTarget != null) {
-							manager.updateTarget(t, true);
-						} else {
-							try {
-								manager.add(t, true);
-							} catch (TargetException e) {
-								// cannot occur, suppress connection
-							} catch (LicenseExpiredException e) {
-								// cannot occur, suppress connection
+						try {
+							if (existingTarget != null) {
+								manager.updateTarget(copy(t), true);
+							} else {
+								manager.add(copy(t), true);
 							}
+						} catch (TargetException e) {
+							// cannot occur, suppress connection
+						} catch (LicenseExpiredException e) {
+							// cannot occur, suppress connection
+						}
+						if (dataInitialized) {
+							ServersManager.addServer(server);
+						} else {
+							setData(server);
+							dataInitialized = true;
 						}
 					}
 					ServersManager.save();
@@ -540,6 +544,26 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 				3306));
 		config.setPortForwardings(portForwardings);
 		config.store(server);
+	}
+	
+	private IZendTarget copy(ZendTarget t) {
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
+				t.getDefaultServerURL(), t.getKey(), t.getSecretKey());
+		String[] keys = t.getPropertiesKeys();
+		for (String key : keys) {
+			target.addProperty(key, t.getProperty(key));
+		}
+		return target;
+	}
+	
+	private Server getExistingServer(String host) {
+		Server[] servers = ServersManager.getServers();
+		for (Server server : servers) {
+			if (server.getHost().equals(host)) {
+				return server;
+			}
+		}
+		return null;
 	}
 
 }

@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
+import org.eclipse.php.internal.ui.wizards.WizardModel;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
 
@@ -33,6 +34,7 @@ public class OpenShiftWizardFragment extends AbstractWizardFragment {
 		boolean result = super.performFinish(monitor);
 		if (result) {
 			((OpenShiftCompositeFragment) composite).detectServers(monitor);
+			getWizardModel().putObject(WizardModel.SERVER, composite.getData());
 			return composite.isComplete();
 		}
 		return result;

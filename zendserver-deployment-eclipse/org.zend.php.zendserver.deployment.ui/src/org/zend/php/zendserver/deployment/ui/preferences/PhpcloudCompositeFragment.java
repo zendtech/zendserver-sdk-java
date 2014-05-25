@@ -273,22 +273,18 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						ZendTarget t = (ZendTarget) target;
 						Server server = null;
-						if (dataInitialized) {
-							server = new Server();
+						Server existingServer = getExistingServer(host);
+						if (existingServer != null) {
+							server = existingServer;
 						} else {
-							server = getServer();
+							server = new Server();
+							server.setName(host);
 						}
 						server.setHost(host);
-						server.setName(target.getHost().getHost());
 						server.setBaseURL(baseUrl.toString());
 						server.setAttribute(IServerType.TYPE,
 								PhpcloudServerType.ID);
 						setupSSHConfiguration(server, target);
-						if (dataInitialized) {
-							ServersManager.addServer(server);
-						} else {
-							dataInitialized = true;
-						}
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());
 						IZendTarget existingTarget = manager.getTargetById(t
@@ -304,7 +300,12 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						} catch (LicenseExpiredException e) {
 							// cannot occur, suppress connection
 						}
-						ServersManager.addServer(server);
+						if (dataInitialized) {
+							ServersManager.addServer(server);
+						} else {
+							setData(server);
+							dataInitialized = true;
+						}
 					}
 					ServersManager.save();
 					break;
@@ -492,6 +493,16 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 			target.addProperty(key, t.getProperty(key));
 		}
 		return target;
+	}
+
+	private Server getExistingServer(String host) {
+		Server[] servers = ServersManager.getServers();
+		for (Server server : servers) {
+			if (server.getHost().equals(host)) {
+				return server;
+			}
+		}
+		return null;
 	}
 
 }
