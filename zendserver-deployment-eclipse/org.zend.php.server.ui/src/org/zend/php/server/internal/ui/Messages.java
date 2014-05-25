@@ -34,6 +34,8 @@ public class Messages extends NLS {
 	public static String OpenShiftServerType_Name;
 	public static String PhpcloudServerType_Name;
 	public static String RemoveServerAction_RemoveLabel;
+	public static String ServersCombo_AddLabel;
+	public static String ServersCombo_DefaultLabel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

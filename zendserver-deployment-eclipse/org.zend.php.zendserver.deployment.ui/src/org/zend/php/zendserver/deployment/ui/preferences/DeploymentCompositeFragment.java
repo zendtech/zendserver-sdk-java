@@ -101,13 +101,8 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		if (!isForEditing()) {
 			return isComplete();
 		}
-		if (target != null) {
-			URL targetHost = target.getHost();
-			if (targetHost != null && host.equals(targetHost.toString())
-					&& key.equals(target.getKey())
-					&& secret.equals(target.getSecretKey())) {
-				return true;
-			}
+		if (target != null && !isModified()) {
+			return true;
 		}
 		try {
 			controlHandler.run(true, true, new IRunnableWithProgress() {
@@ -161,13 +156,8 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		if (!enable) {
 			return;
 		}
-		if (target != null) {
-			URL targetHost = target.getHost();
-			if (targetHost != null && host.equals(targetHost.toString())
-					&& key.equals(target.getKey())
-					&& secret.equals(target.getSecretKey())) {
-				return;
-			}
+		if (target != null && !isModified()) {
+			return;
 		}
 		saveValues();
 		monitor.beginTask(
@@ -319,6 +309,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			enableButton.setSelection(false);
 			updateState(false);
 		}
+		updateData();
 	}
 
 	private void saveValues() {
@@ -412,4 +403,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		detectButton.setEnabled(enabled);
 	}
 
+	private boolean isModified() {
+		URL targetHost = target.getHost();
+		return !(targetHost != null && host.equals(targetHost.toString())
+				&& key.equals(target.getKey()) && secret.equals(target
+				.getSecretKey()));
+	}
 }

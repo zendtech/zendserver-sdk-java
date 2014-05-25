@@ -45,7 +45,6 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.DeployJobChangeList
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard;
 import org.zend.php.zendserver.deployment.debug.ui.wizards.DeploymentWizard.Mode;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
 
@@ -297,12 +296,7 @@ public class DeploymentHandler {
 							.getBaseURL().toString());
 					if (helper.getOperationType() == IDeploymentHelper.DEPLOY
 							&& LaunchUtils.isAutoDeployAvailable()) {
-						String host = helper.getTargetHost();
-						if (TargetsManager.isPhpcloud(host)
-								|| TargetsManager.isOpenShift(host)
-								|| TargetsManager.isLocalhost(host)) {
-							job = getAutoDeployJob(helper, project);
-						}
+						job = getAutoDeployJob(helper, project);
 					}
 				}
 				LaunchUtils.updatePreferences(project,
@@ -359,8 +353,7 @@ public class DeploymentHandler {
 		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IZendTarget target = TargetsManagerService.INSTANCE
 					.getTargetManager().getTargetById(helper.getTargetId());
-			String serverName = target.getServerName();
-			Server server = ServersManager.getServer(serverName);
+			Server server = getServer(target);
 			SSHTunnelConfiguration config = SSHTunnelConfiguration
 					.read(server);
 			try {
@@ -578,6 +571,11 @@ public class DeploymentHandler {
 				MessageDialog.QUESTION, new String[] {
 						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 0);
+	}
+	
+	private Server getServer(IZendTarget target) {
+		String serverName = target.getServerName();
+		return ServersManager.getServer(serverName);
 	}
 
 }

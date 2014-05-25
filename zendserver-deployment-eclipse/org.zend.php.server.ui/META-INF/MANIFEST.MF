@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.zend.php.zendserver.deployment.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.zend.php.server.ui.actions,
+Export-Package: org.zend.php.server.ui,
+ org.zend.php.server.ui.actions,
  org.zend.php.server.ui.fragments,
  org.zend.php.server.ui.types

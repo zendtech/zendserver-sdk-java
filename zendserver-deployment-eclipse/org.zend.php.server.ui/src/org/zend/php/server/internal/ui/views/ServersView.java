@@ -13,7 +13,6 @@ package org.zend.php.server.internal.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.zend.php.server.internal.ui.actions.ActionContributionsManager;
 import org.zend.php.server.internal.ui.actions.AddServerAction;
@@ -57,11 +55,6 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 	public static final String ID = "org.zend.php.server.ui.views.ServersView"; //$NON-NLS-1$
 
 	private TreeViewer viewer;
-
-	private DrillDownAdapter drillDownAdapter;
-	private Action action1;
-	private Action action2;
-
 	private IAction editAction;
 	private IAction removeAction;
 
@@ -72,7 +65,6 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(ServersManager.getInstance());
@@ -161,8 +153,6 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 		});
 	}
 
-	// TODO to remove
-
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
@@ -174,12 +164,6 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
-	}
-
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -217,13 +201,6 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 			}
 		}
 		return result;
-	}
-
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
 	}
 
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.actions;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.php.internal.server.core.Server;
@@ -46,12 +45,10 @@ public class AddServerAction extends AbstractServerAction {
 	protected Server getServerFromWizard() {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getShell();
-		NullProgressMonitor monitor = new NullProgressMonitor();
 		Server server = null;
 		ServerWizard wizard = new ServerWizard();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		if (dialog.open() == Window.CANCEL) {
-			monitor.setCanceled(true);
 			return null;
 		}
 		server = (Server) wizard.getRootFragment().getWizardModel()

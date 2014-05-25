@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.server.ui.ServersCombo;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
@@ -49,8 +50,6 @@ import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
-import org.zend.php.zendserver.deployment.ui.actions.AddTargetAction;
-import org.zend.php.zendserver.deployment.ui.targets.TargetsCombo;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -62,7 +61,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private TargetsCombo targetsCombo = new TargetsCombo(true);
+	private ServersCombo targetsCombo = new ServersCombo(true);
 	private Text baseUrl;
 	private Button ignoreFailures;
 	private Button developmentMode;
@@ -152,14 +151,14 @@ public class ConfigurationBlock extends AbstractBlock {
 		if ((targetId == null || targetId.isEmpty())) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
-				targetsCombo.select(settings.get(DeploymentAttributes.TARGET_ID
-						.getName()));
+				targetsCombo.selectByTarget(settings
+						.get(DeploymentAttributes.TARGET_ID.getName()));
 			}
 		} else {
-			targetsCombo.select(targetId);
+			targetsCombo.selectByTarget(targetId);
 			String applicationURL = LaunchUtils.getURLFromPreferences(helper
 					.getProjectName());
-			target = targetsCombo.getSelected();
+			target = targetsCombo.getSelectedTarget();
 			if (target != null && applicationURL != null) {
 				baseUrl.setText(updateURL(target, applicationURL));
 			}
@@ -195,7 +194,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		URL newBaseURL = helper.getBaseURL();
 		if (baseUrl.getText().isEmpty() && newBaseURL != null) {
 			if (target == null) {
-				target = targetsCombo.getSelected();
+				target = targetsCombo.getSelectedTarget();
 			}
 			if (target != null) {
 				baseUrl.setText(updateURL(target, newBaseURL.toString()));
@@ -390,7 +389,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	private IZendTarget getTarget() {
-		return targetsCombo.getSelected();
+		return targetsCombo.getSelectedTarget();
 	}
 
 	private String getInstalledLocation() {
@@ -410,22 +409,15 @@ public class ConfigurationBlock extends AbstractBlock {
 		targetsCombo.getCombo().addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				changeHost(targetsCombo.getSelected());
+				changeHost(targetsCombo.getSelectedTarget());
 				listener.statusChanged(validatePage());
 			}
 		});
-		targetsCombo.setAddTargetListener(new SelectionAdapter() {
+		targetsCombo.setListener(new ServersCombo.IAddServerListener() {
 
-			public void widgetSelected(SelectionEvent e) {
-				AddTargetAction addTarget = new AddTargetAction();
-				addTarget.run();
-				IZendTarget newTarget = addTarget.getTarget();
-				if (newTarget != null) {
-					targetsCombo.updateItems();
-					targetsCombo.select(newTarget.getId());
-					changeHost(targetsCombo.getSelected());
-					listener.statusChanged(validatePage());
-				}
+			public void serverAdded(String name) {
+				changeHost(targetsCombo.getSelectedTarget());
+				listener.statusChanged(validatePage());
 			}
 		});
 	}
