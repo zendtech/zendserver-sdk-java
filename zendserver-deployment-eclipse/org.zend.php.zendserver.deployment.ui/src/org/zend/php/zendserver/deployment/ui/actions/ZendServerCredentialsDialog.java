@@ -33,7 +33,7 @@ public class ZendServerCredentialsDialog extends Dialog {
 	private String password;
 	private String username;
 	private String message;
-	
+
 	public ZendServerCredentialsDialog(Shell parentShell, String title,
 			String message) {
 		super(parentShell);
@@ -88,6 +88,8 @@ public class ZendServerCredentialsDialog extends Dialog {
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
 		usernameLabel.setText(Messages.ZendServerCredentialsDialog_0);
 		usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		usernameText.setText("admin"); //$NON-NLS-1$
+		usernameText.forceFocus();
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		usernameText.setLayoutData(data);
 		Label passwordLabel = new Label(comp, SWT.RIGHT);

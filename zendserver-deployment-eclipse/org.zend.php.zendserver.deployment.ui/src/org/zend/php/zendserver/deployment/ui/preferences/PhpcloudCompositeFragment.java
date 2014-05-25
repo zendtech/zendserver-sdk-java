@@ -291,15 +291,18 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());
 
-						if (manager.getTargetById(t.getId()) != null) {
-							manager.remove(manager.getTargetById(t.getId()));
-						}
-						try {
-							manager.add(copy(t), true);
-						} catch (TargetException e) {
-							// cannot occur, suppress connection
-						} catch (LicenseExpiredException e) {
-							// cannot occur, suppress connection
+						IZendTarget existingTarget = manager.getTargetById(t
+								.getId());
+						if (existingTarget != null) {
+							manager.updateTarget(t, true);
+						} else {
+							try {
+								manager.add(t, true);
+							} catch (TargetException e) {
+								// cannot occur, suppress connection
+							} catch (LicenseExpiredException e) {
+								// cannot occur, suppress connection
+							}
 						}
 					}
 					ServersManager.save();
@@ -442,16 +445,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 							e.getMessage(), e), StatusManager.SHOW);
 		}
-	}
-
-	private IZendTarget copy(ZendTarget t) {
-		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
-				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), false);
-		String[] keys = t.getPropertiesKeys();
-		for (String key : keys) {
-			target.addProperty(key, t.getProperty(key));
-		}
-		return target;
 	}
 
 }
