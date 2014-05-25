@@ -9,6 +9,7 @@ public class Messages extends NLS {
 	public static String LocalZendServerCompositeFragment_DetectTitle;
 	public static String LocalZendServerCompositeFragment_EmptyNameError;
 	public static String LocalZendServerCompositeFragment_Name;
+	public static String LocalZendServerCompositeFragment_NameConflictError;
 	public static String LocalZendServerCompositeFragment_NameLabel;
 	public static String LocalZendServerCompositeFragment_NameTooltip;
 	public static String LocalZendServerType_Name;

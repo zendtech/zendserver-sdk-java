@@ -169,6 +169,7 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		usernameText
 				.setToolTipText(Messages.OpenShiftCompositeFragment_UsernameTooltip);
 		usernameText.addModifyListener(modifyListener);
+		usernameText.forceFocus();
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.OpenShiftCompositeFragment_PasswordLabel);
@@ -330,20 +331,10 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 					ServersManager.save();
 					break;
 				case IStatus.WARNING:
-					final String warning = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(warning, IMessageProvider.WARNING);
-						}
-					});
+					setMessage(status.getMessage(), IMessageProvider.WARNING);
 					break;
 				case IStatus.ERROR:
-					final String error = status.getMessage();
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							setMessage(error, IMessageProvider.ERROR);
-						}
-					});
+					setMessage(status.getMessage(), IMessageProvider.ERROR);
 					break;
 				default:
 					break;

@@ -158,6 +158,9 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	public void performTesting(IProgressMonitor monitor) {
+		if (!enable) {
+			return;
+		}
 		if (target != null) {
 			URL targetHost = target.getHost();
 			if (targetHost != null && host.equals(targetHost.toString())
@@ -213,20 +216,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			}
 			break;
 		case IStatus.WARNING:
-			final String warning = status.getMessage();
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					setMessage(warning, IMessageProvider.WARNING);
-				}
-			});
+			setMessage(status.getMessage(), IMessageProvider.WARNING);
 			break;
 		case IStatus.ERROR:
-			final String error = status.getMessage();
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					setMessage(error, IMessageProvider.ERROR);
-				}
-			});
+			setMessage(status.getMessage(), IMessageProvider.ERROR);
 			break;
 		default:
 			break;
@@ -262,6 +255,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateState(enableButton.getSelection());
+				validate();
 			}
 		});
 		Label label = new Label(parent, SWT.NONE);
@@ -390,14 +384,20 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 									keyText.setText(key);
 									secretText.setText(secret);
 								}
+								validate();
 							}
 						});
 					} catch (SdkException e) {
+						String message = e.getMessage();
+						Throwable cause = e.getCause();
+						if (cause != null) {
+							message = cause.getMessage();
+						}
+						setMessage(message, IMessageProvider.ERROR);
 						Activator.log(e);
 					}
 				}
 			});
-			validate();
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 		} catch (InterruptedException e) {

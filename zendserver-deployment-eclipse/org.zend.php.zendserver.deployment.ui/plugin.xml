@@ -173,25 +173,6 @@
             class="org.zend.php.zendserver.deployment.ui.Activator"></startup>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.php.perspective">
-         <viewShortcut
-               id="org.zend.php.zendserver.deployment.ui.targetsview">
-         </viewShortcut>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.php.perspective">
-         <view
-               id="org.zend.php.zendserver.deployment.ui.targetsview"
-               minimized="false"
-               relationship="stack"
-               relative="org.eclipse.ui.views.ProblemView"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferencesPage"

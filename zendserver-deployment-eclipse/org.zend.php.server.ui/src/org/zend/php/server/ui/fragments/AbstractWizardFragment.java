@@ -66,7 +66,7 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 	@Override
 	public boolean isComplete() {
 		if (composite == null) {
-			return super.isComplete();
+			return false;
 		}
 		return super.isComplete() && composite.isComplete();
 	}
@@ -80,7 +80,7 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 		return result;
 	}
 
-	protected void setMessage(String message, int severity) {
+	protected void setMessage(final String message, final int severity) {
 		((AbstractCompositeFragment) composite).setMessage(message, severity);
 	}
 

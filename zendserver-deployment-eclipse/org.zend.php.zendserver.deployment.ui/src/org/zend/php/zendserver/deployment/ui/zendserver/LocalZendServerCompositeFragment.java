@@ -46,7 +46,10 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 	 * Saves the page's state
 	 */
 	public void saveValues() {
-		getServer().setName(name);
+		Server server = getServer();
+		if (server != null) {
+			getServer().setName(name);
+		}
 	}
 
 	public boolean performOk() {
@@ -67,13 +70,14 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 				return;
 
 			}
+			if (!isDuplicateName(name)) {
+				setMessage(
+						Messages.LocalZendServerCompositeFragment_NameConflictError,
+						IMessageProvider.ERROR);
+				return;
+			}
 		}
 		setMessage(getDescription(), IMessageProvider.NONE);
-	}
-
-	@Override
-	public boolean isComplete() {
-		return true;
 	}
 
 	@Override
@@ -92,6 +96,7 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 				validate();
 			}
 		});
+		serverNameText.forceFocus();
 	}
 
 	@Override

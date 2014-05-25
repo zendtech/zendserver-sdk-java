@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Abstract wizard fragment with basic implementation. It is intended to extend
@@ -63,12 +64,22 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 	}
 
 	/**
-	 * Returns the Server that is attached to this fragment.
+	 * Returns {@link Server} instance that is attached to this fragment.
 	 * 
-	 * @return The attached Server.
+	 * @return attached {@link Server} instance
 	 */
 	public Server getServer() {
 		return (Server) getData();
+	}
+
+	public void setMessage(final String message, final int type) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				controlHandler.setMessage(message, type);
+				setComplete(type != IMessageProvider.ERROR);
+				controlHandler.update();
+			}
+		});
 	}
 
 	/**
@@ -92,13 +103,15 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 
 	protected abstract void init();
 
-	public void setMessage(String message, int type) {
-		controlHandler.setMessage(message, type);
-		setComplete(type != IMessageProvider.ERROR);
-		controlHandler.update();
-	}
-
-	protected boolean checkServerName(String name) {
+	/**
+	 * Check if new server's name is in conflict with any existing server.
+	 * 
+	 * @param name
+	 *            new server's name
+	 * @return <code>true</code> if there is no conflict with a name of existing
+	 *         server; otherwise return <code>false</code>
+	 */
+	protected boolean isDuplicateName(String name) {
 		name = name.trim();
 		if (name.equals(getServer().getName())) {
 			return true;

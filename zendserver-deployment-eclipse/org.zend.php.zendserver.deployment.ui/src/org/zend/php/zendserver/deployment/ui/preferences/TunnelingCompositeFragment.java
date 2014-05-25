@@ -216,6 +216,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		usernameText = createText(
 				Messages.TunnelingCompositeFragment_UsernameLabel,
 				credentialsGroup);
+		usernameText.forceFocus();
 		passwordText = createText(
 				Messages.TunnelingCompositeFragment_PasswordLabel,
 				credentialsGroup);

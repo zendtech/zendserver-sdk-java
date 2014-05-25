@@ -91,11 +91,12 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 						IMessageProvider.ERROR);
 				return;
 			}
-			/*
-			 * if (checkServerName(name)) { setMessage(
-			 * Messages.LocalApacheCompositeFragment_NameConflictMessage,
-			 * IMessageProvider.ERROR); return; }
-			 */
+			if (!isDuplicateName(name)) {
+				setMessage(
+						Messages.LocalApacheCompositeFragment_NameConflictMessage,
+						IMessageProvider.ERROR);
+				return;
+			}
 		}
 		if (location != null) {
 			File binFile = new File(location, BIN);
@@ -126,6 +127,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 		serverNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 2, 1));
 		serverNameText.addModifyListener(modifyListener);
+		serverNameText.forceFocus();
 
 		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.LocalApacheCompositeFragment_LocationLabel);
