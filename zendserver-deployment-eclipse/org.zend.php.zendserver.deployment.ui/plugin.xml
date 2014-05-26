@@ -28,38 +28,6 @@
                style="push">
          </command>
       </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.openTarget"
-               label="%command.label"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup2">
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-               label="%command.label.0"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.zend.php.zendserver.deployment.ui.uninstallApplication"
-               label="%command.label.1"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -80,11 +48,6 @@
             name="%command.name.1">
       </command>
       <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenTargetCommand"
-            id="org.zend.php.zendserver.deployment.ui.openTarget"
-            name="%command.name.2">
-      </command>
-      <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.UninstallApplicationHandler"
             id="org.zend.php.zendserver.deployment.ui.uninstallApplication"
             name="%command.name.3">
@@ -93,16 +56,6 @@
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenCodeTracingCommand"
             id="org.zend.php.zendserver.deployment.ui.OpenCodeTracingSnapshot"
             name="%command.name.4">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.EnableTargetMonitorHandler"
-            id="org.zend.php.zendserver.deployment.ui.enableTargetMonitoring"
-            name="%command.name.5">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.DisableTargetMonitorHandler"
-            id="org.zend.php.zendserver.deployment.ui.disableTargetMonitoring"
-            name="%command.name.6">
       </command>
    </extension>
    <extension
@@ -145,21 +98,6 @@
             </parameter>
          </describer>
       </content-type>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            category="org.zend.php.zendserver.deployment.ui.category"
-            class="org.zend.php.zendserver.deployment.ui.views.TargetsViewPart"
-            icon="icons/eview16/servers_view.gif"
-            id="org.zend.php.zendserver.deployment.ui.targetsview"
-            name="%view.name"
-            restorable="true">
-      </view>
-      <category
-            id="org.zend.php.zendserver.deployment.ui.category"
-            name="%category.name.0">
-      </category>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
