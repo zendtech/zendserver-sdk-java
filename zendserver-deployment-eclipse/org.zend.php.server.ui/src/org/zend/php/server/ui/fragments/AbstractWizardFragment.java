@@ -74,7 +74,7 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 	@Override
 	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
 		boolean result = super.performFinish(monitor);
-		if (composite != null && composite.isComplete()) {
+		if (result && composite != null && composite.isComplete()) {
 			result = composite.performOk();
 		}
 		return result;
