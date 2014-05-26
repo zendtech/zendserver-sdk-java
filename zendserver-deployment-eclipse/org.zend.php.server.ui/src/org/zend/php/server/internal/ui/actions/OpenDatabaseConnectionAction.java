@@ -111,8 +111,6 @@ public class OpenDatabaseConnectionAction extends Action {
 						if (dialog.open() == Window.OK) {
 							targetConnection.setPassword(dialog.getPassword());
 							targetConnection.setSavePassword(dialog.getSave());
-						} else {
-							// TODO
 						}
 					}
 				});
@@ -134,7 +132,9 @@ public class OpenDatabaseConnectionAction extends Action {
 				return Status.CANCEL_STATUS;
 			}
 		}
-		return new Status(IStatus.ERROR, ServersUI.PLUGIN_ID,
+		IStatus status = targetConnection.getResult();
+		return status != null ? status : new Status(IStatus.ERROR,
+				ServersUI.PLUGIN_ID,
 				Messages.OpenDatabaseConnectionAction_CannotConnectError);
 	}
 }

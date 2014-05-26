@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.deployment.core.database;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -35,7 +36,7 @@ public interface ITargetDatabase {
 	 *         <code>false</code>
 	 */
 	boolean hasPassword();
-	
+
 	/**
 	 * @return <code>true</code> if password should be saved; otherwise return
 	 *         <code>false</code>
@@ -88,5 +89,10 @@ public interface ITargetDatabase {
 	 * @return associated zend target
 	 */
 	IZendTarget getTarget();
+
+	/**
+	 * @return result of connection process
+	 */
+	IStatus getResult();
 
 }

@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String OpenShiftTargetInitializer_UnsupportedCartridgeMessage;
 	public static String OpenShiftTunnel_CannotFindKey;
 	public static String TargetDatabase_1;
+	public static String TargetDatabase_NoDriversError;
 	public static String TargetDatabase_ProfileName;
 	public static String TargetsManagerService_RemoveTargetJob;
 	public static String VersionTester_IsNotValidVersionNumber;
