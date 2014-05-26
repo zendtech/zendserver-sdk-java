@@ -341,10 +341,9 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
 		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
 				10137));
-		// TODO set correct db port
 		String baseUrl = host.substring(host.indexOf('.'));
-		portForwardings.add(PortForwarding.createLocal(12333, username + "-db" //$NON-NLS-1$
-				+ baseUrl, 3306));
+		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
+				username + "-db" + baseUrl, 3306)); //$NON-NLS-1$
 		config.setPortForwardings(portForwardings);
 		config.setHttpProxyHost(host);
 		config.setHttpProxyPort("21653"); //$NON-NLS-1$

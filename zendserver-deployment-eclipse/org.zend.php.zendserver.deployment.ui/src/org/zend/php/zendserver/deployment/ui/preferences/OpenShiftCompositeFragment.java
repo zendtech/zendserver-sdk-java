@@ -372,9 +372,8 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 				.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
 		portForwardings.add(PortForwarding.createRemote(internalHost, 17000,
 				"127.0.0.1", 17000)); //$NON-NLS-1$
-		// TODO set correct db port
-		portForwardings.add(PortForwarding.createLocal(12333, internalHost,
-				3306));
+		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
+				internalHost, 3306));
 		config.setPortForwardings(portForwardings);
 		config.store(server);
 	}

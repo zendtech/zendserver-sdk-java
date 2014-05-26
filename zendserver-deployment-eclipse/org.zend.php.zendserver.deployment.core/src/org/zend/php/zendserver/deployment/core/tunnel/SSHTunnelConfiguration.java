@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding.Side;
 
 /**
  * SSH tunnel configuration. It contains all settings required to set up ssh
@@ -58,6 +60,30 @@ public class SSHTunnelConfiguration {
 		config.setHttpProxyHost(server.getAttribute(HTTP_PROXY_HOST, null));
 		config.setHttpProxyPort(server.getAttribute(HTTP_PROXY_PORT, null));
 		return config;
+	}
+
+	/**
+	 * Generate new port for database local port forwarding which is not in
+	 * conflict of any existing SSH tunnel configuration.
+	 * 
+	 * @return port for local port forwarding for database connection
+	 */
+	public static int getNewDatabasePort() {
+		Server[] servers = ServersManager.getServers();
+		int selectedPort = 12306;
+		for (Server server : servers) {
+			SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
+			List<PortForwarding> forwardings = config.getPortForwardings();
+			for (PortForwarding portForwarding : forwardings) {
+				if (portForwarding.getSide() == Side.LOCAL) {
+					int port = portForwarding.getLocalPort();
+					if (port > selectedPort) {
+						selectedPort = port + 1;
+					}
+				}
+			}
+		}
+		return selectedPort;
 	}
 
 	public void store(Server server) {

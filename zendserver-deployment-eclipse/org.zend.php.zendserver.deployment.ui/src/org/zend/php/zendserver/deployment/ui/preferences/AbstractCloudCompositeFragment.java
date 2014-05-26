@@ -27,6 +27,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
@@ -42,6 +43,8 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public abstract class AbstractCloudCompositeFragment extends
 		AbstractCompositeFragment {
+
+	private int lastPort = -1;
 
 	protected ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -180,6 +183,25 @@ public abstract class AbstractCloudCompositeFragment extends
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Generate new port for database local port forwarding which is not in
+	 * conflict of any existing SSH tunnel configuration (including any server
+	 * created during cloud servers detection which has not been added yet).
+	 * 
+	 * @return port for local port forwarding for database connection
+	 */
+	protected int getNewDatabasePort() {
+		int port = SSHTunnelConfiguration.getNewDatabasePort();
+		if (lastPort == -1) {
+			lastPort = port;
+		}
+		if (lastPort == port) {
+			port++;
+			lastPort = port;
+		}
+		return port;
 	}
 
 }
