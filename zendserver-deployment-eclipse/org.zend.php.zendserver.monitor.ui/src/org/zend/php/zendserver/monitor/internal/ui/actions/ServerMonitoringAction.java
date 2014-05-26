@@ -11,12 +11,11 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.actions.IActionContribution;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.internal.ui.Activator;
 import org.zend.php.zendserver.monitor.internal.ui.Messages;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -33,7 +32,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public String getLabel() {
-		IZendTarget target = getTarget(server);
+		IZendTarget target = ServerUtils.getTarget(server);
 		if (target != null) {
 			IEclipsePreferences prefs = InstanceScope.INSTANCE
 					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
@@ -49,7 +48,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public boolean isAvailable(Server server) {
-		return getTarget(server) != null;
+		return ServerUtils.getTarget(server) != null;
 	}
 
 	public ImageDescriptor getIcon() {
@@ -57,7 +56,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	}
 
 	public void run() {
-		IZendTarget target = getTarget(server);
+		IZendTarget target = ServerUtils.getTarget(server);
 		if (target != null) {
 			IEclipsePreferences prefs = InstanceScope.INSTANCE
 					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
@@ -73,23 +72,6 @@ public class ServerMonitoringAction implements IActionContribution {
 
 	public boolean isMulti() {
 		return false;
-	}
-
-	private IZendTarget getTarget(Server server) {
-		if (server != null) {
-			TargetsManager manager = TargetsManagerService.INSTANCE
-					.getTargetManager();
-			if (server != null) {
-				String serverName = server.getName();
-				IZendTarget[] targets = manager.getTargets();
-				for (IZendTarget target : targets) {
-					if (serverName.equals(target.getServerName())) {
-						return target;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 }

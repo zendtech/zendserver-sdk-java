@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.server.ui.IAddServerListener;
 import org.zend.php.server.ui.ServersCombo;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
@@ -413,8 +414,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				listener.statusChanged(validatePage());
 			}
 		});
-		targetsCombo.setListener(new ServersCombo.IAddServerListener() {
-
+		targetsCombo.setListener(new IAddServerListener() {
 			public void serverAdded(String name) {
 				changeHost(targetsCombo.getSelectedTarget());
 				listener.statusChanged(validatePage());

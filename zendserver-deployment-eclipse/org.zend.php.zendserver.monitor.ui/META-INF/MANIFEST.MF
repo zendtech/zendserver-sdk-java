@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.php.server.ui,
  org.eclipse.php.server.core,
  org.eclipse.php.ui,
- org.zend.php.server.ui
+ org.zend.php.server.ui,
+ org.zend.php.server.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.monitor.ui

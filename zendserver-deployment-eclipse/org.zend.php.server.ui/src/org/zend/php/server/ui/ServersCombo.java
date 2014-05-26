@@ -30,11 +30,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 
 /**
  * Component for presenting combo box with list of servers which fulfill
@@ -46,27 +46,67 @@ import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 @SuppressWarnings("restriction")
 public class ServersCombo {
 
-	public interface IAddServerListener {
-
-		public void serverAdded(String name);
-
-	}
+	/**
+	 * Get all servers.
+	 */
+	public static final IServerFilter ALL_SERVERS_FILTER = new IServerFilter() {
+		@Override
+		public Server[] filter(Server[] servers) {
+			return servers;
+		}
+	};
 
 	/**
-	 * Type of servers which should be populated in a combo.
-	 * 
+	 * Get all servers with deployment support.
 	 */
-	public enum Type {
-		ALL,
+	public static final IServerFilter DEPLOYMENT_FILTER = new IServerFilter() {
+		@Override
+		public Server[] filter(Server[] servers) {
+			List<Server> result = new ArrayList<Server>();
+			for (Server server : servers) {
+				if (ServerUtils.getTarget(server) != null) {
+					result.add(server);
+				}
+			}
+			return result.toArray(new Server[result.size()]);
+		}
+	};
 
-		PHPCLOUD,
+	/**
+	 * Get all Phpcloud servers.
+	 */
+	public static final IServerFilter PHPCLOUD_FILTER = new IServerFilter() {
+		@Override
+		public Server[] filter(Server[] servers) {
+			List<Server> result = new ArrayList<Server>();
+			for (Server server : servers) {
+				IZendTarget target = ServerUtils.getTarget(server);
+				if (TargetsManager.isPhpcloud(target)) {
+					result.add(server);
+				}
+			}
+			return result.toArray(new Server[result.size()]);
+		}
+	};
 
-		OPENSHIFT,
+	/**
+	 * Get all OpenShift servers.
+	 */
+	public static final IServerFilter OPENSHIFT_FILTER = new IServerFilter() {
+		@Override
+		public Server[] filter(Server[] servers) {
+			List<Server> result = new ArrayList<Server>();
+			for (Server server : servers) {
+				IZendTarget target = ServerUtils.getTarget(server);
+				if (TargetsManager.isOpenShift(target)) {
+					result.add(server);
+				}
+			}
+			return result.toArray(new Server[result.size()]);
+		}
+	};
 
-		ZEND_SERVER_6;
-	}
-
-	private TargetsManager targetsManager = TargetsManagerService.INSTANCE
+	private static TargetsManager targetsManager = TargetsManagerService.INSTANCE
 			.getTargetManager();
 
 	private Combo serversCombo;
@@ -79,27 +119,47 @@ public class ServersCombo {
 
 	private String tooltip;
 
-	private Type type;
-
 	private boolean addServer;
 
 	private IAddServerListener listener;
 
+	private IServerFilter filter;
+
+	/**
+	 * Create ServersCombo populated by servers with deployment support. By
+	 * default "PHP Servers:" label is used. To change it call
+	 * {@link ServersCombo#setLabel(String)}.
+	 */
 	public ServersCombo() {
-		this(Type.ALL, false);
+		this(DEPLOYMENT_FILTER, false);
 	}
 
-	public ServersCombo(Type type) {
-		this(type, false);
+	/**
+	 * Create ServersCombo populated by servers which match specified filter. By
+	 * default "PHP Servers:" label is used. To change it call
+	 * {@link ServersCombo#setLabel(String)}.
+	 */
+	public ServersCombo(IServerFilter filter) {
+		this(filter, false);
 	}
 
-	public ServersCombo(boolean addTarget) {
-		this(Type.ALL, addTarget);
+	/**
+	 * Create ServersCombo populated by servers with deployment support and Add
+	 * Server button visible. By default "PHP Servers:" label is used. To change
+	 * it call {@link ServersCombo#setLabel(String)}.
+	 */
+	public ServersCombo(boolean addButton) {
+		this(DEPLOYMENT_FILTER, addButton);
 	}
 
-	public ServersCombo(Type type, boolean addTarget) {
-		this.type = type;
-		this.addServer = addTarget;
+	/**
+	 * Create ServersCombo populated by servers which match specified filter.
+	 * and Add Server button visible. By default "PHP Servers:" label is used.
+	 * To change it call {@link ServersCombo#setLabel(String)}.
+	 */
+	public ServersCombo(IServerFilter filter, boolean addButton) {
+		this.filter = filter;
+		this.addServer = addButton;
 		this.labelText = Messages.ServersCombo_DefaultLabel;
 	}
 
@@ -127,7 +187,7 @@ public class ServersCombo {
 	 */
 	public void selectByTarget(String id) {
 		for (int i = 0; i < serversList.length; i++) {
-			IZendTarget target = getTarget(serversList[i]);
+			IZendTarget target = ServerUtils.getTarget(serversList[i]);
 			if (target.getId().equals(id)) {
 				serversCombo.select(i);
 				return;
@@ -151,7 +211,7 @@ public class ServersCombo {
 	 * @return {@link Server} instance instance if server name is selected;
 	 *         otherwise return <code>null</code>
 	 */
-	public Server getSelected() {
+	public Server getSelectedServer() {
 		int idx = serversCombo.getSelectionIndex();
 		if (idx <= -1) {
 			return null;
@@ -170,7 +230,7 @@ public class ServersCombo {
 		if (idx <= -1) {
 			return null;
 		}
-		return getTarget(serversList[idx]);
+		return ServerUtils.getTarget(serversList[idx]);
 	}
 
 	/**
@@ -185,7 +245,7 @@ public class ServersCombo {
 		if (serversList.length != 0) {
 			int i = 0;
 			for (Server server : serversList) {
-				IZendTarget target = getTarget(server);
+				IZendTarget target = ServerUtils.getTarget(server);
 				if (target != null && target.getId().equals(defaultId)) {
 					defaultNo = i;
 				}
@@ -212,8 +272,10 @@ public class ServersCombo {
 	 *            parent component
 	 */
 	public void createControl(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(labelText);
+		if (labelText != null) {
+			Label label = new Label(parent, SWT.NONE);
+			label.setText(labelText);
+		}
 		Composite comboContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
@@ -290,43 +352,9 @@ public class ServersCombo {
 	private Server[] filterServers(Server[] servers) {
 		List<Server> result = new ArrayList<Server>();
 		if (servers != null && servers.length > 0) {
-			for (Server server : servers) {
-				IZendTarget target = getTarget(server);
-				if (target == null) {
-					continue;
-				} else if (type == Type.PHPCLOUD
-						&& !TargetsManager.isPhpcloud(target)) {
-					continue;
-				} else if (type == Type.OPENSHIFT
-						&& !TargetsManager.isOpenShift(target)) {
-					continue;
-				} else if (type == Type.ZEND_SERVER_6) {
-					if (!TargetsManager.checkExactVersion(target,
-							ZendServerVersion.v6_X_X)) {
-						continue;
-					}
-				}
-				result.add(server);
-			}
+			return filter.filter(servers);
 		}
 		return result.toArray(new Server[0]);
-	}
-
-	private IZendTarget getTarget(Server server) {
-		if (server != null) {
-			TargetsManager manager = TargetsManagerService.INSTANCE
-					.getTargetManager();
-			if (server != null) {
-				String serverName = server.getName();
-				IZendTarget[] targets = manager.getTargets();
-				for (IZendTarget target : targets) {
-					if (serverName.equals(target.getServerName())) {
-						return target;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 }
