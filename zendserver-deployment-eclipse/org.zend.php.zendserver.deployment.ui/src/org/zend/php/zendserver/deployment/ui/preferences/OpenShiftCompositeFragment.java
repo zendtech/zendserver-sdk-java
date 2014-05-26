@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -29,8 +28,6 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -44,8 +41,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.statushandlers.StatusManager;
-import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.OpenShiftServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
@@ -72,7 +67,7 @@ import org.zend.sdklib.target.LicenseExpiredException;
  * 
  */
 @SuppressWarnings("restriction")
-public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
+public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 
 	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.PhpcloudCompositeFragment"; //$NON-NLS-1$
 
@@ -94,12 +89,6 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		super(parent, handler, isForEditing,
 				Messages.OpenShiftCompositeFragment_Title,
 				Messages.OpenShiftCompositeFragment_Desc);
-		createControl(isForEditing);
-	}
-
-	@Override
-	public boolean performOk() {
-		return isComplete();
 	}
 
 	@Override
@@ -144,13 +133,6 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void createControl(Composite parent) {
-		ModifyListener modifyListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateData();
-				validate();
-			}
-		};
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3,
 				1));
@@ -265,7 +247,16 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		btnGenerate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				generateKey();
+				final String key = generateKey();
+				if (key != null) {
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							privateKeyText.setText(key);
+						}
+					});
+				}
+				updateData();
+				validate();
 			}
 		});
 
@@ -282,6 +273,7 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 	protected void init() {
 	}
 
+	@Override
 	protected void detectServers(IProgressMonitor monitor) {
 		try {
 			IZendTarget[] targets = createTargets(monitor);
@@ -354,7 +346,8 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		}
 	}
 
-	private void updateData() {
+	@Override
+	protected void updateData() {
 		if (usernameText != null) {
 			username = usernameText.getText();
 		}
@@ -364,6 +357,31 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 		if (privateKeyText != null) {
 			privateKey = privateKeyText.getText();
 		}
+	}
+
+	@Override
+	protected void setupSSHConfiguration(Server server, IZendTarget target) {
+		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
+		config.setEnabled(true);
+		String uuid = target.getProperty(OpenShiftTarget.TARGET_UUID);
+		config.setUsername(uuid);
+		config.setPrivateKey(target
+				.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
+		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
+		String internalHost = target
+				.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
+		portForwardings.add(PortForwarding.createRemote(internalHost, 17000,
+				"127.0.0.1", 17000)); //$NON-NLS-1$
+		// TODO set correct db port
+		portForwardings.add(PortForwarding.createLocal(12333, internalHost,
+				3306));
+		config.setPortForwardings(portForwardings);
+		config.store(server);
+	}
+
+	@Override
+	protected String getGeneratedKeyName() {
+		return GENERATED_KEY_FILENAME;
 	}
 
 	private IZendTarget[] createTargets(IProgressMonitor monitor)
@@ -483,87 +501,6 @@ public class OpenShiftCompositeFragment extends AbstractCompositeFragment {
 				monitor.done();
 			}
 		});
-	}
-
-	private void generateKey() {
-		String sshHome = EclipseSSH2Settings.getSSHHome();
-		String file;
-		if (sshHome != null) {
-			File tmpFile = new File(sshHome, GENERATED_KEY_FILENAME);
-			int i = 1;
-			while (tmpFile.exists()) {
-				tmpFile = new File(sshHome, GENERATED_KEY_FILENAME + i);
-				i++;
-			}
-
-			file = tmpFile.getAbsolutePath();
-
-			boolean confirm = MessageDialog
-					.openConfirm(
-							privateKeyText.getShell(),
-							Messages.OpenShiftCompositeFragment_GenerateKeyTitle,
-							Messages.bind(
-									Messages.OpenShiftCompositeFragment_GenerateKeyMessage,
-									file));
-			if (!confirm) {
-				return;
-			}
-		} else {
-			FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
-			file = d.open();
-			if (file == null) {
-				return;
-			}
-		}
-
-		try {
-			EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE, file);
-
-			privateKeyText.setText(file);
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e), StatusManager.SHOW);
-		}
-	}
-
-	private void setupSSHConfiguration(Server server, IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String uuid = target.getProperty(OpenShiftTarget.TARGET_UUID);
-		config.setUsername(uuid);
-		config.setPrivateKey(target
-				.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		String internalHost = target
-				.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
-		portForwardings.add(PortForwarding.createRemote(internalHost, 17000,
-				"127.0.0.1", 17000)); //$NON-NLS-1$
-		// TODO set correct db port
-		portForwardings.add(PortForwarding.createLocal(12333, internalHost,
-				3306));
-		config.setPortForwardings(portForwardings);
-		config.store(server);
-	}
-	
-	private IZendTarget copy(ZendTarget t) {
-		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
-				t.getDefaultServerURL(), t.getKey(), t.getSecretKey());
-		String[] keys = t.getPropertiesKeys();
-		for (String key : keys) {
-			target.addProperty(key, t.getProperty(key));
-		}
-		return target;
-	}
-	
-	private Server getExistingServer(String host) {
-		Server[] servers = ServersManager.getServers();
-		for (Server server : servers) {
-			if (server.getHost().equals(host)) {
-				return server;
-			}
-		}
-		return null;
 	}
 
 }

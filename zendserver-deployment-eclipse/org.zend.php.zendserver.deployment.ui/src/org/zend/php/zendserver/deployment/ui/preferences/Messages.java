@@ -4,6 +4,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.preferences.messages"; //$NON-NLS-1$
+	public static String AbstarctCloudCompositeFragment_GenerateKeyMessage;
+	public static String AbstarctCloudCompositeFragment_GenerateKeyTitle;
 	public static String DeploymentCompositeFragment_Description;
 	public static String DeploymentCompositeFragment_DetectingCredentials;
 	public static String DeploymentCompositeFragment_DetectLabel;
@@ -36,8 +38,6 @@ public class Messages extends NLS {
 	public static String OpenShiftCompositeFragment_EmptyKeyError;
 	public static String OpenShiftCompositeFragment_EmptyPasswordError;
 	public static String OpenShiftCompositeFragment_EmptyUsernameError;
-	public static String OpenShiftCompositeFragment_GenerateKeyMessage;
-	public static String OpenShiftCompositeFragment_GenerateKeyTitle;
 	public static String OpenShiftCompositeFragment_GenerateLabel;
 	public static String OpenShiftCompositeFragment_InvalidKeyError;
 	public static String OpenShiftCompositeFragment_KeyDesc;
@@ -60,9 +60,7 @@ public class Messages extends NLS {
 	public static String PhpcloudCompositeFragment_EmptyKeyError;
 	public static String PhpcloudCompositeFragment_EmptyPasswordError;
 	public static String PhpcloudCompositeFragment_EmptyUsernameError;
-	public static String PhpcloudCompositeFragment_GenerateKeyMessage;
 	public static String PhpcloudCompositeFragment_GenerateLabel;
-	public static String PhpcloudCompositeFragment_GenrateKeyTitle;
 	public static String PhpcloudCompositeFragment_InvalidKeyError;
 	public static String PhpcloudCompositeFragment_KeyDesc;
 	public static String PhpcloudCompositeFragment_KeyLabel;

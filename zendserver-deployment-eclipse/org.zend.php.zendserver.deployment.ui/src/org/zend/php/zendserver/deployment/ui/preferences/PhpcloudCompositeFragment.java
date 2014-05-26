@@ -19,14 +19,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -34,11 +31,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.statushandlers.StatusManager;
-import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
@@ -60,7 +56,7 @@ import org.zend.sdklib.target.LicenseExpiredException;
  * 
  */
 @SuppressWarnings("restriction")
-public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
+public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 
 	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.PhpcloudCompositeFragment"; //$NON-NLS-1$
 
@@ -78,24 +74,11 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 	private String privateKey;
 	private boolean shouldStore;
 
-	/**
-	 * PlatformCompositeFragment constructor
-	 * 
-	 * @param parent
-	 * @param handler
-	 * @param isForEditing
-	 */
 	public PhpcloudCompositeFragment(Composite parent, IControlHandler handler,
 			boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.PhpcloudCompositeFragment_Title,
 				Messages.PhpcloudCompositeFragment_Desc);
-		createControl(isForEditing);
-	}
-
-	@Override
-	public boolean performOk() {
-		return isComplete();
 	}
 
 	@Override
@@ -140,13 +123,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void createControl(Composite parent) {
-		ModifyListener modifyListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateData();
-				validate();
-			}
-		};
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3,
 				1));
@@ -234,7 +210,14 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		});
 		btnGenerate.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				generateKey();
+				final String key = generateKey();
+				if (key != null) {
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							privateKeyText.setText(key);
+						}
+					});
+				}
 				updateData();
 				validate();
 			}
@@ -253,6 +236,7 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		shouldStoreButton.setSelection(true);
 	}
 
+	@Override
 	protected void detectServers(IProgressMonitor monitor) {
 		try {
 			IZendTarget[] targets = createTargets(monitor);
@@ -329,7 +313,8 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		}
 	}
 
-	private void updateData() {
+	@Override
+	protected void updateData() {
 		if (usernameText != null) {
 			username = usernameText.getText();
 		}
@@ -342,6 +327,33 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 		if (privateKeyText != null) {
 			privateKey = privateKeyText.getText();
 		}
+	}
+
+	@Override
+	protected void setupSSHConfiguration(Server server, IZendTarget target) {
+		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
+		config.setEnabled(true);
+		String host = server.getHost();
+		String username = host.substring(0, host.indexOf('.'));
+		config.setUsername(username);
+		config.setPrivateKey(target
+				.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH));
+		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
+		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
+				10137));
+		// TODO set correct db port
+		String baseUrl = host.substring(host.indexOf('.'));
+		portForwardings.add(PortForwarding.createLocal(12333, username + "-db" //$NON-NLS-1$
+				+ baseUrl, 3306));
+		config.setPortForwardings(portForwardings);
+		config.setHttpProxyHost(host);
+		config.setHttpProxyPort("21653"); //$NON-NLS-1$
+		config.store(server);
+	}
+
+	@Override
+	protected String getGeneratedKeyName() {
+		return GENERATED_KEY_FILENAME;
 	}
 
 	private IZendTarget[] createTargets(IProgressMonitor monitor)
@@ -400,109 +412,6 @@ public class PhpcloudCompositeFragment extends AbstractCompositeFragment {
 			}
 		}
 		return updatedTargets;
-	}
-
-	/**
-	 * Check if there is already a target with specified host URL
-	 * 
-	 * @param target
-	 * @return {@link IZendTarget} instance which has specified URL or
-	 *         <code>null</code> if such target does not exist
-	 */
-	private IZendTarget findExistingTarget(IZendTarget target) {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget t : targets) {
-			if (TargetsManager.isPhpcloud(t)
-					&& t.getHost().getHost().equals(target.getHost().getHost())) {
-				return t;
-			}
-		}
-		return null;
-	}
-
-	private void setupSSHConfiguration(Server server, IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String host = server.getHost();
-		String username = host.substring(0, host.indexOf('.'));
-		config.setUsername(username);
-		config.setPrivateKey(target
-				.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
-				10137));
-		// TODO set correct db port
-		String baseUrl = host.substring(host.indexOf('.'));
-		portForwardings.add(PortForwarding.createLocal(12333, username + "-db" //$NON-NLS-1$
-				+ baseUrl, 3306));
-		config.setPortForwardings(portForwardings);
-		config.setHttpProxyHost(host);
-		config.setHttpProxyPort("21653"); //$NON-NLS-1$
-		config.store(server);
-	}
-
-	private void generateKey() {
-		String sshHome = EclipseSSH2Settings.getSSHHome();
-		String file;
-		if (sshHome != null) {
-			File tmpFile = new File(sshHome, GENERATED_KEY_FILENAME);
-			int i = 1;
-			while (tmpFile.exists()) {
-				tmpFile = new File(sshHome, GENERATED_KEY_FILENAME + i);
-				i++;
-			}
-
-			file = tmpFile.getAbsolutePath();
-
-			boolean confirm = MessageDialog
-					.openConfirm(
-							privateKeyText.getShell(),
-							Messages.PhpcloudCompositeFragment_GenrateKeyTitle,
-							Messages.bind(
-									Messages.PhpcloudCompositeFragment_GenerateKeyMessage,
-									file));
-			if (!confirm) {
-				return;
-			}
-		} else {
-			FileDialog d = new FileDialog(usernameText.getShell(), SWT.SAVE);
-			file = d.open();
-			if (file == null) {
-				return;
-			}
-		}
-
-		try {
-			EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE, file);
-
-			privateKeyText.setText(file);
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							e.getMessage(), e), StatusManager.SHOW);
-		}
-	}
-
-	private IZendTarget copy(ZendTarget t) {
-		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
-				t.getDefaultServerURL(), t.getKey(), t.getSecretKey());
-		String[] keys = t.getPropertiesKeys();
-		for (String key : keys) {
-			target.addProperty(key, t.getProperty(key));
-		}
-		return target;
-	}
-
-	private Server getExistingServer(String host) {
-		Server[] servers = ServersManager.getServers();
-		for (Server server : servers) {
-			if (server.getHost().equals(host)) {
-				return server;
-			}
-		}
-		return null;
 	}
 
 }
