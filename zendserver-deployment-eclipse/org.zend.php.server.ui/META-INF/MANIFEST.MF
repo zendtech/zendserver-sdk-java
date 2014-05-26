@@ -8,13 +8,9 @@ Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.php.server.core,
- org.eclipse.php.core,
  org.eclipse.php.server.ui,
- org.eclipse.nebula.widgets.gallery,
  org.eclipse.php.ui,
- com.zend.php.zendserver.core,
  org.eclipse.php.debug.core,
- org.zend.sdk,
  org.zend.php.zendserver.deployment.core,
  org.zend.php.server.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
