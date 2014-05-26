@@ -24,5 +24,7 @@
     <module>../org.zend.php.zendserver.deployment.ui</module>
     <module>../org.zend.php.zendserver.monitor.core</module>
     <module>../org.zend.php.zendserver.monitor.ui</module>
+    <module>../org.zend.php.server.ui</module>
+    <module>../org.zend.php.server.core</module>
   </modules>
 </project>
