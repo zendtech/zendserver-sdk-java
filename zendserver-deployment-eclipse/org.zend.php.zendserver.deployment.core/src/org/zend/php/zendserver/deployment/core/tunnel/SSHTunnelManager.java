@@ -1,25 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
-import org.zend.sdklib.internal.target.ZendDevCloud;
-import org.zend.sdklib.manager.TargetsManager;
-import org.zend.sdklib.target.IZendTarget;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
 
 import com.jcraft.jsch.JSchException;
 
+/**
+ * SSH tunnel manager. It is responsible for managing SSH tunnels for different
+ * servers.
+ * 
+ * @author Wojciech Galanciak, 2014
+ * 
+ */
 public class SSHTunnelManager {
 
 	private static SSHTunnelManager manager;
 
-	private Map<IZendTarget, AbstractSSHTunnel> targets;
+	private Map<String, SSHTunnel> tunnels;
 
 	private SSHTunnelManager() {
-		this.targets = new HashMap<IZendTarget, AbstractSSHTunnel>();
+		this.tunnels = new HashMap<String, SSHTunnel>();
 	}
 
 	public static SSHTunnelManager getManager() {
@@ -29,139 +39,97 @@ public class SSHTunnelManager {
 		return manager;
 	}
 
-	public State connect(IZendTarget target) throws TunnelException, JSchException {
-		if (!isTargetSupported(target)) {
-			return null;
-		}
-		AbstractSSHTunnel tunnel = getTunnel(target);
-		boolean init = false;
+	/**
+	 * Set up SSH tunnel connection base on a configuration provided as an
+	 * argument.
+	 * 
+	 * @param config
+	 *            {@link SSHTunnelConfiguration} instance
+	 * @return {@link State#CONNECTED} if connection was established
+	 *         successfully; {@link State#CONNECTED} if tunnel is already
+	 *         connected; {@link State#ERROR} if any issues occurred during
+	 *         connection process
+	 * @throws TunnelException
+	 * @throws JSchException
+	 */
+	public State connect(SSHTunnelConfiguration config) throws TunnelException,
+			JSchException {
+		SSHTunnel tunnel = tunnels.get(config.getHost());
+		State result = null;
 		if (tunnel == null) {
-			if (TargetsManager.isPhpcloud(target)) {
-				String user = getUsername(target);
-				String privateKey = getSSHPrivateKey(target);
-				if (user == null || user.length() == 0 || privateKey == null
-						|| privateKey.length() == 0) {
-					return State.NOT_SUPPORTED;
-				}
-				tunnel = new ZendDevCloudTunnel(user, privateKey);
-				targets.put(target, tunnel);
-				init = true;
-			} else if (TargetsManager.isOpenShift(target)) {
-				String user = getUuid(target);
-				String privateKey = getSSHPrivateKey(target);
-				if (user == null || user.length() == 0 || privateKey == null
-						|| privateKey.length() == 0) {
-					return State.NOT_SUPPORTED;
-				}
-				String internalHost = target.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
-				String host = target.getDefaultServerURL().getHost();
-				tunnel = new OpenShiftTunnel(user, host, internalHost, privateKey);
-				targets.put(target, tunnel);
-				init = true;
-			}
-		}
-		return connect(tunnel, target, init);
-	}
-
-	public void disconnect(IZendTarget target) {
-		AbstractSSHTunnel tunnel = targets.get(target);
-		if (tunnel != null) {
-			tunnel.disconnect();
-		}
-	}
-
-	public void disconnectAll() {
-		Set<IZendTarget> targetsSet = targets.keySet();
-		for (IZendTarget target : targetsSet) {
-			disconnect(target);
-		}
-	}
-
-	public boolean isAvailable(IZendTarget target) {
-		AbstractSSHTunnel tunnel = targets.get(target);
-		if (tunnel != null) {
-			return true;
-		}
-		return false;
-	}
-
-	public int getDatabasePort(IZendTarget target) {
-		if (isTargetSupported(target)) {
-			AbstractSSHTunnel tunnel = targets.get(target);
-			if (tunnel != null) {
-				return tunnel.getDatabasePort();
-			}
-		}
-		return -1;
-	}
-
-	private AbstractSSHTunnel getTunnel(IZendTarget target) {
-		Set<IZendTarget> targetsSet = targets.keySet();
-		for (IZendTarget t : targetsSet) {
-			if (target.getHost().getHost().equals(t.getHost().getHost())) {
-				return targets.get(t);
-			}
-		}
-		return null;
-	}
-
-	private String getSSHPrivateKey(IZendTarget target) {
-		if (TargetsManager.isPhpcloud(target)) {
-			return target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
-		}
-		if (TargetsManager.isOpenShift(target)) {
-			return target.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH);
-		}
-		return null;
-	}
-
-	private String getUsername(IZendTarget target) {
-		if (TargetsManager.isPhpcloud(target)) {
-			String host = target.getHost().getHost();
-			return host.substring(0, host.indexOf('.'));
-		}
-		return null;
-	}
-
-	private String getUuid(IZendTarget target) {
-		if (TargetsManager.isOpenShift(target)) {
-			return target.getProperty(OpenShiftTarget.TARGET_UUID);
-		}
-		return null;
-	}
-
-	private State connect(AbstractSSHTunnel tunnel, IZendTarget target,
-			boolean init) throws TunnelException, JSchException {
-		if (init) {
+			tunnel = new SSHTunnel(config);
 			try {
-				return tunnel.connect();
+				result = tunnel.connect();
 			} catch (TunnelException e) {
 				tunnel.disconnect();
-				targets.remove(target);
+				tunnels.remove(tunnel.getConfig().getHost());
 				throw e;
 			}
-		} else {
-			if (!tunnel.isConnected()) {
-				try {
-					return tunnel.connect();
-				} catch (Exception e) {
-					// If tunnel exists but it is disconnected and failed to
-					// connect it again
-					// try to remove old tunnel and create a new one for it
-					targets.remove(target);
-					return connect(target);
-				}
+		} else if (!tunnel.isConnected()) {
+			try {
+				result = tunnel.connect();
+			} catch (Exception e) {
+				// If tunnel exists but it is disconnected and failed to
+				// connect it again
+				// try to remove old tunnel and create a new one for it
+				tunnels.remove(tunnel.getConfig().getHost());
+				result = connect(tunnel.getConfig());
 			}
 		}
-		return State.CONNECTED;
+		tunnels.put(config.getHost(), tunnel);
+		return result;
 	}
 
-	private boolean isTargetSupported(IZendTarget target) {
-		if (TargetsManager.isPhpcloud(target)
-				|| TargetsManager.isOpenShift(target)) {
+	/**
+	 * Disconnect tunnel for spepcifed host.
+	 * 
+	 * @param host
+	 *            host name
+	 */
+	public void disconnect(String host) {
+		SSHTunnel tunnel = tunnels.get(host);
+		if (tunnel != null) {
+			tunnel.disconnect();
+			tunnels.remove(host);
+		}
+	}
+
+	/**
+	 * Disconnect all acitve tunnels.
+	 */
+	public void disconnectAll() {
+		Set<String> keySet = tunnels.keySet();
+		for (String key : keySet) {
+			disconnect(key);
+		}
+	}
+
+	/**
+	 * Check connection state of SSH tunnel for specified host.
+	 * 
+	 * @param host
+	 *            host name
+	 * @return <code>true</code> if tunnel for specified host is opened;
+	 *         otherwise return <code>false</code>
+	 */
+	public boolean isConnected(String host) {
+		SSHTunnel tunnel = tunnels.get(host);
+		if (tunnel != null && tunnel.isConnected()) {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param host
+	 * @return database port
+	 */
+	public int getDatabasePort(String host) {
+		SSHTunnel tunnel = tunnels.get(host);
+		if (tunnel != null) {
+			return tunnel.getDatabasePort();
+		}
+		return -1;
 	}
 
 }

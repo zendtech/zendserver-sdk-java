@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
@@ -72,6 +73,15 @@ public class EclipseTargetsManager extends TargetsManager {
 				}
 			} catch (MalformedURLException e) {
 				// should not occur
+			}
+			if (TargetsManager.isPhpcloud(t)
+					&& t.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH) == null) {
+				SSHTunnelConfiguration config = SSHTunnelConfiguration
+						.read(server);
+				String privateKey = config.getPrivateKey();
+				if (privateKey != null) {
+					t.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKey);
+				}
 			}
 		}
 		IZendTarget result = super.add(target, suppressConnect);

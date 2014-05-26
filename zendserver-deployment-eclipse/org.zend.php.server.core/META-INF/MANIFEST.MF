@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PHP Servers Core
+Bundle-SymbolicName: org.zend.php.server.core
+Bundle-Version: 11.0.0.qualifier
+Bundle-Activator: org.zend.php.server.internal.core.ServersCore
+Bundle-Vendor: Zend Technologies Ltd.
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.php.debug.core,
+ org.eclipse.core.resources,
+ org.eclipse.php.server.core,
+ org.zend.sdk,
+ org.zend.php.zendserver.deployment.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.zend.php.server.core.utils

@@ -21,10 +21,13 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.INotificationChangeListener;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.core.tunnel.TunnelException;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
@@ -110,7 +113,11 @@ public abstract class AbstractTunnelHandler extends AbstractHandler {
 			State result = null;
 			if (TargetsManager.isPhpcloud(target)
 					|| TargetsManager.isOpenShift(target)) {
-				result = SSHTunnelManager.getManager().connect(target);
+				String serverName = target.getServerName();
+				Server server = ServersManager.getServer(serverName);
+				SSHTunnelConfiguration config = SSHTunnelConfiguration
+						.read(server);
+				result = SSHTunnelManager.getManager().connect(config);
 			}
 			switch (result) {
 			case CONNECTED:

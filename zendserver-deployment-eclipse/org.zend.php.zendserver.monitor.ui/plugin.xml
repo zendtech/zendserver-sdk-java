@@ -8,98 +8,33 @@
             class="org.zend.php.zendserver.monitor.internal.ui.NotificationProvider">
       </notificationProvider>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
-            class="org.zend.php.zendserver.monitor.ui.preferences.MonitoringPreferencePage"
-            id="org.zend.php.zendserver.monitor.ui.targetsMonitoring"
-            name="%page.name">
-      </page>
+<extension
+         id="com.zend.php.platform.ui.platformWizardFragment"
+         name="Application Monitoring"
+         point="org.eclipse.php.ui.wizardAndCompositeFragments">
+      <wizardAndCompositeFragment
+            class="org.zend.php.zendserver.monitor.ui.preferences.MonitoringFragmentFactory"
+            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
+            id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
+            name="Application Monitorng Fragment"
+            placeAfter="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"/>
    </extension>
 <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.zend.php.zendserver.deployment.ui.targetsview?after=popupGroup1">
-         <command
-               commandId="org.zend.php.zendserver.monitor.ui.startMonitoring"
-               label="%command.label"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <test
-                     forcePluginActivation="true"
-                     property="propertyTester.targetMonitor.visible"
-                     value="false">
-               </test>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.zend.php.zendserver.monitor.ui.stopMonitoring"
-               label="%command.label.0"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <test
-                     forcePluginActivation="true"
-                     property="propertyTester.targetMonitor.visible"
-                     value="true">
-               </test>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.zend.php.zendserver.monitor.ui.monitoringPreferences"
-               label="%command.label.1"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <iterate
-                     ifEmpty="false"
-                     operator="and">
-                  <test
-                        forcePluginActivation="true"
-                        property="propertyTester.monitoringPreferences.visible"
-                        value="true">
-                  </test>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-<extension
-      point="org.eclipse.core.expressions.propertyTesters">
-   <propertyTester
-         class="org.zend.php.zendserver.monitor.internal.ui.commands.MonitoringPrefsPropertyTester"
-         id="org.zend.php.zendserver.monitor.ui.monitoringPreferencesTester"
-         namespace="propertyTester.monitoringPreferences"
-         properties="visible"
-         type="java.lang.Object">
-   </propertyTester>
-   <propertyTester
-         class="org.zend.php.zendserver.monitor.internal.ui.commands.MonitorStateTester"
-         id="org.zend.php.zendserver.monitor.ui.MonitorStateTester"
-         namespace="propertyTester.targetMonitor"
-         properties="visible"
-         type="java.lang.Object">
-   </propertyTester>
-</extension>
-<extension
-      point="org.eclipse.ui.commands">
-   <command
-         defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.StartMonitorHandler"
-         id="org.zend.php.zendserver.monitor.ui.startMonitoring"
-         name="%command.name">
-   </command>
-   <command
-         defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.StopMonitorHandler"
-         id="org.zend.php.zendserver.monitor.ui.stopMonitoring"
-         name="%command.name.0">
-   </command>
-   <command
-         defaultHandler="org.zend.php.zendserver.monitor.internal.ui.commands.MonitoringPreferencesHandler"
-         id="org.zend.php.zendserver.monitor.ui.monitoringPreferences"
-         name="%command.name.1">
-   </command>
+      point="org.zend.php.server.ui.actionContributions">
+   <action
+         class="org.zend.php.zendserver.monitor.internal.ui.actions.ServerMonitoringAction">
+      <serverType
+            id="org.zend.php.server.ui.types.ZendServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.server.ui.types.OpenShiftServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.server.ui.types.PhpcloudServerType">
+      </serverType>
+      <serverType
+            id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+      </serverType>
+   </action>
 </extension>
 </plugin>

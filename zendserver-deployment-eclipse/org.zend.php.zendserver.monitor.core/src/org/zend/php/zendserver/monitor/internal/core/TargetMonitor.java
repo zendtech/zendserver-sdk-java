@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -53,7 +52,7 @@ public class TargetMonitor extends AbstractMonitor {
 	 * @param enable
 	 */
 	public void setEnabled(boolean enable) {
-		getPreferences().putBoolean(targetId, enable);
+		MonitorManager.getPreferences().putBoolean(targetId, enable);
 	}
 
 	/*
@@ -63,7 +62,7 @@ public class TargetMonitor extends AbstractMonitor {
 	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
 	 */
 	public void disable(boolean codeTracing) {
-		getPreferences().putBoolean(targetId, false);
+		MonitorManager.getPreferences().putBoolean(targetId, false);
 		if (codeTracing) {
 			disableCodeTacing();
 		}
@@ -76,7 +75,7 @@ public class TargetMonitor extends AbstractMonitor {
 	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return getPreferences().getBoolean(targetId, false);
+		return MonitorManager.getPreferences().getBoolean(targetId, false);
 	}
 
 	/*
@@ -86,7 +85,7 @@ public class TargetMonitor extends AbstractMonitor {
 	 * flushPreferences()
 	 */
 	public void flushPreferences() throws BackingStoreException {
-		getPreferences().flush();
+		MonitorManager.getPreferences().flush();
 	}
 
 	public void updateFilters() {
@@ -94,7 +93,7 @@ public class TargetMonitor extends AbstractMonitor {
 	}
 
 	public List<String> getFilters(String targetId) {
-		String val = getPreferences().get(
+		String val = MonitorManager.getPreferences().get(
 				MonitorManager.getFiltersKey(targetId), null);
 		if (val != null) {
 			return new ArrayList<String>(Arrays.asList(val
@@ -223,13 +222,9 @@ public class TargetMonitor extends AbstractMonitor {
 		}
 		return basePath;
 	}
-
-	private IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-	}
 	
 	private boolean shouldNotify(IssueSeverity severity, String baseURL) {
-		IEclipsePreferences prefs = getPreferences();
+		IEclipsePreferences prefs = MonitorManager.getPreferences();
 		String nodeName = targetId + '.' + severity.getName();
 		if (prefs.getBoolean(nodeName, true)) {
 			for (String filter : filters) {

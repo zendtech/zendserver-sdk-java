@@ -20,7 +20,11 @@ Require-Bundle: org.eclipse.ui,
  org.zend.php.zendserver.monitor.core,
  org.zend.core.notifications,
  org.eclipse.php.server.ui,
- org.eclipse.help
+ org.eclipse.help,
+ org.eclipse.php.ui,
+ org.eclipse.php.server.core,
+ org.zend.php.server.ui,
+ org.zend.php.server.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Zend Technologies Ltd.

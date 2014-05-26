@@ -555,6 +555,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 			}
 			IZendTarget updated = loader.update(target);
 			if (updated != null) {
+				IZendTarget old = getTargetById(updated.getId());
+				int index = all.indexOf(old);
+				all.remove(index);
+				all.add(index, updated);
 				statusChanged(new BasicStatus(StatusCode.UNKNOWN,
 						"updated target", "updated target"));
 			}

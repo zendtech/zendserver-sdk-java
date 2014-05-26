@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.datatools.connectivity.ConnectEvent;
@@ -25,21 +26,25 @@ import org.eclipse.datatools.connectivity.drivers.DriverManager;
 import org.eclipse.datatools.connectivity.drivers.IPropertySet;
 import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCConnectionProfileConstants;
 import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCDriverDefinitionConstants;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.AbstractSSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
  * @author Wojciech Galanciak, 2012
- *
+ * 
  */
+@SuppressWarnings("restriction")
 public abstract class TargetDatabase implements ITargetDatabase {
 
 	protected static final String PROTOCOL = "jdbc:mysql://"; //$NON-NLS-1$
@@ -48,12 +53,14 @@ public abstract class TargetDatabase implements ITargetDatabase {
 
 	protected IZendTarget target;
 	protected String profileId;
-	
+
 	protected String password;
 	protected boolean savePassword;
-	
+
 	protected TargetsDatabaseManager manager;
 	protected IConnectionProfile profile;
+
+	protected IStatus result;
 
 	protected TargetDatabase(IZendTarget target, TargetsDatabaseManager manager) {
 		super();
@@ -66,46 +73,38 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	 * Create instance of target database that corresponds to specified target's
 	 * type.
 	 * 
-	 * @param t
+	 * @param target
 	 *            zend target
-	 * @param m
+	 * @param databaseManager
 	 *            database manager
 	 * @return instance of corresponding target database
 	 */
-	public static ITargetDatabase create(IZendTarget t, TargetsDatabaseManager m) {
-		if (TargetsManager.isOpenShift(t)) {
-			return new OpenShiftDatabase(t, m);
+	public static ITargetDatabase create(IZendTarget target,
+			TargetsDatabaseManager databaseManager) {
+		if (TargetsManager.isOpenShift(target)) {
+			return new OpenShiftDatabase(target, databaseManager);
 		}
-		if (TargetsManager.isPhpcloud(t)) {
-			return new PhpcloudDatabase(t, m);
+		if (TargetsManager.isPhpcloud(target)) {
+			return new PhpcloudDatabase(target, databaseManager);
 		}
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.deployment.core.database.ITargetDatabase#
-	 * createProfile()
-	 */
+	@Override
 	public boolean createProfile() {
+		result = Status.OK_STATUS;
 		boolean isValid = isTunnelAvailable();
 		if (!isValid) {
 			isValid = connectTunnel();
 		}
 		if (isValid) {
 			String url = getUrl();
-			if (url == null) {
-				// TODO handle null url
-				return false;
-			}
 			profile = findProfile();
 			if (profile != null) {
 				validatePort();
 				initListener();
 				return true;
 			}
-
 			DriverInstance[] dilist = DriverManager.getInstance()
 					.getAllDriverInstances();
 			Properties properties = null;
@@ -127,7 +126,8 @@ public abstract class TargetDatabase implements ITargetDatabase {
 						IJDBCDriverDefinitionConstants.URL_PROP_ID, url);
 			}
 			if (properties == null) {
-				// TODO handle it
+				result = new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
+						Messages.TargetDatabase_NoDriversError);
 				return false;
 			}
 			try {
@@ -147,19 +147,15 @@ public abstract class TargetDatabase implements ITargetDatabase {
 				initListener();
 				return true;
 			} catch (ConnectionProfileException e) {
+				result = new Status(IStatus.ERROR, DeploymentCore.PLUGIN_ID,
+						e.getMessage());
 				DeploymentCore.log(e);
 			}
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.internal.database.ITargetDatabase
-	 * #connect(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public boolean connect(IProgressMonitor monitor) {
 		if (connectTunnel()) {
 			if (profile != null) {
@@ -175,13 +171,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.internal.database.ITargetDatabase
-	 * #disconnect()
-	 */
+	@Override
 	public void disconnect() {
 		IConnectionProfile profile = ProfileManager.getInstance()
 				.getProfileByInstanceID(profileId);
@@ -198,13 +188,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#setPassword
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setPassword(String password) {
 		Properties props = profile.getBaseProperties();
 		if (password != null) {
@@ -218,13 +202,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		profile.setBaseProperties(props);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.internal.database.ITargetDatabase
-	 * #isConnected()
-	 */
+	@Override
 	public ConnectionState getState() {
 		if (profile != null) {
 			return ConnectionState.byState(profile.getConnectionState());
@@ -232,13 +210,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		return ConnectionState.UNAVAILABLE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#hasPassword
-	 * ()
-	 */
+	@Override
 	public boolean hasPassword() {
 		if (profile != null) {
 			String password = profile.getBaseProperties().getProperty(
@@ -249,47 +221,31 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 		return false;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.deployment.core.database.ITargetDatabase#
-	 * isSavePassword()
-	 */
+
+	@Override
 	public boolean isSavePassword() {
 		return savePassword;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.deployment.core.database.ITargetDatabase#
-	 * setSavePassword(boolean)
-	 */
+	@Override
 	public void setSavePassword(boolean save) {
 		this.savePassword = save;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#remove()
-	 */
+	@Override
 	public void remove() {
 		profile = null;
 		manager.stateChanged(this, ConnectionState.UNAVAILABLE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.deployment.core.database.ITargetDatabase#getTarget
-	 * ()
-	 */
+	@Override
 	public IZendTarget getTarget() {
 		return target;
+	}
+
+	@Override
+	public IStatus getResult() {
+		return result;
 	}
 
 	protected abstract String getUrl();
@@ -297,12 +253,15 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	protected abstract String getUsername();
 
 	protected abstract String getDatabaseName();
-	
+
 	protected abstract String getProfilePrefix();
 
 	private boolean connectTunnel() {
 		try {
-			State result = SSHTunnelManager.getManager().connect(target);
+			String serverName = target.getServerName();
+			Server server = ServersManager.getServer(serverName);
+			SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
+			State result = SSHTunnelManager.getManager().connect(config);
 			switch (result) {
 			case CONNECTING:
 			case CONNECTED:
@@ -370,11 +329,16 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	}
 
 	private boolean isTunnelAvailable() {
-		return SSHTunnelManager.getManager().isAvailable(target);
+		String serverName = target.getServerName();
+		Server server = ServersManager.getServer(serverName);
+		return SSHTunnelManager.getManager().isConnected(server.getHost());
 	}
 
 	private void validatePort() {
-		int port = SSHTunnelManager.getManager().getDatabasePort(target);
+		String serverName = target.getServerName();
+		Server server = ServersManager.getServer(serverName);
+		int port = SSHTunnelManager.getManager().getDatabasePort(
+				server.getHost());
 		Properties properties = profile.getBaseProperties();
 		String url = properties
 				.getProperty(IJDBCDriverDefinitionConstants.URL_PROP_ID);
@@ -396,7 +360,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 
 	}
-	
+
 	private void savePassword() {
 		Properties props = profile.getBaseProperties();
 		if (savePassword) {

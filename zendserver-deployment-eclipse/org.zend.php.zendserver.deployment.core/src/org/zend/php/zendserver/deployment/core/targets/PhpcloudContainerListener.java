@@ -80,6 +80,9 @@ public class PhpcloudContainerListener implements IRequestListener {
 		String host = url.getHost();
 		if (TargetsManager.isPhpcloud(host)) {
 			IZendTarget target = getTarget(host);
+			if (target == null) {
+				return true;
+			}
 			Long timestamp = timestamps.get(target.getId());
 			if (timestamp != null) {
 				Long currentTime = System.currentTimeMillis();

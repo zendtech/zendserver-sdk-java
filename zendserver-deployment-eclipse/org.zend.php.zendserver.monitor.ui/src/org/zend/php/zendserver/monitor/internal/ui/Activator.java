@@ -27,6 +27,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String REFRESH = "icons/refresh.png"; //$NON-NLS-1$
 	public static final String JUMP_TO = "icons/jumpto.png"; //$NON-NLS-1$
 	public static final String TRACE = "icons/trace.png"; //$NON-NLS-1$
+	
+	public static final String MONITORING_ICON = "icons/monitoring.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

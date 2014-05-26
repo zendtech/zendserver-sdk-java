@@ -29,7 +29,8 @@ public class PhpcloudDatabase extends TargetDatabase {
 	 * #getUrl()
 	 */
 	protected String getUrl() {
-		int port = SSHTunnelManager.getManager().getDatabasePort(target);
+		int port = SSHTunnelManager.getManager().getDatabasePort(
+				target.getHost().getHost());
 		return PROTOCOL + DEFAULT_HOST + ':' + port + '/' + getDatabaseName();
 	}
 

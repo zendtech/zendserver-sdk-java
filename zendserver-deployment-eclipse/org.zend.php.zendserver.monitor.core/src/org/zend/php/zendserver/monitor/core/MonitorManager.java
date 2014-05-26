@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.monitor.internal.core.AbstractMonitor;
@@ -187,6 +189,10 @@ public class MonitorManager {
 
 	public static String getFiltersKey(String targetId) {
 		return targetId + '.' + FILTERS_PREF;
+	}
+	
+	public static IEclipsePreferences getPreferences() {
+		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 	}
 
 	public static void setDefaultPreferences(IZendTarget target) {

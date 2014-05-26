@@ -49,7 +49,7 @@ public class ZendDevCloudTunnel extends AbstractSSHTunnel {
 	}
 
 	public ZendDevCloudTunnel(String user, String privateKey) {
-		this(user, ZendDevCloud.DEVPASS_HOST, privateKey, new EmptyUserInfo());
+		this(user, ZendDevCloud.DEVPASS_HOST, privateKey, new SimpleUserInfo());
 	}
 
 

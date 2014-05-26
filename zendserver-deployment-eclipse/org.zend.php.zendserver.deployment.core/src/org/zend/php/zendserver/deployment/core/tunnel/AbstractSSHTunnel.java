@@ -55,7 +55,7 @@ public abstract class AbstractSSHTunnel {
 	}
 
 	public AbstractSSHTunnel(String baseUrl, String privateKey) {
-		this(baseUrl, privateKey, new EmptyUserInfo());
+		this(baseUrl, privateKey, new SimpleUserInfo());
 	}
 
 	public State connect() throws TunnelException, JSchException {
