@@ -26,7 +26,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.php.feature.group" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/zend-pdt/lastSuccessfulBuild/artifact/result/"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/zend-pdt/lastSuccessfulBuild/artifact/dev/org.eclipse.php-repository/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.dltk.core.feature.group" version="0.0.0"/>
