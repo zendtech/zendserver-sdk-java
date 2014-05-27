@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,7 +38,6 @@ import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
@@ -331,22 +329,8 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 
 	@Override
 	protected void setupSSHConfiguration(Server server, IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String host = server.getHost();
-		String username = host.substring(0, host.indexOf('.'));
-		config.setUsername(username);
-		config.setPrivateKey(target
-				.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
-				10137));
-		String baseUrl = host.substring(host.indexOf('.'));
-		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
-				username + "-db" + baseUrl, 3306)); //$NON-NLS-1$
-		config.setPortForwardings(portForwardings);
-		config.setHttpProxyHost(host);
-		config.setHttpProxyPort("21653"); //$NON-NLS-1$
+		SSHTunnelConfiguration config = SSHTunnelConfiguration
+				.createPhpcloudConfiguration(server, target);
 		config.store(server);
 	}
 

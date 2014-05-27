@@ -18,4 +18,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.server.ui,
  org.zend.php.server.ui.actions,
  org.zend.php.server.ui.fragments,
+ org.zend.php.server.ui.migration,
  org.zend.php.server.ui.types

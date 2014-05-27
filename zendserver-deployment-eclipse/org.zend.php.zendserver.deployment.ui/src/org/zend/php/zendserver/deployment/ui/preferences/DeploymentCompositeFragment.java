@@ -310,6 +310,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			updateState(false);
 		}
 		updateData();
+		validate();
 	}
 
 	private void saveValues() {

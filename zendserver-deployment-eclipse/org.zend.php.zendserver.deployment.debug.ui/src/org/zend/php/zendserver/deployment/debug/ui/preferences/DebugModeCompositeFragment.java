@@ -312,6 +312,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 		}
 		viewer.setInput(input);
 		viewer.refresh();
+		validate();
 	}
 
 	private void removeElement(ISelection selection) {

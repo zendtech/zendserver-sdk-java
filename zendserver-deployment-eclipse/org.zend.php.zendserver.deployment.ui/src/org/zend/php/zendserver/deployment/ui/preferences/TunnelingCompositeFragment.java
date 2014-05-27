@@ -208,6 +208,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 				proxyPortText.setText(proxyPort);
 			}
 		}
+		validate();
 	}
 
 	private void createCredentialsGroup(Composite parent) {

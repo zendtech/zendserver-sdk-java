@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,7 +45,6 @@ import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetData;
@@ -361,20 +359,8 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 
 	@Override
 	protected void setupSSHConfiguration(Server server, IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String uuid = target.getProperty(OpenShiftTarget.TARGET_UUID);
-		config.setUsername(uuid);
-		config.setPrivateKey(target
-				.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		String internalHost = target
-				.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
-		portForwardings.add(PortForwarding.createRemote(internalHost, 17000,
-				"127.0.0.1", 17000)); //$NON-NLS-1$
-		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
-				internalHost, 3306));
-		config.setPortForwardings(portForwardings);
+		SSHTunnelConfiguration config = SSHTunnelConfiguration
+				.createOpenShiftConfiguration(target);
 		config.store(server);
 	}
 

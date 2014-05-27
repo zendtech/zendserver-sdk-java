@@ -209,6 +209,7 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 		}
 		viewer.setInput(input);
 		viewer.refresh();
+		validate();
 	}
 
 	private IZendTarget getTarget() {

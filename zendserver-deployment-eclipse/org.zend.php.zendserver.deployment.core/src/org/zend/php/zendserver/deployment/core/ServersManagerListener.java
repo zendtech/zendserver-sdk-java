@@ -8,14 +8,19 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.IServersManagerListener;
 import org.eclipse.php.internal.server.core.manager.ServerManagerEvent;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.internal.target.ZendTarget;
+import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
  * Implementation of {@link IServersManagerListener}. It is added during plug-in
@@ -27,6 +32,8 @@ import org.zend.sdklib.target.IZendTarget;
  */
 @SuppressWarnings("restriction")
 public class ServersManagerListener implements IServersManagerListener {
+
+	private List<IZendTarget> removedTargets = new ArrayList<IZendTarget>();
 
 	@Override
 	public void serverRemoved(ServerManagerEvent event) {
@@ -45,6 +52,7 @@ public class ServersManagerListener implements IServersManagerListener {
 				}
 			}
 			if (toRemove != null) {
+				removedTargets.add(toRemove);
 				manager.remove(toRemove);
 			}
 		}
@@ -71,6 +79,22 @@ public class ServersManagerListener implements IServersManagerListener {
 
 	@Override
 	public void serverAdded(ServerManagerEvent event) {
+		for (IZendTarget target : removedTargets) {
+			String serverName = target.getServerName();
+			if (event.getServer().getName().equals(serverName)) {
+				TargetsManager manager = TargetsManagerService.INSTANCE
+						.getTargetManager();
+				try {
+					manager.add(target, true);
+					return;
+				} catch (TargetException e) {
+					// cannot occur, suppress connection
+				} catch (LicenseExpiredException e) {
+					// cannot occur, suppress connection
+				}
+			}
+		}
+		removedTargets.clear();
 	}
 
 }

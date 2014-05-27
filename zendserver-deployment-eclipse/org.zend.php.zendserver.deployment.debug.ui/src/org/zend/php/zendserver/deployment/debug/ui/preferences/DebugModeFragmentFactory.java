@@ -15,6 +15,8 @@ import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.server.ui.types.OpenShiftServerType;
+import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.server.ui.types.ZendServerType;
 import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
 
@@ -46,8 +48,10 @@ public class DebugModeFragmentFactory implements ICompositeFragmentFactory {
 			typeId = server.getAttribute(IServerType.TYPE, null);
 		}
 		return typeId != null
-				&& (ZendServerType.ID.equals(typeId) || LocalZendServerType.ID
-						.equals(typeId));
+				&& (ZendServerType.ID.equals(typeId)
+						|| LocalZendServerType.ID.equals(typeId)
+						|| PhpcloudServerType.ID.equals(typeId) || OpenShiftServerType.ID
+							.equals(typeId));
 	}
 
 	public String getId() {
