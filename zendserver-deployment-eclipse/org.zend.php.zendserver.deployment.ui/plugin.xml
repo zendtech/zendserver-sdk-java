@@ -155,9 +155,6 @@
 	            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
 	            </fragment>
 	            <fragment
-	                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
-	            </fragment>
-	            <fragment
 	                  id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
 	            </fragment>
 	            <fragment

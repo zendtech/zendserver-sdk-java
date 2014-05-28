@@ -89,14 +89,49 @@ public class SSHTunnelConfiguration {
 		return selectedPort;
 	}
 
+	/**
+	 * Store SSH tunnel configuration in specified PHP server's settings.
+	 * 
+	 * @param server
+	 */
 	public void store(Server server) {
 		server.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
-		server.setAttribute(USERNAME, getUsername());
-		server.setAttribute(PASSWORD, getPassword());
-		server.setAttribute(PRIVATE_KEY, getPrivateKey());
-		server.setAttribute(PORT_FORWARDING, serializeForwarding());
-		server.setAttribute(HTTP_PROXY_HOST, getHttpProxyHost());
-		server.setAttribute(HTTP_PROXY_PORT, getHttpProxyPort());
+		String username = getUsername();
+		if (username != null && !username.isEmpty()) {
+			server.setAttribute(USERNAME, username);
+		} else {
+			server.removeAttribute(USERNAME);
+		}
+		String password = getPassword();
+		if (password != null && !password.isEmpty()) {
+			server.setAttribute(USERNAME, password);
+		} else {
+			server.removeAttribute(PASSWORD);
+		}
+		String privateKey = getPrivateKey();
+		if (privateKey != null && !privateKey.isEmpty()) {
+			server.setAttribute(PRIVATE_KEY, getPrivateKey());
+		} else {
+			server.removeAttribute(PRIVATE_KEY);
+		}
+		String portForwarding = serializeForwarding();
+		if (portForwarding != null) {
+			server.setAttribute(PORT_FORWARDING, portForwarding);
+		} else {
+			server.removeAttribute(PORT_FORWARDING);
+		}
+		String httpProxyHost = getHttpProxyHost();
+		if (httpProxyHost != null && !httpProxyHost.isEmpty()) {
+			server.setAttribute(HTTP_PROXY_HOST, httpProxyHost);
+		} else {
+			server.removeAttribute(HTTP_PROXY_HOST);
+		}
+		String httpProxyPort = getHttpProxyPort();
+		if (httpProxyPort != null && !httpProxyPort.isEmpty()) {
+			server.setAttribute(HTTP_PROXY_PORT, httpProxyPort);
+		} else {
+			server.removeAttribute(HTTP_PROXY_PORT);
+		}
 	}
 
 	public boolean isEnabled() {
@@ -189,6 +224,21 @@ public class SSHTunnelConfiguration {
 		config.setHttpProxyHost(host);
 		config.setHttpProxyPort("21653"); //$NON-NLS-1$
 		return config;
+	}
+
+	/**
+	 * Remove SSH tunnel attributes for specified PHP server.
+	 * 
+	 * @param server
+	 */
+	public static void remove(Server server) {
+		server.removeAttribute(ENABLED);
+		server.removeAttribute(USERNAME);
+		server.removeAttribute(PASSWORD);
+		server.removeAttribute(PRIVATE_KEY);
+		server.removeAttribute(PORT_FORWARDING);
+		server.removeAttribute(HTTP_PROXY_HOST);
+		server.removeAttribute(HTTP_PROXY_PORT);
 	}
 
 	/**

@@ -70,6 +70,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	private ModifyListener modifyListener = new ModifyListener() {
 
 		public void modifyText(ModifyEvent e) {
+			updateData();
 			validate();
 		}
 	};
@@ -90,29 +91,11 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	 * Saves the page's state
 	 */
 	public void saveValues() {
-		config.setEnabled(enableButton.getSelection());
-		String username = usernameText.getText();
-		if (!username.isEmpty()) {
-			config.setUsername(username);
+		if (config.isEnabled()) {
+			config.store(getServer());
+		} else {
+			SSHTunnelConfiguration.remove(getServer());
 		}
-		String password = passwordText.getText();
-		if (!password.isEmpty()) {
-			config.setPassword(password);
-		}
-		String privateKey = privateKeyText.getText();
-		if (!privateKey.isEmpty()) {
-			config.setPrivateKey(privateKey);
-		}
-
-		String httpProxyHost = proxyHostText.getText();
-		if (!httpProxyHost.isEmpty()) {
-			config.setHttpProxyHost(httpProxyHost);
-		}
-		String httpProxyPort = proxyPortText.getText();
-		if (!httpProxyPort.isEmpty()) {
-			config.setHttpProxyPort(httpProxyPort);
-		}
-		config.store(getServer());
 	}
 
 	public boolean performOk() {
@@ -125,16 +108,16 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	public void validate() {
-		if (enableButton.getSelection()) {
-			String username = usernameText.getText();
-			if (username.isEmpty()) {
+		if (config.isEnabled()) {
+			String username = config.getUsername();
+			if (username != null && username.isEmpty()) {
 				setMessage(
 						Messages.TunnelingCompositeFragment_EmptyUsernameError,
 						IMessageProvider.ERROR);
 				return;
 			}
-			String password = passwordText.getText();
-			if (password.isEmpty()) {
+			String password = config.getPassword();
+			if (password != null && password.isEmpty()) {
 				String privateKey = privateKeyText.getText();
 				if (privateKey.isEmpty()) {
 					setMessage(
@@ -143,12 +126,8 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 					return;
 				}
 			}
-			String httpProxyHost = proxyHostText.getText();
-			if (!httpProxyHost.isEmpty()) {
-				config.setHttpProxyHost(httpProxyHost);
-			}
-			String httpProxyPort = proxyPortText.getText();
-			if (!httpProxyPort.isEmpty()) {
+			String httpProxyPort = config.getHttpProxyPort();
+			if (httpProxyPort != null && !httpProxyPort.isEmpty()) {
 				try {
 					Integer.valueOf(httpProxyPort);
 				} catch (NumberFormatException e) {
@@ -170,6 +149,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = enableButton.getSelection();
 				updateState(enabled);
+				updateData();
 				validate();
 			}
 		});
@@ -207,7 +187,12 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 			if (proxyPort != null) {
 				proxyPortText.setText(proxyPort);
 			}
+		} else {
+			config = new SSHTunnelConfiguration();
+			enableButton.setSelection(false);
 		}
+		updateData();
+		updateState(config.isEnabled());
 		validate();
 	}
 
@@ -218,7 +203,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 				Messages.TunnelingCompositeFragment_UsernameLabel,
 				credentialsGroup);
 		usernameText.forceFocus();
-		passwordText = createText(
+		passwordText = createPasswordText(
 				Messages.TunnelingCompositeFragment_PasswordLabel,
 				credentialsGroup);
 		Label label = new Label(credentialsGroup, SWT.NONE);
@@ -449,6 +434,15 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		return text;
 	}
 
+	private Text createPasswordText(String name, Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(name);
+		Text text = new Text(parent, SWT.BORDER | SWT.PASSWORD);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		text.addModifyListener(modifyListener);
+		return text;
+	}
+
 	private Group createGroup(String name, Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(name);
@@ -456,6 +450,42 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 				1));
 		group.setLayout(new GridLayout(3, false));
 		return group;
+	}
+
+	private void updateData() {
+		if (enableButton != null) {
+			config.setEnabled(enableButton.getSelection());
+		}
+		if (usernameText != null) {
+			String username = usernameText.getText();
+			if (!username.isEmpty()) {
+				config.setUsername(username);
+			}
+		}
+		if (passwordText != null) {
+			String password = passwordText.getText();
+			if (!password.isEmpty()) {
+				config.setPassword(password);
+			}
+		}
+		if (privateKeyText != null) {
+			String privateKey = privateKeyText.getText();
+			if (!privateKey.isEmpty()) {
+				config.setPrivateKey(privateKey);
+			}
+		}
+		if (proxyHostText != null) {
+			String httpProxyHost = proxyHostText.getText();
+			if (!httpProxyHost.isEmpty()) {
+				config.setHttpProxyHost(httpProxyHost);
+			}
+		}
+		if (proxyPortText != null) {
+			String httpProxyPort = proxyPortText.getText();
+			if (!httpProxyPort.isEmpty()) {
+				config.setHttpProxyPort(httpProxyPort);
+			}
+		}
 	}
 
 	private void updateState(boolean enabled) {

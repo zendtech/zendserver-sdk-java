@@ -3,6 +3,39 @@
 <plugin>
    <extension-point id="deployWizardContribution" name="Deployment Wizard Contribution" schema="schema/deployWizardContribution.exsd"/>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.LaunchApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.launchApplication"
+            name="%command.name">
+         <commandParameter
+               id="mode"
+               name="%commandParameter.name"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="projectName"
+               name="%commandParameter.name.0"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.deployApplication"
+            name="%command.name.0">
+            <commandParameter
+               id="mode"
+               name="%commandParameter.name.1"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="projectName"
+               name="%commandParameter.name.2"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
       <launchConfigurationTab
             class="org.zend.php.zendserver.deployment.debug.ui.config.DeploymentLaunchConfigurationTab"
