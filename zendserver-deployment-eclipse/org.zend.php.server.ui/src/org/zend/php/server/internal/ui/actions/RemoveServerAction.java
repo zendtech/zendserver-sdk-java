@@ -57,6 +57,18 @@ public class RemoveServerAction extends AbstractServerAction implements
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
 		boolean newVal = !selection.isEmpty();
+		if (newVal) {
+			List<Server> servers = getSelection();
+			if (servers.size() > 1) {
+				newVal = false;
+			} else {
+				if (ServersManager.getDefaultServer(null).getName()
+						.equals(servers.get(0).getName())) {
+					newVal = false;
+				}
+			}
+
+		}
 		if (isEnabled != newVal) {
 			isEnabled = newVal;
 			firePropertyChange(ENABLED, !isEnabled, isEnabled);
