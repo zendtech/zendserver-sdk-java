@@ -383,11 +383,7 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 			updatedTargets[i].addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH,
 					privateKey);
 			try {
-				if (existingTarget != null) {
-					tm.updateTarget(updatedTargets[i], true);
-				} else {
-					tm.add(updatedTargets[i], true);
-				}
+				tm.add(updatedTargets[i], true);
 			} catch (TargetException e) {
 				// should not appear cause we do not try to connect to it
 			} catch (LicenseExpiredException e) {

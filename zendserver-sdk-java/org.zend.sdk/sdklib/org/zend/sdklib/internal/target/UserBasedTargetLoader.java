@@ -141,7 +141,9 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		if (target == null) {
 			throw new IllegalArgumentException("target is null");
 		}
-
+		if (target.isTemporary()) {
+			return target;
+		}
 		final File df = getDescriptorFile(target.getId());
 		TargetDescriptor descriptor = loadTargetDescriptor(df);
 		if (descriptor == null) {

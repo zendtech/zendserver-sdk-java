@@ -115,7 +115,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		IZendTarget existingTarget = getTarget(target.getHost(),
 				target.getKey());
 		if (existingTarget != null) {
-			return updateTarget(existingTarget, target);
+			return updateTarget(existingTarget, target, suppressConnect);
 		} else {
 			// notify loader on addition
 			this.loader.add(target);
@@ -476,11 +476,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget)
+	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget, boolean suppressConnect)
 			throws LicenseExpiredException {
 		IZendTarget updated = updateTarget(existing.getId(), newTarget
 				.getHost().toString(), newTarget.getDefaultServerURL()
-				.toString(), newTarget.getKey(), newTarget.getSecretKey());
+				.toString(), newTarget.getKey(), newTarget.getSecretKey(), suppressConnect);
 		ZendTarget updatedZT = (ZendTarget) updated;
 
 		ZendTarget newZT = (ZendTarget) newTarget;
@@ -492,9 +492,16 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		return updated;
 	}
-
+	
 	public IZendTarget updateTarget(String targetId, String host,
 			String defaultServer, String key, String secretKey)
+			throws LicenseExpiredException {
+		return updateTarget(targetId, host, defaultServer, key, secretKey,
+				false);
+	}
+
+	public IZendTarget updateTarget(String targetId, String host,
+			String defaultServer, String key, String secretKey, boolean suppressConnect)
 			throws LicenseExpiredException {
 		ZendTarget target = (ZendTarget) getTargetById(targetId);
 		if (target == null) {
@@ -515,7 +522,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 				target.setSecretKey(secretKey);
 			}
 			try {
-				if (!target.connect(WebApiVersion.V1_3, ServerType.ZEND_SERVER)) {
+				if (!suppressConnect
+						&& !target.connect(WebApiVersion.V1_3,
+								ServerType.ZEND_SERVER)) {
 					return null;
 				}
 			} catch (WebApiException e) {
@@ -555,6 +564,10 @@ public class TargetsManager extends AbstractChangeNotifier {
 			}
 			IZendTarget updated = loader.update(target);
 			if (updated != null) {
+				IZendTarget old = getTargetById(updated.getId());
+				int index = all.indexOf(old);
+				all.remove(index);
+				all.add(index, updated);
 				statusChanged(new BasicStatus(StatusCode.UNKNOWN,
 						"updated target", "updated target"));
 			}
