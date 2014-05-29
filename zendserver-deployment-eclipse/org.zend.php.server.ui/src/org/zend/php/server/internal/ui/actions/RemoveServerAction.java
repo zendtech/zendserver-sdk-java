@@ -59,15 +59,13 @@ public class RemoveServerAction extends AbstractServerAction implements
 		boolean newVal = !selection.isEmpty();
 		if (newVal) {
 			List<Server> servers = getSelection();
-			if (servers.size() > 1) {
-				newVal = false;
-			} else {
+			for (Server server : servers) {
 				if (ServersManager.getDefaultServer(null).getName()
-						.equals(servers.get(0).getName())) {
+						.equals(server.getName())) {
 					newVal = false;
+					break;
 				}
 			}
-
 		}
 		if (isEnabled != newVal) {
 			isEnabled = newVal;
