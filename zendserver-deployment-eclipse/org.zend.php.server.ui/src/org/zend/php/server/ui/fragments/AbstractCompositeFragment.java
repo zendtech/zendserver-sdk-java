@@ -91,7 +91,7 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 		setLayout(pageLayout);
 
 		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(3, false));
 
 		createControl(composite);
