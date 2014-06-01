@@ -254,6 +254,23 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
 				2, 1));
 		hostText.addModifyListener(modifyListener);
+		hostText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				if (hostText != null && detectButton != null) {
+					String host = hostText.getText().trim();
+					if (!host.isEmpty() && !DEFAULT_HOST.equals(host)) {
+						try {
+							new URL(host);
+							detectButton.setEnabled(true);
+							return;
+						} catch (MalformedURLException e) {
+							// set detect to false
+						}
+					}
+					detectButton.setEnabled(false);
+				}
+			}
+		});
 		hostText.setText(DEFAULT_HOST);
 		hostText.setSelection(hostText.getText().length());
 
@@ -298,6 +315,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 					keyText.setText(target.getKey());
 					secretText.setText(target.getSecretKey());
 					enableButton.setSelection(true);
+					detectButton.setEnabled(true);
 					updateState(true);
 					break;
 				}
@@ -307,6 +325,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
 			enableButton.setSelection(false);
+			detectButton.setEnabled(false);
 			updateState(false);
 		}
 		updateData();
