@@ -25,9 +25,6 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 
 	private static final String ZENDSERVER_GUI_URL_KEY = "zendserver_default_port"; //$NON-NLS-1$
 
-	private String username;
-	private String password;
-
 	public EclipseApiKeyDetector(String username, String password,
 			String serverUrl) {
 		super(username, password, serverUrl);
@@ -67,7 +64,7 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 		return "http://localhost:10081/ZendServer"; //$NON-NLS-1$
 	}
 
-	public String[] getServerCredentials(final String serverName,
+	public void getServerCredentials(final String serverName,
 			final String message) {
 		Display.getDefault().syncExec(new Runnable() {
 
@@ -76,19 +73,11 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 						Display.getDefault().getActiveShell(),
 						"Zend Server Credentials", message, serverName); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
-					username = dialog.getUsername();
-					password = dialog.getPassword();
-				} else {
-					username = null;
-					password = null;
+					setUsername(dialog.getUsername());
+					setPassword(dialog.getPassword());
 				}
 			}
 		});
-		if (username == null || username.trim().isEmpty() || password == null
-				|| password.trim().isEmpty()) {
-			return null;
-		}
-		return new String[] { username, password };
 	}
 
 }

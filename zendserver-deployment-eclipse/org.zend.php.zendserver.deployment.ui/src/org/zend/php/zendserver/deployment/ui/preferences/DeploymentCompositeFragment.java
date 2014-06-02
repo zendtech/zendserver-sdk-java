@@ -40,6 +40,7 @@ import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.sdklib.target.InvalidCredentialsException;
 import org.zend.sdklib.target.LicenseExpiredException;
 
 /**
@@ -383,20 +384,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 						monitor.beginTask(
 								Messages.DeploymentCompositeFragment_DetectingCredentials,
 								IProgressMonitor.UNKNOWN);
-						final ApiKeyDetector detector = new EclipseApiKeyDetector(
-								host + "/ZendServer"); //$NON-NLS-1$
-						detector.createApiKey(null);
-						Display.getDefault().asyncExec(new Runnable() {
-
-							public void run() {
-								String key = detector.getKey();
-								String secret = detector.getSecretKey();
-								if (key != null && secret != null) {
-									keyText.setText(key);
-									secretText.setText(secret);
-								}
-							}
-						});
+						detectApiKey(null);
 					} catch (SdkException e) {
 						String message = e.getMessage();
 						Throwable cause = e.getCause();
@@ -413,6 +401,28 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			Activator.log(e);
 		} catch (InterruptedException e) {
 			Activator.log(e);
+		}
+	}
+
+	private void detectApiKey(String message) throws SdkException {
+		try {
+			final ApiKeyDetector detector = new EclipseApiKeyDetector(host
+					+ "/ZendServer"); //$NON-NLS-1$
+			if (detector.createApiKey(message)) {
+				Display.getDefault().asyncExec(new Runnable() {
+
+					public void run() {
+						String key = detector.getKey();
+						String secret = detector.getSecretKey();
+						if (key != null && secret != null) {
+							keyText.setText(key);
+							secretText.setText(secret);
+						}
+					}
+				});
+			}
+		} catch (InvalidCredentialsException e) {
+			detectApiKey(Messages.LocalTargetDetector_InvalidCredentialsMessage);
 		}
 	}
 

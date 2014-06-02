@@ -63,13 +63,10 @@ public abstract class ApiKeyDetector {
 				throw new NoBootstrapException();
 			}
 			if (username == null && password == null) {
-				String[] credentials = getServerCredentials(serverUrl,
-						validationMessage);
-				if (credentials == null || credentials.length != 2) {
+				getServerCredentials(serverUrl, validationMessage);
+				if (username == null || password == null) {
 					return false;
 				}
-				username = credentials[0];
-				password = credentials[1];
 			}
 			String sessionId = login();
 			if (sessionId != null) {
@@ -99,29 +96,6 @@ public abstract class ApiKeyDetector {
 		}
 	}
 
-	private boolean isBootstrapped() throws SdkException {
-		HttpClient client = new HttpClient();
-		HttpMethodBase method = new GetMethod(getUrl("/Login"));
-		if (method != null) {
-			int statusCode = -1;
-			try {
-				statusCode = client.executeMethod(method);
-				if (statusCode == 200) {
-					String responseContent = new String(
-							method.getResponseBody());
-					if (!responseContent.contains("BootstrapWizard")) {
-						return true;
-					}
-				}
-			} catch (IOException e) {
-				throw new SdkException(e);
-			} finally {
-				method.releaseConnection();
-			}
-		}
-		return false;
-	}
-
 	public String getKey() {
 		return name;
 	}
@@ -138,8 +112,24 @@ public abstract class ApiKeyDetector {
 		this.serverUrl = serverUrl;
 	}
 
-	public abstract String[] getServerCredentials(String serverUrl,
+	public abstract void getServerCredentials(String serverUrl,
 			String validationMessage);
+
+	protected void setUsername(String username) {
+		this.username = username;
+	}
+
+	protected void setPassword(String password) {
+		this.password = password;
+	}
+	
+	protected String getUsername() {
+		return username;
+	}
+	
+	protected String getPassword() {
+		return password;
+	}
 
 	private String login() throws SdkException {
 		Map<String, String> params = new HashMap<String, String>();
@@ -162,6 +152,29 @@ public abstract class ApiKeyDetector {
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put(SESSION_ID, sessionId);
 		return executeGetApiKeys(getUrl("/Api/apiKeysGetList"), cookies); //$NON-NLS-1$
+	}
+
+	private boolean isBootstrapped() throws SdkException {
+		HttpClient client = new HttpClient();
+		HttpMethodBase method = new GetMethod(getUrl("/Login")); //$NON-NLS-1$
+		if (method != null) {
+			int statusCode = -1;
+			try {
+				statusCode = client.executeMethod(method);
+				if (statusCode == 200) {
+					String responseContent = new String(
+							method.getResponseBody());
+					if (!responseContent.contains("BootstrapWizard")) { //$NON-NLS-1$
+						return true;
+					}
+				}
+			} catch (IOException e) {
+				throw new SdkException(e);
+			} finally {
+				method.releaseConnection();
+			}
+		}
+		return false;
 	}
 
 	private String getUrl(String suffix) {
