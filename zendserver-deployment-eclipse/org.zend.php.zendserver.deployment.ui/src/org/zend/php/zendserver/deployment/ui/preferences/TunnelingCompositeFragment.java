@@ -497,8 +497,8 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		proxyPortText.setEnabled(enabled);
 		table.setEnabled(enabled);
 		addButton.setEnabled(enabled);
-		editButton.setEnabled(enabled);
-		removeButton.setEnabled(enabled);
+		editButton.setEnabled(false);
+		removeButton.setEnabled(false);
 	}
 
 }
