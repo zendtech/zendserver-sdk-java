@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.config;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -17,21 +16,14 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.zend.core.notifications.NotificationManager;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
 import org.zend.php.zendserver.deployment.core.descriptor.ParameterType;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLaunchJob;
@@ -185,9 +177,8 @@ public class DeploymentHandler {
 		}
 		return IStatus.OK;
 	}
-	
-	public int noWizardDeploy(IDeploymentHelper helper,
-			IProject project) {
+
+	public int noWizardDeploy(IDeploymentHelper helper, IProject project) {
 		try {
 			job = new DeployLaunchJob(helper, project);
 			job.setUser(true);
@@ -299,26 +290,26 @@ public class DeploymentHandler {
 						job = getAutoDeployJob(helper, project);
 					}
 				}
-				LaunchUtils.updatePreferences(project,
-						helper.getTargetId(), helper.getBaseURL().toString());
-				return checkSSHTunnel(helper);
-			}
-			switch (deploymentJob.getResponseCode()) {
-			case BASE_URL_CONFLICT:
-			case APPLICATION_CONFLICT:
-				return handleConflict(helper, project,
-						deploymentJob.getResponseCode());
-			case INVALID_PARAMETER:
-				IStatus result = job.getResult();
-				if (result.getSeverity() == IStatus.INFO) {
+				LaunchUtils.updatePreferences(project, helper.getTargetId(),
+						helper.getBaseURL().toString());
+			} else {
+				switch (code) {
+				case BASE_URL_CONFLICT:
+				case APPLICATION_CONFLICT:
 					return handleConflict(helper, project,
 							deploymentJob.getResponseCode());
+				case INVALID_PARAMETER:
+					IStatus result = job.getResult();
+					if (result.getSeverity() == IStatus.INFO) {
+						return handleConflict(helper, project,
+								deploymentJob.getResponseCode());
+					}
+				default:
+					break;
 				}
-			default:
-				break;
 			}
 		}
-		return checkSSHTunnel(helper);
+		return IStatus.OK;
 	}
 
 	private AbstractLaunchJob getAutoDeployJob(IDeploymentHelper helper,
@@ -349,52 +340,8 @@ public class DeploymentHandler {
 		return job;
 	}
 
-	private int checkSSHTunnel(IDeploymentHelper helper) {
-		if (mode != null && mode.equals(ILaunchManager.DEBUG_MODE)) {
-			IZendTarget target = TargetsManagerService.INSTANCE
-					.getTargetManager().getTargetById(helper.getTargetId());
-			Server server = getServer(target);
-			SSHTunnelConfiguration config = SSHTunnelConfiguration
-					.read(server);
-			try {
-				State result = null;
-				result = SSHTunnelManager.getManager().connect(config);
-				if (result != null) {
-					switch (result) {
-					case CONNECTING:
-						String message = MessageFormat.format(
-								Messages.OpenTunnelCommand_SuccessMessage,
-								target.getId());
-						NotificationManager.registerInfo(
-								Messages.OpenTunnelCommand_OpenTunnelTitle,
-								message, 4000);
-						break;
-					case NOT_SUPPORTED:
-						NotificationManager.registerWarning(
-								Messages.OpenTunnelCommand_OpenTunnelTitle,
-								Messages.OpenTunnelCommand_NotSupportedMessage,
-								4000);
-						break;
-					default:
-						return IStatus.OK;
-					}
-				}
-			} catch (Exception e) {
-				Activator.log(e);
-				String message = MessageFormat.format(
-						Messages.DeploymentHandler_sshTunnelErrorTitle,
-						target.getId());
-				NotificationManager.registerError(
-						Messages.OpenTunnelCommand_OpenTunnelTitle, message,
-						4000);
-				return IStatus.ERROR;
-			}
-		}
-		return IStatus.OK;
-	}
-
-	private int handleConflict(IDeploymentHelper helper,
-			IProject project, ResponseCode code) throws InterruptedException {
+	private int handleConflict(IDeploymentHelper helper, IProject project,
+			ResponseCode code) throws InterruptedException {
 		if (helper.isWarnUpdate()) {
 			switch (code) {
 			case BASE_URL_CONFLICT:
@@ -571,11 +518,6 @@ public class DeploymentHandler {
 				MessageDialog.QUESTION, new String[] {
 						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 0);
-	}
-	
-	private Server getServer(IZendTarget target) {
-		String serverName = target.getServerName();
-		return ServersManager.getServer(serverName);
 	}
 
 }

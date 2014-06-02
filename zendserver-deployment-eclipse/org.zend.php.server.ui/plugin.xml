@@ -183,5 +183,11 @@
          <startup
             class="org.zend.php.server.internal.ui.ServersMigrationStartup"></startup>
    </extension>
+   <extension
+         point="org.eclipse.php.debug.core.phpLaunchDelegateListener">
+      <launchDelegateListener
+            class="org.zend.php.server.internal.ui.ServerLaunchDelegateListener">
+      </launchDelegateListener>
+   </extension>
 
 </plugin>
