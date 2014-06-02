@@ -3,8 +3,8 @@ package org.zend.php.zendserver.deployment.ui;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
+import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
-import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 

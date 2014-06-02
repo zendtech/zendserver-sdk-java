@@ -15,10 +15,10 @@ import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.server.ui.types.OpenShiftServerType;
 import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.server.ui.types.ZendServerType;
-import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014

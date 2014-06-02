@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filebuffers,
  org.eclipse.php.core,
  org.eclipse.dltk.core,
- org.zend.webapi;resolution:=optional;visibility:=reexport
+ org.zend.webapi;resolution:=optional;visibility:=reexport,
+ org.eclipse.php.debug.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.deployment.core,

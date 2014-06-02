@@ -51,6 +51,7 @@ public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 							Messages.LocalZendServerCompositeFragment_CannotDetectError,
 							IMessageProvider.ERROR);
 				} else {
+					ZendServerManager.setupPathMapping(server);
 					LocalTargetDetector detector = new LocalTargetDetector(
 							this.server);
 					detector.detect();

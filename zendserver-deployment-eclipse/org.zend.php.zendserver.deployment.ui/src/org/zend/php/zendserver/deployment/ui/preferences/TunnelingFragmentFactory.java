@@ -18,7 +18,7 @@ import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.types.LocalApacheType;
-import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
+import org.zend.php.server.ui.types.LocalZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014

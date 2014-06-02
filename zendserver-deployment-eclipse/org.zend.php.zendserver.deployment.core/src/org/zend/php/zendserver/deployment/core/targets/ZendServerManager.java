@@ -18,8 +18,16 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.php.internal.debug.core.pathmapper.PathEntry.Type;
+import org.eclipse.php.internal.debug.core.pathmapper.PathMapper;
+import org.eclipse.php.internal.debug.core.pathmapper.PathMapper.Mapping;
+import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
+import org.eclipse.php.internal.debug.core.pathmapper.VirtualPath;
 import org.eclipse.php.internal.server.core.Server;
+import org.osgi.framework.Bundle;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 
 import com.ice.jni.registry.NoSuchKeyException;
@@ -43,7 +51,7 @@ public class ZendServerManager {
 	public static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
 	public static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
 	public static final String ZENDSERVER_GUI_URL_KEY = "zendserver_default_port"; //$NON-NLS-1$
-	
+
 	// TODO can be used for refreshing local settings
 	public static final String ZENDSERVER_INSTALL_LOCATION = "InstallLocation";//$NON-NLS-1$
 
@@ -124,6 +132,32 @@ public class ZendServerManager {
 	public Server getLocalZendServer() {
 		Server server = null;
 		return getLocalZendServer(server);
+	}
+
+	/**
+	 * Setup path mapping for a local Zend Server.
+	 * 
+	 * @param server
+	 */
+	public static void setupPathMapping(Server server) {
+		String location = server.getAttribute(
+				ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
+		if (location != null) {
+			Bundle bundle = Platform
+					.getBundle("org.zend.php.framework.resource"); //$NON-NLS-1$
+			IPath workingLibPath = Platform.getStateLocation(bundle).append(
+					"resources/ZendFramework-1/library"); //$NON-NLS-1$
+			Mapping mapping = new Mapping();
+			mapping.remotePath = new VirtualPath(new Path(location).append(
+					"ZendServer/share/ZendFramework/library") //$NON-NLS-1$
+					.toString());
+
+			mapping.localPath = new VirtualPath(workingLibPath.toString());
+			mapping.type = Type.EXTERNAL;
+			PathMapper pathMapper = PathMapperRegistry.getByServer(server);
+			pathMapper.setMapping(new Mapping[] { mapping });
+			PathMapperRegistry.storeToPreferences();
+		}
 	}
 
 	/**

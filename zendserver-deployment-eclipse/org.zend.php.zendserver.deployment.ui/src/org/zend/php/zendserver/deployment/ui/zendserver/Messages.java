@@ -12,7 +12,6 @@ public class Messages extends NLS {
 	public static String LocalZendServerCompositeFragment_NameConflictError;
 	public static String LocalZendServerCompositeFragment_NameLabel;
 	public static String LocalZendServerCompositeFragment_NameTooltip;
-	public static String LocalZendServerType_Name;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

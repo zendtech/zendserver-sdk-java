@@ -7,12 +7,13 @@
  * any use. 
  *
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.zendserver;
+package org.zend.php.server.ui.types;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
-import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.server.internal.ui.Messages;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * Representation of local Zend Server type.
@@ -22,7 +23,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
  */
 public class LocalZendServerType implements IServerType {
 
-	public static final String ID = "org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType"; //$NON-NLS-1$ 
+	public static final String ID = "org.zend.php.server.ui.types.LocalZendServerType"; //$NON-NLS-1$ 
 
 	public String getId() {
 		return ID;
@@ -33,12 +34,11 @@ public class LocalZendServerType implements IServerType {
 	}
 
 	public Image getViewIcon() {
-		return Activator.getDefault()
-				.getImage(Activator.IMAGE_ZEND_SERVER_ICON);
+		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
 	}
 
 	public ImageDescriptor getWizardImage() {
-		return Activator.getImageDescriptor(Activator.IMAGE_ZEND_SERVER_WIZ);
+		return ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ);
 	}
 
 }

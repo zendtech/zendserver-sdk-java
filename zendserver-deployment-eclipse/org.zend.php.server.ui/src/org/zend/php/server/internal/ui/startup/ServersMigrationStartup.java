@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *******************************************************************************/
-package org.zend.php.server.internal.ui;
+package org.zend.php.server.internal.ui.startup;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.core.utils.ServerUtils;
