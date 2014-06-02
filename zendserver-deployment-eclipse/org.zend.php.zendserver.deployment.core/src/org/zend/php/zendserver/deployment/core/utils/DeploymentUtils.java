@@ -23,6 +23,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -34,10 +35,6 @@ import org.zend.sdklib.target.IZendTarget;
  * 
  */
 public class DeploymentUtils {
-
-	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
-	private static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
-	private static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1$
 
 	/**
 	 * Returns application URL used for last deployment.
@@ -176,8 +173,8 @@ public class DeploymentUtils {
 			URL baseURL = target.getDefaultServerURL();
 			Server[] servers = ServersManager.getServers();
 			for (Server server : servers) {
-
-				String zsPort = server.getAttribute(ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
+				String zsPort = server.getAttribute(
+						ZendServerManager.ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
 				URL serverBaseURL = new URL(server.getBaseURL());
 				if (serverBaseURL.getHost().equals(baseURL.getHost())
 						&& Integer.valueOf(zsPort) != -1) {
@@ -239,9 +236,12 @@ public class DeploymentUtils {
 			if (TargetsManager.isOpenShift(target)) {
 				zsPort = 80;
 			}
-			server.setAttribute(ZENDSERVER_PORT_KEY, String.valueOf(zsPort));
-			server.setAttribute(ZENDSERVER_ENABLED_KEY, "true"); //$NON-NLS-1$
-			server.setAttribute(DEFAULT_URL_KEY, "/ZendServer"); //$NON-NLS-1$
+			server.setAttribute(ZendServerManager.ZENDSERVER_PORT_KEY,
+					String.valueOf(zsPort));
+			server.setAttribute(ZendServerManager.ZENDSERVER_ENABLED_KEY,
+					"true"); //$NON-NLS-1$
+			server.setAttribute(ZendServerManager.DEFAULT_URL_KEY,
+					"/ZendServer"); //$NON-NLS-1$
 			ServersManager.addServer(server);
 			ServersManager.save();
 			return server;

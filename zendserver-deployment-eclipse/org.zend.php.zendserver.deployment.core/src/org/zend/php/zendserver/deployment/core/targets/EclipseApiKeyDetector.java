@@ -23,8 +23,6 @@ import org.zend.sdklib.internal.target.ApiKeyDetector;
  */
 public class EclipseApiKeyDetector extends ApiKeyDetector {
 
-	private static final String ZENDSERVER_GUI_URL_KEY = "zendserver_default_port"; //$NON-NLS-1$
-
 	public EclipseApiKeyDetector(String username, String password,
 			String serverUrl) {
 		super(username, password, serverUrl);
@@ -50,7 +48,7 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 				URL serverBaseURL = new URL(server.getBaseURL());
 				if (serverBaseURL.getHost().equals("localhost")) { //$NON-NLS-1$
 					String defaultPort = server.getAttribute(
-							ZENDSERVER_GUI_URL_KEY, null);
+							ZendServerManager.ZENDSERVER_GUI_URL_KEY, null);
 					if (defaultPort != null) {
 						return "http://localhost:" + defaultPort //$NON-NLS-1$
 								+ "/ZendServer"; //$NON-NLS-1$

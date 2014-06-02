@@ -1,9 +1,9 @@
 package org.zend.php.zendserver.deployment.ui;
 
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.server.ui.types.BasicServerType;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -26,11 +26,12 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 	protected boolean migrate(Server server) {
 		String typeId = getServerType(server);
 		if (typeId == null) {
-			typeId = BasicServerType.ID;
 			if (isLocalZendServer(server)) {
 				typeId = LocalZendServerType.ID;
 			}
-			setType(server, typeId);
+			if (typeId != null) {
+				setType(server, typeId);
+			}
 			return true;
 		}
 		return false;
@@ -38,7 +39,17 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 
 	private boolean isLocalZendServer(Server server) {
 		IZendTarget target = ServerUtils.getTarget(server);
-		return TargetsManager.isLocalhost(target);
+		if (TargetsManager.isLocalhost(target)) {
+			return true;
+		} else {
+			String enabled = server.getAttribute(
+					ZendServerManager.ZENDSERVER_ENABLED_KEY,
+					String.valueOf(false));
+			if (Boolean.valueOf(enabled)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

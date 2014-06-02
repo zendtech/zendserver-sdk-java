@@ -33,6 +33,7 @@ import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.monitor.core.Activator;
@@ -49,8 +50,6 @@ import org.zend.webapi.core.connection.data.Issue;
  * 
  */
 public class EventDetails implements IEventDetails {
-
-	private static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
 
 	private String projectName;
 	private String basePath;
@@ -115,7 +114,7 @@ public class EventDetails implements IEventDetails {
 	public long getLine() {
 		return line;
 	}
-	
+
 	public String getLocalFile() {
 		String local = convertToLocalFilename();
 		if (local != null) {
@@ -151,6 +150,7 @@ public class EventDetails implements IEventDetails {
 		}
 		return null;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -300,7 +300,7 @@ public class EventDetails implements IEventDetails {
 						return server;
 					} else {
 						String zsPort = server.getAttribute(
-								ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
+								ZendServerManager.ZENDSERVER_PORT_KEY, "-1"); //$NON-NLS-1$
 						if (Integer.valueOf(zsPort) == baseURL.getPort()) {
 							return server;
 						}

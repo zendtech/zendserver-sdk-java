@@ -38,6 +38,12 @@ import com.ice.jni.registry.RegistryKey;
 @SuppressWarnings("restriction")
 public class ZendServerManager {
 
+	// old Zend Server attributes
+	public static final String ZENDSERVER_ENABLED_KEY = "zendserver_enabled"; //$NON-NLS-1$
+	public static final String ZENDSERVER_PORT_KEY = "zendserver_default_port"; //$NON-NLS-1$
+	public static final String DEFAULT_URL_KEY = "zendserver_defaulturl"; //$NON-NLS-1$
+	public static final String ZENDSERVER_GUI_URL_KEY = "zendserver_default_port"; //$NON-NLS-1$
+	
 	// TODO can be used for refreshing local settings
 	public static final String ZENDSERVER_INSTALL_LOCATION = "InstallLocation";//$NON-NLS-1$
 
