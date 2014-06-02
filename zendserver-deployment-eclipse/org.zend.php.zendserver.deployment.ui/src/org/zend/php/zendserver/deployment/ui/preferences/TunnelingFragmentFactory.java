@@ -17,6 +17,8 @@ import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -37,7 +39,16 @@ public class TunnelingFragmentFactory implements ICompositeFragmentFactory {
 	}
 
 	public boolean isSupported(Object element) {
-		return element instanceof IServerType || element instanceof Server;
+		String typeId = null;
+		if (element instanceof IServerType) {
+			typeId = ((IServerType) element).getId();
+		}
+		if (element instanceof Server) {
+			Server server = (Server) element;
+			typeId = server.getAttribute(IServerType.TYPE, null);
+		}
+		return typeId != null && !LocalZendServerType.ID.equals(typeId)
+				&& !LocalApacheType.ID.equals(typeId);
 	}
 
 	public String getId() {
