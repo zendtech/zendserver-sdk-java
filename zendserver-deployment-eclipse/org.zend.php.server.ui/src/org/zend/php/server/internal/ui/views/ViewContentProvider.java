@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.views;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -39,7 +42,15 @@ class ViewContentProvider implements IStructuredContentProvider,
 
 	public Object[] getElements(Object parent) {
 		if (parent instanceof ServersManager) {
-			return ServersManager.getServers();
+			Server[] servers = ServersManager.getServers();
+			Arrays.sort(servers, new Comparator<Server>() {
+				@Override
+				public int compare(Server first, Server second) {
+					return String.CASE_INSENSITIVE_ORDER.compare(
+							first.getName(), second.getName());
+				}
+			});
+			return servers;
 		}
 		return null;
 	}
