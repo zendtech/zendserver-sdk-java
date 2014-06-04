@@ -97,7 +97,7 @@
             id="org.zend.php.server.ui.types.PhpcloudServerType">
       </serverType>
       <serverType
-            id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerType">
+            id="org.zend.php.server.ui.types.LocalZendServerType">
       </serverType>
    </action>
    <action
