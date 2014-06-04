@@ -138,7 +138,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 				.setToolTipText(Messages.LocalApacheCompositeFragment_LocationTooltip);
 		locationText.addModifyListener(modifyListener);
 
-		browseButton = new Button(parent, SWT.BORDER);
+		browseButton = new Button(parent, SWT.PUSH);
 		browseButton.setText(Messages.LocalApacheCompositeFragment_BrowseLabel);
 		browseButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));

@@ -215,7 +215,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 				.setToolTipText(Messages.TunnelingCompositeFragment_KeyTooltip);
 		privateKeyText.addModifyListener(modifyListener);
 
-		browseButton = new Button(credentialsGroup, SWT.BORDER);
+		browseButton = new Button(credentialsGroup, SWT.PUSH);
 		browseButton.setText(Messages.TunnelingCompositeFragment_BrowseLabel);
 		browseButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
