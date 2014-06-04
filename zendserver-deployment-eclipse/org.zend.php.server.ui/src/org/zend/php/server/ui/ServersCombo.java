@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -106,23 +105,17 @@ public class ServersCombo {
 		}
 	};
 
-	private static TargetsManager targetsManager = TargetsManagerService.INSTANCE
-			.getTargetManager();
-
 	private Combo serversCombo;
-
 	private Button addServerButton;
 
 	private Server[] serversList = new Server[0];
 
 	private String labelText;
-
 	private String tooltip;
 
 	private boolean addServer;
 
 	private IAddServerListener listener;
-
 	private IServerFilter filter;
 
 	/**
@@ -239,22 +232,14 @@ public class ServersCombo {
 	public void updateItems() {
 		serversList = filterServers(ServersManager.getServers());
 		serversCombo.removeAll();
-		String defaultId = targetsManager.getDefaultTargetId();
-		int defaultNo = 0;
-
 		if (serversList.length != 0) {
-			int i = 0;
 			for (Server server : serversList) {
-				IZendTarget target = ServerUtils.getTarget(server);
-				if (target != null && target.getId().equals(defaultId)) {
-					defaultNo = i;
-				}
 				serversCombo.add(server.getName());
-				i++;
 			}
 		}
 		if (serversCombo.getItemCount() > 0) {
-			serversCombo.select(defaultNo);
+			Server defaultServer = ServersManager.getDefaultServer(null);
+			serversCombo.select(serversCombo.indexOf(defaultServer.getName()));
 		}
 	}
 
