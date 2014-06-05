@@ -262,7 +262,9 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 					if (!host.isEmpty() && !DEFAULT_HOST.equals(host)) {
 						try {
 							new URL(host);
-							detectButton.setEnabled(true);
+							if (enable) {
+								detectButton.setEnabled(true);
+							}
 							return;
 						} catch (MalformedURLException e) {
 							// set detect to false
@@ -326,7 +328,6 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
 			enableButton.setSelection(false);
-			detectButton.setEnabled(false);
 			updateState(false);
 		}
 		updateData();

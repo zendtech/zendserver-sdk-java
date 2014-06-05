@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
@@ -57,7 +58,9 @@ public class RemoveServerAction extends AbstractServerAction implements
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
 		boolean newVal = !selection.isEmpty();
-		if (newVal && ServersManager.getServers().length <= 1) {
+		IStructuredSelection selectedServers = (IStructuredSelection) selection;
+		int availableServers = ServersManager.getServers().length;
+		if (availableServers <= 1 || availableServers == selectedServers.size()) {
 			newVal = false;
 		}
 		if (isEnabled != newVal) {
