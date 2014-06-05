@@ -13,6 +13,10 @@ package org.zend.php.server.internal.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,6 +29,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.php.internal.server.core.Activator;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.IServersManagerListener;
 import org.eclipse.php.internal.server.core.manager.ServerManagerEvent;
@@ -43,6 +48,7 @@ import org.zend.php.server.internal.ui.actions.AddServerAction;
 import org.zend.php.server.internal.ui.actions.EditServerAction;
 import org.zend.php.server.internal.ui.actions.OpenDatabaseConnectionAction;
 import org.zend.php.server.internal.ui.actions.RemoveServerAction;
+import org.zend.php.server.internal.ui.actions.SetDefaultServerAction;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 
 /**
@@ -50,23 +56,29 @@ import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
  * 
  */
 @SuppressWarnings("restriction")
-public class ServersView extends ViewPart implements IServersManagerListener {
+public class ServersView extends ViewPart implements IServersManagerListener,
+		IPreferenceChangeListener {
 
 	public static final String ID = "org.zend.php.server.ui.views.ServersView"; //$NON-NLS-1$
 
 	private TreeViewer viewer;
 	private IAction editAction;
 	private IAction removeAction;
+	private IAction setDefaultAction;
 
 	public ServersView() {
 		ServersManager.addManagerListener(this);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(Activator.PLUGIN_ID);
+		prefs.addPreferenceChangeListener(this);
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer.setLabelProvider(new ViewLabelProvider(viewer.getTree()
+				.getFont()));
 		viewer.setInput(ServersManager.getInstance());
 
 		createActions();
@@ -83,6 +95,9 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 	@Override
 	public void dispose() {
 		ServersManager.removeManagerListener(this);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(Activator.PLUGIN_ID);
+		prefs.removePreferenceChangeListener(this);
 		super.dispose();
 	}
 
@@ -106,11 +121,20 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 		refreshViewer();
 	}
 
+	@Override
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (ServersManager.DEFAULT_SERVER_PREFERENCES_KEY
+				.equals(event.getKey())) {
+			refreshViewer();
+		}
+	}
+
 	public ISelectionProvider getSelectionProvider() {
 		return viewer;
 	}
 
 	private void createActions() {
+		setDefaultAction = new SetDefaultServerAction(getSelectionProvider());
 		editAction = new EditServerAction(getSelectionProvider());
 		removeAction = new RemoveServerAction(getSelectionProvider());
 	}
@@ -119,6 +143,7 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		toolBarManager.add(new AddServerAction());
+		toolBarManager.add(setDefaultAction);
 		toolBarManager.add(editAction);
 		toolBarManager.add(removeAction);
 	}
@@ -180,6 +205,7 @@ public class ServersView extends ViewPart implements IServersManagerListener {
 						manager.add(action);
 					}
 				}
+				manager.add(setDefaultAction);
 				manager.add(editAction);
 			}
 			manager.add(removeAction);

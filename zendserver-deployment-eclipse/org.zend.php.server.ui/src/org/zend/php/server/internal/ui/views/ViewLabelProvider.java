@@ -12,11 +12,17 @@ package org.zend.php.server.internal.ui.views;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.server.ui.types.ServerTypesManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
@@ -29,7 +35,18 @@ import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
  * 
  */
 @SuppressWarnings("restriction")
-class ViewLabelProvider extends LabelProvider {
+class ViewLabelProvider extends LabelProvider implements IFontProvider {
+
+	private Font defautFont;
+	private Font boldFont;
+
+	public ViewLabelProvider(Font defautFont) {
+		super();
+		this.defautFont = defautFont;
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(defautFont)
+				.setStyle(SWT.BOLD);
+		this.boldFont = boldDescriptor.createFont(Display.getDefault());
+	}
 
 	@Override
 	public String getText(Object obj) {
@@ -84,4 +101,14 @@ class ViewLabelProvider extends LabelProvider {
 		return super.getImage(obj);
 	}
 
+	@Override
+	public Font getFont(Object obj) {
+		if (obj instanceof Server) {
+			Server server = (Server) obj;
+			if (server.equals(ServersManager.getDefaultServer(null))) {
+				return boldFont;
+			}
+		}
+		return defautFont;
+	}
 }

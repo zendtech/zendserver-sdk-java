@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String ServerLaunchDelegateListener_SubTaskName;
 	public static String ServersCombo_AddLabel;
 	public static String ServersCombo_DefaultLabel;
+	public static String SetDefaultServerAction_Name;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
