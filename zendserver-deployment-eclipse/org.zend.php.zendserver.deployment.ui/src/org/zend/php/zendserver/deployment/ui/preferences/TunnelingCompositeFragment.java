@@ -110,14 +110,14 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	public void validate() {
 		if (config.isEnabled()) {
 			String username = config.getUsername();
-			if (username != null && username.isEmpty()) {
+			if (username == null || username.isEmpty()) {
 				setMessage(
 						Messages.TunnelingCompositeFragment_EmptyUsernameError,
 						IMessageProvider.ERROR);
 				return;
 			}
 			String password = config.getPassword();
-			if (password != null && password.isEmpty()) {
+			if (password == null || password.isEmpty()) {
 				String privateKey = privateKeyText.getText();
 				if (privateKey.isEmpty()) {
 					setMessage(
@@ -458,33 +458,23 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		}
 		if (usernameText != null) {
 			String username = usernameText.getText();
-			if (!username.isEmpty()) {
-				config.setUsername(username);
-			}
+			config.setUsername(username);
 		}
 		if (passwordText != null) {
 			String password = passwordText.getText();
-			if (!password.isEmpty()) {
-				config.setPassword(password);
-			}
+			config.setPassword(password);
 		}
 		if (privateKeyText != null) {
 			String privateKey = privateKeyText.getText();
-			if (!privateKey.isEmpty()) {
-				config.setPrivateKey(privateKey);
-			}
+			config.setPrivateKey(privateKey);
 		}
 		if (proxyHostText != null) {
 			String httpProxyHost = proxyHostText.getText();
-			if (!httpProxyHost.isEmpty()) {
-				config.setHttpProxyHost(httpProxyHost);
-			}
+			config.setHttpProxyHost(httpProxyHost);
 		}
 		if (proxyPortText != null) {
 			String httpProxyPort = proxyPortText.getText();
-			if (!httpProxyPort.isEmpty()) {
-				config.setHttpProxyPort(httpProxyPort);
-			}
+			config.setHttpProxyPort(httpProxyPort);
 		}
 	}
 
