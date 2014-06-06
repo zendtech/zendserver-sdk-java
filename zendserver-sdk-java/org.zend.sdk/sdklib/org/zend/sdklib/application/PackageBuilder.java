@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) May 26, 2011 Zend Technologies Ltd. 
+ * Copyright (c) 2011, 2014 Zend Technologies Ltd. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -41,27 +41,28 @@ import org.zend.webapi.core.progress.IChangeNotifier;
 import org.zend.webapi.core.progress.StatusCode;
 
 /**
- * Provides ability to create zpk application package based on
+ * Provides ability to create ZPK application package.
  * 
  * @author Wojciech Galanciak, 2011
- * 
+ * @author Kaloyan Raev, 2014
  */
 public class PackageBuilder extends AbstractChangeNotifier {
 
 	public static final String EXTENSION = ".zpk";
 
 	private static final int BUFFER = 1024;
-	
+
 	private static final int STEPS = 10;
 
+	protected File container;
+	protected File configLocation;
+	protected IMappingModel model;
+
 	private ZipOutputStream out;
-	private File container;
-	private File configLocation;
-	private IMappingModel model;
 
 	private Set<String> addedPaths;
 	private IVariableResolver variableResolver;
-	
+
 	private int resolution;
 	private int progress;
 
@@ -151,8 +152,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			if (result == null) {
 				return null;
 			}
-			out = new ZipOutputStream(new BufferedOutputStream(
-					new FileOutputStream(result)));
+
+			prepareOutputFile(result);
+
 			if (!model.isLoaded()) {
 				createDefaultModel();
 			}
@@ -163,10 +165,12 @@ public class PackageBuilder extends AbstractChangeNotifier {
 							+ " deployment package...", STEPS));
 			File descriptorFile = new File(configLocation,
 					ProjectResourcesWriter.DESCRIPTOR);
-			addFileToZip(descriptorFile, null, null, null, false);
+			addFileToPackage(descriptorFile, null, null, null, false);
 			resolveIconAndLicence();
 			resolveMappings();
-			out.close();
+
+			finishOutputFile(result);
+
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 					"Package creation",
 					"Deployment package created successfully."));
@@ -203,11 +207,81 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		return createDeploymentPackage(new File("."));
 	}
 
+	/**
+	 * Prepares the output ZPK file that will contain the exported project.
+	 * 
+	 * <p>
+	 * This method is called before any mapping is resolved yet. Subclasses may
+	 * override this method to provide alternative way of creating the ZPK file.
+	 * </p>
+	 * 
+	 * @param zpkFile
+	 *            the ZPK file
+	 * 
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	protected void prepareOutputFile(File zpkFile) throws IOException {
+		out = new ZipOutputStream(new BufferedOutputStream(
+				new FileOutputStream(zpkFile)));
+	}
+
+	/**
+	 * Finishes the output ZPK file that will contain the exported project.
+	 * 
+	 * <p>
+	 * This method is called after all mappings are resolved. Subclasses must
+	 * override this method if they have already overridden
+	 * {@link #prepareOutputFile(File)}.
+	 * </p>
+	 * 
+	 * @param zpkFile
+	 *            the ZPK file
+	 * 
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	protected void finishOutputFile(File zpkFile) throws IOException {
+		out.close();
+	}
+
+	/**
+	 * Adds a file from the project being exported to the output ZPK file.
+	 * 
+	 * <p>
+	 * This method is called for each mapping being resolved. Subclasses must
+	 * override this method if they have already overridden
+	 * {@link #prepareOutputFile(File)}.
+	 * </p>
+	 * 
+	 * @param file
+	 *            file to add
+	 * @param relativePath
+	 *            relative path of the file to the project root
+	 * 
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	protected void addFileToOutput(File file, String relativePath)
+			throws IOException {
+		ZipEntry entry = new ZipEntry(relativePath);
+		out.putNextEntry(entry);
+		int count;
+		byte data[] = new byte[BUFFER];
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+				file), BUFFER);
+		while ((count = in.read(data, 0, BUFFER)) != -1) {
+			out.write(data, 0, count);
+		}
+		in.close();
+	}
+
 	private void resolveIconAndLicence() {
 		String icon = getIconName(configLocation);
 		if (icon != null) {
 			try {
-				addFileToZip(new File(container, icon), null, null, null, false);
+				addFileToPackage(new File(container, icon), null, null, null,
+						false);
 			} catch (IOException e) {
 				// do nothing, it means that descriptor has entries which are
 				// not valid
@@ -216,8 +290,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		String license = getLicenseName(configLocation);
 		if (license != null) {
 			try {
-				addFileToZip(new File(container, license), null, null, null,
-						false);
+				addFileToPackage(new File(container, license), null, null,
+						null, false);
 			} catch (IOException e) {
 				// do nothing, it means that descriptor has entries which are
 				// not valid
@@ -228,15 +302,11 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private void resolveMappings() throws IOException {
 		String appdir = getAppdirName(configLocation);
 		String scriptsdir = getScriptsdirName(configLocation);
-		if (appdir != null) {
-			if (!appdir.isEmpty()) {
-				addNewFolderToZip(new File(container, appdir));
-			}
+		if (appdir != null && !appdir.isEmpty()) {
 			resolveMapping(IMappingModel.APPDIR, appdir, false);
 			resolveLibraryMapping(appdir, false);
 		}
 		if (scriptsdir != null && !scriptsdir.isEmpty()) {
-			addNewFolderToZip(new File(container, scriptsdir));
 			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir, true);
 		}
 	}
@@ -264,7 +334,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					}
 					File resource = new File(libraryFile.getCanonicalPath());
 					if (resource.exists()) {
-						addFileToZip(resource, mappingFolder, library,
+						addFileToPackage(resource, mappingFolder, library,
 								"library", false);
 					}
 				}
@@ -294,28 +364,21 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					allowFlat &= resource.isDirectory() && entries.size() == 1
 							&& mappings.size() == 1;
 
-					addFileToZip(resource, folderName, mapping.getPath(), tag,
-							allowFlat);
+					addFileToPackage(resource, folderName, mapping.getPath(),
+							tag, allowFlat);
 				}
 			}
 		}
 	}
 
-	private void addNewFolderToZip(File root) throws IOException {
-		String location = root.getCanonicalPath();
-		String path = getContainerRelativePath(location) + "/";
-		ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
-		out.putNextEntry(entry);
-	}
-
-	private void addFileToZip(File root, String mappingFolder,
+	private void addFileToPackage(File root, String mappingFolder,
 			String mappingPath, String tag, boolean allowFlat)
 			throws IOException {
 		if (!model.isExcluded(tag, root.getCanonicalPath())) {
 			if (root.isDirectory() && !isExcludeAllChildren(tag, root)) {
 				File[] children = root.listFiles();
 				for (File child : children) {
-					addFileToZip(child, mappingFolder, mappingPath, tag,
+					addFileToPackage(child, mappingFolder, mappingPath, tag,
 							allowFlat);
 				}
 			} else {
@@ -340,24 +403,15 @@ public class PackageBuilder extends AbstractChangeNotifier {
 					path = path.substring(1);
 				}
 				if (addedPaths.add(path)) {
-					ZipEntry entry = new ZipEntry(path);
-					out.putNextEntry(entry);
 					if (!root.isDirectory()) {
-						int count;
-						byte data[] = new byte[BUFFER];
-						BufferedInputStream in = new BufferedInputStream(
-								new FileInputStream(location), BUFFER);
-						while ((count = in.read(data, 0, BUFFER)) != -1) {
-							out.write(data, 0, count);
-						}
-						in.close();
-						progress++;
-						if (progress >= resolution) {
-							notifier.statusChanged(new BasicStatus(
-									StatusCode.PROCESSING, "Package creation",
-									"Creating deployment package...", 1));
-							progress = 0;
-						}
+						addFileToOutput(root, path);
+					}
+					progress++;
+					if (progress >= resolution) {
+						notifier.statusChanged(new BasicStatus(
+								StatusCode.PROCESSING, "Package creation",
+								"Creating deployment package...", 1));
+						progress = 0;
 					}
 				}
 			}
@@ -408,7 +462,7 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		return result;
 	}
 
-	private String getAppdirName(File container) {
+	protected String getAppdirName(File container) {
 		String result = null;
 		Package p = getPackage(container);
 		if (p != null) {

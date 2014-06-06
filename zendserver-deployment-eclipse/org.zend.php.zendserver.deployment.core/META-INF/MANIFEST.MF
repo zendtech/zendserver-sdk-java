@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.core,
  org.zend.webapi;resolution:=optional;visibility:=reexport,
  org.eclipse.php.debug.core,
- org.eclipse.wst.xml.core
+ org.eclipse.wst.xml.core,
+ org.apache.commons.io
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.zendserver.deployment.core,
@@ -38,3 +39,4 @@ Export-Package: org.zend.php.zendserver.deployment.core,
  org.zend.php.zendserver.deployment.core.targets,
  org.zend.php.zendserver.deployment.core.tunnel,
  org.zend.php.zendserver.deployment.core.utils
+Eclipse-BundleShape: dir

@@ -16,16 +16,6 @@ import org.zend.php.zendserver.deployment.ui.wizards.PackageExportWizard;
 
 public class ExportApplicationAction extends Action {
 
-	/**
-	 * The wizard dialog width
-	 */
-	private static final int SIZING_WIZARD_WIDTH = 500;
-
-	/**
-	 * The wizard dialog height
-	 */
-	private static final int SIZING_WIZARD_HEIGHT = 500;
-
 	private IProject project;
 
 	public ExportApplicationAction() {
@@ -66,7 +56,6 @@ public class ExportApplicationAction extends Action {
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.setHelpAvailable(false);
 		dialog.create();
-		dialog.getShell().setSize(SIZING_WIZARD_WIDTH, SIZING_WIZARD_HEIGHT);
 
 		// Move the dialog to the center of the top level shell.
 		Rectangle shellBounds = parent.getBounds();
