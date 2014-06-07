@@ -146,4 +146,13 @@
             </instanceof></enablement>
       </deleteParticipant>
    </extension>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution
+            id="default">
+         <uri
+               name="http://www.zend.com/server/deployment-descriptor/1.0"
+               uri="xsd/deployment-descriptor-1.0.xsd">
+         </uri></catalogContribution>
+   </extension>
 </plugin>
