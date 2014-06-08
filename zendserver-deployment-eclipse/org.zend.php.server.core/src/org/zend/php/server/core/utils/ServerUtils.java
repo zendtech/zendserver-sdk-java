@@ -92,4 +92,20 @@ public class ServerUtils {
 		return server != null ? getTarget(server.getName()) : null;
 	}
 
+	/**
+	 * Get target associated with specified project.
+	 * 
+	 * @param server
+	 *            {@link IProject} instance
+	 * @return {@link IZendTarget} instance which is associated with specified
+	 *         project or <code>null</code> if such target does not exist
+	 */
+	public static IZendTarget getTarget(IProject project) {
+		if (project != null) {
+			Server server = ServersManager.getDefaultServer(project);
+			return server != null ? getTarget(server.getName()) : null;
+		}
+		return null;
+	}
+
 }

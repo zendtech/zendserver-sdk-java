@@ -217,6 +217,55 @@ public class DeploymentHandler {
 		return IStatus.OK;
 	}
 
+	/**
+	 * Perform a deployment job base on provided {@link IDeploymentHelper} and a
+	 * project.
+	 * 
+	 * @param helper
+	 *            {@link IDeploymentHelper} instance with deployment parameters
+	 * @param project
+	 *            {@link IProject} instance
+	 * @return {@link IStatus#OK} if action was performed successfully;
+	 *         otherwise return {@link IStatus#CANCEL}
+	 */
+	public int performJob(IDeploymentHelper helper, IProject project) {
+		switch (helper.getOperationType()) {
+		case IDeploymentHelper.DEPLOY:
+			job = new DeployLaunchJob(helper, project);
+			break;
+		case IDeploymentHelper.UPDATE:
+			job = new UpdateLaunchJob(helper, project);
+			break;
+		case IDeploymentHelper.AUTO_DEPLOY:
+			job = LaunchUtils.getAutoDeployJob();
+			if (job == null) {
+				break;
+			}
+			job.setHelper(helper);
+			job.setProjectPath(project);
+			job.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().getSeverity() == IStatus.CANCEL) {
+						cancelled = true;
+					}
+				}
+			});
+			break;
+		}
+		if (job != null) {
+			job.setUser(true);
+			job.schedule();
+			try {
+				job.join();
+				return verifyJobResult(job.getHelper(), project);
+			} catch (InterruptedException e) {
+				Activator.log(e);
+			}
+		}
+		return IStatus.OK;
+	}
+
 	private void setDefaultTarget(IDeploymentHelper helper,
 			final IProject project) {
 		String targetId = helper.getTargetId();

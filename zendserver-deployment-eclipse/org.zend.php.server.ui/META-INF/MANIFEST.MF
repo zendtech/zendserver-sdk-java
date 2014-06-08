@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.debug.core,
  com.jcraft.jsch,
- org.zend.core.notifications
+ org.zend.core.notifications,
+ org.eclipse.php.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.server.ui,
