@@ -108,24 +108,50 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 	 * 
 	 * @param name
 	 *            new server's name
-	 * @return <code>true</code> if there is no conflict with a name of existing
+	 * @return <code>true</code> if there is a conflict with a name of existing
 	 *         server; otherwise return <code>false</code>
 	 */
 	protected boolean isDuplicateName(String name) {
 		name = name.trim();
 		if (name.equals(getServer().getName())) {
-			return true;
+			return false;
 		}
 		Server[] allServers = ServersManager.getServers();
 		if (allServers != null) {
 			int size = allServers.length;
 			for (int i = 0; i < size; i++) {
 				Server server = allServers[i];
-				if (name.equals(server.getName()))
-					return false;
+				if (name.equals(server.getName())) {
+					return true;
+				}
 			}
 		}
-		return true;
+		return false;
+	}
+
+	/**
+	 * Check if there is any server with the same base URL as a specified one.
+	 * 
+	 * @param base
+	 *            URL
+	 * @return {@link Server} instance if there is a server with the same base
+	 *         URL; otherwise return <code>false</code>
+	 */
+	protected Server getConflictingServer(Server server) {
+		String baseUrl = server.getBaseURL();
+		if (baseUrl != null) {
+			Server[] servers = ServersManager.getServers();
+			if (servers != null) {
+				int size = servers.length;
+				for (int i = 0; i < size; i++) {
+					Server s = servers[i];
+					if (baseUrl.equals(s.getBaseURL())) {
+						return s;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

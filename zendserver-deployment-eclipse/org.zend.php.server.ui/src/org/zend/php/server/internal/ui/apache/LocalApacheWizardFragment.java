@@ -37,7 +37,9 @@ public class LocalApacheWizardFragment extends AbstractWizardFragment {
 	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
 		boolean result = super.performFinish(monitor);
 		if (result) {
-		LocalApacheType.parseAttributes(server);
+			long start = System.currentTimeMillis();
+			LocalApacheType.parseAttributes(server);
+			System.out.println(System.currentTimeMillis() - start);
 		}
 		return result;
 	}

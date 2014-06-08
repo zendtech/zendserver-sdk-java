@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.zendserver;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
@@ -20,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -70,9 +73,29 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 				return;
 
 			}
-			if (!isDuplicateName(name)) {
+			if (isDuplicateName(name)) {
 				setMessage(
 						Messages.LocalZendServerCompositeFragment_NameConflictError,
+						IMessageProvider.ERROR);
+				return;
+			}
+			Server tempServer = new Server();
+			tempServer = ZendServerManager.getInstance().getLocalZendServer(
+					tempServer);
+			String location = tempServer.getAttribute(
+					ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
+			if (location == null || location.isEmpty()) {
+				setMessage(
+						Messages.LocalZendServerCompositeFragment_CannotDetectError,
+						IMessageProvider.ERROR);
+				return;
+			}
+			Server conflictingServer = getConflictingServer(tempServer);
+			if (conflictingServer != null) {
+				setMessage(
+						MessageFormat.format(
+								Messages.LocalZendServerCompositeFragment_BaseUrlConflictError,
+								conflictingServer.getName()),
 						IMessageProvider.ERROR);
 				return;
 			}

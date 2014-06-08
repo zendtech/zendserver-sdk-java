@@ -11,6 +11,7 @@
 package org.zend.php.server.internal.ui.apache;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -91,7 +92,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 						IMessageProvider.ERROR);
 				return;
 			}
-			if (!isDuplicateName(name)) {
+			if (isDuplicateName(name)) {
 				setMessage(
 						Messages.LocalApacheCompositeFragment_NameConflictMessage,
 						IMessageProvider.ERROR);
@@ -106,6 +107,19 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 						Messages.LocalApacheCompositeFragment_LocationInvalidMessage,
 						IMessageProvider.ERROR);
 				return;
+			} else {
+				Server server = new Server();
+				server.setAttribute(LocalApacheType.LOCATION, location);
+				LocalApacheType.parseAttributes(server);
+				Server conflictingServer = getConflictingServer(server);
+				if (conflictingServer != null) {
+					setMessage(
+							MessageFormat.format(
+									Messages.LocalApacheCompositeFragment_BaseUrlConflictError,
+									conflictingServer.getName()),
+							IMessageProvider.ERROR);
+					return;
+				}
 			}
 		}
 		setMessage(getDescription(), IMessageProvider.NONE);

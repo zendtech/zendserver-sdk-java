@@ -8,6 +8,7 @@ public class Messages extends NLS {
 	public static String LocalZendServerType_Name;
 	public static String ZendServerType_Name;
 	public static String ViewLabelProvider_ServersViewLabel;
+	public static String LocalApacheCompositeFragment_BaseUrlConflictError;
 	public static String LocalApacheCompositeFragment_BrowseLabel;
 	public static String LocalApacheCompositeFragment_Desc;
 	public static String LocalApacheCompositeFragment_ExamplePathUnix;

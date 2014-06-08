@@ -4,6 +4,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.zendserver.messages"; //$NON-NLS-1$
+	public static String LocalZendServerCompositeFragment_BaseUrlConflictError;
 	public static String LocalZendServerCompositeFragment_CannotDetectError;
 	public static String LocalZendServerCompositeFragment_Desc;
 	public static String LocalZendServerCompositeFragment_DetectTitle;
