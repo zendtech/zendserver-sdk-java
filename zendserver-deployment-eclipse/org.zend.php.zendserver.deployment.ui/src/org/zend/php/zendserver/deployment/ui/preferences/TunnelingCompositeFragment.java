@@ -84,6 +84,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		super(parent, handler, isForEditing,
 				Messages.TunnelingCompositeFragment_Title,
 				Messages.TunnelingCompositeFragment_Desc);
+		this.config = new SSHTunnelConfiguration();
 		createControl(isForEditing);
 	}
 
@@ -126,6 +127,13 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 					return;
 				}
 			}
+			List<PortForwarding> portForwardings = config.getPortForwardings();
+			if (portForwardings == null || portForwardings.isEmpty()) {
+				setMessage(
+						Messages.TunnelingCompositeFragment_NoForwardingError,
+						IMessageProvider.ERROR);
+				return;
+			}
 			String httpProxyPort = config.getHttpProxyPort();
 			if (httpProxyPort != null && !httpProxyPort.isEmpty()) {
 				try {
@@ -162,33 +170,34 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	protected void init() {
 		Server server = getServer();
 		if (server != null) {
-			config = SSHTunnelConfiguration.read(server);
-			boolean enabled = config.isEnabled();
+			SSHTunnelConfiguration currentConfig = SSHTunnelConfiguration
+					.read(server);
+			boolean enabled = currentConfig.isEnabled();
 			enableButton.setSelection(enabled);
 			updateState(enabled);
-			String username = config.getUsername();
+			String username = currentConfig.getUsername();
 			if (username != null) {
 				usernameText.setText(username);
 			}
-			String password = config.getPassword();
+			String password = currentConfig.getPassword();
 			if (password != null) {
 				passwordText.setText(password);
 			}
-			String privateKey = config.getPrivateKey();
+			String privateKey = currentConfig.getPrivateKey();
 			if (privateKey != null) {
 				privateKeyText.setText(privateKey);
 			}
-			portForwardingViewer.setInput(config);
-			String proxyHost = config.getHttpProxyHost();
+			config.setPortForwardings(currentConfig.getPortForwardings());
+			portForwardingViewer.refresh();
+			String proxyHost = currentConfig.getHttpProxyHost();
 			if (proxyHost != null) {
 				proxyHostText.setText(proxyHost);
 			}
-			String proxyPort = config.getHttpProxyPort();
+			String proxyPort = currentConfig.getHttpProxyPort();
 			if (proxyPort != null) {
 				proxyPortText.setText(proxyPort);
 			}
 		} else {
-			config = new SSHTunnelConfiguration();
 			enableButton.setSelection(false);
 		}
 		updateData();
@@ -277,6 +286,8 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 					}
 
 				});
+		portForwardingViewer.setInput(config);
+
 		table = portForwardingViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		table.setHeaderVisible(true);

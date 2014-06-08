@@ -86,6 +86,7 @@ public class Messages extends NLS {
 	public static String TunnelingCompositeFragment_KeyTooltip;
 	public static String TunnelingCompositeFragment_LocalAddrLabel;
 	public static String TunnelingCompositeFragment_LocalPortLabel;
+	public static String TunnelingCompositeFragment_NoForwardingError;
 	public static String TunnelingCompositeFragment_NoPathNorPasswordError;
 	public static String TunnelingCompositeFragment_PasswordLabel;
 	public static String TunnelingCompositeFragment_ProxyHostLabel;

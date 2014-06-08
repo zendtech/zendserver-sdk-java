@@ -48,6 +48,7 @@ public class SSHTunnelConfiguration {
 	private String httpProxyPort;
 
 	public SSHTunnelConfiguration() {
+		this.portForwardings = new ArrayList<PortForwarding>();
 	}
 
 	public static SSHTunnelConfiguration read(Server server) {
@@ -104,7 +105,7 @@ public class SSHTunnelConfiguration {
 		}
 		String password = getPassword();
 		if (password != null && !password.isEmpty()) {
-			server.setAttribute(USERNAME, password);
+			server.setAttribute(PASSWORD, password);
 		} else {
 			server.removeAttribute(PASSWORD);
 		}
@@ -115,7 +116,7 @@ public class SSHTunnelConfiguration {
 			server.removeAttribute(PRIVATE_KEY);
 		}
 		String portForwarding = serializeForwarding();
-		if (portForwarding != null) {
+		if (!portForwarding.isEmpty()) {
 			server.setAttribute(PORT_FORWARDING, portForwarding);
 		} else {
 			server.removeAttribute(PORT_FORWARDING);
@@ -282,11 +283,13 @@ public class SSHTunnelConfiguration {
 
 	private String serializeForwarding() {
 		StringBuilder result = new StringBuilder();
-		for (PortForwarding portForwarding : portForwardings) {
-			if (result.length() != 0) {
-				result.append(FORWARDING_SEPARATOR);
+		if (portForwardings != null) {
+			for (PortForwarding portForwarding : portForwardings) {
+				if (result.length() != 0) {
+					result.append(FORWARDING_SEPARATOR);
+				}
+				result.append(portForwarding.serialize());
 			}
-			result.append(portForwarding.serialize());
 		}
 		return result.toString();
 	}

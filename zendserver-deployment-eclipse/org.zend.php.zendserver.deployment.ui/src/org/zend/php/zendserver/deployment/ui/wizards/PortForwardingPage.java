@@ -124,6 +124,7 @@ public class PortForwardingPage extends WizardPage {
 		commandLabel.setText(Messages.PortForwardingPage_ProvideMessage);
 		setControl(composite);
 		init();
+		setPageComplete(validatePage());
 	}
 
 	private boolean validatePage() {
