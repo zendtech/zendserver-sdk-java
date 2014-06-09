@@ -37,7 +37,7 @@
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployProjectHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.deployProject"
-            name="Deploy">
+            name="Deploy Project">
                <visibleWhen
                   checkEnabled="false">
                   <iterate
@@ -54,26 +54,6 @@
                   </iterate>
             </visibleWhen>
          </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.QuickDeployProjectHandler"
-            id="org.zend.php.zendserver.deployment.debug.ui.quickDeployProject"
-            name="Quick Deploy">
-         <visibleWhen
-               checkEnabled="false">
-            <iterate
-                  ifEmpty="false"
-                  operator="and">
-               <adapt
-                     type="org.eclipse.core.resources.IResource">
-               </adapt>
-               <test
-                     forcePluginActivation="true"
-                     property="org.zend.php.zendserver.deployment.ui.deploy"
-                     value="true">
-               </test>
-            </iterate>
-         </visibleWhen>
-      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
@@ -152,53 +132,27 @@
 </extension>
  <extension point="org.eclipse.ui.menus">
     <menuContribution locationURI="popup:org.eclipse.php.ui.explorer?after=additions">
-      <menu
-            id="org.zend.php.zendserver.deployment.ui.deployment"
-            label="Deployment"
-            icon="icons/obj16/deploy_exc.png">
-         <command
-               commandId="org.zend.php.zendserver.deployment.debug.ui.quickDeployProject"
-               label="Deploy"
-               style="push"
-               icon="icons/obj16/quick_deploy.png">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="and">
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                  </adapt>
-                  <test
-                        forcePluginActivation="true"
-                        property="org.zend.php.zendserver.deployment.ui.quickDeploy"
-                        value="true">
-                  </test>
-               </iterate>
-            </visibleWhen>
-         </command>	
-            <command
-               commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
-               label="Deploy To..."
-               style="push"
-               icon="icons/obj16/deploy_to.png">
-               <visibleWhen
-                  checkEnabled="false">
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                     </adapt>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.zend.php.zendserver.deployment.ui.deploy"
-                        value="true">
-                     </test>
-                  </iterate>
-            </visibleWhen>
-         </command>
-      </menu>
+      <command
+            commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
+            icon="icons/obj16/deploy_to.png"
+            label="Deploy To..."
+            style="push">
+         <visibleWhen
+               checkEnabled="false">
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <adapt
+                     type="org.eclipse.core.resources.IResource">
+               </adapt>
+               <test
+                     forcePluginActivation="true"
+                     property="org.zend.php.zendserver.deployment.ui.deploy"
+                     value="true">
+               </test>
+            </iterate>
+         </visibleWhen>
+      </command>
     </menuContribution>
     </extension>
 </plugin>
