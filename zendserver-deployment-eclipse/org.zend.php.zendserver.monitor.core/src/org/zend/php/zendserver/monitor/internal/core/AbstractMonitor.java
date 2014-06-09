@@ -21,9 +21,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
@@ -50,6 +51,7 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
  * @author Wojciech Galanciak, 2012
  * 
  */
+@SuppressWarnings("restriction")
 public abstract class AbstractMonitor extends Job {
 
 	private static final String PROVIDER_EXTENSION = "org.zend.php.zendserver.monitor.core.notificationProvider"; //$NON-NLS-1$
@@ -85,7 +87,7 @@ public abstract class AbstractMonitor extends Job {
 			getProvider().showProgress(
 					getName(),
 					MessageFormat.format(Messages.ZendServerMonitor_TaskTitle,
-							targetId), new IRunnableWithProgress() {
+							getServerName()), new IRunnableWithProgress() {
 
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
@@ -104,9 +106,8 @@ public abstract class AbstractMonitor extends Job {
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(MessageFormat.format(
-				Messages.ZendServerMonitor_TaskTitle, targetId),
+				Messages.ZendServerMonitor_TaskTitle, getServerName()),
 				IProgressMonitor.UNKNOWN);
-		PhpcloudContainerListener listener = null;
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 				.getTargetById(targetId);
 		if (isZS6(target)) {
@@ -221,17 +222,19 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected void disableCodeTacing() {
+		final String name = getServerName();
 		getProvider().showProgress(
 				getName(),
 				MessageFormat.format(Messages.AbstractMonitor_DisablingJobName,
-						targetId), new IRunnableWithProgress() {
+						name), new IRunnableWithProgress() {
 
 					public void run(IProgressMonitor monitor)
 							throws InvocationTargetException,
 							InterruptedException {
-						monitor.beginTask(MessageFormat.format(
-								Messages.AbstractMonitor_DisablingJobName,
-								targetId), IProgressMonitor.UNKNOWN);
+						monitor.beginTask(
+								MessageFormat
+										.format(Messages.AbstractMonitor_DisablingJobName,
+												name), IProgressMonitor.UNKNOWN);
 						ZendCodeTracing codeTracing = new ZendCodeTracing(
 								targetId);
 						try {
@@ -242,7 +245,7 @@ public abstract class AbstractMonitor extends Job {
 								if (status == null) {
 									String m = MessageFormat
 											.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-													targetId);
+													name);
 									handleError(monitor, m);
 									return;
 								}
@@ -250,7 +253,7 @@ public abstract class AbstractMonitor extends Job {
 						} catch (WebApiCommunicationError e) {
 							String m = MessageFormat
 									.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-											targetId);
+											name);
 							handleError(monitor, m);
 							return;
 						} catch (UnexpectedResponseCode e) {
@@ -259,7 +262,7 @@ public abstract class AbstractMonitor extends Job {
 							case UNSUPPORTED_API_VERSION:
 								String m = MessageFormat
 										.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
-												targetId);
+												name);
 								handleError(monitor, m);
 								return;
 							default:
@@ -330,8 +333,8 @@ public abstract class AbstractMonitor extends Job {
 				issues = removeDuplicates(issues);
 				handleIssues(issues, target);
 				offset += issues.size();
-				lastTime = monitor.getLastEventTime(issues.get(issues.size() - 1),
-						target);
+				lastTime = monitor.getLastEventTime(
+						issues.get(issues.size() - 1), target);
 			} else {
 				counter++;
 			}
@@ -339,8 +342,9 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	private boolean doStart(IProgressMonitor monitor) {
+		String name = getServerName();
 		monitor.beginTask(MessageFormat.format(
-				Messages.AbstractMonitor_EnablingJobName, targetId),
+				Messages.AbstractMonitor_EnablingJobName, name),
 				IProgressMonitor.UNKNOWN);
 		if (codeTracing == null) {
 			codeTracing = new ZendCodeTracing(targetId);
@@ -349,7 +353,7 @@ public abstract class AbstractMonitor extends Job {
 				if (status == null) {
 					String m = MessageFormat
 							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-									targetId);
+									name);
 					handleError(monitor, m);
 					return false;
 				}
@@ -358,7 +362,7 @@ public abstract class AbstractMonitor extends Job {
 				if (e instanceof WebApiCommunicationError) {
 					String m = MessageFormat
 							.format(Messages.AbstractMonitor_InitializationJobConnectionError,
-									targetId);
+									name);
 					handleError(monitor, m);
 					return false;
 				} else {
@@ -369,7 +373,7 @@ public abstract class AbstractMonitor extends Job {
 						case UNSUPPORTED_API_VERSION:
 							String m = MessageFormat
 									.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
-											targetId);
+											name);
 							handleError(monitor, m);
 							return false;
 						default:
@@ -386,6 +390,13 @@ public abstract class AbstractMonitor extends Job {
 		}
 		AbstractMonitor.this.run(monitor);
 		return true;
+	}
+
+	protected String getServerName() {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		return server != null ? server.getName() : targetId;
 	}
 
 	private void handleError(IProgressMonitor monitor, String m) {
