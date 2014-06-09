@@ -55,16 +55,6 @@ public class Messages extends NLS {
 	public static String MonitoringCompositeFragment_RemoveLabel;
 	public static String MonitoringCompositeFragment_SeverityDesc;
 	public static String MonitoringCompositeFragment_Title;
-	public static String MonitoringPreferencePage_AddFilterTitle;
-	public static String MonitoringPreferencePage_AddLabel;
-	public static String MonitoringPreferencePage_AddTilterDesc;
-	public static String MonitoringPreferencePage_FiltersLabel;
-	public static String MonitoringPreferencePage_InvalidUrlMessage;
-	public static String MonitoringPreferencePage_ModifyFilterDesc;
-	public static String MonitoringPreferencePage_ModifyFilterTitle;
-	public static String MonitoringPreferencePage_ModifyLabel;
-	public static String MonitoringPreferencePage_RemoveLabel;
-	public static String MonitoringPreferencePage_TargetsLabel;
 	public static String OpenInEditorJob_0;
 	public static String OpenInEditorJob_UnavailableMessage;
 	public static String OpenInEditorJob_UnavailableTitle;
@@ -77,15 +67,6 @@ public class Messages extends NLS {
 	public static String RequestGeneratorJob_RepeatFailedMessage;
 	public static String RequestGeneratorJob_RepeatTaskTitle;
 	public static String ServerMonitoringAction_NoTargetMessage;
-	public static String ServerMonitoringPropertyPage_DelayLabel;
-	public static String ServerMonitoringPropertyPage_DelayTooltip;
-	public static String ServerMonitoringPropertyPage_Description;
-	public static String ServerMonitoringPropertyPage_EnableCheckboxLabel;
-	public static String ServerMonitoringPropertyPage_EnableJobTitle;
-	public static String ServerMonitoringPropertyPage_HideLabel;
-	public static String ServerMonitoringPropertyPage_InvalidDelayMessage;
-	public static String ServerMonitoringPropertyPage_PreferencePageDescription;
-	public static String TargetsMonitoringPreferencePage_PreferencePageDescription;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
