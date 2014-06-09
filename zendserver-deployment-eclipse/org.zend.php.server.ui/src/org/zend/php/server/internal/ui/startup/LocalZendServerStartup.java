@@ -35,7 +35,9 @@ public class LocalZendServerStartup implements IStartup {
 	public void earlyStartup() {
 		Server server = new Server();
 		server = ZendServerManager.getInstance().getLocalZendServer(server);
-		if (server != null) {
+		String location = server.getAttribute(
+				ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
+		if (location != null) {
 			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 			Server oldServer = ServersManager.getServer(server.getName());
 			if (oldServer == null) {
