@@ -246,6 +246,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateState(enableButton.getSelection());
+				updateData();
 				validate();
 			}
 		});

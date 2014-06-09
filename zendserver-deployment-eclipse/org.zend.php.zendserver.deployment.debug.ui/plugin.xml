@@ -155,4 +155,16 @@
       </command>
     </menuContribution>
     </extension>
+ <extension
+       point="org.zend.php.server.ui.dragAndDropContribution">
+    <contribution
+          class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployProjectContribution">
+    </contribution>
+ </extension>
+ <extension
+       point="org.zend.php.server.ui.dragAndDropContribution">
+    <contribution
+          class="org.zend.php.zendserver.deployment.debug.ui.DragAndDropContribution1">
+    </contribution>
+ </extension>
 </plugin>

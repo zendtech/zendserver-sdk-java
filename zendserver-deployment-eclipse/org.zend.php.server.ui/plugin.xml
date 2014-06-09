@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="actionContributions" name="Server Action Contributions" schema="schema/actionContributions.exsd"/>
+   <extension-point id="dragAndDropContribution" name="Contributon to Drag and Drop" schema="schema/dragAndDropContribution.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <category

@@ -37,11 +37,14 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.server.ui.types.ServerTypesManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.zend.php.server.internal.ui.actions.ActionContributionsManager;
 import org.zend.php.server.internal.ui.actions.AddServerAction;
@@ -80,6 +83,13 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		viewer.setLabelProvider(new ViewLabelProvider(viewer.getTree()
 				.getFont()));
 		viewer.setInput(ServersManager.getInstance());
+
+		DropTransferListener transferListener = new DropTransferListener(viewer);
+		transferListener.setExpandEnabled(false);
+		ResourceTransfer resourceTransfer = ResourceTransfer.getInstance();
+		Transfer[] transfers = new Transfer[] { resourceTransfer };
+		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_MOVE, transfers,
+				transferListener);
 
 		createActions();
 
