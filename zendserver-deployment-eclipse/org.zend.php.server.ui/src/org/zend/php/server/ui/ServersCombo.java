@@ -239,7 +239,12 @@ public class ServersCombo {
 		}
 		if (serversCombo.getItemCount() > 0) {
 			Server defaultServer = ServersManager.getDefaultServer(null);
-			serversCombo.select(serversCombo.indexOf(defaultServer.getName()));
+			int index = serversCombo.indexOf(defaultServer.getName());
+			if (index != -1) {
+				serversCombo.select(index);
+			} else {
+				serversCombo.select(0);
+			}
 		}
 	}
 
