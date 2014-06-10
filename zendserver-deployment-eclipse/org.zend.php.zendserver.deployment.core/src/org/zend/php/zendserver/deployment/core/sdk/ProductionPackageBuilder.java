@@ -133,12 +133,20 @@ public class ProductionPackageBuilder extends PackageBuilder {
 		FileUtils.deleteDirectory(zpkTempDir);
 	}
 	/**
-	 * Copies a file from a resolved mapping the the temporary directory.
+	 * Copies a file from a resolved mapping to the temporary directory.
 	 */
 	@Override
 	protected void addFileToOutput(File file, String relativePath)
 			throws IOException {
 		FileUtils.copyFile(file, new File(zpkTempDir, relativePath));
+	}
+
+	/**
+	 * Creates an empty directory in the temporary directory.
+	 */
+	@Override
+	protected void addEmptyDirectoryToOutput(File directory) throws IOException {
+		directory.mkdirs();
 	}
 
 	/**

@@ -276,6 +276,28 @@ public class PackageBuilder extends AbstractChangeNotifier {
 		in.close();
 	}
 
+	/**
+	 * Adds an empty directory to the output ZPK file.
+	 * 
+	 * <p>
+	 * This method may be called while the mapping are being resolved.
+	 * Subclasses must override this method if they have already overridden
+	 * {@link #prepareOutputFile(File)}.
+	 * </p>
+	 * 
+	 * @param directory
+	 *            directory to add
+	 * 
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	protected void addEmptyDirectoryToOutput(File directory) throws IOException {
+		String location = directory.getCanonicalPath();
+		String path = getContainerRelativePath(location) + "/";
+		ZipEntry entry = new ZipEntry(path.replaceAll("\\\\", "/"));
+		out.putNextEntry(entry);
+	}
+
 	private void resolveIconAndLicence() {
 		String icon = getIconName(configLocation);
 		if (icon != null) {
@@ -302,11 +324,15 @@ public class PackageBuilder extends AbstractChangeNotifier {
 	private void resolveMappings() throws IOException {
 		String appdir = getAppdirName(configLocation);
 		String scriptsdir = getScriptsdirName(configLocation);
-		if (appdir != null && !appdir.isEmpty()) {
+		if (appdir != null) {
+			if (!appdir.isEmpty()) {
+				addEmptyDirectoryToOutput(new File(container, appdir));
+			}
 			resolveMapping(IMappingModel.APPDIR, appdir, false);
 			resolveLibraryMapping(appdir, false);
 		}
 		if (scriptsdir != null && !scriptsdir.isEmpty()) {
+			addEmptyDirectoryToOutput(new File(container, scriptsdir));
 			resolveMapping(IMappingModel.SCRIPTSDIR, scriptsdir, true);
 		}
 	}
