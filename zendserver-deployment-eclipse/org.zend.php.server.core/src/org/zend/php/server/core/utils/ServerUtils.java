@@ -81,6 +81,23 @@ public class ServerUtils {
 	}
 
 	/**
+	 * Get server associated with specified target.
+	 * 
+	 * @param target
+	 * @return {@link Server} instance if there is a server associated with
+	 *         specified target; otherwise return <code>null</code>
+	 */
+	public static Server getServer(IZendTarget target) {
+		if (target != null) {
+			String serverName = target.getServerName();
+			if (serverName != null) {
+				return ServersManager.getServer(serverName);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get target associated with specified server.
 	 * 
 	 * @param server
