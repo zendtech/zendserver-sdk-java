@@ -5,10 +5,12 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
@@ -43,8 +45,13 @@ public class SelectTargetTypePage extends WizardPage {
 			}
 		});
 		setPageComplete(targetType.getSelectionCount() > 0);
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(getControl(), HelpContextIds.MANAGING_TARGETS);
+		
+		getControl().setData(WorkbenchHelpSystem.HELP_KEY, HelpContextIds.MANAGING_TARGETS);
+		getControl().addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent arg0) {
+				org.eclipse.swt.program.Program.launch(HelpContextIds.MANAGING_TARGETS);
+			}
+		});
 	}
 	
 	public SelectTargetType getSelectTargetType() {

@@ -8,7 +8,6 @@
 package org.zend.php.zendserver.deployment.ui.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.ui.Activator;
 
 public class HelpAction extends Action {
@@ -24,6 +23,6 @@ public class HelpAction extends Action {
 	}
 
 	public void run() {
-		PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
+		org.eclipse.swt.program.Program.launch(helpContextID);
 	}
 }

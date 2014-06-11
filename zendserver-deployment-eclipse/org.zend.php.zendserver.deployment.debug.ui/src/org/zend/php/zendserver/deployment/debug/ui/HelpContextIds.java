@@ -9,15 +9,16 @@ package org.zend.php.zendserver.deployment.debug.ui;
 
 public interface HelpContextIds {
 
-	public static final String PREFIX = "com.zend.php.help."; //$NON-NLS-1$
+	public static final String PREFIX = "http://files.zend.com/help/Zend-Studio-11/content/"; //$NON-NLS-1$
+	public static final String SUFIX = ".htm?zs"; //$NON-NLS-1$
 
 	public static final String LAUNCHING_AN_APPLICATION = PREFIX
-			+ "launching_an_application"; //$NON-NLS-1$
+			+ "launching_an_application" + SUFIX; //$NON-NLS-1$
 
 	public static final String DEPLOYING_AN_APPLICATION = PREFIX
-			+ "deploying_an_application"; //$NON-NLS-1$
+			+ "deploying_an_application"+ SUFIX;; //$NON-NLS-1$
 
 	public static final String DEBUGGING_AN_APPLICAITON = PREFIX
-			+ "debugging_an_applicaiton_"; //$NON-NLS-1$
+			+ "debugging_an_applicaiton_"+ SUFIX; //$NON-NLS-1$
 
 }

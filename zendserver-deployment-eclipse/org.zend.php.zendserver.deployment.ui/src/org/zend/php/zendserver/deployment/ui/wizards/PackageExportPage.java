@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,8 +35,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
@@ -94,12 +96,14 @@ public class PackageExportPage extends WizardPage implements Listener {
 		createProductionModeGroup(container);
 
 		setControl(container);
-		
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(getControl(),
-						HelpContextIds.EXPORTING_THE_APPLICATION_PACKAGE);
+				
+		getControl().setData(WorkbenchHelpSystem.HELP_KEY, HelpContextIds.EXPORTING_THE_APPLICATION_PACKAGE); 
+		getControl().addHelpListener(new HelpListener() { 
+		     public void helpRequested(HelpEvent arg0) 
+		     { 
+		          org.eclipse.swt.program.Program.launch(HelpContextIds.EXPORTING_THE_APPLICATION_PACKAGE); 
+		     } 
+		});
 		
 		// validate the page
 		handleEvent(new Event());

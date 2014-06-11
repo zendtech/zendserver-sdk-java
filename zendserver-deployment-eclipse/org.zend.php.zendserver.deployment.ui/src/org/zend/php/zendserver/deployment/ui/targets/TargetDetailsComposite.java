@@ -8,10 +8,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -128,8 +130,23 @@ public class TargetDetailsComposite {
 			}
 		}
 		if (clientArea != null && currentComposite != -1) {
-			String help = targetComposites[currentComposite].getHelpResource();
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(clientArea, help);
+			final String help = targetComposites[currentComposite].getHelpResource();
+			
+			clientArea.setData(WorkbenchHelpSystem.HELP_KEY, help);
+			clientArea.addHelpListener(new HelpListener() {
+				public void helpRequested(HelpEvent arg0) {
+					org.eclipse.swt.program.Program.launch(help);
+				}
+			});
+			
+			clientArea.setData(WorkbenchHelpSystem.HELP_KEY, help);
+			clientArea.addHelpListener(new HelpListener() {
+				public void helpRequested(HelpEvent arg0) {
+					org.eclipse.swt.program.Program.launch(help);
+				}
+			});
+			
+			
 		}
 		if ((clientArea != null) && (! clientArea.isDisposed())) {
 			clientArea.layout();

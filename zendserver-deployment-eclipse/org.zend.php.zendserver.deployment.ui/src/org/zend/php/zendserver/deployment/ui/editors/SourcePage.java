@@ -52,9 +52,6 @@ public class SourcePage extends TextEditor implements IFormPage {
 		super.createPartControl(parent);
 		Control[] children = parent.getChildren();
 		fControl = children[children.length - 1];
-
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, IHelpContextIds.MANIFEST_SOURCE_PAGE);
-		
 		installFormatAction();
 	}
 	

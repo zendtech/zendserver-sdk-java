@@ -39,11 +39,13 @@ import org.eclipse.php.server.ui.types.ServerTypesManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.zend.php.server.internal.ui.actions.ActionContributionsManager;
@@ -97,9 +99,13 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		hookDoubleClickAction();
 
 		hookContextMenu();
-
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(viewer.getControl(), ID);
+		
+		viewer.getControl().setData(WorkbenchHelpSystem.HELP_KEY, ID);
+		viewer.getControl().addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent arg0) {
+				org.eclipse.swt.program.Program.launch(ID);
+			}
+		});
 	}
 
 	@Override

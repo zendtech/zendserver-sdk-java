@@ -65,9 +65,6 @@ public class ExportApplicationAction extends Action {
 				shellBounds.x + (shellBounds.width - dialogSize.x) / 2,
 				shellBounds.y + (shellBounds.height - dialogSize.y) / 2);
 
-		// PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
-		// IWorkbenchHelpContextIds.NEW_WIZARD);
-
 		return dialog;
 	}
 
