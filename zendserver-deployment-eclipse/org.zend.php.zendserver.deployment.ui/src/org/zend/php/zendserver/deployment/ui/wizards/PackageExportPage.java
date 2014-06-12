@@ -117,6 +117,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		projectList = new TableViewer(parent, SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.minimumHeight = 100;
+		gd.heightHint = 150;
 		projectList.getControl().setLayoutData(gd);
 		
 		projectList.setContentProvider(new DeploymentContentProvider());
