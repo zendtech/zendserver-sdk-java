@@ -12,6 +12,7 @@
 <unit id="org.hamcrest.integration" version="0.0.0"/>
 <unit id="org.hamcrest.library" version="0.0.0"/>
 <unit id="org.hamcrest" version="0.0.0"/>
+<unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="org.hamcrest.text" version="0.0.0"/>
 <unit id="com.jcraft.jsch" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
