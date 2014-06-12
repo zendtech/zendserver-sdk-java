@@ -271,7 +271,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	    Object[] results = dialog.getResult();
 	    if (results != null && results.length == 1 && results[0] instanceof IPath) {
 	        IPath path = (IPath) results[0];
-	        String absolutePath = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(path).toOSString();
+	        String absolutePath = ResourcesPlugin.getWorkspace().getRoot().getFolder(path).getLocation().toOSString();
 	        configsDirectoryField.setText(absolutePath);
 	    }
 	}
