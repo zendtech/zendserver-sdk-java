@@ -11,6 +11,8 @@
 package org.zend.php.server.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.window.Window;
@@ -231,6 +233,15 @@ public class ServersCombo {
 	 */
 	public void updateItems() {
 		serversList = filterServers(ServersManager.getServers());
+		if (serversList.length > 1) {
+			Arrays.sort(serversList, new Comparator<Server>() {
+				@Override
+				public int compare(Server first, Server second) {
+					return String.CASE_INSENSITIVE_ORDER.compare(
+							first.getName(), second.getName());
+				}
+			});
+		}
 		serversCombo.removeAll();
 		if (serversList.length != 0) {
 			for (Server server : serversList) {
