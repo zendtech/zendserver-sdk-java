@@ -110,19 +110,25 @@ public abstract class AbstractMonitor extends Job {
 				IProgressMonitor.UNKNOWN);
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 				.getTargetById(targetId);
-		if (isZS6(target)) {
-			doRunZS6(target);
-		} else {
-			doRunOld(target);
-		}
-		if (!monitor.isCanceled()) {
-			monitor.done();
-			if (counter > STEP && jobDelay < JOB_DELAY_MAX) {
-				jobDelay *= 2;
-				counter = 0;
+		if (target != null) {
+			if (isZS6(target)) {
+				doRunZS6(target);
+			} else {
+				doRunOld(target);
 			}
-			this.schedule(jobDelay);
-			return Status.OK_STATUS;
+			if (!monitor.isCanceled()) {
+				monitor.done();
+				if (counter > STEP && jobDelay < JOB_DELAY_MAX) {
+					jobDelay *= 2;
+					counter = 0;
+				}
+				this.schedule(jobDelay);
+				return Status.OK_STATUS;
+			}
+		} else {
+			getProvider().showErrorMessage(
+					Messages.AbstractMonitor_NotificationTitle,
+					Messages.AbstractMonitor_NoTargetError);
 		}
 		monitor.done();
 		return Status.CANCEL_STATUS;
