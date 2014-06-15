@@ -10,7 +10,6 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,10 +25,12 @@ import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
+import org.zend.php.zendserver.deployment.core.sdk.ProductionPackageBuilder;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.application.PackageBuilder;
+import org.zend.sdklib.mapping.IMappingLoader;
 
 public class PackageExportWizard extends Wizard implements IExportWizard {
 
@@ -92,8 +93,13 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return false;
 		}
-		final IResource[] projects = parametersPage.getSelectedProjects();
-		final File directory = new File(parametersPage.getDestinationValue());
+		
+		final IProject project = parametersPage.getSelectedProject();
+		final File directory = new File(parametersPage.getDestinationDirectory());
+		final boolean overwrite = parametersPage.isOverwriteSelected();
+		final boolean forProduction = parametersPage.isProductionModeSelected();
+		final String appConfigsPath = parametersPage.getConfigsDirectory();
+		
 		Job createPackageJob = new Job(Messages.exportWizard_JobTitle) {
 			private StatusChangeListener listener;
 
@@ -102,24 +108,27 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 				if (monitor.isCanceled()) {
 					return Status.OK_STATUS;
 				}
-				for (IResource project : projects) {
-					File container = new File(project.getLocation()
-							.toOSString());
-					PackageBuilder builder = new PackageBuilder(container,
-							new EclipseMappingModelLoader());
-					builder.addStatusChangeListener(listener);
-					builder.setVariableResolver(new EclipseVariableResolver());
-					if (!parametersPage.isOverwriteWithoutWarning()) {
-						IStatus s = shouldOverwrite(directory, builder);
-						if (!s.isOK()) {
-							return s;
-						}
+				
+				File container = new File(project.getLocation()
+						.toOSString());
+				IMappingLoader mappingLoader = new EclipseMappingModelLoader();
+				
+				PackageBuilder builder = (forProduction)
+						? new ProductionPackageBuilder(container, mappingLoader, appConfigsPath)
+						: new PackageBuilder(container, mappingLoader);
+				builder.addStatusChangeListener(listener);
+				builder.setVariableResolver(new EclipseVariableResolver());
+				if (!overwrite) {
+					IStatus s = shouldOverwrite(directory, builder);
+					if (!s.isOK()) {
+						return s;
 					}
+				}
 
-					builder.createDeploymentPackage(directory);
-					if (monitor.isCanceled()) {
-						return Status.OK_STATUS;
-					}
+				builder.createDeploymentPackage(directory);
+					
+				if (monitor.isCanceled()) {
+					return Status.OK_STATUS;
 				}
 				return new SdkStatus(listener.getStatus());
 			}

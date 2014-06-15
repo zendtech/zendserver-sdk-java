@@ -2,12 +2,16 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
 
-public abstract class DeploymentWizardPage extends WizardPage implements IStatusChangeListener {
+public abstract class DeploymentWizardPage extends WizardPage implements
+		IStatusChangeListener {
 
 	protected IDeploymentHelper helper;
 	private String help;
@@ -36,7 +40,12 @@ public abstract class DeploymentWizardPage extends WizardPage implements IStatus
 
 	public void createControl(Composite parent) {
 		if (help != null) {
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, help);
+			parent.setData(WorkbenchHelpSystem.HELP_KEY, help);
+			parent.addHelpListener(new HelpListener() {
+				public void helpRequested(HelpEvent arg0) {
+					org.eclipse.swt.program.Program.launch(help);
+				}
+			});
 		}
 	}
 

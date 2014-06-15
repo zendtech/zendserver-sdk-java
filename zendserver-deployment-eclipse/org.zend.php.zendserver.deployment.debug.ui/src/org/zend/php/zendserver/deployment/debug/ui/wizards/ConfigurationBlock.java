@@ -118,9 +118,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		devModeDesc.setLayoutData(gd);
 		devModeDesc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IWorkbenchHelpSystem help = PlatformUI.getWorkbench()
-						.getHelpSystem();
-				help.displayHelpResource(e.text);
+				org.eclipse.swt.program.Program.launch(e.text);
 			}
 		});
 		warnUpdate = createLabelWithCheckbox(
