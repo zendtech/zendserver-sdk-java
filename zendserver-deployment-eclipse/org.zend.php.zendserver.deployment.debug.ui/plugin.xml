@@ -128,6 +128,12 @@
       <serverType
             id="org.zend.php.server.ui.types.PhpcloudServerType">
       </serverType>
+      <serverType
+            id="org.zend.php.server.ui.types.ZendServerType">
+      </serverType>
+      <serverType
+            id="org.eclipse.php.server.ui.types.BasicServerType">
+      </serverType>
    </action>
 </extension>
  <extension point="org.eclipse.ui.menus">
@@ -159,12 +165,6 @@
        point="org.zend.php.server.ui.dragAndDropContribution">
     <contribution
           class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployProjectContribution">
-    </contribution>
- </extension>
- <extension
-       point="org.zend.php.server.ui.dragAndDropContribution">
-    <contribution
-          class="org.zend.php.zendserver.deployment.debug.ui.DragAndDropContribution1">
     </contribution>
  </extension>
 </plugin>
