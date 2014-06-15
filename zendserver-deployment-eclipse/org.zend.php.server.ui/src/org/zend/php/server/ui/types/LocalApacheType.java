@@ -31,6 +31,10 @@ import org.zend.php.server.internal.ui.ServersUI;
 @SuppressWarnings("restriction")
 public class LocalApacheType implements IServerType {
 
+	private static final String LISTEN = "Listen"; //$NON-NLS-1$
+
+	private static final String DOCUMENT_ROOT = "DocumentRoot"; //$NON-NLS-1$
+
 	public static final String ID = "org.zend.php.server.ui.types.LocalApacheType"; //$NON-NLS-1$
 
 	public static final String LOCATION = "apache2Location"; //$NON-NLS-1$
@@ -76,19 +80,18 @@ public class LocalApacheType implements IServerType {
 				String line = null;
 				while ((line = httpdReader.readLine()) != null) {
 					line = line.trim();
-					if (line.startsWith("Listen")) { //$NON-NLS-1$
-						String[] segments = line.trim().split(" "); //$NON-NLS-1$
-						if (segments.length == 2) {
-							server.setPort(segments[1]);
+					if (line.startsWith(LISTEN)) {
+						String value = extractValue(line, LISTEN);
+						if (value != null) {
+							server.setPort(value);
 						}
-					} else if (line.startsWith("DocumentRoot")) { //$NON-NLS-1$
-						String[] segments = line.trim().split(" "); //$NON-NLS-1$
-						if (segments.length == 2) {
-							String val = segments[1];
-							if (val.startsWith("\"")) { //$NON-NLS-1$
-								server.setDocumentRoot(val.substring(1,
-										val.length() - 1));
+					} else if (line.startsWith(DOCUMENT_ROOT)) {
+						String path = extractValue(line, DOCUMENT_ROOT);
+						if (path != null) {
+							if (path.startsWith("\"")) { //$NON-NLS-1$
+								path = path.substring(1, path.length() - 1);
 							}
+							server.setDocumentRoot(path);
 						}
 					}
 				}
@@ -103,6 +106,11 @@ public class LocalApacheType implements IServerType {
 				}
 			}
 		}
+	}
+
+	private static String extractValue(String line, String attributeName) {
+		String path = line.trim().substring(attributeName.length());
+		return path.trim();
 	}
 
 }
