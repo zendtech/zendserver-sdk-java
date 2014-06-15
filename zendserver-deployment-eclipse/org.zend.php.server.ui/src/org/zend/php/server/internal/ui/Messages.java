@@ -4,8 +4,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.server.internal.ui.messages"; //$NON-NLS-1$
+	public static String LocalApacheType_Description;
 	public static String LocalApacheType_Name;
+	public static String LocalZendServerType_Description;
 	public static String LocalZendServerType_Name;
+	public static String ZendServerType_Description;
 	public static String ZendServerType_Name;
 	public static String ViewLabelProvider_ServersViewLabel;
 	public static String LocalApacheCompositeFragment_BaseUrlConflictError;
@@ -32,7 +35,9 @@ public class Messages extends NLS {
 	public static String OpenDatabaseConnectionAction_DatabasePassword;
 	public static String OpenDatabaseConnectionAction_JobTitle;
 	public static String OpenDatabaseConnectionAction_TaskName;
+	public static String OpenShiftServerType_Description;
 	public static String OpenShiftServerType_Name;
+	public static String PhpcloudServerType_Description;
 	public static String PhpcloudServerType_Name;
 	public static String RemoveServerAction_RemoveLabel;
 	public static String ServerLaunchDelegateListener_ErrorMessage;

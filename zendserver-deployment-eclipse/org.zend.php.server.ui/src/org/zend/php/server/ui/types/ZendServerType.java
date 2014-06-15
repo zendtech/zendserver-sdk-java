@@ -37,8 +37,18 @@ public class ZendServerType implements IServerType {
 	}
 
 	@Override
+	public String getDescription() {
+		return Messages.ZendServerType_Description;
+	}
+
+	@Override
 	public Image getViewIcon() {
 		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
+	}
+
+	@Override
+	public Image getTypeIcon() {
+		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_TYPE_ICON);
 	}
 
 	@Override

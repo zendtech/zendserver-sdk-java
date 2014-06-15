@@ -35,11 +35,20 @@ public class PhpcloudServerType implements IServerType {
 	public String getName() {
 		return Messages.PhpcloudServerType_Name;
 	}
+	
+	@Override
+	public String getDescription() {
+		return Messages.PhpcloudServerType_Description;
+	}
 
 	@Override
 	public Image getViewIcon() {
-		// TODO set a correct icon
 		return ServersUI.getDefault().getImage(ServersUI.PHPCLOUD_ICON);
+	}
+	
+	@Override
+	public Image getTypeIcon() {
+		return ServersUI.getDefault().getImage(ServersUI.PHPCLOUD_TYPE_ICON);
 	}
 
 	@Override

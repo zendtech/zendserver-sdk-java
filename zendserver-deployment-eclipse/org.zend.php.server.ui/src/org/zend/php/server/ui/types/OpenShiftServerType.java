@@ -35,10 +35,20 @@ public class OpenShiftServerType implements IServerType {
 	public String getName() {
 		return Messages.OpenShiftServerType_Name;
 	}
+	
+	@Override
+	public String getDescription() {
+		return Messages.OpenShiftServerType_Description;
+	}
 
 	@Override
 	public Image getViewIcon() {
 		return ServersUI.getDefault().getImage(ServersUI.OPENSHIFT_ICON);
+	}
+	
+	@Override
+	public Image getTypeIcon() {
+		return ServersUI.getDefault().getImage(ServersUI.OPENSHIFT_TYPE_ICON);
 	}
 
 	@Override

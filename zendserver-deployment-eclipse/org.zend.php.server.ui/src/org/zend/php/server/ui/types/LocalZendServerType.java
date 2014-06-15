@@ -33,8 +33,17 @@ public class LocalZendServerType implements IServerType {
 		return Messages.LocalZendServerType_Name;
 	}
 
+	public String getDescription() {
+		return Messages.LocalZendServerType_Description;
+	}
+
 	public Image getViewIcon() {
 		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_ICON);
+	}
+
+	@Override
+	public Image getTypeIcon() {
+		return ServersUI.getDefault().getImage(ServersUI.ZEND_SERVER_TYPE_ICON);
 	}
 
 	public ImageDescriptor getWizardImage() {

@@ -58,6 +58,16 @@ public class LocalApacheType implements IServerType {
 	}
 
 	@Override
+	public String getDescription() {
+		return Messages.LocalApacheType_Description;
+	}
+
+	@Override
+	public Image getTypeIcon() {
+		return ServersUI.getDefault().getImage(ServersUI.APACHE_TYPE_ICON);
+	}
+
+	@Override
 	public ImageDescriptor getWizardImage() {
 		return ServersUI.getImageDescriptor(ServersUI.APACHE_SERVER_WIZ);
 	}

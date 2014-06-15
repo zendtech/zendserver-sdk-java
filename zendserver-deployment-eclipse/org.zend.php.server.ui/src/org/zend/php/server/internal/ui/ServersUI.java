@@ -36,16 +36,20 @@ public class ServersUI extends AbstractUIPlugin {
 	public static final String DEFAULT_SERVER_ICON = "icons/obj16/default_server.png"; //$NON-NLS-1$
 
 	public static final String ZEND_SERVER_ICON = "icons/obj16/zend_server.png"; //$NON-NLS-1$
+	public static final String ZEND_SERVER_TYPE_ICON = "icons/obj32/zend_server.png"; //$NON-NLS-1$
 	public static final String ZEND_SERVER_WIZ = "icons/wizban/zend_server_wiz.png"; //$NON-NLS-1$
 
 	public static final String APACHE_SERVER_ICON = "icons/obj16/apache.png"; //$NON-NLS-1$
+	public static final String APACHE_TYPE_ICON = "icons/obj32/apache.png"; //$NON-NLS-1$
 	public static final String APACHE_SERVER_WIZ = "icons/wizban/local_apache_wiz.png"; //$NON-NLS-1$
 	public static final String REFRESH_APACHE_ICON = "icons/obj16/refresh.gif"; //$NON-NLS-1$
 
 	public static final String OPENSHIFT_ICON = "icons/obj16/openshift.png"; //$NON-NLS-1$
+	public static final String OPENSHIFT_TYPE_ICON = "icons/obj32/openshift.png"; //$NON-NLS-1$
 	public static final String OPENSHIFT_WIZ = "icons/wizban/openshift_wiz.png"; //$NON-NLS-1$
 
 	public static final String PHPCLOUD_ICON = "icons/obj16/phpcloud.png"; //$NON-NLS-1$
+	public static final String PHPCLOUD_TYPE_ICON = "icons/obj32/phpcloud.png"; //$NON-NLS-1$
 	public static final String PHPCLOUD_WIZ = "icons/wizban/phpcloud_wiz.png"; //$NON-NLS-1$
 
 	public static final String IMAGE_DATABASE = "icons/obj16/database.gif"; //$NON-NLS-1$
