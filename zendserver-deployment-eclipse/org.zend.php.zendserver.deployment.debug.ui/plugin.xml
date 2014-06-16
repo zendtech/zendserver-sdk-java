@@ -140,7 +140,7 @@
     <menuContribution locationURI="popup:org.eclipse.php.ui.explorer?after=additions">
       <command
             commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
-            icon="icons/obj16/deploy_to.png"
+            icon="icons/obj16/deploy_exc.png"
             label="Deploy To..."
             style="push">
          <visibleWhen
