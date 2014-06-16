@@ -18,7 +18,13 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.debug.core.debugger.launching.ILaunchDelegateListener;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
+import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 
 /**
  * {@link ILaunchDelegateListener} for debugging PHP applications. It is
@@ -35,8 +41,7 @@ public class ServerLaunchDelegateListener implements ILaunchDelegateListener {
 			ILaunch launch, IProgressMonitor monitor) {
 		String serverName = null;
 		try {
-			throw new Exception("asd");
-			/*serverName = configuration.getAttribute(Server.NAME, (String) null);
+			serverName = configuration.getAttribute(Server.NAME, (String) null);
 			if (serverName != null) {
 				Server server = ServersManager.getServer(serverName);
 				if (server != null) {
@@ -47,20 +52,34 @@ public class ServerLaunchDelegateListener implements ILaunchDelegateListener {
 						SSHTunnelManager.getManager().connect(sshConfig);
 					}
 				}
-			}*/
+			}
 		} catch (CoreException e) {
 			ServersUI.logError(e);
 		} catch (Exception e) {
 			ServersUI.logError(e);
-			MessageDialog.openError(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(),
-					Messages.ServerLaunchDelegateListener_ErrorTitle,
-					MessageFormat.format(
-							Messages.ServerLaunchDelegateListener_ErrorMessage,
-							serverName));
+			displayError(serverName);
 			return -1;
 		}
 		return 0;
+	}
+
+	private void displayError(final String name) {
+		final IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+				.getWorkbenchWindows();
+		if (windows != null && windows.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					MessageDialog.openError(
+							windows[0].getShell(),
+							Messages.ServerLaunchDelegateListener_ErrorTitle,
+							MessageFormat
+									.format(Messages.ServerLaunchDelegateListener_ErrorMessage,
+											name));
+				}
+			});
+		}
 	}
 
 }
