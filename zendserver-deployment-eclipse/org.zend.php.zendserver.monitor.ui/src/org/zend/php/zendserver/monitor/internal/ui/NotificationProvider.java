@@ -71,12 +71,13 @@ public class NotificationProvider implements INotificationProvider {
 	}
 
 	private NotificationSettings getNotificationSettings(IZendIssue issue,
-			String targetId, IEventDetails eventSource, int actionsAvailable) {
-		IBody eventBody = new EventBody(targetId, eventSource, issue,
+			String serverId, IEventDetails eventSource, int actionsAvailable) {
+		IBody eventBody = new EventBody(serverId, eventSource, issue,
 				actionsAvailable);
 		NotificationSettings settings = new NotificationSettings();
-		String title = MessageFormat.format("{0} (target: {1})", issue //$NON-NLS-1$
-				.getIssue().getRule(), targetId);
+		String title = MessageFormat.format(
+				Messages.NotificationProvider_EventTitle, issue.getIssue()
+						.getRule(), serverId);
 		settings.setTitle(title).setClosable(true)
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);

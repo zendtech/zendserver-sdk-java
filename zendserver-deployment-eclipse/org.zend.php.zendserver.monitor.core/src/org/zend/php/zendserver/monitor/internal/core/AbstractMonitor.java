@@ -167,7 +167,7 @@ public abstract class AbstractMonitor extends Job {
 				IEventDetails eventSource = EventDetails.create(issue
 						.getIssue().getGeneralDetails().getUrl(), projectName,
 						basePath, issue.getIssue());
-				getProvider().showNonification(issue, targetId, eventSource,
+				getProvider().showNonification(issue, getName(), eventSource,
 						delay, actionsAvailable);
 			}
 		});
