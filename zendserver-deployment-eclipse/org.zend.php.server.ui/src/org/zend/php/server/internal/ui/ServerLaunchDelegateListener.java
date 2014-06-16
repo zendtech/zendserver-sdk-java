@@ -21,7 +21,6 @@ import org.eclipse.php.debug.core.debugger.launching.ILaunchDelegateListener;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
@@ -64,22 +63,20 @@ public class ServerLaunchDelegateListener implements ILaunchDelegateListener {
 	}
 
 	private void displayError(final String name) {
-		final IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-				.getWorkbenchWindows();
-		if (windows != null && windows.length > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable() {
 
-				@Override
-				public void run() {
-					MessageDialog.openError(
-							windows[0].getShell(),
-							Messages.ServerLaunchDelegateListener_ErrorTitle,
-							MessageFormat
-									.format(Messages.ServerLaunchDelegateListener_ErrorMessage,
-											name));
-				}
-			});
-		}
+			@Override
+			public void run() {
+				MessageDialog
+						.openError(
+								PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow().getShell(),
+								Messages.ServerLaunchDelegateListener_ErrorTitle,
+								MessageFormat
+										.format(Messages.ServerLaunchDelegateListener_ErrorMessage,
+												name));
+			}
+		});
 	}
 
 }
