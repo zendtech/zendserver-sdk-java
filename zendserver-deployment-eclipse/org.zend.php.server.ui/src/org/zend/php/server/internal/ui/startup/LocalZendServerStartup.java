@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.startup;
 
+import java.io.File;
+
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
@@ -37,7 +39,7 @@ public class LocalZendServerStartup implements IStartup {
 		server = ZendServerManager.getInstance().getLocalZendServer(server);
 		String location = server.getAttribute(
 				ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-		if (location != null) {
+		if (location != null && new File(location).exists()) {
 			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 			Server oldServer = ServersManager.getServer(server.getName());
 			if (oldServer == null) {
@@ -54,6 +56,7 @@ public class LocalZendServerStartup implements IStartup {
 					ServersManager.removeServer(oldServer.getName());
 				}
 				ServersManager.addServer(server);
+				ServersManager.setDefaultServer(null, server);
 				ServersManager.save();
 				if (!server.equals(ServersManager.getDefaultServer(null))) {
 					ServersManager.setDefaultServer(null, server);
