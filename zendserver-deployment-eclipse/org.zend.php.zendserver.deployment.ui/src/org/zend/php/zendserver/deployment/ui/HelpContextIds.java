@@ -25,15 +25,15 @@ public interface HelpContextIds {
 	public static final String DEPLOYMENT_XML_TAB = PREFIX
 			+ "deployment.xml_tab" + SUFFIX; //$NON-NLS-1$
 
-	public static final String MANAGING_TARGETS = PREFIX + "managing_targets" + SUFFIX; //$NON-NLS-1$
+	public static final String MANAGING_TARGETS = PREFIX + "managing_php_servers" + SUFFIX; //$NON-NLS-1$
 
 	public static final String CREATING_A_REMOTE_ZEND_SERVER_TARGET = PREFIX
-			+ "creating_a_remote_zend_server_target" + SUFFIX; //$NON-NLS-1$
+			+ "adding_a_remote_zend_server" + SUFFIX; //$NON-NLS-1$
 
 	public static final String CREATING_A_ZEND_DEVELOPER_CLOUD_TARGET = PREFIX
-			+ "creating_a_zend_developer_cloud_target" + SUFFIX; //$NON-NLS-1$
+			+ "adding_a_zend_developer_cloud_php_server" + SUFFIX; //$NON-NLS-1$
 
 	public static final String CREATING_A_LOCAL_ZEND_SERVER_TARGET = PREFIX
-			+ "creating_a_local_zend_server_target" + SUFFIX; //$NON-NLS-1$
+			+ "adding_a_local_zend_server" + SUFFIX; //$NON-NLS-1$
 
 }
