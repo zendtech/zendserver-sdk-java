@@ -133,7 +133,7 @@ public abstract class AbstractTunnelHelper {
 			Activator.log(e);
 			String message = MessageFormat.format(
 					Messages.DeploymentHandler_sshTunnelErrorTitle,
-					config.getHost());
+					config.getHost(), e.getMessage());
 			NotificationManager.registerError(
 					Messages.OpenTunnelCommand_OpenTunnelTitle, message, 5000);
 		}
