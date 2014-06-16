@@ -40,6 +40,9 @@ public class LocalZendServerStartup implements IStartup {
 		String location = server.getAttribute(
 				ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
 		if (location != null && new File(location).exists()) {
+			if (!isUnique(server.getName())) {
+				server.setName(getNewName(server.getName()));
+			}
 			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 			Server oldServer = ServersManager.getServer(server.getName());
 			if (oldServer == null) {
@@ -73,6 +76,33 @@ public class LocalZendServerStartup implements IStartup {
 					Messages.LocalZendServerStartup_NotFoundMessage,
 					ZEND_PHP_WEB_SERVER_HELP, 5000, MESSAGE_ID);
 		}
+	}
+
+	/**
+	 * Generate unique server name by adding integer suffix to original name.
+	 * 
+	 * @param name
+	 * @return unique server name
+	 */
+	private String getNewName(String name) {
+		int suffix = 1;
+		String newName = name + ' ' + suffix;
+		while (!isUnique(newName)) {
+			newName = name + ' ' + suffix;
+			suffix++;
+		}
+		return newName;
+	}
+
+	/**
+	 * Check if specified server name is unique.
+	 * 
+	 * @param name
+	 * @return <code>true</code> if specified name is a unique server name;
+	 *         otherwise return <code>false</code>
+	 */
+	private boolean isUnique(String name) {
+		return ServersManager.getServer(name) == null;
 	}
 
 }
