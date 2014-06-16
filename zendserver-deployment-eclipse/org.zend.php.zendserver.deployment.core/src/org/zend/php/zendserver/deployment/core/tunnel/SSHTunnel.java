@@ -48,6 +48,9 @@ public class SSHTunnel {
 
 		NOT_SUPPORTED;
 	}
+	
+	// connection timeout in ms
+	private static final int TIMEOUT = 10000; 
 
 	private UserInfo userInfo;
 	private Session session;
@@ -146,6 +149,7 @@ public class SSHTunnel {
 			if (config.getPassword() != null) {
 				session.setPassword(config.getPassword());
 			}
+			session.setTimeout(TIMEOUT);
 			session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			session.setConfig("StrictHostKeyChecking", "no"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (config.getHttpProxyHost() != null) {
@@ -163,8 +167,6 @@ public class SSHTunnel {
 					jsch.addIdentity(privateKey);
 				}
 			}
-		} catch (JSchException e) {
-			throw e;
 		} catch (PublicKeyNotFoundException e) {
 			throw new TunnelException(MessageFormat.format(
 					Messages.SSHTunnel_ConnectionError, config.getHost()));
