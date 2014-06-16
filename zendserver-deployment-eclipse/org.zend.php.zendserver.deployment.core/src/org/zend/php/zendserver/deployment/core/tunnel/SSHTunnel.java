@@ -59,7 +59,7 @@ public class SSHTunnel {
 	}
 
 	public SSHTunnel(SSHTunnelConfiguration config) {
-		this(config, new SimpleUserInfo(config.getPassword()));
+		this(config, new SimpleUserInfo());
 	}
 
 	/**
@@ -143,8 +143,8 @@ public class SSHTunnel {
 		try {
 			session = jsch.getSession(config.getUsername(), config.getHost(),
 					22);
-			if (userInfo.getPassword() != null) {
-				session.setUserInfo(userInfo);
+			if (config.getPassword() != null) {
+				session.setPassword(config.getPassword());
 			}
 			session.setConfig("compression_level", "9"); //$NON-NLS-1$ //$NON-NLS-2$
 			session.setConfig("StrictHostKeyChecking", "no"); //$NON-NLS-1$ //$NON-NLS-2$

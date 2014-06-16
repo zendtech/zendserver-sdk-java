@@ -23,11 +23,6 @@ public class SimpleUserInfo implements UserInfo {
 	public SimpleUserInfo() {
 	}
 
-	public SimpleUserInfo(String password) {
-		super();
-		this.password = password;
-	}
-
 	@Override
 	public String getPassword() {
 		return password;
