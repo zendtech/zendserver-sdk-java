@@ -186,4 +186,9 @@
             name="SSH Tunneling">
       </wizardAndCompositeFragment>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.zend.php.zendserver.deployment.ui.ServersMigrationStartup"></startup>
+   </extension>
 </plugin>
