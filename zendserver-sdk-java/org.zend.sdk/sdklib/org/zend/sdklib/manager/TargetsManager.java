@@ -79,7 +79,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	/**
 	 * @param target
 	 * @return
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target)
@@ -91,7 +91,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param target
 	 * @param suppressConnect
 	 * @return
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 * @throws WebApiException
 	 */
 	public synchronized IZendTarget add(IZendTarget target,
@@ -231,7 +231,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 *            key to use, null if not specified
 	 * @return the detected localhost target, or null if detection failed
 	 * @throws DetectionException
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key) throws DetectionException, LicenseExpiredException {
@@ -251,7 +251,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 *            server config file
 	 * @return
 	 * @throws DetectionException
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key, boolean add, boolean createKey)
@@ -272,7 +272,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 *            server config file
 	 * @return
 	 * @throws DetectionException
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 */
 	public synchronized IZendTarget detectLocalhostTarget(String targetId,
 			String key, String secretKey, boolean add, boolean createKey)
@@ -428,7 +428,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 * @param key
 	 * @param secretKey
 	 * @return
-	 * @throws LicenseExpiredException 
+	 * @throws LicenseExpiredException
 	 */
 	public IZendTarget createTarget(String targetId, String host, String key,
 			String secretKey) throws LicenseExpiredException {
@@ -476,11 +476,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return null;
 	}
 
-	private IZendTarget updateTarget(IZendTarget existing, IZendTarget newTarget, boolean suppressConnect)
+	private IZendTarget updateTarget(IZendTarget existing,
+			IZendTarget newTarget, boolean suppressConnect)
 			throws LicenseExpiredException {
 		IZendTarget updated = updateTarget(existing.getId(), newTarget
 				.getHost().toString(), newTarget.getDefaultServerURL()
-				.toString(), newTarget.getKey(), newTarget.getSecretKey(), suppressConnect);
+				.toString(), newTarget.getKey(), newTarget.getSecretKey(),
+				suppressConnect);
 		ZendTarget updatedZT = (ZendTarget) updated;
 
 		ZendTarget newZT = (ZendTarget) newTarget;
@@ -492,7 +494,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 
 		return updated;
 	}
-	
+
 	public IZendTarget updateTarget(String targetId, String host,
 			String defaultServer, String key, String secretKey)
 			throws LicenseExpiredException {
@@ -501,8 +503,8 @@ public class TargetsManager extends AbstractChangeNotifier {
 	}
 
 	public IZendTarget updateTarget(String targetId, String host,
-			String defaultServer, String key, String secretKey, boolean suppressConnect)
-			throws LicenseExpiredException {
+			String defaultServer, String key, String secretKey,
+			boolean suppressConnect) throws LicenseExpiredException {
 		ZendTarget target = (ZendTarget) getTargetById(targetId);
 		if (target == null) {
 			log.info("Target with id '" + targetId + "' does not exist.");
@@ -749,10 +751,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 	}
 
 	public static boolean isLocalhost(IZendTarget target) {
-		return isLocalhost(target.getHost().getHost());
+		return target != null && isLocalhost(target.getHost().getHost());
 	}
 
 	public static boolean isLocalhost(String host) {
+		if (host == null) {
+			return false;
+		}
 		if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
 			return true;
 		}
