@@ -67,6 +67,9 @@
                <fragment
                      id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
                </fragment>
+               <fragment
+                     id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
+               </fragment>
             </settings>
       </type>
    </extension>
@@ -142,6 +145,9 @@
             <fragment
                   id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
             </fragment>
+            <fragment
+                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
+            </fragment>
          </settings>
       </type>
    </extension>
@@ -175,6 +181,9 @@
             </fragment>
             <fragment
                   id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
+            </fragment>
+            <fragment
+                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
             </fragment>
          </settings>
       </type>
