@@ -28,13 +28,13 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class SSHTunnelConfiguration {
 
-	private static final String ENABLED = "tunnelEnabled"; //$NON-NLS-1$
-	private static final String USERNAME = "tunnelAuthUsername"; //$NON-NLS-1$
-	private static final String PASSWORD = "tunnelAuthPassword"; //$NON-NLS-1$
-	private static final String PRIVATE_KEY = "tunnelPrivateKey"; //$NON-NLS-1$
-	private static final String PORT_FORWARDING = "tunnelPortForwarding"; //$NON-NLS-1$
-	private static final String HTTP_PROXY_HOST = "tunnelHttpProxyHost"; //$NON-NLS-1$
-	private static final String HTTP_PROXY_PORT = "tunnelHttpProxyPort"; //$NON-NLS-1$
+	private static final String ENABLED = "sshTunnelEnabled"; //$NON-NLS-1$
+	private static final String USERNAME = "sshTunnelAuthUsername"; //$NON-NLS-1$
+	private static final String PASSWORD = "sshTunnelAuthPassword"; //$NON-NLS-1$
+	private static final String PRIVATE_KEY = "sshTunnelPrivateKey"; //$NON-NLS-1$
+	private static final String PORT_FORWARDING = "sshTunnelPortForwarding"; //$NON-NLS-1$
+	private static final String HTTP_PROXY_HOST = "sshTunnelHttpProxyHost"; //$NON-NLS-1$
+	private static final String HTTP_PROXY_PORT = "sshTunnelHttpProxyPort"; //$NON-NLS-1$
 
 	private static final String FORWARDING_SEPARATOR = ";"; //$NON-NLS-1$
 
