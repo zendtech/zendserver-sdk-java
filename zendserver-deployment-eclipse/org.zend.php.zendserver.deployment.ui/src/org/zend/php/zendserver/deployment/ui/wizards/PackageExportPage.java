@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -67,6 +68,12 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 	}
 
+	private static final String S_DESTINATION = "destination"; //$NON-NLS-1$
+	private static final String S_OVERWRITE = "overwrite"; //$NON-NLS-1$
+	private static final String S_PRODUCTION = "production"; //$NON-NLS-1$
+	private static final String S_USE_EXISTING_CONFIGS = "useExistingConfigs"; //$NON-NLS-1$
+	private static final String S_CONFIGS_DIRECTORY = "configsDirectory"; //$NON-NLS-1$
+	
 	private Combo destinationField;
 	private Button browseButton;
 	private TableViewer projectList;
@@ -156,19 +163,19 @@ public class PackageExportPage extends WizardPage implements Listener {
 		// Overwrite existing files without warning message
 		overwriteCheckbox = new Button(group, SWT.CHECK);
 		overwriteCheckbox.setText(Messages.PackageExportPage_OverwriteCheckboxText);
+		initializeCheckbox(S_OVERWRITE, overwriteCheckbox, true);
 		overwriteCheckbox.addListener(SWT.Selection, this);
 		overwriteCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
-		overwriteCheckbox.setSelection(true);
 	}
 	
 	private void createProductionModeGroup(Composite parent) {
 		productionCheckbox = new Button(parent, SWT.CHECK);
 		productionCheckbox.setText(Messages.PackageExportPage_ProductionCheckboxText);
+		initializeCheckbox(S_PRODUCTION, productionCheckbox, false);
 		productionCheckbox.addListener(SWT.Selection, this);
 		GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1);
 		gd.verticalIndent = 8;
 		productionCheckbox.setLayoutData(gd);
-		productionCheckbox.setSelection(false);
 		
 		configsGroup = new Group(parent, SWT.NONE);
 		configsGroup.setText(Messages.PackageExportPage_ConfigsGroupText);
@@ -179,14 +186,16 @@ public class PackageExportPage extends WizardPage implements Listener {
 		reuseConfigsRadio.setText(Messages.PackageExportPage_ReuseRadioText);
 		reuseConfigsRadio.addListener(SWT.Selection, this);
 		reuseConfigsRadio.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
-		reuseConfigsRadio.setSelection(true);
 		
 		alternativeConfigsRadio = new Button(configsGroup, SWT.RADIO);
 		alternativeConfigsRadio.setText(Messages.PackageExportPage_AlternativeConfigsRadioText);
 		alternativeConfigsRadio.addListener(SWT.Selection, this);
 		alternativeConfigsRadio.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
 		
+		initializeRadioGroup(S_USE_EXISTING_CONFIGS, reuseConfigsRadio, alternativeConfigsRadio);
+		
 		configsDirectoryField = new Combo(configsGroup, SWT.SINGLE | SWT.BORDER);
+		initializeCombo(S_CONFIGS_DIRECTORY, configsDirectoryField);
 		configsDirectoryField.addListener(SWT.Modify, this);
 		configsDirectoryField.addListener(SWT.Selection, this);
 		configsDirectoryField.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
@@ -372,9 +381,13 @@ public class PackageExportPage extends WizardPage implements Listener {
 	}
 
 	private void setInitialDestination() {
-		File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
-		if (home.exists()) {
-			destinationField.setText(home.getAbsolutePath());
+		initializeCombo(S_DESTINATION, destinationField);
+		if (destinationField.getText().trim().isEmpty()) {
+			// no history available - default to the user home directory
+			File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
+			if (home.exists()) {
+				destinationField.setText(home.getAbsolutePath());
+			}
 		}
 	}
 	
@@ -395,6 +408,82 @@ public class PackageExportPage extends WizardPage implements Listener {
 			return project.hasNature("org.zend.php.framework.ZendFrameworkNature"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			return false;
+		}
+	}
+
+	public void saveSettings() {
+		saveCombo(S_DESTINATION, destinationField);
+		saveCheckbox(S_OVERWRITE, overwriteCheckbox);
+		saveCheckbox(S_PRODUCTION, productionCheckbox);
+		saveRadioGroup(S_USE_EXISTING_CONFIGS, reuseConfigsRadio, alternativeConfigsRadio);
+		saveCombo(S_CONFIGS_DIRECTORY, configsDirectoryField);
+	}
+
+	private void initializeCombo(String key, Combo combo) {
+		IDialogSettings settings = getDialogSettings();
+
+		for (int i = 0; i < 6; i++) {
+			String curr = settings.get(key + String.valueOf(i));
+			if (curr != null && combo.indexOf(curr) == -1) {
+				combo.add(curr);
+			}
+		}
+
+		if (combo.getItemCount() > 0) {
+			combo.setText(combo.getItem(0));
+		}
+	}
+
+	private void saveCombo(String key, Combo combo) {
+		IDialogSettings settings = getDialogSettings();
+
+		if (!combo.getText().trim().isEmpty()) {
+			settings.put(key + String.valueOf(0), combo.getText().trim());
+			String[] items = combo.getItems();
+			int nEntries = Math.min(items.length, 5);
+			for (int i = 0; i < nEntries; i++) {
+				settings.put(key + String.valueOf(i + 1), items[i].trim());
+			}
+		}
+	}
+	
+	private void initializeCheckbox(String key, Button checkbox, boolean defaultValue) {
+		IDialogSettings settings = getDialogSettings();
+		
+		boolean selection = defaultValue;
+		if (settings.get(key) != null) {
+			selection = settings.getBoolean(key);
+		}
+		
+		checkbox.setSelection(selection);
+	}
+	
+	private void saveCheckbox(String key, Button checkbox) {
+		getDialogSettings().put(key, checkbox.getSelection());
+	}
+	
+	private void initializeRadioGroup(String key, Button... radioButtons) {
+		IDialogSettings settings = getDialogSettings();
+		
+		int selectionIndex = 0;
+		if (settings.get(key) != null) {
+			selectionIndex = settings.getInt(key);
+			if (selectionIndex > radioButtons.length - 1) {
+				selectionIndex = 0;
+			}
+		}
+		
+		radioButtons[selectionIndex].setSelection(true);
+	}
+
+	private void saveRadioGroup(String key, Button... radioButtons) {
+		int selectionIndex = 0;
+		for (Button radio : radioButtons) {
+			if (radio.getSelection()) {
+				getDialogSettings().put(key, selectionIndex);
+			} else {
+				selectionIndex++;
+			}
 		}
 	}
 

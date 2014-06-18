@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -63,7 +64,18 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 	private PackageExportPage parametersPage;
 
 	public PackageExportWizard() {
+		setDialogSettings(getSettingsSection());
 		parametersPage = new PackageExportPage();
+	}
+
+	public IDialogSettings getSettingsSection() {
+		IDialogSettings master = Activator.getDefault().getDialogSettings();
+		String name = getClass().getSimpleName();
+		IDialogSettings settings = master.getSection(name);
+		if (settings == null) {
+			settings = master.addNewSection(name);
+		}
+		return settings;
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -90,6 +102,8 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
 	@Override
 	public boolean performFinish() {
+		saveSettings();
+		
 		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return false;
 		}
@@ -153,6 +167,10 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		createPackageJob.setUser(true);
 		createPackageJob.schedule();
 		return true;
+	}
+
+	private void saveSettings() {
+		parametersPage.saveSettings();
 	}
 
 	protected List<IProject> getValidSelection(
