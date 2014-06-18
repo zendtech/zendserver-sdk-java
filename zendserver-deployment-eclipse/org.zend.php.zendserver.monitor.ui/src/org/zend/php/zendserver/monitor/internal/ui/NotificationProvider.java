@@ -10,13 +10,17 @@ package org.zend.php.zendserver.monitor.internal.ui;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.php.internal.server.core.Server;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.NotificationType;
+import org.zend.php.server.core.utils.ServerUtils;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.INotificationProvider;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Implementation of {@link INotificationProvider}. Provides ability to display
@@ -71,13 +75,13 @@ public class NotificationProvider implements INotificationProvider {
 	}
 
 	private NotificationSettings getNotificationSettings(IZendIssue issue,
-			String serverId, IEventDetails eventSource, int actionsAvailable) {
-		IBody eventBody = new EventBody(serverId, eventSource, issue,
+			String targetId, IEventDetails eventSource, int actionsAvailable) {
+		IBody eventBody = new EventBody(targetId, eventSource, issue,
 				actionsAvailable);
 		NotificationSettings settings = new NotificationSettings();
 		String title = MessageFormat.format(
 				Messages.NotificationProvider_EventTitle, issue.getIssue()
-						.getRule(), serverId);
+						.getRule(), getServerName(targetId));
 		settings.setTitle(title).setClosable(true)
 				.setType(NotificationType.INFO).setBody(eventBody)
 				.setBorder(true);
@@ -85,6 +89,13 @@ public class NotificationProvider implements INotificationProvider {
 			settings.setComparator(new EventComparator(issue));
 		}
 		return settings;
+	}
+
+	protected String getServerName(String targetId) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		return server != null ? server.getName() : targetId;
 	}
 
 }

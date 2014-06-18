@@ -48,7 +48,8 @@ public interface INotificationProvider {
 	 * @param runnable
 	 *            process which should be run
 	 */
-	void showProgress(String title, String message, IRunnableWithProgress runnable);
+	void showProgress(String title, String message,
+			IRunnableWithProgress runnable);
 
 	/**
 	 * Displays error message when something goes wrong during monitoring
