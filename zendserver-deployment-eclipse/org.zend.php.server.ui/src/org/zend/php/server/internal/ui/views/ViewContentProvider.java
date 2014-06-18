@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.views;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -50,7 +52,14 @@ class ViewContentProvider implements IStructuredContentProvider,
 							first.getName(), second.getName());
 				}
 			});
-			return servers;
+			List<Server> result = new ArrayList<Server>();
+			for (Server server : servers) {
+				if (!Boolean.valueOf(server.getAttribute(
+						ServersManager.EMPTY_SERVER, String.valueOf(false)))) {
+					result.add(server);
+				}
+			}
+			return result.toArray(new Server[result.size()]);
 		}
 		return null;
 	}

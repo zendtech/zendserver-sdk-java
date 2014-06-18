@@ -32,8 +32,7 @@ public abstract class AbstractMigrationService implements IStartup {
 		Server[] servers = ServersManager.getServers();
 		boolean save = false;
 		for (Server server : servers) {
-			if (migrate(server)) {
-				ServersManager.addServer(server);
+			if (!ServersManager.isEmptyServer(server) && migrate(server)) {
 				save = true;
 			}
 		}

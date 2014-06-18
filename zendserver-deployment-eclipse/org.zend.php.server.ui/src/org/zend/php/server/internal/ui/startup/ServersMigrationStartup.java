@@ -7,8 +7,12 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.startup;
 
+import java.net.MalformedURLException;
+
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.server.core.utils.ServerUtils;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
 import org.zend.php.server.ui.types.LocalApacheType;
 import org.zend.php.server.ui.types.OpenShiftServerType;
@@ -60,6 +64,26 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 			if (typeId != null) {
 				setType(server, typeId);
 				return true;
+			}
+		}
+		return updateDefaultPHPWebServer(server);
+	}
+
+	private boolean updateDefaultPHPWebServer(Server server) {
+		if ("Default PHP Web Server".equals(server.getName()) //$NON-NLS-1$
+				&& "http://localhost".equals(server.getBaseURL()) //$NON-NLS-1$
+				&& server.getDocumentRoot().isEmpty()) {
+			if (ServersManager.getServer(ServersManager.DEFAULT_SERVER_NAME) != null) {
+				ServersManager.removeServer(ServersManager.DEFAULT_SERVER_NAME);
+			}
+			server.setName(ServersManager.DEFAULT_SERVER_NAME);
+			server.setAttribute(ServersManager.EMPTY_SERVER,
+					String.valueOf(true));
+			try {
+				server.setBaseURL("http://<no_php_server>"); //$NON-NLS-1$
+				return true;
+			} catch (MalformedURLException e) {
+				ServersUI.logError(e);
 			}
 		}
 		return false;
