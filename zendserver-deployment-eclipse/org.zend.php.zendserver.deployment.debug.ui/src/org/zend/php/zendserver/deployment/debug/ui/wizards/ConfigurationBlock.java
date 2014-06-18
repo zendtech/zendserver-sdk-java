@@ -115,6 +115,7 @@ public class ConfigurationBlock extends AbstractBlock {
 		devModeDesc.setFont(font);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
+		gd.widthHint = 400;
 		devModeDesc.setLayoutData(gd);
 		devModeDesc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

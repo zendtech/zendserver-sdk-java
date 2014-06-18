@@ -83,13 +83,13 @@ public class PackageExportPage extends WizardPage implements Listener {
 
 	protected PackageExportPage() {
 		super(Messages.PackageExportPage_Name);
-		setDescription(Messages.PackageExportPage_Description);
 		setTitle(Messages.PackageExportPage_Title);
+		setDescription(Messages.PackageExportPage_Description);
 	}
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
+		container.setLayout(new GridLayout());
 		
 		createProjectSelectionGroup(container);
 		createDestinationGroup(container);

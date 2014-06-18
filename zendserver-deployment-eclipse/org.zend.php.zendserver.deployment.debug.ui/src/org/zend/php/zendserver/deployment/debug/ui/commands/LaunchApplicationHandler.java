@@ -107,7 +107,6 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 				wizardMode);
 		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
-		dialog.setPageSize(550, 350);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			try {

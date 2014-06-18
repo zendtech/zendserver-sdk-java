@@ -17,10 +17,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
@@ -58,20 +54,6 @@ public class DeploymentWizard extends Wizard {
 			Mode mode) {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
 		init(project, helper, mode);
-	}
-
-	@Override
-	public void createPageControls(Composite pageContainer) {
-		super.createPageControls(pageContainer);
-		Point size = getShell().computeSize(SWT.DEFAULT, SWT.MIN);
-		Point containerSize = pageContainer.computeSize(size.x, SWT.DEFAULT);
-		// TODO change a way of computing dialog size
-		getShell().setSize(size.x, size.y + containerSize.y + 50);
-		Rectangle monitorArea = getShell().getDisplay().getPrimaryMonitor().getBounds();
-		Rectangle shellArea = getShell().getBounds();
-		int x = monitorArea.x + (monitorArea.width - shellArea.width) / 2;
-		int y = monitorArea.y + (monitorArea.height - shellArea.height) / 3;
-		getShell().setLocation(x, y);
 	}
 
 	@Override
