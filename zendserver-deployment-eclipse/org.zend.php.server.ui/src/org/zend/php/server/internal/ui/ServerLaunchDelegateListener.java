@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.debug.core.debugger.launching.ILaunchDelegateListener;
 import org.eclipse.php.internal.server.core.Server;
@@ -38,26 +39,29 @@ public class ServerLaunchDelegateListener implements ILaunchDelegateListener {
 	@Override
 	public int preLaunch(ILaunchConfiguration configuration, String mode,
 			ILaunch launch, IProgressMonitor monitor) {
-		String serverName = null;
-		try {
-			serverName = configuration.getAttribute(Server.NAME, (String) null);
-			if (serverName != null) {
-				Server server = ServersManager.getServer(serverName);
-				if (server != null) {
-					SSHTunnelConfiguration sshConfig = SSHTunnelConfiguration
-							.read(server);
-					if (sshConfig.isEnabled()) {
-						monitor.subTask(Messages.ServerLaunchDelegateListener_SubTaskName);
-						SSHTunnelManager.getManager().connect(sshConfig);
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			String serverName = null;
+			try {
+				serverName = configuration.getAttribute(Server.NAME,
+						(String) null);
+				if (serverName != null) {
+					Server server = ServersManager.getServer(serverName);
+					if (server != null) {
+						SSHTunnelConfiguration sshConfig = SSHTunnelConfiguration
+								.read(server);
+						if (sshConfig.isEnabled()) {
+							monitor.subTask(Messages.ServerLaunchDelegateListener_SubTaskName);
+							SSHTunnelManager.getManager().connect(sshConfig);
+						}
 					}
 				}
+			} catch (CoreException e) {
+				ServersUI.logError(e);
+			} catch (Exception e) {
+				ServersUI.logError(e);
+				displayError(serverName);
+				return -1;
 			}
-		} catch (CoreException e) {
-			ServersUI.logError(e);
-		} catch (Exception e) {
-			ServersUI.logError(e);
-			displayError(serverName);
-			return -1;
 		}
 		return 0;
 	}
