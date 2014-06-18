@@ -73,10 +73,10 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 		if ("Default PHP Web Server".equals(server.getName()) //$NON-NLS-1$
 				&& "http://localhost".equals(server.getBaseURL()) //$NON-NLS-1$
 				&& server.getDocumentRoot().isEmpty()) {
-			if (ServersManager.getServer(ServersManager.Default_Server_Name) != null) {
-				ServersManager.removeServer(ServersManager.Default_Server_Name);
+			if (ServersManager.getServer(ServersManager.DEFAULT_SERVER_NAME) != null) {
+				ServersManager.removeServer(ServersManager.DEFAULT_SERVER_NAME);
 			}
-			server.setName(ServersManager.Default_Server_Name);
+			server.setName(ServersManager.DEFAULT_SERVER_NAME);
 			server.setAttribute(ServersManager.EMPTY_SERVER,
 					String.valueOf(true));
 			try {
