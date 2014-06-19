@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String PackageExportPage_Title;
 	public static String PackageExportPage_Description;
 	public static String PackageExportPage_ProductionCheckboxText;
+	public static String PackageExportPage_ProjectCorruptedError;
 	public static String PackageExportPage_ProjectListLabel;
 	public static String PackageExportPage_BrowseButtonText;
 	public static String PackageExportPage_ConfigDirectoryNotExistError;
@@ -32,6 +33,7 @@ public class Messages extends NLS {
 	public static String PackageExportPage_DestinationNotDirectoryError;
 	public static String PackageExportPage_DestinationNotExistError;
 	public static String PackageExportPage_FileSystemButtonText;
+	public static String PackageExportPage_NoDeploymentSupportWarning;
 	public static String PackageExportPage_NoProjectAvailableError;
 	public static String PackageExportPage_NoProjectSelectedError;
 	public static String PackageExportPage_NotZF2ProjectError;
