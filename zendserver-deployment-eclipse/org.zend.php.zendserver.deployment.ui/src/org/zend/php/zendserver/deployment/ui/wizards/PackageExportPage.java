@@ -9,6 +9,8 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -23,6 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.php.internal.core.PHPToolkitUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
@@ -39,7 +42,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.DeploymentNature;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 
 public class PackageExportPage extends WizardPage implements Listener {
@@ -49,15 +53,23 @@ public class PackageExportPage extends WizardPage implements Listener {
 
 		public Object[] getElements(Object input) {
 			List<IProject> result = new ArrayList<IProject>();
+			
 			if (input instanceof IWorkspace) {
 				IWorkspace workspace = (IWorkspace) input;
 				IProject[] projects = workspace.getRoot().getProjects();
+				sortByNameIgnoreCase(projects);
+				
 				for (IProject project : projects) {
-					if (project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH) != null) {
-						result.add(project);
+					try {
+						if (PHPToolkitUtil.isPhpProject(project)) {
+							result.add(project);
+						}
+					} catch (CoreException e) {
+						Activator.log(e);
 					}
 				}
 			}
+			
 			return result.toArray(new IProject[result.size()]);
 		}
 
@@ -65,6 +77,15 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+		
+		private void sortByNameIgnoreCase(IProject[] projects) {
+			Arrays.sort(projects, new Comparator<IProject>() {
+				@Override
+				public int compare(IProject p1, IProject p2) {
+					return p1.getName().compareToIgnoreCase(p2.getName());
+				}
+			});
 		}
 	}
 
@@ -77,7 +98,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private Combo destinationField;
 	private Button browseButton;
 	private TableViewer projectList;
-	private List<IProject> initialSelection;
+	private IProject initialSelection;
 	private Button overwriteCheckbox;
 	
 	private Button productionCheckbox;
@@ -133,7 +154,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		projectList.setInput(ResourcesPlugin.getWorkspace());
 		
 		if (initialSelection != null) {
-			projectList.setSelection(new StructuredSelection(initialSelection));
+			projectList.setSelection(new StructuredSelection(initialSelection), true);
 		}
 		
 		projectList.getControl().addListener(SWT.Selection, this);
@@ -247,7 +268,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		}
 	}
 	
-	public void setInitialSelection(List<IProject> initialSelection) {
+	public void setInitialSelection(IProject initialSelection) {
 		if (initialSelection != null) {
 			this.initialSelection = initialSelection;
 		}
@@ -299,55 +320,62 @@ public class PackageExportPage extends WizardPage implements Listener {
 	}
 
 	protected void validatePage() {
-		if (validateSelection() && validateDestinationDirectory()
-				&& validateProductionMode() && validateConfigsDirectory()) {
-			setErrorMessage(null);
-			setPageComplete(true);
-		} else {
-			setPageComplete(false);
-		}
+		setMessage(null, NONE);
+		
+		boolean canFinish = validateSelection() && validateDestinationDirectory()
+				&& validateProductionMode() && validateConfigsDirectory();
+		
+		setPageComplete(canFinish);
 	}
 
 	private boolean validateSelection() {
 		if (projectList.getTable().getItemCount() == 0) {
-			setErrorMessage(Messages.PackageExportPage_NoProjectAvailableError);
+			setMessage(Messages.PackageExportPage_NoProjectAvailableError, ERROR);
 			return false;
 		}
 		
 		IProject project = getSelectedProject();
 		if (project == null) {
-			setErrorMessage(Messages.PackageExportPage_NoProjectSelectedError);
+			setMessage(Messages.PackageExportPage_NoProjectSelectedError, ERROR);
 			return false;
 		}
+		
+		try {
+			if (!project.hasNature(DeploymentNature.ID)) {
+				setMessage(Messages.PackageExportPage_NoDeploymentSupportWarning, WARNING);
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+			setMessage(Messages.PackageExportPage_ProjectCorruptedError, ERROR);
+			return false;
+		}
+		
 		return true;
 	}
 
 	private boolean validateDestinationDirectory() {
 		String destinationDirectory = getDestinationDirectory();
-		if (destinationDirectory.isEmpty()) {
-			setErrorMessage(null);
+		if (destinationDirectory.isEmpty() && getMessageType() == NONE) {
 			setMessage(Messages.PackageExportPage_SelectDestinationMessage, NONE);
 			return false;
 		}
 		
 		File destDir = new File(destinationDirectory);
 		if (!destDir.exists()) {
-			setErrorMessage(Messages.PackageExportPage_DestinationNotExistError);
+			setMessage(Messages.PackageExportPage_DestinationNotExistError, ERROR);
 			return false;
 		}
 			
 		if (!destDir.isDirectory()) {
-			setErrorMessage(Messages.PackageExportPage_DestinationNotDirectoryError);
+			setMessage(Messages.PackageExportPage_DestinationNotDirectoryError, ERROR);
 			return false;
 		}
-		
-		setMessage(null, NONE);
 		return true;
 	}
 
 	private boolean validateProductionMode() {
 		if (isProductionModeSelected() && !isZF2Project(getSelectedProject())) {
-			setErrorMessage(Messages.PackageExportPage_NotZF2ProjectError);
+			setMessage(Messages.PackageExportPage_NotZF2ProjectError, ERROR);
 			return false;
 		}
 		return true;
@@ -355,26 +383,25 @@ public class PackageExportPage extends WizardPage implements Listener {
 	
 	private boolean validateConfigsDirectory() {
 		if (isProductionModeSelected()) {
-			setMessage(Messages.PackageExportPage_SelectConfigDirectoryMessage, NONE);
+			if (getMessageType() == NONE) {
+				setMessage(Messages.PackageExportPage_SelectConfigDirectoryMessage, NONE);
+			}
 			
 			String configsDirectory = getConfigsDirectory();
 			if (configsDirectory.isEmpty()) {
-				setErrorMessage(null);
 				return false;
 			}
 			
 			File configsDir = new File(configsDirectory);
 			if (!configsDir.exists()) {
-				setErrorMessage(Messages.PackageExportPage_ConfigDirectoryNotExistError);
+				setMessage(Messages.PackageExportPage_ConfigDirectoryNotExistError, ERROR);
 				return false;
 			}
 				
 			if (!configsDir.isDirectory()) {
-				setErrorMessage(Messages.PackageExportPage_ConfigLocationNotDirectoryError);
+				setMessage(Messages.PackageExportPage_ConfigLocationNotDirectoryError, ERROR);
 				return false;
 			}
-		} else {
-			setMessage(null, NONE);
 		}
 		
 		return true;

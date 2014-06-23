@@ -3,13 +3,14 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -19,11 +20,12 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.php.internal.core.PHPToolkitUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseVariableResolver;
 import org.zend.php.zendserver.deployment.core.sdk.ProductionPackageBuilder;
@@ -44,9 +46,8 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		}
 
 		public void run() {
-			final String message = MessageFormat
-					.format(Messages.PackageExportWizard_0,
-							p.getAbsolutePath());
+			final String message = MessageFormat.format(
+					Messages.PackageExportWizard_0, p.getAbsolutePath());
 			final boolean overwrite = MessageDialog.openQuestion(getShell(),
 					Messages.PackageExportWizard_1, message);
 			setResult(overwrite ? Status.OK_STATUS : Status.CANCEL_STATUS);
@@ -89,12 +90,6 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		}
 	}
 
-	public void setInitialSelection(List<IProject> resources) {
-		if (resources != null) {
-			parametersPage.setInitialSelection(resources);
-		}
-	}
-
 	@Override
 	public void addPages() {
 		addPage(parametersPage);
@@ -103,32 +98,39 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 	@Override
 	public boolean performFinish() {
 		saveSettings();
-		
+
 		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return false;
 		}
-		
+
 		final IProject project = parametersPage.getSelectedProject();
-		final File directory = new File(parametersPage.getDestinationDirectory());
+		final File directory = new File(
+				parametersPage.getDestinationDirectory());
 		final boolean overwrite = parametersPage.isOverwriteSelected();
 		final boolean forProduction = parametersPage.isProductionModeSelected();
 		final String appConfigsPath = parametersPage.getConfigsDirectory();
-		
+
 		Job createPackageJob = new Job(Messages.exportWizard_JobTitle) {
 			private StatusChangeListener listener;
 
 			public IStatus run(IProgressMonitor monitor) {
+				try {
+					addDeploymentSupport(project, monitor);
+				} catch (CoreException e) {
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							e.getMessage(), e);
+				}
+
 				listener = new StatusChangeListener(monitor);
 				if (monitor.isCanceled()) {
 					return Status.OK_STATUS;
 				}
-				
-				File container = new File(project.getLocation()
-						.toOSString());
+
+				File container = new File(project.getLocation().toOSString());
 				IMappingLoader mappingLoader = new EclipseMappingModelLoader();
-				
-				PackageBuilder builder = (forProduction)
-						? new ProductionPackageBuilder(container, mappingLoader, appConfigsPath)
+
+				PackageBuilder builder = (forProduction) ? new ProductionPackageBuilder(
+						container, mappingLoader, appConfigsPath)
 						: new PackageBuilder(container, mappingLoader);
 				builder.addStatusChangeListener(listener);
 				builder.setVariableResolver(new EclipseVariableResolver());
@@ -140,7 +142,7 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 				}
 
 				builder.createDeploymentPackage(directory);
-					
+
 				if (monitor.isCanceled()) {
 					return Status.OK_STATUS;
 				}
@@ -169,21 +171,30 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 		return true;
 	}
 
+	private void addDeploymentSupport(IProject project, IProgressMonitor monitor)
+			throws CoreException {
+		if (!project.hasNature(DeploymentNature.ID)) {
+			IProjectDescription description = project.getDescription();
+			String[] natures = description.getNatureIds();
+			natures = Arrays.copyOf(natures, natures.length + 1);
+			natures[natures.length - 1] = DeploymentNature.ID;    
+			description.setNatureIds(natures);
+			project.setDescription(description, monitor);
+		}
+	}
+
 	private void saveSettings() {
 		parametersPage.saveSettings();
 	}
 
-	protected List<IProject> getValidSelection(
-			IStructuredSelection currentSelection) {
-
+	protected IProject getValidSelection(IStructuredSelection currentSelection) {
 		IStructuredSelection structuredSelection = (IStructuredSelection) currentSelection;
-		List<IProject> selectedElements = new ArrayList<IProject>(
-				structuredSelection.size());
 		Iterator<?> iter = structuredSelection.iterator();
 		while (iter.hasNext()) {
 			Object selectedElement = iter.next();
 			IProject project = null;
-			Object projectAdapter = ((IAdaptable) selectedElement).getAdapter(IProject.class);
+			Object projectAdapter = ((IAdaptable) selectedElement)
+					.getAdapter(IProject.class);
 			if (projectAdapter instanceof IProject) {
 				project = (IProject) projectAdapter;
 			} else if (selectedElement instanceof IContainer) {
@@ -191,14 +202,17 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 			} else if (selectedElement instanceof IFile) {
 				project = ((IFile) selectedElement).getProject();
 			}
-			if (project != null) {
-				if (project
-						.findMember(DescriptorContainerManager.DESCRIPTOR_PATH) != null) {
-					selectedElements.add(project);
+
+			try {
+				if (project != null && PHPToolkitUtil.isPhpProject(project)) {
+					return project;
 				}
+			} catch (CoreException e) {
+				Activator.log(e);
 			}
 		}
-		return selectedElements;
+
+		return null;
 	}
 
 }
