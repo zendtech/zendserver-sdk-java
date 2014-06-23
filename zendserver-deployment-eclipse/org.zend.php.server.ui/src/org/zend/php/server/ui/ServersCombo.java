@@ -243,19 +243,18 @@ public class ServersCombo {
 			});
 		}
 		serversCombo.removeAll();
+		int toSelect = 0;
 		if (serversList.length != 0) {
-			for (Server server : serversList) {
+			for (int i = 0; i < serversList.length; i++) {
+				Server server = serversList[i];
 				serversCombo.add(server.getName());
+				if (ServersManager.isEmptyServer(server)) {
+					toSelect = i;
+				}
 			}
 		}
 		if (serversCombo.getItemCount() > 0) {
-			Server defaultServer = ServersManager.getDefaultServer(null);
-			int index = serversCombo.indexOf(defaultServer.getName());
-			if (index != -1) {
-				serversCombo.select(index);
-			} else {
-				serversCombo.select(0);
-			}
+			serversCombo.select(toSelect);
 		}
 	}
 
