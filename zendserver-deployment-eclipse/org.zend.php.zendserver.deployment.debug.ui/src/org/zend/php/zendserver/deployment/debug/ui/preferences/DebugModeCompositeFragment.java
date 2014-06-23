@@ -93,17 +93,17 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 			switch (status.getSeverity()) {
 			case IStatus.OK:
 				NotificationManager.registerInfo(
-						Messages.DebugModeCompositeFragment_DebugModeLabel,
+						Messages.DebugModeCompositeFragment_Name,
 						status.getMessage(), 4000);
 				break;
 			case IStatus.WARNING:
 				NotificationManager.registerWarning(
-						Messages.DebugModeCompositeFragment_DebugModeLabel,
+						Messages.DebugModeCompositeFragment_Name,
 						status.getMessage(), 4000);
 				break;
 			case IStatus.ERROR:
 				NotificationManager.registerError(
-						Messages.DebugModeCompositeFragment_DebugModeLabel,
+						Messages.DebugModeCompositeFragment_Name,
 						status.getMessage(), 4000);
 				break;
 			default:
@@ -139,7 +139,8 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 	public DebugModeCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
-				Messages.DebugModeCompositeFragment_DebugModeLabel,
+				Messages.DebugModeCompositeFragment_Name,
+				getTitle(isForEditing),
 				Messages.DebugModeCompositeFragment_PageDesc);
 		this.prefs = InstanceScope.INSTANCE
 				.getNode(DebugModeManager.DEBUG_MODE_NODE);
@@ -343,7 +344,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 			return MessageDialog
 					.openQuestion(
 							getShell(),
-							Messages.DebugModeCompositeFragment_DebugModeLabel,
+							Messages.DebugModeCompositeFragment_Name,
 							MessageFormat
 									.format(Messages.DebugModeCompositeFragment_RestartQuestion,
 											target.getHost().getHost()));
@@ -365,6 +366,11 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 			}
 		}
 		return null;
+	}
+
+	private static String getTitle(boolean isEditing) {
+		return isEditing ? Messages.DebugModeCompositeFragment_EditTitle
+				: Messages.DebugModeCompositeFragment_CreateTitle;
 	}
 
 }

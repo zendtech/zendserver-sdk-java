@@ -6,9 +6,11 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.preferences.messages"; //$NON-NLS-1$
 	public static String AbstarctCloudCompositeFragment_GenerateKeyMessage;
 	public static String AbstarctCloudCompositeFragment_GenerateKeyTitle;
+	public static String DeploymentCompositeFragment_CreateTitle;
 	public static String DeploymentCompositeFragment_Description;
 	public static String DeploymentCompositeFragment_DetectingCredentials;
 	public static String DeploymentCompositeFragment_DetectLabel;
+	public static String DeploymentCompositeFragment_EditTitle;
 	public static String DeploymentCompositeFragment_EmptyHostMessage;
 	public static String DeploymentCompositeFragment_EmptyKeyMessage;
 	public static String DeploymentCompositeFragment_EmptySecretMessage;
@@ -17,7 +19,8 @@ public class Messages extends NLS {
 	public static String DeploymentCompositeFragment_KeyName;
 	public static String DeploymentCompositeFragment_KeySecret;
 	public static String DeploymentCompositeFragment_TestingConnection;
-	public static String DeploymentCompositeFragment_Title;
+	public static String DeploymentCompositeFragment_Name;
+	public static String DeploymentCompositeFragment_WebApiDetails;
 	public static String DeploymentTester_NotAllValid;
 	public static String DeploymentTester_NullTarget;
 	public static String DeploymentTester_TestingPortSubTask;
@@ -75,9 +78,11 @@ public class Messages extends NLS {
 	public static String PhpcloudCompositeFragment_UsernameTooltip;
 	public static String TunnelingCompositeFragment_AddLabel;
 	public static String TunnelingCompositeFragment_BrowseLabel;
+	public static String TunnelingCompositeFragment_CreateTitle;
 	public static String TunnelingCompositeFragment_CredentialsLabel;
 	public static String TunnelingCompositeFragment_Desc;
 	public static String TunnelingCompositeFragment_EditLabel;
+	public static String TunnelingCompositeFragment_EditTitle;
 	public static String TunnelingCompositeFragment_EmptyUsernameError;
 	public static String TunnelingCompositeFragment_EnableLabel;
 	public static String TunnelingCompositeFragment_ForwardingLabel;
@@ -96,7 +101,7 @@ public class Messages extends NLS {
 	public static String TunnelingCompositeFragment_RemotePortLabel;
 	public static String TunnelingCompositeFragment_RemoveLabel;
 	public static String TunnelingCompositeFragment_SideLabel;
-	public static String TunnelingCompositeFragment_Title;
+	public static String TunnelingCompositeFragment_Name;
 	public static String TunnelingCompositeFragment_UsernameLabel;
 	static {
 		// initialize resource bundle

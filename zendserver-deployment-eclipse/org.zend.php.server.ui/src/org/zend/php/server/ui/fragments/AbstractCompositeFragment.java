@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.Display;
 public abstract class AbstractCompositeFragment extends CompositeFragment {
 
 	protected AbstractCompositeFragment(Composite parent,
-			IControlHandler handler, boolean isForEditing, String title,
-			String description) {
+			IControlHandler handler, boolean isForEditing, String name,
+			String title, String description) {
 		super(parent, handler, isForEditing);
-		setDisplayName(title);
+		setDisplayName(name);
 		setTitle(title);
 		setDescription(description);
 

@@ -98,7 +98,8 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	public MonitoringCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
-				Messages.MonitoringCompositeFragment_Title,
+				Messages.MonitoringCompositeFragment_Name,
+				getTitle(isForEditing),
 				Messages.MonitoringCompositeFragment_Description);
 		createControl(isForEditing);
 	}
@@ -429,6 +430,11 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 			input.remove((String) elem);
 		}
 		viewer.refresh();
+	}
+
+	private static String getTitle(boolean isEditing) {
+		return isEditing ? Messages.MonitoringCompositeFragment_EditTitle
+				: Messages.MonitoringCompositeFragment_CreateTitle;
 	}
 
 }

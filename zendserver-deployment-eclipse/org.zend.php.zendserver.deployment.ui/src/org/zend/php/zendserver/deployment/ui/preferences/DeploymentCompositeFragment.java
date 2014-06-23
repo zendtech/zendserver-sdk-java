@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -78,7 +81,8 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	public DeploymentCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
-				Messages.DeploymentCompositeFragment_Title,
+				Messages.DeploymentCompositeFragment_Name,
+				getTitle(isForEditing),
 				Messages.DeploymentCompositeFragment_Description);
 		createControl(isForEditing);
 	}
@@ -302,6 +306,25 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 				handleDetect(hostText.getText());
 			}
 		});
+		Link link = new Link(parent, SWT.WRAP);
+		link.setText(Messages.DeploymentCompositeFragment_WebApiDetails);
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.widthHint = 400;
+		layoutData.horizontalSpan = 3;
+		link.setLayoutData(layoutData);
+		link.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				try {
+					PlatformUI.getWorkbench().getBrowserSupport()
+							.getExternalBrowser().openURL(new URL(event.text));
+				} catch (PartInitException e) {
+					Activator.log(e);
+				} catch (MalformedURLException e) {
+					Activator.log(e);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -440,5 +463,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		return !(targetHost != null && host.equals(targetHost.toString())
 				&& key.equals(target.getKey()) && secret.equals(target
 				.getSecretKey()));
+	}
+
+	private static String getTitle(boolean isEditing) {
+		return isEditing ? Messages.DeploymentCompositeFragment_EditTitle
+				: Messages.DeploymentCompositeFragment_CreateTitle;
 	}
 }

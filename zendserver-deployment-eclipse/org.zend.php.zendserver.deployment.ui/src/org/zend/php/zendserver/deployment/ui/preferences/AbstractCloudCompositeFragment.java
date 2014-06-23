@@ -56,7 +56,7 @@ public abstract class AbstractCloudCompositeFragment extends
 	protected AbstractCloudCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing, String title,
 			String description) {
-		super(parent, handler, isForEditing, title, description);
+		super(parent, handler, isForEditing, title, title, description);
 		createControl(isForEditing);
 	}
 

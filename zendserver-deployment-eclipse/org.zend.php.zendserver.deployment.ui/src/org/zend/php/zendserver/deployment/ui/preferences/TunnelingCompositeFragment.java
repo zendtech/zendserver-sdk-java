@@ -82,7 +82,8 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	public TunnelingCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
-				Messages.TunnelingCompositeFragment_Title,
+				Messages.TunnelingCompositeFragment_Name,
+				getTitle(isForEditing),
 				Messages.TunnelingCompositeFragment_Desc);
 		this.config = new SSHTunnelConfiguration();
 		createControl(isForEditing);
@@ -500,6 +501,11 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		addButton.setEnabled(enabled);
 		editButton.setEnabled(false);
 		removeButton.setEnabled(false);
+	}
+
+	private static String getTitle(boolean isEditing) {
+		return isEditing ? Messages.TunnelingCompositeFragment_EditTitle
+				: Messages.TunnelingCompositeFragment_CreateTitle;
 	}
 
 }

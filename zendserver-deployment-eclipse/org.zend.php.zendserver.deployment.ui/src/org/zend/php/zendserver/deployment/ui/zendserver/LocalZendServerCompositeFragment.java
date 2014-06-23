@@ -41,6 +41,7 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.LocalZendServerCompositeFragment_Name,
+				Messages.LocalZendServerCompositeFragment_Name,
 				Messages.LocalZendServerCompositeFragment_Desc);
 		createControl(isForEditing);
 	}
