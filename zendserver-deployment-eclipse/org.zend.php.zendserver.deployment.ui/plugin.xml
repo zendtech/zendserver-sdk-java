@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="testingSectionContribution" name="Testing Section Contribution" schema="schema/testingSectionContribution.exsd"/>
+   <extension-point id="productionSectionContribution" name="Production Section Contribution" schema="schema/productionSectionContribution.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">

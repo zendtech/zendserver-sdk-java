@@ -21,6 +21,7 @@ import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.HelpAction;
 import org.zend.php.zendserver.deployment.ui.actions.ToolbarAction;
+import org.zend.php.zendserver.deployment.ui.contributions.IProductionSectionContribution;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 /**
@@ -31,6 +32,8 @@ public abstract class DescriptorEditorPage extends FormPage {
 
 	private static final String TESTING_EXTENSION_POINT = Activator.PLUGIN_ID
 			+ ".testingSectionContribution"; //$NON-NLS-1$
+	private static final String PRODUCTION_EXTENSION_POINT = Activator.PLUGIN_ID
+			+ ".productionSectionContribution"; //$NON-NLS-1$
 
 	private FieldsContainer fields = new FieldsContainer();
 
@@ -141,6 +144,26 @@ public abstract class DescriptorEditorPage extends FormPage {
 							.createExecutableExtension("class"); //$NON-NLS-1$
 					if (listener instanceof ITestingSectionContribution) {
 						result.add((ITestingSectionContribution) listener);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+		return result;
+	}
+
+	protected List<IProductionSectionContribution> getProductionContributions() {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(PRODUCTION_EXTENSION_POINT);
+		List<IProductionSectionContribution> result = new ArrayList<IProductionSectionContribution>();
+		for (IConfigurationElement element : elements) {
+			if ("contribution".equals(element.getName())) { //$NON-NLS-1$
+				try {
+					Object listener = element
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					if (listener instanceof IProductionSectionContribution) {
+						result.add((IProductionSectionContribution) listener);
 					}
 				} catch (CoreException e) {
 					Activator.log(e);

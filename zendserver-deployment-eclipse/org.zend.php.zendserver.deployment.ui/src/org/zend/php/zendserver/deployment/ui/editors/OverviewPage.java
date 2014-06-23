@@ -34,6 +34,7 @@ import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.actions.ExportApplicationAction;
+import org.zend.php.zendserver.deployment.ui.contributions.IProductionSectionContribution;
 import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
 
 public class OverviewPage extends DescriptorEditorPage {
@@ -91,6 +92,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
 		createTestingSection(managedForm, right);
+		createProductionSection(managedForm, right);
 		createExportingSection(managedForm, right);
 
 		form.reflow(true);
@@ -272,7 +274,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		sectionClient.setLayout(new GridLayout(1, false));
 
 		ProjectType type = fModel.getDescriptorModel().getType();
-		resolveContributions(sectionClient, type);
+		resolveTestingContributions(sectionClient, type);
 		fModel.getDescriptorModel().addListener(
 				new IDescriptorChangeListener() {
 
@@ -312,6 +314,26 @@ public class OverviewPage extends DescriptorEditorPage {
 		for (IContributionItem item : items) {
 			item.fill(parent);
 		}
+	}
+	
+	private void createProductionSection(IManagedForm managedForm,
+			Composite body) {
+		FormToolkit toolkit = managedForm.getToolkit();
+
+		Section section = toolkit.createSection(body, Section.TITLE_BAR
+				| Section.DESCRIPTION | Section.EXPANDED );
+		section.setText("Production");
+		section.setDescription("Deploy the application in production environment.");
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);
+
+		final Composite sectionClient = toolkit.createComposite(section);
+		
+		section.setClient(sectionClient);
+		sectionClient.setLayout(new GridLayout(1, false));
+		
+		ProjectType type = fModel.getDescriptorModel().getType();
+		resolveProductionContributions(sectionClient, type);
 	}
 
 	private void createGeneralInformationSection(IManagedForm managedForm,
@@ -477,7 +499,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		return HelpContextIds.OVERVIEW_TAB;
 	}
 
-	private void resolveContributions(final Composite sectionClient,
+	private void resolveTestingContributions(Composite sectionClient,
 			ProjectType currentType) {
 		if (currentType == ProjectType.UNKNOWN) {
 			currentType = ProjectType.APPLICATION;
@@ -485,7 +507,22 @@ public class OverviewPage extends DescriptorEditorPage {
 		List<ITestingSectionContribution> contributions = getTestingContributions();
 		for (ITestingSectionContribution c : contributions) {
 			ContributionControl control = new ContributionControl(
-					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon(), c.getType());
+					c.getCommand(), c.getMode(), c.getLabel(), c.getIcon(),
+					c.getType());
+			Control link = control.createControl(sectionClient);
+			setControlVisibility(link, c.getType() == currentType);
+		}
+	}
+
+	private void resolveProductionContributions(Composite sectionClient,
+			ProjectType currentType) {
+		if (currentType == ProjectType.UNKNOWN) {
+			currentType = ProjectType.APPLICATION;
+		}
+		List<IProductionSectionContribution> contributions = getProductionContributions();
+		for (IProductionSectionContribution c : contributions) {
+			ProductionContributionControl control = new ProductionContributionControl(
+					c.getCommand(), c.getLabel(), c.getIcon(), c.getType());
 			Control link = control.createControl(sectionClient);
 			setControlVisibility(link, c.getType() == currentType);
 		}

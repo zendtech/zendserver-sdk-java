@@ -22,18 +22,16 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.contributions.ITestingSectionContribution;
+import org.zend.php.zendserver.deployment.ui.contributions.IProductionSectionContribution;
 
-public class ContributionControl {
+public class ProductionContributionControl {
 
-	private String mode;
 	private String message;
 	private ImageDescriptor image;
 	private String commandId;
 	private ProjectType projectType;
 
-	public ContributionControl(String commandId, String mode, String message, ImageDescriptor image, ProjectType projectType) {
-		this.mode = mode;
+	public ProductionContributionControl(String commandId, String message, ImageDescriptor image, ProjectType projectType) {
 		this.message = message;
 		this.image = image;
 		this.commandId = commandId;
@@ -55,8 +53,7 @@ public class ContributionControl {
 							.getService(ICommandService.class));
 					Command command = service.getCommand(commandId);
 					Map<String, String> params = new HashMap<String, String>();
-					params.put(ITestingSectionContribution.PROJECT_NAME, project.getName());
-					params.put(ITestingSectionContribution.MODE, mode);
+					params.put(IProductionSectionContribution.PROJECT_NAME, project.getName());
 					ExecutionEvent event = new ExecutionEvent(command, params, null,
 							null);
 					try {

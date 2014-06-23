@@ -42,6 +42,10 @@ public interface IDeploymentHelper {
 	boolean isDevelopmentModeEnabled();
 	
 	boolean isWarnUpdate();
+	
+	boolean isForProduction();
+	
+	String getConfigsLocation();
 
 	void setBaseURL(String baseURL);
 
@@ -72,5 +76,9 @@ public interface IDeploymentHelper {
 	void setWarnUpdate(boolean enabled);
 
 	void setExtraAtttributes(Map<String, String> extraAttributes);
+	
+	void setForProduction(boolean forProduction);
+	
+	void setConfigsLocation(String location);
 	
 }

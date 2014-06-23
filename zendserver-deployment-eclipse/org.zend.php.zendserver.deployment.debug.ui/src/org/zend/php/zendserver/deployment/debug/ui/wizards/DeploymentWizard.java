@@ -31,7 +31,7 @@ import org.zend.php.zendserver.deployment.debug.ui.Messages;
 public class DeploymentWizard extends Wizard {
 
 	public enum Mode {
-		RUN, DEBUG, DEPLOY;
+		RUN, DEBUG, DEPLOY, PRODUCTION_DEPLOY;
 	}
 
 	protected ConfigurationPage configPage;
@@ -110,6 +110,12 @@ public class DeploymentWizard extends Wizard {
 			description = Messages.DeploymentWizard_DeployDesc;
 			image = Activator.IMAGE_WIZBAN_DEPLOY;
 			help = HelpContextIds.DEPLOYING_AN_APPLICATION;
+			break;
+		case PRODUCTION_DEPLOY:
+			title = Messages.deploymentWizard_DeployTitle;
+			description = Messages.DeploymentWizard_DeployDesc;
+			image = Activator.IMAGE_WIZBAN_DEPLOY;
+			help = HelpContextIds.DEPLOYING_AN_APPLICATION_IN_PRODUCTION;
 			break;
 		}
 		this.parametersPage = new ParametersPage(project, helper, title, help);

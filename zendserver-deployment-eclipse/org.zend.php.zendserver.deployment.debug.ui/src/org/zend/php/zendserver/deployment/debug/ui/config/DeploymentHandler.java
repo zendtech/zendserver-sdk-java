@@ -481,6 +481,8 @@ public class DeploymentHandler {
 					} else {
 						wizardMode = Mode.DEBUG;
 					}
+				} else if (helper.isForProduction()) {
+					wizardMode = Mode.PRODUCTION_DEPLOY;
 				} else {
 					wizardMode = Mode.DEPLOY;
 				}

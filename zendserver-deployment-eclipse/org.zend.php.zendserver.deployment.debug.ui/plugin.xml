@@ -54,6 +54,11 @@
                   </iterate>
             </visibleWhen>
          </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.ProductionDeployApplicationHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.productionDeployApplication"
+            name="Deploy PHP Application in Production">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.ui.launchConfigurationTabs">
@@ -90,6 +95,12 @@
       </contribution>
       <contribution
             class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployApplicationContribution">
+      </contribution>
+   </extension>
+   <extension
+         point="org.zend.php.zendserver.deployment.ui.productionSectionContribution">
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.ProductionDeployApplicationContribution">
       </contribution>
    </extension>
 <extension

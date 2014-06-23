@@ -30,12 +30,11 @@ public class DeploymentHelper implements IDeploymentHelper {
 	private int operationType;
 	private String installedLocation;
 	private boolean enabled;
-
 	private boolean developmentMode;
-
 	private boolean warnUpdate;
-
 	private Map<String, String> extraAttributes;
+	private boolean forProduction;
+	private String configsLocation;
 
 	public DeploymentHelper() {
 		this.baseURL = null;
@@ -53,6 +52,8 @@ public class DeploymentHelper implements IDeploymentHelper {
 		this.enabled = true;
 		this.developmentMode = true;
 		this.warnUpdate = false;
+		this.forProduction = false;
+		this.configsLocation = EMPTY_STRING;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,6 +165,14 @@ public class DeploymentHelper implements IDeploymentHelper {
 		return extraAttributes;
 	}
 
+	public boolean isForProduction() {
+		return forProduction;
+	}
+
+	public String getConfigsLocation() {
+		return configsLocation;
+	}
+
 	public void setBaseURL(String baseURL) {
 		try {
 			this.baseURL = new URL(baseURL);
@@ -226,6 +235,14 @@ public class DeploymentHelper implements IDeploymentHelper {
 
 	public void setExtraAtttributes(Map<String, String> extraAttributes) {
 		this.extraAttributes = extraAttributes;
+	}
+
+	public void setForProduction(boolean forProduction) {
+		this.forProduction = forProduction;
+	}
+
+	public void setConfigsLocation(String location) {
+		this.configsLocation = location;
 	}
 
 	@Override
