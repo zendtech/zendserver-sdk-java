@@ -43,6 +43,9 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.zend.php.zendserver.deployment.core.DeploymentNature;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
+import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
+import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 
@@ -374,9 +377,15 @@ public class PackageExportPage extends WizardPage implements Listener {
 	}
 
 	private boolean validateProductionMode() {
-		if (isProductionModeSelected() && !isZF2Project(getSelectedProject())) {
-			setMessage(Messages.PackageExportPage_NotZF2ProjectError, ERROR);
-			return false;
+		if (isProductionModeSelected()) {
+			IProject selectedProject = getSelectedProject();
+			if (!isZF2Project(selectedProject)) {
+				setMessage(Messages.PackageExportPage_NotZF2ProjectError, ERROR);
+				return false;
+			} else if (isZF2Library(selectedProject)) {
+				setMessage(Messages.PackageExportPage_ZF2LibraryError, ERROR);
+				return false;
+			}
 		}
 		return true;
 	}
@@ -436,6 +445,12 @@ public class PackageExportPage extends WizardPage implements Listener {
 		} catch (CoreException e) {
 			return false;
 		}
+	}
+	
+	private boolean isZF2Library(IProject project) {
+		IDeploymentDescriptor descriptor = DescriptorContainerManager
+				.getService().openDescriptorContainer(project).getDescriptorModel();
+		return descriptor.getType() == ProjectType.LIBRARY;
 	}
 
 	public void saveSettings() {
