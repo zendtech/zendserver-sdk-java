@@ -41,6 +41,7 @@ public class Messages extends NLS {
 	public static String PackageExportPage_SelectConfigDirectoryMessage;
 	public static String PackageExportPage_SelectDestinationMessage;
 	public static String PackageExportPage_WorkspaceButtonText;
+	public static String PackageExportPage_ZF2LibraryError;
 	public static String MySQLCredentialsDialog_DialogTitle;
 	public static String NewDependencyWizard_0;
 	public static String OpenShiftDomainPage_EnterNameMessage;
