@@ -55,7 +55,7 @@ public class SSHTunnelManager {
 	public State connect(SSHTunnelConfiguration config) throws TunnelException,
 			JSchException {
 		SSHTunnel tunnel = tunnels.get(config.getHost());
-		State result = null;
+		State result = State.CONNECTED;
 		if (tunnel == null) {
 			tunnel = new SSHTunnel(config);
 			try {
