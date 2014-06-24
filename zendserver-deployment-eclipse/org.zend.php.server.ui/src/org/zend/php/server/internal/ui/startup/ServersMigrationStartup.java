@@ -18,6 +18,7 @@ import org.zend.php.server.ui.types.LocalApacheType;
 import org.zend.php.server.ui.types.OpenShiftServerType;
 import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.server.ui.types.ZendServerType;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
@@ -106,7 +107,13 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 
 	private boolean isZendServer(Server server) {
 		IZendTarget target = ServerUtils.getTarget(server);
-		return target != null && !TargetsManager.isLocalhost(target);
+		if (target != null) {
+			return !TargetsManager.isLocalhost(target);
+		}
+		String enabled = server
+				.getAttribute(ZendServerManager.ZENDSERVER_ENABLED_KEY,
+						String.valueOf(false));
+		return Boolean.valueOf(enabled);
 	}
 
 }
