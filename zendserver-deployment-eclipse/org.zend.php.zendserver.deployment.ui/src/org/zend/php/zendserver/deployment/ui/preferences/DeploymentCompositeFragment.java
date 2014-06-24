@@ -11,7 +11,7 @@ package org.zend.php.zendserver.deployment.ui.preferences;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -195,17 +195,19 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 		}
 		switch (status.getSeverity()) {
 		case IStatus.OK:
-			ArrayList<IZendTarget> finalTargets = tester.getFinalTargets();
+			List<IZendTarget> finalTargets = tester.getFinalTargets();
 			for (IZendTarget target : finalTargets) {
-				if (manager.getTargetById(target.getId()) != null) {
-					manager.updateTarget(target, true);
-				} else {
-					try {
-						manager.add(target, true);
-					} catch (TargetException e) {
-						// cannot occur, suppress connection
-					} catch (LicenseExpiredException e) {
-						// cannot occur, suppress connection
+				if (target != null) {
+					if (manager.getTargetById(target.getId()) != null) {
+						manager.updateTarget(target, true);
+					} else {
+						try {
+							manager.add(target, true);
+						} catch (TargetException e) {
+							// cannot occur, suppress connection
+						} catch (LicenseExpiredException e) {
+							// cannot occur, suppress connection
+						}
 					}
 				}
 			}

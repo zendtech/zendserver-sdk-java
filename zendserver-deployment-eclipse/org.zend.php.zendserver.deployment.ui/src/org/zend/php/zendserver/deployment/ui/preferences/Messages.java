@@ -21,7 +21,6 @@ public class Messages extends NLS {
 	public static String DeploymentCompositeFragment_TestingConnection;
 	public static String DeploymentCompositeFragment_Name;
 	public static String DeploymentCompositeFragment_WebApiDetails;
-	public static String DeploymentTester_NotAllValid;
 	public static String DeploymentTester_NullTarget;
 	public static String DeploymentTester_TestingPortSubTask;
 	public static String DeploymentTester_UnexpectedError;
@@ -55,6 +54,8 @@ public class Messages extends NLS {
 	public static String OpenShiftCompositeFragment_Title;
 	public static String OpenShiftCompositeFragment_UsernameLabel;
 	public static String OpenShiftCompositeFragment_UsernameTooltip;
+	public static String OpenShiftCompositeFragment_WarningMessage;
+	public static String OpenShiftCompositeFragment_WarningTitle;
 	public static String OpenShiftPreferencesPage_0;
 	public static String OpenShiftPreferencesPage_1;
 	public static String PhpcloudCompositeFragment_BrowseLabel;
@@ -76,6 +77,7 @@ public class Messages extends NLS {
 	public static String PhpcloudCompositeFragment_Title;
 	public static String PhpcloudCompositeFragment_UsernameLabel;
 	public static String PhpcloudCompositeFragment_UsernameTooltip;
+	public static String PhpcloudCompositeFragment_WarningTitle;
 	public static String TunnelingCompositeFragment_AddLabel;
 	public static String TunnelingCompositeFragment_BrowseLabel;
 	public static String TunnelingCompositeFragment_CreateTitle;

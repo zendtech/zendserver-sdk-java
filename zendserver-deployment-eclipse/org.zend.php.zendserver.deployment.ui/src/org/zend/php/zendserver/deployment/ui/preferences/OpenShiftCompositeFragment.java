@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -275,17 +277,19 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 	protected void detectServers(IProgressMonitor monitor) {
 		try {
 			IZendTarget[] targets = createTargets(monitor);
+			IStatus finalStatus = Status.OK_STATUS;
 			if (targets != null) {
 				TargetConnectionTester tester = new TargetConnectionTester();
-				IStatus status = tester.testConnection(targets, monitor);
-				switch (status.getSeverity()) {
-				case IStatus.OK:
-					ArrayList<IZendTarget> finalTargets = tester
-							.getFinalTargets();
-					TargetsManager manager = TargetsManagerService.INSTANCE
-							.getTargetManager();
-					boolean dataInitialized = false;
-					for (IZendTarget target : finalTargets) {
+				IStatus[] results = tester.testConnection(targets, monitor);
+				boolean dataInitialized = false;
+				List<IZendTarget> finalTargets = tester.getFinalTargets();
+				TargetsManager manager = TargetsManagerService.INSTANCE
+						.getTargetManager();
+				for (int i = 0; i < results.length; i++) {
+					IStatus status = results[i];
+					IZendTarget target = finalTargets.get(i);
+					switch (status.getSeverity()) {
+					case IStatus.OK:
 						String host = target.getHost().getHost();
 						URL baseUrl = new URL("http", host, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						ZendTarget t = (ZendTarget) target;
@@ -324,17 +328,30 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 							setData(server);
 							dataInitialized = true;
 						}
+						break;
+					case IStatus.ERROR:
+						finalStatus = new Status(
+								IStatus.WARNING,
+								Activator.PLUGIN_ID,
+								MessageFormat
+										.format(Messages.OpenShiftCompositeFragment_WarningMessage,
+												status.getMessage()));
+						break;
+					default:
+						break;
 					}
+				}
+				if (dataInitialized) {
 					ServersManager.save();
-					break;
-				case IStatus.WARNING:
-					setMessage(status.getMessage(), IMessageProvider.WARNING);
-					break;
-				case IStatus.ERROR:
-					setMessage(status.getMessage(), IMessageProvider.ERROR);
-					break;
-				default:
-					break;
+					switch (finalStatus.getSeverity()) {
+					case IStatus.WARNING:
+						showWarningMessage(finalStatus.getMessage());
+						break;
+					default:
+						break;
+					}
+				} else {
+					setMessage(finalStatus.getMessage(), IMessageProvider.ERROR);
 				}
 			}
 		} catch (CoreException e) {

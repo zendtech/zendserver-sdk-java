@@ -11,7 +11,8 @@ package org.zend.php.zendserver.deployment.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -91,10 +92,10 @@ public class TargetConnectionTester {
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
 	private static final int[] possiblePhpcloudPorts = new int[] { 10082 };
 
-	private ArrayList<IZendTarget> finalTargets;
+	private IZendTarget[] finalTargets;
 
-	public ArrayList<IZendTarget> getFinalTargets() {
-		return finalTargets;
+	public List<IZendTarget> getFinalTargets() {
+		return Arrays.asList(finalTargets);
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class TargetConnectionTester {
 	 *         otherwise return {@link IStatus#ERROR}
 	 */
 	public IStatus testConnection(IZendTarget target, IProgressMonitor monitor) {
-		return testConnection(new IZendTarget[] { target }, monitor);
+		return testConnection(new IZendTarget[] { target }, monitor)[0];
 	}
 
 	/**
@@ -120,28 +121,28 @@ public class TargetConnectionTester {
 	 * was established successfully not with all specified targets then return
 	 * {@link IStatus#WARNING} with appropriate message.
 	 * 
-	 * @param target
-	 *            target to be tested
+	 * @param targets
+	 *            targets to be tested
 	 * @param monitor
 	 *            progress monitor
-	 * @return {@link IStatus#OK} if connection was established successfully; if
-	 *         connection was established successfully not with all specified
-	 *         targets then return {@link IStatus#WARNING} with appropriate
-	 *         message; otherwise return {@link IStatus#ERROR}
+	 * @return array of statuses for each target separately: {@link IStatus#OK}
+	 *         if connection was established successfully; otherwise return
+	 *         {@link IStatus#ERROR}
 	 */
-	public IStatus testConnection(IZendTarget[] targets,
+	public IStatus[] testConnection(IZendTarget[] targets,
 			IProgressMonitor monitor) {
-		finalTargets = new ArrayList<IZendTarget>(targets.length);
-		IStatus status = Status.OK_STATUS;
-		for (IZendTarget target : targets) {
+		finalTargets = new IZendTarget[targets.length];
+		IStatus[] results = new IStatus[targets.length];
+		for (int i = 0; i < targets.length; i++) {
+			IZendTarget target = targets[i];
 			if (target == null) {
-				status = getError(Messages.DeploymentTester_NullTarget);
+				results[i] = getError(Messages.DeploymentTester_NullTarget);
 				continue;
 			}
 
 			String message = ((ZendTarget) target).validateTarget();
 			if (message != null) {
-				status = getError(message);
+				results[i] = getError(message);
 				continue;
 			}
 
@@ -152,10 +153,10 @@ public class TargetConnectionTester {
 				OpenShiftInitializer initializer = new OpenShiftInitializer(
 						target, monitor);
 				initializer.init();
-				if (status == null) {
+				if (results[i] == null) {
 					target = initializer.getTarget();
 				} else {
-					status = initializer.getStatus();
+					results[i] = initializer.getStatus();
 					continue;
 				}
 			}
@@ -167,49 +168,46 @@ public class TargetConnectionTester {
 						OpenShiftInitializer initializer = new OpenShiftInitializer(
 								target, monitor);
 						initializer.init();
-						if (status == null) {
+						if (results[i] == null) {
 							target = initializer.getTarget();
 						} else {
-							status = initializer.getStatus();
+							results[i] = initializer.getStatus();
 							continue;
 						}
 					}
 				}
 				if (target == null) {
-					status = getError(MessageFormat.format(
+					results[i] = getError(MessageFormat.format(
 							Messages.DeploymentTester_UnexpectedError,
 							e.getMessage()), e);
 					continue;
 				} else {
-					status = getError(e.getMessage());
+					results[i] = getError(e.getMessage());
 					continue;
 				}
 			} catch (WebApiException e) {
-				status = getError(MessageFormat.format(
+				results[i] = getError(MessageFormat.format(
 						Messages.DeploymentTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			} catch (RuntimeException e) {
-				status = getError(MessageFormat.format(
+				results[i] = getError(MessageFormat.format(
 						Messages.DeploymentTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			} catch (LicenseExpiredException e) {
-				status = getError(MessageFormat.format(
+				results[i] = getError(MessageFormat.format(
 						Messages.DeploymentTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			}
 			// }
 			if (target != null) {
-				finalTargets.add(copy((ZendTarget) target));
+				results[i] = Status.OK_STATUS;
+				finalTargets[i] = copy((ZendTarget) target);
 			}
 		}
-		if (status.getSeverity() != IStatus.OK && finalTargets.size() > 0
-				&& finalTargets.size() != targets.length) {
-			return getWarning(Messages.DeploymentTester_NotAllValid);
-		}
-		return status;
+		return results;
 	}
 
 	private IZendTarget testConnectAndDetectPort(IZendTarget target,

@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
@@ -202,6 +203,17 @@ public abstract class AbstractCloudCompositeFragment extends
 			lastPort = port;
 		}
 		return port;
+	}
+
+	protected void showWarningMessage(final String message) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				MessageDialog.openWarning(getShell(),
+						Messages.OpenShiftCompositeFragment_WarningTitle,
+						message);
+			}
+		});
 	}
 
 }
