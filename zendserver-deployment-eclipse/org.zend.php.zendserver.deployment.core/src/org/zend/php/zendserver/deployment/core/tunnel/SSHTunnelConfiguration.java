@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class SSHTunnelConfiguration {
 	private String httpProxyHost;
 	private String httpProxyPort;
 
+	private static int databasePort;
+
 	public SSHTunnelConfiguration() {
 		this.portForwardings = new ArrayList<PortForwarding>();
 	}
@@ -73,21 +77,21 @@ public class SSHTunnelConfiguration {
 	 * @return port for local port forwarding for database connection
 	 */
 	public static int getNewDatabasePort() {
+		initDatabasePort();
 		Server[] servers = ServersManager.getServers();
-		int selectedPort = 12306;
 		for (Server server : servers) {
 			SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
 			List<PortForwarding> forwardings = config.getPortForwardings();
 			for (PortForwarding portForwarding : forwardings) {
 				if (portForwarding.getSide() == Side.LOCAL) {
 					int port = portForwarding.getLocalPort();
-					if (port > selectedPort) {
-						selectedPort = port + 1;
+					if (port >= databasePort) {
+						databasePort = port + 1;
 					}
 				}
 			}
 		}
-		return selectedPort;
+		return databasePort++;
 	}
 
 	/**
@@ -292,6 +296,20 @@ public class SSHTunnelConfiguration {
 			}
 		}
 		return result.toString();
+	}
+	
+	private static void initDatabasePort() {
+		int port = 12306;
+		while (databasePort == 0) {
+			try {
+				ServerSocket socket = new ServerSocket(port);
+				databasePort = port;
+				socket.close();
+			} catch (IOException e) {
+				// just continue to find a free port
+				port++;
+			}
+		}
 	}
 
 }

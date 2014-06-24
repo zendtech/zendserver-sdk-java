@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.deployment.core.tunnel;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
@@ -48,9 +49,9 @@ public class SSHTunnel {
 
 		NOT_SUPPORTED;
 	}
-	
+
 	// connection timeout in ms
-	private static final int TIMEOUT = 10000; 
+	private static final int TIMEOUT = 10000;
 
 	private UserInfo userInfo;
 	private Session session;
@@ -136,8 +137,17 @@ public class SSHTunnel {
 
 	private void configurePortForwarding() throws JSchException {
 		List<PortForwarding> entries = config.getPortForwardings();
+		List<PortForwarding> configured = new ArrayList<PortForwarding>();
 		for (PortForwarding entry : entries) {
-			entry.setup(session);
+			try {
+				entry.setup(session);
+				configured.add(entry);
+			} catch (JSchException e) {
+				for (PortForwarding config : configured) {
+					config.delete(session);
+				}
+				throw e;
+			}
 		}
 	}
 

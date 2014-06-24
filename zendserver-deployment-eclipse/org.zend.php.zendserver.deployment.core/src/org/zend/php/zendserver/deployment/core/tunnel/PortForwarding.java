@@ -279,6 +279,34 @@ public class PortForwarding {
 	}
 
 	/**
+	 * Delete particular port forwarding for specified SSH session.
+	 * 
+	 * @param session
+	 *            {@link Session} instance
+	 * @throws JSchException
+	 */
+	public void delete(Session session) throws JSchException {
+		switch (side) {
+		case LOCAL:
+			if (localAddress != null) {
+				session.delPortForwardingL(localAddress, localPort);
+			} else {
+				session.delPortForwardingL(localPort);
+			}
+			break;
+		case REMOTE:
+			if (remoteAddress != null) {
+				session.delPortForwardingR(remoteAddress, remotePort);
+			} else {
+				session.delPortForwardingR(remotePort);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
 	 * @return local address
 	 */
 	public String getLocalAddress() {
