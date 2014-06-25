@@ -295,7 +295,7 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 								IStatus.WARNING,
 								Activator.PLUGIN_ID,
 								MessageFormat
-										.format(Messages.PhpcloudCompositeFragment_WarningTitle,
+										.format(Messages.PhpcloudCompositeFragment_WarningMessage,
 												status.getMessage()));
 						break;
 					default:
@@ -306,7 +306,7 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 					ServersManager.save();
 					switch (finalStatus.getSeverity()) {
 					case IStatus.WARNING:
-						showWarningMessage(finalStatus.getMessage());
+						showWarningMessage(Messages.PhpcloudCompositeFragment_WarningTitle, finalStatus.getMessage());
 						break;
 					default:
 						break;

@@ -345,7 +345,9 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 					ServersManager.save();
 					switch (finalStatus.getSeverity()) {
 					case IStatus.WARNING:
-						showWarningMessage(finalStatus.getMessage());
+						showWarningMessage(
+								Messages.OpenShiftCompositeFragment_WarningTitle,
+								finalStatus.getMessage());
 						break;
 					default:
 						break;

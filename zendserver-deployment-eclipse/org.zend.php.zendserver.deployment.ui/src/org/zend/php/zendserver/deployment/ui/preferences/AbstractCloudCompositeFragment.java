@@ -205,13 +205,11 @@ public abstract class AbstractCloudCompositeFragment extends
 		return port;
 	}
 
-	protected void showWarningMessage(final String message) {
+	protected void showWarningMessage(final String title, final String message) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				MessageDialog.openWarning(getShell(),
-						Messages.OpenShiftCompositeFragment_WarningTitle,
-						message);
+				MessageDialog.openWarning(getShell(), title, message);
 			}
 		});
 	}

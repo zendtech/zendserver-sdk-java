@@ -77,6 +77,7 @@ public class Messages extends NLS {
 	public static String PhpcloudCompositeFragment_Title;
 	public static String PhpcloudCompositeFragment_UsernameLabel;
 	public static String PhpcloudCompositeFragment_UsernameTooltip;
+	public static String PhpcloudCompositeFragment_WarningMessage;
 	public static String PhpcloudCompositeFragment_WarningTitle;
 	public static String TunnelingCompositeFragment_AddLabel;
 	public static String TunnelingCompositeFragment_BrowseLabel;
