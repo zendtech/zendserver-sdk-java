@@ -379,11 +379,11 @@ public class PackageExportPage extends WizardPage implements Listener {
 	private boolean validateProductionMode() {
 		if (isProductionModeSelected()) {
 			IProject selectedProject = getSelectedProject();
-			if (!isZF2Project(selectedProject)) {
+			if (!ZFUtils.isZF2Project(selectedProject)) {
 				setMessage(Messages.PackageExportPage_NotZF2ProjectError, ERROR);
 				return false;
-			} else if (isZF2Library(selectedProject)) {
-				setMessage(Messages.PackageExportPage_ZF2LibraryError, ERROR);
+			} else if (isPHPLibrary(selectedProject)) {
+				setMessage(Messages.PackageExportPage_PHPLibraryError, ERROR);
 				return false;
 			}
 		}
@@ -439,15 +439,7 @@ public class PackageExportPage extends WizardPage implements Listener {
 		fileSystemButton.setEnabled(prodMode && !reuseConfigs);
 	}
 	
-	private boolean isZF2Project(IProject project) {
-		try {
-			return project.hasNature("org.zend.php.framework.ZendFrameworkNature"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-	
-	private boolean isZF2Library(IProject project) {
+	private boolean isPHPLibrary(IProject project) {
 		IDeploymentDescriptor descriptor = DescriptorContainerManager
 				.getService().openDescriptorContainer(project).getDescriptorModel();
 		return descriptor.getType() == ProjectType.LIBRARY;
