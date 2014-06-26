@@ -421,6 +421,9 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 			return null;
 		}
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
+		
+		targets = removeExistingTargets(targets, tm);
+		
 		for (IZendTarget target : targets) {
 			try {
 				tm.add(target, true);

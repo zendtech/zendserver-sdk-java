@@ -306,7 +306,9 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 					ServersManager.save();
 					switch (finalStatus.getSeverity()) {
 					case IStatus.WARNING:
-						showWarningMessage(Messages.PhpcloudCompositeFragment_WarningTitle, finalStatus.getMessage());
+						showWarningMessage(
+								Messages.PhpcloudCompositeFragment_WarningTitle,
+								finalStatus.getMessage());
 						break;
 					default:
 						break;
@@ -369,10 +371,11 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 		if (targets == null || targets.length == 0) {
 			return null;
 		}
-
 		TargetsManager tm = TargetsManagerService.INSTANCE.getTargetManager();
-		ZendTarget[] updatedTargets = new ZendTarget[targets.length];
 
+		targets = removeExistingTargets(targets, tm);
+
+		ZendTarget[] updatedTargets = new ZendTarget[targets.length];
 		String uniqueId = tm.createUniqueId(null);
 		for (int i = 0; i < targets.length; i++) {
 			IZendTarget target = targets[i];

@@ -9,6 +9,8 @@
 package org.zend.php.zendserver.deployment.ui.preferences;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
@@ -203,6 +206,50 @@ public abstract class AbstractCloudCompositeFragment extends
 			lastPort = port;
 		}
 		return port;
+	}
+
+	/**
+	 * Remove existing targets from list of cloud target detected on the
+	 * account. For existing targets it updates private key path.
+	 * 
+	 * @param targets
+	 *            detected cloud targets
+	 * @param manager
+	 *            {@link TargetsManager} instance
+	 * @return list of new targets
+	 */
+	protected IZendTarget[] removeExistingTargets(IZendTarget[] targets,
+			TargetsManager manager) {
+		List<IZendTarget> result = new ArrayList<IZendTarget>();
+		IZendTarget[] existingTargets = manager.getTargets();
+		for (IZendTarget target : targets) {
+			boolean unique = true;
+			for (IZendTarget existingTarget : existingTargets) {
+				if (existingTarget.getDefaultServerURL().equals(
+						target.getDefaultServerURL())) {
+					unique = false;
+					// only update private key path and then skip it
+					String privateKey = target
+							.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
+					ZendTarget toUpdate = (ZendTarget) existingTarget;
+					toUpdate.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH,
+							privateKey);
+					manager.updateTarget(existingTarget, true);
+					Server server = ServerUtils.getServer(existingTarget);
+					if (server != null) {
+						SSHTunnelConfiguration config = SSHTunnelConfiguration
+								.read(server);
+						config.setPrivateKey(privateKey);
+						config.store(server);
+					}
+					break;
+				}
+			}
+			if (unique) {
+				result.add(target);
+			}
+		}
+		return result.toArray(new IZendTarget[result.size()]);
 	}
 
 	protected void showWarningMessage(final String title, final String message) {
