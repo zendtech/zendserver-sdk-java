@@ -8,6 +8,8 @@
 package org.zend.php.zendserver.deployment.core.internal.database;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -105,11 +107,9 @@ public abstract class TargetDatabase implements ITargetDatabase {
 				initListener();
 				return true;
 			}
-			DriverInstance[] dilist = DriverManager.getInstance()
-					.getAllDriverInstances();
+			DriverInstance driver = getMySQLDriver();
 			Properties properties = null;
-			if (dilist.length > 0) {
-				DriverInstance driver = dilist[0];
+			if (driver != null) {
 				IPropertySet propSet = driver.getPropertySet();
 				properties = propSet.getBaseProperties();
 				properties.setProperty(TARGET_ID, target.getId());
@@ -371,6 +371,28 @@ public abstract class TargetDatabase implements ITargetDatabase {
 					String.valueOf(savePassword));
 		}
 		profile.setBaseProperties(props);
+	}
+	
+	private DriverInstance getMySQLDriver() {
+		DriverInstance[] drivers = DriverManager.getInstance()
+				.getAllDriverInstances();
+		double resultVersion = 0;
+		DriverInstance result = null;
+		for (DriverInstance driverInstance : drivers) {
+			String name = driverInstance.getName();
+			if (name.contains("MySQL")) { //$NON-NLS-1$
+				Pattern p = Pattern.compile("(\\d+(?:\\.\\d+))"); //$NON-NLS-1$
+				Matcher m = p.matcher(name);
+				if (m.find()) {
+					double version = Double.parseDouble(m.group(1));
+					if (version > resultVersion) {
+						result = driverInstance;
+						resultVersion = version;
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 }
