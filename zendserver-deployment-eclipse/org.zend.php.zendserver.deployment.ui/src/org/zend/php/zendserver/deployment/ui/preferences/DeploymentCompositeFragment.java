@@ -53,6 +53,34 @@ import org.zend.sdklib.target.LicenseExpiredException;
 @SuppressWarnings("restriction")
 public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
+	private class KeyDetectionRunnable implements IRunnableWithProgress {
+
+		private String errorMessage;
+
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			try {
+				monitor.beginTask(
+						Messages.DeploymentCompositeFragment_DetectingCredentials,
+						IProgressMonitor.UNKNOWN);
+				detectApiKey(null);
+			} catch (SdkException e) {
+				String message = e.getMessage();
+				Throwable cause = e.getCause();
+				if (cause != null) {
+					message = cause.getMessage();
+				}
+				Activator.log(e);
+				this.errorMessage = message;
+			}
+		}
+
+		public String getErrorMessage() {
+			return errorMessage;
+		}
+
+	}
+
 	private static final String DEFAULT_HOST = "http://"; //$NON-NLS-1$
 
 	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.DeploymentCompositeFragment"; //$NON-NLS-1$
@@ -402,32 +430,18 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	private void handleDetect(final String host) {
+		KeyDetectionRunnable detector = new KeyDetectionRunnable();
 		try {
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(
-								Messages.DeploymentCompositeFragment_DetectingCredentials,
-								IProgressMonitor.UNKNOWN);
-						detectApiKey(null);
-					} catch (SdkException e) {
-						String message = e.getMessage();
-						Throwable cause = e.getCause();
-						if (cause != null) {
-							message = cause.getMessage();
-						}
-						setMessage(message, IMessageProvider.ERROR);
-						Activator.log(e);
-					}
-				}
-			});
-			validate();
+			controlHandler.run(true, true, detector);
 		} catch (InvocationTargetException e) {
 			Activator.log(e);
 		} catch (InterruptedException e) {
 			Activator.log(e);
+		}
+		if (detector.getErrorMessage() != null) {
+			setMessage(detector.getErrorMessage(), IMessageProvider.ERROR);
+		} else {
+			validate();
 		}
 	}
 
