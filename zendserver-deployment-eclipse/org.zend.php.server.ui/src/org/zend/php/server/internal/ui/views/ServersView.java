@@ -54,7 +54,10 @@ import org.zend.php.server.internal.ui.actions.EditServerAction;
 import org.zend.php.server.internal.ui.actions.OpenDatabaseConnectionAction;
 import org.zend.php.server.internal.ui.actions.RemoveServerAction;
 import org.zend.php.server.internal.ui.actions.SetDefaultServerAction;
+import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
+import org.zend.php.zendserver.deployment.core.database.ITargetDatabaseListener;
+import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -62,7 +65,7 @@ import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
  */
 @SuppressWarnings("restriction")
 public class ServersView extends ViewPart implements IServersManagerListener,
-		IPreferenceChangeListener {
+		IPreferenceChangeListener, ITargetDatabaseListener {
 
 	public static final String ID = "org.zend.php.server.ui.views.ServersView"; //$NON-NLS-1$
 
@@ -76,6 +79,7 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(Activator.PLUGIN_ID);
 		prefs.addPreferenceChangeListener(this);
+		TargetsDatabaseManager.getManager().addTargetDatabaseListener(this);
 	}
 
 	@Override
@@ -99,7 +103,7 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		hookDoubleClickAction();
 
 		hookContextMenu();
-		
+
 		viewer.getControl().setData(WorkbenchHelpSystem.HELP_KEY, ID);
 		viewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent arg0) {
@@ -114,6 +118,7 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(Activator.PLUGIN_ID);
 		prefs.removePreferenceChangeListener(this);
+		TargetsDatabaseManager.getManager().removeTargetDatabaseListener(this);
 		super.dispose();
 	}
 
@@ -143,6 +148,12 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 				.equals(event.getKey())) {
 			refreshViewer();
 		}
+	}
+
+	@Override
+	public void stateChanged(ITargetDatabase targetDatabase,
+			ConnectionState state) {
+		refreshViewer();
 	}
 
 	public ISelectionProvider getSelectionProvider() {
