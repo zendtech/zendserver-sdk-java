@@ -16,6 +16,7 @@ import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
 import org.zend.php.server.ui.types.LocalApacheType;
 import org.zend.php.server.ui.types.OpenShiftServerType;
+import org.zend.php.server.ui.types.PhpcloudServerType;
 import org.zend.php.server.ui.types.ZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
@@ -54,7 +55,7 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 						.createPhpcloudConfiguration(server,
 								ServerUtils.getTarget(server));
 				config.store(server);
-				typeId = ZendServerType.ID;
+				typeId = PhpcloudServerType.ID;
 			} else if (isZendServer(server)) {
 				typeId = ZendServerType.ID;
 				return true;
