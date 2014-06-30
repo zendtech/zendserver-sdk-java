@@ -14,6 +14,7 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.ui.IStartup;
 import org.zend.core.notifications.NotificationManager;
+import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
@@ -31,7 +32,6 @@ public class LocalZendServerStartup implements IStartup {
 
 	private static final String MESSAGE_ID = ServersUI.PLUGIN_ID
 			+ ".localZendServer"; //$NON-NLS-1$
-	private static final String ZEND_PHP_WEB_SERVER_HELP = "com.zend.php.help.zend_php_web_server"; //$NON-NLS-1$
 
 	@Override
 	public void earlyStartup() {
@@ -68,13 +68,13 @@ public class LocalZendServerStartup implements IStartup {
 				NotificationManager.showInfoWithHelp(
 						Messages.LocalZendServerStartup_FoundTitle,
 						Messages.LocalZendServerStartup_FoundMessage,
-						ZEND_PHP_WEB_SERVER_HELP, 5000);
+						IHelpContextIds.ZEND_SERVER, 5000);
 			}
 		} else {
 			NotificationManager.showWarningWithHelp(
 					Messages.LocalZendServerStartup_NotFoundTitle,
 					Messages.LocalZendServerStartup_NotFoundMessage,
-					ZEND_PHP_WEB_SERVER_HELP, 5000, MESSAGE_ID);
+					IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
 		}
 	}
 
