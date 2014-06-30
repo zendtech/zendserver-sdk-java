@@ -233,5 +233,12 @@
             class="org.zend.php.server.internal.ui.ServerLaunchDelegateListener">
       </launchDelegateListener>
    </extension>
-
+ <extension
+         point="org.zend.php.ui.welcomeLinkListener">
+      <listener
+            class="org.zend.php.server.internal.ui.actions.LaunchServerWizard"
+            id="org.zend.php.server.internal.ui.actions.LaunchServerWizard.listener"
+            name="server">
+      </listener>
+   </extension>
 </plugin>
