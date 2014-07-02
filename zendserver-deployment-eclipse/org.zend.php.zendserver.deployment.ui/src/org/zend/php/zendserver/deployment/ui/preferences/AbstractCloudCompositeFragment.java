@@ -225,8 +225,9 @@ public abstract class AbstractCloudCompositeFragment extends
 		for (IZendTarget target : targets) {
 			boolean unique = true;
 			for (IZendTarget existingTarget : existingTargets) {
-				if (existingTarget.getDefaultServerURL().equals(
-						target.getDefaultServerURL())) {
+				if (ServerUtils.getServer(existingTarget) != null
+						&& existingTarget.getDefaultServerURL().equals(
+								target.getDefaultServerURL())) {
 					unique = false;
 					// only update private key path and then skip it
 					String privateKey = target
