@@ -13,6 +13,7 @@ package org.zend.php.server.ui.types;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
+import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
 
@@ -35,7 +36,7 @@ public class PhpcloudServerType implements IServerType {
 	public String getName() {
 		return Messages.PhpcloudServerType_Name;
 	}
-	
+
 	@Override
 	public String getDescription() {
 		return Messages.PhpcloudServerType_Description;
@@ -45,7 +46,7 @@ public class PhpcloudServerType implements IServerType {
 	public Image getViewIcon() {
 		return ServersUI.getDefault().getImage(ServersUI.PHPCLOUD_ICON);
 	}
-	
+
 	@Override
 	public Image getTypeIcon() {
 		return ServersUI.getDefault().getImage(ServersUI.PHPCLOUD_TYPE_ICON);
@@ -54,6 +55,11 @@ public class PhpcloudServerType implements IServerType {
 	@Override
 	public ImageDescriptor getWizardImage() {
 		return ServersUI.getImageDescriptor(ServersUI.PHPCLOUD_WIZ);
+	}
+
+	@Override
+	public String getHelp() {
+		return IHelpContextIds.ADDING_A_SERVER_ZEND_DEVELOPER_CLOUD_SERVER;
 	}
 
 }

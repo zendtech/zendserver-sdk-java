@@ -21,4 +21,16 @@ public interface IHelpContextIds {
 
 	String ZEND_SERVER = PREFIX + "zend_certified_php_distribution" + SUFFIX; //$NON-NLS-1$
 
+	String ADDING_A_SERVER_REMOTE_ZEND_SERVER = PREFIX
+			+ "adding_a_remote_zend_server" + SUFFIX; //$NON-NLS-1$
+
+	String ADDING_A_SERVER_APACHE_HTTP_SERVER = PREFIX
+			+ "adding_a_local_apache_server" + SUFFIX; //$NON-NLS-1$
+
+	String ADDING_A_SERVER_ZEND_DEVELOPER_CLOUD_SERVER = PREFIX
+			+ "adding_a_zend_developer_cloud_php_server" + SUFFIX; //$NON-NLS-1$
+
+	String ADDING_A_SERVER_LOCAL_ZEND_SERVER = PREFIX
+			+ "adding_a_local_zend_server" + SUFFIX; //$NON-NLS-1$
+
 }
