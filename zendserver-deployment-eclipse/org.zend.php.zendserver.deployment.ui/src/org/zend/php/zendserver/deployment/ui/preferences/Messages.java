@@ -83,7 +83,8 @@ public class Messages extends NLS {
 	public static String TunnelingCompositeFragment_BrowseLabel;
 	public static String TunnelingCompositeFragment_CreateTitle;
 	public static String TunnelingCompositeFragment_CredentialsLabel;
-	public static String TunnelingCompositeFragment_Desc;
+	public static String TunnelingCompositeFragment_DescEdit;
+	public static String TunnelingCompositeFragment_DescCreate;
 	public static String TunnelingCompositeFragment_EditLabel;
 	public static String TunnelingCompositeFragment_EditTitle;
 	public static String TunnelingCompositeFragment_EmptyUsernameError;

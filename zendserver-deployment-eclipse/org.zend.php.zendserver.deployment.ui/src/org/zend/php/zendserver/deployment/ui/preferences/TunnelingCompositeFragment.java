@@ -83,8 +83,7 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.TunnelingCompositeFragment_Name,
-				getTitle(isForEditing),
-				Messages.TunnelingCompositeFragment_Desc);
+				getTitle(isForEditing), getDescription(isForEditing));
 		this.config = new SSHTunnelConfiguration();
 		createControl(isForEditing);
 	}
@@ -506,6 +505,11 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	private static String getTitle(boolean isEditing) {
 		return isEditing ? Messages.TunnelingCompositeFragment_EditTitle
 				: Messages.TunnelingCompositeFragment_CreateTitle;
+	}
+
+	private static String getDescription(boolean isEditing) {
+		return isEditing ? Messages.TunnelingCompositeFragment_DescEdit
+				: Messages.TunnelingCompositeFragment_DescCreate;
 	}
 
 }
