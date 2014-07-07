@@ -91,15 +91,15 @@ public class ZendLibrary extends ZendConnection {
 		} catch (MalformedURLException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Library Status",
-					"Error duirng retrieving library status from '" + targetId
+					"Error during retrieving library status from '" + targetId
 							+ "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
 					"Library Status",
-					"Library duirng retrieving library status from '"
+					"Library during retrieving library status from '"
 							+ targetId + "'", e));
-			log.error("Error duirng retrieving library status from '"
+			log.error("Error during retrieving library status from '"
 					+ targetId + "'.");
 			log.error("\tpossible error: " + e.getMessage());
 		}

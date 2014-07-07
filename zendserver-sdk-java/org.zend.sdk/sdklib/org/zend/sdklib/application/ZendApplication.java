@@ -96,14 +96,14 @@ public class ZendApplication extends ZendConnection {
 			return result;
 		} catch (MalformedURLException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
-					"Error duirng retrieving application status from '" + targetId
+					"Error during retrieving application status from '" + targetId
 							+ "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
 			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
-					"Error duirng retrieving application status from '" + targetId
+					"Error during retrieving application status from '" + targetId
 							+ "'", e));
-			log.error("Error duirng retrieving application status from '"
+			log.error("Error during retrieving application status from '"
 					+ targetId + "'.");
 			log.error("\tpossible error: " + e.getMessage());
 		}
