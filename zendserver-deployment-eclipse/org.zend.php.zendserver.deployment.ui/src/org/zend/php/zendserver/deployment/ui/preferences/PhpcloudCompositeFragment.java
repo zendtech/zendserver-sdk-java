@@ -273,10 +273,32 @@ public class PhpcloudCompositeFragment extends AbstractCloudCompositeFragment {
 						IZendTarget existingTarget = manager.getTargetById(t
 								.getId());
 						try {
+							IZendTarget finalTarget = copy(t);
 							if (existingTarget != null) {
-								manager.updateTarget(copy(t), true);
+								manager.updateTarget(finalTarget, true);
 							} else {
-								manager.add(copy(t), true);
+								manager.add(finalTarget, true);
+							}
+							if (EclipseSSH2Settings.registerDevCloudTarget(
+									finalTarget, false)) {
+								manager.updateTarget(finalTarget, true);
+							}
+							ZendDevCloud cloud = new ZendDevCloud();
+							cloud.setPublicKeyBuilder(new JSCHPubKeyDecryptor());
+							try {
+								cloud.uploadPublicKey(finalTarget);
+							} catch (SdkException e) {
+								throw new TargetException(e);
+							}
+							String shouldStore = finalTarget
+									.getProperty(ZendDevCloud.STORE_PASSWORD);
+							if (shouldStore != null
+									&& Boolean.valueOf(shouldStore)) {
+								TargetsManagerService.INSTANCE
+										.storePhpcloudPassword(
+												finalTarget,
+												finalTarget
+														.getProperty(ZendDevCloud.TARGET_PASSWORD));
 							}
 						} catch (TargetException e) {
 							// cannot occur, suppress connection

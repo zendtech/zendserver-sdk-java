@@ -14,7 +14,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
-import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
@@ -85,25 +84,6 @@ public class EclipseTargetsManager extends TargetsManager {
 			}
 		}
 		IZendTarget result = super.add(target, suppressConnect);
-		if (TargetsManager.isPhpcloud(result)) {
-			if (EclipseSSH2Settings.registerDevCloudTarget(result, false)) {
-				updateTarget(result, true);
-			}
-			ZendDevCloud cloud = new ZendDevCloud();
-			cloud.setPublicKeyBuilder(new JSCHPubKeyDecryptor());
-			try {
-				cloud.uploadPublicKey(result);
-			} catch (SdkException e) {
-				throw new TargetException(e);
-			}
-			String shouldStore = result
-					.getProperty(ZendDevCloud.STORE_PASSWORD);
-			if (shouldStore != null && Boolean.valueOf(shouldStore)) {
-				TargetsManagerService.INSTANCE.storePhpcloudPassword(result,
-						result.getProperty(ZendDevCloud.TARGET_PASSWORD));
-			}
-		}
-		
 		for (ITargetsManagerListener listener : listeners) {
 			listener.targetAdded(target);
 		}
