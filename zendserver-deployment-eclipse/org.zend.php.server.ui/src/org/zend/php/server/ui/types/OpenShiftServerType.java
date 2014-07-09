@@ -59,7 +59,7 @@ public class OpenShiftServerType implements IServerType {
 	
 	@Override
 	public String getHelp() {
-		return IHelpContextIds.ADDING_A_SERVER_REMOTE_ZEND_SERVER;
+		return IHelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER;
 	}
 
 }
