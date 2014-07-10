@@ -29,18 +29,28 @@ public class ContainerPasswordDialog extends Dialog {
 
 	private Text passwordText;
 	private Button saveButton;
+	private Text usernameText;
 
 	private String title;
-	private String password;
 	private boolean save;
+	private boolean askUsername;
 
-	public ContainerPasswordDialog(Shell parentShell, String title) {
+	private String password;
+	private String username;
+
+	public ContainerPasswordDialog(Shell parentShell, String title,
+			boolean askUsername) {
 		super(parentShell);
 		this.title = title;
+		this.askUsername = askUsername;
 	}
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 	public boolean getSave() {
@@ -53,6 +63,14 @@ public class ContainerPasswordDialog extends Dialog {
 		GridData gd = (GridData) comp.getLayoutData();
 		gd.widthHint = 250;
 		layout.numColumns = 2;
+		if (askUsername) {
+			Label usernameLabel = new Label(comp, SWT.RIGHT);
+			usernameLabel
+					.setText(Messages.ContainerPasswordDialog_UsernameLabel);
+			usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			usernameText.setLayoutData(data);
+		}
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
 		passwordLabel.setText(Messages.ContainerPasswordDialog_PasswordLabel);
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
@@ -71,6 +89,9 @@ public class ContainerPasswordDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		password = passwordText.getText();
+		if (askUsername) {
+			username = usernameText.getText();
+		}
 		save = saveButton.getSelection();
 		super.okPressed();
 	}

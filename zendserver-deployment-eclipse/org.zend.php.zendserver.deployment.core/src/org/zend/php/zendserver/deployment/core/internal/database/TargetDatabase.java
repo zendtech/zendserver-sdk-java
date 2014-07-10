@@ -122,6 +122,12 @@ public abstract class TargetDatabase implements ITargetDatabase {
 				properties.setProperty(
 						IJDBCDriverDefinitionConstants.USERNAME_PROP_ID,
 						getUsername());
+				String password = getPassword();
+				if (password != null) {
+					properties.setProperty(
+							IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID,
+							password);
+				}
 				properties.setProperty(
 						IJDBCDriverDefinitionConstants.URL_PROP_ID, url);
 			}
@@ -203,6 +209,18 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	}
 
 	@Override
+	public void setUsername(String username) {
+		Properties props = profile.getBaseProperties();
+		if (username != null) {
+			props.setProperty(IJDBCDriverDefinitionConstants.USERNAME_PROP_ID,
+					username);
+		} else {
+			props.remove(IJDBCDriverDefinitionConstants.USERNAME_PROP_ID);
+		}
+		profile.setBaseProperties(props);
+	}
+
+	@Override
 	public ConnectionState getState() {
 		if (profile != null) {
 			return ConnectionState.byState(profile.getConnectionState());
@@ -251,6 +269,8 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	protected abstract String getUrl();
 
 	protected abstract String getUsername();
+
+	protected abstract String getPassword();
 
 	protected abstract String getDatabaseName();
 
@@ -372,7 +392,7 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		}
 		profile.setBaseProperties(props);
 	}
-	
+
 	private DriverInstance getMySQLDriver() {
 		DriverInstance[] drivers = DriverManager.getInstance()
 				.getAllDriverInstances();

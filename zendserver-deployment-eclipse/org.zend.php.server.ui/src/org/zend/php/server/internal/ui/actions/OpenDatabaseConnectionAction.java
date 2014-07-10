@@ -99,16 +99,23 @@ public class OpenDatabaseConnectionAction extends Action {
 
 					public void run() {
 						String title = null;
+						boolean askUsername = false;
 						if (TargetsManager.isPhpcloud(targetConnection
 								.getTarget())) {
 							title = Messages.OpenDatabaseConnectionAction_ContainerPassword;
 						} else if (TargetsManager.isOpenShift(targetConnection
 								.getTarget())) {
 							title = Messages.OpenDatabaseConnectionAction_DatabasePassword;
+							askUsername = true;
 						}
 						ContainerPasswordDialog dialog = new ContainerPasswordDialog(
-								Display.getDefault().getActiveShell(), title);
+								Display.getDefault().getActiveShell(), title,
+								askUsername);
 						if (dialog.open() == Window.OK) {
+							if (askUsername) {
+								targetConnection.setUsername(dialog
+										.getUsername());
+							}
 							targetConnection.setPassword(dialog.getPassword());
 							targetConnection.setSavePassword(dialog.getSave());
 						}

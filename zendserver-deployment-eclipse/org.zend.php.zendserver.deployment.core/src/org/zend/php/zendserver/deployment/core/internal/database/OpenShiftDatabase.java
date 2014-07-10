@@ -18,7 +18,7 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class OpenShiftDatabase extends TargetDatabase {
 
-	private static final String USERNAME = "admin"; //$NON-NLS-1$
+	private static final String DEFAULT_USERNAME = "admin"; //$NON-NLS-1$
 
 	public OpenShiftDatabase(IZendTarget target, TargetsDatabaseManager manager) {
 		super(target, manager);
@@ -45,7 +45,11 @@ public class OpenShiftDatabase extends TargetDatabase {
 	 * #getUsername()
 	 */
 	protected String getUsername() {
-		return USERNAME;
+		String username = target.getProperty(OpenShiftTarget.MYSQL_USERNAME);
+		if (username == null) {
+			username = DEFAULT_USERNAME;
+		}
+		return username;
 	}
 
 	/*
@@ -68,6 +72,17 @@ public class OpenShiftDatabase extends TargetDatabase {
 	 */
 	protected String getProfilePrefix() {
 		return "openshift target"; //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.internal.database.TargetDatabase
+	 * #getPassword()
+	 */
+	protected String getPassword() {
+		return target.getProperty(OpenShiftTarget.MYSQL_PASSWORD);
 	}
 
 }
