@@ -31,6 +31,7 @@ public class Messages extends NLS {
 	public static String AddServerAction_AddLabel;
 	public static String ContainerPasswordDialog_PasswordLabel;
 	public static String ContainerPasswordDialog_SaveLabel;
+	public static String ContainerPasswordDialog_UsernameLabel;
 	public static String EditServerAction_EditLabel;
 	public static String OpenDatabaseConnectionAction_CannotConnectError;
 	public static String OpenDatabaseConnectionAction_ContainerPassword;

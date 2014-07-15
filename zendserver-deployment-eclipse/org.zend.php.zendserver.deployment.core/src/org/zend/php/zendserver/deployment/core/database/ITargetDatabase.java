@@ -72,12 +72,20 @@ public interface ITargetDatabase {
 	ConnectionState getState();
 
 	/**
-	 * Set container password for associated connection profile.
+	 * Set MySQL password for associated connection profile.
 	 * 
 	 * @param password
-	 *            container password
+	 *            MySQL password
 	 */
 	void setPassword(String password);
+
+	/**
+	 * Set MySQL username for associated connection profile.
+	 * 
+	 * @param username
+	 *            MySQL username
+	 */
+	void setUsername(String username);
 
 	/**
 	 * Remove associated connection profile. After that operation next call of
