@@ -67,6 +67,17 @@ public class PhpcloudDatabase extends TargetDatabase {
 		return "phpcloud container"; //$NON-NLS-1$
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.zend.php.zendserver.deployment.core.internal.database.TargetDatabase
+	 * #getPassword()
+	 */
+	protected String getPassword() {
+		return null;
+	}
+
 	private String getContainerName() {
 		String host = target.getHost().getHost();
 		if (host != null && host.length() > 0) {

@@ -58,7 +58,9 @@ import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
 import com.openshift.client.cartridge.IStandaloneCartridge;
 import com.openshift.client.cartridge.StandaloneCartridge;
+import com.openshift.internal.client.EmbeddedCartridgeResource;
 import com.openshift.internal.client.GearProfile;
+import com.openshift.internal.client.response.CartridgeResourceProperty;
 
 /**
  * Represents OpenShift user account. It allows to detects OpenShift
@@ -122,6 +124,9 @@ public class OpenShiftTarget {
 	public static final String TARGET_UUID = "openshift.uuid";
 	public static final String TARGET_INTERNAL_HOST = "openshift.internalHost";
 	public static final String TARGET_MYSQL_SUPPORT = "openshift.mysql";
+	public static final String MYSQL_PASSWORD = ZendTarget.ENCRYPT
+			+ "openshift.mysql.password";
+	public static final String MYSQL_USERNAME = "openshift.mysql.username";
 	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
 
 	public static final String BOOTSTRAP = ZendTarget.TEMP + "bootstrap";
@@ -573,9 +578,9 @@ public class OpenShiftTarget {
 			if (internalHost != null) {
 				target.addProperty(TARGET_INTERNAL_HOST, internalHost);
 			}
-			if (hasMySqlSupport(container)) {
-				target.addProperty(TARGET_MYSQL_SUPPORT, "true");
-			}
+
+			detectMySqlSupport(container, target);
+
 			IStandaloneCartridge cartridge = container.getCartridge();
 			String gearProfile = cartridge.getName();
 			Type type = Type.create(gearProfile);
@@ -735,7 +740,8 @@ public class OpenShiftTarget {
 		return publicKeyFile;
 	}
 
-	private boolean hasMySqlSupport(IApplication container) throws SdkException {
+	private void detectMySqlSupport(IApplication container, ZendTarget target)
+			throws SdkException {
 		List<IEmbeddedCartridge> cartridges = null;
 		try {
 			cartridges = container.getEmbeddedCartridges();
@@ -744,12 +750,22 @@ public class OpenShiftTarget {
 		}
 		if (cartridges != null) {
 			for (IEmbeddableCartridge cartridge : cartridges) {
-				if (cartridge.getName().startsWith("mysql")) {
-					return true;
+				if (cartridge.getName().startsWith("mysql")
+						&& cartridge instanceof EmbeddedCartridgeResource) {
+					target.addProperty(TARGET_MYSQL_SUPPORT,
+							String.valueOf(true));
+					CartridgeResourceProperty usernameProperty = ((EmbeddedCartridgeResource) cartridge)
+							.getProperties().getProperty("username");
+					target.addProperty(MYSQL_USERNAME,
+							usernameProperty.getValue());
+					CartridgeResourceProperty passwordProperty = ((EmbeddedCartridgeResource) cartridge)
+							.getProperties().getProperty("password");
+					target.addProperty(MYSQL_PASSWORD,
+							passwordProperty.getValue());
+					break;
 				}
 			}
 		}
-		return false;
 	}
 
 	private String generateSecretKey() {
