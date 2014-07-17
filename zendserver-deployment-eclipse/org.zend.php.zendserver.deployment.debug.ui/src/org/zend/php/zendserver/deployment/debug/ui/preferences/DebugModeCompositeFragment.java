@@ -306,7 +306,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 		breakFirstButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false, 3, 1));
 		breakFirstButton
-				.setText(Messages.DebugModeCompositeFragment_BreakFirstLabel);
+				.setText(Messages.DebugModeCompositeFragment_BreakAtFirstLabel);
 	}
 
 	@Override
