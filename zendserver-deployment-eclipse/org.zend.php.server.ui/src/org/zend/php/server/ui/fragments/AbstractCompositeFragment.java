@@ -82,6 +82,16 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 		});
 	}
 
+	public void setIncompleteMessage(final String message) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				controlHandler.setMessage(message, IMessageProvider.NONE);
+				setComplete(false);
+				controlHandler.update();
+			}
+		});
+	}
+
 	/**
 	 * Create the page
 	 */
