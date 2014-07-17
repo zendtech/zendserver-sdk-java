@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.apache;
 
-import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Platform;
@@ -88,9 +87,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	public void validate() {
 		if (name != null) {
 			if (name.trim().isEmpty()) {
-				setMessage(
-						Messages.LocalApacheCompositeFragment_NameEmptyMessage,
-						IMessageProvider.ERROR);
+				setIncompleteMessage(Messages.LocalApacheCompositeFragment_NameEmptyMessage);
 				return;
 			}
 			if (isDuplicateName(name)) {
@@ -100,18 +97,10 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 				return;
 			}
 		}
-		if (location != null) {
-			File binFile = new File(location, BIN);
-			File confFile = new File(location, CONF);
-			if (!binFile.exists() || !confFile.exists()) {
-				setMessage(
-						Messages.LocalApacheCompositeFragment_LocationInvalidMessage,
-						IMessageProvider.ERROR);
-				return;
-			} else {
-				Server server = new Server();
-				server.setAttribute(LocalApacheType.LOCATION, location);
-				LocalApacheType.parseAttributes(server);
+		if (location != null && !location.isEmpty()) {
+			Server server = new Server();
+			server.setAttribute(LocalApacheType.LOCATION, location);
+			if (LocalApacheType.parseAttributes(server)) {
 				Server conflictingServer = getConflictingServer(server);
 				if (conflictingServer != null) {
 					setMessage(
@@ -121,7 +110,15 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 							IMessageProvider.ERROR);
 					return;
 				}
+			} else {
+				setMessage(
+						Messages.LocalApacheCompositeFragment_LocationInvalidMessage,
+						IMessageProvider.ERROR);
+				return;
 			}
+		} else {
+			setIncompleteMessage("Specify an installation directory.");
+			return;
 		}
 		setMessage(getDescription(), IMessageProvider.NONE);
 	}
