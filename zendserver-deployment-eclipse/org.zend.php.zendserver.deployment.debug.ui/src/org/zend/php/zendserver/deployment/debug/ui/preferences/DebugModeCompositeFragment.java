@@ -129,6 +129,8 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
 	private IZendTarget target;
 
+	private Button breakFirstButton;
+
 	/**
 	 * PlatformCompositeFragment constructor
 	 * 
@@ -180,6 +182,9 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 				}
 			}
 		}
+		Server server = getServer();
+		server.setAttribute(DebugModeManager.BREAK_FIRST_LINE,
+				String.valueOf(breakFirstButton.getSelection()));
 		return true;
 	}
 
@@ -297,6 +302,11 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 		});
 		removeButton.setEnabled(false);
 		modifyButton.setEnabled(false);
+		breakFirstButton = new Button(parent, SWT.CHECK);
+		breakFirstButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false, 3, 1));
+		breakFirstButton
+				.setText(Messages.DebugModeCompositeFragment_BreakFirstLabel);
 	}
 
 	@Override
@@ -310,6 +320,12 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 				String[] segments = value.split(","); //$NON-NLS-1$
 				input = new ArrayList<String>(Arrays.asList(segments));
 			}
+		}
+		Server server = getServer();
+		if (server != null) {
+			String breakAtFirst = server.getAttribute(
+					DebugModeManager.BREAK_FIRST_LINE, String.valueOf(true));
+			breakFirstButton.setSelection(Boolean.valueOf(breakAtFirst));
 		}
 		viewer.setInput(input);
 		viewer.refresh();
