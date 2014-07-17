@@ -15,15 +15,20 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
+import org.eclipse.php.internal.server.core.Server;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.application.ZendDebugMode;
 import org.zend.sdklib.application.ZendDebugMode.State;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
+@SuppressWarnings("restriction")
 public class DebugModeManager {
 
 	public static final int[] prohibitedPorts = new int[] { 10081, 10082 };
+
+	public static final String BREAK_FIRST_LINE = "debug_mode_debug_stop"; //$NON-NLS-1$
 
 	private static final String DEBUG_STOP = "debug_stop"; //$NON-NLS-1$
 
@@ -67,7 +72,17 @@ public class DebugModeManager {
 			int port = debuggerConfiguration.getPort();
 			options.put(DEBUG_PORT, String.valueOf(port));
 			options.put(DEBUG_HOST, getDebugHosts(target));
-			options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
+			Server server = ServerUtils.getServer(target);
+			if (server != null) {
+				String breakAtFirst = server
+						.getAttribute(DebugModeManager.BREAK_FIRST_LINE,
+								String.valueOf(true));
+				if (Boolean.valueOf(breakAtFirst)) {
+					options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
+				}
+			} else {
+				options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
+			}
 			debugMode.setOptions(options);
 		}
 		State result = State.ERROR;
