@@ -12,7 +12,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.php.internal.debug.core.PHPDebugPlugin;
 import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguration;
+import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNames;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
 import org.eclipse.php.internal.server.core.Server;
@@ -27,8 +29,6 @@ import org.zend.sdklib.target.IZendTarget;
 public class DebugModeManager {
 
 	public static final int[] prohibitedPorts = new int[] { 10081, 10082 };
-
-	public static final String BREAK_FIRST_LINE = "debug_mode_debug_stop"; //$NON-NLS-1$
 
 	private static final String DEBUG_STOP = "debug_stop"; //$NON-NLS-1$
 
@@ -61,7 +61,6 @@ public class DebugModeManager {
 		return manager;
 	}
 
-	@SuppressWarnings("restriction")
 	public IStatus startDebugMode(IZendTarget target) {
 		ZendDebugMode debugMode = new ZendDebugMode(target.getId());
 		Map<String, String> options = new HashMap<String, String>();
@@ -74,10 +73,7 @@ public class DebugModeManager {
 			options.put(DEBUG_HOST, getDebugHosts(target));
 			Server server = ServerUtils.getServer(target);
 			if (server != null) {
-				String breakAtFirst = server
-						.getAttribute(DebugModeManager.BREAK_FIRST_LINE,
-								String.valueOf(true));
-				if (Boolean.valueOf(breakAtFirst)) {
+				if (shouldStopAtFirstLine()) {
 					options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
 				}
 			} else {
@@ -189,6 +185,13 @@ public class DebugModeManager {
 			filters = new ArrayList<String>();
 		}
 		return filters.toArray(new String[0]);
+	}
+	
+	private boolean shouldStopAtFirstLine() {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(PHPDebugPlugin.ID);
+		return prefs.getBoolean(PHPDebugCorePreferenceNames.STOP_AT_FIRST_LINE,
+				true);
 	}
 
 }
