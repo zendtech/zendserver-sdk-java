@@ -25,6 +25,7 @@
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
                commandId="org.zend.php.zendserver.deployment.ui.configureNature"
+               icon="icons/obj16/deploy_exc.png"
                style="push">
          </command>
       </menuContribution>
