@@ -27,6 +27,8 @@ public class Messages extends NLS {
 
 	public static String DebugModeManager_StopSuccess;
 
+	public static String DeploymentLaunchJob_AppUrlConflictMessage;
+
 	public static String DeploymentLaunchJob_ConnectionRefusedMessage;
 	public static String statusJob_Title;
 	public static String updateJob_Title;
