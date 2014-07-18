@@ -1,6 +1,5 @@
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,52 +10,34 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.server.ui.IAddServerListener;
 import org.zend.php.server.ui.ServersCombo;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
-import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
-import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
-import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListener;
-import org.zend.sdklib.application.ZendApplication;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.connection.data.ApplicationInfo;
-import org.zend.webapi.core.connection.data.ApplicationsList;
-import org.zend.webapi.core.progress.StatusCode;
 
 public class ConfigurationBlock extends AbstractBlock {
 
@@ -67,12 +48,9 @@ public class ConfigurationBlock extends AbstractBlock {
 	private Button ignoreFailures;
 	private Button developmentMode;
 	private Button warnUpdate;
-	private Combo applicationNameCombo;
-	private Button refreshButton;
+	private Text applicationNameText;
 
 	private IRunnableContext context;
-
-	private ApplicationInfo[] applicationInfos = new ApplicationInfo[0];
 
 	private String description;
 	private String projectName;
@@ -103,7 +81,9 @@ public class ConfigurationBlock extends AbstractBlock {
 		createDeployCombo(getContainer());
 		baseUrl = createLabelWithText(Messages.configurationPage_baseURL,
 				EMPTY_STRING, getContainer(), false);
-		createApplicationSelection(getContainer());
+		applicationNameText = createLabelWithText(
+				Messages.ConfigurationBlock_ApplicationNameLabel, EMPTY_STRING,
+				getContainer(), false);
 		developmentMode = createLabelWithCheckbox(
 				Messages.ConfigurationBlock_DevelopmentModeLabel, null,
 				getContainer());
@@ -200,7 +180,7 @@ public class ConfigurationBlock extends AbstractBlock {
 				baseUrl.setText(updateURL(target, newBaseURL.toString()));
 			}
 		}
-		applicationNameCombo.setText(helper.getAppName());
+		applicationNameText.setText(helper.getAppName());
 		for (IDeployWizardContribution c : contributions) {
 			c.initializeFields(helper);
 		}
@@ -209,7 +189,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	public void clear() {
 		baseUrl.setText(EMPTY_STRING);
 		ignoreFailures.setSelection(true);
-		applicationNameCombo.clearSelection();
+		applicationNameText.clearSelection();
 	}
 
 	/*
@@ -281,21 +261,10 @@ public class ConfigurationBlock extends AbstractBlock {
 			helper.setTargetId(getTarget().getId());
 			helper.setTargetHost(getTarget().getHost().getHost());
 		}
-		ApplicationInfo selectedInfo = getAppicationNameSelection();
-		if (selectedInfo != null) {
-			helper.setAppId(selectedInfo.getId());
-		}
-		helper.setAppName(applicationNameCombo.getText());
+		helper.setAppName(applicationNameText.getText());
 		helper.setIgnoreFailures(ignoreFailures.getSelection());
 		helper.setDefaultServer(isDefaultServer());
-		if (selectedInfo != null && !warnUpdate.getSelection()) {
-			helper.setOperationType(IDeploymentHelper.UPDATE);
-		} else {
-			helper.setOperationType(IDeploymentHelper.DEPLOY);
-		}
-		if (getInstalledLocation() != null) {
-			helper.setInstalledLocation(getInstalledLocation());
-		}
+		helper.setOperationType(IDeploymentHelper.DEPLOY);
 		if (warnUpdate.isEnabled()) {
 			helper.setWarnUpdate(warnUpdate.getSelection());
 		} else {
@@ -323,8 +292,7 @@ public class ConfigurationBlock extends AbstractBlock {
 	}
 
 	public void setApplicationNameEnabled(boolean value) {
-		applicationNameCombo.setEnabled(value);
-		refreshButton.setEnabled(value);
+		applicationNameText.setEnabled(value);
 	}
 
 	public void setWarnUpdateEnabled(boolean value) {
@@ -350,17 +318,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		setApplicationNameEnabled(enabled);
 		setWarnUpdateEnabled(enabled);
 		setDevelopmentModeEnabled(enabled);
-	}
-
-	private ApplicationInfo getAppicationNameSelection() {
-		if (context != null) {
-			int idx = applicationNameCombo.getSelectionIndex();
-			if (idx <= -1) {
-				return null;
-			}
-			return applicationInfos[idx];
-		}
-		return null;
 	}
 
 	private URL getBaseURL() throws MalformedURLException {
@@ -392,16 +349,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		return targetsCombo.getSelectedTarget();
 	}
 
-	private String getInstalledLocation() {
-		if (applicationInfos != null && applicationInfos.length > 0) {
-			int index = applicationNameCombo.getSelectionIndex();
-			if (index != -1) {
-				return applicationInfos[index].getInstalledLocation();
-			}
-		}
-		return null;
-	}
-
 	private void createDeployCombo(Composite container) {
 		targetsCombo.setLabel(Messages.configurationPage_DeployTo);
 		targetsCombo.setTooltip(Messages.configurationPage_DeployToTooltip);
@@ -421,182 +368,6 @@ public class ConfigurationBlock extends AbstractBlock {
 		});
 	}
 
-	private void createApplicationSelection(Composite container) {
-		Label label = new Label(container, SWT.NONE);
-		label.setText(Messages.ConfigurationBlock_ApplicationNameLabel);
-		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		label.setLayoutData(data);
-		Composite appsComposite = new Composite(container, SWT.NULL);
-		appsComposite
-				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.horizontalSpacing = 0;
-		appsComposite.setLayout(layout);
-		applicationNameCombo = new Combo(appsComposite, SWT.SIMPLE
-				| SWT.DROP_DOWN);
-		applicationNameCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false));
-		applicationNameCombo.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				fillFieldsByAppInfo(applicationNameCombo);
-				warnUpdate.setSelection(false);
-				warnUpdate.setEnabled(false);
-				setBaseURLEnabled(false);
-				listener.statusChanged(validatePage());
-			}
-		});
-		applicationNameCombo.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				int matchIndex = isNameMatching(applicationNameCombo.getText());
-				if (matchIndex != -1
-						&& matchIndex != applicationNameCombo
-								.getSelectionIndex()) {
-					applicationNameCombo.select(matchIndex);
-					fillFieldsByAppInfo(applicationNameCombo);
-					warnUpdate.setEnabled(false);
-					setBaseURLEnabled(false);
-				} else {
-					warnUpdate.setEnabled(true);
-					setBaseURLEnabled(true);
-				}
-				listener.statusChanged(validatePage());
-			}
-		});
-		refreshButton = new Button(appsComposite, SWT.PUSH);
-		refreshButton.setText(Messages.ConfigurationBlock_RefreshLabel);
-		refreshButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false));
-		refreshButton.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				getApplicationsInfo(applicationNameCombo);
-				listener.statusChanged(validatePage());
-			}
-		});
-	}
-
-	private int isNameMatching(String name) {
-		if (applicationInfos != null && applicationInfos.length > 0) {
-			for (int i = 0; i < applicationInfos.length; i++) {
-				if (name.equals(applicationInfos[i].getAppName())) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-
-	private void fillFieldsByAppInfo(Combo combo) {
-		int index = combo.getSelectionIndex();
-		if (index != -1) {
-			ApplicationInfo info = applicationInfos[index];
-			IDeploymentHelper helper = new DeploymentHelper();
-			try {
-				helper.setInstalledLocation(info.getInstalledLocation());
-				// by default if app is selected then it is update operation
-				// helper.setOperationType(getOperationType());
-				helper.setAppId(info.getId());
-				helper.setAppName(info.getAppName());
-				URL baseURL = new URL(info.getBaseUrl());
-				if (baseURL.getHost().equals(IDeploymentHelper.DEFAULT_SERVER)) {
-					helper.setDefaultServer(true);
-					IZendTarget target = getTarget();
-					if (target != null) {
-						URL updatedURL = new URL(baseURL.getProtocol(), target
-								.getHost().getHost(), baseURL.getPath());
-						helper.setBaseURL(updatedURL.toString());
-					}
-				} else {
-					helper.setDefaultServer(false);
-					helper.setBaseURL(baseURL.toString());
-				}
-				initializeFields(helper);
-			} catch (MalformedURLException e) {
-				Activator.log(e);
-			}
-		}
-	}
-
-	private void getApplicationsInfo(Combo combo) {
-		final IZendTarget selectedTarget = getTarget();
-		if (selectedTarget != null && context != null) {
-			try {
-				context.run(true, false, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) {
-						StatusChangeListener listener = new StatusChangeListener(
-								monitor);
-						ZendApplication app = new ZendApplication(
-								new EclipseMappingModelLoader());
-						app.addStatusChangeListener(listener);
-						applicationInfos = new ApplicationInfo[0];
-						ApplicationsList info = app.getStatus(selectedTarget
-								.getId());
-						org.zend.webapi.core.progress.IStatus status = listener
-								.getStatus();
-						StatusCode code = status.getCode();
-						if (code == StatusCode.ERROR) {
-							StatusManager.getManager().handle(
-									new SdkStatus(status), StatusManager.SHOW);
-						} else {
-							setApplicationsInfos(info);
-						}
-					}
-				});
-				populateApplicationsList(combo);
-			} catch (InvocationTargetException e) {
-				Activator.log(e);
-			} catch (InterruptedException e) {
-				Activator.log(e);
-			}
-		}
-	}
-
-	private void setApplicationsInfos(ApplicationsList list) {
-		if (list != null && list.getApplicationsInfo() != null) {
-			applicationInfos = list.getApplicationsInfo().toArray(
-					new ApplicationInfo[0]);
-		}
-	}
-
-	private void populateApplicationsList(final Combo combo) {
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				String currentSelection = null;
-				if (!combo.getText().trim().isEmpty()) {
-					currentSelection = combo.getText();
-				}
-				combo.removeAll();
-				int toSelect = -1;
-				if (applicationInfos.length != 0) {
-					for (int i = 0; i < applicationInfos.length; i++) {
-						String name = applicationInfos[i].getAppName();
-						combo.add(name);
-						if (currentSelection != null
-								&& currentSelection.equals(name)) {
-							toSelect = i;
-						}
-					}
-				}
-				if (currentSelection != null) {
-					if (toSelect == -1) {
-						combo.setText(currentSelection);
-					} else {
-						combo.select(toSelect);
-						fillFieldsByAppInfo(combo);
-					}
-				} else {
-					combo.select(0);
-					fillFieldsByAppInfo(combo);
-				}
-			}
-		});
-	}
-
 	private void changeHost(IZendTarget target) {
 		URL serverBaseUrl = DeploymentUtils.getServerBaseURL(target);
 		URL oldUrl = null;
@@ -610,7 +381,7 @@ public class ConfigurationBlock extends AbstractBlock {
 			if (oldUrl == null) {
 				updatedUrl = new URL(serverBaseUrl.getProtocol(),
 						serverBaseUrl.getHost(), serverBaseUrl.getPort(),
-						'/' + applicationNameCombo.getText());
+						'/' + applicationNameText.getText());
 			} else {
 				updatedUrl = new URL(serverBaseUrl.getProtocol(),
 						serverBaseUrl.getHost(), serverBaseUrl.getPort(),
