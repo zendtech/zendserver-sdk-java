@@ -82,8 +82,6 @@ public class Messages extends NLS {
 
 	public static String DebugModeCompositeFragment_AddLabel;
 
-	public static String DebugModeCompositeFragment_BreakAtFirstLabel;
-
 	public static String DebugModeCompositeFragment_CreateTitle;
 
 	public static String DebugModeCompositeFragment_DebugModeDesc;
