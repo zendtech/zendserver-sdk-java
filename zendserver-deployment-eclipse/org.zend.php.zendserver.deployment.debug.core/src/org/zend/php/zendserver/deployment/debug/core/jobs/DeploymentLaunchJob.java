@@ -37,7 +37,8 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		StatusChangeListener listener = new StatusChangeListener(monitor);
-		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
+		ZendApplication app = new ZendApplication(
+				new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
 		app.setVariableResolver(new EclipseVariableResolver());
 		List<IDeploymentContribution> contributions = getContributions();
@@ -54,8 +55,8 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		}
 		if (info != null && info.getStatus() == ApplicationStatus.STAGING) {
 			helper.setAppId(info.getId());
-			status = monitorApplicationStatus(listener,
-					helper.getTargetId(), info.getId(), app, monitor);
+			status = monitorApplicationStatus(listener, helper.getTargetId(),
+					info.getId(), app, monitor);
 			if (status.getSeverity() == IStatus.OK) {
 				for (IDeploymentContribution c : contributions) {
 					status = c.performAfter(monitor, helper);
@@ -73,8 +74,11 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 			responseCode = codeException.getResponseCode();
 			switch (responseCode) {
 			case BASE_URL_CONFLICT:
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						Messages.DeploymentLaunchJob_AppUrlConflictMessage);
 			case APPLICATION_CONFLICT:
-				return Status.OK_STATUS;
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+						codeException.getMessage());
 			case INVALID_PARAMETER:
 				String message = codeException.getMessage();
 				if (message != null) {
@@ -103,7 +107,8 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 		return responseCode;
 	}
 
-	protected abstract ApplicationInfo performOperation(ZendApplication app, String projectPath);
+	protected abstract ApplicationInfo performOperation(ZendApplication app,
+			String projectPath);
 
 	private IStatus monitorApplicationStatus(StatusChangeListener listener,
 			String targetId, int id, ZendApplication application,
@@ -114,7 +119,8 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			ApplicationsList info = application.getStatus(targetId, String.valueOf(id));
+			ApplicationsList info = application.getStatus(targetId,
+					String.valueOf(id));
 			if (info != null) {
 				if (info.getApplicationsInfo() != null) {
 					result = info.getApplicationsInfo().get(0).getStatus();

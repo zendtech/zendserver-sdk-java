@@ -341,21 +341,9 @@ public class DeploymentHandler {
 				}
 				LaunchUtils.updatePreferences(project, helper.getTargetId(),
 						helper.getBaseURL().toString());
-			} else {
-				switch (code) {
-				case BASE_URL_CONFLICT:
-				case APPLICATION_CONFLICT:
-					return handleConflict(helper, project,
-							deploymentJob.getResponseCode());
-				case INVALID_PARAMETER:
-					IStatus result = job.getResult();
-					if (result.getSeverity() == IStatus.INFO) {
-						return handleConflict(helper, project,
-								deploymentJob.getResponseCode());
-					}
-				default:
-					break;
-				}
+			} else if (code == ResponseCode.INVALID_PARAMETER) {
+				return handleConflict(helper, project,
+						deploymentJob.getResponseCode());
 			}
 		}
 		return IStatus.OK;
@@ -392,46 +380,17 @@ public class DeploymentHandler {
 	private int handleConflict(IDeploymentHelper helper, IProject project,
 			ResponseCode code) throws InterruptedException {
 		if (helper.isWarnUpdate()) {
-			switch (code) {
-			case BASE_URL_CONFLICT:
+			IStatus result = job.getResult();
+			if (result.getSeverity() == IStatus.INFO) {
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 					public void run() {
-						MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.updateExistingApplicationDialog_Message);
+						MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.DeploymentHandler_ApplicationNameErrorMessage);
 						if (dialog.open() == 0) {
 							dialogResult = true;
 						}
 					}
 				});
-				break;
-			case APPLICATION_CONFLICT:
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-					public void run() {
-						MessageDialog dialog = getApplicationConflictDialog();
-						if (dialog.open() != 0) {
-							dialogResult = true;
-						}
-					}
-				});
-				break;
-			case INVALID_PARAMETER:
-				IStatus result = job.getResult();
-				if (result.getSeverity() == IStatus.INFO) {
-					PlatformUI.getWorkbench().getDisplay()
-							.syncExec(new Runnable() {
-
-								public void run() {
-									MessageDialog dialog = getUpdateExistingApplicationDialog(Messages.DeploymentHandler_ApplicationNameErrorMessage);
-									if (dialog.open() == 0) {
-										dialogResult = true;
-									}
-								}
-							});
-				}
-				break;
-			default:
-				break;
 			}
 		} else {
 			dialogResult = true;
@@ -555,17 +514,6 @@ public class DeploymentHandler {
 				MessageDialog.QUESTION, new String[] {
 						Messages.updateExistingApplicationDialog_yesButton,
 						Messages.updateExistingApplicationDialog_noButton }, 1);
-	}
-
-	private MessageDialog getApplicationConflictDialog() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getShell();
-		return new MessageDialog(shell,
-				Messages.applicationConflictDialog_Title, null,
-				Messages.applicationConflictDialog_Message,
-				MessageDialog.QUESTION, new String[] {
-						Messages.updateExistingApplicationDialog_yesButton,
-						Messages.updateExistingApplicationDialog_noButton }, 0);
 	}
 
 }
