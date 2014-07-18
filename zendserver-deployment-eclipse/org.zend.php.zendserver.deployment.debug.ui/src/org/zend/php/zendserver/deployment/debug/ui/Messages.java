@@ -121,8 +121,6 @@ public class Messages extends NLS {
 
 	public static String updateExistingAppDevCloudDialog_Message;
 
-	public static String DeploymentLaunchConfigurationTab_EnableDeployment;
-
 	public static String DeploymentParameters_Title;
 
 	public static String DeploymentWizard_DebugDesc;
