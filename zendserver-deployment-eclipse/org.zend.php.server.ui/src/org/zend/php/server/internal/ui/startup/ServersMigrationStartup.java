@@ -39,6 +39,8 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class ServersMigrationStartup extends AbstractMigrationService {
 
+	private static final String PHPCLOUD_TYPE = "org.zend.php.server.ui.types.PhpcloudServerType"; //$NON-NLS-1$
+
 	@Override
 	protected boolean migrate(Server server) {
 		String typeId = getServerType(server);
@@ -65,6 +67,9 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 				setType(server, typeId);
 				return true;
 			}
+		} else if (PHPCLOUD_TYPE.equals(typeId)) {
+			setType(server, ZendServerType.ID);
+			return true;
 		}
 		return updateDefaultPHPWebServer(server);
 	}
