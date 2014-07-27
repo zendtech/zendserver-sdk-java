@@ -60,28 +60,13 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
-	private class URLInputValidator implements IInputValidator {
+	public static class RestartJob extends Job {
 
-		public String isValid(String newText) {
-			try {
-				URL url = new URL(newText);
-				int port = target.getHost().getPort();
-				if (port != -1 && port == url.getPort()) {
-					return MessageFormat.format(
-							Messages.DebugModeCompositeFragment_InvalidPort,
-							String.valueOf(port));
-				}
-			} catch (MalformedURLException e) {
-				return Messages.DebugModeCompositeFragment_InvalidUrl;
-			}
-			return null;
-		}
-	}
-
-	private class RestartJob extends Job {
-
-		public RestartJob() {
+		private IZendTarget target;
+		
+		public RestartJob(IZendTarget target) {
 			super(Messages.DebugModeCompositeFragment_RestartJobTitle);
+			this.target = target;
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
@@ -110,6 +95,24 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 				break;
 			}
 			return Status.OK_STATUS;
+		}
+	}
+	
+	private class URLInputValidator implements IInputValidator {
+
+		public String isValid(String newText) {
+			try {
+				URL url = new URL(newText);
+				int port = target.getHost().getPort();
+				if (port != -1 && port == url.getPort()) {
+					return MessageFormat.format(
+							Messages.DebugModeCompositeFragment_InvalidPort,
+							String.valueOf(port));
+				}
+			} catch (MalformedURLException e) {
+				return Messages.DebugModeCompositeFragment_InvalidUrl;
+			}
+			return null;
 		}
 	}
 
@@ -174,7 +177,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 					Activator.log(e);
 				}
 				if (askForRestart(target)) {
-					Job restartJob = new RestartJob();
+					Job restartJob = new RestartJob(target);
 					restartJob.setUser(true);
 					restartJob.schedule();
 				}
