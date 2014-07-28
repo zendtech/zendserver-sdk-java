@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -52,7 +51,6 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class LaunchUtils {
 
-	private static final String SERVER_ENABLED = "serverEnabled"; //$NON-NLS-1$
 	private static final String AUTO_GENERATED_URL = "auto_generated_url"; //$NON-NLS-1$
 
 	public static ILaunchConfiguration createConfiguration(IProject project,
@@ -132,7 +130,7 @@ public class LaunchUtils {
 		Server server = DeploymentUtils.findExistingServer(target);
 		wc.setAttribute(Server.NAME, server.getName());
 		ServersManager.setDefaultServer(project, server);
-		
+
 		// always use non-generated url
 		wc.setAttribute(AUTO_GENERATED_URL, false);
 		URL baseURL = helper.getBaseURL();
@@ -144,41 +142,6 @@ public class LaunchUtils {
 				wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
 			}
 		}
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(),
-				helper.getAppId());
-		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper
-				.getBaseURL().toString());
-		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
-				helper.getAppName());
-		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(),
-				helper.isDefaultServer());
-		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(),
-				helper.isIgnoreFailures());
-		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
-				project.getName());
-		if (helper.getTargetId() != null && !helper.getTargetId().isEmpty()) {
-			wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(),
-					helper.getTargetId());
-			wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(),
-					helper.getTargetHost());
-		}
-		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(),
-				helper.getUserParams());
-		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
-				helper.getOperationType());
-		String location = helper.getInstalledLocation();
-		if (location != null && !location.isEmpty()) {
-			wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
-					helper.getInstalledLocation());
-		}
-		wc.setAttribute(DeploymentAttributes.ENABLED.getName(),
-				helper.isEnabled());
-		wc.setAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName(),
-				helper.isDevelopmentModeEnabled());
-		wc.setAttribute(DeploymentAttributes.WARN_UPDATE.getName(),
-				helper.isWarnUpdate());
-		wc.setAttribute(SERVER_ENABLED, !helper.isEnabled());
-		
 		// Set the debugger ID and the configuration delegate for this launch
 		// configuration
 		String debuggerID = PHPProjectPreferences.getDefaultDebuggerID(project);
@@ -359,25 +322,6 @@ public class LaunchUtils {
 		return true;
 	}
 
-	public static void removeDeploymentSupport(
-			ILaunchConfigurationWorkingCopy wc) {
-		wc.removeAttribute(DeploymentAttributes.APP_ID.getName());
-		wc.removeAttribute(DeploymentAttributes.BASE_URL.getName());
-		wc.removeAttribute(DeploymentAttributes.APPLICATION_NAME.getName());
-		wc.removeAttribute(DeploymentAttributes.DEFAULT_SERVER.getName());
-		wc.removeAttribute(DeploymentAttributes.IGNORE_FAILURES.getName());
-		wc.removeAttribute(DeploymentAttributes.PROJECT_NAME.getName());
-		wc.removeAttribute(DeploymentAttributes.TARGET_ID.getName());
-		wc.removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
-		wc.removeAttribute(DeploymentAttributes.PARAMETERS.getName());
-		wc.removeAttribute(DeploymentAttributes.OPERATION_TYPE.getName());
-		wc.removeAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName());
-		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), false);
-		wc.removeAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName());
-		wc.removeAttribute(DeploymentAttributes.WARN_UPDATE.getName());
-		wc.removeAttribute(SERVER_ENABLED);
-	}
-	
 	public static IZendTarget updatePreferences(IProject project,
 			String targetId, String applicationURL) {
 		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
@@ -394,7 +338,7 @@ public class LaunchUtils {
 		}
 		return null;
 	}
-	
+
 	public static String getURLFromPreferences(String projectName) {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectName);
@@ -402,7 +346,7 @@ public class LaunchUtils {
 				.getNode(DeploymentCore.PLUGIN_ID);
 		return pref.get("applicationURL", null); //$NON-NLS-1$
 	}
-	
+
 	public static IZendTarget getTargetFromPreferences(String projectName) {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectName);
@@ -543,53 +487,6 @@ public class LaunchUtils {
 				oldConfig.getAttribute(DeploymentAttributes.BASE_URL.getName(),
 						(String) null) + "/" + pathToFile); //$NON-NLS-1$
 
-		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), oldConfig
-				.getAttribute(DeploymentAttributes.APP_ID.getName(), -1));
-		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), oldConfig
-				.getAttribute(DeploymentAttributes.BASE_URL.getName(),
-						(String) null));
-		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.APPLICATION_NAME.getName(),
-						(String) null));
-		wc.setAttribute(
-				DeploymentAttributes.DEFAULT_SERVER.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.DEFAULT_SERVER.getName(), true));
-		wc.setAttribute(
-				DeploymentAttributes.IGNORE_FAILURES.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.IGNORE_FAILURES.getName(), false));
-		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(),
-				project.getName());
-		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), oldConfig
-				.getAttribute(DeploymentAttributes.TARGET_ID.getName(),
-						(String) null));
-		wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), oldConfig
-				.getAttribute(DeploymentAttributes.TARGET_HOST.getName(),
-						(String) null));
-		wc.setAttribute(
-				DeploymentAttributes.PARAMETERS.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.PARAMETERS.getName(),
-						Collections.emptyMap()));
-		wc.setAttribute(
-				DeploymentAttributes.OPERATION_TYPE.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.OPERATION_TYPE.getName(), 0));
-		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.INSTALLED_LOCATION.getName(),
-						(String) null));
-		wc.setAttribute(
-				DeploymentAttributes.DEVELOPMENT_MODE.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.DEVELOPMENT_MODE.getName(), true));
-		wc.setAttribute(
-				DeploymentAttributes.WARN_UPDATE.getName(),
-				oldConfig.getAttribute(
-						DeploymentAttributes.WARN_UPDATE.getName(), true));
-		wc.setAttribute(SERVER_ENABLED, false);
 	}
 
 }
