@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 
 /**
  * Abstract wizard fragment with basic implementation. It is intended to extend
@@ -162,6 +163,22 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Check if deployment is enabled on Deployment tab.
+	 * 
+	 * @return <code>true</code> if deployment is enabled; otherwise return
+	 *         <code>false</code>
+	 */
+	protected boolean isDeploymentEnabled() {
+		Server server = getServer();
+		if (server != null) {
+			return Boolean.valueOf(server.getAttribute(
+					DeploymentAttributes.ENABLED.getName(),
+					String.valueOf(false)));
+		}
+		return false;
 	}
 
 }

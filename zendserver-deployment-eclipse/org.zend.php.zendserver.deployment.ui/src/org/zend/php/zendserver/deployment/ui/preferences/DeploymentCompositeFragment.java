@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
+import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -121,6 +122,9 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public boolean performOk() {
+		// remove temporary attributes
+		getServer().removeAttribute(DeploymentAttributes.ENABLED.getName());
+		getServer().removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
 		if (!enable) {
 			if (target != null) {
 				TargetsManager manager = TargetsManagerService.INSTANCE
@@ -373,6 +377,11 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 					secretText.setText(target.getSecretKey());
 					enableButton.setSelection(true);
 					detectButton.setEnabled(true);
+					server.setAttribute(DeploymentAttributes.ENABLED.getName(),
+							String.valueOf(true));
+					server.setAttribute(
+							DeploymentAttributes.TARGET_HOST.getName(),
+							hostText.getText());
 					updateState(true);
 					break;
 				}
@@ -382,6 +391,8 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
 			enableButton.setSelection(false);
+			server.setAttribute(DeploymentAttributes.ENABLED.getName(),
+					String.valueOf(false));
 			updateState(false);
 		}
 		updateData();
@@ -407,9 +418,18 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	private void updateData() {
 		if (enableButton != null) {
 			enable = enableButton.getSelection();
+			getServer().setAttribute(DeploymentAttributes.ENABLED.getName(),
+					String.valueOf(enable));
 		}
 		if (hostText != null) {
 			host = hostText.getText();
+			if (enable) {
+				getServer().setAttribute(
+						DeploymentAttributes.TARGET_HOST.getName(), host);
+			} else {
+				getServer().removeAttribute(
+						DeploymentAttributes.TARGET_HOST.getName());
+			}
 		}
 		if (keyText != null) {
 			key = keyText.getText();

@@ -30,6 +30,8 @@ public class DebugModeManager {
 
 	public static final int[] prohibitedPorts = new int[] { 10081, 10082 };
 
+	public static final String SERVER_ATTRIBUTE = "debugModeFilters"; //$NON-NLS-1$
+
 	private static final String DEBUG_STOP = "debug_stop"; //$NON-NLS-1$
 
 	private static final String DEBUG_HOST = "debug_host"; //$NON-NLS-1$
@@ -173,20 +175,32 @@ public class DebugModeManager {
 		return clientHosts;
 	}
 
+	/**
+	 * Get Debug Mode filters. Firstly, it tries to read them from PHP server
+	 * configuration. If they are not defined in it, then reads them from
+	 * preferences.
+	 * 
+	 * @param target
+	 * @return list of Debug Mode filters; it may be empty
+	 */
 	private String[] getFilters(IZendTarget target) {
-		IEclipsePreferences prefs = InstanceScope.INSTANCE
-				.getNode(DEBUG_MODE_NODE);
-		String val = prefs.get(target.getId(), null);
+		Server server = ServerUtils.getServer(target);
+		String value = server.getAttribute(SERVER_ATTRIBUTE, null);
+		if (value == null) {
+			IEclipsePreferences prefs = InstanceScope.INSTANCE
+					.getNode(DEBUG_MODE_NODE);
+			value = prefs.get(target.getId(), null);
+		}
 		List<String> filters = null;
-		if (val != null && val.length() > 0) {
-			filters = new ArrayList<String>(Arrays.asList(val
+		if (value != null && value.length() > 0) {
+			filters = new ArrayList<String>(Arrays.asList(value
 					.split(FILTER_SEPARATOR)));
 		} else {
 			filters = new ArrayList<String>();
 		}
 		return filters.toArray(new String[0]);
 	}
-	
+
 	private boolean shouldStopAtFirstLine() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(PHPDebugPlugin.ID);

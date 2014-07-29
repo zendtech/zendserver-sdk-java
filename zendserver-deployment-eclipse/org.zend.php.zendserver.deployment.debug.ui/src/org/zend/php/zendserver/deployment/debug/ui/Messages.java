@@ -92,6 +92,8 @@ public class Messages extends NLS {
 
 	public static String DebugModeCompositeFragment_Name;
 
+	public static String DebugModeCompositeFragment_NotAvailableMessage;
+
 	public static String DebugModeCompositeFragment_EditLabel;
 
 	public static String DebugModeCompositeFragment_EditTitle;
