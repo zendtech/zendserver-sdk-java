@@ -17,12 +17,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.osgi.service.prefs.BackingStoreException;
+import org.eclipse.php.internal.server.core.Server;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
-import org.zend.php.zendserver.monitor.core.Activator;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.sdklib.monitor.IZendIssue;
 import org.zend.sdklib.target.IZendTarget;
@@ -36,70 +34,34 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
  * @author Wojciech Galanciak, 2012
  * 
  */
+@SuppressWarnings("restriction")
 public class TargetMonitor extends AbstractMonitor {
 
 	private List<String> filters;
 
 	public TargetMonitor(String targetId) {
 		super(targetId, Messages.TargetMonitor_JobName);
-		this.filters = getFilters(targetId);
-	}
-
-	/**
-	 * Set preference value for this target.
-	 * 
-	 * @param tar
-	 * @param enable
-	 */
-	public void setEnabled(boolean enable) {
-		MonitorManager.getPreferences().putBoolean(targetId, enable);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#disable()
-	 */
-	public void disable(boolean codeTracing) {
-		MonitorManager.getPreferences().putBoolean(targetId, false);
-		if (codeTracing) {
-			disableCodeTacing();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return MonitorManager.getPreferences().getBoolean(targetId, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zend.php.zendserver.monitor.internal.core.AbstractMonitor#
-	 * flushPreferences()
-	 */
-	public void flushPreferences() throws BackingStoreException {
-		MonitorManager.getPreferences().flush();
+		this.filters = getFilters();
 	}
 
 	public void updateFilters() {
-		setFilters(getFilters(targetId));
+		setFilters(getFilters());
 	}
 
-	public List<String> getFilters(String targetId) {
-		String val = MonitorManager.getPreferences().get(
-				MonitorManager.getFiltersKey(targetId), null);
-		if (val != null) {
-			return new ArrayList<String>(Arrays.asList(val
+	public List<String> getFilters() {
+		IZendTarget target = getTarget();
+		Server server = ServerUtils.getServer(target);
+		String value = server.getAttribute(MonitorManager.FILTERS_ATTRIBUTE,
+				null);
+		if (value == null) {
+			value = MonitorManager.getPreferences().get(
+					MonitorManager.getFiltersKey(targetId), null);
+		}
+		if (value != null) {
+			return new ArrayList<String>(Arrays.asList(value
 					.split(MonitorManager.FILTER_SEPARATOR)));
-		} else
-			return new ArrayList<String>();
+		}
+		return new ArrayList<String>();
 	}
 
 	public String getValue(List<String> list) {
@@ -132,18 +94,11 @@ public class TargetMonitor extends AbstractMonitor {
 				// handle case when have not found a corresponding project
 				if (project != null) {
 					int delay = 0;
-					IPreferenceStore store = Activator.getDefault()
-							.getPreferenceStore();
-					if (store.getBoolean(MonitorManager
-							.getHideKey(targetId))) {
-						delay = store.getInt(MonitorManager
-								.getHideTimeKey(targetId)) * 1000;
-						if (delay == 0) {
-							delay = MonitorManager.DELAY_DEFAULT;
-						}
+					if (MonitorManager.getHide(targetId)) {
+						delay = MonitorManager.getHideTime(targetId) * 1000;
 					}
-					showNonification(zendIssue, project.getName(),
-							basePath, delay, actionsAvailable);
+					showNonification(zendIssue, project.getName(), basePath,
+							delay, actionsAvailable);
 				}
 			}
 		}
@@ -168,8 +123,8 @@ public class TargetMonitor extends AbstractMonitor {
 		}
 		if (project == null) {
 			IPath path = new Path(urlString);
-			IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-					.getTargetById(targetId);
+			IZendTarget target = TargetsManagerService.INSTANCE
+					.getTargetManager().getTargetById(targetId);
 			String host = target.getHost().getHost();
 			String[] segments = path.segments();
 			for (int i = 0; i < segments.length; i++) {
@@ -182,13 +137,9 @@ public class TargetMonitor extends AbstractMonitor {
 				String projectName = path.segment(0);
 				project = ResourcesPlugin.getWorkspace().getRoot()
 						.getProject(projectName);
-			}	
+			}
 		}
 		return project;
-	}
-
-	protected boolean shouldStart() {
-		return isEnabled();
 	}
 
 	private String getBasePath(final String baseURL, IProject project) {
@@ -222,13 +173,11 @@ public class TargetMonitor extends AbstractMonitor {
 		}
 		return basePath;
 	}
-	
+
 	private boolean shouldNotify(IssueSeverity severity, String baseURL) {
-		IEclipsePreferences prefs = MonitorManager.getPreferences();
-		String nodeName = targetId + '.' + severity.getName();
-		if (prefs.getBoolean(nodeName, true)) {
+		if (checkSeverity(severity.getName())) {
 			for (String filter : filters) {
-				if (filter.endsWith(MonitorManager.SLASH)) { 
+				if (filter.endsWith(MonitorManager.SLASH)) {
 					filter = filter.substring(0, filter.length() - 1);
 				}
 				if (baseURL.startsWith(filter)) {
@@ -237,13 +186,29 @@ public class TargetMonitor extends AbstractMonitor {
 						int index = baseURL.indexOf(MonitorManager.SLASH);
 						baseURL = baseURL.substring(index);
 					}
-					if (baseURL.startsWith(MonitorManager.SLASH) || baseURL.isEmpty()) { 
+					if (baseURL.startsWith(MonitorManager.SLASH)
+							|| baseURL.isEmpty()) {
 						return true;
 					}
 				}
 			}
 		}
 		return false;
+	}
+
+	private boolean checkSeverity(String name) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		if (server != null) {
+			String value = server.getAttribute(
+					MonitorManager.SEVERITY_ATTRIBUTE + name, (String) null);
+			if (value != null) {
+				return Boolean.valueOf(value);
+			}
+		}
+		return MonitorManager.getPreferences().getBoolean(
+				targetId + '.' + name, true);
 	}
 
 	private void setFilters(List<String> filters) {

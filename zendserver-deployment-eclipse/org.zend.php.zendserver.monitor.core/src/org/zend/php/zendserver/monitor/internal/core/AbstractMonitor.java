@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.swt.widgets.Display;
-import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.Activator;
@@ -82,34 +81,33 @@ public abstract class AbstractMonitor extends Job {
 	/**
 	 * Start monitor job.
 	 */
-	public boolean start() {
-		if (shouldStart()) {
-			getProvider().showProgress(
-					getName(),
-					MessageFormat.format(Messages.ZendServerMonitor_TaskTitle,
-							getServerName()), new IRunnableWithProgress() {
+	public void start() {
+		getProvider().showProgress(
+				getName(),
+				MessageFormat.format(Messages.ZendServerMonitor_TaskTitle,
+						getServerName()), new IRunnableWithProgress() {
 
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
-							if (!doStart(monitor)) {
-								MonitorManager
-										.removeMonitor(AbstractMonitor.this);
-							}
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						if (!doStart(monitor)) {
+							MonitorManager.removeMonitor(AbstractMonitor.this);
 						}
-					});
-			return true;
-		}
-		return false;
+					}
+				});
+	}
+
+	public void stop() {
+		cancel();
+		disableCodeTacing();
 	}
 
 	@Override
-	public IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(MessageFormat.format(
 				Messages.ZendServerMonitor_TaskTitle, getServerName()),
 				IProgressMonitor.UNKNOWN);
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
+		IZendTarget target = getTarget();
 		if (target != null) {
 			if (isZS6(target)) {
 				doRunZS6(target);
@@ -134,27 +132,6 @@ public abstract class AbstractMonitor extends Job {
 		return Status.CANCEL_STATUS;
 	}
 
-	/**
-	 * Flush preferences for for this monitor.
-	 * 
-	 * @throws BackingStoreException
-	 */
-	public abstract void flushPreferences() throws BackingStoreException;
-
-	/**
-	 * @return <code>true</code> if it monitors is enabled; otherwise return
-	 *         <code>false</code>
-	 */
-	public abstract boolean isEnabled();
-
-	/**
-	 * Disable the whole monitor.
-	 * 
-	 * @param codeTracing
-	 *            - <code>true</code> if code tracing should be disabled
-	 */
-	public abstract void disable(boolean codeTracing);
-
 	protected abstract void handleIssues(List<IZendIssue> issues,
 			IZendTarget target);
 
@@ -174,8 +151,7 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected int checkActions(IZendIssue issue) {
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
+		IZendTarget target = getTarget();
 		if (TargetsManager.checkMinVersion(target, ZendServerVersion.v5_6_0)) {
 			return codeTracingEnabled ? MonitorManager.REPEAT
 					+ MonitorManager.CODE_TRACE : MonitorManager.REPEAT;
@@ -202,8 +178,6 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	protected abstract IProject getProject(String urlString);
-
-	protected abstract boolean shouldStart();
 
 	protected static INotificationProvider getProvider() {
 		if (provider == null) {
@@ -244,8 +218,7 @@ public abstract class AbstractMonitor extends Job {
 						ZendCodeTracing codeTracing = new ZendCodeTracing(
 								targetId);
 						try {
-							if (TargetsManagerService.INSTANCE
-									.getTargetManager().getTargetById(targetId) != null) {
+							if (getTarget() != null) {
 								CodeTracingStatus status = codeTracing
 										.disable(true);
 								if (status == null) {
@@ -285,6 +258,16 @@ public abstract class AbstractMonitor extends Job {
 		ZendServerVersion version = ZendServerVersion.byName(target
 				.getProperty(IZendTarget.SERVER_VERSION));
 		return version.getName().startsWith("6"); //$NON-NLS-1$
+	}
+	
+	protected String getServerName() {
+		Server server = ServerUtils.getServer(getTarget());
+		return server != null ? server.getName() : targetId;
+	}
+
+	protected IZendTarget getTarget() {
+		return TargetsManagerService.INSTANCE.getTargetManager().getTargetById(
+				targetId);
 	}
 
 	private void doRunZS6(IZendTarget target) {
@@ -398,16 +381,8 @@ public abstract class AbstractMonitor extends Job {
 		return true;
 	}
 
-	protected String getServerName() {
-		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
-				.getTargetById(targetId);
-		Server server = ServerUtils.getServer(target);
-		return server != null ? server.getName() : targetId;
-	}
-
 	private void handleError(IProgressMonitor monitor, String m) {
 		getProvider().showErrorMessage(getName(), m);
-		monitor.done();
-		disable(false);
+		stop();
 	}
 }

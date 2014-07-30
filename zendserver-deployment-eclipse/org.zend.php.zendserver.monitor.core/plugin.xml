@@ -8,17 +8,5 @@
             class="org.zend.php.zendserver.monitor.internal.core.Startup">
       </startup>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.zend.php.zendserver.monitor.internal.TargetsMonitorPreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
-         point="org.zend.php.zendserver.deployment.core.targetsManagerListener">
-      <listener
-            class="org.zend.php.zendserver.monitor.internal.core.TargetsManagerListener">
-      </listener>
-   </extension>
 
 </plugin>

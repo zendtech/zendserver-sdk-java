@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui.actions;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.core.utils.ServerUtils;
@@ -34,9 +32,7 @@ public class ServerMonitoringAction implements IActionContribution {
 	public String getLabel() {
 		IZendTarget target = ServerUtils.getTarget(server);
 		if (target != null) {
-			IEclipsePreferences prefs = InstanceScope.INSTANCE
-					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
-			if (prefs.getBoolean(target.getId(), false)) {
+			if (MonitorManager.isMonitorStarted(target.getId())) {
 				return Messages.MonitoringAction_StopMonitorLabel;
 			} else {
 				return Messages.MonitoringAction_StartMonitorLabel;
@@ -58,14 +54,11 @@ public class ServerMonitoringAction implements IActionContribution {
 	public void run() {
 		IZendTarget target = ServerUtils.getTarget(server);
 		if (target != null) {
-			IEclipsePreferences prefs = InstanceScope.INSTANCE
-					.getNode(org.zend.php.zendserver.monitor.core.Activator.PLUGIN_ID);
-			if (prefs.getBoolean(target.getId(), false)) {
-				MonitorManager.setTargetEnabled(target.getId(), false);
-				MonitorManager.removeTargetMonitor(target.getId());
+			String id = target.getId();
+			if (MonitorManager.isMonitorStarted(id)) {
+				MonitorManager.removeTargetMonitor(id);
 			} else {
-				MonitorManager.setTargetEnabled(target.getId(), true);
-				MonitorManager.createTargetMonitor(target.getId());
+				MonitorManager.createTargetMonitor(id);
 			}
 		}
 	}

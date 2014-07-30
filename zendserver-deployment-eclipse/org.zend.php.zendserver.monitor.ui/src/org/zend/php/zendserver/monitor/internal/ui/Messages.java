@@ -57,6 +57,7 @@ public class Messages extends NLS {
 	public static String MonitoringCompositeFragment_RemoveLabel;
 	public static String MonitoringCompositeFragment_SeverityDesc;
 	public static String MonitoringCompositeFragment_Name;
+	public static String MonitoringCompositeFragment_NotAvailableMessage;
 	public static String NotificationProvider_EventTitle;
 	public static String OpenInEditorJob_0;
 	public static String OpenInEditorJob_UnavailableMessage;

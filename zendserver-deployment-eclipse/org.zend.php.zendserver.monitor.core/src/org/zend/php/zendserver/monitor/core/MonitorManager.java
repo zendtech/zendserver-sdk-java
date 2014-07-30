@@ -15,12 +15,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.osgi.service.prefs.BackingStoreException;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.zend.php.server.core.utils.ServerUtils;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.internal.core.AbstractMonitor;
 import org.zend.php.zendserver.monitor.internal.core.TargetMonitor;
 import org.zend.sdklib.target.IZendTarget;
-import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
 /**
  * Represents management service for application monitoring.
@@ -28,19 +29,24 @@ import org.zend.webapi.core.connection.data.values.IssueSeverity;
  * @author Wojciech Galanciak, 2012
  * 
  */
+@SuppressWarnings("restriction")
 public class MonitorManager {
 
+	public static final String FILTERS_ATTRIBUTE = "monitoringFilters"; //$NON-NLS-1$
+	public static final String HIDE_ATTRIBUTE = "monitoringHide"; //$NON-NLS-1$
+	public static final String HIDE_TIME_ATTRIBUTE = "monitoringHideTime"; //$NON-NLS-1$
+	public static final String SEVERITY_ATTRIBUTE = "monitoringSeverity"; //$NON-NLS-1$
+
 	public static final String SLASH = "/"; //$NON-NLS-1$
-	//public static final String ENABLED = "enabled."; //$NON-NLS-1$
-	//public static final String ENABLED_ALL = "enabledAll"; //$NON-NLS-1$
-	private static final String HIDE_KEY = "hide"; //$NON-NLS-1$
-	private static final String HIDE_TIME_KEY = "hide_time"; //$NON-NLS-1$
-	private static final String FILTERS_PREF = "filters"; //$NON-NLS-1$
 	public static final String FILTER_SEPARATOR = ","; //$NON-NLS-1$
 	public static final int DELAY_DEFAULT = 10;
 
 	public static final int CODE_TRACE = 0x01;
 	public static final int REPEAT = 0x10;
+
+	private static final String HIDE_KEY = "hide"; //$NON-NLS-1$
+	private static final String HIDE_TIME_KEY = "hide_time"; //$NON-NLS-1$
+	private static final String FILTERS_PREF = "filters"; //$NON-NLS-1$
 
 	private static Map<String, TargetMonitor> targetMonitors;
 
@@ -59,11 +65,8 @@ public class MonitorManager {
 		TargetMonitor monitor = targetMonitors.get(targetId);
 		if (monitor == null) {
 			TargetMonitor m = new TargetMonitor(targetId);
-			if (m.start()) {
-				targetMonitors.put(targetId, m);
-			} else {
-				return false;
-			}
+			m.start();
+			targetMonitors.put(targetId, m);
 		}
 		return true;
 	}
@@ -96,17 +99,9 @@ public class MonitorManager {
 	public static boolean removeTargetMonitor(String targetId) {
 		TargetMonitor monitor = targetMonitors.get(targetId);
 		if (monitor != null) {
-			monitor.disable(true);
-			if (!monitor.isEnabled()) {
-				monitor.cancel();
-				try {
-					monitor.flushPreferences();
-				} catch (BackingStoreException e) {
-					Activator.log(e);
-				}
-				targetMonitors.remove(targetId);
-				return true;
-			}
+			monitor.stop();
+			targetMonitors.remove(targetId);
+			return true;
 		}
 		return false;
 	}
@@ -114,14 +109,13 @@ public class MonitorManager {
 	/**
 	 * Disable all target monitors.
 	 * 
-	 * @throws BackingStoreException
 	 */
-	public static void removeAllTargetMonitors() throws BackingStoreException {
+	public static void removeAllTargetMonitors() {
 		Set<String> keys = targetMonitors.keySet();
 		for (String key : keys) {
 			TargetMonitor monitor = targetMonitors.get(key);
-			monitor.cancel();
-			monitor.flushPreferences();
+			monitor.stop();
+			targetMonitors.remove(key);
 		}
 	}
 
@@ -138,23 +132,6 @@ public class MonitorManager {
 	}
 
 	/**
-	 * 
-	 * Set preference value for specified target.
-	 * 
-	 * @param targetId
-	 * @param enable
-	 */
-	public static void setTargetEnabled(String targetId, boolean enable) {
-		TargetMonitor monitor = targetMonitors.get(targetId);
-		if (monitor != null) {
-			monitor.setEnabled(enable);
-		} else {
-			monitor = new TargetMonitor(targetId);
-			monitor.setEnabled(enable);
-		}
-	}
-
-	/**
 	 * Check if monitor for particular target is started.
 	 * 
 	 * @param targetId
@@ -162,7 +139,7 @@ public class MonitorManager {
 	 *         <code>false</code>
 	 */
 	public static boolean isMonitorStarted(String targetId) {
-		return Activator.getDefault().getPreferenceStore().getBoolean(targetId);
+		return targetMonitors.get(targetId) != null;
 	}
 
 	/**
@@ -176,93 +153,102 @@ public class MonitorManager {
 		if (monitor == null) {
 			monitor = new TargetMonitor(targetId);
 		}
-		return monitor.getFilters(targetId);
+		return monitor.getFilters();
 	}
 
-	public static String getHideKey(String targetId) {
-		return targetId + '.' + HIDE_KEY;
+	public static boolean getHide(String targetId) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		String value = server.getAttribute(MonitorManager.HIDE_ATTRIBUTE, null);
+		if (value == null) {
+			IEclipsePreferences prefs = MonitorManager.getPreferences();
+			prefs.get(HIDE_KEY, null);
+		}
+		return value != null ? Boolean.valueOf(value) : false;
 	}
 
-	public static String getHideTimeKey(String targetId) {
-		return targetId + '.' + HIDE_TIME_KEY;
+	public static int getHideTime(String targetId) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		String value = server.getAttribute(MonitorManager.HIDE_TIME_ATTRIBUTE,
+				null);
+		if (value == null) {
+			IEclipsePreferences prefs = MonitorManager.getPreferences();
+			prefs.get(HIDE_TIME_KEY, null);
+		}
+		return value != null ? Integer.valueOf(value) : DELAY_DEFAULT;
+	}
+
+	public static boolean getServerity(String targetId, String severityName) {
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		String value = server.getAttribute(MonitorManager.SEVERITY_ATTRIBUTE
+				+ severityName, null);
+		if (value == null) {
+			IEclipsePreferences prefs = MonitorManager.getPreferences();
+			prefs.get(targetId + '.' + severityName, null);
+		}
+		return value != null ? Boolean.valueOf(value) : true;
 	}
 
 	public static String getFiltersKey(String targetId) {
 		return targetId + '.' + FILTERS_PREF;
 	}
-	
+
 	public static IEclipsePreferences getPreferences() {
 		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 	}
 
-	public static void setDefaultPreferences(IZendTarget target) {
-		String id = target.getId();
-		IPreferenceStore preferences = Activator.getDefault()
-				.getPreferenceStore();
-		preferences.setDefault(MonitorManager.getFiltersKey(id), ""); //$NON-NLS-1$
-		preferences.setDefault(MonitorManager.getHideKey(id), false);
-		preferences.setDefault(MonitorManager.getHideTimeKey(id),
-				MonitorManager.DELAY_DEFAULT);
-		IssueSeverity[] severityValues = IssueSeverity.values();
-		for (IssueSeverity sev : severityValues) {
-			preferences.setDefault(id + '.' + sev.getName(), true);
-		}
-	}
-
-	public static void removePreferences(IZendTarget target) {
-		String id = target.getId();
-		IPreferenceStore preferences = Activator.getDefault()
-				.getPreferenceStore();
-		preferences.setToDefault(MonitorManager.getFiltersKey(id));
-		preferences.setToDefault(MonitorManager.getHideKey(id));
-		preferences.setToDefault(MonitorManager.getHideTimeKey(id));
-		IssueSeverity[] severityValues = IssueSeverity.values();
-		for (IssueSeverity sev : severityValues) {
-			preferences.setToDefault(id + '.' + sev.getName());
-		}
-	}
-
 	public static void addFilter(String targetId, String baseURL) {
-		if (!baseURL.endsWith(SLASH)) { 
-			baseURL += SLASH; 
+		if (!baseURL.endsWith(SLASH)) {
+			baseURL += SLASH;
 		}
 		TargetMonitor monitor = targetMonitors.get(targetId);
 		if (monitor == null) {
 			monitor = new TargetMonitor(targetId);
 		}
-		List<String> filters = monitor.getFilters(targetId);
+		List<String> filters = monitor.getFilters();
 		if (!filters.contains(baseURL)) {
 			filters.add(baseURL);
 		}
 		if (!filters.isEmpty() && !isMonitorStarted(targetId)) {
-			setTargetEnabled(targetId, true);
 			createTargetMonitor(targetId);
 		}
 		String newValue = monitor.getValue(filters);
-		IPreferenceStore preferences = Activator.getDefault()
-				.getPreferenceStore();
-		preferences.setValue(MonitorManager.getFiltersKey(targetId), newValue);
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		if (server != null) {
+			server.setAttribute(MonitorManager.FILTERS_ATTRIBUTE, newValue);
+			ServersManager.save();
+		}
 		updateFilters(targetId);
 	}
 
 	public static void removeFilter(String targetId, String baseURL) {
-		if (!baseURL.endsWith(SLASH)) { 
-			baseURL += SLASH; 
+		if (!baseURL.endsWith(SLASH)) {
+			baseURL += SLASH;
 		}
 		TargetMonitor monitor = targetMonitors.get(targetId);
 		if (monitor == null) {
 			monitor = new TargetMonitor(targetId);
 		}
-		List<String> filters = monitor.getFilters(targetId);
+		List<String> filters = monitor.getFilters();
 		filters.remove(baseURL);
 		if (filters.isEmpty() && isMonitorStarted(targetId)) {
-			setTargetEnabled(targetId, false);
 			removeTargetMonitor(targetId);
 		}
 		String newValue = monitor.getValue(filters);
-		IPreferenceStore preferences = Activator.getDefault()
-				.getPreferenceStore();
-		preferences.setValue(MonitorManager.getFiltersKey(targetId), newValue);
+		IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+				.getTargetById(targetId);
+		Server server = ServerUtils.getServer(target);
+		if (server != null) {
+			server.setAttribute(MonitorManager.FILTERS_ATTRIBUTE, newValue);
+			ServersManager.save();
+		}
 		updateFilters(targetId);
 	}
 

@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -38,13 +37,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.service.prefs.BackingStoreException;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
-import org.zend.php.zendserver.monitor.internal.ui.Activator;
 import org.zend.php.zendserver.monitor.internal.ui.Messages;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
 
@@ -86,8 +82,6 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	private boolean hide;
 	private int delay;
 
-	private IZendTarget target;
-
 	/**
 	 * PlatformCompositeFragment constructor
 	 * 
@@ -121,30 +115,31 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public boolean performOk() {
-		saveValues();
-		IEclipsePreferences prefs = MonitorManager.getPreferences();
-		IZendTarget target = getTarget();
-		if (target != null) {
-			String id = target.getId();
-			String oldValue = getValue(MonitorManager.getFilters(id));
-			String newValue = getValue(input);
-			if (oldValue == null || !oldValue.equals(newValue)) {
-				prefs.put(MonitorManager.getFiltersKey(id), newValue);
-				MonitorManager.updateFilters(id);
-			}
-			for (int i = 0; i < severities.length; i++) {
-				String nodeName = getNodeName(severityButtons[i]);
-				prefs.putBoolean(id + '.' + nodeName, severities[i]);
-			}
-			prefs.putBoolean(MonitorManager.getHideKey(id), hide);
-			prefs.putInt(MonitorManager.getHideTimeKey(id), delay);
-			try {
-				prefs.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
+		Server server = getServer();
+		if (server != null && isDeploymentEnabled()) {
+			updateAttribute(MonitorManager.FILTERS_ATTRIBUTE, getValue(input),
+					server);
+			updateAttribute(MonitorManager.HIDE_ATTRIBUTE,
+					String.valueOf(hideButton.getSelection()), server);
+			updateAttribute(MonitorManager.HIDE_TIME_ATTRIBUTE,
+					delayText.getText(), server);
+			for (int i = 0; i < severityButtons.length; i++) {
+				String severityName = getSeverityName(severityButtons[i]);
+				updateAttribute(MonitorManager.SEVERITY_ATTRIBUTE
+						+ severityName, String.valueOf(severities[i]), server);
 			}
 		}
 		return true;
+	}
+
+	private void updateAttribute(String attributeName, String newValue,
+			Server server) {
+		String oldValue = server.getAttribute(attributeName, ""); //$NON-NLS-1$
+		if (newValue.isEmpty()) {
+			server.removeAttribute(attributeName);
+		} else if (!newValue.equals(oldValue)) {
+			server.setAttribute(attributeName, newValue);
+		}
 	}
 
 	@Override
@@ -154,20 +149,31 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public void validate() {
-		try {
-			String val = delayText.getText();
-			delay = Integer.valueOf(val);
-		} catch (NumberFormatException ex) {
-			setMessage(Messages.MonitoringCompositeFragment_DelayNaNMessage,
-					IMessageProvider.ERROR);
-			return;
+		if (isDeploymentEnabled()) {
+			try {
+				String val = delayText.getText();
+				delay = Integer.valueOf(val);
+			} catch (NumberFormatException ex) {
+				setMessage(
+						Messages.MonitoringCompositeFragment_DelayNaNMessage,
+						IMessageProvider.ERROR);
+				return;
+			}
+			setMessage(getDescription(), IMessageProvider.NONE);
 		}
-		setMessage(getDescription(), IMessageProvider.NONE);
 	}
 
 	@Override
 	public boolean isComplete() {
 		return true;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			updateEnablement(isDeploymentEnabled());
+		}
 	}
 
 	@Override
@@ -179,57 +185,42 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void init() {
-		target = getTarget();
 		severities = new boolean[] { true, true, true };
 		input = new ArrayList<String>();
-		if (target != null) {
-			String id = target.getId();
-			IEclipsePreferences prefs = MonitorManager.getPreferences();
-			List<String> value = MonitorManager.getFilters(id);
-			if (value != null && !value.isEmpty()) {
-				input = value;
-			} else {
-				input = new ArrayList<String>();
+		delay = MonitorManager.DELAY_DEFAULT;
+		hide = false;
+		Server server = getServer();
+		if (server != null) {
+			IZendTarget target = ServerUtils.getTarget(server);
+			if (target != null) {
+				String targetId = target.getId();
+				List<String> filters = MonitorManager.getFilters(targetId);
+				if (filters != null && !filters.isEmpty()) {
+					input = filters;
+				} else {
+					input = new ArrayList<String>();
+				}
+				hide = MonitorManager.getHide(targetId);
+				delay = MonitorManager.getHideTime(targetId);
+				for (int i = 0; i < severityButtons.length; i++) {
+					String severityName = getSeverityName(severityButtons[i]);
+					severities[i] = MonitorManager.getServerity(targetId,
+							severityName);
+				}
 			}
-			String key = MonitorManager.getHideKey(id);
-			hide = prefs.getBoolean(key, false);
-			key = MonitorManager.getHideTimeKey(id);
-			delay = prefs.getInt(key, 10);
-			severities = new boolean[3];
 			for (int i = 0; i < severityButtons.length; i++) {
-				String nodeName = getNodeName(severityButtons[i]);
-				key = id + '.' + nodeName;
-				severities[i] = prefs.getBoolean(key, true);
+				severityButtons[i].setSelection(severities[i]);
 			}
 			hideButton.setSelection(hide);
 			delayText.setEnabled(hideButton.getSelection());
 			delayText.setText(String.valueOf(delay));
+			updateEnablement(target != null);
+			viewer.setInput(input);
+			viewer.refresh();
 		}
-		for (int i = 0; i < severityButtons.length; i++) {
-			severityButtons[i].setSelection(severities[i]);
-		}
-		viewer.setInput(input);
-		viewer.refresh();
-		validate();
 	}
 
-	private IZendTarget getTarget() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		Server server = getServer();
-		if (server != null) {
-			String serverName = server.getName();
-			IZendTarget[] targets = manager.getTargets();
-			for (IZendTarget target : targets) {
-				if (serverName.equals(target.getServerName())) {
-					return target;
-				}
-			}
-		}
-		return null;
-	}
-
-	private String getNodeName(Button button) {
+	private String getSeverityName(Button button) {
 		return button.getText();
 	}
 
@@ -430,6 +421,25 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 			input.remove((String) elem);
 		}
 		viewer.refresh();
+	}
+
+	private void updateEnablement(boolean enabled) {
+		addButton.setEnabled(enabled);
+		removeButton.setEnabled(false);
+		modifyButton.setEnabled(false);
+		viewer.getTable().setEnabled(enabled);
+		for (Button button : severityButtons) {
+			button.setEnabled(enabled);
+		}
+		hideButton.setEnabled(enabled);
+		delayText.setEnabled(enabled && hideButton.getSelection());
+		if (enabled) {
+			setDescription(Messages.MonitoringCompositeFragment_Description);
+		} else {
+			setMessage(
+					Messages.MonitoringCompositeFragment_NotAvailableMessage,
+					IMessageProvider.WARNING);
+		}
 	}
 
 	private static String getTitle(boolean isEditing) {
