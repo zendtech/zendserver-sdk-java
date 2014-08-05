@@ -391,8 +391,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			String id = manager.createUniqueId(null);
 			target = new ZendTarget(id, null, null, null, true);
 			enableButton.setSelection(false);
-			server.setAttribute(DeploymentAttributes.ENABLED.getName(),
-					String.valueOf(false));
+			if (server != null) {
+				server.setAttribute(DeploymentAttributes.ENABLED.getName(),
+						String.valueOf(false));
+			}
 			updateState(false);
 		}
 		updateData();
@@ -416,19 +418,26 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	private void updateData() {
+		Server server = getServer();
 		if (enableButton != null) {
 			enable = enableButton.getSelection();
-			getServer().setAttribute(DeploymentAttributes.ENABLED.getName(),
-					String.valueOf(enable));
+			if (server != null) {
+				server.setAttribute(DeploymentAttributes.ENABLED.getName(),
+						String.valueOf(enable));
+			}
 		}
 		if (hostText != null) {
 			host = hostText.getText();
 			if (enable) {
-				getServer().setAttribute(
-						DeploymentAttributes.TARGET_HOST.getName(), host);
+				if (server != null) {
+					server.setAttribute(
+							DeploymentAttributes.TARGET_HOST.getName(), host);
+				}
 			} else {
-				getServer().removeAttribute(
-						DeploymentAttributes.TARGET_HOST.getName());
+				if (server != null) {
+					server.removeAttribute(DeploymentAttributes.TARGET_HOST
+							.getName());
+				}
 			}
 		}
 		if (keyText != null) {
