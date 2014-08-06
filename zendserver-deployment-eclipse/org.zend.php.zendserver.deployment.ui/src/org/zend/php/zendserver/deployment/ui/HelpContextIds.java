@@ -13,7 +13,8 @@ public interface HelpContextIds {
 
 	public static final String OVERVIEW_TAB = PREFIX + "overview_tab" + SUFFIX; //$NON-NLS-1$
 
-	public static final String DEPENDENCIES_TAB = PREFIX + "dependencies_tab" + SUFFIX; //$NON-NLS-1$
+	public static final String DEPENDENCIES_TAB = PREFIX
+			+ "dependencies_tab" + SUFFIX; //$NON-NLS-1$
 
 	public static final String TRIGGERS_TAB = PREFIX + "triggers_tab" + SUFFIX; //$NON-NLS-1$
 
@@ -25,7 +26,8 @@ public interface HelpContextIds {
 	public static final String DEPLOYMENT_XML_TAB = PREFIX
 			+ "deployment.xml_tab" + SUFFIX; //$NON-NLS-1$
 
-	public static final String MANAGING_TARGETS = PREFIX + "managing_php_servers" + SUFFIX; //$NON-NLS-1$
+	public static final String MANAGING_TARGETS = PREFIX
+			+ "managing_php_servers" + SUFFIX; //$NON-NLS-1$
 
 	public static final String CREATING_A_REMOTE_ZEND_SERVER_TARGET = PREFIX
 			+ "adding_a_remote_zend_server" + SUFFIX; //$NON-NLS-1$
@@ -35,5 +37,8 @@ public interface HelpContextIds {
 
 	public static final String CREATING_A_LOCAL_ZEND_SERVER_TARGET = PREFIX
 			+ "adding_a_local_zend_server" + SUFFIX; //$NON-NLS-1$
+
+	public static final String ADDING_A_SERVER_OPENSHFIT_SERVER = PREFIX
+			+ "adding_an_openshift_php_server" + SUFFIX; //$NON-NLS-1$
 
 }

@@ -18,14 +18,19 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 
 /**
  * New OpenShift Target wizard page which contains EULA document.
@@ -85,6 +90,13 @@ public class OpenShiftEulaPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(acceptTermOfUse.getSelection());
+			}
+		});
+		parent.setData(WorkbenchHelpSystem.HELP_KEY,
+				HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
+		parent.addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				Program.launch(HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
 			}
 		});
 		setControl(composite);
