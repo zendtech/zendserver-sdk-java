@@ -98,8 +98,14 @@ public abstract class AbstractMonitor extends Job {
 	}
 
 	public void stop() {
+		boolean disableCodeTracing = false;
+		if (getState() != Job.NONE) {
+			disableCodeTracing = true;
+		}
 		cancel();
-		disableCodeTacing();
+		if (disableCodeTracing) {
+			disableCodeTacing();
+		}
 	}
 
 	@Override
@@ -259,7 +265,7 @@ public abstract class AbstractMonitor extends Job {
 				.getProperty(IZendTarget.SERVER_VERSION));
 		return version.getName().startsWith("6"); //$NON-NLS-1$
 	}
-	
+
 	protected String getServerName() {
 		Server server = ServerUtils.getServer(getTarget());
 		return server != null ? server.getName() : targetId;
