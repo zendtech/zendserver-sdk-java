@@ -9,13 +9,18 @@ package org.zend.php.zendserver.deployment.ui.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 
 /**
@@ -44,6 +49,13 @@ public class OpenShiftDomainPage extends WizardPage {
 		container.setLayout(layout);
 		domainNameText = createLabelWithText(
 				Messages.OpenShiftDomainPage_NameLabel, container);
+		parent.setData(WorkbenchHelpSystem.HELP_KEY,
+				HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
+		parent.addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				Program.launch(HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
+			}
+		});
 		setControl(container);
 		setPageComplete(validatePage());
 	}

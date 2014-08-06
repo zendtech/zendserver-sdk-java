@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,6 +29,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.OpenShiftTarget.Type;
 
@@ -83,6 +87,13 @@ public class OpenShiftTargetPage extends WizardPage {
 			createMySqlGroup(container);
 		}
 		createPasswordGroup(container);
+		parent.setData(WorkbenchHelpSystem.HELP_KEY,
+				HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
+		parent.addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				Program.launch(HelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER);
+			}
+		});
 		setControl(container);
 		if (!init) {
 			initializeValues();
