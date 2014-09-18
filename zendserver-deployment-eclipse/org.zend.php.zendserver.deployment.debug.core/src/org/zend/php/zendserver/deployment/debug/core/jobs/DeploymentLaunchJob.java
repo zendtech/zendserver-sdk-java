@@ -17,6 +17,7 @@ import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.IDeploymentContribution;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
+import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
@@ -77,6 +78,13 @@ public abstract class DeploymentLaunchJob extends AbstractLaunchJob {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						Messages.DeploymentLaunchJob_AppUrlConflictMessage);
 			case APPLICATION_CONFLICT:
+				// in the case of deployment this response code should be
+				// handled as a conflict; for other operations (including
+				// update) it is an error
+				if (helper.getOperationType() == DeploymentHelper.DEPLOY) {
+					return new Status(IStatus.INFO, Activator.PLUGIN_ID,
+							codeException.getMessage());
+				}
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						codeException.getMessage());
 			case INVALID_PARAMETER:

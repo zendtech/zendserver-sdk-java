@@ -341,7 +341,14 @@ public class DeploymentHandler {
 				}
 				LaunchUtils.updatePreferences(project, helper.getTargetId(),
 						helper.getBaseURL().toString());
-			} else if (code == ResponseCode.INVALID_PARAMETER) {
+			} else if (code == ResponseCode.INVALID_PARAMETER
+					|| (code == ResponseCode.APPLICATION_CONFLICT && helper
+							.getOperationType() != IDeploymentHelper.UPDATE)) {
+				// handle correctly invalid response (INVALID_PARAMENTER) and
+				// the correct one (APPLICATION_CONFLICT) but do not handle
+				// conflict if it exists for an update operation because it
+				// means that application is different than the one on the
+				// server
 				return handleConflict(helper, project,
 						deploymentJob.getResponseCode());
 			}
@@ -409,6 +416,7 @@ public class DeploymentHandler {
 			return verifyJobResult(job.getHelper(), project);
 		} else {
 			dialogResult = false;
+			helper.setOperationType(DeploymentHelper.UPDATE);
 			job = new ExisitngAppIdJob(helper, project);
 			job.setUser(true);
 			job.schedule();
