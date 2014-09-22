@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class LocalApacheDetector {
 
+	private static final String HTTPD_CONF = "httpd.conf"; //$NON-NLS-1$
+
 	private static final String LISTEN = "Listen"; //$NON-NLS-1$
 
 	private static final String DOCUMENT_ROOT = "DocumentRoot"; //$NON-NLS-1$
@@ -33,7 +35,7 @@ public class LocalApacheDetector {
 
 	public static final String LOCATION = "apache2Location"; //$NON-NLS-1$
 
-	private static final String DEFAULT_HTTPD_CONF = "/conf/httpd.conf"; //$NON-NLS-1$
+	private static final String DEFAULT_HTTPD_CONF = "/conf/" + HTTPD_CONF; //$NON-NLS-1$
 
 	private static final String DEBIAN_PORT_CONF = "/ports.conf"; //$NON-NLS-1$
 
@@ -59,18 +61,12 @@ public class LocalApacheDetector {
 		if (location != null) {
 			File defaultHttpdConf = new File(location, DEFAULT_HTTPD_CONF);
 			if (defaultHttpdConf.exists()) {
-				List<String> lines = readFile(defaultHttpdConf);
-				for (String line : lines) {
-					if (line.startsWith(LISTEN)) {
-						parseListen(line);
-					} else if (line.startsWith(DOCUMENT_ROOT)) {
-						parseDocumentRoot(line);
-					}
-				}
+				parseHttpdConf(defaultHttpdConf);
 			} else {
 				// check debian configuration
 				File portsConf = new File(location, DEBIAN_PORT_CONF);
-				if (portsConf.exists()) {
+				File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
+				if (portsConf.exists() && defaultConf.exists()) {
 					List<String> lines = readFile(portsConf);
 					for (String line : lines) {
 						if (line.startsWith(LISTEN)) {
@@ -78,16 +74,19 @@ public class LocalApacheDetector {
 							break;
 						}
 					}
-				}
-				File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
-				if (defaultConf.exists()) {
-					List<String> lines = readFile(defaultConf);
+					lines = readFile(defaultConf);
 					for (String line : lines) {
 						line = line.trim();
 						if (line.startsWith(DOCUMENT_ROOT)) {
 							parseDocumentRoot(line);
 							break;
 						}
+					}
+				} else {
+					// check httpd.conf in specified location
+					File httpdConf = new File(location, HTTPD_CONF);
+					if (httpdConf.exists()) {
+						parseHttpdConf(httpdConf);
 					}
 				}
 			}
@@ -150,6 +149,23 @@ public class LocalApacheDetector {
 				path = path.substring(1, path.length() - 1);
 			}
 			setDocumentRoot(path);
+		}
+	}
+
+	/**
+	 * Parse Listen and DocumentRoot from specified httpd.conf file.
+	 * 
+	 * @param httpdConfFile
+	 *            httpd.conf file
+	 */
+	private void parseHttpdConf(File httpdConfFile) {
+		List<String> lines = readFile(httpdConfFile);
+		for (String line : lines) {
+			if (line.startsWith(LISTEN)) {
+				parseListen(line);
+			} else if (line.startsWith(DOCUMENT_ROOT)) {
+				parseDocumentRoot(line);
+			}
 		}
 	}
 
