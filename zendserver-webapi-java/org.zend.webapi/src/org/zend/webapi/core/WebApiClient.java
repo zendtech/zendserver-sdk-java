@@ -637,7 +637,7 @@ public class WebApiClient {
 			throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.APPLICATION_DEPLOY,
-				getVersion(WebApiVersion.V1_1), new IRequestInitializer() {
+				getVersion(WebApiVersion.V1_9), new IRequestInitializer() {
 
 					public void init(IRequest request) throws WebApiException {
 						ApplicationDeployRequest deployRequest = (ApplicationDeployRequest) request;
