@@ -10,6 +10,7 @@ public class Messages extends NLS {
 	public static String AbstractMonitor_InitializationJobUnsupportedVersion;
 	public static String AbstractMonitor_NoTargetError;
 	public static String AbstractMonitor_NotificationTitle;
+	public static String AbstractMonitor_NotSupportedMessage;
 	public static String TargetMonitor_JobName;
 	public static String ZendServerMonitor_JobTitle;
 	public static String ZendServerMonitor_TaskTitle;

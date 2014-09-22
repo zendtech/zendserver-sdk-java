@@ -365,8 +365,14 @@ public abstract class AbstractMonitor extends Job {
 						UnexpectedResponseCode codeException = (UnexpectedResponseCode) e;
 						ResponseCode code = codeException.getResponseCode();
 						switch (code) {
-						case UNSUPPORTED_API_VERSION:
+						case NOT_SUPPORTED_BY_EDITION:
 							String m = MessageFormat
+									.format(Messages.AbstractMonitor_NotSupportedMessage,
+											name);
+							handleError(monitor, m);
+							return false;
+						case UNSUPPORTED_API_VERSION:
+							m = MessageFormat
 									.format(Messages.AbstractMonitor_InitializationJobUnsupportedVersion,
 											name);
 							handleError(monitor, m);

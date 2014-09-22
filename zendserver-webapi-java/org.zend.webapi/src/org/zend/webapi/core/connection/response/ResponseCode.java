@@ -88,6 +88,10 @@ public enum ResponseCode {
 			"libraryAlreadyExists",
 			"Could not deploy library: Library with the same name and version already exists"),
 	
+	NOT_SUPPORTED_BY_EDITION(
+			410,
+			"notSupportedByEdition",
+			"This WebAPI action cannot be used on server's operating system"),
 			
 	SERVER_NOT_CONFIGURED(
 			500,
