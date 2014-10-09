@@ -62,6 +62,9 @@
 	            </wizardAndSettings>
             <settings>
                <fragment
+                     id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
+               </fragment>
+               <fragment
                      id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
                </fragment>
                <fragment
