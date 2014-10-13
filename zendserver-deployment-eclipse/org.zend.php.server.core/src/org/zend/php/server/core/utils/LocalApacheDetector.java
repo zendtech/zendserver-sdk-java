@@ -21,13 +21,14 @@ import java.util.List;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Utility class for detecting local Apache HTTP Server settings. It works correctly with following Apache Server distributions:
+ * Utility class for detecting local Apache HTTP Server settings. It works
+ * correctly with following Apache Server distributions:
  * <p>
  * <h4>Windows</h4>
  * <ul>
  * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
  * <li>WAMP</li>
- * <li>XAMP?</li>
+ * <li>XAMPP</li>
  * <li>MAMP?</li>
  * </ul>
  * </p>
@@ -35,7 +36,7 @@ import org.eclipse.core.runtime.Platform;
  * <h4>Linux</h4>
  * <ul>
  * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
- * <li>installed through apt (Debian) </li>
+ * <li>installed through apt (Debian)</li>
  * <li></li>
  * </ul>
  * </p>
@@ -47,6 +48,7 @@ import org.eclipse.core.runtime.Platform;
  * <li>MAMP?</li>
  * </ul>
  * </p>
+ * 
  * @author Wojciech Galanciak, 2014
  * 
  */
@@ -86,21 +88,34 @@ public class LocalApacheDetector {
 	 */
 	public boolean detect() {
 		if (location != null) {
-			File defaultHttpdConf = new File(location, DEFAULT_HTTPD_CONF);
+			File httpdConf = new File(location, DEFAULT_HTTPD_CONF);
 			// firstly check a default configuration location (/conf/httpd.conf)
-			if (defaultHttpdConf.exists()) {
-				parseHttpdConf(defaultHttpdConf);
+			if (httpdConf.exists()) {
+				parseHttpdConf(httpdConf);
 			} else {
 				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					// check if it is a WAMP's root (C:\wamp)
+					// check if it is a WAMP's root (e.g. C:\wamp)
 					File wampManager = new File(location, "wampmanager.exe");
 					if (wampManager.exists()) {
 						return parseWamp(location);
 					}
-					// Check if it apache's root (C:\wamp\bin\apache)
+					// Check if it apache's root (e.g. C:\wamp\bin\apache)
 					File apacheFile = new File(location);
 					if ("apache".equals(apacheFile.getName())) {
-						return parseWamp(apacheFile.getParentFile().getParent());
+						wampManager = new File(apacheFile.getParentFile()
+								.getParent(), "wampmanager.exe");
+						if (wampManager.exists()) {
+							return parseWamp(wampManager.getParent());
+						}
+					}
+					// Check if it is a XAMPP's root (e.g. C:\xamp)
+					File xamppStart = new File(location, "xampp_start.exe");
+					if (xamppStart.exists()) {
+						File apacheRoot = new File(location, "apache");
+						httpdConf = new File(apacheRoot, DEFAULT_HTTPD_CONF);
+						if (httpdConf.exists()) {
+							return parseHttpdConf(httpdConf);
+						}
 					}
 				}
 				if (Platform.getOS().equals(Platform.OS_LINUX)) {
@@ -126,7 +141,7 @@ public class LocalApacheDetector {
 					}
 				}
 				// finally check httpd.conf in specified location
-				File httpdConf = new File(location, HTTPD_CONF);
+				httpdConf = new File(location, HTTPD_CONF);
 				if (httpdConf.exists()) {
 					parseHttpdConf(httpdConf);
 				}
@@ -169,7 +184,7 @@ public class LocalApacheDetector {
 	protected void setDocumentRoot(String documentRoot) {
 		this.documentRoot = documentRoot;
 	}
-	
+
 	private boolean parseWamp(String location) {
 		File apacheRoot = new File(location, "bin\\apache");
 		if (apacheRoot.exists()) {
