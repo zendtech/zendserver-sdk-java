@@ -13,13 +13,40 @@ package org.zend.php.server.core.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+
 /**
- * Utility class for detecting local Apache HTTP Server settings.
- * 
+ * Utility class for detecting local Apache HTTP Server settings. It works correctly with following Apache Server distributions:
+ * <p>
+ * <h4>Windows</h4>
+ * <ul>
+ * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
+ * <li>WAMP</li>
+ * <li>XAMP?</li>
+ * <li>MAMP?</li>
+ * </ul>
+ * </p>
+ * <p>
+ * <h4>Linux</h4>
+ * <ul>
+ * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
+ * <li>installed through apt (Debian) </li>
+ * <li></li>
+ * </ul>
+ * </p>
+ * <p>
+ * <h4>Mac OS X</h4>
+ * <ul>
+ * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
+ * <li>Default Apache Server provided with operating system</li>
+ * <li>MAMP?</li>
+ * </ul>
+ * </p>
  * @author Wojciech Galanciak, 2014
  * 
  */
@@ -60,34 +87,48 @@ public class LocalApacheDetector {
 	public boolean detect() {
 		if (location != null) {
 			File defaultHttpdConf = new File(location, DEFAULT_HTTPD_CONF);
+			// firstly check a default configuration location (/conf/httpd.conf)
 			if (defaultHttpdConf.exists()) {
 				parseHttpdConf(defaultHttpdConf);
 			} else {
-				// check debian configuration
-				File portsConf = new File(location, DEBIAN_PORT_CONF);
-				File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
-				if (portsConf.exists() && defaultConf.exists()) {
-					List<String> lines = readFile(portsConf);
-					for (String line : lines) {
-						if (line.startsWith(LISTEN)) {
-							parseListen(line);
-							break;
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					// check if it is a WAMP's root (C:\wamp)
+					File wampManager = new File(location, "wampmanager.exe");
+					if (wampManager.exists()) {
+						return parseWamp(location);
+					}
+					// Check if it apache's root (C:\wamp\bin\apache)
+					File apacheFile = new File(location);
+					if ("apache".equals(apacheFile.getName())) {
+						return parseWamp(apacheFile.getParentFile().getParent());
+					}
+				}
+				if (Platform.getOS().equals(Platform.OS_LINUX)) {
+					// check debian configuration
+					File portsConf = new File(location, DEBIAN_PORT_CONF);
+					File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
+					if (portsConf.exists() && defaultConf.exists()) {
+						List<String> lines = readFile(portsConf);
+						for (String line : lines) {
+							if (line.startsWith(LISTEN)) {
+								parseListen(line);
+								break;
+							}
+						}
+						lines = readFile(defaultConf);
+						for (String line : lines) {
+							line = line.trim();
+							if (line.startsWith(DOCUMENT_ROOT)) {
+								parseDocumentRoot(line);
+								break;
+							}
 						}
 					}
-					lines = readFile(defaultConf);
-					for (String line : lines) {
-						line = line.trim();
-						if (line.startsWith(DOCUMENT_ROOT)) {
-							parseDocumentRoot(line);
-							break;
-						}
-					}
-				} else {
-					// check httpd.conf in specified location
-					File httpdConf = new File(location, HTTPD_CONF);
-					if (httpdConf.exists()) {
-						parseHttpdConf(httpdConf);
-					}
+				}
+				// finally check httpd.conf in specified location
+				File httpdConf = new File(location, HTTPD_CONF);
+				if (httpdConf.exists()) {
+					parseHttpdConf(httpdConf);
 				}
 			}
 		}
@@ -113,11 +154,38 @@ public class LocalApacheDetector {
 	}
 
 	protected void setPort(String port) {
+		// check what is a format of Listen value;
+		// possible values:
+		// Listen 80
+		// Listen 0.0.0.0:80
+		// Listen [::0]:80
+		int index = port.indexOf(':');
+		if (index != -1) {
+			port = port.substring(index + 1);
+		}
 		this.port = port;
 	}
 
 	protected void setDocumentRoot(String documentRoot) {
 		this.documentRoot = documentRoot;
+	}
+	
+	private boolean parseWamp(String location) {
+		File apacheRoot = new File(location, "bin\\apache");
+		if (apacheRoot.exists()) {
+			String[] apacheFolders = apacheRoot.list(new FilenameFilter() {
+
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.startsWith("apache");
+				}
+			});
+			apacheRoot = new File(apacheRoot,
+					apacheFolders[apacheFolders.length - 1]);
+			File httpdConf = new File(apacheRoot, DEFAULT_HTTPD_CONF);
+			return httpdConf.exists() && parseHttpdConf(httpdConf);
+		}
+		return false;
 	}
 
 	private List<String> readFile(File file) {
@@ -157,16 +225,19 @@ public class LocalApacheDetector {
 	 * 
 	 * @param httpdConfFile
 	 *            httpd.conf file
+	 * @return <code>true</code> file port and document root are correctly
+	 *         parsed; otherwise return <code>false</code>
 	 */
-	private void parseHttpdConf(File httpdConfFile) {
+	private boolean parseHttpdConf(File httpdConfFile) {
 		List<String> lines = readFile(httpdConfFile);
 		for (String line : lines) {
-			if (line.startsWith(LISTEN)) {
+			if (port == null && line.startsWith(LISTEN)) {
 				parseListen(line);
-			} else if (line.startsWith(DOCUMENT_ROOT)) {
+			} else if (documentRoot == null && line.startsWith(DOCUMENT_ROOT)) {
 				parseDocumentRoot(line);
 			}
 		}
+		return port != null && documentRoot != null;
 	}
 
 	private void parseListen(String line) {
