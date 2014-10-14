@@ -24,22 +24,22 @@ import org.eclipse.core.runtime.Platform;
  * Utility class for detecting local Apache HTTP Server settings. It works
  * correctly with following Apache Server distributions: <h4>Windows</h4>
  * <ul>
- * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
- * <li>WAMP</li>
- * <li>XAMPP</li>
- * <li>MAMP?</li>
+ * <li>httpd binary (<a href="http://httpd.apache.org/download.cgi">http://httpd.apache.org/download.cgi</a>)</li>
+ * <li>WAMP Server (<a href="http://www.wampserver.com">http://www.wampserver.com</a>)</li>
+ * <li>Bitnami WAMPStack (<a href="https://bitnami.com/stack/wamp">https://bitnami.com/stack/wamp</a>)</li>
+ * <li>XAMPP (<a href="http://www.apachefriends.org">http://www.apachefriends.org</a>)</li>
  * </ul>
  * <h4>Linux</h4>
  * <ul>
- * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
+ * <li>httpd binary (<a href="http://httpd.apache.org/download.cgi">http://httpd.apache.org/download.cgi</a>)</li>
  * <li>installed through apt (Debian)</li>
  * <li></li>
  * </ul>
  * <h4>Mac OS X</h4>
  * <ul>
- * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
+ * <li>httpd binary (<a href="http://httpd.apache.org/download.cgi">http://httpd.apache.org/download.cgi</a>)</li>
  * <li>Default Apache Server provided with operating system</li>
- * <li>MAMP</li>
+ * <li>MAMP (<a href="http://www.mamp.info">http://www.mamp.info</a>)</li>
  * </ul>
  * 
  * @author Wojciech Galanciak, 2014
@@ -102,6 +102,9 @@ public class LocalApacheDetector {
 					if (checkWAMP(location)) {
 						return true;
 					}
+					if (checkBitnamiWAMP(location)) {
+						return true;
+					}
 					if (checkXAMPP(location)) {
 						return true;
 					}
@@ -115,6 +118,10 @@ public class LocalApacheDetector {
 					if (checkMAMP(location)) {
 						return true;
 					}
+				}
+				// check if there is apache2 folder in specified location
+				if (checkApache2(location)) {
+					return true;
 				}
 				// finally check httpd.conf in specified location
 				httpdConf = new File(location, HTTPD_CONF);
@@ -275,6 +282,37 @@ public class LocalApacheDetector {
 			if (wampManager.exists()) {
 				return parseWAMP(wampManager.getParent());
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Try to detect local Apache Server configuration from Bitnami WAMPStack distribution on
+	 * Windows. It tests following possible location passed as an argument:
+	 * <ul>
+	 * <li>Bitnami WAMP's root folder (e.g. C:\Bitnami\wampstack-5.4.33-0)</li>
+	 * </ul>
+	 * 
+	 * @param location
+	 * @return <code>true</code> if document root and port were detected
+	 *         correctly; otherwise return <code>false</code>
+	 */
+	private boolean checkBitnamiWAMP(String location) {
+		return checkApache2(location);
+	}
+	
+	/**
+	 * Check if there is apache2 folder in specified location.
+	 * 
+	 * @param location
+	 * @return <code>true</code> if document root and port were detected
+	 *         correctly; otherwise return <code>false</code>
+	 */
+	private boolean checkApache2(String location) {
+		File httpdConf = new File(location, APACHE_2 + File.separator + CONF
+				+ File.separator + HTTPD_CONF);
+		if (httpdConf.exists()) {
+			return parseHttpdConf(httpdConf);
 		}
 		return false;
 	}
