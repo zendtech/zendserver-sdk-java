@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -50,6 +52,7 @@ import org.eclipse.core.runtime.Platform;
  * <li>MAMP (<a href="http://www.mamp.info">http://www.mamp.info</a>)</li>
  * <li>XAMPP (<a
  * href="http://www.apachefriends.org">http://www.apachefriends.org</a>)</li>
+ * <li>AMPPS (<a href="http://ampps.com/">http://ampps.com</a>)</li>
  * </ul>
  * 
  * @author Wojciech Galanciak, 2014
@@ -70,8 +73,6 @@ public class LocalApacheDetector {
 	private static final String CONF = "conf"; //$NON-NLS-1$
 	private static final String APACHE = "apache"; //$NON-NLS-1$
 	private static final String HTTPD_CONF = "httpd.conf"; //$NON-NLS-1$
-	private static final String DEFAULT_HTTPD_CONF = CONF + File.separator
-			+ HTTPD_CONF;
 
 	// Linux
 	private static final String DEBIAN_PORT_CONF = "/ports.conf"; //$NON-NLS-1$
@@ -104,7 +105,7 @@ public class LocalApacheDetector {
 	 */
 	public boolean detect() {
 		if (location != null) {
-			File httpdConf = new File(location, DEFAULT_HTTPD_CONF);
+			File httpdConf = new File(location, getPath(CONF, HTTPD_CONF));
 			// firstly check a default configuration location (/conf/httpd.conf)
 			if (httpdConf.exists()) {
 				parseHttpdConf(httpdConf);
@@ -213,8 +214,8 @@ public class LocalApacheDetector {
 			mampApp = new File(location, MAMP_APP);
 		}
 		if (mampApp.exists()) {
-			File httpdConf = new File(mampApp.getParent(), CONF
-					+ File.separator + APACHE + File.separator + HTTPD_CONF);
+			File httpdConf = new File(mampApp.getParent(), getPath(CONF,
+					APACHE, HTTPD_CONF));
 			if (httpdConf.exists()) {
 				return parseHttpdConf(httpdConf);
 			}
@@ -261,8 +262,8 @@ public class LocalApacheDetector {
 		// Check if it is a XAMPP's root (e.g. C:\xamp)
 		File xamppStart = new File(location, XAMPP_START_EXE);
 		if (xamppStart.exists()) {
-			File httpdConf = new File(location, APACHE + File.separator
-					+ DEFAULT_HTTPD_CONF);
+			File httpdConf = new File(location, getPath(APACHE, CONF,
+					HTTPD_CONF));
 			if (httpdConf.exists()) {
 				return parseHttpdConf(httpdConf);
 			}
@@ -283,8 +284,7 @@ public class LocalApacheDetector {
 	 */
 	private boolean checkXAMPPMac(String location) {
 		// check if there is etc/httpd.conf file
-		File httpdConf = new File(location, ETC + File.separator
-				+ HTTPD_CONF);
+		File httpdConf = new File(location, getPath(ETC, HTTPD_CONF));
 		if (httpdConf.exists()) {
 			return parseHttpdConf(httpdConf);
 		}
@@ -345,8 +345,7 @@ public class LocalApacheDetector {
 	 *         correctly; otherwise return <code>false</code>
 	 */
 	private boolean checkApache2(String location) {
-		File httpdConf = new File(location, APACHE_2 + File.separator + CONF
-				+ File.separator + HTTPD_CONF);
+		File httpdConf = new File(location, getPath(APACHE_2, CONF, HTTPD_CONF));
 		if (httpdConf.exists()) {
 			return parseHttpdConf(httpdConf);
 		}
@@ -354,7 +353,7 @@ public class LocalApacheDetector {
 	}
 
 	private boolean parseWAMP(String location) {
-		File apacheRoot = new File(location, BIN + File.separator + APACHE);
+		File apacheRoot = new File(location, getPath(BIN, APACHE));
 		if (apacheRoot.exists()) {
 			String[] apacheFolders = apacheRoot.list(new FilenameFilter() {
 
@@ -365,7 +364,7 @@ public class LocalApacheDetector {
 			});
 			apacheRoot = new File(apacheRoot,
 					apacheFolders[apacheFolders.length - 1]);
-			File httpdConf = new File(apacheRoot, DEFAULT_HTTPD_CONF);
+			File httpdConf = new File(apacheRoot, getPath(CONF, HTTPD_CONF));
 			return httpdConf.exists() && parseHttpdConf(httpdConf);
 		}
 		return false;
@@ -433,6 +432,17 @@ public class LocalApacheDetector {
 	private String extractValue(String line, String attributeName) {
 		String path = line.trim().substring(attributeName.length());
 		return path.trim();
+	}
+
+	private String getPath(String... segments) {
+		if (segments.length == 0) {
+			return ""; //$NON-NLS-1$
+		}
+		IPath path = new Path(segments[0]);
+		for (int i = 1; i < segments.length; i++) {
+			path.append(segments[i]);
+		}
+		return path.toString();
 	}
 
 }
