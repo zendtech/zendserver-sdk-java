@@ -22,53 +22,58 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Utility class for detecting local Apache HTTP Server settings. It works
- * correctly with following Apache Server distributions:
- * <p>
- * <h4>Windows</h4>
+ * correctly with following Apache Server distributions: <h4>Windows</h4>
  * <ul>
  * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
  * <li>WAMP</li>
  * <li>XAMPP</li>
  * <li>MAMP?</li>
  * </ul>
- * </p>
- * <p>
  * <h4>Linux</h4>
  * <ul>
  * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
  * <li>installed through apt (Debian)</li>
  * <li></li>
  * </ul>
- * </p>
- * <p>
  * <h4>Mac OS X</h4>
  * <ul>
  * <li>httpd binary from http://httpd.apache.org/download.cgi</li>
  * <li>Default Apache Server provided with operating system</li>
- * <li>MAMP?</li>
+ * <li>MAMP</li>
  * </ul>
- * </p>
  * 
  * @author Wojciech Galanciak, 2014
  * 
  */
 public class LocalApacheDetector {
 
-	private static final String HTTPD_CONF = "httpd.conf"; //$NON-NLS-1$
+	public static final String ID = "org.zend.php.server.ui.types.LocalApacheType"; //$NON-NLS-1$
+
+	public static final String LOCATION = "apache2Location"; //$NON-NLS-1$
 
 	private static final String LISTEN = "Listen"; //$NON-NLS-1$
 
 	private static final String DOCUMENT_ROOT = "DocumentRoot"; //$NON-NLS-1$
 
-	public static final String ID = "org.zend.php.server.ui.types.LocalApacheType"; //$NON-NLS-1$
+	// Common
+	private static final String BIN = "bin"; //$NON-NLS-1$
+	private static final String CONF = "conf"; //$NON-NLS-1$
+	private static final String APACHE = "apache"; //$NON-NLS-1$
+	private static final String HTTPD_CONF = "httpd.conf"; //$NON-NLS-1$
+	private static final String DEFAULT_HTTPD_CONF = CONF + File.separator
+			+ HTTPD_CONF;
 
-	public static final String LOCATION = "apache2Location"; //$NON-NLS-1$
-
-	private static final String DEFAULT_HTTPD_CONF = "/conf/" + HTTPD_CONF; //$NON-NLS-1$
-
+	// Linux
 	private static final String DEBIAN_PORT_CONF = "/ports.conf"; //$NON-NLS-1$
-
 	private static final String DEBIAN_DEFAULT_CONF = "/sites-enabled/000-default.conf"; //$NON-NLS-1$
+
+	// Windows
+	private static final String XAMPP_START_EXE = "xampp_start.exe"; //$NON-NLS-1$
+	private static final String WAMPMANAGER_EXE = "wampmanager.exe"; //$NON-NLS-1$
+
+	// Mac
+	private static final String APACHE_2 = "apache2"; //$NON-NLS-1$
+	private static final String MAMP_APP = "MAMP.app"; //$NON-NLS-1$
 
 	private String port;
 	private String documentRoot;
@@ -94,56 +99,27 @@ public class LocalApacheDetector {
 				parseHttpdConf(httpdConf);
 			} else {
 				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					// check if it is a WAMP's root (e.g. C:\wamp)
-					File wampManager = new File(location, "wampmanager.exe");
-					if (wampManager.exists()) {
-						return parseWamp(location);
+					if (checkWAMP(location)) {
+						return true;
 					}
-					// Check if it apache's root (e.g. C:\wamp\bin\apache)
-					File apacheFile = new File(location);
-					if ("apache".equals(apacheFile.getName())) {
-						wampManager = new File(apacheFile.getParentFile()
-								.getParent(), "wampmanager.exe");
-						if (wampManager.exists()) {
-							return parseWamp(wampManager.getParent());
-						}
-					}
-					// Check if it is a XAMPP's root (e.g. C:\xamp)
-					File xamppStart = new File(location, "xampp_start.exe");
-					if (xamppStart.exists()) {
-						File apacheRoot = new File(location, "apache");
-						httpdConf = new File(apacheRoot, DEFAULT_HTTPD_CONF);
-						if (httpdConf.exists()) {
-							return parseHttpdConf(httpdConf);
-						}
+					if (checkXAMPP(location)) {
+						return true;
 					}
 				}
 				if (Platform.getOS().equals(Platform.OS_LINUX)) {
-					// check debian configuration
-					File portsConf = new File(location, DEBIAN_PORT_CONF);
-					File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
-					if (portsConf.exists() && defaultConf.exists()) {
-						List<String> lines = readFile(portsConf);
-						for (String line : lines) {
-							if (line.startsWith(LISTEN)) {
-								parseListen(line);
-								break;
-							}
-						}
-						lines = readFile(defaultConf);
-						for (String line : lines) {
-							line = line.trim();
-							if (line.startsWith(DOCUMENT_ROOT)) {
-								parseDocumentRoot(line);
-								break;
-							}
-						}
+					if (checkDebian(location)) {
+						return true;
+					}
+				}
+				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+					if (checkMAMP(location)) {
+						return true;
 					}
 				}
 				// finally check httpd.conf in specified location
 				httpdConf = new File(location, HTTPD_CONF);
 				if (httpdConf.exists()) {
-					parseHttpdConf(httpdConf);
+					return parseHttpdConf(httpdConf);
 				}
 			}
 		}
@@ -185,14 +161,132 @@ public class LocalApacheDetector {
 		this.documentRoot = documentRoot;
 	}
 
-	private boolean parseWamp(String location) {
-		File apacheRoot = new File(location, "bin\\apache");
+	/**
+	 * Try to detect local Apache Server configuration from MAMP distribution on
+	 * Mac OS X. It tests following possible location passed as an argument:
+	 * <ul>
+	 * <li>MAMP's root directory (e.g. /Applications/MAMP)</li>
+	 * <li>apache bin directory (e.g. /Applications/MAMP/bin/apache2)</li>
+	 * </ul>
+	 * 
+	 * @param location
+	 * @return <code>true</code> if document root and port were detected
+	 *         correctly; otherwise return <code>false</code>
+	 */
+	private boolean checkMAMP(String location) {
+		// check if it is MAMP's apache2 in bin (e.g.
+		// /Applications/MAMP/bin/apache2)
+		File mampApp = null;
+		File apache2 = new File(location);
+		if (APACHE_2.equals(apache2.getName())) {
+			apache2 = apache2.getParentFile();
+			if (apache2 != null) {
+				apache2 = apache2.getParentFile();
+				if (apache2 != null) {
+					mampApp = new File(apache2, MAMP_APP);
+				}
+			}
+		}
+		// check if it is MAMP's root (e.g. /Applications/MAMP)
+		if (mampApp == null) {
+			mampApp = new File(location, MAMP_APP);
+		}
+		if (mampApp.exists()) {
+			File httpdConf = new File(mampApp.getParent(), CONF
+					+ File.separator + APACHE + File.separator + HTTPD_CONF);
+			if (httpdConf.exists()) {
+				return parseHttpdConf(httpdConf);
+			}
+		}
+		return false;
+	}
+
+	private boolean checkDebian(String location) {
+		// check debian configuration
+		File portsConf = new File(location, DEBIAN_PORT_CONF);
+		File defaultConf = new File(location, DEBIAN_DEFAULT_CONF);
+		if (portsConf.exists() && defaultConf.exists()) {
+			List<String> lines = readFile(portsConf);
+			for (String line : lines) {
+				if (line.startsWith(LISTEN)) {
+					parseListen(line);
+					break;
+				}
+			}
+			lines = readFile(defaultConf);
+			for (String line : lines) {
+				line = line.trim();
+				if (line.startsWith(DOCUMENT_ROOT)) {
+					parseDocumentRoot(line);
+					break;
+				}
+			}
+		}
+		return port != null && documentRoot != null;
+	}
+
+	/**
+	 * Try to detect local Apache Server configuration from XAMPP distribution
+	 * on Windows. It tests following possible location passed as an argument:
+	 * <ul>
+	 * <li>XAMPP's root directory (e.g. C:\xampp)</li>
+	 * </ul>
+	 * 
+	 * @param location
+	 * @return <code>true</code> if document root and port were detected
+	 *         correctly; otherwise return <code>false</code>
+	 */
+	private boolean checkXAMPP(String location) {
+		// Check if it is a XAMPP's root (e.g. C:\xamp)
+		File xamppStart = new File(location, XAMPP_START_EXE);
+		if (xamppStart.exists()) {
+			File httpdConf = new File(location, APACHE + File.separator
+					+ DEFAULT_HTTPD_CONF);
+			if (httpdConf.exists()) {
+				return parseHttpdConf(httpdConf);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Try to detect local Apache Server configuration from WAMP distribution on
+	 * Windows. It tests following possible location passed as an argument:
+	 * <ul>
+	 * <li>WAMP's root directory (e.g. C:\wamp)</li>
+	 * <li>apache bin directory (e.g. C:\wamp\bin\apache)</li>
+	 * </ul>
+	 * 
+	 * @param location
+	 * @return <code>true</code> if document root and port were detected
+	 *         correctly; otherwise return <code>false</code>
+	 */
+	private boolean checkWAMP(String location) {
+		// check if it is a WAMP's root (e.g. C:\wamp)
+		File wampManager = new File(location, WAMPMANAGER_EXE);
+		if (wampManager.exists()) {
+			return parseWAMP(location);
+		}
+		// Check if it apache's root (e.g. C:\wamp\bin\apache)
+		File apacheFile = new File(location);
+		if (APACHE.equals(apacheFile.getName())) {
+			wampManager = new File(apacheFile.getParentFile().getParent(),
+					WAMPMANAGER_EXE);
+			if (wampManager.exists()) {
+				return parseWAMP(wampManager.getParent());
+			}
+		}
+		return false;
+	}
+
+	private boolean parseWAMP(String location) {
+		File apacheRoot = new File(location, BIN + File.separator + APACHE);
 		if (apacheRoot.exists()) {
 			String[] apacheFolders = apacheRoot.list(new FilenameFilter() {
 
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.startsWith("apache");
+					return name.startsWith(APACHE);
 				}
 			});
 			apacheRoot = new File(apacheRoot,
