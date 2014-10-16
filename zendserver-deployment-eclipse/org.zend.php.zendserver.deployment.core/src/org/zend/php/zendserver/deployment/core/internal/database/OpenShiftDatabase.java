@@ -71,7 +71,7 @@ public class OpenShiftDatabase extends TargetDatabase {
 	 * #getProfilePrefix()
 	 */
 	protected String getProfilePrefix() {
-		return "openshift target"; //$NON-NLS-1$
+		return "OpenShift server"; //$NON-NLS-1$
 	}
 
 	/*
