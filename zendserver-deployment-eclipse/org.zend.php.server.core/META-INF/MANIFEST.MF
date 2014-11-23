@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PHP Servers Core
 Bundle-SymbolicName: org.zend.php.server.core
-Bundle-Version: 12.0.0.qualifier
+Bundle-Version: 12.0.1.qualifier
 Bundle-Activator: org.zend.php.server.internal.core.ServersCore
 Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.core.runtime,
