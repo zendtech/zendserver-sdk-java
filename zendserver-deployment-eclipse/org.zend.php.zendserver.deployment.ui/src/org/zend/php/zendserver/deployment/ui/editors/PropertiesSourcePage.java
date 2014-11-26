@@ -1,24 +1,12 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.zend.php.zendserver.deployment.ui.Activator;
+import org.eclipse.jdt.internal.ui.propertiesfileeditor.PropertiesFileEditor;
 import org.zend.php.zendserver.deployment.ui.HelpContextIds;
-import org.zend.php.zendserver.deployment.ui.editors.propertiestext.PropertiesColorManager;
-import org.zend.php.zendserver.deployment.ui.editors.propertiestext.PropertiesFileSourceViewerConfiguration;
 
-public class PropertiesSourcePage extends SourcePage {
+public class PropertiesSourcePage extends PropertiesFileEditor {
 
-	public PropertiesSourcePage(String pageId, DeploymentDescriptorEditor editor) {
-		super(pageId, editor);
+	public PropertiesSourcePage() {
 		setHelpContextId(HelpContextIds.DEPLOYMENT_PROPERTIES_TAB);
-		setDocumentProvider(editor.getDocumentProvider());
-		PropertiesFileSourceViewerConfiguration a = new PropertiesFileSourceViewerConfiguration(
-				new PropertiesColorManager(), Activator.getDefault().getPreferenceStore());
-		setSourceViewerConfiguration(a);
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
 	}
 
 }

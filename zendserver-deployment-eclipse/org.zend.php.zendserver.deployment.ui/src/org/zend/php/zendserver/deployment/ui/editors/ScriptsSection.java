@@ -110,7 +110,7 @@ public class ScriptsSection {
 	private void createScript(final String scriptName, IProgressMonitor monitor,
 			StatusChangeListener listener) throws CoreException, IOException {
 		File projLocation = editor.getProject().getLocation().toFile();
-		IDocument document = editor.getDocumentProvider().getDocument(editor.getPropertiesInput());
+		IDocument document = editor.getPropertiesDocument();
 		final ZendProject zp = new ZendProject(projLocation,
 				new EclipseMappingModelLoader(document));
 		zp.addStatusChangeListener(listener);

@@ -33,8 +33,7 @@ public class DeploymentPropertiesPage extends DescriptorEditorPage {
 	public void setActive(boolean active) {
 		if (active) {
 			DeploymentDescriptorEditor editor = ((DeploymentDescriptorEditor) getEditor());
-			IDocument document = editor.getDocumentProvider().getDocument(
-					editor.getPropertiesInput());
+			IDocument document = editor.getPropertiesDocument();
 			InputStream stream = new ByteArrayInputStream(document.get().getBytes());
 			try {
 				model.getMappingModel().load(stream);

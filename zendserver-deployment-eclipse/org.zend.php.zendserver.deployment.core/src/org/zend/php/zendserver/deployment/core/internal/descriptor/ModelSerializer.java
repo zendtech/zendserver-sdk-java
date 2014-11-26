@@ -141,9 +141,7 @@ public class ModelSerializer {
 			}
 			
 			String value = stripWhitespaces(s);
-			if (value != null) {
-				obj.set(feature, value);
-			}
+			obj.set(feature, value);
 		}
 		
 		if (obj instanceof IModelContainer) {

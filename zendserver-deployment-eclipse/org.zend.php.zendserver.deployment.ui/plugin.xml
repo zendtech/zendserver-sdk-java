@@ -108,12 +108,6 @@
       </content-type>
    </extension>
    <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.zend.php.zendserver.deployment.ui.DeploymentUIPreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
          point="org.eclipse.ui.startup">
       <startup
             class="org.zend.php.zendserver.deployment.ui.Activator"></startup>
@@ -182,5 +176,16 @@
          point="org.eclipse.ui.startup">
       <startup
             class="org.zend.php.zendserver.deployment.ui.ServersMigrationStartup"></startup>
+   </extension>
+   <extension
+         point="org.eclipse.wst.sse.ui.sourcevalidation">
+      <validator
+            scope="total"
+            id="org.zend.php.zendserver.deployment.ui.editors.text.DescriptorReconcilingStrategy"
+            class="org.zend.php.zendserver.deployment.ui.editors.text.DescriptorReconcilingStrategy">
+      <contentTypeIdentifier id="org.eclipse.core.runtime.xml">
+         <partitionType id="org.eclipse.wst.xml.XML_DEFAULT"/>
+      </contentTypeIdentifier>
+      </validator>
    </extension>
 </plugin>

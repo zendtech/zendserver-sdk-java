@@ -30,13 +30,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.zend.php.zendserver.deployment.core.IncrementalDeploymentBuilder;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
@@ -47,7 +47,6 @@ import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
 import org.zend.php.zendserver.deployment.core.internal.descriptor.Feature;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Messages;
 import org.zend.php.zendserver.deployment.ui.editors.DescriptorEditorPage.FormDecoration;
 import org.zend.sdklib.mapping.MappingModelFactory;
@@ -59,8 +58,8 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	public static final String TOOLBAR_LOCATION_URI = "toolbar:org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor"; //$NON-NLS-1$
 	
-	private SourcePage descriptorSourcePage;
-	private SourcePage propertiesSourcePage;
+	private TextEditor descriptorSourcePage;
+	private TextEditor propertiesSourcePage;
 	
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
@@ -81,16 +80,20 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			if (type == ProjectType.APPLICATION || type == ProjectType.UNKNOWN) {
 				addPage(automationPage);
 			}
+			
 			addMappingPages();
-			descriptorSourcePage = new SourcePage("source", this, HelpContextIds.DEPLOYMENT_XML_TAB); //$NON-NLS-1$
-			addPage(descriptorSourcePage, getEditorInput());
+			
+			// add deployment.xml page
+			descriptorSourcePage = new SourcePage();
+			int pageIndex = addPage(descriptorSourcePage, getEditorInput());
+			setPageText(pageIndex, getEditorInput().getName());
+			initDescriptor(getEditorInput());
 		} catch (PartInitException e) {
 			//
 		}
 	}
 
 	private IDescriptorContainer fModel;
-	private IDocumentProvider fDocumentProvider;
 	private String iconLocation = Activator.IMAGE_DESCRIPTOR_OVERVIEW;
 
 	private FileEditorInput propertiesInput;
@@ -101,7 +104,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	public DeploymentDescriptorEditor() {
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		fDocumentProvider = new DescriptorDocumentProvider();
 	}
 
 	/**
@@ -157,44 +159,19 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		
-		initDescriptor(editorInput);
-		initMapping();
-		final IFile file = fModel.getFile();
-		if (file != null) {
-			setPartName(file.getProject().getName());
-		}
+		setPartName(fileInput.getFile().getProject().getName());
 	}
 	
-	private void reinit(final IFile newFile) {
-		fModel = DescriptorContainerManager.getService()
-				.openDescriptorContainer(newFile);
-		FileEditorInput input = new FileEditorInput(newFile);
-		try {
-			super.init(getEditorSite(), input);
-			initDescriptor(input);
-			initMapping();
-		} catch (PartInitException e) {
-			Activator.log(e);
-			close(false);
-		}
-		getSite().getShell().getDisplay().syncExec(new Runnable() {
-
-			public void run() {
-				setPartName(newFile.getProject().getName());
-			}
-			
-		});
-	}
-
 	private void initDescriptor(IEditorInput editorInput) throws PartInitException {
 		try {
-			fDocumentProvider.connect(editorInput);
+			descriptorSourcePage.getDocumentProvider().connect(editorInput);
 		} catch (CoreException e) {
 			throw new PartInitException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
 
-		fModel.connect(getDocument());
+		fModel.connect(descriptorSourcePage.getDocumentProvider().getDocument(
+				editorInput));
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 
 		fModel.getDescriptorModel().addListener(
@@ -257,13 +234,13 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		IFile propsFile = (IFile) fModel.getMappingFile();
 		propertiesInput = new FileEditorInput(propsFile);
 		try {
-			fDocumentProvider.connect(getPropertiesInput());
+			propertiesSourcePage.getDocumentProvider().connect(
+					getPropertiesInput());
 		} catch (CoreException e) {
 			throw new PartInitException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
-		fModel.initializeMappingModel(fDocumentProvider
-				.getDocument(propertiesInput));
+		fModel.initializeMappingModel(getPropertiesDocument());
 	}
 
 	protected void handleModelUpdate(final IDeploymentDescriptor descr) {
@@ -461,6 +438,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 	private void addMappingPages() {
 		try {
 			if (!isMappingAvailable()) {
+				propertiesSourcePage = new PropertiesSourcePage();
 				initMapping();
 			}
 		} catch (PartInitException e) {
@@ -481,10 +459,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 						addPage(index, new DeploymentPropertiesPage(fModel,
 								DeploymentDescriptorEditor.this, "package", //$NON-NLS-1$
 								Messages.DeploymentDescriptorEditor_Package));
-						propertiesSourcePage = new PropertiesSourcePage(
-								"propertiesSource", DeploymentDescriptorEditor.this); //$NON-NLS-1$
+						
 						addPage(++index, propertiesSourcePage,
 								getPropertiesInput());
+						setPageText(index, getPropertiesInput().getName());
 					} catch (PartInitException e) {
 						Activator.log(e);
 					}
@@ -503,14 +481,6 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 
 	public IProject getProject() {
 		return fModel.getProject();
-	}
-
-	public IDocument getDocument() {
-		return fDocumentProvider.getDocument(getEditorInput());
-	}
-
-	public IDocumentProvider getDocumentProvider() {
-		return fDocumentProvider;
 	}
 
 	public FileEditorInput getPropertiesInput() {
@@ -559,6 +529,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		String message = marker.getAttribute(IMarker.MESSAGE, null);
 		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
 		return new FormDecoration(message, severity);
+	}
+
+	public IDocument getPropertiesDocument() {
+		return propertiesSourcePage.getDocumentProvider().getDocument(propertiesInput);
 	}
 
 }
