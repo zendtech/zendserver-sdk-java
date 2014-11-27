@@ -142,7 +142,7 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 		Composite client = isSection ? toolkit.createComposite(general)
 				: general;
 		version = new VersionControl(getVersionModes(), input);
-		version.createContents(client, toolkit);
+		version.createContents(client, mform);
 		EditorField[] versionFields = version.getFields();
 		for (EditorField ef : versionFields) {
 			fields.add(ef);
@@ -199,7 +199,7 @@ public abstract class DependencyDetailsPage extends DescriptorDetailsPage {
 		hint.setLayoutData(data);
 		name = (TextAssistField) fields.add(new TextAssistField(input,
 				DeploymentDescriptorPackage.DEPENDENCY_NAME, nameLabel,
-				provider.getNames()));
+				provider.getNames(), mform.getMessageManager()));
 		name.create(hint, toolkit);
 		toolkit.paintBordersFor(hint);
 	}

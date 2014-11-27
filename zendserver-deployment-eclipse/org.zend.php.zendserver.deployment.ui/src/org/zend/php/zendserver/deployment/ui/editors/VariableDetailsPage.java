@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -62,9 +63,11 @@ public class VariableDetailsPage extends DescriptorDetailsPage {
 		s1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		s1.setClient(client);
 		
-		EditorField name = fields.add(new TextField(null, DeploymentDescriptorPackage.VAR_NAME, Messages.VariableDetailsPage_Name));
+		IMessageManager mmng = mform.getMessageManager();
+		
+		EditorField name = fields.add(new TextField(null, DeploymentDescriptorPackage.VAR_NAME, Messages.VariableDetailsPage_Name, mmng));
 		name.create(client, toolkit);
-		EditorField value = fields.add(new TextField(null, DeploymentDescriptorPackage.VALUE, Messages.VariableDetailsPage_Value));
+		EditorField value = fields.add(new TextField(null, DeploymentDescriptorPackage.VALUE, Messages.VariableDetailsPage_Value, mmng));
 		value.create(client, toolkit);
 		
 		toolkit.paintBordersFor(client);

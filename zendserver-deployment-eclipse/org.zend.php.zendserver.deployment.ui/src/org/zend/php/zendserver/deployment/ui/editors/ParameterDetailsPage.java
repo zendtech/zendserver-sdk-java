@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -85,7 +86,9 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL_GRAB));
 		section.setClient(client);
 		
-		EditorField id = fields.add(new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id));
+		IMessageManager mmng = mform.getMessageManager();
+		
+		EditorField id = fields.add(new TextField(null, DeploymentDescriptorPackage.ID, Messages.ParameterDetailsPage_Id, mmng));
 		id.create(client, toolkit);
 		((GridData)id.getText().getLayoutData()).widthHint = 100;
 		
@@ -107,11 +110,11 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		EditorField required = (CheckboxField) fields.add(new CheckboxField(null, DeploymentDescriptorPackage.REQUIRED, Messages.ParameterDetailsPage_Required));
 		required.create(client, toolkit);
 		
-		EditorField display = fields.add(new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display));
+		EditorField display = fields.add(new TextField(null, DeploymentDescriptorPackage.DISPLAY, Messages.ParameterDetailsPage_Display, mmng));
 		display.create(client, toolkit);
 		((GridData)display.getText().getLayoutData()).widthHint = 100;
 		
-		defaultValue = fields.add(new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue));
+		defaultValue = fields.add(new TextField(null, DeploymentDescriptorPackage.DEFAULTVALUE, Messages.ParameterDetailsPage_DefaultValue, mmng));
 		defaultValue.create(client, toolkit);
 		((GridData)defaultValue.getText().getLayoutData()).widthHint = 100;
 		
@@ -119,7 +122,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 		defaultCombo.create(client, toolkit);
 		((GridData)defaultCombo.getText().getLayoutData()).widthHint = 100;
 		
-		validation = (ListField) fields.add(new ListField(null, DeploymentDescriptorPackage.VALIDATION, Messages.ParameterDetailsPage_ValidValues));
+		validation = (ListField) fields.add(new ListField(null, DeploymentDescriptorPackage.VALIDATION, Messages.ParameterDetailsPage_ValidValues, mmng));
 		validation.create(client, toolkit);
 		((GridData)validation.getText().getLayoutData()).heightHint = 100;
 		((GridData)validation.getText().getLayoutData()).widthHint = 100;
@@ -146,7 +149,7 @@ public class ParameterDetailsPage extends DescriptorDetailsPage {
 			}
 		});
 		
-		EditorField description = fields.add(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description));
+		EditorField description = fields.add(new TextField(null, DeploymentDescriptorPackage.PARAM_DESCRIPTION, Messages.ParameterDetailsPage_Description, mmng));
 		description.create(client, toolkit);
 		GridData gd = ((GridData)description.getText().getLayoutData());
 		gd.heightHint = 100;

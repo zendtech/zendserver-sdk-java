@@ -10,6 +10,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
 import org.zend.php.zendserver.deployment.core.descriptor.IModelObject;
@@ -154,7 +156,9 @@ public class VersionControl {
 	/**
 	 * @wbp.parser.entryPoint
 	 */
-	public void createContents(Composite client, FormToolkit toolkit) {
+	public void createContents(Composite client, IManagedForm mform) {
+		FormToolkit toolkit = mform.getToolkit();
+		
 		client.setLayout(new GridLayout(1, false));
 		client.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -172,12 +176,12 @@ public class VersionControl {
 		versions.setLayout(new GridLayout(1, false));
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		versions.setLayoutData(gd);
-		addVersionFields(toolkit, versions);
+		addVersionFields(toolkit, versions, mform.getMessageManager());
 
 		// refresh();
 	}
 
-	protected void addVersionFields(FormToolkit toolkit, Composite versions) {
+	protected void addVersionFields(FormToolkit toolkit, Composite versions, IMessageManager mmng) {
 
 		range = null;
 		if ((modes & RANGE) == RANGE) {
@@ -188,10 +192,10 @@ public class VersionControl {
 
 			minField = new TextField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_MIN,
-					Messages.VersionControl_Minimum);
+					Messages.VersionControl_Minimum, mmng);
 			maxField = new TextField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_MAX,
-					Messages.VersionControl_Maximum);
+					Messages.VersionControl_Maximum, mmng);
 			minField.create(range, toolkit);
 			maxField.create(range, toolkit);
 
@@ -201,7 +205,7 @@ public class VersionControl {
 		if ((modes & EXCLUDE) == EXCLUDE) {
 			excludeField = new ListField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_EXCLUDE,
-					Messages.VersionControl_Exclude);
+					Messages.VersionControl_Exclude, mmng);
 			excludeField.create(range, toolkit);
 		}
 
@@ -213,7 +217,7 @@ public class VersionControl {
 
 			conflictsField = new TextField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_CONFLICTS,
-					Messages.VersionControl_0);
+					Messages.VersionControl_0, mmng);
 			conflictsField.create(conflicts, toolkit);
 			
 
@@ -227,7 +231,7 @@ public class VersionControl {
 			equals.setLayoutData(data);
 			equalsField = new TextField(null,
 					DeploymentDescriptorPackage.DEPENDENCY_EQUALS,
-					Messages.VersionControl_0);
+					Messages.VersionControl_0, mmng);
 			equalsField.create(equals, toolkit);
 			
 

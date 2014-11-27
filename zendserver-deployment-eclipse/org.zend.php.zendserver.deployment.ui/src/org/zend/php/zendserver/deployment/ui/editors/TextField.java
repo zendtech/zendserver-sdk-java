@@ -1,8 +1,6 @@
 package org.zend.php.zendserver.deployment.ui.editors;
 
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -13,6 +11,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.zend.php.zendserver.deployment.core.descriptor.ChangeEvent;
@@ -31,20 +30,21 @@ public class TextField implements EditorField {
 	protected IModelObject target;
 	protected Feature key;
 	protected boolean isRefresh;
-	protected ControlDecoration controlDecoration;
 	protected boolean linkLabel;
 	protected int style;
+	protected IMessageManager mmng;
 	protected IDescriptorChangeListener modelChangeListener;
 	
-	public TextField(IModelObject target,Feature key, String label) {
-		this(target, key, label, SWT.SINGLE, false);
+	public TextField(IModelObject target,Feature key, String label, IMessageManager mmng) {
+		this(target, key, label, SWT.SINGLE, false, mmng);
 	}
 	
-	public TextField(IModelObject target,Feature key, String label, int style, boolean linkLabel) {
+	public TextField(IModelObject target,Feature key, String label, int style, boolean linkLabel, IMessageManager mmng) {
 		this.key = key;
 		this.labelTxt = label;
 		this.style = style;
 		this.linkLabel = linkLabel;
+		this.mmng = mmng;
 		setInput(target);
 	}
 	
@@ -70,13 +70,8 @@ public class TextField implements EditorField {
 	protected void createControls(Composite parent, FormToolkit toolkit) {
 		createLabel(parent, toolkit);
 		createTextControl(parent, toolkit);
-		createControlDecoration();	
 	}
 	
-	protected void createControlDecoration() {
-		controlDecoration = new ControlDecoration(text, SWT.LEFT | SWT.TOP);
-	}
-
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		if (labelTxt == null) {
 			return;
@@ -101,24 +96,18 @@ public class TextField implements EditorField {
 	
 	public void setErrorMessage(String message) {
 		if (message == null) {
-			controlDecoration.hide();
-			return;
+			mmng.removeMessage(this, text);
+		} else {
+			mmng.addMessage(this, message, null, IMessageProvider.ERROR, text);
 		}
-		FieldDecoration img = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
-		controlDecoration.setImage(img.getImage());
-		controlDecoration.setDescriptionText(message);
-		controlDecoration.show();
 	}
 	
 	public void setWarningMessage(String message) {
 		if (message == null) {
-			controlDecoration.hide();
-			return;
+			mmng.removeMessage(this, text);
+		} else {
+			mmng.addMessage(this, message, null, IMessageProvider.WARNING, text);
 		}
-		FieldDecoration img = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
-		controlDecoration.setImage(img.getImage());
-		controlDecoration.setDescriptionText(message);
-		controlDecoration.show();
 	}
 	
 	protected void createActions() {

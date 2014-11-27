@@ -38,7 +38,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.part.FileEditorInput;
 import org.zend.php.zendserver.deployment.core.descriptor.DeploymentDescriptorPackage;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -56,12 +55,6 @@ public class ScriptsSection {
 	
 	public ScriptsSection(DeploymentDescriptorEditor editor) {
 		this.editor = editor;
-		IDeploymentDescriptor descr = editor.getModel();
-		
-		scriptsDir = new TextField(descr,
-				DeploymentDescriptorPackage.SCRIPTSDIR,
-				Messages.OverviewPage_Scriptsdir);
-		
 	}
 	
 	private void openScript(final String name) {
@@ -167,7 +160,11 @@ public class ScriptsSection {
 		section.setClient(sectionClient);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.BOTTOM));
 		sectionClient.setLayout(new GridLayout(3, false));
-		
+
+		scriptsDir = new TextField(editor.getModel(),
+				DeploymentDescriptorPackage.SCRIPTSDIR,
+				Messages.OverviewPage_Scriptsdir,
+				managedForm.getMessageManager());
 		scriptsDir.create(sectionClient, toolkit);
 
 		Label label = toolkit.createLabel(sectionClient,

@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
@@ -25,13 +26,13 @@ public class FileField extends TextField {
 	private IContainer root;
 	private IDescriptorContainer fModel;
 	
-	public FileField(IDeploymentDescriptor descriptor, Feature key, String label, IContainer root) {
-		super(descriptor, key, label);
+	public FileField(IDeploymentDescriptor descriptor, Feature key, String label, IContainer root, IMessageManager mmng) {
+		super(descriptor, key, label, mmng);
 		this.root = root;
 	}
 	
-	public FileField(IDescriptorContainer model, Feature key, String label, IContainer root) {
-		this(model.getDescriptorModel(), key, label, root);
+	public FileField(IDescriptorContainer model, Feature key, String label, IContainer root, IMessageManager mmng) {
+		this(model.getDescriptorModel(), key, label, root, mmng);
 		this.fModel = model;
 	}
 

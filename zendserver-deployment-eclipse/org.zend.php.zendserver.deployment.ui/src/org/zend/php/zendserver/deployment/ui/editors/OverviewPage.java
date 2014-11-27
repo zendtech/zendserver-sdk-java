@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -317,10 +318,11 @@ public class OverviewPage extends DescriptorEditorPage {
 	private void createGeneralInformationSection(IManagedForm managedForm,
 			Composite body) {
 		IDeploymentDescriptor descr = editor.getModel();
+		IMessageManager mmng = managedForm.getMessageManager();
 
 		name = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_NAME,
-				Messages.OverviewPage_Name));
+				Messages.OverviewPage_Name, mmng));
 		type = addField(new ComboField(descr,
 				DeploymentDescriptorPackage.PKG_TYPE,
 				Messages.OverviewPage_ProjectType, SWT.READ_ONLY,
@@ -329,36 +331,36 @@ public class OverviewPage extends DescriptorEditorPage {
 				ProjectType.LIBRARY.getName() });
 		summary = addField(new TextField(descr,
 				DeploymentDescriptorPackage.SUMMARY,
-				Messages.OverviewPage_Summary));
+				Messages.OverviewPage_Summary, mmng));
 		description = addField(new TextField(descr,
 				DeploymentDescriptorPackage.PKG_DESCRIPTION,
 				Messages.OverviewPage_Description, SWT.MULTI | SWT.WRAP
-						| SWT.V_SCROLL | SWT.RESIZE, false));
+						| SWT.V_SCROLL | SWT.RESIZE, false, mmng));
 		releaseVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_RELEASE,
-				Messages.OverviewPage_0));
+				Messages.OverviewPage_0, mmng));
 		apiVersion = addField(new TextField(descr,
 				DeploymentDescriptorPackage.VERSION_API,
-				Messages.OverviewPage_1));
+				Messages.OverviewPage_1, mmng));
 		healthcheck = addField(new TextField(descr,
-				DeploymentDescriptorPackage.HEALTHCHECK, Messages.OverviewPage_3));
+				DeploymentDescriptorPackage.HEALTHCHECK, Messages.OverviewPage_3, mmng));
 		license = addField(new FileField(descr,
 				DeploymentDescriptorPackage.EULA,
-				Messages.OverviewPage_4, editor.getProject()));
+				Messages.OverviewPage_4, editor.getProject(), mmng));
 		icon = addField(new FileField(descr, DeploymentDescriptorPackage.ICON,
-				Messages.OverviewPage_Icon, editor.getProject()));
+				Messages.OverviewPage_Icon, editor.getProject(), mmng));
 		docRoot = addField(new FolderField(fModel,
 				DeploymentDescriptorPackage.DOCROOT,
-				Messages.OverviewPage_Docroot, editor.getProject()));
+				Messages.OverviewPage_Docroot, editor.getProject(), mmng));
 		libDir = addField(new TextField(descr,
 				DeploymentDescriptorPackage.LIBDIR,
-				Messages.OverviewPage_Libdir));
+				Messages.OverviewPage_Libdir, mmng));
 		updateUrl = addField(new TextField(descr,
 				DeploymentDescriptorPackage.UPDATE_URL,
-				Messages.OverviewPage_UpdateUrl));
+				Messages.OverviewPage_UpdateUrl, mmng));
 		appDir = addField(new TextField(descr,
 				DeploymentDescriptorPackage.APPDIR,
-				Messages.OverviewPage_Appdir));
+				Messages.OverviewPage_Appdir, mmng));
 
 		FormToolkit toolkit = managedForm.getToolkit();
 		final Section section = toolkit.createSection(body, Section.DESCRIPTION
