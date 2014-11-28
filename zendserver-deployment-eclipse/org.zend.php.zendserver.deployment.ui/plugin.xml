@@ -183,7 +183,7 @@
             scope="total"
             id="org.zend.php.zendserver.deployment.ui.editors.text.DescriptorReconcilingStrategy"
             class="org.zend.php.zendserver.deployment.ui.editors.text.DescriptorReconcilingStrategy">
-      <contentTypeIdentifier id="org.eclipse.core.runtime.xml">
+      <contentTypeIdentifier id="org.zend.php.zendserver.deployment.ui.deploymentDescriptor">
          <partitionType id="org.eclipse.wst.xml.XML_DEFAULT"/>
       </contentTypeIdentifier>
       </validator>
