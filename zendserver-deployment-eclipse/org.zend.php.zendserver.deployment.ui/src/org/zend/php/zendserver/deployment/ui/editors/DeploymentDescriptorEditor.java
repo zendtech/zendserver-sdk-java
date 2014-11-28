@@ -87,7 +87,7 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 			descriptorSourcePage = new SourcePage();
 			int pageIndex = addPage(descriptorSourcePage, getEditorInput());
 			setPageText(pageIndex, getEditorInput().getName());
-			initDescriptor(getEditorInput());
+			initDescriptor();
 		} catch (PartInitException e) {
 			//
 		}
@@ -162,16 +162,15 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		setPartName(fileInput.getFile().getProject().getName());
 	}
 	
-	private void initDescriptor(IEditorInput editorInput) throws PartInitException {
+	private void initDescriptor() throws PartInitException {
 		try {
-			descriptorSourcePage.getDocumentProvider().connect(editorInput);
+			descriptorSourcePage.getDocumentProvider().connect(getEditorInput());
 		} catch (CoreException e) {
 			throw new PartInitException(new Status(IStatus.ERROR,
 					Activator.PLUGIN_ID, e.getMessage(), e));
 		}
 
-		fModel.connect(descriptorSourcePage.getDocumentProvider().getDocument(
-				editorInput));
+		fModel.connect(getDocument());
 		changeIcon(fModel.getDescriptorModel().getIconLocation());
 
 		fModel.getDescriptorModel().addListener(
@@ -529,6 +528,10 @@ public class DeploymentDescriptorEditor extends FormEditor implements
 		String message = marker.getAttribute(IMarker.MESSAGE, null);
 		int severity = marker.getAttribute(IMarker.SEVERITY, 0);
 		return new FormDecoration(message, severity);
+	}
+
+	public IDocument getDocument() {
+		return descriptorSourcePage.getDocumentProvider().getDocument(getEditorInput());
 	}
 
 	public IDocument getPropertiesDocument() {

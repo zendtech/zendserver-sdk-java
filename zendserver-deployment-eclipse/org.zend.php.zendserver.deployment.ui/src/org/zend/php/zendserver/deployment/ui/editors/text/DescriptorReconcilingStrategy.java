@@ -3,8 +3,6 @@ package org.zend.php.zendserver.deployment.ui.editors.text;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -12,8 +10,6 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.wst.sse.ui.internal.reconcile.validator.ISourceValidator;
-import org.eclipse.wst.validation.internal.core.ValidationException;
 import org.eclipse.wst.validation.internal.provisional.core.IReporter;
 import org.eclipse.wst.validation.internal.provisional.core.IValidationContext;
 import org.eclipse.wst.validation.internal.provisional.core.IValidator;
@@ -23,47 +19,27 @@ import org.zend.php.zendserver.deployment.core.internal.validation.DescriptorVal
 import org.zend.php.zendserver.deployment.core.internal.validation.ValidationStatus;
 import org.zend.php.zendserver.deployment.ui.editors.DeploymentDescriptorEditor;
 
-public class DescriptorReconcilingStrategy implements ISourceValidator, IValidator {
+public class DescriptorReconcilingStrategy implements IValidator {
 	
-	private IDocument document;
 	private DescriptorSemanticValidator validator = new DescriptorSemanticValidator();
 
 	public DescriptorReconcilingStrategy() {
 	}
 
 	@Override
-	public void cleanup(IReporter arg0) {
+	public void cleanup(IReporter reporter) {
 	}
 
-	@Override
-	public void validate(IValidationContext helper, IReporter reporter)
-			throws ValidationException {
-		validate(null, helper, reporter);
-		
-	}
-
-	@Override
-	public void connect(IDocument document) {
-		this.document = document; 
-	}
-
-	@Override
-	public void disconnect(IDocument document) {
-		this.document = null;
-	}
-
-	@Override
-	public void validate(IRegion dirtyRegion, IValidationContext helper,
-			IReporter reporter) {
-		DeploymentDescriptorEditor fEditor = findEditor(helper);
-		if (fEditor == null)
+	public void validate(IValidationContext helper, IReporter reporter) {
+		DeploymentDescriptorEditor editor = findEditor(helper);
+		if (editor == null)
 			return;
 		
-		IDescriptorContainer container = fEditor.getDescriptorContainer();
+		IDescriptorContainer container = editor.getDescriptorContainer();
 		container.load();
 		
 		validator.setFile(container.getFile());
-		ValidationStatus[] statuses = validator.validate(container.getDescriptorModel(), document);
+		ValidationStatus[] statuses = validator.validate(container.getDescriptorModel(), editor.getDocument());
 		DescriptorValidator.reportProblems(container.getFile(), statuses);
 	}
 
