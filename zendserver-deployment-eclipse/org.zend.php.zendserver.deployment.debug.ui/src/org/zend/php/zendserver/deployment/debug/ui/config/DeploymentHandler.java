@@ -334,8 +334,9 @@ public class DeploymentHandler {
 				if (helper.isDevelopmentModeEnabled()) {
 					MonitorManager.addFilter(helper.getTargetId(), helper
 							.getBaseURL().toString());
-					if (helper.getOperationType() == IDeploymentHelper.DEPLOY
-							&& LaunchUtils.isAutoDeployAvailable()) {
+					if (LaunchUtils.isAutoDeployAvailable()
+							&& (helper.getOperationType() == IDeploymentHelper.DEPLOY || helper
+									.getOperationType() == IDeploymentHelper.UPDATE)) {
 						job = getAutoDeployJob(helper, project);
 					}
 				}
