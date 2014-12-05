@@ -37,7 +37,6 @@ import org.zend.core.notifications.ui.IActionListener;
 import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.dialogs.ReadMoreDialog;
-import org.zend.core.notifications.util.FontName;
 import org.zend.core.notifications.util.Fonts;
 import org.zend.php.zendserver.monitor.core.EventType;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
@@ -239,7 +238,7 @@ public class EventBody implements IBody {
 	private void createDescription(Composite composite,
 			NotificationSettings settings) {
 		Link label = new Link(composite, SWT.WRAP);
-		label.setFont(Fonts.get(FontName.DEFAULT));
+		label.setFont(Fonts.DEFAULT.getFont());
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
 		label.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLACK));
@@ -260,7 +259,7 @@ public class EventBody implements IBody {
 		int width = Math.max(settings.getWidth(),
 				NotificationSettings.DEFAULT_WIDTH);
 		Point size = label.computeSize(width, SWT.DEFAULT);
-		int height = Fonts.get(FontName.DEFAULT).getFontData()[0].getHeight();
+		int height = Fonts.DEFAULT.getFont().getFontData()[0].getHeight();
 		if (text != null && size.y > 5 * height) {
 			int cut = (int) (text.length() * ((double) (5 * height) / (double) size.y));
 			String shortText = text.substring(0, cut);
