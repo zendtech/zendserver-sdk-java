@@ -8,6 +8,8 @@
 package org.zend.sdkcli.internal.commands;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 
 import org.zend.sdkcli.internal.options.Option;
@@ -37,8 +39,13 @@ public class DeployApplicationCommand extends AbstractDeploymentCommand {
 	}
 
 	@Option(opt = VHOST, required = false, description = "Specify the virtual host which should be used. If a virtual host with the specified name does not exist, it will be created. By default if virtual host is not specified then the default one will be used (marked as <default-server> in the application url)", argName = "vHost")
-	public String getVhost() {
-		return getValue(VHOST);
+	public URL getVhost() {
+		try {
+			return new URL(getValue(VHOST));
+		} catch (MalformedURLException e) {
+			getLogger().error(e);
+		}
+		return null;
 	}
 
 	public boolean isVhost() {
