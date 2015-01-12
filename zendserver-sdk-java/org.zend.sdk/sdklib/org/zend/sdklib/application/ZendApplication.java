@@ -306,17 +306,20 @@ public class ZendApplication extends ZendConnection {
 				boolean vhost = vhostURL != null;
 				// Update parameters for Zend Server version >= 6.2.0 base on
 				// virtual hosts
-				ZendServerVersion version = ZendServerVersion
-						.byName(getTargetById(targetId).getProperty(
-								IZendTarget.SERVER_VERSION));
-				if (version.compareTo(v6_2_0) >= 0) {
-					VhostInfo virtualHost = getVirtualHost(targetId, baseUrl);
-					if (virtualHost != null) {
-						defaultServer = virtualHost.isDefaultVhost();
-						vhost = false;
-					} else {
-						vhost = true;
-						defaultServer = false;
+				IZendTarget target = getTargetById(targetId);
+				if (target != null) {
+					ZendServerVersion version = ZendServerVersion.byName(target
+							.getProperty(IZendTarget.SERVER_VERSION));
+					if (version.compareTo(v6_2_0) >= 0) {
+						VhostInfo virtualHost = getVirtualHost(targetId,
+								baseUrl);
+						if (virtualHost != null) {
+							defaultServer = virtualHost.isDefaultVhost();
+							vhost = false;
+						} else {
+							vhost = true;
+							defaultServer = false;
+						}
 					}
 				}
 				ApplicationInfo result = client.applicationDeploy(
