@@ -765,8 +765,17 @@ public class ZendApplication extends ZendConnection {
 					if (baseUrl.equals(vhostUrl.toString())) {
 						return vhostInfo;
 					}
-					// If it is https with default port then try without port
+					// If it is https with a default port then try without a
+					// port
 					if (vhostInfo.isSSL() && port == 443) {
+						vhostUrl = new URL(protocol, host, -1,
+								applicationUrl.getFile());
+						if (baseUrl.equals(vhostUrl.toString())) {
+							return vhostInfo;
+						}
+					}
+					// If it is http with a default port then try without a port
+					if (!vhostInfo.isSSL() && port == 80) {
 						vhostUrl = new URL(protocol, host, -1,
 								applicationUrl.getFile());
 						if (baseUrl.equals(vhostUrl.toString())) {
