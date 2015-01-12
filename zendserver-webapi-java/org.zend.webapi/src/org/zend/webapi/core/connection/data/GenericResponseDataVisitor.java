@@ -357,11 +357,11 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	public boolean visit(LibraryList libraryList) {
 		return true;
 	}
-	
+
 	public boolean preVisit(LibraryFile libraryFile) {
 		return true;
 	}
-	
+
 	public boolean visit(LibraryFile libraryFile) {
 		return true;
 	}
@@ -379,6 +379,22 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	}
 
 	public boolean preVisit(ApiKey apiKey) {
+		return true;
+	}
+
+	public boolean visit(VhostsList vhostsList) {
+		return true;
+	}
+
+	public boolean preVisit(VhostsList vhostsList) {
+		return true;
+	}
+
+	public boolean preVisit(VhostInfo vhostInfo) {
+		return true;
+	}
+
+	public boolean visit(VhostInfo vhostInfo) {
 		return true;
 	}
 

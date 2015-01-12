@@ -18,16 +18,15 @@ public class DeployLaunchJob extends DeploymentLaunchJob {
 	}
 
 	@Override
-	protected ApplicationInfo performOperation(ZendApplication app, String projectPath) {
-		String vHost = helper.getBaseURL().getHost();
-		int port = helper.getBaseURL().getPort();
-		if (port != -1 && port != 80) {
-			vHost += ":" + port; //$NON-NLS-1$
-		}
+	protected ApplicationInfo performOperation(ZendApplication app,
+			String projectPath) {
 		String basePath = helper.getBaseURL().getPath();
-		DeploymentEventsService.getInstance().fireEvent(new DeploymentEvent(helper.getProjectName(), helper.getBaseURL().toString()));
+		DeploymentEventsService.getInstance().fireEvent(
+				new DeploymentEvent(helper.getProjectName(), helper
+						.getBaseURL().toString()));
 		return app.deploy(projectPath, basePath, helper.getTargetId(),
-				helper.getUserParams(), helper.getAppName(), helper.isIgnoreFailures(), vHost,
+				helper.getUserParams(), helper.getAppName(),
+				helper.isIgnoreFailures(), helper.getBaseURL(),
 				helper.isDefaultServer());
 	}
 

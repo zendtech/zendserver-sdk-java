@@ -78,7 +78,12 @@ public class ServiceDispatcher implements IServiceDispatcher {
 				WebApiClient.logError(e);
 				throw e;
 			}
-
+			/*try {
+				System.out.println(handle.getText());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			final DataDigster dataDigster = new DataDigster(request, handle);
 			// digest response
 			final Status status = resource.getStatus();

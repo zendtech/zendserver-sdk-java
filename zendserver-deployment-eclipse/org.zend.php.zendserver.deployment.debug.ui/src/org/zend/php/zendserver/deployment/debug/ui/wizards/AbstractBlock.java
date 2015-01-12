@@ -1,7 +1,6 @@
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -20,7 +19,6 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
 public abstract class AbstractBlock {
 
 	private Composite container;
-	private IDialogSettings dialogSettings;
 
 	protected IStatusChangeListener listener;
 
@@ -50,17 +48,9 @@ public abstract class AbstractBlock {
 	public void setEnabled(boolean enabled) {
 		container.setEnabled(enabled);
 	}
-	
-	public void setDialogSettings(IDialogSettings dialogSettings) {
-		this.dialogSettings = dialogSettings;
-	}
 
 	protected Composite getContainer() {
 		return container;
-	}
-	
-	protected IDialogSettings getDialogSettings() {
-		return dialogSettings;
 	}
 
 	protected IStatusChangeListener getContext() {

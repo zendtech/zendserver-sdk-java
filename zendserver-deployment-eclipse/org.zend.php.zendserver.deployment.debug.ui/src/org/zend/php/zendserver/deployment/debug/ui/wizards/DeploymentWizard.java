@@ -20,13 +20,15 @@ import org.eclipse.jface.wizard.Wizard;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
-import org.zend.php.zendserver.deployment.core.descriptor.IDeploymentDescriptor;
 import org.zend.php.zendserver.deployment.core.descriptor.IDescriptorContainer;
 import org.zend.php.zendserver.deployment.core.descriptor.IParameter;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
+import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.HelpContextIds;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
+import org.zend.sdklib.target.IZendTarget;
 
 public class DeploymentWizard extends Wizard {
 
@@ -46,10 +48,11 @@ public class DeploymentWizard extends Wizard {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
 		DeploymentHelper helper = DeploymentHelper.create(config);
 		String projectName = helper.getProjectName();
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectName);
 		init(project, helper, mode);
 	}
-	
+
 	public DeploymentWizard(IProject project, IDeploymentHelper helper,
 			Mode mode) {
 		setDialogSettings(Activator.getDefault().getDialogSettings());
@@ -62,7 +65,8 @@ public class DeploymentWizard extends Wizard {
 		this.configPage = new ConfigurationPage(helper, getContainer(),
 				getWindowTitle(), description, help);
 		addPage(configPage);
-		List<IParameter> parameters = model.getDescriptorModel().getParameters();
+		List<IParameter> parameters = model.getDescriptorModel()
+				.getParameters();
 		if (parameters != null && parameters.size() > 0) {
 			addPage(parametersPage);
 		}
@@ -85,10 +89,11 @@ public class DeploymentWizard extends Wizard {
 	}
 
 	protected void init(IProject project, IDeploymentHelper helper, Mode mode) {
-		IResource descriptor = project.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
+		IResource descriptor = project
+				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		this.project = project;
-		this.model = DescriptorContainerManager.getService().openDescriptorContainer(
-				(IFile) descriptor);
+		this.model = DescriptorContainerManager.getService()
+				.openDescriptorContainer((IFile) descriptor);
 		setNeedsProgressMonitor(true);
 		String title = null;
 		String image = null;
@@ -114,7 +119,7 @@ public class DeploymentWizard extends Wizard {
 		}
 		this.parametersPage = new ParametersPage(project, helper, title, help);
 		if (helper == null || helper.getProjectName().isEmpty()) {
-			this.helper = createDefaultHelper();
+			this.helper = updateHelper(LaunchUtils.createDefaultHelper(project));
 		} else {
 			this.helper = updateHelper(helper);
 		}
@@ -123,31 +128,40 @@ public class DeploymentWizard extends Wizard {
 	}
 
 	protected IDeploymentHelper updateHelper(IDeploymentHelper toUpdate) {
-		if (toUpdate.getBaseURL() == null) {
-			toUpdate.setBaseURL("http://default/" + project.getName()); //$NON-NLS-1$
-			toUpdate.setDefaultServer(true);
+		// Set default dialog settings
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String targetId = settings.get(DeploymentAttributes.TARGET_ID
+					.getName());
+			if (targetId != null) {
+				IZendTarget target = TargetsManagerService.INSTANCE
+						.getTargetManager().getTargetById(targetId);
+				if (target != null) {
+					toUpdate.setTargetId(targetId);
+					toUpdate.setTargetHost(target.getHost().getHost());
+				}
+			}
+			String developerMode = settings
+					.get(DeploymentAttributes.DEVELOPMENT_MODE.getName());
+			if (developerMode != null) {
+				toUpdate.setDevelopmentMode((Boolean.valueOf(developerMode)));
+			}
+			String warnUpdate = settings.get(DeploymentAttributes.WARN_UPDATE
+					.getName());
+			if (warnUpdate != null) {
+				toUpdate.setWarnUpdate(Boolean.valueOf(warnUpdate));
+			}
+			String ignoreFailure = settings
+					.get(DeploymentAttributes.IGNORE_FAILURES.getName());
+			if (ignoreFailure != null) {
+				toUpdate.setIgnoreFailures(Boolean.valueOf(ignoreFailure));
+			}
 		}
 		String appName = toUpdate.getAppName();
 		if (appName == null || appName.isEmpty()) {
 			toUpdate.setAppName(project.getName());
 		}
 		return toUpdate;
-	}
-
-	protected IDeploymentHelper createDefaultHelper() {
-		IDeploymentHelper helper = new DeploymentHelper();
-		IDescriptorContainer descContainer = DescriptorContainerManager.getService().openDescriptorContainer(project);
-		IDeploymentDescriptor descModel = descContainer.getDescriptorModel();
-		String name = descModel.getName();
-		if (name == null || name.isEmpty()) {
-			name = project.getName();
-		}
-		String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		helper.setBaseURL("http://default/" + trimmedName); //$NON-NLS-1$
-		helper.setDefaultServer(true);
-		helper.setAppName(name);
-		helper.setProjectName(project.getName());
-		return helper;
 	}
 
 	protected IDeploymentHelper createHelper() {

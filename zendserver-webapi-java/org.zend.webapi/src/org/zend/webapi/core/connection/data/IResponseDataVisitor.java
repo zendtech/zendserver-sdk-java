@@ -158,7 +158,7 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(GeneralDetails generalDetails);
 
 	public boolean visit(GeneralDetails generalDetails);
-	
+
 	public boolean preVisit(DebugMode debugMode);
 
 	public boolean visit(DebugMode debugMode);
@@ -190,13 +190,21 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(LibraryFile libraryFile);
 
 	public boolean visit(LibraryFile libraryFile);
-	
+
 	public boolean visit(Bootstrap bootstrap);
-	
+
 	public boolean preVisit(Bootstrap bootstrap);
-		
+
 	public boolean visit(ApiKey apiKey);
-	
+
 	public boolean preVisit(ApiKey apiKey);
+
+	public boolean visit(VhostsList vhostsList);
+
+	public boolean preVisit(VhostsList vhostsList);
+	
+	public boolean visit(VhostInfo vhostInfo);
+
+	public boolean preVisit(VhostInfo vhostInfo);
 
 }

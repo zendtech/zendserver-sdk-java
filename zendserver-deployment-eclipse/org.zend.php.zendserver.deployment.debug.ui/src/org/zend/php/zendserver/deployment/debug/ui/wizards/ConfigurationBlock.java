@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.IAddServerListener;
 import org.zend.php.server.ui.ServersCombo;
-import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.config.DeploymentHelper;
@@ -127,60 +125,12 @@ public class ConfigurationBlock extends AbstractBlock {
 	 */
 	public void initializeFields(IDeploymentHelper helper) {
 		String targetId = helper.getTargetId();
-		IZendTarget target = null;
-		if ((targetId == null || targetId.isEmpty())) {
-			IDialogSettings settings = getDialogSettings();
-			if (settings != null) {
-				targetsCombo.selectByTarget(settings
-						.get(DeploymentAttributes.TARGET_ID.getName()));
-			}
-		} else {
-			targetsCombo.selectByTarget(targetId);
-			String applicationURL = LaunchUtils.getURLFromPreferences(helper
-					.getProjectName());
-			target = targetsCombo.getSelectedTarget();
-			if (target != null && applicationURL != null) {
-				baseUrl.setText(updateURL(target, applicationURL));
-			}
-		}
-		IDialogSettings settings = getDialogSettings();
-		if (helper.getAppId() == -1 && settings != null) {
-			String developerModeVal = settings
-					.get(DeploymentAttributes.DEVELOPMENT_MODE.getName());
-			if (developerModeVal != null) {
-				developmentMode.setSelection(Boolean.valueOf(developerModeVal));
-			} else {
-				developmentMode.setSelection(helper.isDevelopmentModeEnabled());
-			}
-			String warnUpdateVal = settings
-					.get(DeploymentAttributes.WARN_UPDATE.getName());
-			if (warnUpdateVal != null) {
-				warnUpdate.setSelection(Boolean.valueOf(warnUpdateVal));
-			} else {
-				warnUpdate.setSelection(helper.isWarnUpdate());
-			}
-			String ignoreFailureVal = settings
-					.get(DeploymentAttributes.IGNORE_FAILURES.getName());
-			if (ignoreFailureVal != null) {
-				ignoreFailures.setSelection(Boolean.valueOf(ignoreFailureVal));
-			} else {
-				ignoreFailures.setSelection(helper.isIgnoreFailures());
-			}
-		} else {
-			developmentMode.setSelection(helper.isDevelopmentModeEnabled());
-			warnUpdate.setSelection(helper.isWarnUpdate());
-			ignoreFailures.setSelection(helper.isIgnoreFailures());
-		}
-		URL newBaseURL = helper.getBaseURL();
-		if (baseUrl.getText().isEmpty() && newBaseURL != null) {
-			if (target == null) {
-				target = targetsCombo.getSelectedTarget();
-			}
-			if (target != null) {
-				baseUrl.setText(updateURL(target, newBaseURL.toString()));
-			}
-		}
+		targetsCombo.selectByTarget(targetId);
+		developmentMode.setSelection(helper.isDevelopmentModeEnabled());
+		warnUpdate.setSelection(helper.isWarnUpdate());
+		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		applicationNameText.setText(helper.getAppName());
+		baseUrl.setText(helper.getBaseURL().toString());
 		for (IDeployWizardContribution c : contributions) {
 			c.initializeFields(helper);
 		}

@@ -16,10 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.text.MessageFormat;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -30,10 +31,14 @@ import org.zend.sdklib.mapping.IMappingLoader;
 import org.zend.sdklib.mapping.IVariableResolver;
 import org.zend.sdklib.repository.site.Application;
 import org.zend.sdklib.target.ITargetLoader;
+import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
 import org.zend.webapi.core.connection.data.ApplicationsList;
+import org.zend.webapi.core.connection.data.VhostInfo;
+import org.zend.webapi.core.connection.data.VhostsList;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.core.connection.request.NamedInputStream;
 import org.zend.webapi.core.progress.BasicStatus;
 import org.zend.webapi.core.progress.StatusCode;
@@ -47,7 +52,10 @@ import org.zend.webapi.core.progress.StatusCode;
 public class ZendApplication extends ZendConnection {
 
 	public static final String TEMP_PREFIX = "ZendStudioDeployment";
-	
+
+	private final static ZendServerVersion v6_2_0 = ZendServerVersion
+			.byName("6.2.0");
+
 	private IVariableResolver variableResolver;
 
 	public ZendApplication() {
@@ -62,11 +70,10 @@ public class ZendApplication extends ZendConnection {
 		super(loader);
 	}
 
-	public ZendApplication(ITargetLoader loader,
-			IMappingLoader mappingLoader) {
+	public ZendApplication(ITargetLoader loader, IMappingLoader mappingLoader) {
 		super(loader, mappingLoader);
 	}
-	
+
 	public void setVariableResolver(IVariableResolver variableResolver) {
 		this.variableResolver = variableResolver;
 	}
@@ -88,22 +95,69 @@ public class ZendApplication extends ZendConnection {
 			WebApiClient client = getClient(targetId);
 			applicationIds = applicationIds == null ? new String[0]
 					: applicationIds;
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Application Status",
-					"Retrieving Application status(es) from selected target...", -1));
-			ApplicationsList result = client.applicationGetStatus(applicationIds);
-			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Application Status",
+			notifier.statusChanged(new BasicStatus(
+					StatusCode.STARTING,
+					"Application Status",
+					"Retrieving Application status(es) from selected target...",
+					-1));
+			ApplicationsList result = client
+					.applicationGetStatus(applicationIds);
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+					"Application Status",
 					"Application status(es) retrievied successfully. "));
 			return result;
 		} catch (MalformedURLException e) {
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
-					"Error during retrieving application status from '" + targetId
-							+ "'", e));
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Application Status",
+					"Error during retrieving application status from '"
+							+ targetId + "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Application Status",
-					"Error during retrieving application status from '" + targetId
-							+ "'", e));
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Application Status",
+					"Error during retrieving application status from '"
+							+ targetId + "'", e));
 			log.error("Error during retrieving application status from '"
+					+ targetId + "'.");
+			log.error("\tpossible error: " + e.getMessage());
+		}
+		return null;
+	}
+
+	/**
+	 * Provides information about available virtual hosts on the specified
+	 * target.
+	 * 
+	 * @param targetId
+	 * @param vhosts
+	 *            - array of vhost id(s) for which status should be checked
+	 * @return instance of {@link VhostsList} or <code>null</code> if there
+	 *         where problems with connections or target with specified id does
+	 *         not exist
+	 */
+	public VhostsList getVhosts(String targetId, String... vhosts) {
+		try {
+			WebApiClient client = getClient(targetId);
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Virtual Host Status",
+					"Retrieving virtual hosts of selected server...", -1));
+			VhostsList result = client.vhostGetStatus(vhosts);
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+					"Virtual Host Status",
+					"Virtual hosts retrievied successfully. "));
+			return result;
+		} catch (MalformedURLException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Virtual Host Status",
+					"Error during retrieving virtual hosts status from '"
+							+ targetId + "'", e));
+			log.error(e);
+		} catch (WebApiException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Virtual Host Status",
+					"Error during retrieving virtual hosts status from '"
+							+ targetId + "'", e));
+			log.error("Error during retrieving virtual hosts status from '"
 					+ targetId + "'.");
 			log.error("\tpossible error: " + e.getMessage());
 		}
@@ -128,9 +182,9 @@ public class ZendApplication extends ZendConnection {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param vhostName
-	 *            - the name of the vhost to use, if such a virtual host wasn't
-	 *            already created by Zend Server it will be created
+	 * @param vhostURL
+	 *            - virtual host's URL, if such a virtual host wasn't already
+	 *            created by Zend Server it will be created
 	 * @param defaultServer
 	 *            - deploy the application on the default server; the base URL
 	 *            host provided will be ignored and replaced with
@@ -141,7 +195,7 @@ public class ZendApplication extends ZendConnection {
 	 */
 	public ApplicationInfo deploy(String path, String basePath,
 			String targetId, String propertiesFile, String appName,
-			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
+			Boolean ignoreFailures, URL vhostURL, Boolean defaultServer) {
 		Map<String, String> userParams = null;
 		if (propertiesFile != null) {
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
@@ -157,7 +211,7 @@ public class ZendApplication extends ZendConnection {
 		notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 				"Deploying", "Reading user parametes is completed."));
 		return deploy(path, basePath, targetId, userParams, appName,
-				ignoreFailures, vhostName, defaultServer);
+				ignoreFailures, vhostURL, defaultServer);
 	}
 
 	/**
@@ -177,8 +231,8 @@ public class ZendApplication extends ZendConnection {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param vhostName
-	 *            - the name of the vhost to use, if such a virtual host wasn't
+	 * @param vhostURL
+	 *            - the virtual host's URL to use, if such a virtual host wasn't
 	 *            already created by Zend Server it will be created
 	 * @param defaultServer
 	 *            - deploy the application on the default server; the base URL
@@ -191,12 +245,12 @@ public class ZendApplication extends ZendConnection {
 	public ApplicationInfo deploy(InputStream inputStream,
 			Application application, String basePath, String targetId,
 			String propertiesFile, String appName, Boolean ignoreFailures,
-			String vhostName, Boolean defaultServer) {
+			URL vhostURL, Boolean defaultServer) {
 		if (inputStream != null && application != null) {
 			String path = getPackagePath(inputStream, application);
 			if (path != null) {
 				return deploy(path, basePath, targetId, propertiesFile,
-						appName, ignoreFailures, vhostName, defaultServer);
+						appName, ignoreFailures, vhostURL, defaultServer);
 			}
 		}
 		return null;
@@ -220,7 +274,7 @@ public class ZendApplication extends ZendConnection {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param vhostName
+	 * @param vhostURL
 	 *            - The virtual host to use, if such a virtual host wasn't
 	 *            already created by Zend Server - it is created.
 	 * @param defaultServer
@@ -233,14 +287,13 @@ public class ZendApplication extends ZendConnection {
 	 */
 	public ApplicationInfo deploy(String path, String basePath,
 			String targetId, Map<String, String> userParams, String appName,
-			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
+			Boolean ignoreFailures, URL vhostURL, Boolean defaultServer) {
 		deleteFile(getTempFile(path));
 		File zendPackage = createPackage(path);
 		try {
 			if (zendPackage != null) {
 				String baseUrl = resolveBaseUrl(new File(path), basePath,
-						defaultServer,
-						vhostName);
+						defaultServer, vhostURL);
 				WebApiClient client = getClient(targetId);
 				if (appName == null) {
 					String[] segments = baseUrl.split("/");
@@ -250,12 +303,28 @@ public class ZendApplication extends ZendConnection {
 				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 						"Deploying", "Deploying application to the target...",
 						-1));
+				boolean vhost = vhostURL != null;
+				// Update parameters for Zend Server version >= 6.2.0 base on
+				// virtual hosts
+				ZendServerVersion version = ZendServerVersion
+						.byName(getTargetById(targetId).getProperty(
+								IZendTarget.SERVER_VERSION));
+				if (version.compareTo(v6_2_0) >= 0) {
+					VhostInfo virtualHost = getVirtualHost(targetId, baseUrl);
+					if (virtualHost != null) {
+						defaultServer = virtualHost.isDefaultVhost();
+						vhost = false;
+					} else {
+						vhost = true;
+						defaultServer = false;
+					}
+				}
 				ApplicationInfo result = client.applicationDeploy(
 						new NamedInputStream(zendPackage), baseUrl,
-						ignoreFailures, userParams, appName, vhostName != null,
+						ignoreFailures, userParams, appName, vhost,
 						defaultServer);
-				notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Deploying",
-						"Application deployed successfully"));
+				notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
+						"Deploying", "Application deployed successfully"));
 				deleteFile(getTempFile(path));
 				return result;
 			}
@@ -295,7 +364,7 @@ public class ZendApplication extends ZendConnection {
 	 * @param ignoreFailures
 	 *            - ignore failures during staging if only some servers reported
 	 *            failures
-	 * @param vhostName
+	 * @param vhostURL
 	 *            - The virtual host to use, if such a virtual host wasn't
 	 *            already created by Zend Server - it is created.
 	 * @param defaultServer
@@ -309,12 +378,12 @@ public class ZendApplication extends ZendConnection {
 	public ApplicationInfo deploy(InputStream inputStream,
 			Application application, String basePath, String targetId,
 			Map<String, String> userParams, String appName,
-			Boolean ignoreFailures, String vhostName, Boolean defaultServer) {
+			Boolean ignoreFailures, URL vhostURL, Boolean defaultServer) {
 		if (inputStream != null && application != null) {
 			String path = getPackagePath(inputStream, application);
 			if (path != null) {
 				return deploy(path, basePath, targetId, userParams, appName,
-						ignoreFailures, vhostName, defaultServer);
+						ignoreFailures, vhostURL, defaultServer);
 			}
 		}
 		return null;
@@ -344,8 +413,8 @@ public class ZendApplication extends ZendConnection {
 		try {
 			WebApiClient client = getClient(targetId);
 			int appIdint = Integer.parseInt(appId);
-			return client
-					.applicationSynchronize(appIdint, ignoreFailures, servers);
+			return client.applicationSynchronize(appIdint, ignoreFailures,
+					servers);
 		} catch (MalformedURLException e) {
 			log.error(e);
 		} catch (NumberFormatException e) {
@@ -386,7 +455,7 @@ public class ZendApplication extends ZendConnection {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Updates/redeploys an existing application.
 	 * 
@@ -410,8 +479,9 @@ public class ZendApplication extends ZendConnection {
 			String propertiesFile, Boolean ignoreFailures) {
 		Map<String, String> userParams = null;
 		if (propertiesFile != null) {
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Updating",
-					"Reading user parameters properites file...", -1));
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Updating", "Reading user parameters properites file...",
+					-1));
 			File propsFile = new File(propertiesFile);
 			if (propsFile.exists()) {
 				userParams = getUserParameters(propsFile);
@@ -491,12 +561,14 @@ public class ZendApplication extends ZendConnection {
 				return result;
 			}
 		} catch (MalformedURLException e) {
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Updating",
-					"Error during updating application on '" + targetId + "'", e));
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Updating", "Error during updating application on '"
+							+ targetId + "'", e));
 			log.error(e);
 		} catch (WebApiException e) {
-			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Updating",
-					"Error during updating application on '" + targetId + "'", e));
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
+					"Updating", "Error during updating application on '"
+							+ targetId + "'", e));
 			log.error("Error during updating application on '" + targetId
 					+ "':");
 			log.error("\tpossible error: " + e.getMessage());
@@ -562,23 +634,25 @@ public class ZendApplication extends ZendConnection {
 	public Map<String, String> getUserParameters(String propertiesString) {
 		Map<String, String> result = new LinkedHashMap<String, String>(3);
 
-		if (Pattern.matches("[[^,=]=[^,=]*][,[^,=]*=[^,=]*]*", propertiesString)) {
+		if (Pattern
+				.matches("[[^,=]=[^,=]*][,[^,=]*=[^,=]*]*", propertiesString)) {
 			final String[] split = propertiesString.split(",");
 			for (String token : split) {
 				final String[] val = token.split("=");
 				if (val.length == 2) {
 					result.put(val[0], val[1]);
 				} else {
-					log.error("Error parsing property string , skipping token " + token);
+					log.error("Error parsing property string , skipping token "
+							+ token);
 				}
 			}
 		} else {
 			log.error("Error parsing property string " + propertiesString);
 		}
-		
+
 		return result;
 	}
-	
+
 	private File createPackage(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
@@ -669,23 +743,55 @@ public class ZendApplication extends ZendConnection {
 		return url.substring(url.lastIndexOf("/") + 1);
 	}
 
-	private String resolveBaseUrl(File path, String basePath,
-			Boolean defaultServer, String vhostName)
+	private VhostInfo getVirtualHost(String targetId, String baseUrl)
 			throws MalformedURLException {
+		VhostsList hostsList = getVhosts(targetId);
+		URL applicationUrl = new URL(baseUrl);
+		if (hostsList != null) {
+			List<VhostInfo> infos = hostsList.getVhosts();
+			if (infos != null) {
+				for (VhostInfo vhostInfo : infos) {
+					String protocol = vhostInfo.isSSL() ? "https" : "http";
+					String host = vhostInfo.getName();
+					if ("*".equals(host)) {
+						host = getTargetById(targetId).getHost().getHost();
+					}
+					int port = vhostInfo.getPort();
+					URL vhostUrl = new URL(protocol, host, port,
+							applicationUrl.getFile());
+					if (baseUrl.equals(vhostUrl.toString())) {
+						return vhostInfo;
+					}
+					// If it is https with default port then try without port
+					if (vhostInfo.isSSL() && port == 443) {
+						vhostUrl = new URL(protocol, host, -1,
+								applicationUrl.getFile());
+						if (baseUrl.equals(vhostUrl.toString())) {
+							return vhostInfo;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 
+	private String resolveBaseUrl(File path, String basePath,
+			Boolean defaultServer, URL vhostURL) throws MalformedURLException {
+		URL resolvedURL = null;
 		if (basePath == null) {
 			basePath = path.getName();
 			int index = basePath.indexOf('-');
-			basePath = basePath.substring(0, index);
-		}
-		if (basePath.startsWith("/")) {
-			basePath = basePath.substring(1);
+			basePath = "/" + basePath.substring(0, index);
 		}
 
-		String url = MessageFormat.format("http://{0}/{1}",
-				vhostName == null ? "default-server" : vhostName, basePath);
-		log.debug("resolved url " + url);
-		return url;
+		if (vhostURL != null) {
+			resolvedURL = new URL(vhostURL.getProtocol(), vhostURL.getHost(),
+					vhostURL.getPort(), basePath);
+		} else {
+			resolvedURL = new URL("http", "default-server", -1, basePath);
+		}
+		return resolvedURL.toString();
 	}
 
 }

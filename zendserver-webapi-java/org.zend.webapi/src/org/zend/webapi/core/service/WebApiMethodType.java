@@ -49,6 +49,7 @@ import org.zend.webapi.internal.core.connection.request.StudioStartDebugModeRequ
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStopDebugModeRequest;
+import org.zend.webapi.internal.core.connection.request.VhostGetStatusRequest;
 
 /**
  * The Zend Server Web API is intended to allow automation of the management and
@@ -238,7 +239,7 @@ public enum WebApiMethodType {
 	 * @see StudioStartProfileRequest
 	 */
 	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class),
-	
+
 	/**
 	 * @see StudioStartDebugModeRequest
 	 */
@@ -255,8 +256,8 @@ public enum WebApiMethodType {
 	 * @see StudioStartDebugModeRequest
 	 */
 	STUDIO_IS_DEBUG_MODE_ENABLED("studioIsDebugModeEnabled",
-			StudioIsDebugModeEnabledRequest.class), 
-		
+			StudioIsDebugModeEnabledRequest.class),
+
 	/**
 	 * @see LibraryGetStatusRequest
 	 */
@@ -272,8 +273,8 @@ public enum WebApiMethodType {
 	 * @see LibraryVersionDeployRequest
 	 */
 	LIBRARY_VERSION_DEPLOY("libraryVersionDeploy",
-			LibraryVersionDeployRequest.class), 
-	
+			LibraryVersionDeployRequest.class),
+
 	/**
 	 * @see LibrarySynchronizeRequest
 	 */
@@ -284,12 +285,18 @@ public enum WebApiMethodType {
 	 */
 	DOWNLOAD_LIBRARY_VERSION_FILE("downloadLibraryVersionFile",
 			DownloadLibraryVersionFileRequest.class),
-			
+
 	/**
 	 * @see BootstrapSingleServerRequest
 	 */
 	BOOTSTRAP_SINGLE_SERVER("bootstrapSingleServer",
-			BootstrapSingleServerRequest.class);
+			BootstrapSingleServerRequest.class),
+
+	/**
+	 * @see VhostGetStatusRequest
+	 */
+	VHOST_GET_STATUS_REQUEST("vhostGetStatusRequest",
+			VhostGetStatusRequest.class);
 
 	/**
 	 * Name of the service

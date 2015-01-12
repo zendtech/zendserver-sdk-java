@@ -1087,7 +1087,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryInfo.setLibraryVersions(versions);
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(LibraryFile libraryFile) {
 		Disposition disposition = representation.getDisposition();
@@ -1110,7 +1110,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(Bootstrap bootstrap) {
 		String currentPath = bootstrap.getPrefix();
@@ -1121,7 +1121,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		bootstrap.setSuccess(Boolean.valueOf(value));
 		return true;
 	}
-	
+
 	@Override
 	public boolean preVisit(ApiKey apiKey) {
 		String currentPath = apiKey.getPrefix();
@@ -1138,6 +1138,45 @@ public class DataDigster extends GenericResponseDataVisitor {
 		apiKey.setCreationTime(value);
 		return true;
 	}
+
+	@Override
+	public boolean preVisit(VhostsList vhostsList) {
+		String currentPath = vhostsList.getPrefix();
+		final int size = getNodesLength(currentPath, "vhostInfo",
+				vhostsList.getOccurrence());
+
+		if (size == 0) {
+			return false;
+		}
+
+		final int overallSize = getPreviousNodesLength(currentPath,
+				"vhostInfo", vhostsList.getOccurrence());
+
+		List<VhostInfo> infos = new ArrayList<VhostInfo>(size);
+		for (int index = overallSize; index < overallSize + size; index++) {
+			infos.add(new VhostInfo(currentPath + "/vhostInfo", index));
+		}
+
+		vhostsList.setVhosts(infos);
+		return true;
+	}
+	
+	@Override
+	public boolean preVisit(VhostInfo vhostInfo) {
+			String currentPath = vhostInfo.getPrefix();
+			int occurrence = vhostInfo.getOccurrence();
+			String value = getValue(currentPath + "/id", occurrence);
+			vhostInfo.setId(Integer.valueOf(value));
+			value = getValue(currentPath + "/name", occurrence);
+			vhostInfo.setName(value);
+			value = getValue(currentPath + "/port", occurrence);
+			vhostInfo.setPort(Integer.valueOf(value));
+			value = getValue(currentPath + "/default", occurrence);
+			vhostInfo.setDefaultVhost(Boolean.valueOf(value));
+			value = getValue(currentPath + "/ssl", occurrence);
+			vhostInfo.setSSL(Boolean.valueOf(value));
+			return true;
+		}
 
 	/**
 	 * @param value
@@ -1216,6 +1255,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new Bootstrap();
 		case APIKEY:
 			return new ApiKey();
+		case VHOSTS_LIST:
+			return new VhostsList();
+		case VHOST_INFO:
+			return new VhostInfo();
 		default:
 			return null;
 		}

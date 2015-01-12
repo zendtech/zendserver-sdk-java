@@ -405,6 +405,9 @@ public class LaunchUtils {
 			IZendTarget target) {
 		if (target != null) {
 			try {
+				IDeploymentHelper helper = new DeploymentHelper();
+
+				// Get application name from a descriptor
 				IDescriptorContainer descContainer = DescriptorContainerManager
 						.getService().openDescriptorContainer(project);
 				IDeploymentDescriptor descModel = descContainer
@@ -413,20 +416,30 @@ public class LaunchUtils {
 				if (name == null || name.isEmpty()) {
 					name = project.getName();
 				}
-				IDeploymentHelper helper = new DeploymentHelper();
-				URL targetUrl = target.getDefaultServerURL();
-				String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				URL baseUrl = new URL(targetUrl.getProtocol(),
-						targetUrl.getHost(), targetUrl.getPort(),
-						"/" + trimmedName); //$NON-NLS-1$
-				helper.setBaseURL(baseUrl.toString());
+				helper.setAppName(name);
+
+				// If application was already deployed then use the same
+				// application URL
+				String previousURL = getURLFromPreferences(project.getName());
+				if (previousURL != null) {
+					helper.setBaseURL(previousURL);
+				} else {
+					// If not then generate a default one
+					URL targetUrl = target.getDefaultServerURL();
+					String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					URL baseUrl = new URL(targetUrl.getProtocol(),
+							targetUrl.getHost(), targetUrl.getPort(),
+							"/" + trimmedName); //$NON-NLS-1$
+					helper.setBaseURL(baseUrl.toString());
+				}
+
+				// Set the rest of helper attributes
 				helper.setDefaultServer(true);
 				helper.setTargetId(target.getId());
 				helper.setTargetHost(target.getHost().getHost().toString());
 				helper.setIgnoreFailures(false);
 				helper.setOperationType(IDeploymentHelper.DEPLOY);
 				helper.setProjectName(project.getName());
-				helper.setAppName(name);
 				return helper;
 			} catch (MalformedURLException e) {
 				return null;

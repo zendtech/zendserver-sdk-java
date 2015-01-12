@@ -82,26 +82,30 @@ public interface IResponseData {
 		PROFILE_REQUEST,
 
 		GENERAL_DETAILS,
-		
+
 		DEBUG_MODE,
-		
+
 		LIBRARY_SERVER,
-		
+
 		LIBRARY_SERVERS,
-		
+
 		LIBRARY_VERSION,
-		
+
 		LIBRARY_VERSIONS,
-		
+
 		LIBRARY_INFO,
-		
+
 		LIBRARY_LIST,
-		
+
 		LIBRARY_FILE,
-		
+
 		APIKEY,
+
+		BOOTSTRAP,
+
+		VHOSTS_LIST,
 		
-		BOOTSTRAP
+		VHOST_INFO
 
 	}
 
