@@ -8,6 +8,8 @@
 
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -133,12 +135,21 @@ public class DeploymentWizard extends Wizard {
 		if (settings != null) {
 			String targetId = settings.get(DeploymentAttributes.TARGET_ID
 					.getName());
-			if (targetId != null) {
+			if (targetId != null && toUpdate.getTargetId() == null) {
 				IZendTarget target = TargetsManagerService.INSTANCE
 						.getTargetManager().getTargetById(targetId);
 				if (target != null) {
 					toUpdate.setTargetId(targetId);
 					toUpdate.setTargetHost(target.getHost().getHost());
+					URL targetUrl = target.getDefaultServerURL();
+					try {
+						URL baseUrl = new URL(targetUrl.getProtocol(),
+								targetUrl.getHost(), targetUrl.getPort(), "/"
+										+ toUpdate.getAppName());
+						toUpdate.setBaseURL(baseUrl.toString());
+					} catch (MalformedURLException e) {
+						Activator.log(e);
+					}
 				}
 			}
 			String developerMode = settings

@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.debug.ui.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,7 +31,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.zend.php.server.core.utils.ServerUtils;
+import org.zend.php.zendserver.deployment.core.DeploymentNature;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
+import org.zend.php.zendserver.deployment.core.descriptor.DescriptorContainerManager;
 import org.zend.php.zendserver.deployment.debug.core.config.LaunchUtils;
 import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.config.DeploymentHandler;
@@ -73,7 +81,11 @@ public class DeployProjectHandler extends AbstractDeploymentHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (!hasDeploymentNature(project)) {
+					if (project
+							.findMember(DescriptorContainerManager.DESCRIPTOR_PATH) == null) {
+						if (hasDeploymentNature(project)) {
+							removeDeploymentNature(project);
+						}
 						enableDeployment(project);
 					}
 					DeploymentHandler handler = new DeploymentHandler();
@@ -99,6 +111,17 @@ public class DeployProjectHandler extends AbstractDeploymentHandler {
 		};
 		job.setSystem(true);
 		job.schedule();
+	}
+
+	private void removeDeploymentNature(IProject project) throws CoreException {
+		IProjectDescription desc = project.getDescription();
+		List<String> natures = Arrays.asList(desc.getNatureIds());
+		List<String> updatedNatures = new ArrayList<String>();
+		updatedNatures.addAll(natures);
+		updatedNatures.remove(DeploymentNature.ID);
+		desc.setNatureIds(updatedNatures.toArray(new String[updatedNatures
+				.size()]));
+		project.setDescription(desc, new NullProgressMonitor());
 	}
 
 }

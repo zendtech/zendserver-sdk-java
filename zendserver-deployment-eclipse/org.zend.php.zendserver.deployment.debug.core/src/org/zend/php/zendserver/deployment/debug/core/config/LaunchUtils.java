@@ -403,27 +403,27 @@ public class LaunchUtils {
 
 	private static IDeploymentHelper createDefaultHelper(IProject project,
 			IZendTarget target) {
-		if (target != null) {
-			try {
-				IDeploymentHelper helper = new DeploymentHelper();
+		try {
+			IDeploymentHelper helper = new DeploymentHelper();
 
-				// Get application name from a descriptor
-				IDescriptorContainer descContainer = DescriptorContainerManager
-						.getService().openDescriptorContainer(project);
-				IDeploymentDescriptor descModel = descContainer
-						.getDescriptorModel();
-				String name = descModel.getName();
-				if (name == null || name.isEmpty()) {
-					name = project.getName();
-				}
-				helper.setAppName(name);
+			// Get application name from a descriptor
+			IDescriptorContainer descContainer = DescriptorContainerManager
+					.getService().openDescriptorContainer(project);
+			IDeploymentDescriptor descModel = descContainer
+					.getDescriptorModel();
+			String name = descModel.getName();
+			if (name == null || name.isEmpty()) {
+				name = project.getName();
+			}
+			helper.setAppName(name);
 
-				// If application was already deployed then use the same
-				// application URL
-				String previousURL = getURLFromPreferences(project.getName());
-				if (previousURL != null) {
-					helper.setBaseURL(previousURL);
-				} else {
+			// If application was already deployed then use the same
+			// application URL
+			String previousURL = getURLFromPreferences(project.getName());
+			if (previousURL != null) {
+				helper.setBaseURL(previousURL);
+			} else {
+				if (target != null) {
 					// If not then generate a default one
 					URL targetUrl = target.getDefaultServerURL();
 					String trimmedName = name.replaceAll("[ ]|[\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -432,20 +432,21 @@ public class LaunchUtils {
 							"/" + trimmedName); //$NON-NLS-1$
 					helper.setBaseURL(baseUrl.toString());
 				}
+			}
 
-				// Set the rest of helper attributes
-				helper.setDefaultServer(true);
+			// Set the rest of helper attributes
+			helper.setDefaultServer(true);
+			helper.setIgnoreFailures(false);
+			helper.setOperationType(IDeploymentHelper.DEPLOY);
+			helper.setProjectName(project.getName());
+			if (target != null) {
 				helper.setTargetId(target.getId());
 				helper.setTargetHost(target.getHost().getHost().toString());
-				helper.setIgnoreFailures(false);
-				helper.setOperationType(IDeploymentHelper.DEPLOY);
-				helper.setProjectName(project.getName());
-				return helper;
-			} catch (MalformedURLException e) {
-				return null;
 			}
+			return helper;
+		} catch (MalformedURLException e) {
+			return null;
 		}
-		return null;
 	}
 
 	private static IZendTarget getTargetFromPreferences(IProject project) {

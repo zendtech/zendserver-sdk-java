@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.IAddServerListener;
 import org.zend.php.server.ui.ServersCombo;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
@@ -125,12 +128,29 @@ public class ConfigurationBlock extends AbstractBlock {
 	 */
 	public void initializeFields(IDeploymentHelper helper) {
 		String targetId = helper.getTargetId();
-		targetsCombo.selectByTarget(targetId);
+		if (targetId != null) {
+			targetsCombo.selectByTarget(targetId);
+		}
 		developmentMode.setSelection(helper.isDevelopmentModeEnabled());
 		warnUpdate.setSelection(helper.isWarnUpdate());
 		ignoreFailures.setSelection(helper.isIgnoreFailures());
 		applicationNameText.setText(helper.getAppName());
-		baseUrl.setText(helper.getBaseURL().toString());
+		if (helper.getBaseURL() != null) {
+			baseUrl.setText(helper.getBaseURL().toString());
+		} else {
+			IZendTarget defaultTarget = targetsCombo.getSelectedTarget();
+			if (defaultTarget != null) {
+				URL targetUrl = defaultTarget.getDefaultServerURL();
+				try {
+					URL url = new URL(targetUrl.getProtocol(),
+							targetUrl.getHost(), targetUrl.getPort(), "/" //$NON-NLS-1$
+									+ helper.getAppName());
+					baseUrl.setText(url.toString());
+				} catch (MalformedURLException e) {
+					Activator.log(e);
+				}
+			}
+		}
 		for (IDeployWizardContribution c : contributions) {
 			c.initializeFields(helper);
 		}

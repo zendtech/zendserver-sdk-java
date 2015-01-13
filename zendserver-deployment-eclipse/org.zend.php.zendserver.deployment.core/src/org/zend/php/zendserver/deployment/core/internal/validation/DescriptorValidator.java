@@ -30,9 +30,10 @@ public class DescriptorValidator {
 	private static final String DESCRIPTOR_SCHEMA = "deployment.xsd"; //$NON-NLS-1$
 	
 	public void validate(IFile file) {
-		validateXSD(file);
-		validateSemantics(file);
-		
+		if (file != null && file.exists()) {
+			validateXSD(file);
+			validateSemantics(file);
+		}
 	}
 	
 	protected void validateXSD(IFile file) {
