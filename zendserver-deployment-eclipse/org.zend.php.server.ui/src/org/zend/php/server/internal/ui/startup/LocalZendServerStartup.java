@@ -59,11 +59,11 @@ public class LocalZendServerStartup implements IStartup {
 					ServersManager.removeServer(oldServer.getName());
 				}
 				ServersManager.addServer(server);
-				ServersManager.setDefaultServer(null, server);
-				ServersManager.save();
-				if (!server.equals(ServersManager.getDefaultServer(null))) {
+				if (ServersManager.getServers().length == 2) {
+					// There is only an empty server and detected local Zend Server
 					ServersManager.setDefaultServer(null, server);
 				}
+				ServersManager.save();
 				ZendServerManager.setupPathMapping(server);
 				NotificationManager.showInfoWithHelp(
 						Messages.LocalZendServerStartup_FoundTitle,
