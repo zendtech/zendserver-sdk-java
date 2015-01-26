@@ -291,37 +291,42 @@ public class ZendApplication extends ZendConnection {
 		deleteFile(getTempFile(path));
 		File zendPackage = createPackage(path);
 		try {
-			if (zendPackage != null) {
-				String baseUrl = resolveBaseUrl(new File(path), basePath,
-						defaultServer, vhostURL);
-				WebApiClient client = getClient(targetId);
-				if (appName == null) {
-					String[] segments = baseUrl.split("/");
-					appName = segments.length > 0 ? segments[segments.length - 1]
-							: null;
-				}
-				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-						"Deploying", "Deploying application to the target...",
-						-1));
-				boolean vhost = vhostURL != null;
-				// Update parameters for Zend Server version >= 6.2.0 base on
-				// virtual hosts
-				IZendTarget target = getTargetById(targetId);
-				if (target != null) {
-					ZendServerVersion version = ZendServerVersion.byName(target
-							.getProperty(IZendTarget.SERVER_VERSION));
-					if (version.compareTo(v6_2_0) >= 0) {
-						VhostInfo virtualHost = getVirtualHost(targetId,
-								baseUrl);
-						if (virtualHost != null) {
-							defaultServer = virtualHost.isDefaultVhost();
-							vhost = false;
-						} else {
-							vhost = true;
-							defaultServer = false;
-						}
+			WebApiClient client = getClient(targetId);
+			String baseUrl = resolveBaseUrl(new File(path), basePath,
+					defaultServer, vhostURL);
+			if (appName == null) {
+				String[] segments = baseUrl.split("/");
+				appName = segments.length > 0 ? segments[segments.length - 1]
+						: null;
+			}
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
+					"Deploying", "Deploying application to the target...", -1));
+			boolean vhost = vhostURL != null;
+			// Update parameters for Zend Server version >= 6.2.0 base on
+			// virtual hosts
+			IZendTarget target = getTargetById(targetId);
+			if (target != null) {
+				ZendServerVersion version = ZendServerVersion.byName(target
+						.getProperty(IZendTarget.SERVER_VERSION));
+				if (version.compareTo(v6_2_0) >= 0) {
+					VhostInfo virtualHost = getVirtualHost(targetId, baseUrl);
+					if (virtualHost != null) {
+						defaultServer = virtualHost.isDefaultVhost();
+						vhost = false;
+					} else {
+						vhost = true;
+						defaultServer = false;
 					}
 				}
+			}
+			if (vhost && baseUrl.startsWith("https://")) {
+				notifier.statusChanged(new BasicStatus(
+						StatusCode.ERROR,
+						"Deployment Error",
+						"Specified virtual host does not exist. HTTPS or SSL secure virtual hosts may only be created using Zend Server GUI."));
+				return null;
+			}
+			if (zendPackage != null) {
 				ApplicationInfo result = client.applicationDeploy(
 						new NamedInputStream(zendPackage), baseUrl,
 						ignoreFailures, userParams, appName, vhost,
