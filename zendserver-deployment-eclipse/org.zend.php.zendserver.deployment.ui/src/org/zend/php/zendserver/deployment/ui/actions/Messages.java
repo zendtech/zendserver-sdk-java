@@ -8,8 +8,6 @@ public class Messages extends NLS {
 	public static String ExportApplicationAction_1;
 	public static String ExportApplicationAction_2;
 	public static String HelpAction_0;
-	public static String ZendServerCredentialsDialog_0;
-	public static String ZendServerCredentialsDialog_1;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
