@@ -39,21 +39,6 @@
             name="%command.name">
       </command>
       <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.ApplicationTestHandler"
-            id="org.zend.php.zendserver.deployment.ui.phpunit"
-            name="%command.name.0">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.RemoveLaunchOrTarget"
-            id="org.zend.php.zendserver.deployment.ui.removeLaunchConfig"
-            name="%command.name.1">
-      </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.UninstallApplicationHandler"
-            id="org.zend.php.zendserver.deployment.ui.uninstallApplication"
-            name="%command.name.3">
-      </command>
-      <command
             defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenCodeTracingCommand"
             id="org.zend.php.zendserver.deployment.ui.OpenCodeTracingSnapshot"
             name="%command.name.4">
@@ -72,7 +57,7 @@
             class="org.zend.php.zendserver.deployment.ui.commands.DeploymentTester"
             id="org.zend.php.zendserver.deployment.ui.deploymentTester"
             namespace="org.zend.php.zendserver.deployment.ui"
-            properties="addSupport,deploy,quickDeploy"
+            properties="deploy"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -125,14 +110,6 @@
       <initializer
             class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferenceInitializer">
       </initializer>
-   </extension>
-   <extension
-         point="org.zend.php.ui.welcomeLinkListener">
-      <listener
-            class="org.zend.php.zendserver.deployment.ui.actions.LaunchTargetWizard"
-            id="org.zend.php.zendserver.deployment.ui.actions.LaunchTargetWizard.listener"
-            name="target">
-      </listener>
    </extension>
  <extension
          id="com.zend.php.platform.ui.platformWizardFragment"
