@@ -42,8 +42,6 @@ Export-Package: org.zend.php.zendserver.deployment.ui,
  org.zend.php.zendserver.deployment.ui.contributions,
  org.zend.php.zendserver.deployment.ui.editors,
  org.zend.php.zendserver.deployment.ui.preferences,
- org.zend.php.zendserver.deployment.ui.targets,
- org.zend.php.zendserver.deployment.ui.views,
  org.zend.php.zendserver.deployment.ui.wizards,
  org.zend.php.zendserver.deployment.ui.zendserver
 Bundle-ClassPath: swt.elevate.jar,
