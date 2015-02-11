@@ -8,7 +8,7 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.tunneling;
 
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;

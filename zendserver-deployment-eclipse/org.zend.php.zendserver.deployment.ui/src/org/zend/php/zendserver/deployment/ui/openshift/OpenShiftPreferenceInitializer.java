@@ -1,4 +1,4 @@
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.openshift;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;

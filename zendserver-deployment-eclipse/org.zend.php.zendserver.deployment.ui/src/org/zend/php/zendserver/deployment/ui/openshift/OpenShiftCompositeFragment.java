@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.openshift;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +49,8 @@ import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
+import org.zend.php.zendserver.deployment.ui.servers.AbstractCloudCompositeFragment;
+import org.zend.php.zendserver.deployment.ui.servers.TargetConnectionTester;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetData;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetWizard;
 import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetWizardDialog;

@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.openshift;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
@@ -15,26 +15,24 @@ import org.eclipse.php.internal.ui.wizards.WizardFragment;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.server.ui.types.OpenShiftServerType;
-import org.zend.php.server.ui.types.ZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014
  * 
  */
 @SuppressWarnings("restriction")
-public class DeploymentFragmentFactory implements ICompositeFragmentFactory {
+public class OpenShiftFragmentFactory implements ICompositeFragmentFactory {
 
-	private static final String ID = "org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"; //$NON-NLS-1$
+	private static final String ID = "org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"; //$NON-NLS-1$
 
 	public WizardFragment createWizardFragment() {
-		return new DeploymentWizardFragment();
+		return new OpenShiftWizardFragment();
 	}
 
 	public CompositeFragment createComposite(Composite parent,
 			IControlHandler controlHandler) {
-		return new DeploymentCompositeFragment(parent, controlHandler, true);
+		return new OpenShiftCompositeFragment(parent, controlHandler, true);
 	}
 
 	public boolean isSupported(Object element) {
@@ -46,10 +44,7 @@ public class DeploymentFragmentFactory implements ICompositeFragmentFactory {
 			Server server = (Server) element;
 			typeId = server.getAttribute(IServerType.TYPE, null);
 		}
-		return typeId != null
-				&& (ZendServerType.ID.equals(typeId)
-						|| LocalZendServerType.ID.equals(typeId) || OpenShiftServerType.ID
-							.equals(typeId));
+		return typeId != null && OpenShiftServerType.ID.equals(typeId);
 	}
 
 	public String getId() {

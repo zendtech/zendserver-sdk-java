@@ -8,7 +8,7 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.openshift;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;

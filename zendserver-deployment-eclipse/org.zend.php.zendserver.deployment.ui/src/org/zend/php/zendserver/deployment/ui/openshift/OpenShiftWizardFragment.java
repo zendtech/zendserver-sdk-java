@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.openshift;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

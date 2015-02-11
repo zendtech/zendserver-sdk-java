@@ -100,7 +100,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferencesPage"
+            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftPreferencesPage"
             id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
             name="%page.name">
       </page>
@@ -108,7 +108,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftPreferenceInitializer">
+            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftPreferenceInitializer">
       </initializer>
    </extension>
  <extension
@@ -116,7 +116,7 @@
          name="Deployment"
          point="org.eclipse.php.ui.wizardAndCompositeFragments">
       <wizardAndCompositeFragment
-            class="org.zend.php.zendserver.deployment.ui.preferences.DeploymentFragmentFactory"
+            class="org.zend.php.zendserver.deployment.ui.servers.DeploymentFragmentFactory"
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
             name="Deployment Wizard Fragment"
@@ -134,7 +134,7 @@
     <extension
          point="org.eclipse.php.ui.wizardAndCompositeFragments">
       <wizardAndCompositeFragment
-            class="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
+            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftFragmentFactory"
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
             name="RedHat OpenShift Fragment">
@@ -143,7 +143,7 @@
    <extension
          point="org.eclipse.php.ui.wizardAndCompositeFragments">
       <wizardAndCompositeFragment
-            class="org.zend.php.zendserver.deployment.ui.preferences.TunnelingFragmentFactory"
+            class="org.zend.php.zendserver.deployment.ui.tunneling.TunnelingFragmentFactory"
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
             name="SSH Tunneling">

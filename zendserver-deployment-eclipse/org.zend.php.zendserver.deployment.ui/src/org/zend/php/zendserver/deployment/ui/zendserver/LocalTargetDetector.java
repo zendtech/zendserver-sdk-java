@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.zendserver;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

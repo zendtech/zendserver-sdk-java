@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.preferences;
+package org.zend.php.zendserver.deployment.ui.servers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -492,7 +492,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 				});
 			}
 		} catch (InvalidCredentialsException e) {
-			detectApiKey(Messages.LocalTargetDetector_InvalidCredentialsMessage);
+			detectApiKey(Messages.DeploymentCompositeFragment_InvalidCredentialsError);
 		}
 	}
 

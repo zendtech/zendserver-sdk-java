@@ -13,6 +13,13 @@ public class Messages extends NLS {
 	public static String LocalZendServerCompositeFragment_NameConflictError;
 	public static String LocalZendServerCompositeFragment_NameLabel;
 	public static String LocalZendServerCompositeFragment_NameTooltip;
+	public static String LocalTargetDetector_CompleteMessage;
+	public static String LocalTargetDetector_CompleteTitle;
+	public static String LocalTargetDetector_InvalidCredentialsMessage;
+	public static String LocalTargetDetector_SeeDocMessage;
+	public static String LocalTargetDetector_UnsupportedMessage;
+	public static String LocalTargetDetector_UnsupportedTitle;
+	public static String LocalTargetDetector_WindowsPriviligesMessage;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
