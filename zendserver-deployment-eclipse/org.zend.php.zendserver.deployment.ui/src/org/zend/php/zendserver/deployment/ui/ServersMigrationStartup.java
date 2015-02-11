@@ -3,7 +3,7 @@ package org.zend.php.zendserver.deployment.ui;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
-import org.zend.php.server.ui.types.LocalZendServerType;
+import org.zend.php.server.ui.types.ServerType;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -26,7 +26,7 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 		String typeId = getServerType(server);
 		if (typeId == null) {
 			if (isLocalZendServer(server)) {
-				typeId = LocalZendServerType.ID;
+				typeId = ServerType.LOCAL_ZEND_SERVER.getId();
 			}
 			if (typeId != null) {
 				setType(server, typeId);

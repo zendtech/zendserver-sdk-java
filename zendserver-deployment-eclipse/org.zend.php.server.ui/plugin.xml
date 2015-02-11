@@ -46,60 +46,89 @@
          point="org.eclipse.php.server.ui.serverTypes">
       <type
             class="org.zend.php.server.ui.types.ZendServerType"
-            id="org.zend.php.server.ui.types.ZendServerType">
-            <wizardAndSettings>
-               <fragment
-               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
-	         </fragment>
-	            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
-	            </fragment>
-	            <fragment
-	                  id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
-	            </fragment>
-	            <fragment
-	                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-	            </fragment>
-	            </wizardAndSettings>
-            <settings>
-               <fragment
-                     id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
-               </fragment>
-               <fragment
-                     id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
-               </fragment>
-               <fragment
-                     id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
-               </fragment>
-               <fragment
-                     id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
-               </fragment>
-            </settings>
+            description="Creates a remote Zend Server instance."
+            icon16="icons/obj16/zend_server.png"
+            icon32="icons/obj32/zend_server.png"
+            id="org.zend.php.server.ui.types.ZendServerType"
+            name="Remote Zend Server"
+            wizardImage="icons/wizban/zend_server_wiz.png">
+            <fragment
+                  id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory"
+                  settings="true"
+                  wizard="true">
+            </fragment>
+            <fragment
+                  id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"
+                  settings="true"
+                  wizard="false">
+            </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
+                  settings="true"
+                  wizard="true">
+            </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
+                  settings="true"
+                  wizard="true">
+            </fragment>
+            <fragment
+                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory"
+                  settings="true"
+                  wizard="true">
+            </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
+                  settings="true"
+                  wizard="false">
+            </fragment>
+            <fragment
+                  id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory"
+                  settings="true"
+                  wizard="false">
+            </fragment>
+            <fragment
+                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
+                  settings="true"
+                  wizard="false">
+            </fragment>
       </type>
    </extension>
    <extension
          point="org.eclipse.php.server.ui.serverTypes">
       <type
             class="org.zend.php.server.ui.types.LocalApacheType"
-            id="org.zend.php.server.ui.types.LocalApacheType">
-         <wizard>
-            <fragment
-                  id="org.zend.php.server.ui.apache.LocalApacheFragmentFactory">
-            </fragment>
-         </wizard>
-         <settings>
-               <fragment
-               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
-	         </fragment>
-               <fragment
-                     id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
-               </fragment>
-	            <fragment
-	                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-	            </fragment>
-             <fragment
-                   id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
-             </fragment>
-	       </settings>
+            description="Detects an Apache HTTP Server instance installed locally on this machine."
+            icon16="icons/obj16/apache.png"
+            icon32="icons/obj32/apache.png"
+            id="org.zend.php.server.ui.types.LocalApacheType"
+            name="Local Apache HTTP Server"
+            wizardImage="icons/wizban/local_apache_wiz.png">
+         <fragment
+               id="org.zend.php.server.ui.apache.LocalApacheFragmentFactory"
+               settings="false"
+               wizard="true">
+         </fragment>
+         <fragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
       </type>
    </extension>
    <extension
@@ -124,66 +153,104 @@
          point="org.eclipse.php.server.ui.serverTypes">
       <type
             class="org.zend.php.server.ui.types.OpenShiftServerType"
-            id="org.zend.php.server.ui.types.OpenShiftServerType">
-            <wizard>
-            <fragment
-                  id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory">
-            </fragment>
-         </wizard>
-         <settings>
-            <fragment
-               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
-	         </fragment>
-            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
-            </fragment>
-            <fragment
-                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-            </fragment>
-            <fragment
-                  id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
-            </fragment>
-            <fragment
-                  id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
-            </fragment>
-            <fragment
-                  id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
-            </fragment>
-            <fragment
-                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory">
-            </fragment>
-         </settings>
+            description="Creates a new server for each OpenShift application with a zend-6.1 cartridge."
+            icon16="icons/obj16/openshift.png"
+            icon32="icons/obj32/openshift.png"
+            id="org.zend.php.server.ui.types.OpenShiftServerType"
+            name="RedHat OpenShift"
+            wizardImage="icons/wizban/openshift_wiz.png">
+         <fragment
+               id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
+               settings="false"
+               wizard="true">
+         </fragment>
+         <fragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
       </type>
    </extension>
    <extension
        point="org.eclipse.php.server.ui.serverTypes">
     <type
           class="org.zend.php.server.ui.types.LocalZendServerType"
-          id="org.zend.php.server.ui.types.LocalZendServerType">
-       <settings>
-               <fragment
-               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
-	         </fragment>
-	         <fragment
-                  id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
-            </fragment>
-            <fragment
-            	  id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
-            </fragment>
-            <fragment
-                  id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
-            </fragment>
-            <fragment
-                  id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory">
-            </fragment>
-            <fragment
-                  id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-            </fragment>
-	       </settings>
-         <wizard>
-            <fragment
-                  id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerFragmentFactory">
-            </fragment>
-         </wizard>
+          description="Detects a Zend Server instance installed locally on this machine."
+          icon16="icons/obj16/zend_server.png"
+          icon32="icons/obj32/zend_server.png"
+          id="org.zend.php.server.ui.types.LocalZendServerType"
+          name="Local Zend Server"
+          wizardImage="icons/wizban/zend_server_wiz.png">
+       <fragment
+             id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerFragmentFactory"
+             settings="false"
+             wizard="true">
+       </fragment>
+         <fragment
+               id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="org.zend.php.zendserver.deployment.debug.ui.preferences.DebugModeFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
+         <fragment
+               id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory"
+               settings="true"
+               wizard="false">
+         </fragment>
     </type>
  </extension>
    <extension

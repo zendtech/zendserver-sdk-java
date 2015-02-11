@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.zend.php.server.ui.types;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.php.server.ui.types.IServerType;
-import org.eclipse.swt.graphics.Image;
 import org.zend.php.server.internal.ui.IHelpContextIds;
-import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * Representation of OpenShift server type.
@@ -23,41 +18,8 @@ import org.zend.php.server.internal.ui.ServersUI;
  * @author Wojciech Galanciak, 2014
  * 
  */
-public class OpenShiftServerType implements IServerType {
+public class OpenShiftServerType {
 
-	public static final String ID = "org.zend.php.server.ui.types.OpenShiftServerType"; //$NON-NLS-1$
-
-	@Override
-	public String getId() {
-		return ID;
-	}
-
-	@Override
-	public String getName() {
-		return Messages.OpenShiftServerType_Name;
-	}
-	
-	@Override
-	public String getDescription() {
-		return Messages.OpenShiftServerType_Description;
-	}
-
-	@Override
-	public Image getViewIcon() {
-		return ServersUI.getDefault().getImage(ServersUI.OPENSHIFT_ICON);
-	}
-	
-	@Override
-	public Image getTypeIcon() {
-		return ServersUI.getDefault().getImage(ServersUI.OPENSHIFT_TYPE_ICON);
-	}
-
-	@Override
-	public ImageDescriptor getWizardImage() {
-		return ServersUI.getImageDescriptor(ServersUI.OPENSHIFT_WIZ);
-	}
-	
-	@Override
 	public String getHelp() {
 		return IHelpContextIds.ADDING_A_SERVER_OPENSHFIT_SERVER;
 	}

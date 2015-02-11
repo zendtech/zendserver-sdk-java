@@ -16,7 +16,7 @@ import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
-import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.server.ui.types.ApacheUtil;
 
 /**
  * Wizard fragment for local Apache HTTP Server.
@@ -37,7 +37,7 @@ public class LocalApacheWizardFragment extends AbstractWizardFragment {
 	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
 		boolean result = super.performFinish(monitor);
 		if (result) {
-			LocalApacheType.parseAttributes(server);
+			ApacheUtil.parseAttributes(server);
 		}
 		return result;
 	}

@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.server.ui.types.OpenShiftServerType;
+import org.zend.php.server.ui.types.ServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
@@ -305,7 +305,7 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 						server.setName(target.getHost().getHost());
 						server.setBaseURL(baseUrl.toString());
 						server.setAttribute(IServerType.TYPE,
-								OpenShiftServerType.ID);
+								ServerType.OPENSHIFT.getId());
 						setupSSHConfiguration(server, target);
 						t.setDefaultServerURL(baseUrl);
 						t.setServerName(server.getName());

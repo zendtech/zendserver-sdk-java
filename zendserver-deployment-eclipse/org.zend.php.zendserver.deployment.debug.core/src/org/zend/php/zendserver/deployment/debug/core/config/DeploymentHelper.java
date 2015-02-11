@@ -2,7 +2,6 @@ package org.zend.php.zendserver.deployment.debug.core.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -72,9 +71,9 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.APP_ID.getName(), -1));
 			helper.setProjectName(config.getAttribute(
 					DeploymentAttributes.PROJECT_NAME.getName(), EMPTY_STRING));
-			helper.setUserParams(config.getAttribute(
-					DeploymentAttributes.PARAMETERS.getName(),
-					Collections.emptyMap()));
+			//helper.setUserParams(config.getAttribute(
+			//		DeploymentAttributes.PARAMETERS.getName(),
+			//		Collections.emptyMap()));
 			helper.setAppName(config.getAttribute(
 					DeploymentAttributes.APPLICATION_NAME.getName(),
 					EMPTY_STRING));

@@ -27,7 +27,8 @@ import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.actions.IActionContribution;
-import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.server.ui.types.ApacheUtil;
+import org.zend.php.server.ui.types.ServerType;
 
 /**
  * Contribution to action which is responsible for refreshing local Apache HTTP
@@ -61,7 +62,7 @@ public class RefreshApacheAction implements IActionContribution {
 		if (server != null) {
 			IServerType serverType = ServerTypesManager.getInstance().getType(
 					server);
-			if (LocalApacheType.ID.equals(serverType.getId())) {
+			if (ServerType.LOCAL_APACHE.getId().equals(serverType.getId())) {
 				Job refreshJob = new Job(Messages.RefreshApacheAction_JobName) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -69,9 +70,9 @@ public class RefreshApacheAction implements IActionContribution {
 								IProgressMonitor.UNKNOWN);
 						Server newServer = new Server();
 						newServer.setName(server.getName());
-						newServer.setAttribute(LocalApacheType.LOCATION, server
-								.getAttribute(LocalApacheType.LOCATION, null));
-						LocalApacheType.parseAttributes(newServer);
+						newServer.setAttribute(ApacheUtil.LOCATION,
+								server.getAttribute(ApacheUtil.LOCATION, null));
+						ApacheUtil.parseAttributes(newServer);
 						final String name = checkBaseUrlConfilct(newServer);
 						if (name != null) {
 							Display.getDefault().asyncExec(new Runnable() {

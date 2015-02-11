@@ -14,9 +14,7 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
-import org.zend.php.server.ui.types.LocalApacheType;
-import org.zend.php.server.ui.types.OpenShiftServerType;
-import org.zend.php.server.ui.types.ZendServerType;
+import org.zend.php.server.ui.types.ServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.sdklib.manager.TargetsManager;
@@ -39,36 +37,34 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class ServersMigrationStartup extends AbstractMigrationService {
 
-	private static final String PHPCLOUD_TYPE = "org.zend.php.server.ui.types.PhpcloudServerType"; //$NON-NLS-1$
-
 	@Override
 	protected boolean migrate(Server server) {
-		String typeId = getServerType(server);
-		if (typeId == null) {
+		ServerType type = ServerType.byId(getServerType(server));
+		if (type == null) {
 			if (isOpenShift(server)) {
 				SSHTunnelConfiguration config = SSHTunnelConfiguration
 						.createOpenShiftConfiguration(ServerUtils
 								.getTarget(server));
 				config.store(server);
-				typeId = OpenShiftServerType.ID;
+				type = ServerType.OPENSHIFT;
 			} else if (isPhpcloud(server)) {
 				SSHTunnelConfiguration config = SSHTunnelConfiguration
 						.createPhpcloudConfiguration(server,
 								ServerUtils.getTarget(server));
 				config.store(server);
-				typeId = ZendServerType.ID;
+				type = ServerType.ZEND_SERVER;
 			} else if (isZendServer(server)) {
-				typeId = ZendServerType.ID;
+				type = ServerType.ZEND_SERVER;
 				return true;
 			} else if (isLocalApache(server)) {
-				typeId = LocalApacheType.ID;
+				type = ServerType.LOCAL_APACHE;
 			}
-			if (typeId != null) {
-				setType(server, typeId);
+			if (type != null) {
+				setType(server, type.getId());
 				return true;
 			}
-		} else if (PHPCLOUD_TYPE.equals(typeId)) {
-			setType(server, ZendServerType.ID);
+		} else if (ServerType.OPENSHIFT.equals(type)) {
+			setType(server, ServerType.ZEND_SERVER.getId());
 			return true;
 		}
 		return updateDefaultPHPWebServer(server);

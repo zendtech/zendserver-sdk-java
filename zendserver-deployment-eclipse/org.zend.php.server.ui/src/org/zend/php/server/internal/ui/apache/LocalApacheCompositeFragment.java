@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Zend Technologies Ltd.
+§ * Copyright (c) 2014 Zend Technologies Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
-import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.server.ui.types.ApacheUtil;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -72,7 +72,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	 */
 	public void saveValues() {
 		getServer().setName(name);
-		getServer().setAttribute(LocalApacheType.LOCATION, location);
+		getServer().setAttribute(ApacheUtil.LOCATION, location);
 	}
 
 	public boolean performOk() {
@@ -99,8 +99,8 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 		}
 		if (location != null && !location.isEmpty()) {
 			Server server = new Server();
-			server.setAttribute(LocalApacheType.LOCATION, location);
-			if (LocalApacheType.parseAttributes(server)) {
+			server.setAttribute(ApacheUtil.LOCATION, location);
+			if (ApacheUtil.parseAttributes(server)) {
 				Server conflictingServer = getConflictingServer(server);
 				if (conflictingServer != null) {
 					setMessage(
@@ -179,7 +179,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 		Server server = getServer();
 		if (server != null) {
 			serverNameText.setText(server.getName());
-			String location = server.getAttribute(LocalApacheType.LOCATION, ""); //$NON-NLS-1$
+			String location = server.getAttribute(ApacheUtil.LOCATION, ""); //$NON-NLS-1$
 			locationText.setText(location);
 		}
 	}

@@ -16,7 +16,7 @@ import org.eclipse.ui.IStartup;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.ServersUI;
-import org.zend.php.server.ui.types.LocalZendServerType;
+import org.zend.php.server.ui.types.ServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 
 /**
@@ -43,7 +43,8 @@ public class LocalZendServerStartup implements IStartup {
 			if (!isUnique(server.getName())) {
 				server.setName(getNewName(server.getName()));
 			}
-			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
+			server.setAttribute(IServerType.TYPE,
+					ServerType.LOCAL_ZEND_SERVER.getId());
 			Server oldServer = ServersManager.getServer(server.getName());
 			if (oldServer == null) {
 				Server[] existingServers = ServersManager.getServers();

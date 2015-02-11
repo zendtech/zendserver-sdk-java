@@ -6,12 +6,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.Window;
-import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.internal.server.ui.ServerEditDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -22,9 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
@@ -200,25 +193,6 @@ public class ZendTargetDetailsComposite extends AbstractTargetDetailsComposite {
 	
 	@SuppressWarnings("restriction")
 	private void handleServerConfigButton() {
-		String baseUrl = baseUrlText.getText();
-		Server server = null;
-		Server[] servers = ServersManager.getServers();
-		for (Server s : servers) {
-			if (baseUrl.equals(s.getBaseURL())) {
-				server = s;
-				break;
-			}
-		}
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getShell();
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		ServerEditDialog dialog = new ServerEditDialog(shell, server);
-		if (dialog.open() == Window.CANCEL) {
-			monitor.setCanceled(true);
-			return;
-		}
-		ServersManager.save();
-		baseUrlText.setText(server.getBaseURL());
 	}
 
 }
