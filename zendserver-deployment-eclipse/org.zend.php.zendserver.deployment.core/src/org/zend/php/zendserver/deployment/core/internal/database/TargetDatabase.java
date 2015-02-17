@@ -86,9 +86,6 @@ public abstract class TargetDatabase implements ITargetDatabase {
 		if (TargetsManager.isOpenShift(target)) {
 			return new OpenShiftDatabase(target, databaseManager);
 		}
-		if (TargetsManager.isPhpcloud(target)) {
-			return new PhpcloudDatabase(target, databaseManager);
-		}
 		return null;
 	}
 
