@@ -74,7 +74,7 @@ public class DeploymentHelper implements IDeploymentHelper {
 					DeploymentAttributes.PROJECT_NAME.getName(), EMPTY_STRING));
 			helper.setUserParams(config.getAttribute(
 					DeploymentAttributes.PARAMETERS.getName(),
-					Collections.emptyMap()));
+					new HashMap<String, String>()));
 			helper.setAppName(config.getAttribute(
 					DeploymentAttributes.APPLICATION_NAME.getName(),
 					EMPTY_STRING));
