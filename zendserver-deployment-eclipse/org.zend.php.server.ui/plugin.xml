@@ -51,6 +51,9 @@
                <fragment
                id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
 	         </fragment>
+             <fragment
+                   id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+             </fragment>
 	            <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
 	            </fragment>
 	            <fragment
@@ -85,11 +88,17 @@
             <fragment
                   id="org.zend.php.server.ui.apache.LocalApacheFragmentFactory">
             </fragment>
+            <fragment
+                  id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+            </fragment>
          </wizard>
          <settings>
                <fragment
                id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
 	         </fragment>
+               <fragment
+                     id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+               </fragment>
                <fragment
                      id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
                </fragment>
@@ -129,11 +138,17 @@
             <fragment
                   id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory">
             </fragment>
+            <fragment
+                  id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+            </fragment>
          </wizard>
          <settings>
             <fragment
                id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
 	         </fragment>
+            <fragment
+                  id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+            </fragment>
             <fragment id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
             </fragment>
             <fragment
@@ -163,6 +178,9 @@
                <fragment
                id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
 	         </fragment>
+               <fragment
+                     id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
+               </fragment>
 	         <fragment
                   id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
             </fragment>
@@ -182,6 +200,9 @@
          <wizard>
             <fragment
                   id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerFragmentFactory">
+            </fragment>
+            <fragment
+                  id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory">
             </fragment>
          </wizard>
     </type>
