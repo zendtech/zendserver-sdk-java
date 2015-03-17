@@ -17,6 +17,7 @@ import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguratio
 import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNames;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
+import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsUtil;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.sdklib.SdkException;
@@ -45,9 +46,6 @@ public class DebugModeManager {
 
 	public static final String FILTER_SEPARATOR = ","; //$NON-NLS-1$
 
-	private static final String CLIENT_HOST_KEY = "org.eclipse.php.debug.coreclient_ip"; //$NON-NLS-1$
-	private static final String DEBUG_PLUGIN_ID = "org.eclipse.php.debug.core"; //$NON-NLS-1$
-
 	private static DebugModeManager manager;
 
 	private Map<IZendTarget, Boolean> targets;
@@ -67,22 +65,17 @@ public class DebugModeManager {
 		ZendDebugMode debugMode = new ZendDebugMode(target.getId());
 		Map<String, String> options = new HashMap<String, String>();
 		debugMode.setFilters(getFilters(target));
-		AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
-				.getDebuggerConfiguration(DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID);
-		if (debuggerConfiguration != null) {
-			int port = debuggerConfiguration.getPort();
-			options.put(DEBUG_PORT, String.valueOf(port));
-			options.put(DEBUG_HOST, getDebugHosts(target));
-			Server server = ServerUtils.getServer(target);
-			if (server != null) {
-				if (shouldStopAtFirstLine()) {
-					options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
-				}
-			} else {
+		options.put(DEBUG_PORT, String.valueOf(getDebugPort(target)));
+		options.put(DEBUG_HOST, getDebugHosts(target));
+		Server server = ServerUtils.getServer(target);
+		if (server != null) {
+			if (shouldStopAtFirstLine()) {
 				options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
 			}
-			debugMode.setOptions(options);
+		} else {
+			options.put(DEBUG_STOP, "1"); //$NON-NLS-1$
 		}
+		debugMode.setOptions(options);
 		State result = State.ERROR;
 		try {
 			result = debugMode.start();
@@ -165,13 +158,39 @@ public class DebugModeManager {
 			return LOCALHOST;
 		}
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
-				.getNode(DEBUG_PLUGIN_ID);
-		String clientHosts = prefs.get(CLIENT_HOST_KEY, (String) null);
+				.getNode(PHPDebugPlugin.ID);
+		String clientHosts = prefs.get(PHPDebugCorePreferenceNames.CLIENT_IP,
+				(String) null);
 		if (clientHosts == null) {
 			IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
-					.getNode(DEBUG_PLUGIN_ID);
-			clientHosts = defaultPrefs.get(CLIENT_HOST_KEY, (String) null);
+					.getNode(PHPDebugPlugin.ID);
+			clientHosts = defaultPrefs.get(
+					PHPDebugCorePreferenceNames.CLIENT_IP, (String) null);
 		}
+		Server server = ServerUtils.getServer(target);
+		// Get server individual hosts list if any
+		String customHosts = ZendDebuggerSettingsUtil.getDebugHosts(server);
+		if (customHosts != null)
+			clientHosts = customHosts;
+		return clientHosts;
+	}
+
+	private int getDebugPort(IZendTarget target) {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(PHPDebugPlugin.ID);
+		int clientHosts = prefs.getInt(
+				PHPDebugCorePreferenceNames.ZEND_DEBUG_PORT, -1);
+		if (clientHosts == -1) {
+			IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
+					.getNode(PHPDebugPlugin.ID);
+			clientHosts = defaultPrefs.getInt(
+					PHPDebugCorePreferenceNames.ZEND_DEBUG_PORT, -1);
+		}
+		Server server = ServerUtils.getServer(target);
+		// Get server individual hosts list if any
+		int customPort = ZendDebuggerSettingsUtil.getDebugPort(server);
+		if (customPort != -1)
+			clientHosts = customPort;
 		return clientHosts;
 	}
 
