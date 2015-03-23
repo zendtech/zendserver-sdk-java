@@ -169,7 +169,7 @@ public class DebugModeManager {
 		}
 		Server server = ServerUtils.getServer(target);
 		// Get server individual hosts list if any
-		String customHosts = ZendDebuggerSettingsUtil.getDebugHosts(server);
+		String customHosts = ZendDebuggerSettingsUtil.getDebugHosts(server.getUniqueId());
 		if (customHosts != null)
 			clientHosts = customHosts;
 		return clientHosts;
@@ -188,7 +188,7 @@ public class DebugModeManager {
 		}
 		Server server = ServerUtils.getServer(target);
 		// Get server individual hosts list if any
-		int customPort = ZendDebuggerSettingsUtil.getDebugPort(server);
+		int customPort = ZendDebuggerSettingsUtil.getDebugPort(server.getUniqueId());
 		if (customPort != -1)
 			clientHosts = customPort;
 		return clientHosts;
