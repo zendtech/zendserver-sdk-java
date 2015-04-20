@@ -192,7 +192,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 						&& askForRestart(server.getName())) {
 					Job restartJob = new RestartJob(target);
 					restartJob.setUser(true);
-					restartJob.schedule();
+					restartJob.schedule(1000);
 				}
 			}
 		}
