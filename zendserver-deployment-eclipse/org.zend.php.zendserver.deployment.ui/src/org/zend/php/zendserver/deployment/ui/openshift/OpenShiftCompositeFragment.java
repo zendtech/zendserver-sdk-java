@@ -29,6 +29,8 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +44,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.types.OpenShiftServerType;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
@@ -85,12 +88,16 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 	private String username;
 	private String password;
 	private String privateKey;
+	
+	protected ModifyListener modifyListener;
 
 	public OpenShiftCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.OpenShiftCompositeFragment_Title,
 				Messages.OpenShiftCompositeFragment_Desc);
+		setImageDescriptor(ServersUI.getImageDescriptor(ServersUI.OPENSHIFT_WIZ));
+		handler.setImageDescriptor(getImageDescriptor());
 	}
 
 	@Override
@@ -134,7 +141,15 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 	}
 
 	@Override
-	protected void createControl(Composite parent) {
+	protected void createContents(Composite parent) {
+		
+		modifyListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateData();
+				validate();
+			}
+		};
+		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3,
 				1));

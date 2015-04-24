@@ -14,7 +14,7 @@ import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.swt.graphics.Image;
 import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 
 /**
  * Representation of local Zend Server type.

@@ -21,8 +21,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -50,18 +48,10 @@ public abstract class AbstractCloudCompositeFragment extends
 
 	private int lastPort = -1;
 
-	protected ModifyListener modifyListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			updateData();
-			validate();
-		}
-	};
-
 	protected AbstractCloudCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing, String title,
 			String description) {
 		super(parent, handler, isForEditing, title, title, description);
-		createControl(isForEditing);
 	}
 
 	@Override

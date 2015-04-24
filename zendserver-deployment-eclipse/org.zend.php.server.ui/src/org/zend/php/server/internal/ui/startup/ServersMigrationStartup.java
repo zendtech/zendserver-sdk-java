@@ -12,7 +12,7 @@ import java.net.MalformedURLException;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.server.core.utils.ServerUtils;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
 import org.zend.php.server.ui.types.LocalApacheType;
 import org.zend.php.server.ui.types.OpenShiftServerType;

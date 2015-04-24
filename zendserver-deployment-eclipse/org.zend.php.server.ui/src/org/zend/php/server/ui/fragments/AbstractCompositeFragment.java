@@ -41,14 +41,13 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 		setDisplayName(name);
 		setTitle(title);
 		setDescription(description);
-
 		controlHandler.setTitle(title);
 		controlHandler.setDescription(description);
 		controlHandler.setImageDescriptor(ServersPluginImages.DESC_WIZ_SERVER);
-
 		if (isForEditing) {
 			setData(((ServerEditPage) controlHandler).getServer());
 		}
+		init();
 	}
 
 	/**
@@ -93,24 +92,20 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 		});
 	}
 
-	/**
-	 * Create the page
-	 */
-	protected void createControl(boolean isForEditing) {
-		// set layout for this composite (whole page)
-		GridLayout pageLayout = new GridLayout();
-		setLayout(pageLayout);
-
+	protected void createControl() {
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		setLayout(layout);
+		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(3, false));
-
-		createControl(composite);
-
-		init();
+		layout = new GridLayout(3, false);
+		layout.marginHeight = 10;
+		layout.marginWidth = 10;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		createContents(composite);
 	}
-
-	protected abstract void createControl(Composite parent);
 
 	protected abstract void init();
 

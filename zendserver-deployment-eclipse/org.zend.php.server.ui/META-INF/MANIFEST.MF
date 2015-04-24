@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PHP Servers GUI
 Bundle-SymbolicName: org.zend.php.server.ui;singleton:=true
 Bundle-Version: 12.5.1.qualifier
-Bundle-Activator: org.zend.php.server.internal.ui.ServersUI
+Bundle-Activator: org.zend.php.server.ui.ServersUI
 Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
