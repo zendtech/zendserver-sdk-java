@@ -6,11 +6,10 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.servers.messages"; //$NON-NLS-1$
 	public static String AbstarctCloudCompositeFragment_GenerateKeyMessage;
 	public static String AbstarctCloudCompositeFragment_GenerateKeyTitle;
-	public static String DeploymentCompositeFragment_CreateTitle;
+	public static String DeploymentCompositeFragment_Title;
 	public static String DeploymentCompositeFragment_Description;
 	public static String DeploymentCompositeFragment_DetectingCredentials;
 	public static String DeploymentCompositeFragment_DetectLabel;
-	public static String DeploymentCompositeFragment_EditTitle;
 	public static String DeploymentCompositeFragment_EmptyHostMessage;
 	public static String DeploymentCompositeFragment_EmptyKeyMessage;
 	public static String DeploymentCompositeFragment_EmptySecretMessage;

@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.wizards.PortForwardingWizard;
 
 /**
@@ -66,26 +67,17 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	private Button addButton;
 	private Button editButton;
 	private Button removeButton;
-
-	private ModifyListener modifyListener = new ModifyListener() {
-
-		public void modifyText(ModifyEvent e) {
-			updateData();
-			validate();
-		}
-	};
-
+	private ModifyListener modifyListener;
 	private TableViewer portForwardingViewer;
-
 	private SSHTunnelConfiguration config;
 
 	public TunnelingCompositeFragment(Composite parent,
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.TunnelingCompositeFragment_Name,
-				getTitle(isForEditing), getDescription(isForEditing));
-		this.config = new SSHTunnelConfiguration();
-		createControl(isForEditing);
+				Messages.TunnelingCompositeFragment_Title, Messages.TunnelingCompositeFragment_Description);
+		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZ_SSH_TUNNELING));
+		handler.setImageDescriptor(getImageDescriptor());
 	}
 
 	/**
@@ -150,7 +142,14 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	protected void createControl(Composite parent) {
+	protected void createContents(Composite parent) {
+		this.config = new SSHTunnelConfiguration();
+		modifyListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateData();
+				validate();
+			}
+		};
 		enableButton = new Button(parent, SWT.CHECK);
 		enableButton.setText(Messages.TunnelingCompositeFragment_EnableLabel);
 		enableButton.addSelectionListener(new SelectionAdapter() {
@@ -500,16 +499,6 @@ public class TunnelingCompositeFragment extends AbstractCompositeFragment {
 		addButton.setEnabled(enabled);
 		editButton.setEnabled(false);
 		removeButton.setEnabled(false);
-	}
-
-	private static String getTitle(boolean isEditing) {
-		return isEditing ? Messages.TunnelingCompositeFragment_EditTitle
-				: Messages.TunnelingCompositeFragment_CreateTitle;
-	}
-
-	private static String getDescription(boolean isEditing) {
-		return isEditing ? Messages.TunnelingCompositeFragment_DescEdit
-				: Messages.TunnelingCompositeFragment_DescCreate;
 	}
 
 }

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 
 /**
  * Action responsible for setting selected server as a default workspace PHP

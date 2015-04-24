@@ -25,7 +25,7 @@ import org.eclipse.php.server.ui.types.ServerTypesManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.actions.IActionContribution;
 import org.zend.php.server.ui.types.LocalApacheType;
 
