@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.LocalApacheType;
 
@@ -65,8 +64,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 				Messages.LocalApacheCompositeFragment_Name,
 				Messages.LocalApacheCompositeFragment_Name,
 				Messages.LocalApacheCompositeFragment_Desc);
-		setImageDescriptor(ServersUI.getImageDescriptor(ServersUI.APACHE_SERVER_WIZ));
-		handler.setImageDescriptor(getImageDescriptor());
+		createControl(isForEditing);
 	}
 
 	/**
@@ -126,7 +124,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	protected void createContents(Composite parent) {
+	protected void createControl(Composite parent) {
 		ModifyListener modifyListener = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {

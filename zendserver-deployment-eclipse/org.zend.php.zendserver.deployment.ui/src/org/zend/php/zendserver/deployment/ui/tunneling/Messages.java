@@ -6,10 +6,12 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.tunneling.messages"; //$NON-NLS-1$
 	public static String TunnelingCompositeFragment_AddLabel;
 	public static String TunnelingCompositeFragment_BrowseLabel;
-	public static String TunnelingCompositeFragment_Title;
+	public static String TunnelingCompositeFragment_CreateTitle;
 	public static String TunnelingCompositeFragment_CredentialsLabel;
-	public static String TunnelingCompositeFragment_Description;
+	public static String TunnelingCompositeFragment_DescEdit;
+	public static String TunnelingCompositeFragment_DescCreate;
 	public static String TunnelingCompositeFragment_EditLabel;
+	public static String TunnelingCompositeFragment_EditTitle;
 	public static String TunnelingCompositeFragment_EmptyUsernameError;
 	public static String TunnelingCompositeFragment_EnableLabel;
 	public static String TunnelingCompositeFragment_ForwardingLabel;

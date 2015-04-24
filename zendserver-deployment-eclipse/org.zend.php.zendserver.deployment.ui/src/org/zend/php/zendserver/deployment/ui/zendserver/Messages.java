@@ -20,17 +20,6 @@ public class Messages extends NLS {
 	public static String LocalTargetDetector_UnsupportedMessage;
 	public static String LocalTargetDetector_UnsupportedTitle;
 	public static String LocalTargetDetector_WindowsPriviligesMessage;
-	public static String RemoteZendServerCompositeFragment_Base_URL;
-	public static String RemoteZendServerCompositeFragment_Description;
-	public static String RemoteZendServerCompositeFragment_Duplicated_server_name;
-	public static String RemoteZendServerCompositeFragment_Duplicated_server_URL;
-	public static String RemoteZendServerCompositeFragment_Missing_server_name;
-	public static String RemoteZendServerCompositeFragment_Name;
-	public static String RemoteZendServerCompositeFragment_Please_enter_valid_URL;
-	public static String RemoteZendServerCompositeFragment_Server_name;
-	public static String RemoteZendServerCompositeFragment_Server_properties;
-	public static String RemoteZendServerCompositeFragment_Title;
-	public static String RemoteZendServerCompositeFragment_URL_is_empty;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

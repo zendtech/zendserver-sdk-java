@@ -24,7 +24,7 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.actions.IDragAndDropContribution;
 
 @SuppressWarnings("restriction")

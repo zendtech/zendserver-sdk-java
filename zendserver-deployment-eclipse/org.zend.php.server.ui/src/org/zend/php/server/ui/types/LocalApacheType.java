@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.zend.php.server.core.utils.LocalApacheDetector;
 import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * Representation of local Apache HTTP Server type.
