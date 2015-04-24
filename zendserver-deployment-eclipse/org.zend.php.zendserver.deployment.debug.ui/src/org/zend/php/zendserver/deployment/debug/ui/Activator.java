@@ -69,6 +69,7 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMAGE_WIZBAN_DEP = "icons/wizban/newdep_wiz.png"; //$NON-NLS-1$
 	public static final String IMAGE_WIZBAN_DEBUG = "icons/wizban/debug_wiz.png"; //$NON-NLS-1$
 	public static final String IMAGE_WIZBAN_DEPLOY = "icons/wizban/deploy_wiz.png"; //$NON-NLS-1$
+	public static final String IMAGE_WIZBAN_DEBUG_MODE = "icons/wizban/debug_mode_wiz.png"; //$NON-NLS-1$
 	public static final String IMAGE_EXPORT_PARAMS_DEP = "icons/wizban/exportParams_wiz.png"; //$NON-NLS-1$
 
 	public static final String IMAGE_SSH_TUNNEL = "icons/obj16/ssh_tunnel.png"; //$NON-NLS-1$

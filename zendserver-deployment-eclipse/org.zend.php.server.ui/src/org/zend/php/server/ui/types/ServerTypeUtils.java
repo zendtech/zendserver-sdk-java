@@ -30,7 +30,7 @@ import org.eclipse.php.internal.debug.core.xdebug.communication.XDebugCommunicat
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
 import org.eclipse.php.internal.server.core.Server;
 import org.osgi.framework.Bundle;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 
 /**
  * Utility class which supports server type processing.
