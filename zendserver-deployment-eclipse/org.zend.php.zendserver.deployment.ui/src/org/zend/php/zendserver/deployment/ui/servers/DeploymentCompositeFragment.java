@@ -111,9 +111,10 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.DeploymentCompositeFragment_Name,
-				getTitle(isForEditing),
+				Messages.DeploymentCompositeFragment_Title,
 				Messages.DeploymentCompositeFragment_Description);
-		createControl(isForEditing);
+		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZ_DEPLOYMENT));
+		handler.setImageDescriptor(getImageDescriptor());
 	}
 
 	public IZendTarget getTarget() {
@@ -268,7 +269,7 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	protected void createControl(Composite parent) {
+	protected void createContents(Composite parent) {
 		ModifyListener modifyListener = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
@@ -510,8 +511,4 @@ public class DeploymentCompositeFragment extends AbstractCompositeFragment {
 				.getSecretKey()));
 	}
 
-	private static String getTitle(boolean isEditing) {
-		return isEditing ? Messages.DeploymentCompositeFragment_EditTitle
-				: Messages.DeploymentCompositeFragment_CreateTitle;
-	}
 }

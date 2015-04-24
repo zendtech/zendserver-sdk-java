@@ -48,6 +48,7 @@ import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.debug.core.DebugModeManager;
+import org.zend.php.zendserver.deployment.debug.ui.Activator;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -159,13 +160,10 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.DebugModeCompositeFragment_Name,
-				getTitle(isForEditing),
-				Messages.DebugModeCompositeFragment_PageDesc);
-		this.prefs = InstanceScope.INSTANCE
-				.getNode(DebugModeManager.DEBUG_MODE_NODE);
-		this.defaultPrefs = DefaultScope.INSTANCE
-				.getNode(DebugModeManager.DEBUG_MODE_NODE);
-		createControl(isForEditing);
+				Messages.DebugModeCompositeFragment_Title,
+				Messages.DebugModeCompositeFragment_Description);
+		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZBAN_DEBUG_MODE));
+		handler.setImageDescriptor(getImageDescriptor());
 	}
 
 	@Override
@@ -217,7 +215,7 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	protected void createControl(Composite parent) {
+	protected void createContents(Composite parent) {
 		Composite filtersSection = new Composite(parent, SWT.NONE);
 		filtersSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 3, 1));
@@ -319,6 +317,10 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void init() {
+		this.prefs = InstanceScope.INSTANCE
+				.getNode(DebugModeManager.DEBUG_MODE_NODE);
+		this.defaultPrefs = DefaultScope.INSTANCE
+				.getNode(DebugModeManager.DEBUG_MODE_NODE);
 		Server server = getServer();
 		if (server != null) {
 			String value = server.getAttribute(
@@ -383,18 +385,13 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 						serverName));
 	}
 
-	private static String getTitle(boolean isEditing) {
-		return isEditing ? Messages.DebugModeCompositeFragment_EditTitle
-				: Messages.DebugModeCompositeFragment_CreateTitle;
-	}
-
 	private void updateEnablement(boolean enabled) {
 		addButton.setEnabled(enabled);
 		removeButton.setEnabled(false);
 		modifyButton.setEnabled(false);
 		viewer.getTable().setEnabled(enabled);
 		if (enabled) {
-			setDescription(Messages.DebugModeCompositeFragment_PageDesc);
+			setDescription(Messages.DebugModeCompositeFragment_Description);
 		} else {
 			setMessage(Messages.DebugModeCompositeFragment_NotAvailableMessage,
 					IMessageProvider.WARNING);

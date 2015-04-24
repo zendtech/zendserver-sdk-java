@@ -24,7 +24,7 @@ import org.eclipse.php.internal.server.ui.ServerEditWizard;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.internal.ui.ServersUI;
+import org.zend.php.server.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014
