@@ -2,7 +2,7 @@ package org.zend.php.zendserver.deployment.ui;
 
 public interface HelpContextIds {
 
-	public static final String PREFIX = "http://files.zend.com/help/Zend-Studio-12/zend-studio.htm#"; //$NON-NLS-1$
+	public static final String PREFIX = "http://files.zend.com/help/Zend-Studio-12.5/zend-studio.htm#"; //$NON-NLS-1$
 	public static final String SUFFIX = ".htm?zs"; //$NON-NLS-1$
 
 	public static final String WORKING_WITH_THE_DEPLOYMENT_XML = PREFIX
