@@ -23,7 +23,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.zend.php.server.ui.ServersUI;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 

@@ -1,7 +1,7 @@
 package org.zend.php.server.internal.ui.actions;
 
 import org.eclipse.ui.IWorkbench;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.ServersUI;
 
 public class LaunchServerWizard implements Runnable {
 

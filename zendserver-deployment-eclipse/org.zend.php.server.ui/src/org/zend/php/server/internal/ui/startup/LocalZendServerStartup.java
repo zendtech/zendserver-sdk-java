@@ -15,7 +15,7 @@ import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.ui.IStartup;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.server.internal.ui.IHelpContextIds;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 

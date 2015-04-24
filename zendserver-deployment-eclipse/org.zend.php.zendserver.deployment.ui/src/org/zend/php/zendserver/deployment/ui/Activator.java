@@ -44,8 +44,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public static final String IMAGE_ZENDSERVERCOMPONENT = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_LIBRARY = "icons/obj16/dependency_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_WIZBAN_DEP = "icons/wizban/newdep_wiz.png"; //$NON-NLS-1$
-	public static final String IMAGE_WIZ_SSH_TUNNELING = "icons/wizban/ssh_tunneling_wiz.png"; //$NON-NLS-1$
-	public static final String IMAGE_WIZ_DEPLOYMENT = "icons/wizban/deployment_wiz.png"; //$NON-NLS-1$
+	
 	
 	public static final String IMAGE_PARAMTYPE_PASSWORD = "icons/obj16/category_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_PARAMTYPE_STRING = "icons/obj16/category_obj.gif"; //$NON-NLS-1$

@@ -86,7 +86,7 @@ public class Messages extends NLS {
 
 	public static String DebugModeCompositeFragment_AddLabel;
 
-	public static String DebugModeCompositeFragment_Title;
+	public static String DebugModeCompositeFragment_CreateTitle;
 
 	public static String DebugModeCompositeFragment_DebugModeDesc;
 
@@ -95,6 +95,8 @@ public class Messages extends NLS {
 	public static String DebugModeCompositeFragment_NotAvailableMessage;
 
 	public static String DebugModeCompositeFragment_EditLabel;
+
+	public static String DebugModeCompositeFragment_EditTitle;
 
 	public static String DebugModeCompositeFragment_EnterFilter;
 
@@ -106,7 +108,7 @@ public class Messages extends NLS {
 
 	public static String DebugModeCompositeFragment_ModifyFilter;
 
-	public static String DebugModeCompositeFragment_Description;
+	public static String DebugModeCompositeFragment_PageDesc;
 
 	public static String DebugModeCompositeFragment_RemoveLabel;
 

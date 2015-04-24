@@ -19,7 +19,7 @@ import org.eclipse.php.internal.ui.wizards.WizardModel;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.ui.ServersUI;
+import org.zend.php.server.internal.ui.ServersUI;
 
 /**
  * @author Wojciech Galanciak, 2014

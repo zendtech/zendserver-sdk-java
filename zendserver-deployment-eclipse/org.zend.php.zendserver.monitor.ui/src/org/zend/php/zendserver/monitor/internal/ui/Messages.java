@@ -42,11 +42,12 @@ public class Messages extends NLS {
 	public static String MonitoringCompositeFragment_AddDesc;
 	public static String MonitoringCompositeFragment_AddLabel;
 	public static String MonitoringCompositeFragment_AddTitle;
-	public static String MonitoringCompositeFragment_Title;
+	public static String MonitoringCompositeFragment_CreateTitle;
 	public static String MonitoringCompositeFragment_DelayDesc;
 	public static String MonitoringCompositeFragment_DelayLabel;
 	public static String MonitoringCompositeFragment_DelayNaNMessage;
 	public static String MonitoringCompositeFragment_Description;
+	public static String MonitoringCompositeFragment_EditTitle;
 	public static String MonitoringCompositeFragment_FiltersDesc;
 	public static String MonitoringCompositeFragment_HideLabel;
 	public static String MonitoringCompositeFragment_InvalidUrlMessage;

@@ -21,7 +21,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 
@@ -44,8 +43,7 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 				Messages.LocalZendServerCompositeFragment_Name,
 				Messages.LocalZendServerCompositeFragment_Name,
 				Messages.LocalZendServerCompositeFragment_Desc);
-		setImageDescriptor(ServersUI.getImageDescriptor(ServersUI.ZEND_SERVER_WIZ));
-		handler.setImageDescriptor(getImageDescriptor());
+		createControl(isForEditing);
 	}
 
 	/**
@@ -107,7 +105,7 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 	}
 
 	@Override
-	protected void createContents(Composite parent) {
+	protected void createControl(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.LocalZendServerCompositeFragment_NameLabel);
 		serverNameText = new Text(parent, SWT.BORDER);

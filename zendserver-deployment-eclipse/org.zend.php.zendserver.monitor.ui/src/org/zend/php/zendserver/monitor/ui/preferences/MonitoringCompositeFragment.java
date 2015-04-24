@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
-import org.zend.php.zendserver.monitor.internal.ui.Activator;
 import org.zend.php.zendserver.monitor.internal.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.data.values.IssueSeverity;
@@ -94,9 +93,9 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 			IControlHandler handler, boolean isForEditing) {
 		super(parent, handler, isForEditing,
 				Messages.MonitoringCompositeFragment_Name,
-				Messages.MonitoringCompositeFragment_Title,
+				getTitle(isForEditing),
 				Messages.MonitoringCompositeFragment_Description);
-		setImageDescriptor(Activator.getImageDescriptor(Activator.MONITORING_ICON_WIZ));
+		createControl(isForEditing);
 	}
 
 	/**
@@ -178,7 +177,7 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	@Override
-	protected void createContents(Composite parent) {
+	protected void createControl(Composite parent) {
 		createFiltersSection(parent);
 		createSeveritySection(parent);
 		createDelaySection(parent);
@@ -441,6 +440,11 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 					Messages.MonitoringCompositeFragment_NotAvailableMessage,
 					IMessageProvider.WARNING);
 		}
+	}
+
+	private static String getTitle(boolean isEditing) {
+		return isEditing ? Messages.MonitoringCompositeFragment_EditTitle
+				: Messages.MonitoringCompositeFragment_CreateTitle;
 	}
 
 }

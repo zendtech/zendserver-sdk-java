@@ -88,7 +88,7 @@
             id="org.zend.php.server.ui.types.ZendServerType">
             <wizard>
                <fragment
-                     id="org.zend.php.zendserver.deployment.ui.zendserver.RemoteZendServerFragmentFactory"
+                     id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory"
                      ordinal="1"
                      placement="2">
                </fragment>

@@ -29,7 +29,6 @@ public class Activator extends AbstractUIPlugin {
 	public static final String TRACE = "icons/trace.png"; //$NON-NLS-1$
 	
 	public static final String MONITORING_ICON = "icons/monitoring.png"; //$NON-NLS-1$
-	public static final String MONITORING_ICON_WIZ = "icons/monitoring_wiz.png"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

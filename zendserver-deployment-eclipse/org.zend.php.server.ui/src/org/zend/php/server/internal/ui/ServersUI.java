@@ -8,7 +8,7 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.server.ui;
+package org.zend.php.server.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
