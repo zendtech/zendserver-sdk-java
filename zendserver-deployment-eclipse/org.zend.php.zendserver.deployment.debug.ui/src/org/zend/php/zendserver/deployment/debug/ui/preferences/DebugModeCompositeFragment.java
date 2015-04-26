@@ -34,6 +34,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
+import org.eclipse.php.internal.server.ui.ServerEditPage;
+import org.eclipse.php.internal.server.ui.ServerEditPage.IPostFinish;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,7 +63,7 @@ import org.zend.sdklib.target.IZendTarget;
 @SuppressWarnings("restriction")
 public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 
-	public static class RestartJob extends Job {
+	public static class RestartJob extends Job implements IPostFinish {
 
 		private IZendTarget target;
 
@@ -96,6 +98,10 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 				break;
 			}
 			return Status.OK_STATUS;
+		}
+
+		public void perform() {
+			schedule();
 		}
 	}
 
@@ -188,9 +194,11 @@ public class DebugModeCompositeFragment extends AbstractCompositeFragment {
 						&& DebugModeManager.getManager().isInDebugMode(target);
 				if (dirty && debugModeStarted
 						&& askForRestart(server.getName())) {
-					Job restartJob = new RestartJob(target);
+					RestartJob restartJob = new RestartJob(target);
 					restartJob.setUser(true);
-					restartJob.schedule(1000);
+					if (controlHandler instanceof ServerEditPage) {
+						((ServerEditPage) controlHandler).addPostFinish(restartJob);
+					}
 				}
 			}
 		}
