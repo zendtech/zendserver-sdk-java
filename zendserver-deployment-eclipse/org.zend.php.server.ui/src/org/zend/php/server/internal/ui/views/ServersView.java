@@ -216,6 +216,10 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+		
+		// ZSTD-4911 - make the viewer selection available to avoid other
+		// plugins contributing arbitrary items to this context menu
+		getSite().setSelectionProvider(viewer);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
