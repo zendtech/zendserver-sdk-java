@@ -275,11 +275,6 @@
                   ordinal="1"
                   placement="1">
             </fragment>
-            <fragment
-                  id="org.eclipse.php.debug.ui.DebuggerCompositeFragmentFactory"
-                  ordinal="2"
-                  placement="2">
-            </fragment>
          </wizard>
          <settings>
             <fragment
