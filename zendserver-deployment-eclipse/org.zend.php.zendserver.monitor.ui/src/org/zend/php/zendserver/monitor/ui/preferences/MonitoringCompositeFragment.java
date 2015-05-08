@@ -117,17 +117,21 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 	@Override
 	public boolean performOk() {
 		Server server = getServer();
-		if (server != null && isDeploymentEnabled()) {
-			updateAttribute(MonitorManager.FILTERS_ATTRIBUTE, getValue(input),
-					server);
-			updateAttribute(MonitorManager.HIDE_ATTRIBUTE,
-					String.valueOf(hideButton.getSelection()), server);
-			updateAttribute(MonitorManager.HIDE_TIME_ATTRIBUTE,
-					delayText.getText(), server);
-			for (int i = 0; i < severityButtons.length; i++) {
-				String severityName = getSeverityName(severityButtons[i]);
-				updateAttribute(MonitorManager.SEVERITY_ATTRIBUTE
-						+ severityName, String.valueOf(severities[i]), server);
+		if (server != null) {
+			IZendTarget target = ServerUtils.getTarget(server);
+			if (isDeploymentEnabled() || target != null) {
+				updateAttribute(MonitorManager.FILTERS_ATTRIBUTE,
+						getValue(input), server);
+				updateAttribute(MonitorManager.HIDE_ATTRIBUTE,
+						String.valueOf(hideButton.getSelection()), server);
+				updateAttribute(MonitorManager.HIDE_TIME_ATTRIBUTE,
+						delayText.getText(), server);
+				for (int i = 0; i < severityButtons.length; i++) {
+					String severityName = getSeverityName(severityButtons[i]);
+					updateAttribute(MonitorManager.SEVERITY_ATTRIBUTE
+							+ severityName, String.valueOf(severities[i]),
+							server);
+				}
 			}
 		}
 		return true;
