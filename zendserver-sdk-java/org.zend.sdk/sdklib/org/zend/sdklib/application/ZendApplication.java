@@ -758,7 +758,11 @@ public class ZendApplication extends ZendConnection {
 		if (hostsList != null) {
 			List<VhostInfo> infos = hostsList.getVhosts();
 			if (infos != null) {
+				VhostInfo defaultVhost = null;
 				for (VhostInfo vhostInfo : infos) {
+					if (vhostInfo.isDefaultVhost()) {
+						defaultVhost = vhostInfo;
+					}
 					String protocol = vhostInfo.isSSL() ? "https" : "http";
 					String host = vhostInfo.getName();
 					if ("*".equals(host)) {
@@ -788,6 +792,8 @@ public class ZendApplication extends ZendConnection {
 						}
 					}
 				}
+				// Use default vhost if there is no perfect match
+				return defaultVhost;
 			}
 		}
 		return null;
