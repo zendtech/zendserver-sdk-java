@@ -45,7 +45,7 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 			}
 			
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-				AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
+				AbstractDebuggerConfiguration debuggerConfiguration = (AbstractDebuggerConfiguration) PHPDebuggersRegistry
 						.getDebuggerConfiguration(DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID);
 				String targetHost = configuration.getAttribute(
 						DeploymentAttributes.TARGET_HOST.getName(),
