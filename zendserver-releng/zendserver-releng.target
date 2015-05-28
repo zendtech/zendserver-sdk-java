@@ -49,7 +49,7 @@
 <unit id="org.eclipse.datatools.connectivity.feature.feature.group"  version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/MirrorLuna/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorLuna/lastSuccessfulBuild/artifact/mirrors/luna/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.zend.notifications.feature.feature.group" version="0.0.0"/>
