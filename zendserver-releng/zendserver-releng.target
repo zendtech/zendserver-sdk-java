@@ -28,12 +28,12 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.php.feature.group" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/zend-pdt/lastSuccessfulBuild/artifact/dev/org.eclipse.php-repository/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/zend-pdt-maintenance/lastSuccessfulBuild/artifact/dev/org.eclipse.php-repository/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.dltk.core.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.dltk.core.index.feature.group" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/zend-dltk/lastSuccessfulBuild/artifact/org.eclipse.dltk.releng/build/update.site/target/site"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/zend-dltk-maintenance/lastSuccessfulBuild/artifact/org.eclipse.dltk.releng/build/update.site/target/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
@@ -49,7 +49,7 @@
 <unit id="org.eclipse.datatools.connectivity.feature.feature.group"  version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
 <unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorLuna/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.zend.notifications.feature.feature.group" version="0.0.0"/>
