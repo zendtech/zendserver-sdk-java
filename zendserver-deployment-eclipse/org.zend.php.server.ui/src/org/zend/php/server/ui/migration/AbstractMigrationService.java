@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.server.ui.types.IServerType;
+import org.eclipse.php.internal.server.core.types.IServerType;
 import org.eclipse.ui.IStartup;
 
 /**
@@ -29,35 +29,21 @@ import org.eclipse.ui.IStartup;
 @SuppressWarnings("restriction")
 public abstract class AbstractMigrationService implements IStartup {
 
-	private static final String OLD_EMPTY_SERVER_NAME = "Default PHP Web Server"; //$NON-NLS-1$
-	private static final String EMPTY_BASE_URL = "http://<no_php_server>"; //$NON-NLS-1$
-
+	protected static final String EMPTY_SERVER_ATTRIBUTE = "emptyServer"; //$NON-NLS-1$
+	
 	@Override
 	public final void earlyStartup() {
 		Server[] servers = ServersManager.getServers();
 		boolean save = false;
 		for (Server server : servers) {
-			if (!ServersManager.isEmptyServer(server) && migrate(server)) {
+			if (!ServersManager.isNoneServer(server) && migrate(server)) {
 				save = true;
 			}
 		}
-		Server emptyServer = ServersManager
-				.getServer(ServersManager.EMPTY_SERVER);
-		if (emptyServer == null) {
-			emptyServer = ServersManager.getServer(OLD_EMPTY_SERVER_NAME);
-		}
-		if (emptyServer == null) {
-			try {
-				emptyServer = new Server(ServersManager.DEFAULT_SERVER_NAME,
-						"localhost", EMPTY_BASE_URL, ""); //$NON-NLS-1$ //$NON-NLS-2$
-				emptyServer.setAttribute(ServersManager.EMPTY_SERVER,
-						String.valueOf(true));
-				emptyServer = ServersManager.getServer(emptyServer);
-				ServersManager.addServer(emptyServer);
-				save = true;
-			} catch (MalformedURLException e) {
-				// safe server creation
-			}
+		Server defaultServer = ServersManager.getServer(ServersManager.DEFAULT_SERVER_NAME);
+		if (defaultServer != null) {
+			ServersManager.removeServer(ServersManager.DEFAULT_SERVER_NAME);
+			save = true;
 		}
 		if (save) {
 			ServersManager.save();

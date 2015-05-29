@@ -12,14 +12,10 @@ package org.zend.php.server.ui.types;
 
 import java.net.MalformedURLException;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.server.ui.types.IServerType;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.php.internal.server.core.types.IServerType;
 import org.zend.php.server.core.utils.LocalApacheDetector;
-import org.zend.php.server.internal.ui.IHelpContextIds;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.php.server.ui.ServersUI;
 
 /**
  * Representation of local Apache HTTP Server type.
@@ -47,29 +43,10 @@ public class LocalApacheType implements IServerType {
 	}
 
 	@Override
-	public Image getViewIcon() {
-		return ServersUI.getDefault().getImage(ServersUI.APACHE_SERVER_ICON);
-	}
-
-	@Override
 	public String getDescription() {
 		return Messages.LocalApacheType_Description;
 	}
 
-	@Override
-	public Image getTypeIcon() {
-		return ServersUI.getDefault().getImage(ServersUI.APACHE_TYPE_ICON);
-	}
-
-	@Override
-	public ImageDescriptor getWizardImage() {
-		return ServersUI.getImageDescriptor(ServersUI.APACHE_SERVER_WIZ);
-	}
-
-	@Override
-	public String getHelp() {
-		return IHelpContextIds.ADDING_A_SERVER_APACHE_HTTP_SERVER;
-	}
 
 	/**
 	 * Parse document root and base URL settings from httpd.conf file for

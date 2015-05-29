@@ -12,7 +12,6 @@ package org.zend.php.server.ui.actions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.server.ui.types.IServerType;
 
 /**
  * Interface for providing actions related to specific server type.

@@ -8,16 +8,11 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.ui.preferences;
 
-import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.internal.ui.wizards.WizardFragment;
-import org.eclipse.php.server.ui.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
-import org.zend.php.server.ui.types.LocalZendServerType;
-import org.zend.php.server.ui.types.OpenShiftServerType;
-import org.zend.php.server.ui.types.ZendServerType;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -26,8 +21,6 @@ import org.zend.php.server.ui.types.ZendServerType;
 @SuppressWarnings("restriction")
 public class MonitoringFragmentFactory implements ICompositeFragmentFactory {
 
-	private static final String ID = "org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"; //$NON-NLS-1$
-
 	public WizardFragment createWizardFragment() {
 		return new MonitoringWizardFragment();
 	}
@@ -35,25 +28,6 @@ public class MonitoringFragmentFactory implements ICompositeFragmentFactory {
 	public CompositeFragment createComposite(Composite parent,
 			IControlHandler controlHandler) {
 		return new MonitoringCompositeFragment(parent, controlHandler, true);
-	}
-
-	public boolean isSupported(Object element) {
-		String typeId = null;
-		if (element instanceof IServerType) {
-			typeId = ((IServerType) element).getId();
-		}
-		if (element instanceof Server) {
-			Server server = (Server) element;
-			typeId = server.getAttribute(IServerType.TYPE, null);
-		}
-		return typeId != null
-				&& (ZendServerType.ID.equals(typeId)
-						|| LocalZendServerType.ID.equals(typeId) || OpenShiftServerType.ID
-							.equals(typeId));
-	}
-
-	public String getId() {
-		return ID;
 	}
 
 }

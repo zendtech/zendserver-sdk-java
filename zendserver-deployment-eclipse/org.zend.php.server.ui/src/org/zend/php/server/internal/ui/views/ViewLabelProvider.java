@@ -17,8 +17,11 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.server.ui.types.IServerType;
-import org.eclipse.php.server.ui.types.ServerTypesManager;
+import org.eclipse.php.internal.server.core.types.IServerType;
+import org.eclipse.php.internal.server.core.types.ServerTypesManager;
+import org.eclipse.php.internal.server.ui.types.IServerTypeDescriptor;
+import org.eclipse.php.internal.server.ui.types.ServerTypesDescriptorRegistry;
+import org.eclipse.php.internal.server.ui.types.IServerTypeDescriptor.ImageType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -70,7 +73,8 @@ class ViewLabelProvider extends LabelProvider implements IFontProvider {
 			IServerType type = ServerTypesManager.getInstance().getType(
 					typeName);
 			if (type != null) {
-				return type.getViewIcon();
+				IServerTypeDescriptor typeDescriptor = ServerTypesDescriptorRegistry.getDescriptor(type);
+				return typeDescriptor.getImage(ImageType.ICON_16);
 			} else {
 				return ServersUI.getDefault().getImage(
 						ServersUI.DEFAULT_SERVER_ICON);
