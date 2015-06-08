@@ -31,14 +31,9 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 		}
 
 		IProject[] projects = null;
-		String targetId = null;
 
 		if (ctx != null) {
 			projects = getProjects(ctx.getVariable(TestingSectionContribution.PROJECT_NAME));
-			Object targetIdVariable = ctx.getVariable(TestingSectionContribution.TARGET_ID);
-			if (targetIdVariable instanceof String) {
-				targetId = (String) targetIdVariable;
-			}
 		}
 		if (projects == null) {
 			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
@@ -48,13 +43,13 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 		}
 
 		for (IProject project : projects) {
-			execute(mode, project, targetId);
+			execute(mode, project);
 		}
 
 		return null;
 	}
 
-	private void execute(final String mode, final IProject project, final String targetId) {
+	private void execute(final String mode, final IProject project) {
 		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return;
 		}
@@ -79,12 +74,7 @@ public class DeployApplicationHandler extends AbstractDeploymentHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				DeploymentHandler handler = new DeploymentHandler();
-				IDeploymentHelper defaultHelper = null;
-				if (targetId != null) {
-					defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
-				} else {
-					defaultHelper = LaunchUtils.createDefaultHelper(project);
-				}
+				IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
 				if (handler.openNoConfigDeploymentWizard(defaultHelper, project) == IStatus.OK) {
 					return Status.OK_STATUS;
 				} else {

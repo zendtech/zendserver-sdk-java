@@ -143,6 +143,22 @@ public class LaunchUtils {
 				wc.setAttribute(Server.BASE_URL, helper.getBaseURL().toString());
 			}
 		}
+		// Set deployment parameters
+		wc.setAttribute(DeploymentAttributes.BASE_URL.getName(), helper.getBaseURL().toString());
+		wc.setAttribute(DeploymentAttributes.TARGET_ID.getName(), helper.getTargetId());
+		wc.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), helper.getTargetHost());
+		wc.setAttribute(DeploymentAttributes.APP_ID.getName(), helper.getAppId());
+		wc.setAttribute(DeploymentAttributes.PROJECT_NAME.getName(), helper.getProjectName());
+		wc.setAttribute(DeploymentAttributes.PARAMETERS.getName(), helper.getUserParams());
+		wc.setAttribute(DeploymentAttributes.APPLICATION_NAME.getName(), helper.getAppName());
+		wc.setAttribute(DeploymentAttributes.IGNORE_FAILURES.getName(), helper.isIgnoreFailures());
+		wc.setAttribute(DeploymentAttributes.DEFAULT_SERVER.getName(), helper.isDefaultServer());
+		wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), helper.getOperationType());
+		wc.setAttribute(DeploymentAttributes.INSTALLED_LOCATION.getName(), helper.getInstalledLocation());
+		wc.setAttribute(DeploymentAttributes.ENABLED.getName(), helper.isEnabled());
+		wc.setAttribute(DeploymentAttributes.DEVELOPMENT_MODE.getName(), helper.isDevelopmentModeEnabled());
+		wc.setAttribute(DeploymentAttributes.WARN_UPDATE.getName(), helper.isWarnUpdate());
+		
 		// Set the debugger ID and the configuration delegate for this launch
 		// configuration
 		String debuggerID = PHPProjectPreferences.getDefaultDebuggerID(project);
