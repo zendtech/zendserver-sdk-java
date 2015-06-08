@@ -35,11 +35,9 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		}
 
 		IProject[] projects = null;
-		String targetId = null;
 
 		if (ctx != null) {
 			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
-			targetId = event.getParameter(TestingSectionContribution.TARGET_ID);
 			// if projects is null them command is not executed from descriptor editor 
 			if (projects == null) {
 				Object element = ctx.getDefaultVariable();
@@ -59,21 +57,20 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 			}
 		}
 		if (projects == null) {
-			projects = getProjects(event
-					.getParameter(TestingSectionContribution.PROJECT_NAME));
+			projects = getProjects(event.getParameter(TestingSectionContribution.PROJECT_NAME));
 		}
 		if (projects == null) {
 			projects = new IProject[] { getProjectFromEditor() };
 		}
 
 		for (IProject project : projects) {
-			execute(mode, project, targetId);
+			execute(mode, project);
 		}
 
 		return null;
 	}
 
-	private void execute(final String mode, IProject project, String targetId) {
+	private void execute(final String mode, IProject project) {
 		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return;
 		}
@@ -95,23 +92,15 @@ public class LaunchApplicationHandler extends AbstractDeploymentHandler {
 		}
 
 		ILaunchConfiguration config = null;
-		IDeploymentHelper defaultHelper = null;
-		if (targetId != null) {
-			defaultHelper = LaunchUtils.createDefaultHelper(targetId, project);
-		} else {
-			defaultHelper = LaunchUtils.createDefaultHelper(project);
-		}
-		Mode wizardMode = ILaunchManager.RUN_MODE.equals(mode) ? Mode.RUN
-				: Mode.DEBUG;
-		DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper,
-				wizardMode);
+		IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
+		Mode wizardMode = ILaunchManager.RUN_MODE.equals(mode) ? Mode.RUN : Mode.DEBUG;
+		DeploymentWizard wizard = new DeploymentWizard(project, defaultHelper, wizardMode);
 		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			try {
-				config = LaunchUtils.createConfiguration(project,
-						wizard.getHelper());
+				config = LaunchUtils.createConfiguration(project, wizard.getHelper());
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
