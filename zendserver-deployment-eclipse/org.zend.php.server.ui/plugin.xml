@@ -107,11 +107,6 @@
                      ordinal="4"
                      placement="3">
                </fragment>
-               <fragment
-                     id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
-                     ordinal="5"
-                     placement="4">
-               </fragment>
             </wizard>
             <settings>
                <fragment
@@ -153,11 +148,6 @@
                      id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
                      ordinal="8"
                      placement="8">
-               </fragment>
-               <fragment
-                     id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
-                     ordinal="9"
-                     placement="9">
                </fragment>
             </settings>
       </type>
@@ -256,11 +246,6 @@
                    ordinal="4"
                    placement="4">
 	            </fragment>
-             <fragment
-                   id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
-                   ordinal="5"
-                   placement="5">
-             </fragment>
 	       </settings>
       </type>
    </extension>
@@ -317,11 +302,6 @@
                   ordinal="8"
                   placement="5">
             </fragment>
-            <fragment
-                  id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
-                  ordinal="9"
-                  placement="8">
-            </fragment>
          </settings>
       </type>
    </extension>
@@ -356,11 +336,6 @@
                 ordinal="5"
                 placement="8">
           </fragment>
-          <fragment
-                id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
-                ordinal="6"
-                placement="9">
-          </fragment>
        </wizard>
        <settings>
           <fragment
@@ -387,11 +362,6 @@
                 id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory"
                 ordinal="5"
                 placement="8">
-          </fragment>
-          <fragment
-                id="com.zend.php.debug.internal.ui.tunneling.TunnelingFragmentFactory"
-                ordinal="6"
-                placement="9">
           </fragment></settings>
     </type>
  </extension>
