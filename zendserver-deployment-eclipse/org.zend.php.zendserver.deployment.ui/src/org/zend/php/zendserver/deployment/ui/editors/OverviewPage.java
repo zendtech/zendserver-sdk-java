@@ -473,6 +473,8 @@ public class OverviewPage extends DescriptorEditorPage {
 		license.refresh();
 		icon.refresh();
 		docRoot.refresh();
+		libDir.refresh();
+		updateUrl.refresh();
 		appDir.refresh();
 		persistent.refresh();
 	}
