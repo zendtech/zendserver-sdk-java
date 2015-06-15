@@ -388,6 +388,7 @@ public class OverviewPage extends DescriptorEditorPage {
 								}
 								appDir.setEnabled(!libEnabled);
 								docRoot.setEnabled(!libEnabled);
+								healthcheck.setEnabled(!libEnabled);
 								libDir.setEnabled(libEnabled);
 								updateUrl.setEnabled(libEnabled);
 							}
@@ -427,6 +428,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		case LIBRARY:
 			appDir.setEnabled(false);
 			docRoot.setEnabled(false);
+			healthcheck.setEnabled(false);
 			section.setDescription(Messages.OverviewPage_GeneralInfoDescrLibrary);
 			break;
 		default:
@@ -467,6 +469,7 @@ public class OverviewPage extends DescriptorEditorPage {
 		description.refresh();
 		releaseVersion.refresh();
 		apiVersion.refresh();
+		healthcheck.refresh();
 		license.refresh();
 		icon.refresh();
 		docRoot.refresh();
