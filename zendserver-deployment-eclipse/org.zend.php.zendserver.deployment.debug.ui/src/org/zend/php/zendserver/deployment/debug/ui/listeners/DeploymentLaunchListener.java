@@ -38,8 +38,8 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 				return IStatus.OK;
 			}
 
-			DeploymentHandler handler = new DeploymentHandler(configuration);
-			int result = handler.executeDeployment(mode);
+			DeploymentHandler handler = new DeploymentHandler();
+			int result = handler.executeDeployment(configuration, mode);
 			if (result == IStatus.CANCEL) {
 				configuration.delete();
 			}

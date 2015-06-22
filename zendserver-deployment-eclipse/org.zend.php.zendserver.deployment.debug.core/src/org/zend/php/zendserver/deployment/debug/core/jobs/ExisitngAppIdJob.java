@@ -10,7 +10,6 @@ import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
 import org.zend.php.zendserver.deployment.core.sdk.EclipseMappingModelLoader;
 import org.zend.php.zendserver.deployment.core.sdk.SdkStatus;
 import org.zend.php.zendserver.deployment.core.sdk.StatusChangeListener;
-import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendApplication;
 import org.zend.webapi.core.connection.data.ApplicationInfo;
@@ -30,8 +29,7 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		StatusChangeListener listener = new StatusChangeListener(monitor);
-		ZendApplication app = new ZendApplication(
-				new EclipseMappingModelLoader());
+		ZendApplication app = new ZendApplication(new EclipseMappingModelLoader());
 		app.addStatusChangeListener(listener);
 		ApplicationsList list = app.getStatus(helper.getTargetId());
 		List<ApplicationInfo> infos = list.getApplicationsInfo();
@@ -46,8 +44,7 @@ public class ExisitngAppIdJob extends AbstractLaunchJob {
 				}
 			}
 		}
-		return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-				Messages.ExisitngAppIdJob_AppNameConflictMessage, null);
+		return Status.OK_STATUS;
 	}
 
 }
