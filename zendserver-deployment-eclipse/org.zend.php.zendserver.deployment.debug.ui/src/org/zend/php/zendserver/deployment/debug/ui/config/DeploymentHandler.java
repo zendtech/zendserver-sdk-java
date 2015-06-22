@@ -16,7 +16,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.debugger.IDeploymentHelper;
@@ -49,21 +48,11 @@ public class DeploymentHandler {
 
 	private DeployJobChangeListener listener;
 
-	private ILaunchConfiguration config;
-	private String mode;
-
 	public DeploymentHandler() {
-		this(null);
-	}
-
-	public DeploymentHandler(ILaunchConfiguration config) {
 		super();
-		this.config = config;
 	}
 
-	public int executeDeployment(String executionMode) {
-		mode = executionMode;
-		job = null;
+	public int executeDeployment(ILaunchConfiguration config, String executionMode) {
 		try {
 			boolean isRunAs = LaunchUtils.updateConfigForRunAs(config);
 			if (isRunAs) {
@@ -73,88 +62,58 @@ public class DeploymentHandler {
 			Activator.log(e);
 			return IStatus.ERROR;
 		}
-		listener = new DeployJobChangeListener(config);
+		
 		try {
-			if (LaunchUtils.getConfigurationType() == config.getType()) {
-				IDeploymentHelper helper = DeploymentHelper.create(config);
-				final IProject project = LaunchUtils
-						.getProjectFromFilename(config);
-				if (!helper.isEnabled()) {
-					return IStatus.OK;
+			if (LaunchUtils.getConfigurationType() != config.getType())
+				return IStatus.OK;
+			
+			IDeploymentHelper helper = DeploymentHelper.create(config);
+			if (!helper.isEnabled()) {
+				return IStatus.OK;
+			}
+			
+			listener = new DeployJobChangeListener(config);
+			final IProject project = LaunchUtils.getProjectFromFilename(config);
+
+			switch (helper.getOperationType()) {
+			case IDeploymentHelper.DEPLOY:
+				if (helper.getTargetId().isEmpty()) {
+					IDeploymentHelper defaultHelper = LaunchUtils.createDefaultHelper(project);
+					if (defaultHelper != null) {
+						try {
+							helper = defaultHelper;
+							LaunchUtils.updateLaunchConfiguration(project, defaultHelper, config.getWorkingCopy());
+						} catch (CoreException e) {
+							Activator.log(e);
+						}
+					}
 				}
-				switch (helper.getOperationType()) {
-				case IDeploymentHelper.DEPLOY:
-					if (helper.getTargetId().isEmpty()) {
-						IDeploymentHelper defaultHelper = LaunchUtils
-								.createDefaultHelper(project);
-						if (defaultHelper != null) {
-							try {
-								helper = defaultHelper;
-								LaunchUtils.updateLaunchConfiguration(project,
-										defaultHelper, config.getWorkingCopy());
-							} catch (CoreException e) {
-								Activator.log(e);
-							}
-						}
+				if (helper.getTargetId().isEmpty() || hasEmptyParameters(project, helper)) {
+					setDefaultTarget(helper, project);
+					if (helper.getTargetId() != null || !helper.getTargetId().isEmpty()) {
+						helper.setProjectName(project.getName());
 					}
-					if (!helper.getTargetId().isEmpty()
-							&& !hasEmptyParameters(project, helper)) {
-						job = new DeployLaunchJob(helper, project);
-					} else {
-						setDefaultTarget(helper, project);
-						if (helper.getTargetId() != null
-								|| !helper.getTargetId().isEmpty()) {
-							helper.setProjectName(project.getName());
-						}
-						doOpenDeploymentWizard(helper, project);
-					}
-					if (job == null) {
-						return IStatus.CANCEL;
-					}
-					break;
-				case IDeploymentHelper.UPDATE:
-					if (hasEmptyParameters(project, helper)) {
-						setDefaultTarget(helper, project);
-						if (helper.getTargetId() != null
-								|| !helper.getTargetId().isEmpty()) {
-							helper.setProjectName(project.getName());
-						}
-						doOpenDeploymentWizard(helper, project);
-					} else {
-						job = new UpdateLaunchJob(helper, project);
-					}
-					break;
-				case IDeploymentHelper.AUTO_DEPLOY:
-					job = LaunchUtils.getAutoDeployJob();
-					if (job == null) {
-						return IStatus.CANCEL;
-					}
-					job.setHelper(helper);
-					job.setProjectPath(project);
-					job.addJobChangeListener(new JobChangeAdapter() {
-						@Override
-						public void done(IJobChangeEvent event) {
-							if (event.getResult().getSeverity() == IStatus.CANCEL) {
-								cancelled = true;
-							}
-						}
-					});
-					break;
-				case IDeploymentHelper.NO_ACTION:
-					updateLaunchConfiguration(helper, config, project);
-					return IStatus.OK;
-				default:
-					return IStatus.CANCEL;
+					helper = doOpenDeploymentWizard(helper, project, executionMode);
 				}
-				job.addJobChangeListener(listener);
-				job.setUser(true);
-				job.schedule();
-				job.join();
-				return verifyJobResult(job.getHelper(), project);
+				return performJob(helper, project);
+			case IDeploymentHelper.UPDATE:
+				if (hasEmptyParameters(project, helper)) {
+					setDefaultTarget(helper, project);
+					if (helper.getTargetId() != null || !helper.getTargetId().isEmpty()) {
+						helper.setProjectName(project.getName());
+					}
+					helper = doOpenDeploymentWizard(helper, project, executionMode);
+				}
+				return performJob(helper, project);
+			case IDeploymentHelper.AUTO_DEPLOY:
+				return performJob(helper, project);
+			case IDeploymentHelper.NO_ACTION:
+				updateLaunchConfiguration(helper, config, project);
+				return IStatus.OK;
+			default:
+				return IStatus.CANCEL;
 			}
 		} catch (CoreException e) {
-			Activator.log(e);
-		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
 		return IStatus.OK;
@@ -162,59 +121,11 @@ public class DeploymentHandler {
 
 	public int openNoConfigDeploymentWizard(IDeploymentHelper helper,
 			IProject project) {
-		job = null;
-		try {
-			doOpenDeploymentWizard(helper, project);
-			if (job == null) {
-				return IStatus.OK;
-			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
-		} catch (InterruptedException e) {
-			Activator.log(e);
+		helper = doOpenDeploymentWizard(helper, project);
+		if (helper == null) {
+			return IStatus.CANCEL;
 		}
-		return IStatus.OK;
-	}
-
-	public int noWizardDeploy(IDeploymentHelper helper, IProject project) {
-		try {
-			job = new DeployLaunchJob(helper, project);
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
-		} catch (InterruptedException e) {
-			Activator.log(e);
-		}
-		return IStatus.OK;
-	}
-
-	public int openDeploymentWizard() {
-		job = null;
-		listener = new DeployJobChangeListener(config);
-		try {
-			if (LaunchUtils.getConfigurationType() == config.getType()) {
-				IDeploymentHelper helper = DeploymentHelper.create(config);
-				final IProject project = LaunchUtils
-						.getProjectFromFilename(config);
-				doOpenDeploymentWizard(helper, project);
-				if (job == null) {
-					return IStatus.OK;
-				}
-				job.addJobChangeListener(listener);
-				job.setUser(true);
-				job.schedule();
-				job.join();
-				return verifyJobResult(job.getHelper(), project);
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-		} catch (InterruptedException e) {
-			Activator.log(e);
-		}
-		return IStatus.OK;
+		return performJob(helper, project);
 	}
 
 	/**
@@ -239,7 +150,7 @@ public class DeploymentHandler {
 		case IDeploymentHelper.AUTO_DEPLOY:
 			job = LaunchUtils.getAutoDeployJob();
 			if (job == null) {
-				break;
+				return IStatus.CANCEL;
 			}
 			job.setHelper(helper);
 			job.setProjectPath(project);
@@ -253,15 +164,19 @@ public class DeploymentHandler {
 			});
 			break;
 		}
-		if (job != null) {
-			job.setUser(true);
-			job.schedule();
-			try {
-				job.join();
-				return verifyJobResult(job.getHelper(), project);
-			} catch (InterruptedException e) {
-				Activator.log(e);
-			}
+		
+		if (job == null)
+			return IStatus.OK;
+		
+		if (listener != null)
+			job.addJobChangeListener(listener);
+		job.setUser(true);
+		job.schedule();
+		try {
+			job.join();
+			return verifyJobResult(job.getHelper(), project);
+		} catch (InterruptedException e) {
+			Activator.log(e);
 		}
 		return IStatus.OK;
 	}
@@ -278,8 +193,7 @@ public class DeploymentHandler {
 		}
 	}
 
-	private boolean hasEmptyParameters(IProject project,
-			IDeploymentHelper helper) {
+	private boolean hasEmptyParameters(IProject project, IDeploymentHelper helper) {
 		IResource descriptor = project
 				.findMember(DescriptorContainerManager.DESCRIPTOR_PATH);
 		IDescriptorContainer model = DescriptorContainerManager.getService()
@@ -387,6 +301,7 @@ public class DeploymentHandler {
 
 	private int handleConflict(IDeploymentHelper helper, IProject project,
 			ResponseCode code) throws InterruptedException {
+		dialogResult = false;
 		if (helper.isWarnUpdate()) {
 			IStatus result = job.getResult();
 			if (result.getSeverity() == IStatus.INFO) {
@@ -404,17 +319,11 @@ public class DeploymentHandler {
 			dialogResult = true;
 		}
 		if (!dialogResult) {
-			doOpenDeploymentWizard(helper, project);
-			if (job == null) {
+			helper = doOpenDeploymentWizard(helper, project);
+			if (helper == null) {
 				return IStatus.CANCEL;
 			}
-			if (listener != null) {
-				job.addJobChangeListener(listener);
-			}
-			job.setUser(true);
-			job.schedule();
-			job.join();
-			return verifyJobResult(job.getHelper(), project);
+			return performJob(helper, project);
 		} else {
 			dialogResult = false;
 			helper.setOperationType(DeploymentHelper.UPDATE);
@@ -437,69 +346,36 @@ public class DeploymentHandler {
 		}
 	}
 
-	private void doOpenDeploymentWizard(final IDeploymentHelper helper,
-			final IProject project) {
-		Display.getDefault().syncExec(new Runnable() {
+	private IDeploymentHelper doOpenDeploymentWizard(final IDeploymentHelper helper, final IProject project,
+			String launchMode) {
+		Mode wizardMode = Mode.DEBUG;
+		if (ILaunchManager.RUN_MODE.equals(launchMode))
+			wizardMode = Mode.RUN;
+
+		return doOpenDeploymentWizard(helper, project, wizardMode);
+	}
+
+	private IDeploymentHelper doOpenDeploymentWizard(final IDeploymentHelper helper, final IProject project) {
+		return doOpenDeploymentWizard(helper, project, Mode.DEPLOY);
+	}
+
+	private IDeploymentHelper doOpenDeploymentWizard(final IDeploymentHelper helper, final IProject project,
+			final Mode wizardMode) {
+
+		final DeploymentWizard wizard = new DeploymentWizard(project, helper, wizardMode);
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			public void run() {
-				Mode wizardMode = null;
-				if (config != null) {
-					if (ILaunchManager.RUN_MODE.equals(mode)) {
-						wizardMode = Mode.RUN;
-					} else {
-						wizardMode = Mode.DEBUG;
-					}
-				} else {
-					wizardMode = Mode.DEPLOY;
-				}
-				DeploymentWizard wizard = new DeploymentWizard(project, helper,
-						wizardMode);
-				Shell shell = PlatformUI.getWorkbench().getDisplay()
-						.getActiveShell();
+				Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();
-				if (dialog.open() == Window.OK) {
-					IDeploymentHelper updatedHelper = wizard.getHelper();
-					switch (updatedHelper.getOperationType()) {
-					case IDeploymentHelper.DEPLOY:
-						job = new DeployLaunchJob(updatedHelper, project);
-						break;
-					case IDeploymentHelper.UPDATE:
-						job = new UpdateLaunchJob(updatedHelper, project);
-						break;
-					case IDeploymentHelper.AUTO_DEPLOY:
-						job = LaunchUtils.getAutoDeployJob();
-						if (job == null) {
-							break;
-						}
-						job.setHelper(updatedHelper);
-						job.setProjectPath(project);
-						job.addJobChangeListener(new JobChangeAdapter() {
-							@Override
-							public void done(IJobChangeEvent event) {
-								if (event.getResult().getSeverity() == IStatus.CANCEL) {
-									cancelled = true;
-								}
-							}
-						});
-						break;
-					case IDeploymentHelper.NO_ACTION:
-						try {
-							if (config != null) {
-								updateLaunchConfiguration(updatedHelper,
-										config, project);
-							}
-						} catch (CoreException e) {
-							Activator.log(e);
-						}
-						return;
-					}
-				} else {
-					cancelled = true;
-					job = null;
-				}
+				dialogResult = (dialog.open() == Window.OK);
 			}
 		});
+		IDeploymentHelper helper2 = null;
+		if (dialogResult)
+			helper2 = wizard.getHelper();
+		return helper2;
 	}
 
 	private void updateLaunchConfiguration(IDeploymentHelper helper,
