@@ -160,9 +160,9 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			}
 			int totalWork = calculateTotalWork();
 			resolution = (int) totalWork / STEPS;
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-					"Package creation", "Creating " + result.getName()
-							+ " deployment package...", STEPS));
+			// extra step reserved for finishing output file
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Package creation",
+					"Creating " + result.getName() + " deployment package...", STEPS + 1));
 			File descriptorFile = new File(configLocation,
 					ProjectResourcesWriter.DESCRIPTOR);
 			addFileToPackage(descriptorFile, null, null, null, false);
@@ -170,6 +170,8 @@ public class PackageBuilder extends AbstractChangeNotifier {
 			resolveMappings();
 
 			finishOutputFile(result);
+			notifier.statusChanged(
+					new BasicStatus(StatusCode.PROCESSING, "Package creation", "Creating deployment package...", 1));
 
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 					"Package creation",
