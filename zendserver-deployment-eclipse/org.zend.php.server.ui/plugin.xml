@@ -114,7 +114,7 @@
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
-                id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
+                id="org.eclipse.php.server.ui.PathMapperFragmentFactory">
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
@@ -161,7 +161,7 @@
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
-                id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
+                id="org.eclipse.php.server.ui.PathMapperFragmentFactory">
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
@@ -202,7 +202,7 @@
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
-                id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
+                id="org.eclipse.php.server.ui.PathMapperFragmentFactory">
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
@@ -231,7 +231,7 @@
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
-                id="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory">
+                id="org.eclipse.php.server.ui.PathMapperFragmentFactory">
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">

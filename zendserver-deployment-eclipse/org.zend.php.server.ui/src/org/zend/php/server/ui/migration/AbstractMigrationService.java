@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.internal.server.core.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.ui.IStartup;
 
 /**

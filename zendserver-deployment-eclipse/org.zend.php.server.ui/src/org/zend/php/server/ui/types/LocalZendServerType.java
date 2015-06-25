@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.zend.php.server.ui.types;
 
-import org.eclipse.php.internal.server.core.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.zend.php.server.internal.ui.Messages;
 
 /**

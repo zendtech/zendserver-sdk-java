@@ -13,7 +13,7 @@ package org.zend.php.server.ui.types;
 import java.net.MalformedURLException;
 
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.zend.php.server.core.utils.LocalApacheDetector;
 import org.zend.php.server.internal.ui.Messages;
 
