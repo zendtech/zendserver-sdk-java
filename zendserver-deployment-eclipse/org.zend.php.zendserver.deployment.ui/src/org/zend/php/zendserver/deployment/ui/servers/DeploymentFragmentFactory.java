@@ -12,7 +12,7 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.internal.ui.wizards.WizardFragment;
-import org.eclipse.php.server.ui.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.php.ui.wizards.ICompositeFragmentFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.types.LocalZendServerType;

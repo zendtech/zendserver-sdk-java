@@ -54,8 +54,7 @@ class ViewContentProvider implements IStructuredContentProvider,
 			});
 			List<Server> result = new ArrayList<Server>();
 			for (Server server : servers) {
-				if (!Boolean.valueOf(server.getAttribute(
-						ServersManager.EMPTY_SERVER, String.valueOf(false)))) {
+				if (!ServersManager.isNoneServer(server)) {
 					result.add(server);
 				}
 			}

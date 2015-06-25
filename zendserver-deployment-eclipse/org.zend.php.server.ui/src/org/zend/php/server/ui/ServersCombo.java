@@ -248,7 +248,7 @@ public class ServersCombo {
 			for (int i = 0; i < serversList.length; i++) {
 				Server server = serversList[i];
 				serversCombo.add(server.getName());
-				if (ServersManager.isEmptyServer(server)) {
+				if (ServersManager.isNoneServer(server)) {
 					toSelect = i;
 				}
 			}

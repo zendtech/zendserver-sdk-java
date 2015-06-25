@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.php.server.core.serverType">
+      <type
+            description="Creates a remote Zend Server instance."
+            id="org.zend.php.server.ui.types.ZendServerType"
+            name="Remote Zend Server">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.php.server.core.serverType">
+      <type
+            description="Detects a Zend Server instance installed locally on this machine."
+            id="org.zend.php.server.ui.types.LocalZendServerType"
+            name="Local Zend Server">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.php.server.core.serverType">
+      <type
+            description="Detects an Apache HTTP Server instance installed locally on this machine."
+            id="org.zend.php.server.ui.types.LocalApacheType"
+            name="Local Apache HTTP Server">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.php.server.core.serverType">
+      <type
+            description="Creates a new server for each OpenShift application with a zend-6.1 cartridge."
+            id="org.zend.php.server.ui.types.OpenShiftServerType"
+            name="RedHat OpenShift">
+      </type>
+   </extension>
+
+</plugin>

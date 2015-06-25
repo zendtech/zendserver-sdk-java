@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.server.ui.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.actions.IActionContribution;
 
