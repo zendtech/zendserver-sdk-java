@@ -11,7 +11,7 @@ import java.io.File;
 
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.eclipse.php.server.ui.types.IServerType;
+import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.ui.IStartup;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.server.internal.ui.IHelpContextIds;

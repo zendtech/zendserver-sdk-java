@@ -17,7 +17,7 @@
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory"
             name="Application Monitorng Fragment"
-            placeAfter="org.eclipse.php.internal.server.ui.PathMapperFragmentFactory"/>
+            placeAfter="org.eclipse.php.server.ui.PathMapperFragmentFactory"/>
    </extension>
 <extension
       point="org.zend.php.server.ui.actionContributions">

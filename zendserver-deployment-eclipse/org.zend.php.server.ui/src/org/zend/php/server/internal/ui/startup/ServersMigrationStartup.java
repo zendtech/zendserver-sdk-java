@@ -43,6 +43,10 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 
 	@Override
 	protected boolean migrate(Server server) {
+		if (isEmptyServer(server)) {
+			ServersManager.removeServer(server.getName());
+			return true;
+		}
 		String typeId = getServerType(server);
 		if (typeId == null) {
 			if (isOpenShift(server)) {
@@ -71,26 +75,6 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 			setType(server, ZendServerType.ID);
 			return true;
 		}
-		return updateDefaultPHPWebServer(server);
-	}
-
-	private boolean updateDefaultPHPWebServer(Server server) {
-		if ("Default PHP Web Server".equals(server.getName()) //$NON-NLS-1$
-				&& "http://localhost".equals(server.getBaseURL()) //$NON-NLS-1$
-				&& server.getDocumentRoot().isEmpty()) {
-			if (ServersManager.getServer(ServersManager.DEFAULT_SERVER_NAME) != null) {
-				ServersManager.removeServer(ServersManager.DEFAULT_SERVER_NAME);
-			}
-			server.setName(ServersManager.DEFAULT_SERVER_NAME);
-			server.setAttribute(ServersManager.EMPTY_SERVER,
-					String.valueOf(true));
-			try {
-				server.setBaseURL("http://<no_php_server>"); //$NON-NLS-1$
-				return true;
-			} catch (MalformedURLException e) {
-				ServersUI.logError(e);
-			}
-		}
 		return false;
 	}
 
@@ -118,6 +102,13 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 				.getAttribute(ZendServerManager.ZENDSERVER_ENABLED_KEY,
 						String.valueOf(false));
 		return Boolean.valueOf(enabled);
+	}
+	
+	private boolean isEmptyServer(Server server) {
+		if (Boolean.valueOf(server.getAttribute(EMPTY_SERVER_ATTRIBUTE, String.valueOf(false)))) {
+			return true;
+		}
+		return false;
 	}
 
 }
