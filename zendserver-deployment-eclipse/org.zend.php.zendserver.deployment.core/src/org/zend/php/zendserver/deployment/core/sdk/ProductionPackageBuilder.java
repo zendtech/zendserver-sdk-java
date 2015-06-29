@@ -11,8 +11,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.php.internal.debug.core.preferences.PHPexeItem;
@@ -115,18 +115,14 @@ public class ProductionPackageBuilder extends PackageBuilder {
 		new File(zpkFilePath).delete();
 
 		// execute the ZF Deploy tool
-		try {
-			Process process = new ProcessBuilder(command).start();
-			// wait for the process to finish
-			int exitCode = process.waitFor();
-			if (exitCode != 0) {
-				String message = NLS.bind(
-						Messages.ProductionPackageBuilder_ErrorZFDeployTool,
-						exitCode, IOUtils.toString(process.getInputStream()));
-				throw new IOException(message);
-			}
-		} catch (InterruptedException e) {
-			DeploymentCore.log(e);
+		com.zend.php.ide.internal.core.utils.CommandExecutor cmdExecutor = new com.zend.php.ide.internal.core.utils.CommandExecutor();
+		cmdExecutor.setCommand(command);
+		int exitCode = cmdExecutor.run(new NullProgressMonitor());
+		if(exitCode != 0){
+			String message = NLS.bind(
+					Messages.ProductionPackageBuilder_ErrorZFDeployTool,
+					exitCode, cmdExecutor.getCommandError());
+			throw new IOException(message);
 		}
 
 		// delete the temporary directory
