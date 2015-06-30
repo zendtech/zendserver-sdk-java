@@ -100,7 +100,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 			}
 		}
 		if (location != null && !location.isEmpty()) {
-			Server server = new Server();
+			Server server = getServer();
 			server.setAttribute(LocalApacheType.LOCATION, location);
 			if (LocalApacheType.parseAttributes(server)) {
 				Server conflictingServer = getConflictingServer(server);
