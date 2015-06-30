@@ -66,7 +66,7 @@ public abstract class AbstractWizardFragment extends CompositeWizardFragment {
 	@Override
 	public boolean isComplete() {
 		if (composite == null) {
-			return false;
+			return true;
 		}
 		return super.isComplete() && composite.isComplete();
 	}
