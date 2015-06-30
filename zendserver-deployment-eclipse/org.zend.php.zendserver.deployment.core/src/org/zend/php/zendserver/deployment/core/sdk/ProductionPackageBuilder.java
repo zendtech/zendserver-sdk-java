@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.php.internal.debug.core.preferences.PHPexeItem;
@@ -20,6 +19,7 @@ import org.eclipse.php.internal.debug.core.preferences.PHPexes;
 import org.osgi.framework.Bundle;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.application.PackageBuilder;
+import org.zend.sdklib.internal.utils.CommandExecutor;
 import org.zend.sdklib.mapping.IMappingLoader;
 
 /**
@@ -115,9 +115,9 @@ public class ProductionPackageBuilder extends PackageBuilder {
 		new File(zpkFilePath).delete();
 
 		// execute the ZF Deploy tool
-		com.zend.php.ide.internal.core.utils.CommandExecutor cmdExecutor = new com.zend.php.ide.internal.core.utils.CommandExecutor();
+		CommandExecutor cmdExecutor = new CommandExecutor();
 		cmdExecutor.setCommand(command);
-		int exitCode = cmdExecutor.run(new NullProgressMonitor());
+		int exitCode = cmdExecutor.run();
 		if(exitCode != 0){
 			String message = NLS.bind(
 					Messages.ProductionPackageBuilder_ErrorZFDeployTool,
