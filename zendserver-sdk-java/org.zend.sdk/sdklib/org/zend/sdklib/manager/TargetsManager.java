@@ -155,12 +155,15 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (target == null) {
 			throw new IllegalArgumentException("Target cannot be null");
 		}
+		
 		if (!this.all.contains(target)) {
-			throw new IllegalArgumentException("Target with id '"
-					+ target.getId() + "' does not exist.");
+			throw new IllegalArgumentException(MessageFormat.format("Target with id ''{0}'' does not exist.", target.getId()));
 		}
 
-		this.loader.remove(target);
+		//check whether the target descriptor still exist
+		//it could be deleted by another studio installation
+		if(this.loader.isAvailable(target))
+			this.loader.remove(target);
 
 		// remove the specified target
 		final boolean removed = this.all.remove(target);

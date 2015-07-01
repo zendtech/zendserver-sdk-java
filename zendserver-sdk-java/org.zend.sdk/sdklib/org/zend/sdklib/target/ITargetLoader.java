@@ -17,31 +17,46 @@ package org.zend.sdklib.target;
 public interface ITargetLoader {
 
 	/**
-	 * Adds a target to the system
+	 * Adds given <code>target</code> to the system
 	 * 
 	 * @param target
 	 * @return the target representation or null in case the target
-	 *         couldn't be added for example if any issue was found during
-	 *         persistence operations
+	 *         couldn't be added (e.g. if any issue was found during
+	 *         persistence operations)
 	 */
 	public IZendTarget add(IZendTarget target);
 
 	/**
+	 * Removes given <code>target</code> from the system
+	 * 
 	 * @param target
-	 * @return
+	 * @return the target representation or null in case the target
+	 *         couldn't be removed (e.g. if any issue was found during
+	 *         persistence operations)
 	 */
 	public IZendTarget remove(IZendTarget target);
 
 	/**
-	 * Update an existing target
+	 * Updates an existing target
 	 * 
 	 * @param target
-	 * @return
+	 * @return the target representation or null in case the target
+	 *         couldn't be updated (e.g. if any issue was found during
+	 *         persistence operations)
 	 */
 	public IZendTarget update(IZendTarget target);
 
+	
 	/**
-	 * Load all target environments into the system
+	 * Checks if given <code>target</code> is available in the system
+	 * 
+	 * @param target
+	 * @return <code>true</code> if target is available; <code>false</code> otherwise
+	 */
+	public boolean isAvailable(IZendTarget target);
+	
+	/**
+	 * Loads all target environments into the system
 	 * 
 	 * @return ITarget[] targets
 	 */
