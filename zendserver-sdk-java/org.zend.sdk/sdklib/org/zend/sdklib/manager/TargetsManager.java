@@ -117,8 +117,13 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (existingTarget != null) {
 			return updateTarget(existingTarget, target, suppressConnect);
 		} else {
-			// notify loader on addition
-			this.loader.add(target);
+			
+			//check whether the target descriptor exists
+			//it could be added by another studio installation
+			if(this.loader.isAvailable(target))
+				this.loader.update(target);
+			else
+				this.loader.add(target);
 
 			// adds the target to the list
 			final boolean added = this.all.add(target);
