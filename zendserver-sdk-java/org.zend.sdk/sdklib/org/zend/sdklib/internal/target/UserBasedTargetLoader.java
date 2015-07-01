@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -40,16 +41,15 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		this.baseDir = baseDir;
 
 		if (!baseDir.exists()) {
-			throw new IllegalStateException("error finding user home directory");
+			throw new IllegalStateException(MessageFormat.format("targets folder ''{0}'' does not exist", baseDir.getAbsolutePath()));
 		}
 	}
 
 	public static File getDefaultTargetsDirectory() {
 		final String property = System.getProperty("user.home");
-		final File user = new File(property);
-		if (user.exists()) {
-			final File targetsDir = new File(user, ".zend" + File.separator
-					+ "targets");
+		final File userFolder = new File(property);
+		if (userFolder.exists()) {
+			final File targetsDir = new File(userFolder, ".zend" + File.separator + "targets");
 			if (!targetsDir.isDirectory()) {
 				targetsDir.mkdirs();
 			}
@@ -72,8 +72,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 			throw new IllegalArgumentException("target is null");
 		}
 
-		final File df = getDescriptorFile(target.getId());
-		TargetDescriptor descriptor = loadTargetDescriptor(df);
+		TargetDescriptor descriptor = getTargetDescriptor(target);
 		if (descriptor != null) {
 			File conf = new File(descriptor.path, CONF_FILENAME);
 			if (conf.exists() && conf.length() == 0) {
@@ -115,13 +114,11 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		final File df = getDescriptorFile(target.getId());
 		TargetDescriptor d = loadTargetDescriptor(df);
 		if (null == d) {
-			throw new IllegalArgumentException("cannot find target"
-					+ target.getId());
+			throw new IllegalArgumentException(MessageFormat.format("cannot find target ''{0}''", target.getId()));
 		}
-		final File descriptorFile = df;
 
 		delete(d.path);
-		final boolean delete2 = delete(descriptorFile);
+		final boolean delete2 = delete(df);
 
 		if (!delete2) {
 			throw new IllegalArgumentException("error deleting data");
@@ -144,8 +141,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		if (target.isTemporary()) {
 			return target;
 		}
-		final File df = getDescriptorFile(target.getId());
-		TargetDescriptor descriptor = loadTargetDescriptor(df);
+		TargetDescriptor descriptor = getTargetDescriptor(target);
 		if (descriptor == null) {
 			throw new IllegalArgumentException("target does not exists");
 		}
@@ -169,6 +165,19 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 
 		return target;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.zend.sdklib.target.ITargetLoader#isAvailable(org.zend.sdklib.target.IZendTarget)
+	 */
+	@Override
+	public boolean isAvailable(IZendTarget target) {
+		if (target == null) {
+			throw new IllegalArgumentException("target is null");
+		}
+		
+		TargetDescriptor descriptor = getTargetDescriptor(target);
+		return (descriptor != null);
 	}
 
 	/*
@@ -237,7 +246,12 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 	}
 
-	public TargetDescriptor loadTargetDescriptor(File file) {
+	private TargetDescriptor getTargetDescriptor(IZendTarget target) {
+		File df = getDescriptorFile(target.getId());
+		return loadTargetDescriptor(df);
+	}
+	
+	private TargetDescriptor loadTargetDescriptor(File file) {
 		try {
 			if (!file.exists()) {
 				return null;
@@ -259,7 +273,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 	}
 
-	public File getDescriptorFile(String target) {
+	private File getDescriptorFile(String target) {
 		if (!target.endsWith(INI_EXTENSION)) {
 			target = target + INI_EXTENSION;
 		}
@@ -267,7 +281,7 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		return file;
 	}
 
-	protected boolean delete(File file) {
+	private boolean delete(File file) {
 		if (file == null || !file.exists()) {
 			return true;
 		}
@@ -348,5 +362,4 @@ public class UserBasedTargetLoader implements ITargetLoader {
 		}
 		return new int[] { Integer.valueOf(name), 0 };
 	}
-
 }
