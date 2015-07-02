@@ -26,6 +26,7 @@ import java.util.Random;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.xdebug.communication.XDebugCommunicationDaemon;
 import org.eclipse.php.internal.debug.core.zend.communication.DebuggerCommunicationDaemon;
 import org.eclipse.php.internal.server.core.Server;
@@ -42,6 +43,7 @@ import org.zend.php.server.ui.ServersUI;
 public class ServerTypeUtils {
 
 	private static final String DEBUGGER_SCRIPT = "resources/debugger_validation.php"; //$NON-NLS-1$
+	private static final String ZEND_DEBUGGER_ID = "zend_debugger"; //$NON-NLS-1$
 	private static final String XDEBUG_ID = "xdebug"; //$NON-NLS-1$
 
 	/**
@@ -53,14 +55,16 @@ public class ServerTypeUtils {
 	 *         return <code>Zend Debugger</code> id.
 	 */
 	public static String getLocalDebuggerId(Server server) {
-		String id = DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID;
 		Properties props = executeValidationScript(server);
 		if (props != null) {
+			if (props.containsKey(ZEND_DEBUGGER_ID)) {
+				return DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID;
+			}
 			if (props.containsKey(XDEBUG_ID)) {
-				id = XDebugCommunicationDaemon.XDEBUG_DEBUGGER_ID;
+				return XDebugCommunicationDaemon.XDEBUG_DEBUGGER_ID;
 			}
 		}
-		return id;
+		return PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 	}
 
 	private static Properties executeValidationScript(Server server) {
