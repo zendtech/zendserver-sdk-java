@@ -44,7 +44,7 @@ public class ConfigurationBlock extends AbstractBlock {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private ServersCombo targetsCombo = new ServersCombo(true);
+	private ServersCombo targetsCombo = new ServersCombo(ServersCombo.DEPLOYMENT_FILTER, true, false);
 	private Text baseUrl;
 	private Button ignoreFailures;
 	private Button developmentMode;

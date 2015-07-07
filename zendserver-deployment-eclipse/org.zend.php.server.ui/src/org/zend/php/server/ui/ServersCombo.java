@@ -107,6 +107,7 @@ public class ServersCombo {
 		}
 	};
 
+	private Button useDefaultServerButton;
 	private Combo serversCombo;
 	private Button addServerButton;
 
@@ -115,46 +116,21 @@ public class ServersCombo {
 	private String labelText;
 	private String tooltip;
 
+	private boolean useDefaultServer;
 	private boolean addServer;
 
 	private IAddServerListener listener;
 	private IServerFilter filter;
 
 	/**
-	 * Create ServersCombo populated by servers with deployment support. By
-	 * default "PHP Servers:" label is used. To change it call
-	 * {@link ServersCombo#setLabel(String)}.
-	 */
-	public ServersCombo() {
-		this(DEPLOYMENT_FILTER, false);
-	}
-
-	/**
-	 * Create ServersCombo populated by servers which match specified filter. By
-	 * default "PHP Servers:" label is used. To change it call
-	 * {@link ServersCombo#setLabel(String)}.
-	 */
-	public ServersCombo(IServerFilter filter) {
-		this(filter, false);
-	}
-
-	/**
-	 * Create ServersCombo populated by servers with deployment support and Add
-	 * Server button visible. By default "PHP Servers:" label is used. To change
-	 * it call {@link ServersCombo#setLabel(String)}.
-	 */
-	public ServersCombo(boolean addButton) {
-		this(DEPLOYMENT_FILTER, addButton);
-	}
-
-	/**
 	 * Create ServersCombo populated by servers which match specified filter.
 	 * and Add Server button visible. By default "PHP Servers:" label is used.
 	 * To change it call {@link ServersCombo#setLabel(String)}.
 	 */
-	public ServersCombo(IServerFilter filter, boolean addButton) {
+	public ServersCombo(IServerFilter filter, boolean addButton, boolean defaultServerButton) {
 		this.filter = filter;
 		this.addServer = addButton;
+		this.useDefaultServer = defaultServerButton;
 		this.labelText = Messages.ServersCombo_DefaultLabel;
 	}
 
@@ -207,6 +183,8 @@ public class ServersCombo {
 	 *         otherwise return <code>null</code>
 	 */
 	public Server getSelectedServer() {
+		if (useDefaultServer && useDefaultServerButton.getSelection())
+			return null;
 		int idx = serversCombo.getSelectionIndex();
 		if (idx <= -1) {
 			return null;
@@ -244,11 +222,12 @@ public class ServersCombo {
 		}
 		serversCombo.removeAll();
 		int toSelect = 0;
+		Server workspaceDefaultServer = ServersManager.getDefaultServer(null);
 		if (serversList.length != 0) {
 			for (int i = 0; i < serversList.length; i++) {
 				Server server = serversList[i];
 				serversCombo.add(server.getName());
-				if (ServersManager.isNoneServer(server)) {
+				if (server.equals(workspaceDefaultServer)) {
 					toSelect = i;
 				}
 			}
@@ -274,21 +253,40 @@ public class ServersCombo {
 	public void createControl(Composite parent) {
 		if (labelText != null) {
 			Label label = new Label(parent, SWT.NONE);
+			if (useDefaultServer) {
+				label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, true));
+			}
 			label.setText(labelText);
 		}
 		Composite comboContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.horizontalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		layout.verticalSpacing = 0;
 		comboContainer.setLayout(layout);
-		comboContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
-		serversCombo = new Combo(comboContainer, SWT.SIMPLE | SWT.DROP_DOWN
-				| SWT.READ_ONLY);
+		comboContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		if (useDefaultServer) {
+			useDefaultServerButton = new Button(comboContainer, SWT.CHECK);
+			GridData udsbGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+			udsbGridData.horizontalSpan = 2;
+			useDefaultServerButton.setLayoutData(udsbGridData);
+			useDefaultServerButton.setText("Default PHP Web Server");
+			useDefaultServerButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					boolean useDefault = useDefaultServerButton.getSelection();
+					if (useDefault) {
+						selectByServer(ServersManager.getDefaultServer(null).getName());
+					}
+					serversCombo.setEnabled(!useDefault);
+					addServerButton.setEnabled(!useDefault);
+				}
+			});
+			useDefaultServerButton.setSelection(true);
+		}
+		serversCombo = new Combo(comboContainer, SWT.SIMPLE | SWT.DROP_DOWN | SWT.READ_ONLY);
 		serversCombo.setToolTipText(tooltip);
 		serversCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		serversCombo.setEnabled(useDefaultServer ? false : true);
 		if (addServer) {
 			addServerButton = new Button(comboContainer, SWT.PUSH);
 			addServerButton.setText(Messages.ServersCombo_AddLabel);
@@ -316,6 +314,7 @@ public class ServersCombo {
 					}
 				}
 			});
+			addServerButton.setEnabled(useDefaultServer ? false : true);
 		}
 		updateItems();
 	}
