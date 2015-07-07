@@ -121,7 +121,7 @@ public class ProductionPackageBuilder extends PackageBuilder {
 		if(exitCode != 0){
 			String message = NLS.bind(
 					Messages.ProductionPackageBuilder_ErrorZFDeployTool,
-					exitCode, cmdExecutor.getCommandError());
+					exitCode, cmdExecutor.getCommandOutput());
 			throw new IOException(message);
 		}
 
