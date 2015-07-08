@@ -184,7 +184,8 @@ public class ServersCombo {
 	 */
 	public Server getSelectedServer() {
 		if (useDefaultServer && useDefaultServerButton.getSelection())
-			return null;
+			// Return workspace default server
+			return ServersManager.getDefaultServer(null);
 		int idx = serversCombo.getSelectionIndex();
 		if (idx <= -1) {
 			return null;
@@ -206,6 +207,15 @@ public class ServersCombo {
 		return ServerUtils.getTarget(serversList[idx]);
 	}
 
+	/**
+	 * Gets info if "Default PHP Web Server" check-box is checked
+	 * 
+	 * @return <code>true</code> if checked, ,<code>false</code> otherwise
+	 */
+	public boolean isUseDefaultServer() {
+		return useDefaultServer && useDefaultServerButton.getSelection();
+	}
+	
 	/**
 	 * Update list of servers and populate combo box with current values.
 	 */
