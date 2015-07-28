@@ -11,6 +11,7 @@ package org.zend.php.zendserver.monitor.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -197,22 +198,14 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 		Server server = getServer();
 		if (server != null) {
 			IZendTarget target = ServerUtils.getTarget(server);
-			if (target != null) {
-				String targetId = target.getId();
-				List<String> filters = MonitorManager.getFilters(targetId);
-				if (filters != null && !filters.isEmpty()) {
-					input = filters;
-				} else {
-					input = new ArrayList<String>();
-				}
-				hide = MonitorManager.getHide(targetId);
-				delay = MonitorManager.getHideTime(targetId);
+			input = getFilters(server);
+			hide = getHide(server);
+			delay = getDelay(server);
 				for (int i = 0; i < severityButtons.length; i++) {
 					String severityName = getSeverityName(severityButtons[i]);
-					severities[i] = MonitorManager.getServerity(targetId,
+					severities[i] = getSeverity(server,
 							severityName);
 				}
-			}
 			for (int i = 0; i < severityButtons.length; i++) {
 				severityButtons[i].setSelection(severities[i]);
 			}
@@ -447,4 +440,31 @@ public class MonitoringCompositeFragment extends AbstractCompositeFragment {
 		}
 	}
 
+	private List<String> getFilters(Server server) {
+		String value = server.getAttribute(MonitorManager.FILTERS_ATTRIBUTE,
+				null);
+		if (value != null) {
+			return new ArrayList<String>(Arrays.asList(value
+					.split(MonitorManager.FILTER_SEPARATOR)));
+		}
+		return new ArrayList<String>();
+	}
+
+	private boolean getHide(Server server) {
+		String hideValue = server.getAttribute(MonitorManager.HIDE_ATTRIBUTE, null);
+		return hideValue != null ? Boolean.valueOf(hideValue) : false;
+	}
+
+	private int getDelay(Server server) {
+		String delayValue = server.getAttribute(MonitorManager.HIDE_TIME_ATTRIBUTE,
+				null);
+		return delayValue != null ? Integer.valueOf(delayValue) : MonitorManager.DELAY_DEFAULT;
+	}
+	
+	public static boolean getSeverity(Server server, String severityName) {
+		String value = server.getAttribute(MonitorManager.SEVERITY_ATTRIBUTE
+				+ severityName, null);
+		return value != null ? Boolean.valueOf(value) : true;
+	}
+	
 }
