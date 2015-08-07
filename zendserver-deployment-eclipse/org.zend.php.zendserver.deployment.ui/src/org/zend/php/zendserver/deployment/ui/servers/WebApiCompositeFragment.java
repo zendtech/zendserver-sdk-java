@@ -15,10 +15,12 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
+import org.eclipse.php.internal.ui.wizards.IControlHandler.Kind;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -99,6 +101,9 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	private IZendTarget target;
 
 	private Button detectButton;
+
+	private boolean forceKeysDetection;
+	private boolean keysDetected;
 
 	/**
 	 * PlatformCompositeFragment constructor
@@ -205,19 +210,9 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				.getTargetManager();
 		IStatus status = null;
 		TargetConnectionTester tester = new TargetConnectionTester();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget t : targets) {
-			if (t.getHost().equals(target.getHost())) {
-				ZendTarget oldTarget = (ZendTarget) copyTemp((ZendTarget) t);
-				Server server = getServer();
-				oldTarget.setServerName(server.getName());
-				oldTarget.setDefaultServerURL(target.getDefaultServerURL());
-				oldTarget.setHost(target.getHost());
-				oldTarget.setKey(target.getKey());
-				oldTarget.setSecretKey(target.getSecretKey());
-				status = tester.testConnection(oldTarget, monitor);
-				break;
-			}
+		ZendTarget oldTarget = getOldTarget(target);
+		if (oldTarget != null) {
+			status = tester.testConnection(oldTarget, monitor);
 		}
 		if (status == null) {
 			if (target.isTemporary()) {
@@ -264,6 +259,20 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				String suggestedHost = DEFAULT_HOST + getServer().getHost()
 						+ ":10081"; //$NON-NLS-1$
 				hostText.setText(suggestedHost);
+			}
+		}
+		initialDetect();
+	}
+	
+	private void initialDetect() {
+		if (controlHandler.getKind() == Kind.WIZARD && !forceKeysDetection) {
+			forceKeysDetection = true;
+			handleDetect(hostText.getText());
+			if (keysDetected) {
+				enableButton.setSelection(keysDetected);
+				enable = enableButton.getSelection();
+				updateState(keysDetected);
+				performTesting(new NullProgressMonitor());
 			}
 		}
 	}
@@ -448,6 +457,24 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			secret = secretText.getText();
 		}
 	}
+	
+	private ZendTarget getOldTarget(IZendTarget target) {
+		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
+		IZendTarget[] targets = manager.getTargets();
+		for (IZendTarget t : targets) {
+			if (t.getHost().equals(target.getHost())) {
+				ZendTarget oldTarget = (ZendTarget) copyTemp((ZendTarget) t);
+				Server server = getServer();
+				oldTarget.setServerName(server.getName());
+				oldTarget.setDefaultServerURL(target.getDefaultServerURL());
+				oldTarget.setHost(target.getHost());
+				oldTarget.setKey(target.getKey());
+				oldTarget.setSecretKey(target.getSecretKey());
+				return oldTarget;
+			}
+		}
+		return null;
+	}
 
 	private IZendTarget copyTemp(ZendTarget t) {
 		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
@@ -480,8 +507,8 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			final ApiKeyDetector detector = new EclipseApiKeyDetector(host
 					+ "/ZendServer"); //$NON-NLS-1$
 			if (detector.createApiKey(message)) {
+				keysDetected = true;
 				Display.getDefault().asyncExec(new Runnable() {
-
 					public void run() {
 						String key = detector.getKey();
 						String secret = detector.getSecretKey();
