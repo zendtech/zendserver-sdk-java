@@ -94,13 +94,13 @@
                 id="org.zend.php.zendserver.deployment.ui.zendserver.RemoteZendServerFragmentFactory">
           </fragment>
           <fragment
+                id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory">
+          </fragment>
+          <fragment
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-          </fragment>
-          <fragment
-                id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
           </fragment>
           <fragment
                 id="org.zend.php.zendserver.deployment.ui.TunnelingFragmentFactory">
@@ -111,6 +111,9 @@
                 id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
           </fragment>
           <fragment
+                id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory">
+          </fragment>
+          <fragment
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
@@ -118,9 +121,6 @@
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-          </fragment>
-          <fragment
-                id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
           </fragment>
           <fragment
                 id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
@@ -155,6 +155,9 @@
                 id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
           </fragment>
           <fragment
+                id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory">
+          </fragment>
+          <fragment
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
@@ -162,9 +165,6 @@
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-          </fragment>
-          <fragment
-                id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
           </fragment>
           <fragment
                 id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">
@@ -225,6 +225,9 @@
                 id="org.eclipse.php.server.ui.wizard.BasicCompositeFragmentFactory">
           </fragment>
           <fragment
+                id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory">
+          </fragment>
+          <fragment
                 id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
           </fragment>
           <fragment
@@ -232,9 +235,6 @@
           </fragment>
           <fragment
                 id="com.zend.php.remoteproject.ui.preferences.AutomaticUploadFragmentFactory">
-          </fragment>
-          <fragment
-                id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory">
           </fragment>
           <fragment
                 id="org.zend.php.zendserver.monitor.ui.preferences.monitoringFragmentFactory">

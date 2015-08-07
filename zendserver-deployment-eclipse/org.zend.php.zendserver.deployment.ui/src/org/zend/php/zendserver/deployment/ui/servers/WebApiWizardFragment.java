@@ -20,19 +20,19 @@ import org.zend.php.server.ui.fragments.AbstractWizardFragment;
  * 
  */
 @SuppressWarnings("restriction")
-public class DeploymentWizardFragment extends AbstractWizardFragment {
+public class WebApiWizardFragment extends AbstractWizardFragment {
 
 	@Override
 	protected CompositeFragment createComposite(Composite parent,
 			WizardControlWrapper wrapper) {
-		return new DeploymentCompositeFragment(parent, wrapper, false);
+		return new WebApiCompositeFragment(parent, wrapper, false);
 	}
 
 	@Override
 	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
 		boolean result = super.performFinish(monitor);
 		if (result && composite != null) {
-			((DeploymentCompositeFragment) getComposite())
+			((WebApiCompositeFragment) getComposite())
 					.performTesting(monitor);
 			return composite.isComplete();
 		}

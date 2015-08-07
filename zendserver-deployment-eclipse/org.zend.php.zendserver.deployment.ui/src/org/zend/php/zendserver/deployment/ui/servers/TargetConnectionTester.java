@@ -136,7 +136,7 @@ public class TargetConnectionTester {
 		for (int i = 0; i < targets.length; i++) {
 			IZendTarget target = targets[i];
 			if (target == null) {
-				results[i] = getError(Messages.DeploymentTester_NullTarget);
+				results[i] = getError(Messages.WebApiTester_NullTarget);
 				continue;
 			}
 
@@ -178,7 +178,7 @@ public class TargetConnectionTester {
 				}
 				if (target == null) {
 					results[i] = getError(MessageFormat.format(
-							Messages.DeploymentTester_UnexpectedError,
+							Messages.WebApiTester_UnexpectedError,
 							e.getMessage()), e);
 					continue;
 				} else {
@@ -187,17 +187,17 @@ public class TargetConnectionTester {
 				}
 			} catch (WebApiException e) {
 				results[i] = getError(MessageFormat.format(
-						Messages.DeploymentTester_UnexpectedError,
+						Messages.WebApiTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			} catch (RuntimeException e) {
 				results[i] = getError(MessageFormat.format(
-						Messages.DeploymentTester_UnexpectedError,
+						Messages.WebApiTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			} catch (LicenseExpiredException e) {
 				results[i] = getError(MessageFormat.format(
-						Messages.DeploymentTester_UnexpectedError,
+						Messages.WebApiTester_UnexpectedError,
 						e.getMessage()), e);
 				continue;
 			}
@@ -230,7 +230,7 @@ public class TargetConnectionTester {
 					// should never happen, just replacing a port
 				}
 				monitor.subTask(MessageFormat.format(
-						Messages.DeploymentTester_TestingPortSubTask, target
+						Messages.WebApiTester_TestingPortSubTask, target
 								.getHost().getHost(), String.valueOf(port)));
 				try {
 					return testTargetConnection(target);

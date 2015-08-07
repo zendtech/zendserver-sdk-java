@@ -116,9 +116,9 @@
          name="Deployment"
          point="org.eclipse.php.ui.wizardAndCompositeFragments">
       <wizardAndCompositeFragment
-            class="org.zend.php.zendserver.deployment.ui.servers.DeploymentFragmentFactory"
+            class="org.zend.php.zendserver.deployment.ui.servers.WebApiFragmentFactory"
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
-            id="org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"
+            id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory"
             name="Deployment Wizard Fragment"
             placeAfter="org.eclipse.php.server.ui.PathMapperFragmentFactory"/>
    </extension>

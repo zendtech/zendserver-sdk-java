@@ -24,17 +24,17 @@ import org.zend.php.server.ui.types.ZendServerType;
  * 
  */
 @SuppressWarnings("restriction")
-public class DeploymentFragmentFactory implements ICompositeFragmentFactory {
+public class WebApiFragmentFactory implements ICompositeFragmentFactory {
 
-	private static final String ID = "org.zend.php.zendserver.deployment.ui.deploymentFragmentFactory"; //$NON-NLS-1$
+	private static final String ID = "org.zend.php.zendserver.deployment.ui.webApiFragmentFactory"; //$NON-NLS-1$
 
 	public WizardFragment createWizardFragment() {
-		return new DeploymentWizardFragment();
+		return new WebApiWizardFragment();
 	}
 
 	public CompositeFragment createComposite(Composite parent,
 			IControlHandler controlHandler) {
-		return new DeploymentCompositeFragment(parent, controlHandler, true);
+		return new WebApiCompositeFragment(parent, controlHandler, true);
 	}
 
 	public boolean isSupported(Object element) {
