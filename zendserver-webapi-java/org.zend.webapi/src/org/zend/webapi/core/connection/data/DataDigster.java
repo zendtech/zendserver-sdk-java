@@ -359,6 +359,66 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 		return super.preVisit(serverConfig);
 	}
+	
+	@Override
+	public boolean preVisit(ExtensionsList extensionsList) {
+		String currentPath = extensionsList.getPrefix();
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/extension");
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+		// build extensions info list
+		List<ExtensionInfo> extensionsInfo = new ArrayList<ExtensionInfo>(
+				size);
+		for (int index = 0; index < size; index++) {
+			extensionsInfo.add(new ExtensionInfo(currentPath
+					+ "/extension", index));
+		}
+		extensionsList.setExtensionsInfo(extensionsInfo);
+		return true;
+	}
+	
+	public boolean preVisit(ExtensionInfo extensionInfo) {
+		String currentPath = extensionInfo.getPrefix();
+		int occurrence = extensionInfo.getOccurrence();
+
+		String value = getValue(currentPath + "/name", occurrence);
+		extensionInfo.setName(value);
+
+		value = getValue(currentPath + "/version", occurrence);
+		extensionInfo.setVersion(value);
+
+		value = getValue(currentPath + "/type", occurrence);
+		extensionInfo.setExtensionType(value);
+
+		value = getValue(currentPath + "/status", occurrence);
+		extensionInfo.setStatus(value);
+
+		value = getValue(currentPath + "/shortDescription", occurrence);
+		extensionInfo.setShortDescription(value);
+
+		value = getValue(currentPath + "/longDescription", occurrence);
+		extensionInfo.setLongDescription(value);
+
+		value = getValue(currentPath + "/loaded", occurrence);
+		extensionInfo.setLoaded(Boolean.valueOf(value));
+		
+		value = getValue(currentPath + "/installed", occurrence);
+		extensionInfo.setInstalled(Boolean.valueOf(value));
+		
+		value = getValue(currentPath + "/builtIn", occurrence);
+		extensionInfo.setBuiltIn(Boolean.valueOf(value));
+		
+		value = getValue(currentPath + "/dummy", occurrence);
+		extensionInfo.setDummy(Boolean.valueOf(value));
+		
+		value = getValue(currentPath + "/restartRequired", occurrence);
+		extensionInfo.setRestartRequired(Boolean.valueOf(value));
+
+		return true;
+	}
 
 	public boolean preVisit(ApplicationsList applicationsList) {
 		String currentPath = applicationsList.getPrefix();
@@ -1215,6 +1275,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new ServerInfo();
 		case SERVER_CONFIG:
 			return new ServerConfig();
+		case EXTENSIONS_LIST:
+			return new ExtensionsList();
 		case APPLICATIONS_LIST:
 			return new ApplicationsList();
 		case APPLICATION_INFO:

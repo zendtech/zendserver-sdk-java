@@ -204,7 +204,15 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(VhostsList vhostsList);
 	
 	public boolean visit(VhostInfo vhostInfo);
-
+	
 	public boolean preVisit(VhostInfo vhostInfo);
+	
+	public boolean visit(ExtensionsList extensionsList);
+
+	public boolean preVisit(ExtensionsList extensionsList);
+	
+	public boolean visit(ExtensionInfo extensionInfo);
+
+	public boolean preVisit(ExtensionInfo extensionInfo);
 
 }

@@ -26,6 +26,10 @@ public interface IResponseData {
 		DEPLOYED_VERSION,
 
 		DEPLOYED_VERSIONS_LIST,
+		
+		EXTENSIONS_LIST,
+		
+		EXTENSION_INFO,
 
 		APPLICATION_INFO,
 

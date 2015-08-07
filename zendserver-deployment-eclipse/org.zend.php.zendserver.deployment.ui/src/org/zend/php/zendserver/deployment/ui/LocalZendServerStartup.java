@@ -13,6 +13,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.php.internal.debug.core.debugger.DebuggerSettingsManager;
+import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettings;
+import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettingsWorkingCopy;
+import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerConfiguration;
+import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsConstants;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.core.types.IServerType;
@@ -23,7 +28,12 @@ import org.zend.core.notifications.NotificationManager;
 import org.zend.php.server.ui.IHelpContextIds;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalZendServerType;
+import org.zend.php.server.ui.types.ServerTypeUtils;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
+import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
+import org.zend.sdklib.target.IZendTarget;
+
+import com.zend.php.debug.core.debugger.ZendDebuggerHostProposalComputer;
 
 /**
  * {@link IStartup} implementation responsible for detection of a local Zend
@@ -99,6 +109,28 @@ public class LocalZendServerStartup implements IStartup {
 					monitor.subTask(Messages.LocalZendServerStartup_Detecting_webAPI_keys);
 					LocalTargetDetector detector = new LocalTargetDetector(server);
 					detector.detect();
+					monitor.subTask(Messages.LocalZendServerStartup_Detecting_debugger_settings);
+					// Detect debugger type if Web API is enabled
+					IZendTarget zendTarget = detector.getFinalTarget();
+					String debuggerId;
+					if (zendTarget != null)
+						debuggerId = DebugUtils.getDebuggerId(detector.getFinalTarget());
+					else
+						debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
+					server.setDebuggerId(debuggerId);
+					// Set up best match IPs if it is Zend Debugger
+					if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
+						DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
+						IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(),
+								server.getDebuggerId());
+						ZendDebuggerHostProposalComputer proposalsComputer = new ZendDebuggerHostProposalComputer();
+						String ipsList = proposalsComputer.computeProposals(server);
+						IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager
+								.fetchWorkingCopy(debuggerSettings);
+						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, ipsList);
+						debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
+						debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
+					}
 					monitor.subTask(Messages.LocalZendServerStartup_Saving_configuration);
 					ServersManager.addServer(server);
 					if (ServersManager.getServers().length == 2) {

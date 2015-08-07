@@ -30,6 +30,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingIsEnabledRequ
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
+import org.zend.webapi.internal.core.connection.request.ExtensionsListRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
@@ -193,6 +194,12 @@ public enum WebApiMethodType {
 	CODE_TRACING_DOWNLOAD_TRACE_FILE("codetracingDownloadTraceFile",
 			CodetracingDownloadTraceFileRequest.class),
 
+	/**
+	 * @see ExtensionsListRequest
+	 */
+	EXTENSIONS_LIST("configurationExtensionsList",
+			ExtensionsListRequest.class),
+	
 	/**
 	 * @see MonitorGetRequestSummaryRequest
 	 */

@@ -144,9 +144,6 @@
           <fragment
                 id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerFragmentFactory">
           </fragment>
-          <fragment
-                id="org.eclipse.php.debug.ui.wizards.DebuggerCompositeFragmentFactory">
-          </fragment>
        </wizard>
        <editor>
           <fragment
