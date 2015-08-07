@@ -162,6 +162,9 @@
          point="org.eclipse.ui.startup">
       <startup
             class="org.zend.php.zendserver.deployment.ui.ServersMigrationStartup"></startup>
+      <startup
+            class="org.zend.php.zendserver.deployment.ui.LocalZendServerStartup">
+      </startup>
    </extension>
    <extension
          point="org.eclipse.wst.sse.ui.sourcevalidation">

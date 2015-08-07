@@ -16,12 +16,14 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.internal.ui.wizards.IControlHandler.Kind;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -298,6 +300,13 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				validate();
 			}
 		});
+		
+		CLabel noteIcon = new CLabel(parent, SWT.NONE);
+		noteIcon.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 3, 1));
+		noteIcon.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_INFO));
+		noteIcon.setText(Messages.WebApiCompositeFragment_Enabling_web_api_info_message);
+		
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.WebApiCompositeFragment_Host);
 		hostText = new Text(parent, SWT.BORDER);
@@ -350,6 +359,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				handleDetect(hostText.getText());
 			}
 		});
+		
 		Link link = new Link(parent, SWT.WRAP);
 		link.setText(Messages.WebApiCompositeFragment_WebApiDetails);
 		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);

@@ -46,8 +46,6 @@
          point="org.eclipse.ui.startup">
          <startup
             class="org.zend.php.server.internal.ui.startup.ServersMigrationStartup"></startup>
-         <startup
-            class="org.zend.php.server.internal.ui.startup.LocalZendServerStartup"></startup>
    </extension>
    <extension
          point="org.eclipse.php.debug.core.phpLaunchDelegateListener">

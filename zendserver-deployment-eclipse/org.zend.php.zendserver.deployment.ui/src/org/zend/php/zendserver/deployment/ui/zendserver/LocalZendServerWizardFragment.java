@@ -19,6 +19,7 @@ import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
+import org.zend.php.zendserver.deployment.ui.LocalTargetDetector;
 
 /**
  * @author Wojciech Galanciak, 2014

@@ -14,6 +14,7 @@ public class Messages extends NLS {
 	public static String WebApiCompositeFragment_EmptyKeyMessage;
 	public static String WebApiCompositeFragment_EmptySecretMessage;
 	public static String WebApiCompositeFragment_EnableLabel;
+	public static String WebApiCompositeFragment_Enabling_web_api_info_message;
 	public static String WebApiCompositeFragment_Host;
 	public static String WebApiCompositeFragment_InvalidCredentialsError;
 	public static String WebApiCompositeFragment_KeyName;

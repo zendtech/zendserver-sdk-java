@@ -8,7 +8,7 @@
  * Contributors:
  *    Zend Technologies Ltd. - initial API and implementation
  *******************************************************************************/
-package org.zend.php.server.internal.ui;
+package org.zend.php.server.ui;
 
 /**
  * @author Wojciech Galanciak, 2014
