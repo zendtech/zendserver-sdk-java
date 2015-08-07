@@ -21,7 +21,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Properties;
-import java.util.Random;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -43,6 +42,7 @@ import org.zend.php.server.ui.ServersUI;
 public class ServerTypeUtils {
 
 	private static final String DEBUGGER_SCRIPT = "resources/debugger_validation.php"; //$NON-NLS-1$
+	private static final String TMP_SCRIPT_NAME = "studio_debugger_detect.php"; //$NON-NLS-1$
 	private static final String ZEND_DEBUGGER_ID = "zend_debugger"; //$NON-NLS-1$
 	private static final String XDEBUG_ID = "xdebug"; //$NON-NLS-1$
 
@@ -67,7 +67,7 @@ public class ServerTypeUtils {
 		return PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 	}
 
-	private static Properties executeValidationScript(Server server) {
+	private static synchronized Properties executeValidationScript(Server server) {
 		try {
 			InetAddress address = InetAddress.getByName(server.getHost());
 			if (!address.isLoopbackAddress() && !address.isSiteLocalAddress()) {
@@ -84,9 +84,8 @@ public class ServerTypeUtils {
 		Bundle bundle = Platform.getBundle(ServersUI.PLUGIN_ID);
 		BufferedReader input = null;
 		BufferedWriter output = null;
-		String tempScriptName = +new Random().nextLong() + ".php"; //$NON-NLS-1$
 		File tempScriptFile = new File(docRoot + File.separator
-				+ tempScriptName);
+				+ TMP_SCRIPT_NAME);
 		try {
 			input = new BufferedReader(new InputStreamReader(
 					FileLocator.openStream(bundle, new Path(DEBUGGER_SCRIPT),
@@ -100,7 +99,7 @@ public class ServerTypeUtils {
 			input.close();
 			output.close();
 			URLConnection connection = new URL(server.getRootURL() + "/" //$NON-NLS-1$
-					+ tempScriptName).openConnection();
+					+ TMP_SCRIPT_NAME).openConnection();
 			input = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
 			Properties properties = new Properties();
@@ -111,6 +110,7 @@ public class ServerTypeUtils {
 		} finally {
 			if (tempScriptFile.exists()) {
 				tempScriptFile.delete();
+				tempScriptFile.deleteOnExit();
 			}
 			try {
 				if (input != null) {

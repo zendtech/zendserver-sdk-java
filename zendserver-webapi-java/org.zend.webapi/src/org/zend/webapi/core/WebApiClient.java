@@ -39,6 +39,7 @@ import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.ServerConfig;
+import org.zend.webapi.core.connection.data.ExtensionsList;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
@@ -76,6 +77,7 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingDisableReques
 import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest;
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
+import org.zend.webapi.internal.core.connection.request.ExtensionsListRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
@@ -1599,7 +1601,7 @@ public class WebApiClient {
 				});
 		return (DebugMode) handle.getData();
 	}
-
+	
 	/**
 	 * Stop debug mode on the target server.
 	 * 
@@ -1814,6 +1816,28 @@ public class WebApiClient {
 							}
 						});
 		return (VhostsList) handle.getData();
+	}
+
+	/**
+	 * Gets the list of extensions that are currently installed on the server.
+	 * 
+	 * @param filter
+	 * 			extensions filter (extension name)
+	 * @return list of extensions that are currently installed on the server
+	 * @throws WebApiException
+	 */
+	public ExtensionsList extensionList(final String filter) throws WebApiException {
+		final IResponse handle = this.handle(
+				WebApiMethodType.EXTENSIONS_LIST,
+				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						ExtensionsListRequest configurationExtensionsListRequest = (ExtensionsListRequest) request;
+						if (filter != null) {
+							configurationExtensionsListRequest.setFilter(filter);
+						}
+					}
+				});
+		return (ExtensionsList) handle.getData();
 	}
 
 	/**

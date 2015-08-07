@@ -13,12 +13,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.php.internal.debug.core.debugger.DebuggerSettingsManager;
+import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettings;
+import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettingsWorkingCopy;
+import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerConfiguration;
+import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsConstants;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
 import org.zend.php.server.ui.fragments.AbstractWizardFragment;
+import org.zend.php.server.ui.types.ServerTypeUtils;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
+import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
+import org.zend.php.zendserver.deployment.ui.LocalTargetDetector;
+import org.zend.sdklib.target.IZendTarget;
+
+import com.zend.php.debug.core.debugger.ZendDebuggerHostProposalComputer;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -54,7 +65,26 @@ public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 					LocalTargetDetector detector = new LocalTargetDetector(
 							this.server);
 					detector.detect();
-					if (detector.getStatus().getSeverity() != IStatus.OK) {
+					// Detect debugger type if Web API is enabled
+					IZendTarget zendTarget = detector.getFinalTarget();
+					String debuggerId;
+					if (zendTarget != null)
+						debuggerId = DebugUtils.getDebuggerId(detector.getFinalTarget());
+					else
+						debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
+					server.setDebuggerId(debuggerId);
+					// Set up best match IPs if it is Zend Debugger
+					if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
+						DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
+						IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(), server.getDebuggerId());
+						ZendDebuggerHostProposalComputer proposalsComputer = new ZendDebuggerHostProposalComputer();
+						String ipsList = proposalsComputer.computeProposals(server);
+						IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager.fetchWorkingCopy(debuggerSettings);
+						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, ipsList);
+						debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
+						debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
+					}
+					if (detector.getStatus().getSeverity() != IStatus.OK && detector.getStatus().getSeverity() != IStatus.CANCEL) {
 						setMessage(detector.getStatus().getMessage(),
 								IMessageProvider.ERROR);
 					}

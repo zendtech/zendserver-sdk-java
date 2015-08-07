@@ -6,7 +6,7 @@
  * You must not copy, adapt or redistribute this document for 
  * any use.
  *******************************************************************************/
-package org.zend.php.zendserver.deployment.ui.zendserver;
+package org.zend.php.zendserver.deployment.ui;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,8 +21,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
-import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.actions.ZendDetectTargetCmdLine;
+import org.zend.php.zendserver.deployment.ui.zendserver.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ApiKeyDetector;
 import org.zend.sdklib.internal.target.ZendTarget;
@@ -158,9 +158,7 @@ public class LocalTargetDetector {
 				ZendTarget t = (ZendTarget) finalTarget;
 				try {
 					t.setDefaultServerURL(new URL(server.getBaseURL()));
-					if (finalTarget.getServerName() == null) {
-						t.setServerName(server.getName());
-					}
+					t.setServerName(server.getName());
 					finalTarget = TargetsManagerService.INSTANCE
 							.getTargetManager().updateTarget(t, true);
 				} catch (MalformedURLException e) {

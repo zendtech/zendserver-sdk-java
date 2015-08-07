@@ -72,6 +72,10 @@ public abstract class ZendConnection extends AbstractChangeNotifier {
 			log.error(er);
 			throw new IllegalArgumentException(er);
 		}
+		return getClient(target);
+	}
+
+	public WebApiClient getClient(IZendTarget target) throws MalformedURLException {
 		WebApiCredentials credentials = new BasicCredentials(target.getKey(),
 				target.getSecretKey());
 		String hostname = target.getHost().toString();
