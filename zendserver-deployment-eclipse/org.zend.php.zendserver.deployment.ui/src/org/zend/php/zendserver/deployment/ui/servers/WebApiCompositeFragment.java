@@ -41,6 +41,7 @@ import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.debugger.DeploymentAttributes;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ApiKeyDetector;
@@ -275,6 +276,8 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				enable = enableButton.getSelection();
 				updateState(keysDetected);
 				performTesting(new NullProgressMonitor());
+				IZendTarget zendTarget = getOldTarget(target) != null ? getOldTarget(target) : target;
+				getServer().setDebuggerId(DebugUtils.getDebuggerId(zendTarget));
 			}
 		}
 	}
