@@ -33,8 +33,6 @@ import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
 import org.zend.sdklib.target.IZendTarget;
 
-import com.zend.php.debug.core.debugger.ZendDebuggerHostProposalComputer;
-
 /**
  * {@link IStartup} implementation responsible for detection of a local Zend
  * Server instance. Detected server will be added only if its host is not
@@ -118,16 +116,14 @@ public class LocalZendServerStartup implements IStartup {
 					else
 						debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
 					server.setDebuggerId(debuggerId);
-					// Set up best match IPs if it is Zend Debugger
+					// Set up best match IP (localhost only) if it is Zend Debugger
 					if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
 						DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
 						IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(),
 								server.getDebuggerId());
-						ZendDebuggerHostProposalComputer proposalsComputer = new ZendDebuggerHostProposalComputer();
-						String ipsList = proposalsComputer.computeProposals(server);
 						IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager
 								.fetchWorkingCopy(debuggerSettings);
-						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, ipsList);
+						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, "127.0.0.1"); //$NON-NLS-1$
 						debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
 						debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
 					}
