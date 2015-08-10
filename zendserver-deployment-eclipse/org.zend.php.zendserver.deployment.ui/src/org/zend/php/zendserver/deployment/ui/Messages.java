@@ -91,15 +91,17 @@ public class Messages extends NLS {
 	public static String FileField_Browse;
 	public static String FileField_SelectFile;
 	
+	public static String LocalZendServerStartup_ServerDetectedMessage;
+	public static String LocalZendServerStartup_RegisteringZendServer;
 	public static String LocalZendServerStartup_NotFoundTitle;
 	public static String LocalZendServerStartup_NotFoundMessage;
 	public static String LocalZendServerStartup_FoundTitle;
 	public static String LocalZendServerStartup_FoundMessage;
-	public static String LocalZendServerStartup_Detecting_debugger_settings;
-	public static String LocalZendServerStartup_Detecting_webAPI_keys;
-	public static String LocalZendServerStartup_Fetching_configuration;
-	public static String LocalZendServerStartup_Local_zend_server_detector;
-	public static String LocalZendServerStartup_Saving_configuration;
+	public static String LocalZendServerStartup_DetectingDebuggerSettings;
+	public static String LocalZendServerStartup_DetectingWebAPIKeys;
+	public static String LocalZendServerStartup_FetchingConfiguration;
+	public static String LocalZendServerStartup_LocalZendServer;
+	public static String LocalZendServerStartup_SavingConfiguration;
 	
 	public static String MessageTranslator_DoesntLookLikeZendServer;
 
