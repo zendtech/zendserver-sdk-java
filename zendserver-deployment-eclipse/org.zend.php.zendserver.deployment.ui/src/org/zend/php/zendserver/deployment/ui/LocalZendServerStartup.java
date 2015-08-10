@@ -8,14 +8,16 @@
 package org.zend.php.zendserver.deployment.ui;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.internal.debug.core.debugger.DebuggerSettingsManager;
 import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettings;
 import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettingsWorkingCopy;
+import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsConstants;
 import org.eclipse.php.internal.server.core.Server;
@@ -69,7 +71,7 @@ public class LocalZendServerStartup implements IStartup {
 				if (oldServer != null) {
 					ServersManager.removeServer(oldServer.getName());
 				}
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
 						fetchServerData(server);
@@ -78,77 +80,63 @@ public class LocalZendServerStartup implements IStartup {
 
 			}
 		} else {
-			NotificationManager.showWarningWithHelp(
-					Messages.LocalZendServerStartup_NotFoundTitle,
-					Messages.LocalZendServerStartup_NotFoundMessage,
-					IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
+			NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
+					Messages.LocalZendServerStartup_NotFoundMessage, IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
 		}
 	}
 
-	/**
-	 * Fetch local Zend server configuration data.
-	 * 
-	 * @param server
-	 */
 	private void fetchServerData(final Server server) {
-		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(
-				PlatformUI.getWorkbench().getDisplay().getActiveShell()) {
+		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		final boolean enableWebApi = MessageDialog.openQuestion(shell,
+				Messages.LocalZendServerStartup_LocalZendServer, Messages.LocalZendServerStartup_ServerDetectedMessage);
+		Job performer = new Job(Messages.LocalZendServerStartup_RegisteringZendServer) {
 			@Override
-			protected void configureShell(Shell shell) {
-				super.configureShell(shell);
-				shell.setText(Messages.LocalZendServerStartup_Local_zend_server_detector);
-			}
-		};
-		try {
-			progressDialog.run(true, false, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(Messages.LocalZendServerStartup_Fetching_configuration, IProgressMonitor.UNKNOWN);
-					monitor.subTask(Messages.LocalZendServerStartup_Detecting_webAPI_keys);
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask(Messages.LocalZendServerStartup_FetchingConfiguration, IProgressMonitor.UNKNOWN);
+				monitor.subTask(Messages.LocalZendServerStartup_DetectingWebAPIKeys);
+				String debuggerId = PHPDebuggersRegistry.NONE_DEBUGGER_ID;
+				IZendTarget zendTarget = null;
+				if (enableWebApi) {
 					LocalTargetDetector detector = new LocalTargetDetector(server);
 					detector.detect();
-					monitor.subTask(Messages.LocalZendServerStartup_Detecting_debugger_settings);
-					// Detect debugger type if Web API is enabled
-					IZendTarget zendTarget = detector.getFinalTarget();
-					String debuggerId;
-					if (zendTarget != null)
-						debuggerId = DebugUtils.getDebuggerId(detector.getFinalTarget());
-					else
-						debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
-					server.setDebuggerId(debuggerId);
-					// Set up best match IP (localhost only) if it is Zend Debugger
-					if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
-						DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
-						IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(),
-								server.getDebuggerId());
-						IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager
-								.fetchWorkingCopy(debuggerSettings);
-						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, "127.0.0.1"); //$NON-NLS-1$
-						debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
-						debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
-					}
-					monitor.subTask(Messages.LocalZendServerStartup_Saving_configuration);
-					ServersManager.addServer(server);
-					if (ServersManager.getServers().length == 2) {
-						// There is only an empty server and detected local Zend
-						// Server
-						ServersManager.setDefaultServer(null, server);
-					}
-					ServersManager.save();
-					ZendServerManager.setupPathMapping(server);
-					NotificationManager.showInfoWithHelp(
-							Messages.LocalZendServerStartup_FoundTitle,
-							Messages.LocalZendServerStartup_FoundMessage,
-							IHelpContextIds.ZEND_SERVER, 5000);
-					monitor.done();
+					zendTarget = detector.getFinalTarget();
+				} 
+				monitor.subTask(Messages.LocalZendServerStartup_DetectingDebuggerSettings);
+				if (zendTarget != null) {
+					debuggerId = DebugUtils.getDebuggerId(zendTarget);
 				}
-			});
-		} catch (InvocationTargetException e) {
-			Activator.log(e);
-		} catch (InterruptedException e) {
-			Activator.log(e);
-		}
-
+				else {
+					debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
+				}
+				server.setDebuggerId(debuggerId);
+				// Set up best match IP (localhost only) if it is Zend Debugger
+				if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
+					DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
+					IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(),
+							server.getDebuggerId());
+					IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager
+							.fetchWorkingCopy(debuggerSettings);
+					debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, "127.0.0.1"); //$NON-NLS-1$
+					debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
+					debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
+				}
+				monitor.subTask(Messages.LocalZendServerStartup_SavingConfiguration);
+				ServersManager.addServer(server);
+				if (ServersManager.getServers().length == 2) {
+					// There is only an empty server and detected Local Zend Server
+					ServersManager.setDefaultServer(null, server);
+				}
+				ServersManager.save();
+				ZendServerManager.setupPathMapping(server);
+				NotificationManager.showInfoWithHelp(Messages.LocalZendServerStartup_FoundTitle,
+						Messages.LocalZendServerStartup_FoundMessage, IHelpContextIds.ZEND_SERVER, 5000);
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		performer.setUser(false);
+		performer.setSystem(false);
+		performer.schedule();
 	}
 
 	/**
