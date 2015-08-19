@@ -9,24 +9,21 @@
 package org.zend.php.zendserver.deployment.ui;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.zendserver.deployment.core.targets.EclipseApiKeyDetector;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
+import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.ui.actions.ZendDetectTargetCmdLine;
 import org.zend.php.zendserver.deployment.ui.zendserver.Messages;
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.ApiKeyDetector;
 import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.internal.utils.EnvironmentUtils;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.PrivilegesException;
@@ -51,17 +48,10 @@ import swt.elevate.ElevatedProgramFactory;
  * @author Wojciech Galanciak, 2014
  * 
  */
-@SuppressWarnings("restriction")
 public class LocalTargetDetector {
 
 	private IZendTarget finalTarget;
 	private IStatus status;
-
-	private Server server;
-
-	public LocalTargetDetector(Server server) {
-		this.server = server;
-	}
 
 	public IZendTarget getFinalTarget() {
 		return finalTarget;
@@ -156,14 +146,8 @@ public class LocalTargetDetector {
 		} finally {
 			if (finalTarget != null) {
 				ZendTarget t = (ZendTarget) finalTarget;
-				try {
-					t.setDefaultServerURL(new URL(server.getBaseURL()));
-					t.setServerName(server.getName());
-					finalTarget = TargetsManagerService.INSTANCE
-							.getTargetManager().updateTarget(t, true);
-				} catch (MalformedURLException e) {
-					// should not occur
-				}
+				t.setServerName(ZendServerManager.LOCAL_ZEND_SERVER_NAME);
+				finalTarget = TargetsManagerService.INSTANCE.getTargetManager().updateTarget(t, true);
 			}
 		}
 	}
@@ -227,13 +211,6 @@ public class LocalTargetDetector {
 
 	private IZendTarget detectZendServer6(final String message)
 			throws DetectionException {
-		// check if Zend Server is available at all
-		try {
-			new ZendTargetAutoDetect();
-		} catch (IOException e) {
-			status = getError(e.getMessage(), e);
-			return null;
-		}
 		ApiKeyDetector manager = new EclipseApiKeyDetector();
 		try {
 			if (manager.createApiKey(message)) {

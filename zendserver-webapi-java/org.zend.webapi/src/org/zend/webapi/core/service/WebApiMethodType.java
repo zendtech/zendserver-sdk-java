@@ -50,6 +50,7 @@ import org.zend.webapi.internal.core.connection.request.StudioStartDebugModeRequ
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStopDebugModeRequest;
+import org.zend.webapi.internal.core.connection.request.VhostGetDetailsRequest;
 import org.zend.webapi.internal.core.connection.request.VhostGetStatusRequest;
 
 /**
@@ -70,241 +71,245 @@ public enum WebApiMethodType {
 	/**
 	 * @see GetSystemInfoRequest
 	 */
-	GET_SYSTEM_INFO("getSystemInfo", GetSystemInfoRequest.class),
+	GET_SYSTEM_INFO("getSystemInfo", GetSystemInfoRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ClusterGetServerStatusRequest
 	 */
-	CLUSTER_GET_SERVER_STATUS("clusterGetServerStatus",
+	CLUSTER_GET_SERVER_STATUS("clusterGetServerStatus", //$NON-NLS-1$
 			ClusterGetServerStatusRequest.class),
 
 	/**
 	 * @see ClusterAddServerRequest
 	 */
-	CLUSTER_ADD_SERVER("clusterAddServer", ClusterAddServerRequest.class),
+	CLUSTER_ADD_SERVER("clusterAddServer", ClusterAddServerRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ClusterRemoveServerRequest
 	 */
-	CLUSTER_REMOVE_SERVER("clusterRemoveServer",
+	CLUSTER_REMOVE_SERVER("clusterRemoveServer", //$NON-NLS-1$
 			ClusterRemoveServerRequest.class),
 
 	/**
 	 * @see ClusterDisableServerRequest
 	 */
-	CLUSTER_DISABLE_SERVER("clusterDisableServer",
+	CLUSTER_DISABLE_SERVER("clusterDisableServer", //$NON-NLS-1$
 			ClusterDisableServerRequest.class),
 
 	/**
 	 * @see ClusterEnableServerRequest
 	 */
-	CLUSTER_ENABLE_SERVER("clusterEnableServer",
+	CLUSTER_ENABLE_SERVER("clusterEnableServer", //$NON-NLS-1$
 			ClusterEnableServerRequest.class),
 
 	/**
 	 * @see ClusterEnableServerRequest
 	 */
-	CLUSTER_RECONFIGURE_SERVER("clusterReconfigureServer",
+	CLUSTER_RECONFIGURE_SERVER("clusterReconfigureServer", //$NON-NLS-1$
 			ClusterReconfigureServerRequest.class),
 
 	/**
 	 * @see RestartPhpRequest
 	 */
-	RESTART_PHP("restartPhp", RestartPhpRequest.class),
+	RESTART_PHP("restartPhp", RestartPhpRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ConfigurationExportRequest
 	 */
-	CONFIGURATION_EXPORT("configurationExport",
+	CONFIGURATION_EXPORT("configurationExport", //$NON-NLS-1$
 			ConfigurationExportRequest.class),
 
 	/**
 	 * @see ConfigurationImportRequest
 	 */
-	CONFIGURATION_IMPORT("configurationImport",
+	CONFIGURATION_IMPORT("configurationImport", //$NON-NLS-1$
 			ConfigurationImportRequest.class),
 
 	/**
 	 * @see ApplicationGetStatusRequest
 	 */
-	APPLICATION_GET_STATUS("applicationGetStatus",
+	APPLICATION_GET_STATUS("applicationGetStatus", //$NON-NLS-1$
 			ApplicationGetStatusRequest.class),
 
 	/**
 	 * @see ApplicationDeployRequest
 	 */
-	APPLICATION_DEPLOY("applicationDeploy", ApplicationDeployRequest.class),
+	APPLICATION_DEPLOY("applicationDeploy", ApplicationDeployRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ApplicationUpdateRequest
 	 */
-	APPLICATION_UPDATE("applicationUpdate", ApplicationUpdateRequest.class),
+	APPLICATION_UPDATE("applicationUpdate", ApplicationUpdateRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ApplicationRemoveRequest
 	 */
-	APPLICATION_REMOVE("applicationRemove", ApplicationRemoveRequest.class),
+	APPLICATION_REMOVE("applicationRemove", ApplicationRemoveRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see ApplicationRollbackRequest
 	 */
-	APPLICATION_ROLLBACK("applicationRollback",
+	APPLICATION_ROLLBACK("applicationRollback", //$NON-NLS-1$
 			ApplicationRollbackRequest.class),
 
 	/**
 	 * @see ApplicationRedeployRequest
 	 */
-	APPLICATION_SYNCHRONIZE("applicationSynchronize",
+	APPLICATION_SYNCHRONIZE("applicationSynchronize", //$NON-NLS-1$
 			ApplicationRedeployRequest.class),
 
 	/**
 	 * @see CodeTracingDisableRequest
 	 */
-	CODE_TRACING_DISABLE("codetracingDisable", CodeTracingDisableRequest.class),
+	CODE_TRACING_DISABLE("codetracingDisable", CodeTracingDisableRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see CodeTracingEnableRequest
 	 */
-	CODE_TRACING_ENABLE("codetracingEnable", CodeTracingEnableRequest.class),
+	CODE_TRACING_ENABLE("codetracingEnable", CodeTracingEnableRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see CodeTracingIsEnabledRequest
 	 */
-	CODE_TRACING_IS_ENABLED("codetracingIsEnabled",
+	CODE_TRACING_IS_ENABLED("codetracingIsEnabled", //$NON-NLS-1$
 			CodeTracingIsEnabledRequest.class),
 
 	/**
 	 * @see CodeTracingCreateRequest
 	 */
-	CODE_TRACING_CREATE("codetracingCreate", CodeTracingCreateRequest.class),
+	CODE_TRACING_CREATE("codetracingCreate", CodeTracingCreateRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see CodeTracingDeleteRequest
 	 */
-	CODE_TRACING_DELETE("codetracingDelete", CodeTracingDeleteRequest.class),
+	CODE_TRACING_DELETE("codetracingDelete", CodeTracingDeleteRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see CodeTracingListRequest
 	 */
-	CODE_TRACING_LIST("codetracingList", CodeTracingListRequest.class),
+	CODE_TRACING_LIST("codetracingList", CodeTracingListRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see CodetracingDownloadTraceFileRequest
 	 */
-	CODE_TRACING_DOWNLOAD_TRACE_FILE("codetracingDownloadTraceFile",
+	CODE_TRACING_DOWNLOAD_TRACE_FILE("codetracingDownloadTraceFile", //$NON-NLS-1$
 			CodetracingDownloadTraceFileRequest.class),
 
 	/**
 	 * @see ExtensionsListRequest
 	 */
-	EXTENSIONS_LIST("configurationExtensionsList",
+	EXTENSIONS_LIST("configurationExtensionsList", //$NON-NLS-1$
 			ExtensionsListRequest.class),
 	
 	/**
 	 * @see MonitorGetRequestSummaryRequest
 	 */
-	MONITOR_GET_REQUEST_SUMMARY("monitorGetRequestSummary",
+	MONITOR_GET_REQUEST_SUMMARY("monitorGetRequestSummary", //$NON-NLS-1$
 			MonitorGetRequestSummaryRequest.class),
 
 	/**
 	 * @see MonitorGetIssuesListPredefinedFilterRequest
 	 */
 	MONITOR_GET_ISSUES_LIST_PREDEFINED_FILTER(
-			"monitorGetIssuesListPredefinedFilter",
+			"monitorGetIssuesListPredefinedFilter", //$NON-NLS-1$
 			MonitorGetIssuesListPredefinedFilterRequest.class),
 
 	/**
 	 * @see MonitorGetIssueDetailsRequest
 	 */
-	MONITOR_GET_ISSUE_DETAILS("monitorGetIssuesListByPredefinedFilter",
+	MONITOR_GET_ISSUE_DETAILS("monitorGetIssuesListByPredefinedFilter", //$NON-NLS-1$
 			MonitorGetIssueDetailsRequest.class),
 
 	/**
 	 * @see MonitorGetEventGroupDetailsRequest
 	 */
-	MONITOR_GET_EVENT_GROUP_DETAILS("monitorGetEventGroupDetails",
+	MONITOR_GET_EVENT_GROUP_DETAILS("monitorGetEventGroupDetails", //$NON-NLS-1$
 			MonitorGetEventGroupDetailsRequest.class),
 
 	/**
 	 * @see MonitorExportIssueByEventsGroupRequest
 	 */
-	MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP("monitorExportIssueByEventsGroup",
+	MONITOR_EXPORT_ISSUE_BY_EVENTS_GROUP("monitorExportIssueByEventsGroup", //$NON-NLS-1$
 			MonitorExportIssueByEventsGroupRequest.class),
 
 	/**
 	 * @see MonitorChangeIssueStatusRequest
 	 */
-	MONITOR_CHANGE_ISSUE_STATUS("monitorChangeIssueStatus",
+	MONITOR_CHANGE_ISSUE_STATUS("monitorChangeIssueStatus", //$NON-NLS-1$
 			MonitorChangeIssueStatusRequest.class),
 
 	/**
 	 * @see StudioStartDebugRequest
 	 */
-	STUDIO_START_DEBUG("studioStartDebug", StudioStartDebugRequest.class),
+	STUDIO_START_DEBUG("studioStartDebug", StudioStartDebugRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see StudioStartProfileRequest
 	 */
-	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class),
+	STUDIO_START_PROFILE("studioStartDebug", StudioStartProfileRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see StudioStartDebugModeRequest
 	 */
-	STUDIO_START_DEBUG_MODE("studioStartDebugMode",
+	STUDIO_START_DEBUG_MODE("studioStartDebugMode", //$NON-NLS-1$
 			StudioStartDebugModeRequest.class),
 
 	/**
 	 * @see StudioStartDebugModeRequest
 	 */
-	STUDIO_STOP_DEBUG_MODE("studioStopDebugMode",
+	STUDIO_STOP_DEBUG_MODE("studioStopDebugMode", //$NON-NLS-1$
 			StudioStopDebugModeRequest.class),
 
 	/**
 	 * @see StudioStartDebugModeRequest
 	 */
-	STUDIO_IS_DEBUG_MODE_ENABLED("studioIsDebugModeEnabled",
+	STUDIO_IS_DEBUG_MODE_ENABLED("studioIsDebugModeEnabled", //$NON-NLS-1$
 			StudioIsDebugModeEnabledRequest.class),
 
 	/**
 	 * @see LibraryGetStatusRequest
 	 */
-	LIBRARY_GET_STATUS("libraryGetStatus", LibraryGetStatusRequest.class),
+	LIBRARY_GET_STATUS("libraryGetStatus", LibraryGetStatusRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see LibraryVersionGetStatusRequest
 	 */
-	LIBRARY_VERSION_GET_STATUS("libraryVersionGetStatus",
+	LIBRARY_VERSION_GET_STATUS("libraryVersionGetStatus", //$NON-NLS-1$
 			LibraryVersionGetStatusRequest.class),
 
 	/**
 	 * @see LibraryVersionDeployRequest
 	 */
-	LIBRARY_VERSION_DEPLOY("libraryVersionDeploy",
+	LIBRARY_VERSION_DEPLOY("libraryVersionDeploy", //$NON-NLS-1$
 			LibraryVersionDeployRequest.class),
 
 	/**
 	 * @see LibrarySynchronizeRequest
 	 */
-	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class),
+	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class), //$NON-NLS-1$
 
 	/**
 	 * @see DownloadLibraryVersionFileRequest
 	 */
-	DOWNLOAD_LIBRARY_VERSION_FILE("downloadLibraryVersionFile",
+	DOWNLOAD_LIBRARY_VERSION_FILE("downloadLibraryVersionFile", //$NON-NLS-1$
 			DownloadLibraryVersionFileRequest.class),
 
 	/**
 	 * @see BootstrapSingleServerRequest
 	 */
-	BOOTSTRAP_SINGLE_SERVER("bootstrapSingleServer",
+	BOOTSTRAP_SINGLE_SERVER("bootstrapSingleServer", //$NON-NLS-1$
 			BootstrapSingleServerRequest.class),
 
 	/**
 	 * @see VhostGetStatusRequest
 	 */
-	VHOST_GET_STATUS_REQUEST("vhostGetStatusRequest",
-			VhostGetStatusRequest.class);
-
+	VHOST_GET_STATUS_REQUEST("vhostGetStatusRequest", //$NON-NLS-1$
+			VhostGetStatusRequest.class),
+	/**
+	 * @see VhostGetDetailsRequest
+	 */
+	VHOST_GET_DETAILS_REQUEST("vhostGetDetails", //$NON-NLS-1$
+			VhostGetDetailsRequest.class);
 	/**
 	 * Name of the service
 	 */

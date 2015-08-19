@@ -217,6 +217,18 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		return scaled;
 	}
 
+	public static void logInfo(String message) {
+		getDefault().getLog().log(new Status(IStatus.INFO, PLUGIN_ID, message, null));
+	}
+	
+	public static void logError(String message) {
+		logError(message, null);
+	}
+
+	public static void logError(String message, Throwable e) {
+		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, message, e));
+	}
+
 	public static void log(Throwable e) {
 		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
 	}

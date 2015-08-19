@@ -16,11 +16,11 @@ public class LoggerInitializer {
 		Log.getInstance().registerLogger(new ILogger() {
 			
 			public void warning(Object message) {
-				DeploymentCore.logErrorMessage(message.toString());
+				DeploymentCore.logError(message.toString());
 			}
 			
 			public void info(Object message) {
-				DeploymentCore.logErrorMessage(message.toString());
+				DeploymentCore.logError(message.toString());
 			}
 			
 			public ILogger getLogger(String creatorName, boolean verbose) {
@@ -28,11 +28,11 @@ public class LoggerInitializer {
 			}
 			
 			public void error(Object message) {
-				DeploymentCore.logErrorMessage(message.toString());
+				DeploymentCore.logError(message.toString());
 			}
 			
 			public void debug(Object message) {
-				DeploymentCore.logErrorMessage(message.toString());
+				DeploymentCore.logError(message.toString());
 			}
 		});
 		

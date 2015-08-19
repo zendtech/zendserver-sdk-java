@@ -414,4 +414,20 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 		return true;
 	}
 
+	public boolean visit(VhostDetails vhostsDetails) {
+		return true;
+	}
+
+	public boolean preVisit(VhostDetails vhostsDetails) {
+		return true;
+	}
+	
+	public boolean preVisit(VhostExtendedInfo vhostExtendedInfo) {
+		return true;
+	}
+
+	public boolean visit(VhostExtendedInfo vhostExtendedInfo) {
+		return true;
+	}
+
 }

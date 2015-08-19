@@ -20,8 +20,6 @@ public class DeploymentCore extends Plugin {
 
 	public static final String PLUGIN_ID = "org.zend.php.zendserver.deployment.core"; //$NON-NLS-1$
 
-	private static final int INTERNAL_ERROR = 0;
-
 	private static BundleContext context;
 
 	private static DeploymentCore plugin;
@@ -48,7 +46,6 @@ public class DeploymentCore extends Plugin {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
-	@SuppressWarnings("restriction")
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DeploymentCore.context = context;
@@ -117,33 +114,20 @@ public class DeploymentCore extends Plugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR,
-				"ADP internal error", e)); //$NON-NLS-1$
+		logError("ADP internal error", e); //$NON-NLS-1$
 	}
 
-	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, null));
+	public static void logError(String message) {
+		logError(message, null);
+	}
+
+	public static void logError(String message, Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, message, e));
 	}
 
 	public static IEclipsePreferences getPreferenceScope() {
 		// not using DefaultScope.INSTANCE for backwards compatibility
 		return (new DefaultScope()).getNode(DeploymentCore.PLUGIN_ID);
-	}
-
-	public void debug(Object message) {
-		logErrorMessage(message.toString());
-	}
-
-	public void info(Object message) {
-		logErrorMessage(message.toString());
-	}
-
-	public void warning(Object message) {
-		logErrorMessage(message.toString());
-	}
-
-	public void error(Object message) {
-		logErrorMessage(message.toString());
 	}
 
 	public SdkManager getSdk() {

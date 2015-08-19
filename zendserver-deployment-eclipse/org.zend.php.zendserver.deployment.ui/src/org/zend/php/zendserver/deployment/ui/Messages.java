@@ -1,12 +1,8 @@
 package org.zend.php.zendserver.deployment.ui;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	
-	private static final String CONSTRUCTED_MESSAGES_BUNDLE_ID = "org.zend.php.zendserver.deployment.ui.ConstructedMessages"; //$NON-NLS-1$
 	
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.messages"; //$NON-NLS-1$
 
@@ -91,6 +87,8 @@ public class Messages extends NLS {
 	public static String FileField_Browse;
 	public static String FileField_SelectFile;
 	
+	public static String LocalZendServerStartup_CouldNotObtainAllProperties;
+
 	public static String LocalZendServerStartup_ServerDetectedMessage;
 	public static String LocalZendServerStartup_RegisteringZendServer;
 	public static String LocalZendServerStartup_NotFoundTitle;
@@ -98,10 +96,18 @@ public class Messages extends NLS {
 	public static String LocalZendServerStartup_FoundTitle;
 	public static String LocalZendServerStartup_FoundMessage;
 	public static String LocalZendServerStartup_DetectingDebuggerSettings;
+
+	public static String LocalZendServerStartup_DetectingLocalZendServer_Error;
 	public static String LocalZendServerStartup_DetectingWebAPIKeys;
 	public static String LocalZendServerStartup_FetchingConfiguration;
 	public static String LocalZendServerStartup_LocalZendServer;
+
+	public static String LocalZendServerStartup_LocalZendServerExists_Info;
 	public static String LocalZendServerStartup_SavingConfiguration;
+
+	public static String LocalZendServerStartup_UpdatingServerProperties;
+
+	public static String LocalZendServerStartup_UpdatingServerProperties_Error;
 	
 	public static String MessageTranslator_DoesntLookLikeZendServer;
 
@@ -261,16 +267,7 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private static ResourceBundle constructedMessagesBundle = ResourceBundle.getBundle(CONSTRUCTED_MESSAGES_BUNDLE_ID);
-
-
-
 
 	private Messages() {
-	}
-
-	public static ResourceBundle getResourceBundle() {
-		return constructedMessagesBundle;
 	}
 }

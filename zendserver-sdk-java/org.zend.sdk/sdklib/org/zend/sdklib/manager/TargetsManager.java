@@ -45,7 +45,7 @@ import org.zend.webapi.core.progress.StatusCode;
  */
 public class TargetsManager extends AbstractChangeNotifier {
 
-	public static final String DEFAULT_KEY = "sdk";
+	public static final String DEFAULT_KEY = "sdk"; //$NON-NLS-1$
 
 	/**
 	 * All targets loaded in the manager
@@ -289,17 +289,12 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (targetId == null) {
 			targetId = createUniqueId(null);
 		}
-		key = key != null ? key : DEFAULT_KEY + "."
-				+ System.getProperty("user.name");
+		key = key != null ? key : DEFAULT_KEY + "." //$NON-NLS-1$
+				+ System.getProperty("user.name"); //$NON-NLS-1$
 
 		final IZendTarget existing = getExistingLocalhost();
 
-		ZendTargetAutoDetect detection = null;
-		try {
-			detection = getAutoDetector();
-		} catch (IOException e) {
-			throw new MissingZendServerException(e);
-		}
+		ZendTargetAutoDetect detection = getAutoDetector();
 
 		String existingSecret = null;
 		if (secretKey != null) {
@@ -385,7 +380,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		}
 	}
 
-	public ZendTargetAutoDetect getAutoDetector() throws IOException {
+	public ZendTargetAutoDetect getAutoDetector() {
 		return new ZendTargetAutoDetect();
 	}
 
@@ -647,7 +642,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	 */
 	public String createUniqueId(String prefix) {
 		if (prefix == null) {
-			prefix = "";
+			prefix = ""; //$NON-NLS-1$
 		}
 
 		int idgenerator = getTargets().length;
@@ -766,7 +761,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 		if (host == null) {
 			return false;
 		}
-		if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
+		if ("localhost".equals(host) || "127.0.0.1".equals(host)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 		try {

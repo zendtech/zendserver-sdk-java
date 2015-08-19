@@ -43,6 +43,7 @@ import org.zend.webapi.core.connection.data.ExtensionsList;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.VhostDetails;
 import org.zend.webapi.core.connection.data.VhostsList;
 import org.zend.webapi.core.connection.data.values.IssueStatus;
 import org.zend.webapi.core.connection.data.values.ServerType;
@@ -94,6 +95,7 @@ import org.zend.webapi.internal.core.connection.request.RestartPhpRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugModeRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartDebugRequest;
 import org.zend.webapi.internal.core.connection.request.StudioStartProfileRequest;
+import org.zend.webapi.internal.core.connection.request.VhostGetDetailsRequest;
 import org.zend.webapi.internal.core.connection.request.VhostGetStatusRequest;
 
 /**
@@ -124,7 +126,7 @@ public class WebApiClient {
 	private static IWebApiLogger logger;
 
 	static {
-		String val = System.getProperty("org.zend.webapi.debug");
+		String val = System.getProperty("org.zend.webapi.debug"); //$NON-NLS-1$
 		DEBUG = val != null ? Boolean.valueOf(val) : false;
 	}
 
@@ -1819,6 +1821,29 @@ public class WebApiClient {
 	}
 
 	/**
+	 * Get detailed information about virtual host with given <code>id</code>.
+	 * 
+	 * @see WebApiMethodType#VHOST_GET_DETAILS_REQUEST
+	 * 
+	 * @return virtual host detail information
+	 * @throws WebApiException
+	 * @since 1.6
+	 */
+	public VhostDetails vhostGetDetails(final int id) throws WebApiException{
+		final IResponse handle = this.handle(
+				WebApiMethodType.VHOST_GET_DETAILS_REQUEST,
+				getVersion(WebApiVersion.V1_6),
+						new IRequestInitializer() {
+							public void init(IRequest request)
+									throws WebApiException {
+								((VhostGetDetailsRequest) request)
+										.setId(id);
+							}
+						});
+		return (VhostDetails) handle.getData();		
+	}
+	
+	/**
 	 * Gets the list of extensions that are currently installed on the server.
 	 * 
 	 * @param filter
@@ -1887,7 +1912,7 @@ public class WebApiClient {
 			initializer.init(request);
 		}
 
-		logInfo("sending " + request.getClass().getSimpleName());
+		logInfo("sending " + request.getClass().getSimpleName()); //$NON-NLS-1$
 
 		if (!listenersDisabled) {
 			synchronized (preListeners) {
@@ -2067,10 +2092,10 @@ public class WebApiClient {
 	private final String getWebApiAddress(URL host) {
 		String hostname = host.toString();
 		if (host.getPort() == -1) {
-			if ("https".equalsIgnoreCase(host.getProtocol())) {
-				hostname += ":10082";
+			if ("https".equalsIgnoreCase(host.getProtocol())) { //$NON-NLS-1$
+				hostname += ":10082"; //$NON-NLS-1$
 			} else {
-				hostname += ":10081";
+				hostname += ":10081"; //$NON-NLS-1$
 			}
 		}
 		return hostname;

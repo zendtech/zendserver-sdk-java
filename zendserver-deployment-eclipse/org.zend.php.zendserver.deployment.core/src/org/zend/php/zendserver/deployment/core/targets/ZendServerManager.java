@@ -9,13 +9,12 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.targets;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
@@ -28,11 +27,10 @@ import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.debug.core.pathmapper.VirtualPath;
 import org.eclipse.php.internal.server.core.Server;
 import org.osgi.framework.Bundle;
-import org.zend.php.zendserver.deployment.core.DeploymentCore;
+import org.zend.sdklib.manager.DetectionException;
+import org.zend.sdklib.manager.MissingZendServerException;
 
 import com.ice.jni.registry.NoSuchKeyException;
-import com.ice.jni.registry.NoSuchValueException;
-import com.ice.jni.registry.RegDWordValue;
 import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
@@ -53,29 +51,24 @@ public class ZendServerManager {
 	public static final String ZENDSERVER_GUI_URL_KEY = "zendserver_default_port"; //$NON-NLS-1$
 
 	// TODO can be used for refreshing local settings
+	public static final String LOCAL_ZEND_SERVER_NAME = "Local Zend Server"; //$NON-NLS-1$
 	public static final String ZENDSERVER_INSTALL_LOCATION = "InstallLocation";//$NON-NLS-1$
+	public static final String ZENDSERVER_VERSION = "Version"; //$NON-NLS-1$
 
 	// Linux and Mac OS X
-	private static final String HTTPD_APACHE_CONFIG = "/apache2/conf/httpd.conf"; //$NON-NLS-1$
 	private static final String ZCE_PREFIX = "ZCE_PREFIX";//$NON-NLS-1$
+	private static final String PRODUCT_VERSION = "PRODUCT_VERSION";  //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX = "/etc/zce.rc"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_DEB = "/etc/zce.rc-deb"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LINUX_RPM = "/etc/zce.rc-rpm"; //$NON-NLS-1$
-	private static final String APACHE_PORT2 = "APACHE_PORT"; //$NON-NLS-1$
-	private static final String APACHE_DOCROOT = "APACHE_HTDOCS"; //$NON-NLS-1$
 
 	// Windows
-	private static final String IIS_PORT = "IISPort";//$NON-NLS-1$
-	private static final String APACHE_PORT = "ApachePort";//$NON-NLS-1$
-	private static final String APACHE_APP_PORT = "ApacheAppPort";//$NON-NLS-1$
-	private static final String ZENDSERVER_DOC_ROOT = "DocRoot";//$NON-NLS-1$
 	private static final String ZEND_SERVER = "ZendServer";//$NON-NLS-1$
 	private static final String ZEND_TECHNOLOGIES = "Zend Technologies";//$NON-NLS-1$
 	private static final String SOFTWARE = "SOFTWARE";//$NON-NLS-1$
 	private static final String NODE_64 = "WOW6432node";//$NON-NLS-1$
-	private static final String IIS_APP_PORT = "IISAppPort"; //$NON-NLS-1$
+	private static final String VERSION = "Version"; //$NON-NLS-1$
 
-	private static final String LOCAL_ZEND_SERVER_NAME = "Local Zend Server"; //$NON-NLS-1$
 	private static final String LOCAL_HOST = "localhost";//$NON-NLS-1$
 
 	private static ZendServerManager instance = null;
@@ -94,44 +87,21 @@ public class ZendServerManager {
 	}
 
 	/**
-	 * @param server
-	 *            {@link Server} instance which will be used as a base
-	 *            configuration
 	 * @return {@link Server} instance which represents locally installed Zend
-	 *         Server; if not detected then {@link Server} instance passed as an
-	 *         argument
+	 *         Server
+	 * @throws DetectionException 
 	 */
-	public Server getLocalZendServer(Server server) {
+	public Server getLocalZendServer() throws DetectionException {
 		if (isUnderLinux() || isUnderMaxOSX()) {
-			server = getLocalZendServerFromFile(server);
+			return getLocalZendServerFromFile();
 		}
 
 		if (isUnderWindows()) {
-			try {
-				server = getLocalZendServerFromRegistry(server);
-			} catch (NoSuchKeyException e) {
-				server = null;
-			} catch (RegistryException e) {
-				DeploymentCore.log(e);
-			} catch (MalformedURLException e) {
-				DeploymentCore.log(e);
-			}
+			return getLocalZendServerFromRegistry();
 		}
-
-		if (server != null
-				&& (server.getName() == null || server.getName().isEmpty())) {
-			server.setName(LOCAL_ZEND_SERVER_NAME);
-		}
-		return server;
-	}
-
-	/**
-	 * @return {@link Server} instance which represents locally installed Zend
-	 *         Server; if not detected then return <code>null</code>
-	 */
-	public Server getLocalZendServer() {
-		Server server = null;
-		return getLocalZendServer(server);
+		
+		String message = MessageFormat.format(Messages.ZendServerManager_UnsupportedOS_Error, Platform.getOS());
+		throw new DetectionException(message);
 	}
 
 	/**
@@ -164,14 +134,11 @@ public class ZendServerManager {
 	 * Detect local Zend Server from configuration files. This method is used
 	 * for Linux and Mac OS X operating systems.
 	 * 
-	 * @param server
-	 *            {@link Server} instance which will be used as a base
-	 *            configuration
 	 * @return {@link Server} instance which represents locally installed Zend
-	 *         Server; if not detected then {@link Server} instance passed as an
-	 *         argument
+	 *         Server
+	 * @throws DetectionException 
 	 */
-	private Server getLocalZendServerFromFile(Server server) {
+	private Server getLocalZendServerFromFile() throws DetectionException {
 		Properties props = null;
 
 		// Try to find the zend.rc-deb file.
@@ -208,69 +175,29 @@ public class ZendServerManager {
 			}
 		}
 
-		if (props != null) {
-			String installation = props.getProperty(ZCE_PREFIX);
+		if (props == null) {
+			String message = MessageFormat.format(Messages.ZendServerManager_ConfigurationFilesNotFound_Error, CONFIG_FILE_LINUX_DEB, CONFIG_FILE_LINUX_RPM, CONFIG_FILE_LINUX);
+			throw new MissingZendServerException(message);
+		}
+		
+		String installation = props.getProperty(ZCE_PREFIX);
+		if (installation == null) {
+			throw new DetectionException(Messages.ZendServerManager_InstallationLocationNotFound_Error);
+		}
+		if (!new File(installation).exists()) {
+			String message = MessageFormat.format(Messages.ZendServerManager_InstallationLocationNotValid_Error, installation);
+			throw new DetectionException(message);
+		}
 
-			if (installation == null) {
-				installation = ""; //$NON-NLS-1$
-			} else if (!new File(installation).exists()) {
-				return null;
-			}
-			server.setAttribute(ZENDSERVER_INSTALL_LOCATION, installation);
-
-			String portValue = null;
-			String docRoot = null;
-			BufferedReader httpdReader = null;
-			try {
-				httpdReader = new BufferedReader(new FileReader(new File(
-						installation + HTTPD_APACHE_CONFIG)));
-				String line = null;
-				while ((line = httpdReader.readLine()) != null) {
-					line = line.trim();
-					if (line.startsWith("Listen")) { //$NON-NLS-1$
-						String[] segments = line.trim().split(" "); //$NON-NLS-1$
-						if (segments.length == 2) {
-							portValue = segments[1];
-						}
-					} else if (line.startsWith("DocumentRoot")) { //$NON-NLS-1$
-						String[] segments = line.trim().split(" "); //$NON-NLS-1$
-						if (segments.length == 2) {
-							String val = segments[1];
-							if (val.startsWith("\"")) { //$NON-NLS-1$
-								docRoot = val.substring(1, val.length() - 1);
-							}
-						}
-					}
-				}
-			} catch (IOException e) {
-			} finally {
-				if (httpdReader != null) {
-					try {
-						httpdReader.close();
-					} catch (IOException e) {
-					}
-				}
-			}
-			if (portValue == null) {
-				portValue = props.getProperty(APACHE_PORT2);
-			}
-			if (portValue == null) {
-				portValue = ""; //$NON-NLS-1$
-			}
-			if (docRoot == null) {
-				docRoot = props.getProperty(APACHE_DOCROOT);
-			}
-			if (docRoot == null) {
-				docRoot = ""; //$NON-NLS-1$
-			}
-			server.setDocumentRoot(docRoot);
-			server.setHost(LOCAL_HOST);
-			try {
-				server.setBaseURL("http://" + LOCAL_HOST); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// nothing to do - this is a safe creation;
-			}
-			server.setPort(portValue);
+		Server server = new Server();
+		server.setName(LOCAL_ZEND_SERVER_NAME);
+		server.setAttribute(ZENDSERVER_INSTALL_LOCATION, installation);
+		server.setAttribute(ZENDSERVER_VERSION, props.getProperty(PRODUCT_VERSION));
+		server.setHost(LOCAL_HOST);
+		try {
+			server.setBaseURL("http://" + LOCAL_HOST); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			// nothing to do - this is a safe creation
 		}
 		return server;
 	}
@@ -279,69 +206,38 @@ public class ZendServerManager {
 	 * Detect local Zend Server from system registry. This method is used for
 	 * Windows operating systems.
 	 * 
-	 * @param server
-	 *            {@link Server} instance which will be used as a base
-	 *            configuration
 	 * @return {@link Server} instance which represents locally installed Zend
-	 *         Server; if not detected then {@link Server} instance passed as an
-	 *         argument
+	 *         Server
+	 * @throws DetectionException 
 	 */
-	private Server getLocalZendServerFromRegistry(Server server)
-			throws NoSuchKeyException, RegistryException, MalformedURLException {
-		RegistryKey zendServerKey = getZendServerRegistryKey();
-		if (zendServerKey != null) {
-			String docRoot = zendServerKey.getStringValue(ZENDSERVER_DOC_ROOT);
-			server.setDocumentRoot(docRoot);
+	private Server getLocalZendServerFromRegistry() throws DetectionException  {
+		try {
+			RegistryKey zendServerKey = getZendServerRegistryKey();
+			
+			String installation = zendServerKey.getStringValue(ZENDSERVER_INSTALL_LOCATION);
+			if (installation == null) {
+				throw new DetectionException(Messages.ZendServerManager_InstallationLocationNotFound_Error);
+			}
 
-			String installation = zendServerKey
-					.getStringValue(ZENDSERVER_INSTALL_LOCATION);
+			if (!new File(installation).exists()) {
+				String message = MessageFormat.format(Messages.ZendServerManager_InstallationLocationNotValid_Error, installation);
+				throw new DetectionException(message);
+			}
+
+			Server server = new Server();
+			server.setName(LOCAL_ZEND_SERVER_NAME);
 			server.setAttribute(ZENDSERVER_INSTALL_LOCATION, installation);
-
-			RegDWordValue port = null;
-
-			try {
-				port = (RegDWordValue) zendServerKey.getValue(APACHE_APP_PORT);
-			} catch (NoSuchValueException e) {
-				// if is ISS, the value is not in the registry.
-				// ignore this exception.
-			}
-
-			if (port == null) {
-				try {
-					port = (RegDWordValue) zendServerKey.getValue(IIS_APP_PORT);
-				} catch (NoSuchValueException e) {
-					// Not iis and apache?
-					// Should not happen.
-				}
-			}
-
-			String portValue = null;
-			if (port != null) {
-				portValue = String.valueOf(port.getData());
-			}
-			if (portValue == null) {
-				portValue = ""; //$NON-NLS-1$
-			}
-
-			// Zend server admin url port
-			RegDWordValue zsPort = null;
-			try {
-				zsPort = (RegDWordValue) zendServerKey.getValue(APACHE_PORT);
-			} catch (NoSuchValueException e) {
-				// if is ISS, the value is not in the registry.
-				// ignore this exception.
-			}
-
-			if (zsPort == null) {
-				zsPort = (RegDWordValue) zendServerKey.getValue(IIS_PORT);
-			}
-
+			server.setAttribute(ZENDSERVER_VERSION, zendServerKey.getStringValue(VERSION));
 			server.setHost(LOCAL_HOST);
-			server.setBaseURL("http://" + LOCAL_HOST);//$NON-NLS-1$
-
-			server.setPort(portValue);
+			try {
+				server.setBaseURL("http://" + LOCAL_HOST); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				// nothing to do - this is a safe creation
+			}
+			return server;
+		} catch (RegistryException ex) {
+			throw new DetectionException(Messages.ZendServerManager_ErrorReadingInstallationParameters_Error, ex);
 		}
-		return server;
 	}
 
 	private boolean isUnderLinux() {
@@ -357,21 +253,13 @@ public class ZendServerManager {
 	}
 
 	private RegistryKey getZendServerRegistryKey() throws RegistryException {
-		RegistryKey zendServerKey = null;
 		try {
-			zendServerKey = Registry.HKEY_LOCAL_MACHINE.openSubKey(SOFTWARE)
-					.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
-			return zendServerKey;
+			return Registry.HKEY_LOCAL_MACHINE.openSubKey(SOFTWARE).openSubKey(ZEND_TECHNOLOGIES)
+					.openSubKey(ZEND_SERVER);
 		} catch (NoSuchKeyException e1) {
 			// try the 64 bit
-			try {
-				zendServerKey = Registry.HKEY_LOCAL_MACHINE
-						.openSubKey(SOFTWARE).openSubKey(NODE_64)
-						.openSubKey(ZEND_TECHNOLOGIES).openSubKey(ZEND_SERVER);
-				return zendServerKey;
-			} catch (NoSuchKeyException e) {
-				return null;
-			}
+			return Registry.HKEY_LOCAL_MACHINE.openSubKey(SOFTWARE).openSubKey(NODE_64).openSubKey(ZEND_TECHNOLOGIES)
+					.openSubKey(ZEND_SERVER);
 		}
 	}
 
