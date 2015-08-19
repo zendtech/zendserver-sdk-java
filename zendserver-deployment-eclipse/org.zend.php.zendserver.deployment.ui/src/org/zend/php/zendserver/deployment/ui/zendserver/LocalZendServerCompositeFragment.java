@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
+import org.zend.sdklib.manager.DetectionException;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -83,11 +84,9 @@ public class LocalZendServerCompositeFragment extends AbstractCompositeFragment 
 				return;
 			}
 			Server tempServer = new Server();
-			tempServer = ZendServerManager.getInstance().getLocalZendServer(
-					tempServer);
-			String location = tempServer.getAttribute(
-					ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-			if (location == null || location.isEmpty()) {
+			try {
+				tempServer = ZendServerManager.getInstance().getLocalZendServer();
+			} catch (DetectionException e) {
 				setMessage(
 						Messages.LocalZendServerCompositeFragment_CannotDetectError,
 						IMessageProvider.ERROR);

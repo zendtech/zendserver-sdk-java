@@ -84,8 +84,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 			if (mediaType != null) {
 				String mtName = mediaType.getName();
 				if (mtName != null
-						&& (mtName.startsWith("application/vnd.zend") || mtName
-								.startsWith("application/x-amf"))) {
+						&& (mtName.startsWith("application/vnd.zend") || mtName //$NON-NLS-1$
+								.startsWith("application/x-amf"))) { //$NON-NLS-1$
 					return true;
 				}
 			} else if (data instanceof CodeTraceFile) {
@@ -162,33 +162,28 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(SystemInfo systemInfo) {
 		String currentPath = systemInfo.getPrefix();
 
-		final String statusName = getValue(currentPath + "/status");
+		final String statusName = getValue(currentPath + "/status"); //$NON-NLS-1$
 		systemInfo.setStatus(SystemStatus.byName(statusName));
 
-		final String editionName = getValue(currentPath + "/edition");
+		final String editionName = getValue(currentPath + "/edition"); //$NON-NLS-1$
 		systemInfo.setEdition(SystemEdition.byName(editionName));
 
-		final String serverVersion = getValue(currentPath
-				+ "/zendServerVersion");
+		final String serverVersion = getValue(currentPath + "/zendServerVersion"); //$NON-NLS-1$
 		systemInfo.setVersion(serverVersion);
 
-		final String supportedVersion = getValue(currentPath
-				+ "/supportedApiVersions");
+		final String supportedVersion = getValue(currentPath + "/supportedApiVersions"); //$NON-NLS-1$
 		List<WebApiVersion> versions = parseVersions(supportedVersion);
 		systemInfo.setSupportedApiVersions(versions);
 
-		final String phpVersion = getValue(currentPath + "/phpVersion");
+		final String phpVersion = getValue(currentPath + "/phpVersion"); //$NON-NLS-1$
 		systemInfo.setPhpVersion(phpVersion);
 
-		final String os = getValue(currentPath + "/operatingSystem");
+		final String os = getValue(currentPath + "/operatingSystem"); //$NON-NLS-1$
 		systemInfo.setOperatingSystem(os);
 
-		systemInfo.setLicenseInfo(new LicenseInfo(currentPath
-				+ "/serverLicenseInfo"));
-		systemInfo.setManagerLicenseInfo(new LicenseInfo(currentPath
-				+ "/managerLicenseInfo"));
-		systemInfo.setMessageList(new MessageList(currentPath + "/messageList",
-				systemInfo.getOccurrence()));
+		systemInfo.setLicenseInfo(new LicenseInfo(currentPath + "/serverLicenseInfo")); //$NON-NLS-1$
+		systemInfo.setManagerLicenseInfo(new LicenseInfo(currentPath + "/managerLicenseInfo")); //$NON-NLS-1$
+		systemInfo.setMessageList(new MessageList(currentPath + "/messageList", systemInfo.getOccurrence())); //$NON-NLS-1$
 
 		return true;
 	}
@@ -207,20 +202,20 @@ public class DataDigster extends GenericResponseDataVisitor {
 		// temp for reading values
 		String value;
 
-		value = getValue(currentPath + "/status");
+		value = getValue(currentPath + "/status"); //$NON-NLS-1$
 		licenseInfo.setStatus(LicenseInfoStatus.byName(value));
 
-		value = getValue(currentPath + "/orderNumber");
+		value = getValue(currentPath + "/orderNumber"); //$NON-NLS-1$
 		licenseInfo.setOrderNumber(value);
 
-		value = getValue(currentPath + "/validUntil");
+		value = getValue(currentPath + "/validUntil"); //$NON-NLS-1$
 		if (value != null) {
 			final Date parse = DateUtils
 					.parse(value, DateUtils.FORMAT_RFC_1123);
 			licenseInfo.setValidUntil(parse);
 		}
-		value = getValue(currentPath + "/serverLimit");
-		licenseInfo.setLimit(Integer.parseInt(value == null ? "0" : value));
+		value = getValue(currentPath + "/serverLimit"); //$NON-NLS-1$
+		licenseInfo.setLimit(Integer.parseInt(value == null ? "0" : value)); //$NON-NLS-1$
 
 		return true;
 	}
@@ -234,13 +229,13 @@ public class DataDigster extends GenericResponseDataVisitor {
 	 */
 	public boolean preVisit(MessageList messageList) {
 		// build message info list
-		List<String> errors = getMessageValues(messageList, "error");
+		List<String> errors = getMessageValues(messageList, "error"); //$NON-NLS-1$
 		messageList.setError(errors.size() > 0 ? errors : null);
 
-		List<String> warnings = getMessageValues(messageList, "warning");
+		List<String> warnings = getMessageValues(messageList, "warning"); //$NON-NLS-1$
 		messageList.setWarning(warnings.size() > 0 ? warnings : null);
 
-		List<String> infos = getMessageValues(messageList, "info");
+		List<String> infos = getMessageValues(messageList, "info"); //$NON-NLS-1$
 		messageList.setInfo(infos.size() > 0 ? infos : null);
 
 		return true;
@@ -256,7 +251,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 				messageList.getOccurrence());
 		List<String> messages = new ArrayList<String>(size);
 		for (int index = previousSize; index < previousSize + size; index++) {
-			messages.add(getValue(currentPath + "/" + nodeName, index));
+			messages.add(getValue(currentPath + "/" + nodeName, index)); //$NON-NLS-1$
 		}
 		return messages;
 	}
@@ -273,7 +268,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		if (supportedVersion == null) {
 			return null;
 		}
-		final String[] parsed = supportedVersion.split(",");
+		final String[] parsed = supportedVersion.split(","); //$NON-NLS-1$
 		List<WebApiVersion> versions = new ArrayList<WebApiVersion>(
 				parsed.length);
 		for (String version : parsed) {
@@ -286,7 +281,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = serversList.getPrefix();
 
 		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/serverInfo");
+				.getNodes(currentPath + "/serverInfo"); //$NON-NLS-1$
 		final int size = nodes.size();
 		if (size == 0) {
 			return false;
@@ -295,7 +290,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		// build servers info list
 		List<ServerInfo> serversInfo = new ArrayList<ServerInfo>(size);
 		for (int index = 0; index < size; index++) {
-			serversInfo.add(new ServerInfo(currentPath + "/serverInfo", index));
+			serversInfo.add(new ServerInfo(currentPath + "/serverInfo", index)); //$NON-NLS-1$
 		}
 
 		serversList.setServerInfo(serversInfo);
@@ -318,20 +313,19 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = serverInfo.getPrefix();
 		int occurrence = serverInfo.getOccurrence();
 
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		serverInfo.setId(parseNumberIfExists(value));
 
-		value = getValue(currentPath + "/name", occurrence);
+		value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
 		serverInfo.setName(value);
 
-		value = getValue(currentPath + "/address", occurrence);
+		value = getValue(currentPath + "/address", occurrence); //$NON-NLS-1$
 		serverInfo.setAddress(value);
 
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		serverInfo.setStatus(ServerStatus.byName(value));
 
-		final MessageList messageList = new MessageList(currentPath
-				+ "/messageList", occurrence);
+		final MessageList messageList = new MessageList(currentPath + "/messageList", occurrence); //$NON-NLS-1$
 		serverInfo.setMessageList(messageList);
 
 		return true;
@@ -364,7 +358,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(ExtensionsList extensionsList) {
 		String currentPath = extensionsList.getPrefix();
 		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/extension");
+				.getNodes(currentPath + "/extension"); //$NON-NLS-1$
 		final int size = nodes.size();
 		if (size == 0) {
 			return false;
@@ -374,7 +368,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 				size);
 		for (int index = 0; index < size; index++) {
 			extensionsInfo.add(new ExtensionInfo(currentPath
-					+ "/extension", index));
+					+ "/extension", index)); //$NON-NLS-1$
 		}
 		extensionsList.setExtensionsInfo(extensionsInfo);
 		return true;
@@ -384,37 +378,37 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = extensionInfo.getPrefix();
 		int occurrence = extensionInfo.getOccurrence();
 
-		String value = getValue(currentPath + "/name", occurrence);
+		String value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
 		extensionInfo.setName(value);
 
-		value = getValue(currentPath + "/version", occurrence);
+		value = getValue(currentPath + "/version", occurrence); //$NON-NLS-1$
 		extensionInfo.setVersion(value);
 
-		value = getValue(currentPath + "/type", occurrence);
+		value = getValue(currentPath + "/type", occurrence); //$NON-NLS-1$
 		extensionInfo.setExtensionType(value);
 
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		extensionInfo.setStatus(value);
 
-		value = getValue(currentPath + "/shortDescription", occurrence);
+		value = getValue(currentPath + "/shortDescription", occurrence); //$NON-NLS-1$
 		extensionInfo.setShortDescription(value);
 
-		value = getValue(currentPath + "/longDescription", occurrence);
+		value = getValue(currentPath + "/longDescription", occurrence); //$NON-NLS-1$
 		extensionInfo.setLongDescription(value);
 
-		value = getValue(currentPath + "/loaded", occurrence);
+		value = getValue(currentPath + "/loaded", occurrence); //$NON-NLS-1$
 		extensionInfo.setLoaded(Boolean.valueOf(value));
 		
-		value = getValue(currentPath + "/installed", occurrence);
+		value = getValue(currentPath + "/installed", occurrence); //$NON-NLS-1$
 		extensionInfo.setInstalled(Boolean.valueOf(value));
 		
-		value = getValue(currentPath + "/builtIn", occurrence);
+		value = getValue(currentPath + "/builtIn", occurrence); //$NON-NLS-1$
 		extensionInfo.setBuiltIn(Boolean.valueOf(value));
 		
-		value = getValue(currentPath + "/dummy", occurrence);
+		value = getValue(currentPath + "/dummy", occurrence); //$NON-NLS-1$
 		extensionInfo.setDummy(Boolean.valueOf(value));
 		
-		value = getValue(currentPath + "/restartRequired", occurrence);
+		value = getValue(currentPath + "/restartRequired", occurrence); //$NON-NLS-1$
 		extensionInfo.setRestartRequired(Boolean.valueOf(value));
 
 		return true;
@@ -424,7 +418,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = applicationsList.getPrefix();
 
 		final NodeList nodes = ((XmlRepresentation) representation)
-				.getNodes(currentPath + "/applicationInfo");
+				.getNodes(currentPath + "/applicationInfo"); //$NON-NLS-1$
 		final int size = nodes.size();
 		if (size == 0) {
 			return false;
@@ -435,7 +429,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 				size);
 		for (int index = 0; index < size; index++) {
 			applicationsInfo.add(new ApplicationInfo(currentPath
-					+ "/applicationInfo", index));
+					+ "/applicationInfo", index)); //$NON-NLS-1$
 		}
 
 		applicationsList.setApplicationsInfo(applicationsInfo);
@@ -446,34 +440,34 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = applicationInfo.getPrefix();
 		int occurrence = applicationInfo.getOccurrence();
 
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		applicationInfo.setId(parseNumberIfExists(value));
 
-		value = getValue(currentPath + "/baseUrl", occurrence);
+		value = getValue(currentPath + "/baseUrl", occurrence); //$NON-NLS-1$
 		applicationInfo.setBaseUrl(value);
 
-		value = getValue(currentPath + "/appName", occurrence);
+		value = getValue(currentPath + "/appName", occurrence); //$NON-NLS-1$
 		applicationInfo.setAppName(value);
 
-		value = getValue(currentPath + "/userAppName", occurrence);
+		value = getValue(currentPath + "/userAppName", occurrence); //$NON-NLS-1$
 		applicationInfo.setUserAppName(value);
 
-		value = getValue(currentPath + "/installedLocation", occurrence);
+		value = getValue(currentPath + "/installedLocation", occurrence); //$NON-NLS-1$
 		applicationInfo.setInstalledLocation(value);
 
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		applicationInfo.setStatus(ApplicationStatus.byName(value));
 
 		final ApplicationServers applicationServers = new ApplicationServers(
-				currentPath + "/servers", occurrence);
+				currentPath + "/servers", occurrence); //$NON-NLS-1$
 		applicationInfo.setServers(applicationServers);
 
 		final DeployedVersions deployedVersions = new DeployedVersions(
-				currentPath + "/deployedVersions", occurrence);
+				currentPath + "/deployedVersions", occurrence); //$NON-NLS-1$
 		applicationInfo.setDeployedVersions(deployedVersions);
 
 		final MessageList messageList = new MessageList(currentPath
-				+ "/messageList", occurrence);
+				+ "/messageList", occurrence); //$NON-NLS-1$
 		applicationInfo.setMessageList(messageList);
 
 		return true;
@@ -481,7 +475,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 	public boolean preVisit(DeployedVersions versions) {
 		String currentPath = versions.getPrefix();
-		final int size = getNodesLength(currentPath, "deployedVersion",
+		final int size = getNodesLength(currentPath, "deployedVersion", //$NON-NLS-1$
 				versions.getOccurrence());
 
 		if (size == 0) {
@@ -489,14 +483,14 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"deployedVersion", versions.getOccurrence());
+				"deployedVersion", versions.getOccurrence()); //$NON-NLS-1$
 
 		// build versions list
 		List<DeployedVersion> versionsInfo = new ArrayList<DeployedVersion>(
 				size);
 		for (int index = overallSize; index < overallSize + size; index++) {
 			versionsInfo.add(new DeployedVersion(currentPath
-					+ "/deployedVersion", index));
+					+ "/deployedVersion", index)); //$NON-NLS-1$
 		}
 
 		versions.setDeployedVersions(versionsInfo);
@@ -513,7 +507,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 
 	public boolean preVisit(ApplicationServers serversList) {
 		String currentPath = serversList.getPrefix();
-		final int size = getNodesLength(currentPath, "applicationServer",
+		final int size = getNodesLength(currentPath, "applicationServer", //$NON-NLS-1$
 				serversList.getOccurrence());
 
 		if (size == 0) {
@@ -521,13 +515,13 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"applicationServer", serversList.getOccurrence());
+				"applicationServer", serversList.getOccurrence()); //$NON-NLS-1$
 
 		// build servers info list
 		List<ApplicationServer> servers = new ArrayList<ApplicationServer>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
 			servers.add(new ApplicationServer(currentPath
-					+ "/applicationServer", index));
+					+ "/applicationServer", index)); //$NON-NLS-1$
 		}
 
 		serversList.setAapplicationServers(servers);
@@ -538,13 +532,13 @@ public class DataDigster extends GenericResponseDataVisitor {
 		String currentPath = applicationServer.getPrefix();
 		int occurrence = applicationServer.getOccurrence();
 
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		applicationServer.setId(parseNumberIfExists(value));
 
-		value = getValue(currentPath + "/deployedVersion", occurrence);
+		value = getValue(currentPath + "/deployedVersion", occurrence); //$NON-NLS-1$
 		applicationServer.setDeployedVersion(value);
 
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		applicationServer.setStatus(ApplicationStatus.byName(value));
 		return true;
 	}
@@ -553,9 +547,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(Parameter parameter) {
 		String currentPath = parameter.getPrefix();
 		int occurrence = parameter.getOccurrence();
-		String value = getValue(currentPath + "/name", occurrence);
+		String value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
 		parameter.setName(value);
-		value = getValue(currentPath + "/value", occurrence);
+		value = getValue(currentPath + "/value", occurrence); //$NON-NLS-1$
 		parameter.setValue(value);
 		return true;
 	}
@@ -564,18 +558,18 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(SuperGlobals superGlobals) {
 		String currentPath = superGlobals.getPrefix();
 		int occurrence = superGlobals.getOccurrence();
-		ParameterList get = new ParameterList(currentPath + "/get", occurrence);
+		ParameterList get = new ParameterList(currentPath + "/get", occurrence); //$NON-NLS-1$
 		superGlobals.setGet(get);
-		ParameterList post = new ParameterList(currentPath + "/post",
+		ParameterList post = new ParameterList(currentPath + "/post", //$NON-NLS-1$
 				occurrence);
 		superGlobals.setPost(post);
-		ParameterList cookie = new ParameterList(currentPath + "/cookie",
+		ParameterList cookie = new ParameterList(currentPath + "/cookie", //$NON-NLS-1$
 				occurrence);
 		superGlobals.setCookie(cookie);
-		ParameterList session = new ParameterList(currentPath + "/session",
+		ParameterList session = new ParameterList(currentPath + "/session", //$NON-NLS-1$
 				occurrence);
 		superGlobals.setSession(session);
-		ParameterList server = new ParameterList(currentPath + "/server",
+		ParameterList server = new ParameterList(currentPath + "/server", //$NON-NLS-1$
 				occurrence);
 		superGlobals.setServer(server);
 		return true;
@@ -585,17 +579,17 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(Step step) {
 		String currentPath = step.getPrefix();
 		int occurrence = step.getOccurrence();
-		String value = getValue(currentPath + "/number", occurrence);
+		String value = getValue(currentPath + "/number", occurrence); //$NON-NLS-1$
 		step.setNumber(parseNumberIfExists(value));
-		value = getValue(currentPath + "/object", occurrence);
+		value = getValue(currentPath + "/object", occurrence); //$NON-NLS-1$
 		step.setObjectId(value);
-		value = getValue(currentPath + "/class", occurrence);
+		value = getValue(currentPath + "/class", occurrence); //$NON-NLS-1$
 		step.setClassId(value);
-		value = getValue(currentPath + "/function", occurrence);
+		value = getValue(currentPath + "/function", occurrence); //$NON-NLS-1$
 		step.setFunction(value);
-		value = getValue(currentPath + "/file", occurrence);
+		value = getValue(currentPath + "/file", occurrence); //$NON-NLS-1$
 		step.setFile(value);
-		value = getValue(currentPath + "/line", occurrence);
+		value = getValue(currentPath + "/line", occurrence); //$NON-NLS-1$
 		step.setLine(parseNumberIfExists(value));
 		return true;
 	}
@@ -604,15 +598,15 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(CodeTracingStatus codeTracingStatus) {
 		String currentPath = codeTracingStatus.getPrefix();
 		int occurrence = codeTracingStatus.getOccurrence();
-		String value = getValue(currentPath + "/componentStatus", occurrence);
+		String value = getValue(currentPath + "/componentStatus", occurrence); //$NON-NLS-1$
 		codeTracingStatus.setComponentStatus(Status.byValue(value));
-		value = getValue(currentPath + "/traceEnabled", occurrence);
+		value = getValue(currentPath + "/traceEnabled", occurrence); //$NON-NLS-1$
 		codeTracingStatus.setTraceEnabled(State
 				.byValue(parseNumberIfExists(value)));
-		value = getValue(currentPath + "/developerMode", occurrence);
+		value = getValue(currentPath + "/developerMode", occurrence); //$NON-NLS-1$
 		codeTracingStatus.setDeveloperMode(State
 				.byValue(parseNumberIfExists(value)));
-		value = getValue(currentPath + "/awaitsRestart", occurrence);
+		value = getValue(currentPath + "/awaitsRestart", occurrence); //$NON-NLS-1$
 		codeTracingStatus.setAwaitsRestart(State
 				.byValue(parseNumberIfExists(value)));
 		return true;
@@ -622,17 +616,17 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(CodeTrace codeTrace) {
 		String currentPath = codeTrace.getPrefix();
 		int occurrence = codeTrace.getOccurrence();
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		codeTrace.setId(value);
-		value = getValue(currentPath + "/date", occurrence);
+		value = getValue(currentPath + "/date", occurrence); //$NON-NLS-1$
 		codeTrace.setDate(parseLongIfExists(value));
-		value = getValue(currentPath + "/url", occurrence);
+		value = getValue(currentPath + "/url", occurrence); //$NON-NLS-1$
 		codeTrace.setUrl(value);
-		value = getValue(currentPath + "/createdBy", occurrence);
+		value = getValue(currentPath + "/createdBy", occurrence); //$NON-NLS-1$
 		codeTrace.setCreatedBy(value);
-		value = getValue(currentPath + "/filesize", occurrence);
+		value = getValue(currentPath + "/filesize", occurrence); //$NON-NLS-1$
 		codeTrace.setFilesize(parseNumberIfExists(value));
-		value = getValue(currentPath + "/applicationId", occurrence);
+		value = getValue(currentPath + "/applicationId", occurrence); //$NON-NLS-1$
 		codeTrace.setApplicationId(parseNumberIfExists(value));
 		return true;
 	}
@@ -640,7 +634,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(CodeTracingList codeTracingList) {
 		String currentPath = codeTracingList.getPrefix();
-		final int size = getNodesLength(currentPath, "codeTrace",
+		final int size = getNodesLength(currentPath, "codeTrace", //$NON-NLS-1$
 				codeTracingList.getOccurrence());
 
 		if (size == 0) {
@@ -648,11 +642,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"codeTrace", codeTracingList.getOccurrence());
+				"codeTrace", codeTracingList.getOccurrence()); //$NON-NLS-1$
 
 		List<CodeTrace> traces = new ArrayList<CodeTrace>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			traces.add(new CodeTrace(currentPath + "/codeTrace", index));
+			traces.add(new CodeTrace(currentPath + "/codeTrace", index)); //$NON-NLS-1$
 		}
 
 		codeTracingList.setTraces(traces);
@@ -663,31 +657,31 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(EventsGroup eventsGroup) {
 		String currentPath = eventsGroup.getPrefix();
 		int occurrence = eventsGroup.getOccurrence();
-		String value = getValue(currentPath + "/eventsGroupId", occurrence);
+		String value = getValue(currentPath + "/eventsGroupId", occurrence); //$NON-NLS-1$
 		eventsGroup.setEventsGroupId(parseNumberIfExists(value));
-		value = getValue(currentPath + "/eventsCount", occurrence);
+		value = getValue(currentPath + "/eventsCount", occurrence); //$NON-NLS-1$
 		eventsGroup.setEventsCount(parseNumberIfExists(value));
-		value = getValue(currentPath + "/startTime", occurrence);
+		value = getValue(currentPath + "/startTime", occurrence); //$NON-NLS-1$
 		eventsGroup.setStartTime(value);
-		value = getValue(currentPath + "/serverId", occurrence);
+		value = getValue(currentPath + "/serverId", occurrence); //$NON-NLS-1$
 		eventsGroup.setServerId(parseNumberIfExists(value));
-		value = getValue(currentPath + "/class", occurrence);
+		value = getValue(currentPath + "/class", occurrence); //$NON-NLS-1$
 		eventsGroup.setClassId(value);
-		value = getValue(currentPath + "/userData", occurrence);
+		value = getValue(currentPath + "/userData", occurrence); //$NON-NLS-1$
 		eventsGroup.setUserData(value);
-		value = getValue(currentPath + "/javaBacktrace", occurrence);
+		value = getValue(currentPath + "/javaBacktrace", occurrence); //$NON-NLS-1$
 		eventsGroup.setJavaBacktrace(value);
-		value = getValue(currentPath + "/execTime", occurrence);
+		value = getValue(currentPath + "/execTime", occurrence); //$NON-NLS-1$
 		eventsGroup.setExecTime(parseNumberIfExists(value));
-		value = getValue(currentPath + "/avgExecTime", occurrence);
+		value = getValue(currentPath + "/avgExecTime", occurrence); //$NON-NLS-1$
 		eventsGroup.setAvgExecTime(parseNumberIfExists(value));
-		value = getValue(currentPath + "/memUsage", occurrence);
+		value = getValue(currentPath + "/memUsage", occurrence); //$NON-NLS-1$
 		eventsGroup.setMemUsage(parseNumberIfExists(value));
-		value = getValue(currentPath + "/avgMemUsage", occurrence);
+		value = getValue(currentPath + "/avgMemUsage", occurrence); //$NON-NLS-1$
 		eventsGroup.setAvgMemUsage(parseNumberIfExists(value));
-		value = getValue(currentPath + "/avgOutputSize", occurrence);
+		value = getValue(currentPath + "/avgOutputSize", occurrence); //$NON-NLS-1$
 		eventsGroup.setAvgOutputSize(parseNumberIfExists(value));
-		value = getValue(currentPath + "/load", occurrence);
+		value = getValue(currentPath + "/load", occurrence); //$NON-NLS-1$
 		eventsGroup.setLoad(value);
 		return true;
 	}
@@ -696,20 +690,20 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(Event event) {
 		String currentPath = event.getPrefix();
 		int occurrence = event.getOccurrence();
-		String value = getValue(currentPath + "/eventsGroupId", occurrence);
+		String value = getValue(currentPath + "/eventsGroupId", occurrence); //$NON-NLS-1$
 		event.setEventsGroupId(value);
-		value = getValue(currentPath + "/type", occurrence);
+		value = getValue(currentPath + "/type", occurrence); //$NON-NLS-1$
 		event.setEventType(value);
-		value = getValue(currentPath + "/severity", occurrence);
+		value = getValue(currentPath + "/severity", occurrence); //$NON-NLS-1$
 		event.setSeverity(value);
-		value = getValue(currentPath + "/description", occurrence);
+		value = getValue(currentPath + "/description", occurrence); //$NON-NLS-1$
 		event.setDescription(value);
-		value = getValue(currentPath + "/codeTracing", occurrence);
+		value = getValue(currentPath + "/codeTracing", occurrence); //$NON-NLS-1$
 		event.setCodeTracing(value);
 		SuperGlobals superGlobals = new SuperGlobals(currentPath
-				+ "/superGlobals", occurrence);
+				+ "/superGlobals", occurrence); //$NON-NLS-1$
 		event.setSuperGlobals(superGlobals);
-		Backtrace backtrace = new Backtrace(currentPath + "/backtrace",
+		Backtrace backtrace = new Backtrace(currentPath + "/backtrace", //$NON-NLS-1$
 				occurrence);
 		event.setBacktrace(backtrace);
 		return true;
@@ -718,7 +712,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(Backtrace backtrace) {
 		String currentPath = backtrace.getPrefix();
-		final int size = getNodesLength(currentPath, "step",
+		final int size = getNodesLength(currentPath, "step", //$NON-NLS-1$
 				backtrace.getOccurrence());
 
 		if (size == 0) {
@@ -726,11 +720,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"applicationServer", backtrace.getOccurrence());
+				"applicationServer", backtrace.getOccurrence()); //$NON-NLS-1$
 
 		List<Step> steps = new ArrayList<Step>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			steps.add(new Step(currentPath + "/step", index));
+			steps.add(new Step(currentPath + "/step", index)); //$NON-NLS-1$
 		}
 
 		backtrace.setSteps(steps);
@@ -740,7 +734,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(ParameterList parameterList) {
 		String currentPath = parameterList.getPrefix();
-		final int size = getNodesLength(currentPath, "parameter",
+		final int size = getNodesLength(currentPath, "parameter", //$NON-NLS-1$
 				parameterList.getOccurrence());
 
 		if (size == 0) {
@@ -748,11 +742,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"parameter", parameterList.getOccurrence());
+				"parameter", parameterList.getOccurrence()); //$NON-NLS-1$
 
 		List<Parameter> parameters = new ArrayList<Parameter>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			parameters.add(new Parameter(currentPath + "/parameter", index));
+			parameters.add(new Parameter(currentPath + "/parameter", index)); //$NON-NLS-1$
 		}
 
 		parameterList.setParameters(parameters);
@@ -763,14 +757,14 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(EventsGroupDetails eventsGroupDetails) {
 		String currentPath = eventsGroupDetails.getPrefix();
 		int occurrence = eventsGroupDetails.getOccurrence();
-		String value = getValue(currentPath + "/issueId", occurrence);
+		String value = getValue(currentPath + "/issueId", occurrence); //$NON-NLS-1$
 		eventsGroupDetails.setIssueId(parseNumberIfExists(value));
-		value = getValue(currentPath + "/codeTracing", occurrence);
+		value = getValue(currentPath + "/codeTracing", occurrence); //$NON-NLS-1$
 		eventsGroupDetails.setCodeTracing(value);
-		EventsGroup eventsGroup = new EventsGroup(currentPath + "/eventsGroup",
+		EventsGroup eventsGroup = new EventsGroup(currentPath + "/eventsGroup", //$NON-NLS-1$
 				occurrence);
 		eventsGroupDetails.setEventsGroup(eventsGroup);
-		Event event = new Event(currentPath + "/event", occurrence);
+		Event event = new Event(currentPath + "/event", occurrence); //$NON-NLS-1$
 		eventsGroupDetails.setEvent(event);
 		return true;
 	}
@@ -779,9 +773,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(RouteDetail routeDetail) {
 		String currentPath = routeDetail.getPrefix();
 		int occurrence = routeDetail.getOccurrence();
-		String value = getValue(currentPath + "/key", occurrence);
+		String value = getValue(currentPath + "/key", occurrence); //$NON-NLS-1$
 		routeDetail.setKey(value);
-		value = getValue(currentPath + "/value", occurrence);
+		value = getValue(currentPath + "/value", occurrence); //$NON-NLS-1$
 		routeDetail.setValue(value);
 		return true;
 	}
@@ -789,7 +783,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(EventsGroups eventsGroups) {
 		String currentPath = eventsGroups.getPrefix();
-		final int size = getNodesLength(currentPath, "eventsGroup",
+		final int size = getNodesLength(currentPath, "eventsGroup", //$NON-NLS-1$
 				eventsGroups.getOccurrence());
 
 		if (size == 0) {
@@ -797,11 +791,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"eventsGroup", eventsGroups.getOccurrence());
+				"eventsGroup", eventsGroups.getOccurrence()); //$NON-NLS-1$
 
 		List<EventsGroup> groups = new ArrayList<EventsGroup>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			groups.add(new EventsGroup(currentPath + "/eventsGroup", index));
+			groups.add(new EventsGroup(currentPath + "/eventsGroup", index)); //$NON-NLS-1$
 		}
 
 		eventsGroups.setGroups(groups);
@@ -811,7 +805,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(RouteDetails routeDetails) {
 		String currentPath = routeDetails.getPrefix();
-		final int size = getNodesLength(currentPath, "routeDetail",
+		final int size = getNodesLength(currentPath, "routeDetail", //$NON-NLS-1$
 				routeDetails.getOccurrence());
 
 		if (size == 0) {
@@ -819,11 +813,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"routeDetail", routeDetails.getOccurrence());
+				"routeDetail", routeDetails.getOccurrence()); //$NON-NLS-1$
 
 		List<RouteDetail> details = new ArrayList<RouteDetail>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			details.add(new RouteDetail(currentPath + "/routeDetail", index));
+			details.add(new RouteDetail(currentPath + "/routeDetail", index)); //$NON-NLS-1$
 		}
 
 		routeDetails.setDetails(details);
@@ -834,21 +828,21 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(Issue issue) {
 		String currentPath = issue.getPrefix();
 		int occurrence = issue.getOccurrence();
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		issue.setId(parseNumberIfExists(value));
-		value = getValue(currentPath + "/rule", occurrence);
+		value = getValue(currentPath + "/rule", occurrence); //$NON-NLS-1$
 		issue.setRule(value);
-		value = getValue(currentPath + "/lastOccurance", occurrence);
+		value = getValue(currentPath + "/lastOccurance", occurrence); //$NON-NLS-1$
 		issue.setLastOccurance(value);
-		value = getValue(currentPath + "/severity", occurrence);
+		value = getValue(currentPath + "/severity", occurrence); //$NON-NLS-1$
 		issue.setSeverity(IssueSeverity.byName(value));
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		issue.setStatus(IssueStatus.byName(value));
 		GeneralDetails generalDetails = new GeneralDetails(currentPath
-				+ "/generalDetails", occurrence);
+				+ "/generalDetails", occurrence); //$NON-NLS-1$
 		issue.setGeneralDetails(generalDetails);
 		RouteDetails routeDetails = new RouteDetails(currentPath
-				+ "/routeDetails", occurrence);
+				+ "/routeDetails", occurrence); //$NON-NLS-1$
 		issue.setRouteDetails(routeDetails);
 		return true;
 	}
@@ -856,19 +850,19 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(IssueList issueList) {
 		String currentPath = issueList.getPrefix();
-		final int size = getNodesLength(currentPath, "issue",
+		final int size = getNodesLength(currentPath, "issue", //$NON-NLS-1$
 				issueList.getOccurrence());
 
 		if (size == 0) {
 			return false;
 		}
 
-		final int overallSize = getPreviousNodesLength(currentPath, "issue",
+		final int overallSize = getPreviousNodesLength(currentPath, "issue", //$NON-NLS-1$
 				issueList.getOccurrence());
 
 		List<Issue> issues = new ArrayList<Issue>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			issues.add(new Issue(currentPath + "/issue", index));
+			issues.add(new Issue(currentPath + "/issue", index)); //$NON-NLS-1$
 		}
 
 		issueList.setIssues(issues);
@@ -879,9 +873,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(IssueDetails issueDetails) {
 		String currentPath = issueDetails.getPrefix();
 		int occurrence = issueDetails.getOccurrence();
-		Issue issue = new Issue(currentPath + "/issue", occurrence);
+		Issue issue = new Issue(currentPath + "/issue", occurrence); //$NON-NLS-1$
 		issueDetails.setIssue(issue);
-		EventsGroups groups = new EventsGroups(currentPath + "/eventsGroups",
+		EventsGroups groups = new EventsGroups(currentPath + "/eventsGroups", //$NON-NLS-1$
 				occurrence);
 		issueDetails.setEventsGroups(groups);
 		return true;
@@ -890,19 +884,19 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(Events events) {
 		String currentPath = events.getPrefix();
-		final int size = getNodesLength(currentPath, "event",
+		final int size = getNodesLength(currentPath, "event", //$NON-NLS-1$
 				events.getOccurrence());
 
 		if (size == 0) {
 			return false;
 		}
 
-		final int overallSize = getPreviousNodesLength(currentPath, "event",
+		final int overallSize = getPreviousNodesLength(currentPath, "event", //$NON-NLS-1$
 				events.getOccurrence());
 
 		List<Event> eventsList = new ArrayList<Event>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			eventsList.add(new Event(currentPath + "/event", index));
+			eventsList.add(new Event(currentPath + "/event", index)); //$NON-NLS-1$
 		}
 
 		events.setEvents(eventsList);
@@ -913,11 +907,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(RequestSummary requestSummary) {
 		String currentPath = requestSummary.getPrefix();
 		int occurrence = requestSummary.getOccurrence();
-		String value = getValue(currentPath + "/eventsCount", occurrence);
+		String value = getValue(currentPath + "/eventsCount", occurrence); //$NON-NLS-1$
 		requestSummary.setEventsCount(parseNumberIfExists(value));
-		value = getValue(currentPath + "/codeTracing", occurrence);
+		value = getValue(currentPath + "/codeTracing", occurrence); //$NON-NLS-1$
 		requestSummary.setCodeTracing(value);
-		Events events = new Events(currentPath + "/events", occurrence);
+		Events events = new Events(currentPath + "/events", occurrence); //$NON-NLS-1$
 		requestSummary.setEvents(events);
 		return true;
 	}
@@ -928,7 +922,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 		if (disposition != null) {
 			codeTraceFile.setFilename(disposition.getFilename());
 		} else {
-			codeTraceFile.setFilename("default.amf");
+			codeTraceFile.setFilename("default.amf"); //$NON-NLS-1$
 		}
 		int size = (int) representation.getSize();
 		codeTraceFile.setFileSize(size);
@@ -976,9 +970,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(DebugRequest debugRequest) {
 		String currentPath = debugRequest.getPrefix();
 		int occurrence = debugRequest.getOccurrence();
-		String value = getValue(currentPath + "/success", occurrence);
+		String value = getValue(currentPath + "/success", occurrence); //$NON-NLS-1$
 		debugRequest.setSuccess(value);
-		value = getValue(currentPath + "/message", occurrence);
+		value = getValue(currentPath + "/message", occurrence); //$NON-NLS-1$
 		debugRequest.setMessage(value);
 		return true;
 	}
@@ -987,9 +981,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(ProfileRequest profileRequest) {
 		String currentPath = profileRequest.getPrefix();
 		int occurrence = profileRequest.getOccurrence();
-		String value = getValue(currentPath + "/success", occurrence);
+		String value = getValue(currentPath + "/success", occurrence); //$NON-NLS-1$
 		profileRequest.setSuccess(value);
-		value = getValue(currentPath + "/message", occurrence);
+		value = getValue(currentPath + "/message", occurrence); //$NON-NLS-1$
 		profileRequest.setMessage(value);
 		return true;
 	}
@@ -998,19 +992,19 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(GeneralDetails generalDetails) {
 		String currentPath = generalDetails.getPrefix();
 		int occurrence = generalDetails.getOccurrence();
-		String value = getValue(currentPath + "/url", occurrence);
+		String value = getValue(currentPath + "/url", occurrence); //$NON-NLS-1$
 		generalDetails.setUrl(value);
-		value = getValue(currentPath + "/sourceFile", occurrence);
+		value = getValue(currentPath + "/sourceFile", occurrence); //$NON-NLS-1$
 		generalDetails.setSourceFile(value);
-		value = getValue(currentPath + "/sourceLine", occurrence);
+		value = getValue(currentPath + "/sourceLine", occurrence); //$NON-NLS-1$
 		generalDetails.setSourceLine(parseLongIfExists(value));
-		value = getValue(currentPath + "/function", occurrence);
+		value = getValue(currentPath + "/function", occurrence); //$NON-NLS-1$
 		generalDetails.setFunction(value);
-		value = getValue(currentPath + "/aggregationHint", occurrence);
+		value = getValue(currentPath + "/aggregationHint", occurrence); //$NON-NLS-1$
 		generalDetails.setAggregationHint(value);
-		value = getValue(currentPath + "/errorString", occurrence);
+		value = getValue(currentPath + "/errorString", occurrence); //$NON-NLS-1$
 		generalDetails.setErrorString(value);
-		value = getValue(currentPath + "/errorType", occurrence);
+		value = getValue(currentPath + "/errorType", occurrence); //$NON-NLS-1$
 		generalDetails.setErrorType(value);
 		return true;
 	}
@@ -1019,7 +1013,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(DebugMode debugMode) {
 		String currentPath = debugMode.getPrefix();
 		int occurrence = debugMode.getOccurrence();
-		String value = getValue(currentPath + "/value", occurrence);
+		String value = getValue(currentPath + "/value", occurrence); //$NON-NLS-1$
 		debugMode.setResult(Integer.valueOf(value));
 		return true;
 	}
@@ -1028,23 +1022,23 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(LibraryVersion libraryVersion) {
 		String currentPath = libraryVersion.getPrefix();
 		int occurrence = libraryVersion.getOccurrence();
-		String value = getValue(currentPath + "/libraryVersionId", occurrence);
+		String value = getValue(currentPath + "/libraryVersionId", occurrence); //$NON-NLS-1$
 		libraryVersion.setLibraryVersionId(Integer.valueOf(value));
-		value = getValue(currentPath + "/version", occurrence);
+		value = getValue(currentPath + "/version", occurrence); //$NON-NLS-1$
 		libraryVersion.setVersion(value);
-		value = getValue(currentPath + "/installedLocation", occurrence);
+		value = getValue(currentPath + "/installedLocation", occurrence); //$NON-NLS-1$
 		libraryVersion.setInstalledLocation(value);
-		value = getValue(currentPath + "/creationTime", occurrence);
+		value = getValue(currentPath + "/creationTime", occurrence); //$NON-NLS-1$
 		libraryVersion.setCreationTime(value);
-		value = getValue(currentPath + "/creationTimeTimestamp", occurrence);
+		value = getValue(currentPath + "/creationTimeTimestamp", occurrence); //$NON-NLS-1$
 		libraryVersion.setCreationTimeTimestamp(value);
-		value = getValue(currentPath + "/lastUsed", occurrence);
+		value = getValue(currentPath + "/lastUsed", occurrence); //$NON-NLS-1$
 		libraryVersion.setLastUsed(value);
-		value = getValue(currentPath + "/lastUsedTimeTimestamp", occurrence);
+		value = getValue(currentPath + "/lastUsedTimeTimestamp", occurrence); //$NON-NLS-1$
 		libraryVersion.setLastUsedTimestamp(value);
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		libraryVersion.setStatus(value);
-		LibraryServers servers = new LibraryServers(currentPath + "/servers",
+		LibraryServers servers = new LibraryServers(currentPath + "/servers", //$NON-NLS-1$
 				occurrence);
 		libraryVersion.setServers(servers);
 		return true;
@@ -1054,13 +1048,13 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(LibraryServer libraryServer) {
 		String currentPath = libraryServer.getPrefix();
 		int occurrence = libraryServer.getOccurrence();
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		libraryServer.setId(Integer.valueOf(value));
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		libraryServer.setStatus(value);
-		value = getValue(currentPath + "/lastMessage", occurrence);
+		value = getValue(currentPath + "/lastMessage", occurrence); //$NON-NLS-1$
 		libraryServer.setLastMessage(value);
-		value = getValue(currentPath + "/lastUpdatedTimestamp", occurrence);
+		value = getValue(currentPath + "/lastUpdatedTimestamp", occurrence); //$NON-NLS-1$
 		libraryServer.setLastUpdatedTimestamp(value);
 		return true;
 	}
@@ -1068,7 +1062,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(LibraryServers libraryServers) {
 		String currentPath = libraryServers.getPrefix();
-		final int size = getNodesLength(currentPath, "libraryServer",
+		final int size = getNodesLength(currentPath, "libraryServer", //$NON-NLS-1$
 				libraryServers.getOccurrence());
 
 		if (size == 0) {
@@ -1076,11 +1070,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"libraryServer", libraryServers.getOccurrence());
+				"libraryServer", libraryServers.getOccurrence()); //$NON-NLS-1$
 
 		List<LibraryServer> servers = new ArrayList<LibraryServer>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			servers.add(new LibraryServer(currentPath + "/libraryServer", index));
+			servers.add(new LibraryServer(currentPath + "/libraryServer", index)); //$NON-NLS-1$
 		}
 
 		libraryServers.setServers(servers);
@@ -1090,7 +1084,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(LibraryList libraryList) {
 		String currentPath = libraryList.getPrefix();
-		final int size = getNodesLength(currentPath, "libraryInfo",
+		final int size = getNodesLength(currentPath, "libraryInfo", //$NON-NLS-1$
 				libraryList.getOccurrence());
 
 		if (size == 0) {
@@ -1098,11 +1092,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"libraryInfo", libraryList.getOccurrence());
+				"libraryInfo", libraryList.getOccurrence()); //$NON-NLS-1$
 
 		List<LibraryInfo> infos = new ArrayList<LibraryInfo>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			infos.add(new LibraryInfo(currentPath + "/libraryInfo", index));
+			infos.add(new LibraryInfo(currentPath + "/libraryInfo", index)); //$NON-NLS-1$
 		}
 
 		libraryList.setLibrariesInfo(infos);
@@ -1112,7 +1106,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(LibraryVersions libraryVersions) {
 		String currentPath = libraryVersions.getPrefix();
-		final int size = getNodesLength(currentPath, "libraryVersion",
+		final int size = getNodesLength(currentPath, "libraryVersion", //$NON-NLS-1$
 				libraryVersions.getOccurrence());
 
 		if (size == 0) {
@@ -1120,11 +1114,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"libraryVersion", libraryVersions.getOccurrence());
+				"libraryVersion", libraryVersions.getOccurrence()); //$NON-NLS-1$
 
 		List<LibraryVersion> versions = new ArrayList<LibraryVersion>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			versions.add(new LibraryVersion(currentPath + "/libraryVersion",
+			versions.add(new LibraryVersion(currentPath + "/libraryVersion", //$NON-NLS-1$
 					index));
 		}
 
@@ -1136,14 +1130,14 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(LibraryInfo libraryInfo) {
 		String currentPath = libraryInfo.getPrefix();
 		int occurrence = libraryInfo.getOccurrence();
-		String value = getValue(currentPath + "/libraryId", occurrence);
+		String value = getValue(currentPath + "/libraryId", occurrence); //$NON-NLS-1$
 		libraryInfo.setLibraryId(Integer.valueOf(value));
-		value = getValue(currentPath + "/libraryName", occurrence);
+		value = getValue(currentPath + "/libraryName", occurrence); //$NON-NLS-1$
 		libraryInfo.setLibraryName(value);
-		value = getValue(currentPath + "/status", occurrence);
+		value = getValue(currentPath + "/status", occurrence); //$NON-NLS-1$
 		libraryInfo.setStatus(value);
 		LibraryVersions versions = new LibraryVersions(currentPath
-				+ "/libraryVersions", occurrence);
+				+ "/libraryVersions", occurrence); //$NON-NLS-1$
 		libraryInfo.setLibraryVersions(versions);
 		return true;
 	}
@@ -1175,9 +1169,9 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(Bootstrap bootstrap) {
 		String currentPath = bootstrap.getPrefix();
 		int occurrence = bootstrap.getOccurrence();
-		ApiKey apiKey = new ApiKey(currentPath + "/apiKey", occurrence);
+		ApiKey apiKey = new ApiKey(currentPath + "/apiKey", occurrence); //$NON-NLS-1$
 		bootstrap.setApiKey(apiKey);
-		String value = getValue(currentPath + "/success", occurrence);
+		String value = getValue(currentPath + "/success", occurrence); //$NON-NLS-1$
 		bootstrap.setSuccess(Boolean.valueOf(value));
 		return true;
 	}
@@ -1186,15 +1180,15 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(ApiKey apiKey) {
 		String currentPath = apiKey.getPrefix();
 		int occurrence = apiKey.getOccurrence();
-		String value = getValue(currentPath + "/id", occurrence);
+		String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 		apiKey.setId(Integer.valueOf(value));
-		value = getValue(currentPath + "/username", occurrence);
+		value = getValue(currentPath + "/username", occurrence); //$NON-NLS-1$
 		apiKey.setUsername(value);
-		value = getValue(currentPath + "/name", occurrence);
+		value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
 		apiKey.setName(value);
-		value = getValue(currentPath + "/hash", occurrence);
+		value = getValue(currentPath + "/hash", occurrence); //$NON-NLS-1$
 		apiKey.setHash(value);
-		value = getValue(currentPath + "/creationTime", occurrence);
+		value = getValue(currentPath + "/creationTime", occurrence); //$NON-NLS-1$
 		apiKey.setCreationTime(value);
 		return true;
 	}
@@ -1202,7 +1196,7 @@ public class DataDigster extends GenericResponseDataVisitor {
 	@Override
 	public boolean preVisit(VhostsList vhostsList) {
 		String currentPath = vhostsList.getPrefix();
-		final int size = getNodesLength(currentPath, "vhostInfo",
+		final int size = getNodesLength(currentPath, "vhostInfo", //$NON-NLS-1$
 				vhostsList.getOccurrence());
 
 		if (size == 0) {
@@ -1210,11 +1204,11 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 
 		final int overallSize = getPreviousNodesLength(currentPath,
-				"vhostInfo", vhostsList.getOccurrence());
+				"vhostInfo", vhostsList.getOccurrence()); //$NON-NLS-1$
 
 		List<VhostInfo> infos = new ArrayList<VhostInfo>(size);
 		for (int index = overallSize; index < overallSize + size; index++) {
-			infos.add(new VhostInfo(currentPath + "/vhostInfo", index));
+			infos.add(new VhostInfo(currentPath + "/vhostInfo", index)); //$NON-NLS-1$
 		}
 
 		vhostsList.setVhosts(infos);
@@ -1225,18 +1219,34 @@ public class DataDigster extends GenericResponseDataVisitor {
 	public boolean preVisit(VhostInfo vhostInfo) {
 			String currentPath = vhostInfo.getPrefix();
 			int occurrence = vhostInfo.getOccurrence();
-			String value = getValue(currentPath + "/id", occurrence);
+			String value = getValue(currentPath + "/id", occurrence); //$NON-NLS-1$
 			vhostInfo.setId(Integer.valueOf(value));
-			value = getValue(currentPath + "/name", occurrence);
+			value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
 			vhostInfo.setName(value);
-			value = getValue(currentPath + "/port", occurrence);
+			value = getValue(currentPath + "/port", occurrence); //$NON-NLS-1$
 			vhostInfo.setPort(Integer.valueOf(value));
-			value = getValue(currentPath + "/default", occurrence);
+			value = getValue(currentPath + "/default", occurrence); //$NON-NLS-1$
 			vhostInfo.setDefaultVhost(Boolean.valueOf(value));
-			value = getValue(currentPath + "/ssl", occurrence);
+			value = getValue(currentPath + "/ssl", occurrence); //$NON-NLS-1$
 			vhostInfo.setSSL(Boolean.valueOf(value));
 			return true;
 		}
+
+	@Override
+	public boolean preVisit(VhostDetails vhostDetails) {
+		String currentPath = vhostDetails.getPrefix();
+		vhostDetails.setInfo(new VhostInfo(currentPath + "/vhostInfo", 0)); //$NON-NLS-1$
+		vhostDetails.setExtendedInfo(new VhostExtendedInfo(currentPath + "/vhostExtended")); //$NON-NLS-1$
+		return true;
+	}
+
+	@Override
+	public boolean preVisit(VhostExtendedInfo vhostExtendedInfo) {
+		String currentPath = vhostExtendedInfo.getPrefix();
+		String value = getValue(currentPath + "/docRoot"); //$NON-NLS-1$
+		vhostExtendedInfo.setDocRoot(value);
+		return true;
+	}
 
 	/**
 	 * @param value
@@ -1321,6 +1331,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new VhostsList();
 		case VHOST_INFO:
 			return new VhostInfo();
+		case VHOST_DETAILS:
+			return new VhostDetails();
+		case VHOST_EXTENDED_INFO:
+			return new VhostExtendedInfo();
 		default:
 			return null;
 		}

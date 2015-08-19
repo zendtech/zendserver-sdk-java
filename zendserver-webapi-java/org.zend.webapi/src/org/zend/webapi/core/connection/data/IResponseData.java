@@ -109,8 +109,11 @@ public interface IResponseData {
 
 		VHOSTS_LIST,
 		
-		VHOST_INFO
-
+		VHOST_INFO,
+		
+		VHOST_DETAILS,
+		
+		VHOST_EXTENDED_INFO
 	}
 
 	/**

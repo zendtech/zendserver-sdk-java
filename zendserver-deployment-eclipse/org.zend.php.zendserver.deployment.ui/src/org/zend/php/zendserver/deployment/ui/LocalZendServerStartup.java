@@ -7,7 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui;
 
-import java.io.File;
+import java.net.MalformedURLException;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +34,15 @@ import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.server.ui.types.ServerTypeUtils;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
+import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
+import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.auth.BasicCredentials;
+import org.zend.webapi.core.connection.auth.WebApiCredentials;
+import org.zend.webapi.core.connection.data.VhostDetails;
+import org.zend.webapi.core.connection.data.VhostInfo;
+import org.zend.webapi.core.connection.data.VhostsList;
 
 /**
  * {@link IStartup} implementation responsible for detection of a local Zend
@@ -50,39 +59,25 @@ public class LocalZendServerStartup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		final Server server = ZendServerManager.getInstance().getLocalZendServer(new Server());
-		String location = server.getAttribute(ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-		if (location != null && new File(location).exists()) {
-			if (!isUnique(server.getName())) {
-				server.setName(getNewName(server.getName()));
-			}
-			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
-			final Server oldServer = ServersManager.getServer(server.getName());
-			if (oldServer == null) {
-				Server[] existingServers = ServersManager.getServers();
-				String baseUrl = server.getBaseURL();
-				for (Server existingServer : existingServers) {
-					if (baseUrl.equals(existingServer.getBaseURL())) {
-						return;
-					}
-				}
-			}
-			if (oldServer == null || oldServer.getPort() != server.getPort()) {
-				if (oldServer != null) {
-					ServersManager.removeServer(oldServer.getName());
-				}
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						fetchServerData(server);
-					}
-				});
-
-			}
-		} else {
-			NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
-					Messages.LocalZendServerStartup_NotFoundMessage, IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
+		final Server server;
+		try {
+			server = ZendServerManager.getInstance().getLocalZendServer();
+		} catch (DetectionException e) {
+			Activator.logError(Messages.LocalZendServerStartup_DetectingLocalZendServer_Error, e);
+			NotificationManager.showWarningWithHelp(
+					Messages.LocalZendServerStartup_NotFoundTitle,
+					Messages.LocalZendServerStartup_NotFoundMessage,
+					IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
+			return;
 		}
+		server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
+
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				fetchServerData(server);
+			}
+		});
 	}
 
 	private void fetchServerData(final Server server) {
@@ -94,18 +89,59 @@ public class LocalZendServerStartup implements IStartup {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.LocalZendServerStartup_FetchingConfiguration, IProgressMonitor.UNKNOWN);
 				monitor.subTask(Messages.LocalZendServerStartup_DetectingWebAPIKeys);
-				String debuggerId = PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 				IZendTarget zendTarget = null;
 				if (enableWebApi) {
-					LocalTargetDetector detector = new LocalTargetDetector(server);
+					LocalTargetDetector detector = new LocalTargetDetector();
 					detector.detect();
 					zendTarget = detector.getFinalTarget();
-				} 
+				}
+
+				if(zendTarget != null) {
+					String defaultServerUrl = zendTarget.getDefaultServerURL().toString();
+					for (Server existingServer : ServersManager.getServers()) {
+						if (defaultServerUrl.equals(existingServer.getBaseURL())) {
+							Activator.logInfo(MessageFormat.format(Messages.LocalZendServerStartup_LocalZendServerExists_Info,
+									existingServer.getName()));
+							return Status.OK_STATUS;
+						}
+					}
+
+					monitor.subTask(Messages.LocalZendServerStartup_UpdatingServerProperties);
+					try {
+						if (!isUnique(server.getName())) {
+							server.setName(getNewName(server.getName()));
+						}
+
+						server.setBaseURL(defaultServerUrl);
+
+						WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
+								zendTarget.getSecretKey());
+						WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
+						apiClient.setServerType(zendTarget.getServerType());
+						VhostsList vhostsList = apiClient.vhostGetStatus();
+						for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
+							if (!vhostInfo.isDefaultVhost())
+								continue;
+
+							VhostDetails vhostDetails = apiClient.vhostGetDetails(vhostInfo.getId());
+							String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
+							server.setDocumentRoot(documentRoot);
+							break;
+						}
+					} catch (MalformedURLException | WebApiException ex) {
+						Activator.logError(Messages.LocalZendServerStartup_UpdatingServerProperties_Error, ex);
+						NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
+								Messages.LocalZendServerStartup_CouldNotObtainAllProperties, IHelpContextIds.ZEND_SERVER, 5000,
+								MESSAGE_ID);
+					}
+				}
+
 				monitor.subTask(Messages.LocalZendServerStartup_DetectingDebuggerSettings);
+				// Detect debugger type if Web API is enabled
+				String debuggerId = PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 				if (zendTarget != null) {
 					debuggerId = DebugUtils.getDebuggerId(zendTarget);
-				}
-				else {
+				} else {
 					debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
 				}
 				server.setDebuggerId(debuggerId);
@@ -123,7 +159,8 @@ public class LocalZendServerStartup implements IStartup {
 				monitor.subTask(Messages.LocalZendServerStartup_SavingConfiguration);
 				ServersManager.addServer(server);
 				if (ServersManager.getServers().length == 2) {
-					// There is only an empty server and detected Local Zend Server
+					// There is only an empty server and detected local Zend
+					// Server
 					ServersManager.setDefaultServer(null, server);
 				}
 				ServersManager.save();
@@ -132,11 +169,11 @@ public class LocalZendServerStartup implements IStartup {
 						Messages.LocalZendServerStartup_FoundMessage, IHelpContextIds.ZEND_SERVER, 5000);
 				monitor.done();
 				return Status.OK_STATUS;
-			}
-		};
-		performer.setUser(false);
-		performer.setSystem(false);
-		performer.schedule();
+				}
+			};
+			performer.setUser(false);
+			performer.setSystem(false);
+			performer.schedule();
 	}
 
 	/**

@@ -33,7 +33,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.ui,
  org.eclipse.wst.validation,
  org.zend.php.zendserver.deployment.debug.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.expressions
 Export-Package: org.zend.php.zendserver.deployment.ui,

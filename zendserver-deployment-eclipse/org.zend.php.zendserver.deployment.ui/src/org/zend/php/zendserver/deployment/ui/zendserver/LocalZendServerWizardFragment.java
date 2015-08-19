@@ -27,6 +27,7 @@ import org.zend.php.server.ui.types.ServerTypeUtils;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
 import org.zend.php.zendserver.deployment.ui.LocalTargetDetector;
+import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -49,46 +50,41 @@ public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 			monitor.beginTask(
 					Messages.LocalZendServerCompositeFragment_DetectTitle,
 					IProgressMonitor.UNKNOWN);
-			final Server server = ZendServerManager.getInstance()
-					.getLocalZendServer(this.server);
-			if (server != null) {
-				String location = server.getAttribute(
-						ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-				if (location == null || location.isEmpty()) {
-					setMessage(
-							Messages.LocalZendServerCompositeFragment_CannotDetectError,
-							IMessageProvider.ERROR);
-				} else {
-					ZendServerManager.setupPathMapping(server);
-					LocalTargetDetector detector = new LocalTargetDetector(
-							this.server);
-					detector.detect();
-					// Detect debugger type if Web API is enabled
-					IZendTarget zendTarget = detector.getFinalTarget();
-					String debuggerId;
-					if (zendTarget != null)
-						debuggerId = DebugUtils.getDebuggerId(detector.getFinalTarget());
-					else
-						debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
-					server.setDebuggerId(debuggerId);
-					// Set up best match IP (localhost only) if it is Zend Debugger
-					if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
-						DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
-						IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(), server.getDebuggerId());
-						IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager.fetchWorkingCopy(debuggerSettings);
-						debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, "127.0.0.1"); //$NON-NLS-1$
-						debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
-						debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
-					}
-					if (detector.getStatus().getSeverity() != IStatus.OK && detector.getStatus().getSeverity() != IStatus.CANCEL) {
-						setMessage(detector.getStatus().getMessage(),
-								IMessageProvider.ERROR);
-					}
-				}
-			} else {
+			Server server = null;
+			try {
+				server = ZendServerManager.getInstance().getLocalZendServer();
+			} catch (DetectionException e) {
 				setMessage(
 						Messages.LocalZendServerCompositeFragment_CannotDetectError,
 						IMessageProvider.ERROR);
+				return composite.isComplete();
+			}
+			
+			ZendServerManager.setupPathMapping(server);
+			LocalTargetDetector detector = new LocalTargetDetector();
+			detector.detect();
+			// Detect debugger type if Web API is enabled
+			IZendTarget zendTarget = detector.getFinalTarget();
+			String debuggerId;
+			if (zendTarget != null)
+				debuggerId = DebugUtils.getDebuggerId(detector.getFinalTarget());
+			else
+				debuggerId = ServerTypeUtils.getLocalDebuggerId(server);
+			server.setDebuggerId(debuggerId);
+			// Set up best match IP (localhost only) if it is Zend Debugger
+			if (ZendDebuggerConfiguration.ID.equals(debuggerId)) {
+				DebuggerSettingsManager debuggerSettingsManager = DebuggerSettingsManager.INSTANCE;
+				IDebuggerSettings debuggerSettings = debuggerSettingsManager.findSettings(server.getUniqueId(),
+						server.getDebuggerId());
+				IDebuggerSettingsWorkingCopy debuggerSettingsWorkingCopy = debuggerSettingsManager
+						.fetchWorkingCopy(debuggerSettings);
+				debuggerSettingsWorkingCopy.setAttribute(ZendDebuggerSettingsConstants.PROP_CLIENT_IP, "127.0.0.1"); //$NON-NLS-1$
+				debuggerSettingsManager.save(debuggerSettingsWorkingCopy);
+				debuggerSettingsManager.dropWorkingCopy(debuggerSettingsWorkingCopy);
+			}
+			if (detector.getStatus().getSeverity() != IStatus.OK
+					&& detector.getStatus().getSeverity() != IStatus.CANCEL) {
+				setMessage(detector.getStatus().getMessage(), IMessageProvider.ERROR);
 			}
 			return composite.isComplete();
 		}
