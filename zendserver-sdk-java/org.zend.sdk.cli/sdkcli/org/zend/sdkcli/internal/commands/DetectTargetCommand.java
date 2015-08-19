@@ -87,11 +87,7 @@ public class DetectTargetCommand extends TargetAwareCommand {
 			if (EnvironmentUtils.isUnderLinux()
 					|| EnvironmentUtils.isUnderMaxOSX()) {
 
-				ZendTargetAutoDetect detection = null;
-				try {
-					detection = new ZendTargetAutoDetect();
-				} catch (IOException e) {
-				}
+				ZendTargetAutoDetect detection = new ZendTargetAutoDetect();
 				key = key != null ? key : TargetsManager.DEFAULT_KEY + "."
 						+ System.getProperty("user.name");
 				target = detection.createTemporaryLocalhost(targetId, key);
