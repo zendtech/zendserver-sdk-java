@@ -87,10 +87,18 @@ public class Messages extends NLS {
 	public static String FileField_Browse;
 	public static String FileField_SelectFile;
 	
+	public static String LocalZendServerStartup_CheckingExistingServers;
+
 	public static String LocalZendServerStartup_CouldNotObtainAllProperties;
 
 	public static String LocalZendServerStartup_ServerDetectedMessage;
+
+	public static String LocalZendServerStartup_ServerDetectedWebApiMessage;
 	public static String LocalZendServerStartup_RegisteringZendServer;
+	public static String LocalZendServerStartup_NoLocalTargetFound_Error;
+
+	public static String LocalZendServerStartup_NoLocalTargetFound_Warning;
+
 	public static String LocalZendServerStartup_NotFoundTitle;
 	public static String LocalZendServerStartup_NotFoundMessage;
 	public static String LocalZendServerStartup_FoundTitle;
@@ -98,6 +106,8 @@ public class Messages extends NLS {
 	public static String LocalZendServerStartup_DetectingDebuggerSettings;
 
 	public static String LocalZendServerStartup_DetectingLocalZendServer_Error;
+
+	public static String LocalZendServerStartup_DetectingLocalZendServerSkipped_Message;
 	public static String LocalZendServerStartup_DetectingWebAPIKeys;
 	public static String LocalZendServerStartup_FetchingConfiguration;
 	public static String LocalZendServerStartup_LocalZendServer;
