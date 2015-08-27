@@ -15,7 +15,7 @@ public class ExtensionsList extends AbstractResponseData {
 	private List<ExtensionInfo> extensionsInfo = new ArrayList<ExtensionInfo>();
 
 	public ExtensionsList() {
-		super(ResponseType.EXTENSIONS_LIST, BASE_PATH + EXTENSIONS, EXTENSIONS);
+		super(ResponseType.CONFIGURATION_EXTENSIONS_LIST, BASE_PATH + EXTENSIONS, EXTENSIONS);
 	}
 
 	/*

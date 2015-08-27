@@ -22,7 +22,7 @@ public class ExtensionInfo extends AbstractResponseData {
 	private String status;
 	private String shortDescription;
 	private String longDescription;
-	private String messageList;
+	private MessageList messageList;
 	private boolean loaded;
 	private boolean installed;
 	private boolean builtIn;
@@ -105,7 +105,7 @@ public class ExtensionInfo extends AbstractResponseData {
 	 * 
 	 * @return messages list
 	 */
-	public String getMessageList() {
+	public MessageList getMessageList() {
 		return messageList;
 	}
 
@@ -183,7 +183,7 @@ public class ExtensionInfo extends AbstractResponseData {
 		this.longDescription = longDescription;
 	}
 
-	protected void setMessageList(String messageList) {
+	protected void setMessageList(MessageList messageList) {
 		this.messageList = messageList;
 	}
 
