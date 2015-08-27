@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -107,6 +106,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 	private boolean forceKeysDetection;
 	private boolean keysDetected;
+	private boolean isModified = false;
 
 	/**
 	 * PlatformCompositeFragment constructor
@@ -150,21 +150,10 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		if (target != null && !isModified()) {
 			return true;
 		}
-		try {
-			controlHandler.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					performTesting(monitor);
-				}
-			});
-		} catch (InvocationTargetException e) {
-			Activator.log(e);
+		isModified = false;
+		boolean webApiTest = webApiTest();
+		if (!webApiTest)
 			return false;
-		} catch (InterruptedException e) {
-			Activator.log(e);
-			return false;
-		}
 		return isComplete();
 	}
 
@@ -200,9 +189,6 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 	public void performTesting(IProgressMonitor monitor) {
 		if (!enable) {
-			return;
-		}
-		if (target != null && !isModified()) {
 			return;
 		}
 		saveValues();
@@ -275,7 +261,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				enableButton.setSelection(keysDetected);
 				enable = enableButton.getSelection();
 				updateState(keysDetected);
-				performTesting(new NullProgressMonitor());
+				webApiTest();
 				IZendTarget zendTarget = getOldTarget(target) != null ? getOldTarget(target) : target;
 				getServer().setDebuggerId(DebugUtils.getDebuggerId(zendTarget));
 			}
@@ -288,6 +274,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 			public void modifyText(ModifyEvent e) {
 				updateData();
+				isModified = true;
 				validate();
 			}
 		};
@@ -299,8 +286,16 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateState(enableButton.getSelection());
+				if (!enableButton.getSelection() && target != null) {
+					TargetsManager manager = TargetsManagerService.INSTANCE
+							.getTargetManager();
+					if (manager.getTargetById(target.getId()) != null) {
+						manager.remove(target);
+					}
+				}
 				updateData();
 				validate();
+				webApiTest();
 			}
 		});
 		
@@ -511,6 +506,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		if (detector.getErrorMessage() != null) {
 			setMessage(detector.getErrorMessage(), IMessageProvider.ERROR);
 		} else {
+			webApiTest();
 			validate();
 		}
 	}
@@ -545,10 +541,25 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	private boolean isModified() {
-		URL targetHost = target.getHost();
-		return !(targetHost != null && host.equals(targetHost.toString())
-				&& key.equals(target.getKey()) && secret.equals(target
-				.getSecretKey()));
+		return isModified;
+	}
+	
+	private boolean webApiTest() {
+		try {
+			controlHandler.run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
+					performTesting(monitor);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			Activator.log(e);
+			return false;
+		} catch (InterruptedException e) {
+			Activator.log(e);
+			return false;
+		}
+		return true;
 	}
 
 }

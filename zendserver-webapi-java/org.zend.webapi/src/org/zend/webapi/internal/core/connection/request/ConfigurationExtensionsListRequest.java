@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Zend Technologies Ltd. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *******************************************************************************/
 package org.zend.webapi.internal.core.connection.request;
 
 import java.util.Date;
@@ -13,9 +20,9 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  * 
  * @author Bartlomiej Laczkowski
  */
-public class ExtensionsListRequest extends AbstractRequest {
+public class ConfigurationExtensionsListRequest extends AbstractRequest {
 
-	public ExtensionsListRequest(WebApiVersion version, Date date, String keyName, String userAgent,
+	public ConfigurationExtensionsListRequest(WebApiVersion version, Date date, String keyName, String userAgent,
 			String host, String secretKey, ServerType type) {
 		super(version, date, keyName, userAgent, host, secretKey, type);
 	}
@@ -39,7 +46,7 @@ public class ExtensionsListRequest extends AbstractRequest {
 
 	@Override
 	public ResponseType getExpectedResponseDataType() {
-		return ResponseType.EXTENSIONS_LIST;
+		return ResponseType.CONFIGURATION_EXTENSIONS_LIST;
 	}
 
 	@Override

@@ -37,6 +37,22 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	public boolean visit(MessageList messageList) {
 		return true;
 	}
+	
+	public boolean preVisit(ListValues listValues) {
+		return true;
+	}
+	
+	public boolean visit(ListValues listValues) {
+		return true;
+	}
+	
+	public boolean preVisit(ListValue listValue) {
+		return true;
+	}
+	
+	public boolean visit(ListValue listValue) {
+		return true;
+	}
 
 	public boolean preVisit(ServersList serversList) {
 		return true;
@@ -411,6 +427,22 @@ public class GenericResponseDataVisitor implements IResponseDataVisitor {
 	}
 
 	public boolean preVisit(ExtensionInfo extensionInfo) {
+		return true;
+	}
+	
+	public boolean visit(DirectivesList directivesList) {
+		return true;
+	}
+	@Override
+	public boolean preVisit(DirectivesList directivesList) {
+		return true;
+	}
+
+	public boolean visit(DirectiveInfo directiveInfo) {
+		return true;
+	}
+
+	public boolean preVisit(DirectiveInfo directiveInfo) {
 		return true;
 	}
 

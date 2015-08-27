@@ -29,8 +29,9 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest
 import org.zend.webapi.internal.core.connection.request.CodeTracingIsEnabledRequest;
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
+import org.zend.webapi.internal.core.connection.request.ConfigurationDirectivesListRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationExportRequest;
-import org.zend.webapi.internal.core.connection.request.ExtensionsListRequest;
+import org.zend.webapi.internal.core.connection.request.ConfigurationExtensionsListRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
@@ -196,10 +197,16 @@ public enum WebApiMethodType {
 			CodetracingDownloadTraceFileRequest.class),
 
 	/**
-	 * @see ExtensionsListRequest
+	 * @see ConfigurationExtensionsListRequest
 	 */
-	EXTENSIONS_LIST("configurationExtensionsList", //$NON-NLS-1$
-			ExtensionsListRequest.class),
+	CONFIGURATION_EXTENSIONS_LIST("configurationExtensionsList", //$NON-NLS-1$
+			ConfigurationExtensionsListRequest.class),
+	
+	/**
+	 * @see ConfigurationDirectivesListRequest
+	 */
+	CONFIGURATION_DIRECTIVES_LIST("configurationDirectivesList", //$NON-NLS-1$
+			ConfigurationDirectivesListRequest.class),
 	
 	/**
 	 * @see MonitorGetRequestSummaryRequest

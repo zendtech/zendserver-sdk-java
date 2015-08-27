@@ -119,13 +119,13 @@ public class ZendServerCredentialsDialog extends Dialog {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		usernameText.setLayoutData(data);
 		usernameText.setText("admin"); //$NON-NLS-1$
-		usernameText.forceFocus();
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
 		passwordLabel.setText(Messages.ZendServerCredentialsDialog_1);
 		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
 				false));
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		passwordText.setLayoutData(data);
+		passwordText.forceFocus();
 		getShell().setText(title);
 		return comp;
 	}

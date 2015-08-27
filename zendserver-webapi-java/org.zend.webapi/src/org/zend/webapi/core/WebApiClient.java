@@ -29,6 +29,7 @@ import org.zend.webapi.core.connection.data.CodeTracingList;
 import org.zend.webapi.core.connection.data.CodeTracingStatus;
 import org.zend.webapi.core.connection.data.DebugMode;
 import org.zend.webapi.core.connection.data.DebugRequest;
+import org.zend.webapi.core.connection.data.DirectivesList;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
@@ -78,7 +79,8 @@ import org.zend.webapi.internal.core.connection.request.CodeTracingDisableReques
 import org.zend.webapi.internal.core.connection.request.CodeTracingEnableRequest;
 import org.zend.webapi.internal.core.connection.request.CodeTracingListRequest;
 import org.zend.webapi.internal.core.connection.request.CodetracingDownloadTraceFileRequest;
-import org.zend.webapi.internal.core.connection.request.ExtensionsListRequest;
+import org.zend.webapi.internal.core.connection.request.ConfigurationDirectivesListRequest;
+import org.zend.webapi.internal.core.connection.request.ConfigurationExtensionsListRequest;
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
@@ -298,8 +300,8 @@ public class WebApiClient {
 									throws WebApiException {
 								((ClusterGetServerStatusRequest) request)
 										.setServers(servers);
-							}
-						});
+					}
+				});
 		return (ServersList) handle.getData();
 	}
 
@@ -510,8 +512,8 @@ public class WebApiClient {
 								((RestartPhpRequest) request).setServers(
 										servers).setParallelRestart(
 										parallelRestart);
-							}
-						});
+					}
+				});
 		return (ServersList) handle.getData();
 	}
 
@@ -619,8 +621,8 @@ public class WebApiClient {
 									throws WebApiException {
 								((ApplicationGetStatusRequest) request)
 										.setApplications(applications);
-							}
-						});
+					}
+				});
 		return (ApplicationsList) handle.getData();
 	}
 
@@ -1603,7 +1605,7 @@ public class WebApiClient {
 				});
 		return (DebugMode) handle.getData();
 	}
-	
+
 	/**
 	 * Stop debug mode on the target server.
 	 * 
@@ -1654,8 +1656,8 @@ public class WebApiClient {
 									throws WebApiException {
 								((LibraryGetStatusRequest) request)
 										.setLibraries(libraries);
-							}
-						});
+					}
+				});
 		return (LibraryList) handle.getData();
 	}
 
@@ -1815,8 +1817,8 @@ public class WebApiClient {
 									throws WebApiException {
 								((VhostGetStatusRequest) request)
 										.setVhosts(vhosts);
-							}
-						});
+					}
+				});
 		return (VhostsList) handle.getData();
 	}
 
@@ -1829,40 +1831,79 @@ public class WebApiClient {
 	 * @throws WebApiException
 	 * @since 1.6
 	 */
-	public VhostDetails vhostGetDetails(final int id) throws WebApiException{
+	public VhostDetails vhostGetDetails(final int id) throws WebApiException {
 		final IResponse handle = this.handle(
 				WebApiMethodType.VHOST_GET_DETAILS_REQUEST,
 				getVersion(WebApiVersion.V1_6),
-						new IRequestInitializer() {
+				new IRequestInitializer() {
 							public void init(IRequest request)
 									throws WebApiException {
 								((VhostGetDetailsRequest) request)
 										.setId(id);
-							}
-						});
-		return (VhostDetails) handle.getData();		
+					}
+				});
+		return (VhostDetails) handle.getData();
 	}
-	
+
 	/**
 	 * Gets the list of extensions that are currently installed on the server.
 	 * 
 	 * @param filter
-	 * 			extensions filter (extension name)
+	 *            extensions filter (extension name)
 	 * @return list of extensions that are currently installed on the server
 	 * @throws WebApiException
 	 */
-	public ExtensionsList extensionList(final String filter) throws WebApiException {
-		final IResponse handle = this.handle(
-				WebApiMethodType.EXTENSIONS_LIST,
+	public ExtensionsList configurationExtensionsList(final String filter) throws WebApiException {
+		final IResponse handle = this.handle(WebApiMethodType.CONFIGURATION_EXTENSIONS_LIST,
 				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
 					public void init(IRequest request) throws WebApiException {
-						ExtensionsListRequest configurationExtensionsListRequest = (ExtensionsListRequest) request;
+						ConfigurationExtensionsListRequest configurationExtensionsListRequest = (ConfigurationExtensionsListRequest) request;
 						if (filter != null) {
 							configurationExtensionsListRequest.setFilter(filter);
 						}
 					}
 				});
 		return (ExtensionsList) handle.getData();
+	}
+
+	/**
+	 * Gets the list of configuration directives that are currently set on the
+	 * server.
+	 * 
+	 * @param extension
+	 *            - retrieve only directives of a specific extension. Default:
+	 *            Retrieve all known directives regardless of extensions. If no
+	 *            extension name is provided, the output will be modified so
+	 *            that the extension element is empty
+	 * @param filter
+	 *            directives filter - filter out the directives returned
+	 *            according to a certain text
+	 * @param daemon
+	 *            daemon name - retrieve only directives of a specific zend
+	 *            daemon. Note that both extension and daemon parameters cannot
+	 *            be passed
+	 * @return list of configuration directives that are currently set on the
+	 *         server
+	 * @throws WebApiException
+	 */
+	public DirectivesList configurationDirectivesList(final String extension, final String filter, final String daemon)
+			throws WebApiException {
+		final IResponse handle = this.handle(WebApiMethodType.CONFIGURATION_DIRECTIVES_LIST,
+				getVersion(WebApiVersion.V1_3), new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						ConfigurationDirectivesListRequest configurationDirectivesListRequest = (ConfigurationDirectivesListRequest) request;
+						if (extension != null) {
+							configurationDirectivesListRequest.setExtension(extension);
+						}
+						if (filter != null) {
+							configurationDirectivesListRequest.setFilter(filter);
+						}
+						if (daemon != null) {
+							configurationDirectivesListRequest.setDaemon(daemon);
+						}
+					}
+				});
+		return (DirectivesList) handle.getData();
 	}
 
 	/**

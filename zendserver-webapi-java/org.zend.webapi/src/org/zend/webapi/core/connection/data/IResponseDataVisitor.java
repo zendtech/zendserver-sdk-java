@@ -26,6 +26,14 @@ public interface IResponseDataVisitor {
 	public boolean preVisit(MessageList messageList);
 
 	public boolean visit(MessageList messageList);
+	
+	public boolean preVisit(ListValues listValues);
+
+	public boolean visit(ListValues listValues);
+	
+	public boolean preVisit(ListValue listValue);
+
+	public boolean visit(ListValue listValue);
 
 	public boolean preVisit(ServersList serversList);
 
@@ -214,6 +222,14 @@ public interface IResponseDataVisitor {
 	public boolean visit(ExtensionInfo extensionInfo);
 
 	public boolean preVisit(ExtensionInfo extensionInfo);
+	
+	public boolean visit(DirectivesList directivesList);
+
+	public boolean preVisit(DirectivesList directivesList);
+	
+	public boolean visit(DirectiveInfo directiveInfo);
+
+	public boolean preVisit(DirectiveInfo directiveInfo);
 	
 	public boolean preVisit(VhostDetails vhostDetails);
 	

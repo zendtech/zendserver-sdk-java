@@ -255,6 +255,38 @@ public class DataDigster extends GenericResponseDataVisitor {
 		}
 		return messages;
 	}
+	
+	public boolean preVisit(ListValues listValues) {
+		String currentPath = listValues.getPrefix();
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/listValue"); //$NON-NLS-1$
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+		// build values list
+		List<ListValue> listValue = new ArrayList<ListValue>(
+				size);
+		for (int index = 0; index < size; index++) {
+			listValue.add(new ListValue(currentPath
+					+ "/listValue", index)); //$NON-NLS-1$
+		}
+		listValues.setValues(listValue);
+		return true;
+	}
+	
+	public boolean preVisit(ListValue listValue) {
+		String currentPath = listValue.getPrefix();
+		int occurrence = listValue.getOccurrence();
+
+		String value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
+		listValue.setName(value);
+		
+		value = getValue(currentPath + "/value", occurrence); //$NON-NLS-1$
+		listValue.setValue(value);
+		
+		return true;
+	}
 
 	public IResponseData getResponseData() {
 		return data;
@@ -410,6 +442,61 @@ public class DataDigster extends GenericResponseDataVisitor {
 		
 		value = getValue(currentPath + "/restartRequired", occurrence); //$NON-NLS-1$
 		extensionInfo.setRestartRequired(Boolean.valueOf(value));
+		
+		final MessageList messageList = new MessageList(currentPath
+				+ "/messageList", occurrence); //$NON-NLS-1$
+		extensionInfo.setMessageList(messageList);
+
+		return true;
+	}
+	
+	public boolean preVisit(DirectivesList directivesList) {
+		String currentPath = directivesList.getPrefix();
+		final NodeList nodes = ((XmlRepresentation) representation)
+				.getNodes(currentPath + "/directive"); //$NON-NLS-1$
+		final int size = nodes.size();
+		if (size == 0) {
+			return false;
+		}
+		// build directives info list
+		List<DirectiveInfo> directivesInfo = new ArrayList<DirectiveInfo>(
+				size);
+		for (int index = 0; index < size; index++) {
+			directivesInfo.add(new DirectiveInfo(currentPath
+					+ "/directive", index)); //$NON-NLS-1$
+		}
+		directivesList.setDirectivesInfo(directivesInfo);
+		return true;
+	}
+	
+	public boolean preVisit(DirectiveInfo directiveInfo) {
+		String currentPath = directiveInfo.getPrefix();
+		int occurrence = directiveInfo.getOccurrence();
+
+		String value = getValue(currentPath + "/name", occurrence); //$NON-NLS-1$
+		directiveInfo.setName(value);
+		
+		value = getValue(currentPath + "/section", occurrence); //$NON-NLS-1$
+		directiveInfo.setSection(value);
+		
+		value = getValue(currentPath + "/type", occurrence); //$NON-NLS-1$
+		directiveInfo.setDirectiveType(value);
+		
+		value = getValue(currentPath + "/fileValue", occurrence); //$NON-NLS-1$
+		directiveInfo.setFileValue(value);
+		
+		value = getValue(currentPath + "/defaultValue", occurrence); //$NON-NLS-1$
+		directiveInfo.setDefaultValue(value);
+		
+		value = getValue(currentPath + "/previousValue", occurrence); //$NON-NLS-1$
+		directiveInfo.setPreviousValue(value);
+		
+		value = getValue(currentPath + "/units", occurrence); //$NON-NLS-1$
+		directiveInfo.setUnits(value);
+		
+		final ListValues listValues = new ListValues(currentPath
+				+ "/listValues", occurrence); //$NON-NLS-1$
+		directiveInfo.setListValues(listValues);
 
 		return true;
 	}
@@ -1285,8 +1372,10 @@ public class DataDigster extends GenericResponseDataVisitor {
 			return new ServerInfo();
 		case SERVER_CONFIG:
 			return new ServerConfig();
-		case EXTENSIONS_LIST:
+		case CONFIGURATION_EXTENSIONS_LIST:
 			return new ExtensionsList();
+		case CONFIGURATION_DIRECTIVES_LIST:
+			return new DirectivesList();
 		case APPLICATIONS_LIST:
 			return new ApplicationsList();
 		case APPLICATION_INFO:

@@ -16,22 +16,27 @@ import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.xdebug.dbgp.XDebugDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerConfiguration;
 import org.eclipse.php.internal.server.core.Logger;
+import org.eclipse.php.internal.server.core.Server;
+import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
+import org.zend.webapi.core.connection.data.DirectiveInfo;
+import org.zend.webapi.core.connection.data.DirectivesList;
 import org.zend.webapi.core.connection.data.ExtensionInfo;
 import org.zend.webapi.core.connection.data.ExtensionsList;
 
 @SuppressWarnings("restriction")
 public class DebugUtils {
 
-	private static final String ZEND_DEBUGGER_EXT_NAME = "zend debugger"; //$NON-NLS-1$
+	private static final String ZEND_DEBUGGER_EXT_NAME = "Zend Debugger"; //$NON-NLS-1$
 	private static final String XDEBUG_EXT_NAME = "xdebug"; //$NON-NLS-1$
+	private static final String DIRECTIVE_ALLOW_HOSTS = "zend_debugger.allow_hosts"; //$NON-NLS-1$
 
 	/**
-	 * Detects and returns debugger type id that is installed on top of given Zend
-	 * target. It uses Web API calls to fetch the appropriate data.
+	 * Detects and returns debugger type id that is installed on top of given
+	 * Zend target. It uses Web API calls to fetch the appropriate data.
 	 * 
 	 * @param target
 	 * @return debugger type id
@@ -44,13 +49,13 @@ public class DebugUtils {
 		ExtensionsList extensionsList;
 		try {
 			WebApiClient webApiClient = zendConnection.getClient(target);
-			extensionsList = webApiClient.extensionList(ZEND_DEBUGGER_EXT_NAME);
+			extensionsList = webApiClient.configurationExtensionsList(ZEND_DEBUGGER_EXT_NAME);
 			if (extensionsList.getExtensionsInfo() != null) {
 				ExtensionInfo extensionInfo = extensionsList.getExtensionsInfo().get(0);
 				if (extensionInfo.isInstalled() && extensionInfo.isLoaded())
 					return ZendDebuggerConfiguration.ID;
 			}
-			extensionsList = webApiClient.extensionList(XDEBUG_EXT_NAME);
+			extensionsList = webApiClient.configurationExtensionsList(XDEBUG_EXT_NAME);
 			if (extensionsList.getExtensionsInfo() != null) {
 				ExtensionInfo extensionInfo = extensionsList.getExtensionsInfo().get(0);
 				if (extensionInfo.isInstalled() && extensionInfo.isLoaded())
@@ -63,5 +68,36 @@ public class DebugUtils {
 		}
 		return PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 	}
-	
+
+	/**
+	 * Gets the list of allowed host for Zend Debugger. It uses Web API calls to
+	 * fetch the appropriate data.
+	 * 
+	 * @param server
+	 * @return allowed hosts list or <code>null</code> if Web API can not be
+	 *         used
+	 */
+	public static final String getAllowedHosts(Server server) {
+		IZendTarget target = ServerUtils.getTarget(server);
+		if (target == null)
+			return null;
+		ZendConnection zendConnection = new ZendConnection() {
+		};
+		DirectivesList directivesList;
+		try {
+			WebApiClient webApiClient = zendConnection.getClient(target);
+			directivesList = webApiClient.configurationDirectivesList(ZEND_DEBUGGER_EXT_NAME, DIRECTIVE_ALLOW_HOSTS,
+					null);
+			if (directivesList.getDirectivesInfo() != null) {
+				DirectiveInfo directiveInfo = directivesList.getDirectivesInfo().get(0);
+				return directiveInfo.getFileValue();
+			}
+		} catch (MalformedURLException e) {
+			Logger.logException(e);
+		} catch (WebApiException e) {
+			Logger.logException(e);
+		}
+		return null;
+	}
+
 }
