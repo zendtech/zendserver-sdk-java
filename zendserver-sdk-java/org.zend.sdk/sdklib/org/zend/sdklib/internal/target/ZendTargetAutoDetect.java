@@ -96,6 +96,14 @@ public class ZendTargetAutoDetect {
 		}
 	}
 
+	public static int converByteArrayToInt(byte[] byteData) {
+		int result = 0;
+		for (int i = 0; i < byteData.length; i++) {
+			result += (int) (byteData[i] & 0xFF) << (8 * (byteData.length - i - 1));
+		}
+		return result != 0 ? result : -1;
+	}
+
 	public ZendTargetAutoDetect() {
 		this(true);
 	}
@@ -567,14 +575,6 @@ public class ZendTargetAutoDetect {
 			}
 		}
 		return new URL(localhost.getProtocol(), localhost.getHost(), port, ""); //$NON-NLS-1$
-	}
-
-	private int converByteArrayToInt(byte[] byteData) {
-		int result = 0;
-		for (int i = 0; i < byteData.length; i++) {
-			result += (int) (byteData[i] & 0xFF) << (8 * (byteData.length - i - 1));
-		}
-		return result != 0 ? result : -1;
 	}
 
 }
