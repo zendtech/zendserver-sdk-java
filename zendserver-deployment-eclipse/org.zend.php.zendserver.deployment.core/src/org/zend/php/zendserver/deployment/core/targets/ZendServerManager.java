@@ -68,6 +68,7 @@ public class ZendServerManager {
 	private static final String SOFTWARE = "SOFTWARE";//$NON-NLS-1$
 	private static final String NODE_64 = "WOW6432node";//$NON-NLS-1$
 	private static final String VERSION = "Version"; //$NON-NLS-1$
+	private static final String DOCUMENT_ROOT = "DocRoot"; //$NON-NLS-1$
 
 	private static final String LOCAL_HOST = "localhost";//$NON-NLS-1$
 
@@ -199,6 +200,7 @@ public class ZendServerManager {
 		} catch (MalformedURLException e) {
 			// nothing to do - this is a safe creation
 		}
+		server.setDocumentRoot(null);
 		return server;
 	}
 
@@ -234,6 +236,7 @@ public class ZendServerManager {
 			} catch (MalformedURLException e) {
 				// nothing to do - this is a safe creation
 			}
+			server.setDocumentRoot(zendServerKey.getStringValue(DOCUMENT_ROOT));
 			return server;
 		} catch (RegistryException ex) {
 			throw new DetectionException(Messages.ZendServerManager_ErrorReadingInstallationParameters_Error, ex);
