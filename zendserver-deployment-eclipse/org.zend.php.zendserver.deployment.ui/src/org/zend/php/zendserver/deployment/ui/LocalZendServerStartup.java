@@ -147,19 +147,22 @@ public class LocalZendServerStartup implements IStartup {
 					String defaultServerUrl = zendTarget.getDefaultServerURL().toString();
 					server.setBaseURL(defaultServerUrl);
 
-					WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
-							zendTarget.getSecretKey());
-					WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
-					apiClient.setServerType(zendTarget.getServerType());
-					VhostsList vhostsList = apiClient.vhostGetStatus();
-					for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
-						if (!vhostInfo.isDefaultVhost())
-							continue;
+					if(server.getDocumentRoot() == null) {
+						//server document root folder has not been read from the configuration
+						WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
+								zendTarget.getSecretKey());
+						WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
+						apiClient.setServerType(zendTarget.getServerType());
+						VhostsList vhostsList = apiClient.vhostGetStatus();
+						for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
+							if (!vhostInfo.isDefaultVhost())
+								continue;
 
-						VhostDetails vhostDetails = apiClient.vhostGetDetails(vhostInfo.getId());
-						String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
-						server.setDocumentRoot(documentRoot);
-						break;
+							VhostDetails vhostDetails = apiClient.vhostGetDetails(vhostInfo.getId());
+							String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
+							server.setDocumentRoot(documentRoot);
+							break;
+						}
 					}
 				} catch (MalformedURLException | WebApiException ex) {
 					Activator.logError(Messages.LocalZendServerStartup_UpdatingServerProperties_Error, ex);

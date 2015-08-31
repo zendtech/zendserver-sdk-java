@@ -72,6 +72,7 @@ public class ZendTargetAutoDetect {
 	private static final String NODE_64 = "WOW6432node"; //$NON-NLS-1$
 	private static final String ZEND_SERVER = "ZendServer"; //$NON-NLS-1$
 	private static final String APACHE_APP_PORT = "ApacheAppPort"; //$NON-NLS-1$
+	private static final String IIS_APP_PORT = "IISAppProt"; //$NON-NLS-1$
 	private static final String ZEND_TECHNOLOGIES = "Zend Technologies"; //$NON-NLS-1$
 	private static final String VERSION = "Version"; //$NON-NLS-1$
 
@@ -495,16 +496,44 @@ public class ZendTargetAutoDetect {
 					versionString = zendServerKey.getStringValue(VERSION);
 				}
 			}
+			
+			if(isIISBased())
+				return getDefaultIISServerURL();
 
 			ZendServerVersion version = ZendServerVersion.byName(versionString);
 			if (ZendServerVersion.v6_2_x.compareTo(version) < -1)
 				return getDefaultServerURLFromConfig();
-
+			
 			return getDefaultServerURLWithAPI(key, secretKey);
 		} catch (Exception e) {
 			// if any exception occurs ignore it and return localhost
 		}
 		return localhost;
+	}
+
+	private boolean isIISBased() {
+		if(!EnvironmentUtils.isUnderWindows())
+			return false;
+		
+		try {
+			RegistryKey zendServerKey = getZendServerRegistryKey();
+			RegistryValue portValue = zendServerKey.getValue(IIS_APP_PORT);
+			return (portValue != null);
+		} catch (RegistryException e) {
+		}
+		return false;
+	}
+	
+	private URL getDefaultIISServerURL() throws RegistryException, MalformedURLException {
+		int port = -1;
+		RegistryKey zendServerKey = getZendServerRegistryKey();
+		if (zendServerKey != null) {
+			RegistryValue portValue = zendServerKey.getValue(IIS_APP_PORT);
+			if (portValue != null) {
+				port = converByteArrayToInt(portValue.getByteData());
+			}
+		}
+		return new URL(localhost.getProtocol(), localhost.getHost(), port, ""); //$NON-NLS-1$
 	}
 
 	private URL getDefaultServerURLWithAPI(String key, String secretKey) throws MalformedURLException, WebApiException, DetectionException {
