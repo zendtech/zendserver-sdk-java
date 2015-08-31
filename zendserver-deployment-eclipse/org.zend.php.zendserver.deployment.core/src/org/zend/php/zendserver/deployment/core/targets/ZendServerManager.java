@@ -27,6 +27,7 @@ import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.debug.core.pathmapper.VirtualPath;
 import org.eclipse.php.internal.server.core.Server;
 import org.osgi.framework.Bundle;
+import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.MissingZendServerException;
 
@@ -34,6 +35,7 @@ import com.ice.jni.registry.NoSuchKeyException;
 import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
+import com.ice.jni.registry.RegistryValue;
 
 /**
  * Utility class which is responsible for local Zend Server detection.
@@ -69,6 +71,7 @@ public class ZendServerManager {
 	private static final String NODE_64 = "WOW6432node";//$NON-NLS-1$
 	private static final String VERSION = "Version"; //$NON-NLS-1$
 	private static final String DOCUMENT_ROOT = "DocRoot"; //$NON-NLS-1$
+	private static final String IIS_APP_PORT = "IISAppProt"; //$NON-NLS-1$
 
 	private static final String LOCAL_HOST = "localhost";//$NON-NLS-1$
 
@@ -195,11 +198,6 @@ public class ZendServerManager {
 		server.setAttribute(ZENDSERVER_INSTALL_LOCATION, installation);
 		server.setAttribute(ZENDSERVER_VERSION, props.getProperty(PRODUCT_VERSION));
 		server.setHost(LOCAL_HOST);
-		try {
-			server.setBaseURL("http://" + LOCAL_HOST); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			// nothing to do - this is a safe creation
-		}
 		server.setDocumentRoot(null);
 		return server;
 	}
@@ -232,9 +230,11 @@ public class ZendServerManager {
 			server.setAttribute(ZENDSERVER_VERSION, zendServerKey.getStringValue(VERSION));
 			server.setHost(LOCAL_HOST);
 			try {
-				server.setBaseURL("http://" + LOCAL_HOST); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// nothing to do - this is a safe creation
+				RegistryValue portValue = zendServerKey.getValue(IIS_APP_PORT);
+				int port = ZendTargetAutoDetect.converByteArrayToInt(portValue.getByteData());
+				server.setBaseURL("http://" + LOCAL_HOST + ":" + Integer.toString(port)); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (RegistryException|MalformedURLException ex) {
+				//do nothing; if something fails the base url will be updated later
 			}
 			server.setDocumentRoot(zendServerKey.getStringValue(DOCUMENT_ROOT));
 			return server;
