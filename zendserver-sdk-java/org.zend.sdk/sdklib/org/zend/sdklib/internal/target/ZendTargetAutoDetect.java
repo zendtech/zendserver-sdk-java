@@ -72,7 +72,7 @@ public class ZendTargetAutoDetect {
 	private static final String NODE_64 = "WOW6432node"; //$NON-NLS-1$
 	private static final String ZEND_SERVER = "ZendServer"; //$NON-NLS-1$
 	private static final String APACHE_APP_PORT = "ApacheAppPort"; //$NON-NLS-1$
-	private static final String IIS_APP_PORT = "IISAppProt"; //$NON-NLS-1$
+	private static final String IIS_APP_PORT = "IISAppPort"; //$NON-NLS-1$
 	private static final String ZEND_TECHNOLOGIES = "Zend Technologies"; //$NON-NLS-1$
 	private static final String VERSION = "Version"; //$NON-NLS-1$
 
