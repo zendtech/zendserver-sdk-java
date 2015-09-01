@@ -71,7 +71,7 @@ public class ZendServerManager {
 	private static final String NODE_64 = "WOW6432node";//$NON-NLS-1$
 	private static final String VERSION = "Version"; //$NON-NLS-1$
 	private static final String DOCUMENT_ROOT = "DocRoot"; //$NON-NLS-1$
-	private static final String IIS_APP_PORT = "IISAppProt"; //$NON-NLS-1$
+	private static final String IIS_APP_PORT = "IISAppPort"; //$NON-NLS-1$
 
 	private static final String LOCAL_HOST = "localhost";//$NON-NLS-1$
 

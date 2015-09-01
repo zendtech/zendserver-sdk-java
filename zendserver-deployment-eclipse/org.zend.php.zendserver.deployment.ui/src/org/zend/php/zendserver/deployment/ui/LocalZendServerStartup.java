@@ -164,7 +164,7 @@ public class LocalZendServerStartup implements IStartup {
 						server.setBaseURL(baseUrl);
 					}
 					
-					if(server.getDocumentRoot() == null && defaultVHostInfo != null) {
+					if(server.getDocumentRoot() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
 						// server document root folder has not been read from
 						// the configuration
 						VhostDetails vhostDetails = apiClient.vhostGetDetails(defaultVHostInfo.getId());
