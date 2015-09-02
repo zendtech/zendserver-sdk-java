@@ -309,6 +309,9 @@ public class TargetsManager extends AbstractChangeNotifier {
 		// only return existing, if it's key still exists and is valid
 		if ((existing != null) && (existingSecret != null)
 				&& existingSecret.equals(existing.getSecretKey())) {
+			log.info(MessageFormat
+					.format("Local target {0} has been found with id {1}. ",
+							existing.getHost(), existing.getId()));
 			return existing;
 		}
 
@@ -392,14 +395,11 @@ public class TargetsManager extends AbstractChangeNotifier {
 		return appliedSecretKey;
 	}
 
-	private IZendTarget getExistingLocalhost() {
+	public IZendTarget getExistingLocalhost() {
 		final IZendTarget[] list = getTargets();
 		for (IZendTarget t : list) {
 			if (ZendTargetAutoDetect.localhost.getHost().equals(
 					t.getHost().getHost())) {
-				log.info(MessageFormat
-						.format("Local server {0} has been already detected with id {1}. ",
-								t.getHost(), t.getId()));
 				return t;
 			}
 		}
