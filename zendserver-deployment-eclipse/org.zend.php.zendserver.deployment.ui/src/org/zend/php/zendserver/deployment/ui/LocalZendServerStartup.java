@@ -23,15 +23,16 @@ import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsCon
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.core.types.IServerType;
+import org.eclipse.php.server.core.types.ServerTypesManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
-import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.IHelpContextIds;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.types.LocalZendServerType;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
 import org.zend.sdklib.manager.DetectionException;
@@ -86,7 +87,23 @@ public class LocalZendServerStartup implements IStartup {
 		Job performer = new Job(Messages.LocalZendServerStartup_RegisteringZendServer) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask(Messages.LocalZendServerStartup_FetchingConfiguration, IProgressMonitor.UNKNOWN);
+				monitor.beginTask(Messages.LocalZendServerStartup_RegisteringZendServer, IProgressMonitor.UNKNOWN);
+				
+				//look for existing local server; it does not necessarily have to be the default one
+				monitor.subTask(Messages.LocalZendServerStartup_CheckingExistingServers);
+				ServerTypesManager typesManager = ServerTypesManager.getInstance();
+				Server[] servers = ServersManager.getServers();
+				for (Server server : servers) {
+					IServerType serverType = typesManager.getType(server);
+					if(LocalZendServerType.ID.equalsIgnoreCase(serverType.getId())) {
+						Activator.logInfo(
+								MessageFormat.format(Messages.LocalZendServerStartup_LocalZendServerExists_Info,
+										server.getName()));
+						return Status.OK_STATUS;
+					}
+				}
+				
+				monitor.subTask(Messages.LocalZendServerStartup_FetchingConfiguration);
 				final Server server;
 				try {
 					server = ZendServerManager.getInstance().getLocalZendServer();
@@ -99,27 +116,7 @@ public class LocalZendServerStartup implements IStartup {
 				}
 				server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 
-				monitor.subTask(Messages.LocalZendServerStartup_CheckingExistingServers);
-				IZendTarget zendTarget = null;
-				Server existingLocalServer = ServersManager.findByURL(LOCALHOST_BASE_URL);
-				if (existingLocalServer != null) {
-					zendTarget = ServerUtils.getTarget(existingLocalServer);
-					if(zendTarget == null){
-						reportNullLocalTarget(new DetectionException(Messages.LocalZendServerStartup_NoLocalTargetFound_Error));
-						return Status.CANCEL_STATUS;
-					}
-					
-					String defaultServerUrl = zendTarget.getDefaultServerURL().toString();
-					for (Server existingServer : ServersManager.getServers()) {
-						if (defaultServerUrl.equals(existingServer.getBaseURL())) {
-							Activator.logInfo(
-									MessageFormat.format(Messages.LocalZendServerStartup_LocalZendServerExists_Info,
-											existingServer.getName()));
-							return Status.OK_STATUS;
-						}
-					}
-				}
-
+				IZendTarget zendTarget = TargetsManagerService.INSTANCE.getTargetManager().getExistingLocalhost();
 				AddServerConfirmationRunnable run1 = new AddServerConfirmationRunnable(zendTarget == null);
 				Display.getDefault().syncExec(run1);
 				if (!run1.addServer) {
