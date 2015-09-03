@@ -27,6 +27,7 @@ import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.debug.core.pathmapper.VirtualPath;
 import org.eclipse.php.internal.server.core.Server;
 import org.osgi.framework.Bundle;
+import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.manager.MissingZendServerException;
@@ -116,22 +117,29 @@ public class ZendServerManager {
 	public static void setupPathMapping(Server server) {
 		String location = server.getAttribute(
 				ZendServerManager.ZENDSERVER_INSTALL_LOCATION, null);
-		if (location != null) {
-			Bundle bundle = Platform
-					.getBundle("org.zend.php.framework.resource"); //$NON-NLS-1$
-			IPath workingLibPath = Platform.getStateLocation(bundle).append(
-					"resources/ZendFramework-1/library"); //$NON-NLS-1$
-			Mapping mapping = new Mapping();
-			mapping.remotePath = new VirtualPath(new Path(location).append(
-					"ZendServer/share/ZendFramework/library") //$NON-NLS-1$
-					.toString());
-
-			mapping.localPath = new VirtualPath(workingLibPath.toString());
-			mapping.type = Type.EXTERNAL;
-			PathMapper pathMapper = PathMapperRegistry.getByServer(server);
-			pathMapper.setMapping(new Mapping[] { mapping });
-			PathMapperRegistry.storeToPreferences();
+		if (location == null) {
+			DeploymentCore.logError(Messages.ZendServerManager_SetupPathMapping_NoServerLocationAvialable_Error);
+			return;
 		}
+		
+		String boundleName = "org.zend.php.framework.resource"; //$NON-NLS-1$
+		Bundle bundle = Platform.getBundle(boundleName); 
+		if(bundle == null) {
+			String message = MessageFormat.format(Messages.ZendServerManager_SetupPathMapping_NoBoundleAvailable_Error, boundleName);
+			DeploymentCore.logError(message);
+			return;
+		}
+		
+		IPath workingLibPath = Platform.getStateLocation(bundle).append("resources/ZendFramework-1/library"); //$NON-NLS-1$
+		Mapping mapping = new Mapping();
+		mapping.remotePath = new VirtualPath(new Path(location).append("ZendServer/share/ZendFramework/library") //$NON-NLS-1$
+				.toString());
+
+		mapping.localPath = new VirtualPath(workingLibPath.toString());
+		mapping.type = Type.EXTERNAL;
+		PathMapper pathMapper = PathMapperRegistry.getByServer(server);
+		pathMapper.setMapping(new Mapping[] { mapping });
+		PathMapperRegistry.storeToPreferences();
 	}
 
 	/**
