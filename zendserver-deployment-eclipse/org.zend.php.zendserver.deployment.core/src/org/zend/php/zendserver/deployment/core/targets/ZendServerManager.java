@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.php.internal.debug.core.pathmapper.PathEntry.Type;
 import org.eclipse.php.internal.debug.core.pathmapper.PathMapper;
 import org.eclipse.php.internal.debug.core.pathmapper.PathMapper.Mapping;
+import org.eclipse.php.internal.debug.core.pathmapper.PathMapper.Mapping.MappingSource;
 import org.eclipse.php.internal.debug.core.pathmapper.PathMapperRegistry;
 import org.eclipse.php.internal.debug.core.pathmapper.VirtualPath;
 import org.eclipse.php.internal.server.core.Server;
@@ -137,6 +138,7 @@ public class ZendServerManager {
 
 		mapping.localPath = new VirtualPath(workingLibPath.toString());
 		mapping.type = Type.EXTERNAL;
+		mapping.source = MappingSource.ENVIRONMENT;
 		PathMapper pathMapper = PathMapperRegistry.getByServer(server);
 		pathMapper.setMapping(new Mapping[] { mapping });
 		PathMapperRegistry.storeToPreferences();
