@@ -13,6 +13,10 @@ public class Messages extends NLS {
 	public static String LocalZendServerCompositeFragment_NameConflictError;
 	public static String LocalZendServerCompositeFragment_NameLabel;
 	public static String LocalZendServerCompositeFragment_NameTooltip;
+	public static String LocalZendServerWizardFragment_DetectingDebuggerSettings;
+	public static String LocalZendServerWizardFragment_FetchingConfiguration;
+	public static String LocalZendServerWizardFragment_NoLocalTargetFound_Error;
+	public static String LocalZendServerWizardFragment_UpdatingServerProperties_Error;
 	public static String LocalTargetDetector_CompleteMessage;
 	public static String LocalTargetDetector_CompleteTitle;
 	public static String LocalTargetDetector_InvalidCredentialsMessage;
