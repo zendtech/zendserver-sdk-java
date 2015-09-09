@@ -27,6 +27,7 @@ import org.eclipse.php.server.core.types.ServerTypesManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.zend.core.notifications.NotificationManager;
 import org.zend.php.server.ui.IHelpContextIds;
@@ -201,6 +202,7 @@ public class LocalZendServerStartup implements IStartup {
 				ServersManager.save();
 
 				ZendServerManager.setupPathMapping(server);
+				showPhpServersView();
 				NotificationManager.showInfoWithHelp(Messages.LocalZendServerStartup_FoundTitle,
 						Messages.LocalZendServerStartup_FoundMessage, IHelpContextIds.ZEND_SERVER, 5000);
 				monitor.done();
@@ -244,6 +246,20 @@ public class LocalZendServerStartup implements IStartup {
 		NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
 				Messages.LocalZendServerStartup_NoLocalTargetFound_Warning, IHelpContextIds.ZEND_SERVER,
 				5000, MESSAGE_ID);
+	}
+
+	private void showPhpServersView() {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView("org.zend.php.server.ui.views.ServersView"); //$NON-NLS-1$
+				} catch (PartInitException e) {
+					Activator.log(e);
+				}
+			}
+		});
 	}
 
 }
