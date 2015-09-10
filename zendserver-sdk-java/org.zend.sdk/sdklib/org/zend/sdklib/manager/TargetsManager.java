@@ -398,8 +398,7 @@ public class TargetsManager extends AbstractChangeNotifier {
 	public IZendTarget getExistingLocalhost() {
 		final IZendTarget[] list = getTargets();
 		for (IZendTarget t : list) {
-			if (ZendTargetAutoDetect.localhost.getHost().equals(
-					t.getHost().getHost())) {
+			if (ZendTargetAutoDetect.localhost.equals(t.getHost())) {
 				return t;
 			}
 		}
