@@ -173,6 +173,7 @@ public class LocalZendServerStartup implements IStartup {
 					NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
 							Messages.LocalZendServerStartup_CouldNotObtainAllProperties, IHelpContextIds.ZEND_SERVER,
 							5000, MESSAGE_ID);
+					return Status.CANCEL_STATUS;
 				}
 
 				monitor.subTask(Messages.LocalZendServerStartup_DetectingDebuggerSettings);
