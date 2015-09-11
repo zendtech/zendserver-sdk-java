@@ -137,44 +137,47 @@ public class LocalZendServerStartup implements IStartup {
 				}
 
 				monitor.subTask(Messages.LocalZendServerStartup_UpdatingServerProperties);
-				try {
-					if (!isUnique(server.getName())) {
-						server.setName(getNewName(server.getName()));
-					}
+				if (!isUnique(server.getName())) {
+					server.setName(getNewName(server.getName()));
+				}
 
-					VhostInfo defaultVHostInfo = null;
-					WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
-							zendTarget.getSecretKey());
-					WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
-					apiClient.setServerType(zendTarget.getServerType());
-					VhostsList vhostsList = apiClient.vhostGetStatus();
-					for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
-						if (!vhostInfo.isDefaultVhost())
-							continue;
-						
-						defaultVHostInfo = vhostInfo;
+				if (server.getBaseURL() == "" || server.getDocumentRoot() == "") { //$NON-NLS-1$ //$NON-NLS-2$
+					try {
+						VhostInfo defaultVHostInfo = null;
+						WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
+								zendTarget.getSecretKey());
+						WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
+						apiClient.setServerType(zendTarget.getServerType());
+						VhostsList vhostsList = apiClient.vhostGetStatus();
+						for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
+							if (!vhostInfo.isDefaultVhost())
+								continue;
+
+							defaultVHostInfo = vhostInfo;
+						}
+
+						if (server.getBaseURL() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
+							// server base URL has not been read from
+							// the configuration
+							String baseUrl = "http://localhost:" + Integer.toString(defaultVHostInfo.getPort()); //$NON-NLS-1$
+							server.setBaseURL(baseUrl);
+						}
+
+						if (server.getDocumentRoot() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
+							// server document root folder has not been read
+							// from
+							// the configuration
+							VhostDetails vhostDetails = apiClient.vhostGetDetails(defaultVHostInfo.getId());
+							String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
+							server.setDocumentRoot(documentRoot);
+						}
+					} catch (MalformedURLException | WebApiException ex) {
+						Activator.logError(Messages.LocalZendServerStartup_UpdatingServerProperties_Error, ex);
+						NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
+								Messages.LocalZendServerStartup_CouldNotObtainAllProperties,
+								IHelpContextIds.ZEND_SERVER, 5000, MESSAGE_ID);
+						return Status.CANCEL_STATUS;
 					}
-					
-					if(server.getBaseURL() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
-						// server base URL has not been read from
-						// the configuration
-						String baseUrl = "http://localhost:" + Integer.toString(defaultVHostInfo.getPort()); //$NON-NLS-1$
-						server.setBaseURL(baseUrl);
-					}
-					
-					if(server.getDocumentRoot() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
-						// server document root folder has not been read from
-						// the configuration
-						VhostDetails vhostDetails = apiClient.vhostGetDetails(defaultVHostInfo.getId());
-						String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
-						server.setDocumentRoot(documentRoot);
-					}
-				} catch (MalformedURLException | WebApiException ex) {
-					Activator.logError(Messages.LocalZendServerStartup_UpdatingServerProperties_Error, ex);
-					NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
-							Messages.LocalZendServerStartup_CouldNotObtainAllProperties, IHelpContextIds.ZEND_SERVER,
-							5000, MESSAGE_ID);
-					return Status.CANCEL_STATUS;
 				}
 
 				monitor.subTask(Messages.LocalZendServerStartup_DetectingDebuggerSettings);

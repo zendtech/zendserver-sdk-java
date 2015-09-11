@@ -87,38 +87,41 @@ public class LocalZendServerWizardFragment extends AbstractWizardFragment {
 				return composite.isComplete();
 			}
 
-			try {
-				VhostInfo defaultVHostInfo = null;
-				WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
-						zendTarget.getSecretKey());
-				WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
-				apiClient.setServerType(zendTarget.getServerType());
-				VhostsList vhostsList = apiClient.vhostGetStatus();
-				for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
-					if (!vhostInfo.isDefaultVhost())
-						continue;
-					
-					defaultVHostInfo = vhostInfo;
+			if (server.getBaseURL() == "" || server.getDocumentRoot() == "") { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					VhostInfo defaultVHostInfo = null;
+					WebApiCredentials credentials = new BasicCredentials(zendTarget.getKey(),
+							zendTarget.getSecretKey());
+					WebApiClient apiClient = new WebApiClient(credentials, zendTarget.getHost().toString());
+					apiClient.setServerType(zendTarget.getServerType());
+					VhostsList vhostsList = apiClient.vhostGetStatus();
+					for (VhostInfo vhostInfo : vhostsList.getVhosts()) {
+						if (!vhostInfo.isDefaultVhost())
+							continue;
+
+						defaultVHostInfo = vhostInfo;
+					}
+
+					if (server.getBaseURL() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
+						// server base URL has not been read from
+						// the configuration
+						String baseUrl = "http://localhost:" + Integer.toString(defaultVHostInfo.getPort()); //$NON-NLS-1$
+						server.setBaseURL(baseUrl);
+					}
+
+					if (server.getDocumentRoot() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
+						// server document root folder has not been read from
+						// the configuration
+						VhostDetails vhostDetails = apiClient.vhostGetDetails(defaultVHostInfo.getId());
+						String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
+						server.setDocumentRoot(documentRoot);
+					}
+				} catch (MalformedURLException | WebApiException ex) {
+					Activator.logError(Messages.LocalZendServerWizardFragment_UpdatingServerProperties_Error, ex);
+					setMessage(Messages.LocalZendServerWizardFragment_UpdatingServerProperties_Error,
+							IMessageProvider.ERROR);
+					return composite.isComplete();
 				}
-				
-				if(server.getBaseURL() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
-					// server base URL has not been read from
-					// the configuration
-					String baseUrl = "http://localhost:" + Integer.toString(defaultVHostInfo.getPort()); //$NON-NLS-1$
-					server.setBaseURL(baseUrl);
-				}
-				
-				if(server.getDocumentRoot() == "" && defaultVHostInfo != null) { //$NON-NLS-1$
-					// server document root folder has not been read from
-					// the configuration
-					VhostDetails vhostDetails = apiClient.vhostGetDetails(defaultVHostInfo.getId());
-					String documentRoot = vhostDetails.getExtendedInfo().getDocRoot();
-					server.setDocumentRoot(documentRoot);
-				}
-			} catch (MalformedURLException | WebApiException ex) {
-				Activator.logError(Messages.LocalZendServerWizardFragment_UpdatingServerProperties_Error, ex);
-				setMessage(Messages.LocalZendServerWizardFragment_UpdatingServerProperties_Error, IMessageProvider.ERROR);
-				return composite.isComplete();
 			}
 
 			monitor.subTask(Messages.LocalZendServerWizardFragment_DetectingDebuggerSettings);
