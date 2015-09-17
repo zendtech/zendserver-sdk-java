@@ -171,6 +171,9 @@ public class ServersCombo {
 	 */
 	public void setEnabled(boolean enabled) {
 		serversCombo.setEnabled(enabled);
+		if (useDefaultServer) {
+			useDefaultServerButton.setEnabled(enabled);
+		}
 		if (addServer) {
 			addServerButton.setEnabled(enabled);
 		}
