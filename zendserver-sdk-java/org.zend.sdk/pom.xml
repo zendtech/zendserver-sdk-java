@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.zend</groupId>
 		<artifactId>org.zend.sdk.releng</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 		<relativePath>../org.zend.sdk.releng</relativePath>
 	</parent>
 	

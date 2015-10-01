@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.zend.sdk.cli.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.zend.sdk.cli;bundle-version="1.0.0",
+Require-Bundle: org.zend.sdk.cli,
  org.junit,
  org.mockito,
  org.zend.webapi,
@@ -12,7 +12,7 @@ Require-Bundle: org.zend.sdk.cli;bundle-version="1.0.0",
  org.apache.commons.cli,
  org.restlet,
  org.restlet.ext.xml,
- org.zend.webapi.tests;bundle-version="1.0.0",
+ org.zend.webapi.tests,
  org.apache.commons.httpclient,
  com.jcraft.jsch,
  org.zend.sdk.tests;bundle-version="0.6.0"

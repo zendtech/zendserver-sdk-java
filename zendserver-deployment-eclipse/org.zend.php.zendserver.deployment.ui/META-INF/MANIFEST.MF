@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Zend Application Deployment UI
 Bundle-SymbolicName: org.zend.php.zendserver.deployment.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.zend.php.zendserver.deployment.ui.Activator
 Bundle-Vendor: Zend Technologies Ltd.
 Require-Bundle: org.eclipse.ui,
