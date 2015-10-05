@@ -76,26 +76,21 @@ public class DebugUtils {
 	 * @param server
 	 * @return allowed hosts list or <code>null</code> if Web API can not be
 	 *         used
+	 * @throws MalformedURLException
+	 * @throws WebApiException
 	 */
-	public static final String getAllowedHosts(Server server) {
+	public static final String getAllowedHosts(Server server) throws MalformedURLException, WebApiException {
 		IZendTarget target = ServerUtils.getTarget(server);
 		if (target == null)
 			return null;
 		ZendConnection zendConnection = new ZendConnection() {
 		};
 		DirectivesList directivesList;
-		try {
-			WebApiClient webApiClient = zendConnection.getClient(target);
-			directivesList = webApiClient.configurationDirectivesList(ZEND_DEBUGGER_EXT_NAME, DIRECTIVE_ALLOW_HOSTS,
-					null);
-			if (directivesList.getDirectivesInfo() != null) {
-				DirectiveInfo directiveInfo = directivesList.getDirectivesInfo().get(0);
-				return directiveInfo.getFileValue();
-			}
-		} catch (MalformedURLException e) {
-			Logger.logException(e);
-		} catch (WebApiException e) {
-			Logger.logException(e);
+		WebApiClient webApiClient = zendConnection.getClient(target);
+		directivesList = webApiClient.configurationDirectivesList(ZEND_DEBUGGER_EXT_NAME, DIRECTIVE_ALLOW_HOSTS, null);
+		if (directivesList.getDirectivesInfo() != null) {
+			DirectiveInfo directiveInfo = directivesList.getDirectivesInfo().get(0);
+			return directiveInfo.getFileValue();
 		}
 		return null;
 	}
