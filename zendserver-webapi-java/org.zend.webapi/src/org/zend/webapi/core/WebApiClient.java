@@ -31,6 +31,7 @@ import org.zend.webapi.core.connection.data.DebugMode;
 import org.zend.webapi.core.connection.data.DebugRequest;
 import org.zend.webapi.core.connection.data.DirectivesList;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.ExtensionsList;
 import org.zend.webapi.core.connection.data.Issue;
 import org.zend.webapi.core.connection.data.IssueDetails;
 import org.zend.webapi.core.connection.data.IssueFile;
@@ -40,7 +41,6 @@ import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.ProfileRequest;
 import org.zend.webapi.core.connection.data.RequestSummary;
 import org.zend.webapi.core.connection.data.ServerConfig;
-import org.zend.webapi.core.connection.data.ExtensionsList;
 import org.zend.webapi.core.connection.data.ServerInfo;
 import org.zend.webapi.core.connection.data.ServersList;
 import org.zend.webapi.core.connection.data.SystemInfo;
@@ -2063,7 +2063,7 @@ public class WebApiClient {
 	 * @param message
 	 */
 	public static synchronized void logError(String message) {
-		if (logger != null) {
+		if (logger != null && DEBUG) {
 			logger.logError(message);
 		}
 	}
@@ -2074,7 +2074,7 @@ public class WebApiClient {
 	 * @param e
 	 */
 	public static synchronized void logError(Throwable e) {
-		if (logger != null) {
+		if (logger != null && DEBUG) {
 			logger.logError(e);
 		}
 	}
@@ -2086,7 +2086,7 @@ public class WebApiClient {
 	 * @param e
 	 */
 	public static synchronized void logError(String message, Throwable e) {
-		if (logger != null) {
+		if (logger != null && DEBUG) {
 			logger.logError(message, e);
 		}
 	}
