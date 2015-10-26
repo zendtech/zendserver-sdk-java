@@ -124,8 +124,15 @@ public class ServersUI extends AbstractUIPlugin {
 	}
 
 	public static void logError(Throwable e) {
-		getDefault().getLog().log(
-				new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
+		logError("Server related error occurred", e); //$NON-NLS-1$
 	}
 
+	public static void logError(String message) {
+		logError(message, null);
+	}
+
+	public static void logError(String message, Throwable e) {
+		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, message, e);
+		getDefault().getLog().log(status);
+	}
 }
