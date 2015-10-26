@@ -16,6 +16,8 @@ public class Messages extends NLS {
 	public static String LocalApacheCompositeFragment_Desc;
 	public static String LocalApacheCompositeFragment_ExamplePathUnix;
 	public static String LocalApacheCompositeFragment_ExamplePathWin32;
+	public static String LocalApacheCompositeFragment_LocationEmptyMessage;
+	public static String LocalApacheCompositeFragment_LocationInvalidError;
 	public static String LocalApacheCompositeFragment_LocationInvalidMessage;
 	public static String LocalApacheCompositeFragment_LocationLabel;
 	public static String LocalApacheCompositeFragment_LocationTooltip;

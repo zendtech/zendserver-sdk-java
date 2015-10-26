@@ -68,7 +68,6 @@ public class LocalApacheType implements IServerType {
 			}
 			server.setPort(detector.getPort());
 			server.setDocumentRoot(detector.getDocumentRoot());
-			server.setDebuggerId(ServerTypeUtils.getLocalDebuggerId(server));
 			return true;
 		}
 		return false;

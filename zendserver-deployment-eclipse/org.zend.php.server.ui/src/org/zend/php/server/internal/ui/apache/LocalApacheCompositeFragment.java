@@ -32,6 +32,7 @@ import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.server.ui.types.LocalApacheType;
+import org.zend.php.server.ui.types.ServerTypeUtils;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -41,9 +42,6 @@ import org.zend.php.server.ui.types.LocalApacheType;
 public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 
 	public static String ID = "org.zend.php.server.ui.apache.LocalApacheCompositeFragment"; //$NON-NLS-1$
-
-	private static final String CONF = "conf"; //$NON-NLS-1$
-	private static final String BIN = "bin"; //$NON-NLS-1$
 
 	private Text serverNameText;
 	private Text locationText;
@@ -72,9 +70,16 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	/**
 	 * Saves the page's state
 	 */
-	public void saveValues() {
-		getServer().setName(name);
-		getServer().setAttribute(LocalApacheType.LOCATION, location);
+	protected void saveValues() {
+		Server server = getServer();
+		server.setName(name);
+		server.setAttribute(LocalApacheType.LOCATION, location);
+		if (!LocalApacheType.parseAttributes(server)) {
+			// should not occur at this time
+			// if it does it means that validation does not work well
+			ServersUI.logError(Messages.LocalApacheCompositeFragment_LocationInvalidError);
+			return;
+		}
 	}
 
 	public boolean performOk() {
@@ -87,60 +92,53 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	public void validate() {
-		if (name != null) {
-			if (name.trim().isEmpty()) {
-				setIncompleteMessage(Messages.LocalApacheCompositeFragment_NameEmptyMessage);
-				return;
-			}
-			if (isDuplicateName(name)) {
-				setMessage(
-						Messages.LocalApacheCompositeFragment_NameConflictMessage,
-						IMessageProvider.ERROR);
-				return;
-			}
-		}
-		if (location != null && !location.isEmpty()) {
-			Server server = getServer();
-			server.setAttribute(LocalApacheType.LOCATION, location);
-			if (LocalApacheType.parseAttributes(server)) {
-				Server conflictingServer = getConflictingServer(server);
-				if (conflictingServer != null) {
-					setMessage(
-							MessageFormat.format(
-									Messages.LocalApacheCompositeFragment_BaseUrlConflictError,
-									conflictingServer.getName()),
-							IMessageProvider.ERROR);
-					return;
-				}
-			} else {
-				setMessage(
-						Messages.LocalApacheCompositeFragment_LocationInvalidMessage,
-						IMessageProvider.ERROR);
-				return;
-			}
-		} else {
-			setIncompleteMessage("Specify an installation directory.");
+		if (name == null || name.trim().isEmpty()) {
+			setIncompleteMessage(Messages.LocalApacheCompositeFragment_NameEmptyMessage);
 			return;
 		}
+
+		if (isDuplicateName(name)) {
+			setMessage(Messages.LocalApacheCompositeFragment_NameConflictMessage, IMessageProvider.ERROR);
+			return;
+		}
+
+		if (location == null || location.trim().isEmpty()) {
+			setIncompleteMessage(Messages.LocalApacheCompositeFragment_LocationEmptyMessage);
+			return;
+		}
+
+		Server tempServer = new Server();
+		tempServer.setAttribute(LocalApacheType.LOCATION, location);
+		if (!LocalApacheType.parseAttributes(tempServer)) {
+			setMessage(Messages.LocalApacheCompositeFragment_LocationInvalidMessage, IMessageProvider.ERROR);
+			return;
+		}
+
+		Server conflictingServer = getConflictingServer(tempServer);
+		if (conflictingServer != null) {
+			setMessage(MessageFormat.format(Messages.LocalApacheCompositeFragment_BaseUrlConflictError,
+					conflictingServer.getName()), IMessageProvider.ERROR);
+			return;
+		}
+
 		setMessage(getDescription(), IMessageProvider.NONE);
 	}
 
 	@Override
 	protected void createContents(Composite parent) {
-		ModifyListener modifyListener = new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				updateData();
-				validate();
-			}
-		};
-
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.LocalApacheCompositeFragment_NameLabel);
 		serverNameText = new Text(parent, SWT.BORDER);
 		serverNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 2, 1));
-		serverNameText.addModifyListener(modifyListener);
+		serverNameText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				name = serverNameText.getText();
+				validate();
+			}
+		});
 		serverNameText.forceFocus();
 
 		label = new Label(parent, SWT.NONE);
@@ -150,7 +148,23 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 				false));
 		locationText
 				.setToolTipText(Messages.LocalApacheCompositeFragment_LocationTooltip);
-		locationText.addModifyListener(modifyListener);
+		locationText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				location = locationText.getText();
+				validate();
+				if (!isComplete())
+					return;
+
+				Server tempServer = new Server();
+				tempServer.setAttribute(LocalApacheType.LOCATION, location);
+				if (!LocalApacheType.parseAttributes(tempServer))
+					return;
+
+				getServer().setDebuggerId(ServerTypeUtils.getLocalDebuggerId(tempServer));
+			}
+		});
 
 		browseButton = new Button(parent, SWT.PUSH);
 		browseButton.setText(Messages.LocalApacheCompositeFragment_BrowseLabel);
@@ -184,11 +198,7 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 			String location = server.getAttribute(LocalApacheType.LOCATION, ""); //$NON-NLS-1$
 			locationText.setText(location);
 		}
-	}
-
-	private void updateData() {
-		name = serverNameText.getText();
-		location = locationText.getText();
+		validate();
 	}
 
 	private String getExamplePath() {
