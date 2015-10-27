@@ -91,7 +91,8 @@ public abstract class ApiKeyDetector {
 				}
 				return true;
 			}
-			throw new SdkException("Could not connect with a local Zend Server.");
+			String message = MessageFormat.format("Could not connect to Zend Server at {0}.", serverUrl);
+			throw new SdkException(message);
 		} finally {
 			username = null;
 			password = null;

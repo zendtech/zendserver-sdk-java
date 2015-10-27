@@ -11,6 +11,7 @@ package org.zend.php.zendserver.deployment.ui.servers;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,30 +61,17 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 	private class KeyDetectionRunnable implements IRunnableWithProgress {
 
-		private String errorMessage;
-
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
+			monitor.beginTask(Messages.WebApiCompositeFragment_DetectingCredentials, IProgressMonitor.UNKNOWN);
 			try {
-				monitor.beginTask(
-						Messages.WebApiCompositeFragment_DetectingCredentials,
-						IProgressMonitor.UNKNOWN);
 				detectApiKey(null);
 			} catch (SdkException e) {
-				String message = e.getMessage();
-				Throwable cause = e.getCause();
-				if (cause != null) {
-					message = cause.getMessage();
-				}
-				Activator.log(e);
-				this.errorMessage = message;
+				throw new InvocationTargetException(e);
+			} finally {
+				monitor.done();
 			}
 		}
-
-		public String getErrorMessage() {
-			return errorMessage;
-		}
-
 	}
 
 	private static final String DEFAULT_HOST = "http://"; //$NON-NLS-1$
@@ -256,7 +244,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	private void initialDetect() {
 		if (controlHandler.getKind() == Kind.WIZARD && !forceKeysDetection) {
 			forceKeysDetection = true;
-			handleDetect(hostText.getText());
+			handleDetect();
 			if (keysDetected) {
 				enableButton.setSelection(keysDetected);
 				enable = enableButton.getSelection();
@@ -354,7 +342,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		detectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				handleDetect(hostText.getText());
+				handleDetect();
 			}
 		});
 		
@@ -494,21 +482,24 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		return target;
 	}
 
-	private void handleDetect(final String host) {
+	private void handleDetect() {
 		KeyDetectionRunnable detector = new KeyDetectionRunnable();
 		try {
 			controlHandler.run(true, true, detector);
 		} catch (InvocationTargetException e) {
-			Activator.log(e);
+			String message = MessageFormat.format("Error occurred while detecting Web API credentials: {0}", e.getCause().getLocalizedMessage());
+			setMessage(message, IMessageProvider.ERROR);
+			Activator.logError(message, e);
+			return;
 		} catch (InterruptedException e) {
-			Activator.log(e);
+			String message = "Web API credentials detection interrupted by the user.";
+			setMessage(message, IMessageProvider.INFORMATION);
+			Activator.logInfo(message);
+			return;
 		}
-		if (detector.getErrorMessage() != null) {
-			setMessage(detector.getErrorMessage(), IMessageProvider.ERROR);
-		} else {
-			webApiTest();
-			validate();
-		}
+		
+		webApiTest();
+		validate();
 	}
 
 	private void detectApiKey(String message) throws SdkException {
