@@ -8,8 +8,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.zendserver;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.php.internal.ui.wizards.CompositeFragment;
 import org.eclipse.php.internal.ui.wizards.WizardControlWrapper;
 import org.eclipse.swt.widgets.Composite;
@@ -30,8 +28,8 @@ public class RemoteZendServerWizardFragment extends AbstractWizardFragment {
 	}
 
 	@Override
-	public boolean performFinish(IProgressMonitor monitor) throws CoreException {
-		return super.performFinish(monitor);
+	public void exit() {
+		composite.performApply();
+		super.exit();
 	}
-
 }

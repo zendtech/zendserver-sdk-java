@@ -22,6 +22,7 @@ import org.zend.php.server.internal.ui.Messages;
 public class ZendServerType implements IServerType {
 
 	public static final String ID = "org.zend.php.server.ui.types.ZendServerType"; //$NON-NLS-1$
+	public static final String DEFAULT_BASE_URL = "http://localhost"; //$NON-NLS-1$
 
 	@Override
 	public String getId() {

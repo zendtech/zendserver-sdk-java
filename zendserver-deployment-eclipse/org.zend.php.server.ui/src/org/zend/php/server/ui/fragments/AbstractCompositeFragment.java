@@ -58,7 +58,7 @@ public abstract class AbstractCompositeFragment extends CompositeFragment {
 	 */
 	public void setData(Object server) throws IllegalArgumentException {
 		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(""); //$NON-NLS-1$
+			throw new IllegalArgumentException("Given object is not a server"); //$NON-NLS-1$
 		}
 		super.setData(server);
 	}
