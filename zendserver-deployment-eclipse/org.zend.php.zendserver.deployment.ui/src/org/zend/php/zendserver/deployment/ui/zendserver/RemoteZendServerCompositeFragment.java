@@ -10,24 +10,24 @@ package org.zend.php.zendserver.deployment.ui.zendserver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
+import org.zend.php.server.ui.types.ZendServerType;
+import org.zend.php.zendserver.deployment.ui.Activator;
 
 /**
  * @author Bartlomiej Laczkowski, 2015
@@ -38,10 +38,12 @@ import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 public class RemoteZendServerCompositeFragment extends
 		AbstractCompositeFragment {
 
-	protected Text name;
-	protected Text url;
-	protected Combo combo;
+	protected Text nameText;
+	protected Text urlText;
 
+	protected String name;
+	protected String url;
+	
 	/**
 	 * ServerCompositeFragment
 	 * 
@@ -60,33 +62,11 @@ public class RemoteZendServerCompositeFragment extends
 		handler.setImageDescriptor(getImageDescriptor());
 	}
 
-	/**
-	 * Override the super setData to handle only Server types.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given object is not a {@link Server}
-	 */
-	public void setData(Object server) throws IllegalArgumentException {
-		if (server != null && !(server instanceof Server)) {
-			throw new IllegalArgumentException(
-					"The given object is not a Server"); //$NON-NLS-1$
-		}
-		super.setData(server);
-		init();
-		validate();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.zend.php.server.ui.fragments.AbstractCompositeFragment#getServer()
-	 */
-	public Server getServer() {
-		return (Server) getData();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.php.internal.ui.wizards.CompositeFragment#performOk()
 	 */
 	public boolean performOk() {
+		saveValues();
 		return true;
 	}
 
@@ -94,59 +74,44 @@ public class RemoteZendServerCompositeFragment extends
 	 * @see org.eclipse.php.internal.ui.wizards.CompositeFragment#validate()
 	 */
 	public void validate() {
-		if (getServer() == null) {
-			setMessage("", IMessageProvider.ERROR); //$NON-NLS-1$
+		
+		if (name == null || name.trim().equals("")) { //$NON-NLS-1$
+			setIncompleteMessage(Messages.RemoteZendServerCompositeFragment_Missing_server_name);
 			return;
 		}
+		
+		if(isDuplicateName(name)) {
+			setMessage(Messages.RemoteZendServerCompositeFragment_Duplicated_server_name, IMessageProvider.ERROR);
+			return;
+		}
+
+		if (url == null || url.trim().equals("")) { //$NON-NLS-1$
+			setMessage(Messages.RemoteZendServerCompositeFragment_Missing_server_URL, IMessageProvider.ERROR);
+			return;
+		}
+		
+		URL serverUrl = null;
+		try {
+			serverUrl = new URL(url);
+		} catch (MalformedURLException e) {
+			setMessage(Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL, IMessageProvider.ERROR);
+			return;
+		}
+		if(serverUrl.getHost().isEmpty()) {
+			setMessage(Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL, IMessageProvider.ERROR);
+			return;						
+		}
+		if(serverUrl.getPath().length() != 0){
+			setMessage(Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL, IMessageProvider.ERROR);
+			return;			
+		}
+		
+		if(checkServerUrl(url)) {
+			setMessage(Messages.RemoteZendServerCompositeFragment_Duplicated_server_URL, IMessageProvider.ERROR);
+			return;
+		}
+		
 		setMessage(getDescription(), IMessageProvider.NONE);
-		String urlStr = url.getText();
-		if (urlStr != null && !urlStr.trim().equals("")) { //$NON-NLS-1$
-			boolean ok = checkServerUrl(urlStr);
-			if (!ok) {
-				setMessage(Messages.RemoteZendServerCompositeFragment_Duplicated_server_URL, IMessageProvider.ERROR);
-			}
-		}
-		try {
-			URL url = new URL(urlStr);
-			if (url.getPath() != null && url.getPath().length() != 0) {
-				urlStr = null;
-			}
-		} catch (MalformedURLException e1) {
-			// in case of Malformed URL - reset
-			urlStr = null;
-		}
-		if (urlStr == null || urlStr.equals("")) { //$NON-NLS-1$
-			setMessage(
-					Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL,
-					IMessageProvider.ERROR);
-			return;
-		}
-		try {
-			URL baseURL = new URL(urlStr);
-			String host = baseURL.getHost();
-			if (host.trim().length() == 0) {
-				setMessage(Messages.RemoteZendServerCompositeFragment_URL_is_empty, IMessageProvider.ERROR);
-			}
-			int port = baseURL.getPort();
-	
-			getServer().setHost(host);
-			getServer().setPort(String.valueOf(port));
-		} catch (Exception e) {
-			setMessage(
-					Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL,
-					IMessageProvider.ERROR);
-			return;
-		}
-		String serverName = getServer().getName();
-		if (serverName == null || serverName.trim().equals("")) { //$NON-NLS-1$
-			setMessage(Messages.RemoteZendServerCompositeFragment_Missing_server_name, IMessageProvider.ERROR);
-		} else {
-			boolean ok = checkServerName(serverName);
-			if (!ok) {
-				setMessage(Messages.RemoteZendServerCompositeFragment_Duplicated_server_name, IMessageProvider.ERROR);
-			}
-		}
-		controlHandler.update();
 	}
 
 	/**
@@ -154,8 +119,7 @@ public class RemoteZendServerCompositeFragment extends
 	 */
 	protected void createContents(Composite parent) {
 		Composite nameGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, true);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		nameGroup.setLayout(layout);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -165,20 +129,18 @@ public class RemoteZendServerCompositeFragment extends
 		label.setText(Messages.RemoteZendServerCompositeFragment_Server_name);
 		GridData data = new GridData();
 		label.setLayoutData(data);
-		name = new Text(nameGroup, SWT.BORDER);
+		nameText = new Text(nameGroup, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		name.setLayoutData(data);
-		name.addModifyListener(new ModifyListener() {
+		nameText.setLayoutData(data);
+		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getServer().setName(name.getText());
+				name = nameText.getText();
 				validate();
 			}
 		});
+		nameText.forceFocus();
+		
 		createURLGroup(parent);
-		init();
-		validate();
-		Dialog.applyDialogFont(parent);
-		name.forceFocus();
 	}
 
 	/**
@@ -201,19 +163,12 @@ public class RemoteZendServerCompositeFragment extends
 		group.setText(Messages.RemoteZendServerCompositeFragment_Server_properties);
 		Label urlLabel = new Label(group, SWT.None);
 		urlLabel.setText(Messages.RemoteZendServerCompositeFragment_Base_URL);
-		url = new Text(group, SWT.BORDER);
+		urlText = new Text(group, SWT.BORDER);
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		url.setLayoutData(layoutData);
-		url.addModifyListener(new ModifyListener() {
+		urlText.setLayoutData(layoutData);
+		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (getServer() != null) {
-					String urlStr = url.getText();
-					try {
-						getServer().setBaseURL(urlStr);
-					} catch (MalformedURLException e1) {
-						// ignore
-					}
-				}
+				url = urlText.getText();
 				validate();
 			}
 		});
@@ -225,92 +180,42 @@ public class RemoteZendServerCompositeFragment extends
 	 */
 	protected void init() {
 		Server server = getServer();
-		if (name == null || server == null)
-			return;
-		if (getServer().getName() != null) {
-			boolean nameSet = false;
-			String serverName = getServer().getName();
-			String orgName = serverName;
-			if (!isForEditing()) {
-				for (int i = 0; i < 10; i++) {
-					boolean ok = checkServerName(serverName);
-					if (ok) {
-						name.setText(serverName);
-						getServer().setName(serverName);
-						;
-						nameSet = true;
-						break;
-					}
-					serverName = orgName + " (" + Integer.toString(i + 2) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				if (!nameSet) {
-					name.setText(""); //$NON-NLS-1$
-					getServer().setName(""); //$NON-NLS-1$
-				}
-			} else {
-				name.setText(serverName);
-			}
+		if (server != null) {
+			nameText.setText(server.getName());
+			urlText.setText(server.getBaseURL());
 		} else {
-			name.setText(""); //$NON-NLS-1$
+			urlText.setText(ZendServerType.DEFAULT_BASE_URL);
 		}
-		String baseURL = getServer().getBaseURL();
-		if (!baseURL.equals("")) { //$NON-NLS-1$
-			url.setText(baseURL);
-			try {
-				URL originalURL = new URL(baseURL);
-				int port = originalURL.getPort();
-				getServer().setPort(String.valueOf(port));
-			} catch (Exception e) {
-				setMessage(
-						Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL,
-						IMessageProvider.ERROR);
-			}
-		} else {
-			baseURL = "http://" + server.getHost(); //$NON-NLS-1$
-			url.setText(baseURL);
-			try {
-				getServer().setBaseURL(baseURL);
-				URL createdURL = new URL(baseURL);
-				int port = createdURL.getPort();
-				getServer().setPort(String.valueOf(port));
-			} catch (Exception e) {
-				setMessage(
-						Messages.RemoteZendServerCompositeFragment_Please_enter_valid_URL,
-						IMessageProvider.ERROR);
-			}
-		}
+		validate();
 	}
 
-	private boolean checkServerName(String name) {
-		name = name.trim();
-		Server[] allServers = ServersManager.getServers();
-		if (allServers != null) {
-			int size = allServers.length;
-			for (int i = 0; i < size; i++) {
-				Server server = allServers[i];
-				if (name.equals(server.getName())
-						&& !getServer().getUniqueId().equals(
-								server.getUniqueId()))
-					return false;
-			}
+	protected void saveValues() {
+		Server server = getServer();
+		server.setName(name);
+		try {
+			server.setBaseURL(url);
+			URL serverURL = new URL(url);
+			server.setHost(serverURL.getHost());
+			server.setPort(String.valueOf(serverURL.getPort()));
+		} catch (MalformedURLException e) {
+			// should not occur at this time
+			// if it does it means that validation does not work well
+			String message = MessageFormat.format(Messages.RemoteZendServerCompositeFragment_Invalid_server_URL, url);
+			Activator.logError(message);
+			return;
 		}
-		return true;
 	}
 
 	private boolean checkServerUrl(String url) {
-		url = url.trim();
-		Server[] allServers = ServersManager.getServers();
-		if (allServers != null) {
-			int size = allServers.length;
-			for (int i = 0; i < size; i++) {
-				Server server = allServers[i];
-				if (url.equals(server.getBaseURL())
-						&& !getServer().getUniqueId().equals(
-								server.getUniqueId()))
-					return false;
-			}
+		Server tempServer = new Server();
+		try {
+			tempServer.setBaseURL(url);
+		} catch (MalformedURLException e) {
+			// should not occur
+			String message = MessageFormat.format(Messages.RemoteZendServerCompositeFragment_Invalid_server_URL, url);
+			Activator.logError(message);
 		}
-		return true;
+		return (getConflictingServer(tempServer) != null);
 	}
 
 }
