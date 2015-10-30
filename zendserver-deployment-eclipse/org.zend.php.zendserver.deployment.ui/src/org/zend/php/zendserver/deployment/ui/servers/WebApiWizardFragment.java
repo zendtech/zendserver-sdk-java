@@ -39,4 +39,10 @@ public class WebApiWizardFragment extends AbstractWizardFragment {
 		return result;
 	}
 
+	@Override
+	public void enter() {
+		((WebApiCompositeFragment)getComposite()).setDetectOnEnter(true);
+		super.enter();
+	}
+
 }

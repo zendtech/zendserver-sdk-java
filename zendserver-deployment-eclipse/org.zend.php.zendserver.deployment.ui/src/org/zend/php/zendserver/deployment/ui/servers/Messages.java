@@ -9,6 +9,8 @@ public class Messages extends NLS {
 	public static String WebApiCompositeFragment_Title;
 	public static String WebApiCompositeFragment_Description;
 	public static String WebApiCompositeFragment_DetectingCredentials;
+	public static String WebApiCompositeFragment_DetectingWebApi_Error;
+	public static String WebApiCompositeFragment_DetectingWebApiInterrupted_Info;
 	public static String WebApiCompositeFragment_DetectLabel;
 	public static String WebApiCompositeFragment_EmptyHostMessage;
 	public static String WebApiCompositeFragment_EmptyKeyMessage;
