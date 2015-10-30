@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.ui.servers;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +26,8 @@ import org.eclipse.php.internal.ui.wizards.IControlHandler;
 import org.eclipse.php.internal.ui.wizards.IControlHandler.Kind;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -59,10 +63,11 @@ import org.zend.sdklib.target.LicenseExpiredException;
 @SuppressWarnings("restriction")
 public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
+	private static String ID = "org.zend.php.zendserver.deployment.ui.servers.WebApiCompositeFragment"; //$NON-NLS-1$
+
 	private class KeyDetectionRunnable implements IRunnableWithProgress {
 
-		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(Messages.WebApiCompositeFragment_DetectingCredentials, IProgressMonitor.UNKNOWN);
 			try {
 				detectApiKey(null);
@@ -74,14 +79,23 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		}
 	}
 
-	private static final String DEFAULT_HOST = "http://"; //$NON-NLS-1$
+	private class ServerPropertyChangeListener implements PropertyChangeListener {
 
-	public static String ID = "org.zend.php.zendserver.deployment.ui.servers.WebApiCompositeFragment"; //$NON-NLS-1$
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getPropertyName().equals(Server.HOSTNAME)) {
+				detectOnEnter = true;
+			}
+		}
+	}
+
+	private static final String DEFAULT_HOST = "http://"; //$NON-NLS-1$
 
 	private Button enableButton;
 	private Text hostText;
 	private Text keyText;
 	private Text secretText;
+	private Button detectButton;
 
 	private boolean enable;
 	private String host;
@@ -89,12 +103,10 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	private String secret;
 
 	private IZendTarget target;
-
-	private Button detectButton;
-
-	private boolean forceKeysDetection;
+	private boolean detectOnEnter;
 	private boolean keysDetected;
 	private boolean isModified = false;
+	private ServerPropertyChangeListener phpServerListener = new ServerPropertyChangeListener();
 
 	/**
 	 * PlatformCompositeFragment constructor
@@ -103,18 +115,18 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	 * @param handler
 	 * @param isForEditing
 	 */
-	public WebApiCompositeFragment(Composite parent,
-			IControlHandler handler, boolean isForEditing) {
-		super(parent, handler, isForEditing,
-				Messages.WebApiCompositeFragment_Name,
-				Messages.WebApiCompositeFragment_Title,
-				Messages.WebApiCompositeFragment_Description);
+	public WebApiCompositeFragment(Composite parent, IControlHandler handler, boolean isForEditing) {
+		super(parent, handler, isForEditing, Messages.WebApiCompositeFragment_Name,
+				Messages.WebApiCompositeFragment_Title, Messages.WebApiCompositeFragment_Description);
 		setImageDescriptor(Activator.getImageDescriptor(Activator.IMAGE_WIZ_DEPLOYMENT));
 		handler.setImageDescriptor(getImageDescriptor());
-	}
-
-	public IZendTarget getTarget() {
-		return target;
+		addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				unregisterListeners();
+				removeDisposeListener(this);
+			}
+		});
 	}
 
 	@Override
@@ -124,8 +136,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		getServer().removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
 		if (!enable) {
 			if (target != null) {
-				TargetsManager manager = TargetsManagerService.INSTANCE
-						.getTargetManager();
+				TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 				if (manager.getTargetById(target.getId()) != null) {
 					manager.remove(target);
 				}
@@ -154,21 +165,15 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	public void validate() {
 		if (enableButton.getSelection()) {
 			if (host != null && host.trim().isEmpty()) {
-				setMessage(
-						Messages.WebApiCompositeFragment_EmptyHostMessage,
-						IMessageProvider.ERROR);
+				setMessage(Messages.WebApiCompositeFragment_EmptyHostMessage, IMessageProvider.ERROR);
 				return;
 			}
 			if (key != null && key.trim().isEmpty()) {
-				setMessage(
-						Messages.WebApiCompositeFragment_EmptyKeyMessage,
-						IMessageProvider.ERROR);
+				setMessage(Messages.WebApiCompositeFragment_EmptyKeyMessage, IMessageProvider.ERROR);
 				return;
 			}
 			if (secret != null && secret.trim().isEmpty()) {
-				setMessage(
-						Messages.WebApiCompositeFragment_EmptySecretMessage,
-						IMessageProvider.ERROR);
+				setMessage(Messages.WebApiCompositeFragment_EmptySecretMessage, IMessageProvider.ERROR);
 				return;
 			}
 		}
@@ -180,11 +185,8 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			return;
 		}
 		saveValues();
-		monitor.beginTask(
-				Messages.WebApiCompositeFragment_TestingConnection,
-				IProgressMonitor.UNKNOWN);
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
+		monitor.beginTask(Messages.WebApiCompositeFragment_TestingConnection, IProgressMonitor.UNKNOWN);
+		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 		IStatus status = null;
 		TargetConnectionTester tester = new TargetConnectionTester();
 		ZendTarget oldTarget = getOldTarget(target);
@@ -230,20 +232,23 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	public void setData(Object server) throws IllegalArgumentException {
+		unregisterListeners();
 		super.setData(server);
 		if (getServer() != null && hostText != null && !hostText.isDisposed()) {
-			if (DEFAULT_HOST.equals(hostText.getText())) {
-				String suggestedHost = DEFAULT_HOST + getServer().getHost()
-						+ ":10081"; //$NON-NLS-1$
-				hostText.setText(suggestedHost);
-			}
+			String suggestedHost = DEFAULT_HOST + getServer().getHost() + ":10081"; //$NON-NLS-1$
+			hostText.setText(suggestedHost);
+			registerListeners();
 		}
 		initialDetect();
 	}
+
+	public void setDetectOnEnter(boolean value) {
+		this.detectOnEnter = value;
+	}
 	
 	private void initialDetect() {
-		if (controlHandler.getKind() == Kind.WIZARD && !forceKeysDetection) {
-			forceKeysDetection = true;
+		if (controlHandler.getKind() == Kind.WIZARD && detectOnEnter) {
+			detectOnEnter = false;
 			handleDetect();
 			if (keysDetected) {
 				enableButton.setSelection(keysDetected);
@@ -267,16 +272,14 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			}
 		};
 		enableButton = new Button(parent, SWT.CHECK);
-		enableButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false, 3, 1));
+		enableButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 3, 1));
 		enableButton.setText(Messages.WebApiCompositeFragment_EnableLabel);
 		enableButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateState(enableButton.getSelection());
 				if (!enableButton.getSelection() && target != null) {
-					TargetsManager manager = TargetsManagerService.INSTANCE
-							.getTargetManager();
+					TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 					if (manager.getTargetById(target.getId()) != null) {
 						manager.remove(target);
 					}
@@ -286,18 +289,16 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				webApiTest();
 			}
 		});
-		
+
 		CLabel noteIcon = new CLabel(parent, SWT.NONE);
-		noteIcon.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false, 3, 1));
+		noteIcon.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 		noteIcon.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_INFO));
 		noteIcon.setText(Messages.WebApiCompositeFragment_Enabling_web_api_info_message);
-		
+
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(Messages.WebApiCompositeFragment_Host);
 		hostText = new Text(parent, SWT.BORDER);
-		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
-				2, 1));
+		hostText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
 		hostText.addModifyListener(modifyListener);
 		hostText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
@@ -318,34 +319,29 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 				}
 			}
 		});
-		hostText.setText(DEFAULT_HOST);
-		hostText.setSelection(hostText.getText().length());
 
 		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.WebApiCompositeFragment_KeyName);
 		keyText = new Text(parent, SWT.BORDER);
-		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false,
-				2, 1));
+		keyText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
 		keyText.addModifyListener(modifyListener);
 
 		label = new Label(parent, SWT.NONE);
 		label.setText(Messages.WebApiCompositeFragment_KeySecret);
 		secretText = new Text(parent, SWT.BORDER);
-		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false, 2, 1));
+		secretText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
 		secretText.addModifyListener(modifyListener);
 
 		detectButton = new Button(parent, SWT.PUSH);
 		detectButton.setText(Messages.WebApiCompositeFragment_DetectLabel);
-		detectButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false, 3, 1));
+		detectButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 		detectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleDetect();
 			}
 		});
-		
+
 		Link link = new Link(parent, SWT.WRAP);
 		link.setText(Messages.WebApiCompositeFragment_WebApiDetails);
 		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
@@ -356,8 +352,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					PlatformUI.getWorkbench().getBrowserSupport()
-							.getExternalBrowser().openURL(new URL(event.text));
+					PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(event.text));
 				} catch (PartInitException e) {
 					Activator.log(e);
 				} catch (MalformedURLException e) {
@@ -369,8 +364,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 
 	@Override
 	protected void init() {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
+		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 		Server server = getServer();
 		if (server != null) {
 			String serverName = server.getName();
@@ -383,11 +377,8 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 					secretText.setText(target.getSecretKey());
 					enableButton.setSelection(true);
 					detectButton.setEnabled(true);
-					server.setAttribute(DeploymentAttributes.ENABLED.getName(),
-							String.valueOf(true));
-					server.setAttribute(
-							DeploymentAttributes.TARGET_HOST.getName(),
-							hostText.getText());
+					server.setAttribute(DeploymentAttributes.ENABLED.getName(), String.valueOf(true));
+					server.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), hostText.getText());
 					updateState(true);
 					break;
 				}
@@ -398,8 +389,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			target = new ZendTarget(id, null, null, null, true);
 			enableButton.setSelection(false);
 			if (server != null) {
-				server.setAttribute(DeploymentAttributes.ENABLED.getName(),
-						String.valueOf(false));
+				server.setAttribute(DeploymentAttributes.ENABLED.getName(), String.valueOf(false));
 			}
 			updateState(false);
 		}
@@ -428,21 +418,18 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		if (enableButton != null) {
 			enable = enableButton.getSelection();
 			if (server != null) {
-				server.setAttribute(DeploymentAttributes.ENABLED.getName(),
-						String.valueOf(enable));
+				server.setAttribute(DeploymentAttributes.ENABLED.getName(), String.valueOf(enable));
 			}
 		}
 		if (hostText != null) {
 			host = hostText.getText();
 			if (enable) {
 				if (server != null) {
-					server.setAttribute(
-							DeploymentAttributes.TARGET_HOST.getName(), host);
+					server.setAttribute(DeploymentAttributes.TARGET_HOST.getName(), host);
 				}
 			} else {
 				if (server != null) {
-					server.removeAttribute(DeploymentAttributes.TARGET_HOST
-							.getName());
+					server.removeAttribute(DeploymentAttributes.TARGET_HOST.getName());
 				}
 			}
 		}
@@ -453,7 +440,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			secret = secretText.getText();
 		}
 	}
-	
+
 	private ZendTarget getOldTarget(IZendTarget target) {
 		TargetsManager manager = TargetsManagerService.INSTANCE.getTargetManager();
 		IZendTarget[] targets = manager.getTargets();
@@ -473,8 +460,8 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	private IZendTarget copyTemp(ZendTarget t) {
-		ZendTarget target = new ZendTarget(t.getId(), t.getHost(),
-				t.getDefaultServerURL(), t.getKey(), t.getSecretKey(), true);
+		ZendTarget target = new ZendTarget(t.getId(), t.getHost(), t.getDefaultServerURL(), t.getKey(),
+				t.getSecretKey(), true);
 		String[] keys = t.getPropertiesKeys();
 		for (String key : keys) {
 			target.addProperty(key, t.getProperty(key));
@@ -487,25 +474,25 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 		try {
 			controlHandler.run(true, true, detector);
 		} catch (InvocationTargetException e) {
-			String message = MessageFormat.format("Error occurred while detecting Web API credentials: {0}", e.getCause().getLocalizedMessage());
+			String message = MessageFormat.format(Messages.WebApiCompositeFragment_DetectingWebApi_Error,
+					e.getCause().getLocalizedMessage());
 			setMessage(message, IMessageProvider.ERROR);
 			Activator.logError(message, e);
 			return;
 		} catch (InterruptedException e) {
-			String message = "Web API credentials detection interrupted by the user.";
+			String message = Messages.WebApiCompositeFragment_DetectingWebApiInterrupted_Info;
 			setMessage(message, IMessageProvider.INFORMATION);
 			Activator.logInfo(message);
 			return;
 		}
-		
+
 		webApiTest();
 		validate();
 	}
 
 	private void detectApiKey(String message) throws SdkException {
 		try {
-			final ApiKeyDetector detector = new EclipseApiKeyDetector(host
-					+ "/ZendServer"); //$NON-NLS-1$
+			final ApiKeyDetector detector = new EclipseApiKeyDetector(host + "/ZendServer"); //$NON-NLS-1$
 			if (detector.createApiKey(message)) {
 				keysDetected = true;
 				Display.getDefault().asyncExec(new Runnable() {
@@ -534,12 +521,11 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	private boolean isModified() {
 		return isModified;
 	}
-	
+
 	private boolean webApiTest() {
 		try {
 			controlHandler.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					performTesting(monitor);
 				}
 			});
@@ -551,6 +537,18 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 			return false;
 		}
 		return true;
+	}
+
+	private void registerListeners() {
+		getServer().addPropertyChangeListener(phpServerListener);
+	}
+
+	private void unregisterListeners() {
+		Server server = getServer();
+		if(server == null)
+			return;
+		
+		server.removePropertyChangeListener(phpServerListener);
 	}
 
 }

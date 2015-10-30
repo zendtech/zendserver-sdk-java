@@ -119,7 +119,7 @@
             class="org.zend.php.zendserver.deployment.ui.servers.WebApiFragmentFactory"
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.deployment.ui.webApiFragmentFactory"
-            name="Deployment Wizard Fragment"
+            name="Web API Wizard Fragment"
             placeAfter="org.eclipse.php.server.ui.PathMapperFragmentFactory"/>
    </extension>
  <extension
