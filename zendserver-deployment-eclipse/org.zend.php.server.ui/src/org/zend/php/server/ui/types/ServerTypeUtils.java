@@ -19,7 +19,6 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -53,34 +52,32 @@ public class ServerTypeUtils {
 	 *            {@link Server} instance for a local server
 	 * @return debugger id for specified local server; if cannot detect then
 	 *         return <code>Zend Debugger</code> id.
+	 * @throws IOException
 	 */
-	public static String getLocalDebuggerId(Server server) {
+	public static String getLocalDebuggerId(Server server) throws IOException {
 		Properties props = executeValidationScript(server);
-		if (props != null) {
-			if (props.containsKey(ZEND_DEBUGGER_ID)) {
-				return DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID;
-			}
-			if (props.containsKey(XDEBUG_ID)) {
-				return XDebugCommunicationDaemon.XDEBUG_DEBUGGER_ID;
-			}
+		if (props.containsKey(ZEND_DEBUGGER_ID)) {
+			return DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID;
+		}
+		if (props.containsKey(XDEBUG_ID)) {
+			return XDebugCommunicationDaemon.XDEBUG_DEBUGGER_ID;
 		}
 		return PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 	}
 
-	private static synchronized Properties executeValidationScript(Server server) {
-		try {
-			InetAddress address = InetAddress.getByName(server.getHost());
-			if (!address.isLoopbackAddress() && !address.isSiteLocalAddress()) {
-				return null;
-			}
-		} catch (UnknownHostException e) {
-			// ignore and skip debugger validation
-			return null;
+	private static synchronized Properties executeValidationScript(Server server) throws IOException {
+		Properties properties = new Properties();
+
+		InetAddress address = InetAddress.getByName(server.getHost());
+		if (!address.isLoopbackAddress() && !address.isSiteLocalAddress()) {
+			return properties;
 		}
+
 		String docRoot = server.getDocumentRoot();
 		if (docRoot.isEmpty() || !new File(docRoot).exists()) {
-			return null;
+			return properties;
 		}
+
 		Bundle bundle = Platform.getBundle(ServersUI.PLUGIN_ID);
 		BufferedReader input = null;
 		BufferedWriter output = null;
@@ -102,11 +99,8 @@ public class ServerTypeUtils {
 					+ TMP_SCRIPT_NAME).openConnection();
 			input = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
-			Properties properties = new Properties();
 			properties.load(input);
 			return properties;
-		} catch (IOException e) {
-			ServersUI.logError(e);
 		} finally {
 			if (tempScriptFile.exists()) {
 				tempScriptFile.delete();
@@ -120,10 +114,11 @@ public class ServerTypeUtils {
 					output.close();
 				}
 			} catch (IOException e) {
+				// should not occur; but if it does
+				// login it
 				ServersUI.logError(e);
 			}
 		}
-		return null;
 	}
 
 }

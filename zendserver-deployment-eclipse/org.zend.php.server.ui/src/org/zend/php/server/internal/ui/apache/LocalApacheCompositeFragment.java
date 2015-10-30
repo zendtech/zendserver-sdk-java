@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.apache;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Platform;
@@ -162,7 +163,14 @@ public class LocalApacheCompositeFragment extends AbstractCompositeFragment {
 				if (!LocalApacheType.parseAttributes(tempServer))
 					return;
 
-				getServer().setDebuggerId(ServerTypeUtils.getLocalDebuggerId(tempServer));
+				try {
+					getServer().setDebuggerId(ServerTypeUtils.getLocalDebuggerId(tempServer));
+				} catch (IOException ioe) {
+					String message = MessageFormat.format(Messages.LocalApacheCompositeFragment_ObtainingDebuggerType_Error,
+							ioe.getLocalizedMessage());
+					controlHandler.setMessage(message, IMessageProvider.WARNING);
+					ServersUI.logError(message, ioe);
+				}
 			}
 		});
 

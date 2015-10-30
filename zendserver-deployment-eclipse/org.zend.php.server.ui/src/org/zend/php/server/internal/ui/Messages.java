@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String LocalApacheCompositeFragment_NameEmptyMessage;
 	public static String LocalApacheCompositeFragment_NameLabel;
 	public static String LocalApacheCompositeFragment_Name;
+	public static String LocalApacheCompositeFragment_ObtainingDebuggerType_Error;
 	public static String RefreshApacheAction_BaseUrlError;
 	public static String RefreshApacheAction_BaseUrlTitle;
 	public static String RefreshApacheAction_JobDesc;
