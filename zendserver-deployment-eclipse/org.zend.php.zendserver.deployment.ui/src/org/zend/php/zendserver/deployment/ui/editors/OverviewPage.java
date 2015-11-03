@@ -3,6 +3,7 @@ package org.zend.php.zendserver.deployment.ui.editors;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -123,8 +124,10 @@ public class OverviewPage extends DescriptorEditorPage {
 					return;
 				}
 
+				String applicationDir = editor.getModel().getApplicationDir();
 				for (int i = 0; i < newPaths.length; i++) {
-					editor.getModel().getPersistentResources().add(newPaths[i]);
+					String newPath = applicationDir.concat(String.valueOf(IPath.SEPARATOR)).concat(newPaths[i]);
+					editor.getModel().getPersistentResources().add(newPath);
 				}
 			}
 
