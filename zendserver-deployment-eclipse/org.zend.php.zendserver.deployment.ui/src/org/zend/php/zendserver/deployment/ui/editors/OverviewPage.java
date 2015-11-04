@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -124,9 +125,8 @@ public class OverviewPage extends DescriptorEditorPage {
 					return;
 				}
 
-				String applicationDir = editor.getModel().getApplicationDir();
 				for (int i = 0; i < newPaths.length; i++) {
-					String newPath = applicationDir.concat(String.valueOf(IPath.SEPARATOR)).concat(newPaths[i]);
+					String newPath = getPersistentResourcePath(newPaths[i]);
 					editor.getModel().getPersistentResources().add(newPath);
 				}
 			}
@@ -135,15 +135,17 @@ public class OverviewPage extends DescriptorEditorPage {
 			protected void editPath(Object element) {
 				String currPath = (String) element;
 
+				String resourcePath = getResourcePath(currPath);
 				Shell shell = editor.getSite().getShell();
 				IProject root = editor.getProject();
 				String newPath = OpenFileDialog.open(shell, root,
 						Messages.OverviewPage_ChangePath,
-						Messages.OverviewPage_SelectPath, currPath.toString());
+						Messages.OverviewPage_SelectPath, resourcePath);
 				if (newPath == null) {
 					return;
 				}
 				editor.getModel().getPersistentResources().remove(currPath);
+				newPath = getPersistentResourcePath(newPath);
 				editor.getModel().getPersistentResources().add(newPath);
 			}
 
@@ -511,4 +513,21 @@ public class OverviewPage extends DescriptorEditorPage {
 		data.exclude = !show;
 	}
 
+	private String getPersistentResourcePath(String resourcePath) {
+		String applicationDir = editor.getModel().getApplicationDir();
+		return applicationDir.concat(String.valueOf(IPath.SEPARATOR)).concat(resourcePath);
+	}
+	
+	private String getResourcePath(String persistentResourcePath) {
+		String applicationDir = editor.getModel().getApplicationDir();
+		if(applicationDir == null)
+			return persistentResourcePath;
+		
+		IPath path = new Path(persistentResourcePath);
+		String firstSegment = path.segment(0);
+		if(applicationDir.equalsIgnoreCase(firstSegment))
+			return path.removeFirstSegments(1).toString();
+		
+		return persistentResourcePath;
+	}
 }
