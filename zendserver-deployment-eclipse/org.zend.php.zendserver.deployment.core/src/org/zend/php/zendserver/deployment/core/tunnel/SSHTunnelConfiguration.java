@@ -258,15 +258,16 @@ public class SSHTunnelConfiguration {
 		config.setEnabled(true);
 		String uuid = target.getProperty(OpenShiftTarget.TARGET_UUID);
 		config.setUsername(uuid);
-		config.setPrivateKey(target
-				.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
+		config.setPrivateKey(target.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
 		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		String internalHost = target
-				.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
-		portForwardings.add(PortForwarding.createRemote(internalHost, 17000,
-				"127.0.0.1", 17000)); //$NON-NLS-1$
-		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
-				internalHost, 3306));
+		String internalHost = target.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
+		portForwardings.add(PortForwarding.createRemote(internalHost, 17000, "127.0.0.1", 17000)); //$NON-NLS-1$
+		String mysqlInternalHost = target.getProperty(OpenShiftTarget.MYSQL_INTERNAL_HOST);
+		if(mysqlInternalHost == null) {
+			// for backward compatibility
+			mysqlInternalHost = internalHost;
+		}
+		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(), mysqlInternalHost, 3306));
 		config.setPortForwardings(portForwardings);
 		return config;
 	}

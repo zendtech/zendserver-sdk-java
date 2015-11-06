@@ -58,8 +58,8 @@ import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
 import com.openshift.client.cartridge.IStandaloneCartridge;
 import com.openshift.client.cartridge.StandaloneCartridge;
-import com.openshift.internal.client.EmbeddedCartridgeResource;
 import com.openshift.internal.client.GearProfile;
+import com.openshift.internal.client.response.CartridgeResourceProperties;
 import com.openshift.internal.client.response.CartridgeResourceProperty;
 
 /**
@@ -113,32 +113,31 @@ public class OpenShiftTarget {
 
 	}
 
-	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer";
-	public static final String LIBRA_DOMAIN_PROP = "org.zend.sdk.openshift.libraDomain";
+	public static final String LIBRA_SERVER_PROP = "org.zend.sdk.openshift.libraServer"; //$NON-NLS-1$
+	public static final String LIBRA_DOMAIN_PROP = "org.zend.sdk.openshift.libraDomain"; //$NON-NLS-1$
 
-	public static final String DEFAULT_LIBRA_SERVER = "https://openshift.redhat.com";
-	public static final String DEFAULT_LIBRA_DOMAIN = "rhcloud.com";
+	public static final String DEFAULT_LIBRA_SERVER = "https://openshift.redhat.com"; //$NON-NLS-1$
+	public static final String DEFAULT_LIBRA_DOMAIN = "rhcloud.com"; //$NON-NLS-1$
 
-	public static final String TARGET_CONTAINER = "openshift.container";
-	public static final String TARGET_USERNAME = "openshift.username";
-	public static final String TARGET_UUID = "openshift.uuid";
-	public static final String TARGET_INTERNAL_HOST = "openshift.internalHost";
-	public static final String TARGET_MYSQL_SUPPORT = "openshift.mysql";
-	public static final String MYSQL_PASSWORD = ZendTarget.ENCRYPT
-			+ "openshift.mysql.password";
-	public static final String MYSQL_USERNAME = "openshift.mysql.username";
-	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key";
+	public static final String TARGET_CONTAINER = "openshift.container"; //$NON-NLS-1$
+	public static final String TARGET_USERNAME = "openshift.username"; //$NON-NLS-1$
+	public static final String TARGET_UUID = "openshift.uuid"; //$NON-NLS-1$
+	public static final String TARGET_INTERNAL_HOST = "openshift.internalHost"; //$NON-NLS-1$
+	public static final String TARGET_MYSQL_SUPPORT = "openshift.mysql"; //$NON-NLS-1$
+	public static final String MYSQL_PASSWORD = ZendTarget.ENCRYPT + "openshift.mysql.password"; //$NON-NLS-1$
+	public static final String MYSQL_USERNAME = "openshift.mysql.username"; //$NON-NLS-1$
+	public static final String MYSQL_INTERNAL_HOST = "openshift.mysql.internalHost"; //$NON-NLS-1$
+	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key"; //$NON-NLS-1$
 
-	public static final String BOOTSTRAP = ZendTarget.TEMP + "bootstrap";
-	public static final String GEAR_PROFILE = ZendTarget.TEMP + "gearProfile";
-	public static final String TEMP_PASSWORD = ZendTarget.TEMP
-			+ "openshift.username";
+	public static final String BOOTSTRAP = ZendTarget.TEMP + "bootstrap"; //$NON-NLS-1$
+	public static final String GEAR_PROFILE = ZendTarget.TEMP + "gearProfile"; //$NON-NLS-1$
+	public static final String TEMP_PASSWORD = ZendTarget.TEMP + "openshift.username"; //$NON-NLS-1$
 
-	private static final String SSHKEY_DEFAULT_NAME = "zendStudio";
-	private static final String DEFAULT_KEY_NAME = "ZendStudioClient";
-	private static final String USER_INI = "zend-server-user.ini";
-	private static final String ABSOLUTE_USER_INI_PATH = "/usr/local/zend/gui/application/data/zend-server-user.ini";
-	private static final String RELATIVE_USER_INI_PATH = "zend-5.6/gui/application/data/zend-server-user.ini";
+	private static final String SSHKEY_DEFAULT_NAME = "zendStudio"; //$NON-NLS-1$
+	private static final String DEFAULT_KEY_NAME = "ZendStudioClient"; //$NON-NLS-1$
+	private static final String USER_INI = "zend-server-user.ini"; //$NON-NLS-1$
+	private static final String ABSOLUTE_USER_INI_PATH = "/usr/local/zend/gui/application/data/zend-server-user.ini"; //$NON-NLS-1$
+	private static final String RELATIVE_USER_INI_PATH = "zend-5.6/gui/application/data/zend-server-user.ini"; //$NON-NLS-1$
 
 	private String username;
 	private String password;
@@ -270,7 +269,7 @@ public class OpenShiftTarget {
 					.getEmbeddableCartridges();
 			for (IEmbeddableCartridge c : cartridges) {
 				String name = c.getName();
-				if (name != null && name.trim().startsWith("mysql")) {
+				if (name != null && name.trim().startsWith(IEmbeddableCartridge.NAME_MYSQL)) {
 					result.add(c.getName());
 				}
 			}
@@ -475,12 +474,9 @@ public class OpenShiftTarget {
 			session.connect();
 			if (session.isConnected()) {
 				container.setSSHSession(session);
-				List<IApplicationPortForwarding> portForwarding = container
-						.getForwardablePorts();
-				if (portForwarding != null) {
-					for (IApplicationPortForwarding forwarding : portForwarding) {
-						return forwarding.getRemoteAddress();
-					}
+				List<IApplicationPortForwarding> portForwarding = container.getForwardablePorts();
+				for (IApplicationPortForwarding forwarding : portForwarding) {
+					return forwarding.getRemoteAddress();
 				}
 			}
 		} catch (OpenShiftException e) {
@@ -742,29 +738,32 @@ public class OpenShiftTarget {
 
 	private void detectMySqlSupport(IApplication container, ZendTarget target)
 			throws SdkException {
-		List<IEmbeddedCartridge> cartridges = null;
 		try {
-			cartridges = container.getEmbeddedCartridges();
+			List<IApplicationPortForwarding> forwardablePorts = container.getForwardablePorts();
+			for (IApplicationPortForwarding forwardablePort : forwardablePorts) {
+				String forwardablePortName = forwardablePort.getName();
+				if (!IEmbeddableCartridge.NAME_MYSQL.equalsIgnoreCase(forwardablePortName))
+					continue;
+
+				target.addProperty(MYSQL_INTERNAL_HOST, forwardablePort.getRemoteAddress());
+				break;
+			}
+
+			List<IEmbeddedCartridge> embeddedCartridges = container.getEmbeddedCartridges();
+			for (IEmbeddedCartridge embeddedCartridge : embeddedCartridges) {
+				if (!embeddedCartridge.getName().startsWith(IEmbeddableCartridge.NAME_MYSQL))
+					continue;
+
+				target.addProperty(TARGET_MYSQL_SUPPORT, String.valueOf(true));
+				CartridgeResourceProperties cartridgeProperties = embeddedCartridge.getProperties();
+				CartridgeResourceProperty usernameProperty = cartridgeProperties.getProperty("username"); //$NON-NLS-1$
+				target.addProperty(MYSQL_USERNAME, usernameProperty.getValue());
+				CartridgeResourceProperty passwordProperty = cartridgeProperties.getProperty("password"); //$NON-NLS-1$
+				target.addProperty(MYSQL_PASSWORD, passwordProperty.getValue());
+				break;
+			}
 		} catch (OpenShiftException e) {
 			throw new SdkException(e);
-		}
-		if (cartridges != null) {
-			for (IEmbeddableCartridge cartridge : cartridges) {
-				if (cartridge.getName().startsWith("mysql")
-						&& cartridge instanceof EmbeddedCartridgeResource) {
-					target.addProperty(TARGET_MYSQL_SUPPORT,
-							String.valueOf(true));
-					CartridgeResourceProperty usernameProperty = ((EmbeddedCartridgeResource) cartridge)
-							.getProperties().getProperty("username");
-					target.addProperty(MYSQL_USERNAME,
-							usernameProperty.getValue());
-					CartridgeResourceProperty passwordProperty = ((EmbeddedCartridgeResource) cartridge)
-							.getProperties().getProperty("password");
-					target.addProperty(MYSQL_PASSWORD,
-							passwordProperty.getValue());
-					break;
-				}
-			}
 		}
 	}
 
