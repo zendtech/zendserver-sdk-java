@@ -106,7 +106,7 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	private boolean detectOnEnter;
 	private boolean keysDetected;
 	private boolean isModified = false;
-	private ServerPropertyChangeListener phpServerListener = new ServerPropertyChangeListener();
+	private ServerPropertyChangeListener phpServerListener;
 
 	/**
 	 * PlatformCompositeFragment constructor
@@ -540,6 +540,9 @@ public class WebApiCompositeFragment extends AbstractCompositeFragment {
 	}
 
 	private void registerListeners() {
+		if(phpServerListener == null)
+			phpServerListener = new ServerPropertyChangeListener();
+		
 		getServer().addPropertyChangeListener(phpServerListener);
 	}
 
