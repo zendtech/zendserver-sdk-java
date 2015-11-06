@@ -160,8 +160,6 @@ public class MultipartRepresentation extends OutputRepresentation {
 				outputStream);
 		statusChanged(new BasicStatus(StatusCode.STOPPING, "Package Sending",
 				"Package has been sent successfully."));
-		statusChanged(new BasicStatus(StatusCode.STARTING, "Deploying",
-				"Deploying application to the target...", -1));
 	}
 
 	/**

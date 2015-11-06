@@ -98,7 +98,7 @@ public class ZendApplication extends ZendConnection {
 			notifier.statusChanged(new BasicStatus(
 					StatusCode.STARTING,
 					"Application Status",
-					"Retrieving Application status(es) from selected target...",
+					"Retrieving application status(es) from selected server...",
 					-1));
 			ApplicationsList result = client
 					.applicationGetStatus(applicationIds);
@@ -299,8 +299,8 @@ public class ZendApplication extends ZendConnection {
 				appName = segments.length > 0 ? segments[segments.length - 1]
 						: null;
 			}
-			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-					"Deploying", "Deploying application to the target...", -1));
+			notifier.statusChanged(
+					new BasicStatus(StatusCode.STARTING, "Deploying", "Deploying application to server...", -1));
 			boolean vhost = vhostURL != null;
 			// Update parameters for Zend Server version >= 6.2.0 base on
 			// virtual hosts
@@ -559,8 +559,8 @@ public class ZendApplication extends ZendConnection {
 			if (zendPackage != null) {
 				int appIdint = Integer.parseInt(appId);
 				WebApiClient client = getClient(targetId);
-				notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-						"Updating", "Updating application on the target...", -1));
+				notifier.statusChanged(
+						new BasicStatus(StatusCode.STARTING, "Updating", "Updating application on server...", -1));
 				ApplicationInfo result = client.applicationUpdate(appIdint,
 						new NamedInputStream(zendPackage), ignoreFailures,
 						userParams);
