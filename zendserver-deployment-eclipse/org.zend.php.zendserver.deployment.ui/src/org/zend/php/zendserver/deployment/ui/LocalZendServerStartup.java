@@ -109,7 +109,6 @@ public class LocalZendServerStartup implements IStartup {
 				try {
 					server = ZendServerManager.getInstance().getLocalZendServer();
 				} catch (DetectionException e) {
-					Activator.logError(Messages.LocalZendServerStartup_DetectingLocalZendServer_Error, e);
 					NotificationManager.showWarningWithHelp(Messages.LocalZendServerStartup_NotFoundTitle,
 							Messages.LocalZendServerStartup_NotFoundMessage, IHelpContextIds.ZEND_SERVER, 5000,
 							MESSAGE_ID);
