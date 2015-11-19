@@ -4,7 +4,7 @@
 
 	<groupId>com.zend</groupId>
 	<artifactId>org.zend.sdk.releng</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.zend</groupId>

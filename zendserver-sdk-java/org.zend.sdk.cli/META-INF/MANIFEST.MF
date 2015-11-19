@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cli
 Bundle-SymbolicName: org.zend.sdk.cli
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 1.0.2.qualifier
 Export-Package: org.zend.sdkcli,
  org.zend.sdkcli.internal.commands,
  org.zend.sdkcli.internal.logger,

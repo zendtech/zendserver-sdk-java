@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>com.zend</groupId>
 		<artifactId>org.zend.webapi.releng</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 		<relativePath>../org.zend.webapi.releng</relativePath>
 	</parent>
 
 	<artifactId>org.zend.webapi.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 </project>
