@@ -18,6 +18,7 @@ import java.util.zip.ZipInputStream;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.zend.sdklib.descriptor.pkg.Package;
 import org.zend.sdklib.descriptor.pkg.Version;
 import org.zend.sdklib.internal.application.ZendConnection;
@@ -121,21 +122,19 @@ public class ZendLibrary extends ZendConnection {
 					LibraryList result = client.libraryVersionDeploy(new NamedInputStream(zendPackage));
 					notifier.statusChanged(
 							new BasicStatus(StatusCode.STOPPING, "Deploying", "Library deployed successfully"));
-					deleteFile(getTempFile(path));
 					return result;
 				}
 			} catch (MalformedURLException e) {
 				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
 						"Error during deploying library to '" + targetId + "'", e));
 				log.error(e);
-				deleteFile(getTempFile(path));
 			} catch (WebApiException e) {
 				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
 						"Error during deploying library to '" + targetId + "'", e));
 				log.error("Error during deploying library to '" + targetId + "':");
 				log.error("\tpossible error: " + e.getMessage());
 			} finally {
-				deleteFile(getTempFile(path));
+				deleteDirectory(zendPackage.getParentFile());
 			}
 			return null;
 		}
@@ -210,7 +209,7 @@ public class ZendLibrary extends ZendConnection {
 						.createDeploymentPackage(tempFile);
 			} finally {
 				if (tempUnzipped != null) {
-					deleteFile(tempUnzipped);
+					deleteDirectory(tempUnzipped);
 				}
 			}
 		}
@@ -337,4 +336,12 @@ public class ZendLibrary extends ZendConnection {
 		return file.delete();
 	}
 
+	private void deleteDirectory(File dir) {
+		try {
+			FileUtils.deleteDirectory(dir);
+		} catch (IOException e) {
+			log.error("Could not delete folder: " + dir.getAbsolutePath()); 
+			log.error(e.getLocalizedMessage());
+		}
+	}
 }

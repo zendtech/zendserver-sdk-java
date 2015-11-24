@@ -57,4 +57,5 @@ Require-Bundle: org.apache.commons.codec,
  org.zend.webapi;bundle-version="0.0.23",
  org.slf4j.api;bundle-version="1.6.4",
  org.slf4j.jul;bundle-version="1.6.4",
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.apache.commons.io
