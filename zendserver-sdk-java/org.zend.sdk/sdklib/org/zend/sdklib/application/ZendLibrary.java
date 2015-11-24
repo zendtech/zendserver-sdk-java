@@ -106,39 +106,33 @@ public class ZendLibrary extends ZendConnection {
 		return null;
 	}
 
-	public LibraryList deploy(String path, String configLocation,
-			String targetId, boolean zpkPackage) {
+	public LibraryList deploy(String path, String configLocation, String targetId, boolean zpkPackage) {
 		if (path != null) {
 			File zendPackage = new File(path);
 			if (!zpkPackage) {
 				zendPackage = createPackage(path, configLocation);
 			}
+
 			try {
 				if (zendPackage != null) {
 					WebApiClient client = getClient(targetId);
-					notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
-							"Deploying", "Deploying library to the target...",
-							-1));
-					LibraryList result = client
-							.libraryVersionDeploy(new NamedInputStream(
-									zendPackage));
-					notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
-							"Deploying", "Library deployed successfully"));
+					notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Deploying",
+							"Deploying library to the server...", -1));
+					LibraryList result = client.libraryVersionDeploy(new NamedInputStream(zendPackage));
+					notifier.statusChanged(
+							new BasicStatus(StatusCode.STOPPING, "Deploying", "Library deployed successfully"));
 					deleteFile(getTempFile(path));
 					return result;
 				}
 			} catch (MalformedURLException e) {
-				notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
-						"Deploying", "Error during deploying library to '"
-								+ targetId + "'", e));
+				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying library to '" + targetId + "'", e));
 				log.error(e);
 				deleteFile(getTempFile(path));
 			} catch (WebApiException e) {
-				notifier.statusChanged(new BasicStatus(StatusCode.ERROR,
-						"Deploying", "Error during deploying library to '"
-								+ targetId + "'", e));
-				log.error("Error during deploying library to '" + targetId
-						+ "':");
+				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying",
+						"Error during deploying library to '" + targetId + "'", e));
+				log.error("Error during deploying library to '" + targetId + "':");
 				log.error("\tpossible error: " + e.getMessage());
 			} finally {
 				deleteFile(getTempFile(path));
