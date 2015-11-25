@@ -113,7 +113,6 @@ public class ZendLibrary extends ZendConnection {
 			if (!zpkPackage) {
 				zendPackage = createPackage(path, configLocation);
 			}
-
 			try {
 				if (zendPackage != null) {
 					WebApiClient client = getClient(targetId);
@@ -134,7 +133,8 @@ public class ZendLibrary extends ZendConnection {
 				log.error("Error during deploying library to '" + targetId + "':");
 				log.error("\tpossible error: " + e.getMessage());
 			} finally {
-				deleteDirectory(zendPackage.getParentFile());
+				if (zendPackage != null)
+					deleteDirectory(zendPackage.getParentFile());
 			}
 			return null;
 		}
@@ -191,6 +191,7 @@ public class ZendLibrary extends ZendConnection {
 	private File createPackage(String path, String configLocation) {
 		File file = new File(path);
 		if (!file.exists()) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying", "Path does not exist: " + file));
 			log.error("Path does not exist: " + file);
 			return null;
 		}
