@@ -109,10 +109,7 @@ public class ZendLibrary extends ZendConnection {
 
 	public LibraryList deploy(String path, String configLocation, String targetId, boolean zpkPackage) {
 		if (path != null) {
-			File zendPackage = new File(path);
-			if (!zpkPackage) {
-				zendPackage = createPackage(path, configLocation);
-			}
+			File zendPackage = createPackage(path, configLocation);
 			try {
 				if (zendPackage != null) {
 					WebApiClient client = getClient(targetId);
@@ -199,8 +196,7 @@ public class ZendLibrary extends ZendConnection {
 			File tempFile = getTempFile(path);
 			return getPackageBuilder(path, configLocation, variableResolver)
 					.createDeploymentPackage(tempFile);
-		} else if (file.getName().endsWith(".zpk")
-				|| file.getName().endsWith(".zip")) {
+		} else if (file.getName().endsWith(".zip")) {
 			File tempUnzipped = null;
 			try {
 				tempUnzipped = unzip(file);
@@ -213,6 +209,19 @@ public class ZendLibrary extends ZendConnection {
 					deleteDirectory(tempUnzipped);
 				}
 			}
+		} else if (file.getName().endsWith(".zpk")) {
+			File tempFile = null;
+			try {
+				tempFile = getTempFile("/" + new Random().nextInt());
+				FileUtils.copyFileToDirectory(file, tempFile);
+				return new File(tempFile, file.getName());
+			} catch (IOException e) {
+				String message = "Could not copy " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath();
+				notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Deploying", message));
+				log.error(message);
+				log.error("\tpossible error: " + e.getMessage());
+			}
+			return null;
 		}
 		return file;
 	}
