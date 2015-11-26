@@ -83,7 +83,7 @@ public class ZendLibrary extends ZendConnection {
 			libaryId = libaryId == null ? new String[0] : libaryId;
 			notifier.statusChanged(new BasicStatus(StatusCode.STARTING,
 					"Library Status",
-					"Retrieving Library status(es) from selected target...", -1));
+					"Retrieving library status(es) from selected server...", -1));
 			LibraryList result = client.libraryGetStatus(libaryId);
 			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING,
 					"Library Status",
