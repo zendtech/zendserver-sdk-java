@@ -48,6 +48,7 @@ public class Messages extends NLS {
 	public static String DeploymentDescriptorLabelProvider_ZendServerComponent;
 	public static String DeploymentDescriptorLabelProvider_ZendServerVersion;
 	public static String DeploymentDescriptorLabelProvider_PHPLibrary;
+	public static String DeploymentTester_CouldNotTest_Error;
 	public static String PHPLibraryDependencyDetailsPage_PHPLibraryTitle;
 	public static String PHPLibraryDependencyDetailsPage_PHPLibraryDetails;
 	public static String DescriptorMasterDetailsBlock_Add;
