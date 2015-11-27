@@ -122,7 +122,7 @@
       <command
             commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
             icon="icons/obj16/deploy_exc.png"
-            label="Deploy To..."
+            label="%command.label.9"
             style="push">
          <visibleWhen
                checkEnabled="false">
