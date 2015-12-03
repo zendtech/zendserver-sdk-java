@@ -47,6 +47,9 @@ public class DeploymentTester extends PropertyTester {
 		if (receiver instanceof IProject) {
 			IProject project = (IProject) receiver;
 			try {
+				if (!project.isAccessible())
+					return false;
+				
 				if(!project.hasNature(PHPNature.ID))
 					return false;
 				
