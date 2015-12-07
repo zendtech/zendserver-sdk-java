@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.php.debug.core,
  org.eclipse.core.resources,
  org.eclipse.php.server.core,
- org.zend.php.zendserver.deployment.core,
- org.eclipse.php.core
+ org.zend.php.zendserver.deployment.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zend.php.server.core.utils
