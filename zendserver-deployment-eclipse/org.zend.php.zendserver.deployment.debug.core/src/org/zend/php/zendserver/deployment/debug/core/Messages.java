@@ -34,6 +34,17 @@ public class Messages extends NLS {
 	public static String updateJob_Title;
 
 	public static String ExisitngAppIdJob_JobTitle;
+	
+	public static String AddLibraryJob_CouldNotAddLibrary_Error;
+	public static String AddLibraryJob_Name;
+	public static String AddLibraryJob_TaskName;
+	
+	public static String DeployLibraryJob_CheckingLibraryVersionSubTask_Name;
+	public static String DeployLibraryJob_ConnectionRefused_Error;
+	public static String DeployLibraryJob_Name;
+	public static String DeployLibraryJob_PreparingDeploymenySubTask_Name;
+	public static String DeployLibraryJob_TaskName;
+	public static String DeployLibraryJob_TemporaryDeploymentDescriptor_Error;
 
 	static {
 		// initialize resource bundle

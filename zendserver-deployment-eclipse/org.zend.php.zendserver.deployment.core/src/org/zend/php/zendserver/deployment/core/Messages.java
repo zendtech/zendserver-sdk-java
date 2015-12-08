@@ -46,6 +46,8 @@ public class Messages extends NLS {
 	public static String ZendServerDependency_UnknownGetDependency;
 	public static String ZendServerDependency_UnknownSetDependency;
 	
+	public static String LibraryManager_UnknownLibraryFormat_Error;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

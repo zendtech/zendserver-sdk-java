@@ -54,6 +54,11 @@
                   </iterate>
             </visibleWhen>
          </command>
+      <command
+            defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployLibraryHandler"
+            id="org.zend.php.zendserver.deployment.debug.ui.deployLibary"
+            name="%command.name.6">
+      </command>
    </extension>
    <extension
          point="org.eclipse.php.debug.core.phpLaunchDelegateListener">
@@ -72,8 +77,11 @@
       <contribution
             class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployApplicationContribution">
       </contribution>
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployLibraryContribution">
+      </contribution>
    </extension>
-<extension
+   <extension
          id="com.zend.php.platform.ui.platformWizardFragment"
          name="Application Monitoring"
          point="org.eclipse.php.ui.wizardAndCompositeFragments">
@@ -84,68 +92,123 @@
             name="Debug Mode Fragment"
             placeAfter="org.eclipse.php.server.ui.PathMapperFragmentFactory"/>
    </extension>
-<extension
+   <extension
       point="org.zend.php.server.ui.actionContributions">
-   <action
-         class="org.zend.php.zendserver.deployment.debug.ui.actions.DebugModeAction">
-      <serverType
-            id="org.zend.php.server.ui.types.ZendServerType">
-      </serverType>
-      <serverType
-            id="org.zend.php.server.ui.types.OpenShiftServerType">
-      </serverType>
-      <serverType
-            id="org.zend.php.server.ui.types.PhpcloudServerType">
-      </serverType>
-      <serverType
-            id="org.zend.php.server.ui.types.LocalZendServerType">
-      </serverType>
-   </action>
-   <action
-         class="org.zend.php.zendserver.deployment.debug.ui.actions.SSHTunnelAction">
-      <serverType
-            id="org.zend.php.server.ui.types.OpenShiftServerType">
-      </serverType>
-      <serverType
-            id="org.zend.php.server.ui.types.PhpcloudServerType">
-      </serverType>
-      <serverType
-            id="org.zend.php.server.ui.types.ZendServerType">
-      </serverType>
-      <serverType
-            id="org.eclipse.php.server.ui.types.BasicServerType">
-      </serverType>
-   </action>
-</extension>
- <extension point="org.eclipse.ui.menus">
-    <menuContribution locationURI="popup:org.eclipse.php.ui.explorer?after=additions">
-      <command
-            commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
-            icon="icons/obj16/deploy_exc.png"
-            label="%command.label.9"
-            style="push">
-         <visibleWhen
-               checkEnabled="false">
-            <iterate
-                  ifEmpty="false"
-                  operator="and">
-               <adapt
-                     type="org.eclipse.core.resources.IResource">
-               </adapt>
-               <test
-                     forcePluginActivation="true"
-                     property="org.zend.php.zendserver.deployment.ui.deploy"
-                     value="true">
-               </test>
-            </iterate>
-         </visibleWhen>
-      </command>
-    </menuContribution>
-    </extension>
- <extension
-       point="org.zend.php.server.ui.dragAndDropContribution">
-    <contribution
-          class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployProjectContribution">
-    </contribution>
- </extension>
+      <action
+            class="org.zend.php.zendserver.deployment.debug.ui.actions.DebugModeAction">
+         <serverType
+               id="org.zend.php.server.ui.types.ZendServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.OpenShiftServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.PhpcloudServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.LocalZendServerType">
+         </serverType>
+      </action>
+      <action
+            class="org.zend.php.zendserver.deployment.debug.ui.actions.SSHTunnelAction">
+         <serverType
+               id="org.zend.php.server.ui.types.OpenShiftServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.PhpcloudServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.ZendServerType">
+         </serverType>
+         <serverType
+               id="org.eclipse.php.server.ui.types.BasicServerType">
+         </serverType>
+      </action>
+      <action
+            class="org.zend.php.zendserver.deployment.debug.ui.actions.DeployLibraryAction">
+         <serverType
+               id="org.zend.php.server.ui.types.ZendServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.OpenShiftServerType">
+         </serverType>
+         <serverType
+               id="org.zend.php.server.ui.types.PhpcloudServerType">
+         </serverType>
+         <serverType
+              id="org.zend.php.server.ui.types.LocalZendServerType">
+         </serverType>
+      </action>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.php.ui.explorer?after=additions">
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.deployProject"
+               icon="icons/obj16/deploy_exc.png"
+               label="%command.label.9"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.zend.php.zendserver.deployment.ui.deploy"
+                        value="true">
+                  </test>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.php.ui.explorer?after=additions">
+         <command
+               commandId="org.zend.php.zendserver.deployment.debug.ui.deployLibary"
+               icon="icons/obj16/library_obj.gif"
+               label="%command.label.9"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.zend.php.zendserver.deployment.ui.deploy"
+                        value="true">
+                  </test>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.zend.php.server.ui.dragAndDropContribution">
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.DeployProjectContribution">
+      </contribution>
+      <contribution
+            class="org.zend.php.zendserver.deployment.debug.ui.contributions.PHPServersViewContribution">
+      </contribution>
+   </extension>
+   <extension
+         point="org.eclipse.php.ui.libraryButtonHandlers">
+      <handler
+            class="org.zend.php.zendserver.deployment.debug.ui.preferences.DeployButtonHandler">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.php.ui.libraryButtonHandlers">
+      <handler
+            class="org.zend.php.zendserver.deployment.debug.ui.preferences.ImportZpkHandler">
+      </handler>
+   </extension>
 </plugin>
