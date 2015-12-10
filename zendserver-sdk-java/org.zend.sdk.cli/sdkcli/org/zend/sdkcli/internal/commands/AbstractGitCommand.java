@@ -16,7 +16,6 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdkcli.internal.ssh.GithubSshSessionFactory;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 
 /**
  * 
@@ -74,17 +73,6 @@ public abstract class AbstractGitCommand extends AbstractCommand {
 			}
 		}
 		String password = getPassword();
-		if (password == null) {
-			ZendDevCloud cloud = new ZendDevCloud();
-			password = cloud.getContainerPassword(username);
-			if (password == null) {
-				password = String.valueOf(System.console().readPassword(
-						"Password: "));
-				if (shouldSavePassword()) {
-					cloud.setContainerPassword(username, password);
-				}
-			}
-		}
 		return new UsernamePasswordCredentialsProvider(username, password);
 	}
 

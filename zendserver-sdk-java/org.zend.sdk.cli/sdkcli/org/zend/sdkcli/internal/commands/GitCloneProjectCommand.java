@@ -21,7 +21,6 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.URIish;
-import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
@@ -62,7 +61,7 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 		CloneCommand clone = new CloneCommand();
 		String repo = getRepo();
 		clone.setURI(repo);
-		clone.setRemote(GitHelper.getRemote(repo));
+		clone.setRemote(Constants.DEFAULT_REMOTE_NAME);
 		File dir = null;
 		try {
 			dir = getDirectory(repo);
@@ -134,15 +133,9 @@ public class GitCloneProjectCommand extends AbstractGitCommand {
 			return false;
 		}
 		updateProject(dir);
-		if (GitHelper.ZEND_CLOUD_REMOTE.equals(GitHelper.getRemote(repo))) {
-			getLogger().info(
-					"The remote name used to keep track of the phpCloud repository is: "
-							+ GitHelper.ZEND_CLOUD_REMOTE);
-		} else {
-			getLogger().info(
-					"The remote name used to keep track of the cloned repository is: "
-							+ Constants.DEFAULT_REMOTE_NAME);
-		}
+		getLogger().info(
+				"The remote name used to keep track of the cloned repository is: "
+						+ Constants.DEFAULT_REMOTE_NAME);
 		return true;
 	}
 

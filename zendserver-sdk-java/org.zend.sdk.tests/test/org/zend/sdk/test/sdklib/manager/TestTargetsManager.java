@@ -282,40 +282,6 @@ public class TestTargetsManager extends AbstractTest {
 		assertEquals("target1", manager.createUniqueId("target"));
 	}
 
-	@Test
-	public void testIsPhpcloudTargetFalse() throws MalformedURLException {
-		IZendTarget target = new ZendTarget("dev4",
-				new URL("http://localhost"), "mykey", "43543");
-		assertFalse(TargetsManager.isPhpcloud(target));
-	}
-
-	@Test
-	public void testIsPhpcloudTargetTrue() throws MalformedURLException {
-		IZendTarget target = new ZendTarget("dev4", new URL(
-				"http://test.my.phpcloud.com"), "mykey", "43543");
-		assertTrue(TargetsManager.isPhpcloud(target));
-	}
-
-	@Test
-	public void testIsPhpcloudTargetNull() throws MalformedURLException {
-		assertFalse(TargetsManager.isPhpcloud((IZendTarget) null));
-	}
-
-	@Test
-	public void testIsPhpcloudHostFalse() throws MalformedURLException {
-		assertFalse(TargetsManager.isPhpcloud("http://localhost"));
-	}
-
-	@Test
-	public void testIsPhpcloudHostTrue() throws MalformedURLException {
-		assertTrue(TargetsManager.isPhpcloud("http://test.my.phpcloud.com"));
-	}
-
-	@Test
-	public void testIsPhpcloudHostNull() throws MalformedURLException {
-		assertFalse(TargetsManager.isPhpcloud((String) null));
-	}
-
 	private IZendTarget getTarget() throws WebApiException, LicenseExpiredException {
 		IZendTarget target = null;
 		try {

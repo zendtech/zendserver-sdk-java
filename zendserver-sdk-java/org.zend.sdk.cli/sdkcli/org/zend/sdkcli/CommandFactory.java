@@ -24,9 +24,7 @@ import org.zend.sdkcli.internal.commands.ExportIssueCommand;
 import org.zend.sdkcli.internal.commands.GenerateRepositoryCommand;
 import org.zend.sdkcli.internal.commands.ExportCodetraceCommand;
 import org.zend.sdkcli.internal.commands.GetIssueCommand;
-import org.zend.sdkcli.internal.commands.GitAddRemoteCommand;
 import org.zend.sdkcli.internal.commands.GitCloneProjectCommand;
-import org.zend.sdkcli.internal.commands.GitPushApplicationCommand;
 import org.zend.sdkcli.internal.commands.ListApplicationsCommand;
 import org.zend.sdkcli.internal.commands.ListCodetracingCommand;
 import org.zend.sdkcli.internal.commands.ListIssuesCommand;
@@ -75,12 +73,6 @@ public class CommandFactory {
 			break;
 		case CLONE_PROJECT:
 			command = new GitCloneProjectCommand();
-			break;
-		case PUSH_APPLICATION:
-			command = new GitPushApplicationCommand();
-			break;
-		case ADD_REMOTE:
-			command = new GitAddRemoteCommand();
 			break;
 		case LIST_TARGETS:
 			command = new ListTargetsCommand();

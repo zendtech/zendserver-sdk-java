@@ -24,9 +24,6 @@ public enum CommandType {
 
 	CLONE_PROJECT("clone", "project", "Clone project from git repository"),
 
-	PUSH_APPLICATION("push", "application",
-			"Push local application to the phpCloud git repository"),
-
 	ADD_REMOTE("add", "remote",
 			"Add new remote to specified local git repository"),
 

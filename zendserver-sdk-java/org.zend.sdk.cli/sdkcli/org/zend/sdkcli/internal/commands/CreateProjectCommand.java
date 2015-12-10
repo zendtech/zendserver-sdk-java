@@ -24,8 +24,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.TextProgressMonitor;
-import org.zend.sdkcli.GitHelper;
 import org.zend.sdkcli.internal.mapping.CliMappingLoader;
 import org.zend.sdkcli.internal.options.Option;
 import org.zend.sdklib.application.ZendProject;
@@ -141,7 +141,7 @@ public class CreateProjectCommand extends AbstractCommand {
 	public boolean cloneRepository(String repo, File dir) {
 		CloneCommand clone = new CloneCommand();
 		clone.setURI(repo);
-		clone.setRemote(GitHelper.getRemote(repo));
+		clone.setRemote(Constants.DEFAULT_REMOTE_NAME);
 		clone.setDirectory(dir);
 		clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(
 				System.out)));

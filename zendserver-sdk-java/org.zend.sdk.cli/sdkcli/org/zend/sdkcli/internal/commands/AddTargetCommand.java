@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.zend.sdkcli.internal.options.Option;
-import org.zend.sdklib.SdkException;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -41,7 +39,6 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
 public class AddTargetCommand extends TargetAwareCommand {
 
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
-	private static final int[] possiblePhpcloudPorts = new int[] { 10082 };
 
 	// properties file keys
 	private static final String PROP_SECRETKEY = "secretkey";
@@ -53,14 +50,8 @@ public class AddTargetCommand extends TargetAwareCommand {
 	private static final String SECRETKEY = "s";
 	private static final String HOST = "h";
 	private static final String PROPERTIES = "p";
-	private static final String DEVPASS = "d";
 
 	private Properties props;
-
-	@Option(opt = DEVPASS, required = false, description = "The DevPaas username and password concatenated by a colon", argName = "user:pass")
-	public String getDevPaas() {
-		return getValue(DEVPASS);
-	}
 
 	@Option(opt = ID, required = false, description = "id of the new target", argName = "id")
 	public String getId() {
@@ -106,59 +97,31 @@ public class AddTargetCommand extends TargetAwareCommand {
 	@Override
 	public boolean doExecute() {
 		String targetId = getId();
-		String devPaas = getDevPaas();
 		TargetsManager targetManager = getTargetManager();
 		List<IZendTarget> targets = new ArrayList<IZendTarget>();
-		// resolve phpcloud account properties
-		if (devPaas != null) {
-			IZendTarget[] phpcloudTargets = resolveTarget(devPaas);
-			if (phpcloudTargets != null) {
-				String id = targetId != null ? targetId : targetManager
-						.createUniqueId(null);
-				int i = 0;
-				for (IZendTarget zendTarget : phpcloudTargets) {
-					String key = zendTarget.getKey();
-					String secretKey = zendTarget.getSecretKey();
-					String host = zendTarget.getHost().toString();
-					IZendTarget target = null;
-					try {
-						target = new ZendTarget(id + "_" + i++, new URL(host),
-								key, secretKey);
-						targets.add(target);
-					} catch (MalformedURLException e) {
-						getLogger()
-								.error(MessageFormat
-										.format("Cannot add target {0}. Invalid host value.",
-												getId()));
-					}
-				}
-
-			}
-		} else {
-			String key = getKey();
-			String secretKey = getSecretKey();
-			String host = getHost();
-			File props = getPropertiesFile();
-			if (host == null
-					|| ((key == null || secretKey == null) && (props == null || !props
-							.exists()))) {
-				getLogger()
-						.error("To create target it is required to provide hostname, key and secret key. "
-								+ "They can be provided through a properties file or as command's arguments.");
-				return false;
-			}
-			if (targetId == null) {
-				targetId = targetManager.createUniqueId(null);
-			}
-			try {
-				targets.add(new ZendTarget(targetId, new URL(host), key,
-						secretKey));
-			} catch (MalformedURLException e) {
-				getLogger().error(
-						MessageFormat.format(
-								"Cannot add target {0}. Invalid host value.",
-								getId()));
-			}
+		String key = getKey();
+		String secretKey = getSecretKey();
+		String host = getHost();
+		File props = getPropertiesFile();
+		if (host == null
+				|| ((key == null || secretKey == null) && (props == null || !props
+						.exists()))) {
+			getLogger()
+					.error("To create target it is required to provide hostname, key and secret key. "
+							+ "They can be provided through a properties file or as command's arguments.");
+			return false;
+		}
+		if (targetId == null) {
+			targetId = targetManager.createUniqueId(null);
+		}
+		try {
+			targets.add(new ZendTarget(targetId, new URL(host), key,
+					secretKey));
+		} catch (MalformedURLException e) {
+			getLogger().error(
+					MessageFormat.format(
+							"Cannot add target {0}. Invalid host value.",
+							getId()));
 		}
 		List<IZendTarget> toRemove = new ArrayList<IZendTarget>();
 		for (IZendTarget t : targets) {
@@ -246,9 +209,6 @@ public class AddTargetCommand extends TargetAwareCommand {
 			throws WebApiException, LicenseExpiredException {
 		WebApiException catchedException = null;
 		int[] portToTest = possiblePorts;
-		if (TargetsManager.isPhpcloud(target)) {
-			portToTest = possiblePhpcloudPorts;
-		}
 		if (target.getHost().getPort() == -1) {
 			for (int port : portToTest) {
 				URL old = target.getHost();
@@ -275,35 +235,6 @@ public class AddTargetCommand extends TargetAwareCommand {
 		}
 		if (catchedException != null) {
 			throw catchedException;
-		}
-		return null;
-	}
-
-	private IZendTarget[] resolveTarget(final String devPaas) {
-		final ZendDevCloud detect = new ZendDevCloud();
-		final String[] split = devPaas.split(":");
-		if (split.length != 2) {
-
-			final String message = "Error resolving devpaas account properties: "
-					+ devPaas
-					+ ". Argument should include both user and password concatenated by "
-					+ "colon, for example john.dohe:8hi8Rfe";
-
-			getLogger().error(message);
-			throw new IllegalStateException(message);
-
-		}
-		try {
-			final IZendTarget[] targets = detect.detectTarget(split[0],
-					split[1]);
-
-			if (targets != null && targets.length > 0) {
-				return targets;
-			}
-		} catch (SdkException e) {
-			getLogger().error(e);
-		} catch (IOException e) {
-			getLogger().error(e);
 		}
 		return null;
 	}
