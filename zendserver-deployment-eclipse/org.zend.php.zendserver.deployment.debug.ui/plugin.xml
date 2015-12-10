@@ -103,9 +103,6 @@
                id="org.zend.php.server.ui.types.OpenShiftServerType">
          </serverType>
          <serverType
-               id="org.zend.php.server.ui.types.PhpcloudServerType">
-         </serverType>
-         <serverType
                id="org.zend.php.server.ui.types.LocalZendServerType">
          </serverType>
       </action>
@@ -113,9 +110,6 @@
             class="org.zend.php.zendserver.deployment.debug.ui.actions.SSHTunnelAction">
          <serverType
                id="org.zend.php.server.ui.types.OpenShiftServerType">
-         </serverType>
-         <serverType
-               id="org.zend.php.server.ui.types.PhpcloudServerType">
          </serverType>
          <serverType
                id="org.zend.php.server.ui.types.ZendServerType">
@@ -131,9 +125,6 @@
          </serverType>
          <serverType
                id="org.zend.php.server.ui.types.OpenShiftServerType">
-         </serverType>
-         <serverType
-               id="org.zend.php.server.ui.types.PhpcloudServerType">
          </serverType>
          <serverType
               id="org.zend.php.server.ui.types.LocalZendServerType">

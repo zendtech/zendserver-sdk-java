@@ -43,8 +43,6 @@ public class Messages extends NLS {
 	public static String OpenDatabaseConnectionAction_TaskName;
 	public static String OpenShiftServerType_Description;
 	public static String OpenShiftServerType_Name;
-	public static String PhpcloudServerType_Description;
-	public static String PhpcloudServerType_Name;
 	public static String RemoveServerAction_RemoveLabel;
 	public static String ServerLaunchDelegateListener_ErrorMessage;
 	public static String ServerLaunchDelegateListener_ErrorTitle;

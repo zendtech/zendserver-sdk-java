@@ -30,9 +30,6 @@
             id="org.zend.php.server.ui.types.OpenShiftServerType">
       </serverType>
       <serverType
-            id="org.zend.php.server.ui.types.PhpcloudServerType">
-      </serverType>
-      <serverType
             id="org.zend.php.server.ui.types.LocalZendServerType">
       </serverType>
    </action>

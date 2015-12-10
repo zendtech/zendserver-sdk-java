@@ -85,25 +85,13 @@ public class OpenDatabaseConnectionAction extends Action {
 		if (targetConnection.createProfile()) {
 			boolean hasPassword = targetConnection.hasPassword();
 			if (!hasPassword) {
-				String password = TargetsManagerService.INSTANCE
-						.getContainerPassword(targetConnection.getTarget());
-				if (password != null && password.length() > 0) {
-					targetConnection.setPassword(password);
-					targetConnection.setSavePassword(true);
-					hasPassword = true;
-				}
-			}
-			if (!hasPassword) {
 				passwordProvided = true;
 				Display.getDefault().syncExec(new Runnable() {
 
 					public void run() {
 						String title = null;
 						boolean askUsername = false;
-						if (TargetsManager.isPhpcloud(targetConnection
-								.getTarget())) {
-							title = Messages.OpenDatabaseConnectionAction_ContainerPassword;
-						} else if (TargetsManager.isOpenShift(targetConnection
+						if (TargetsManager.isOpenShift(targetConnection
 								.getTarget())) {
 							title = Messages.OpenDatabaseConnectionAction_DatabasePassword;
 							askUsername = true;

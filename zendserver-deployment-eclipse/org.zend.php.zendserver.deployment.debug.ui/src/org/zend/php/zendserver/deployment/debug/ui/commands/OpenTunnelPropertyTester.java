@@ -16,7 +16,7 @@ import org.zend.sdklib.target.IZendTarget;
 
 /**
  * Property tester for Open SSH Tunnel action. It should be visible only for
- * Phpcloud and OpenShift targets.
+ * OpenShift targets.
  * 
  * @author Wojciech Galanciak, 2012
  * 
@@ -27,8 +27,7 @@ public class OpenTunnelPropertyTester extends PropertyTester {
 			Object expectedValue) {
 		if (receiver instanceof IZendTarget) {
 			IZendTarget target = (IZendTarget) receiver;
-			return TargetsManager.isOpenShift(target)
-					|| TargetsManager.isPhpcloud(target);
+			return TargetsManager.isOpenShift(target);
 		}
 		return false;
 	}

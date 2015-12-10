@@ -12,10 +12,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -44,19 +42,6 @@ public class EclipseTargetsManager extends TargetsManager {
 	}
 	
 	@Override
-	protected void load() {
-		super.load();
-		IZendTarget[] targets = getTargets();
-		for (IZendTarget target : targets) {
-			if (isPhpcloud(target)) {
-				if (EclipseSSH2Settings.registerDevCloudTarget(target, false)) {
-					updateTarget(target, true);
-				}
-			}
-		}
-	}
-
-	@Override
 	public IZendTarget add(IZendTarget target,
 			boolean suppressConnect) throws TargetException,
 			LicenseExpiredException {
@@ -73,15 +58,6 @@ public class EclipseTargetsManager extends TargetsManager {
 			} catch (MalformedURLException e) {
 				// should not occur
 			}
-			if (TargetsManager.isPhpcloud(t)
-					&& t.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH) == null) {
-				SSHTunnelConfiguration config = SSHTunnelConfiguration
-						.read(server);
-				String privateKey = config.getPrivateKey();
-				if (privateKey != null) {
-					t.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, privateKey);
-				}
-			}
 		}
 		IZendTarget result = super.add(target, suppressConnect);
 		for (ITargetsManagerListener listener : listeners) {
@@ -96,7 +72,6 @@ public class EclipseTargetsManager extends TargetsManager {
 		for (ITargetsManagerListener listener : listeners) {
 			listener.targetRemoved(target);
 		}
-		EclipseSSH2Settings.unregisterDevCloudTarget(target);
 		return super.remove(target);
 	}
 

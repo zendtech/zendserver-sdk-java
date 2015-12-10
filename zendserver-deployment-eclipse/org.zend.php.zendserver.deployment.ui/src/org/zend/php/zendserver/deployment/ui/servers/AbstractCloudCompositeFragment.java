@@ -28,16 +28,14 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.ui.fragments.AbstractCompositeFragment;
 import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
- * Abstract composite for Phpcloud and OpenShift fragments.
+ * Abstract composite for OpenShift fragments.
  * 
  * @author Wojciech Galanciak, 2014
  * 
@@ -113,7 +111,7 @@ public abstract class AbstractCloudCompositeFragment extends
 			}
 		}
 		try {
-			EclipseSSH2Settings.createPrivateKey(ZendDevCloud.KEY_TYPE, file);
+			EclipseSSH2Settings.createPrivateKey(EclipseSSH2Settings.RSA, file);
 			return file;
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(
@@ -154,26 +152,6 @@ public abstract class AbstractCloudCompositeFragment extends
 		for (Server server : servers) {
 			if (server.getHost().equals(host)) {
 				return server;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Check if there is already a target with specified host URL
-	 * 
-	 * @param target
-	 * @return {@link IZendTarget} instance which has specified URL or
-	 *         <code>null</code> if such target does not exist
-	 */
-	protected IZendTarget findExistingTarget(IZendTarget target) {
-		TargetsManager manager = TargetsManagerService.INSTANCE
-				.getTargetManager();
-		IZendTarget[] targets = manager.getTargets();
-		for (IZendTarget t : targets) {
-			if (TargetsManager.isPhpcloud(t)
-					&& t.getHost().getHost().equals(target.getHost().getHost())) {
-				return t;
 			}
 		}
 		return null;
@@ -221,9 +199,9 @@ public abstract class AbstractCloudCompositeFragment extends
 					unique = false;
 					// only update private key path and then skip it
 					String privateKey = target
-							.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
+							.getProperty(EclipseSSH2Settings.SSH_PRIVATE_KEY_PATH);
 					ZendTarget toUpdate = (ZendTarget) existingTarget;
-					toUpdate.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH,
+					toUpdate.addProperty(EclipseSSH2Settings.SSH_PRIVATE_KEY_PATH,
 							privateKey);
 					manager.updateTarget(existingTarget, true);
 					Server server = ServerUtils.getServer(existingTarget);

@@ -35,8 +35,6 @@ import org.zend.sdklib.target.IZendTarget;
  */
 public class StopDebugModeHandler extends AbstractHandler {
 
-	private static final String CONTAINER = "container"; //$NON-NLS-1$
-
 	private IZendTarget target;
 
 	/*
@@ -47,28 +45,20 @@ public class StopDebugModeHandler extends AbstractHandler {
 	 * .ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String containerName = event.getParameter(CONTAINER);
-
-		if (containerName != null) {
-			target = TargetsManagerService.INSTANCE
-					.getContainerByName(containerName);
-		} else {
-			IEvaluationContext ctx = (IEvaluationContext) event
-					.getApplicationContext();
-			Object element = ctx.getDefaultVariable();
-			if (element instanceof List) {
-				List<?> list = (List<?>) element;
-				if (list.size() > 0) {
-					element = list.get(0);
-				}
-			}
-			if (element instanceof IZendTarget) {
-				target = (IZendTarget) element;
+		IEvaluationContext ctx = (IEvaluationContext) event
+				.getApplicationContext();
+		Object element = ctx.getDefaultVariable();
+		if (element instanceof List) {
+			List<?> list = (List<?>) element;
+			if (list.size() > 0) {
+				element = list.get(0);
 			}
 		}
+		if (element instanceof IZendTarget) {
+			target = (IZendTarget) element;
+		}
 		if (target == null) {
-			throw new ExecutionException(NLS.bind(
-					Messages.OpenTunnelCommand_UnknownContainer, containerName));
+			throw new ExecutionException(Messages.OpenTunnelCommand_NoTarget);
 		}
 		NotificationManager.registerProgress(
 				Messages.DebugModeHandler_DebugModeLabel,

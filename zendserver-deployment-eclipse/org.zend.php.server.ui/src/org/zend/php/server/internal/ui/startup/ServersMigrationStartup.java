@@ -27,7 +27,6 @@ import org.zend.sdklib.target.IZendTarget;
  * migrating old PHP servers which do not have server type defined. It checks
  * following types:
  * <ul>
- * <li>Phpcloud</li>
  * <li>OpenShift</li>
  * <li>Zend Server</li>
  * <li>Local Apache HTTP Server</li>
@@ -38,8 +37,6 @@ import org.zend.sdklib.target.IZendTarget;
  */
 @SuppressWarnings("restriction")
 public class ServersMigrationStartup extends AbstractMigrationService {
-
-	private static final String PHPCLOUD_TYPE = "org.zend.php.server.ui.types.PhpcloudServerType"; //$NON-NLS-1$
 
 	@Override
 	protected boolean migrate(Server server) {
@@ -55,12 +52,6 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 								.getTarget(server));
 				config.store(server);
 				typeId = OpenShiftServerType.ID;
-			} else if (isPhpcloud(server)) {
-				SSHTunnelConfiguration config = SSHTunnelConfiguration
-						.createPhpcloudConfiguration(server,
-								ServerUtils.getTarget(server));
-				config.store(server);
-				typeId = ZendServerType.ID;
 			} else if (isZendServer(server)) {
 				typeId = ZendServerType.ID;
 				return true;
@@ -71,9 +62,6 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 				setType(server, typeId);
 				return true;
 			}
-		} else if (PHPCLOUD_TYPE.equals(typeId)) {
-			setType(server, ZendServerType.ID);
-			return true;
 		}
 		return false;
 	}
@@ -86,11 +74,6 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 	private boolean isOpenShift(Server server) {
 		IZendTarget target = ServerUtils.getTarget(server);
 		return TargetsManager.isOpenShift(target);
-	}
-
-	private boolean isPhpcloud(Server server) {
-		IZendTarget target = ServerUtils.getTarget(server);
-		return TargetsManager.isPhpcloud(target);
 	}
 
 	private boolean isZendServer(Server server) {

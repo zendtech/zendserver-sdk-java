@@ -60,7 +60,6 @@ import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftTargetWizardDialog
 import org.zend.sdklib.SdkException;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -74,7 +73,7 @@ import org.zend.sdklib.target.LicenseExpiredException;
 @SuppressWarnings("restriction")
 public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 
-	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.PhpcloudCompositeFragment"; //$NON-NLS-1$
+	public static String ID = "org.zend.php.zendserver.deployment.ui.preferences.OpenShiftCompositeFragment"; //$NON-NLS-1$
 
 	private static final String RESTORE_PASSWORD_URL = "https://openshift.redhat.com/app/account/password/new"; //$NON-NLS-1$
 	private static final String CREATE_ACCOUNT_URL = "https://openshift.redhat.com/app/account/new"; //$NON-NLS-1$
@@ -233,8 +232,7 @@ public class OpenShiftCompositeFragment extends AbstractCloudCompositeFragment {
 				false));
 		privateKeyText
 				.setToolTipText(Messages.OpenShiftCompositeFragment_KeyTooltip);
-		File existingKey = EclipseSSH2Settings
-				.getPrivateKey(ZendDevCloud.KEY_TYPE);
+		File existingKey = EclipseSSH2Settings.getPrivateKey(EclipseSSH2Settings.RSA);
 		if (existingKey != null) {
 			privateKeyText.setText(existingKey.getPath());
 		}

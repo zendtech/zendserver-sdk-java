@@ -71,8 +71,7 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
 			String host = helper.getTargetHost();
 			if (LaunchUtils.isAutoDeployAvailable()
-					&& (TargetsManager.isPhpcloud(host)
-							|| TargetsManager.isOpenShift(host) || TargetsManager
+					&& (TargetsManager.isOpenShift(host) || TargetsManager
 								.isLocalhost(host))) {
 				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
 						IDeploymentHelper.NO_ACTION);

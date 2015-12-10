@@ -9,11 +9,9 @@ import org.eclipse.php.internal.server.core.manager.IServersManagerListener;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.osgi.framework.BundleContext;
 import org.zend.php.zendserver.deployment.core.sdk.SdkManager;
-import org.zend.php.zendserver.deployment.core.targets.PhpcloudContainerListener;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
 import org.zend.webapi.core.IWebApiLogger;
 import org.zend.webapi.core.WebApiClient;
-import org.zend.webapi.core.service.IRequestListener;
 
 @SuppressWarnings("restriction")
 public class DeploymentCore extends Plugin {
@@ -25,8 +23,6 @@ public class DeploymentCore extends Plugin {
 	private static DeploymentCore plugin;
 
 	private SdkManager sdkManager;
-
-	private IRequestListener containerListener;
 
 	private IServersManagerListener serversListener;
 
@@ -50,8 +46,6 @@ public class DeploymentCore extends Plugin {
 		super.start(context);
 		DeploymentCore.context = context;
 		sdkManager = new SdkManager();
-		containerListener = new PhpcloudContainerListener();
-		WebApiClient.registerPreRequestListener(containerListener);
 		WebApiClient.setLogger(new IWebApiLogger() {
 
 			@Override
@@ -98,7 +92,6 @@ public class DeploymentCore extends Plugin {
 		super.stop(bundleContext);
 		DeploymentCore.context = null;
 		SSHTunnelManager.getManager().disconnectAll();
-		WebApiClient.unregisterPreRequestListener(containerListener);
 		ServersManager.removeManagerListener(serversListener);
 	}
 

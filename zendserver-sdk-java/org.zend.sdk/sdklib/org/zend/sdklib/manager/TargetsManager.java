@@ -23,7 +23,6 @@ import java.util.Set;
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
 import org.zend.sdklib.target.ITargetLoader;
@@ -651,29 +650,6 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} while (!isIdAvailable(id));
 
 		return id;
-	}
-
-	/**
-	 * Allows to check if specified target is a phpcloud container.
-	 * 
-	 * @param target
-	 * @return <code>true</code> if provided target is a phpcloud container;
-	 *         otherwise return <code>false</code>
-	 */
-	public static boolean isPhpcloud(IZendTarget target) {
-		return target != null && isPhpcloud(target.getHost().getHost());
-	}
-
-	/**
-	 * Allows to check if specified host is a phpcloud container's host.
-	 * 
-	 * @param targetHost
-	 * @return <code>true</code> if provided host is a phpcloud container's
-	 *         host; otherwise return <code>false</code>
-	 */
-	public static boolean isPhpcloud(String targetHost) {
-		return targetHost != null
-				&& targetHost.contains(ZendDevCloud.DEVPASS_HOST);
 	}
 
 	/**

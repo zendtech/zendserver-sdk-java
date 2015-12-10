@@ -21,7 +21,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
-import org.zend.php.zendserver.deployment.core.targets.EclipseSSH2Settings;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.sdklib.manager.TargetsManager;
@@ -158,7 +157,6 @@ public class DeploymentUtils {
 		if (target == null) {
 			return false;
 		}
-		EclipseSSH2Settings.registerDevCloudTarget(target, true);
 		return true;
 	}
 

@@ -60,10 +60,6 @@ public class DeploymentLaunchListener implements ILaunchDelegateListener {
 						debuggerConfiguration.setPort(17000);
 						debuggerConfiguration.save();
 					}
-					if (TargetsManager.isPhpcloud(targetHost)) {
-						debuggerConfiguration.setPort(10137);
-						debuggerConfiguration.save();
-					}
 				}
 			}
 			return result;

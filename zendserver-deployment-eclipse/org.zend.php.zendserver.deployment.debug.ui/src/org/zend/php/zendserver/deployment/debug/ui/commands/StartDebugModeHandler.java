@@ -51,7 +51,6 @@ public class StartDebugModeHandler extends AbstractTunnelHandler {
 		String serverName = target.getServerName();
 		final Server server = ServersManager.getServer(serverName);
 		if (TargetsManager.isOpenShift(target)
-				|| TargetsManager.isPhpcloud(target)
 				&& !SSHTunnelManager.getManager().isConnected(server.getHost())) {
 			final IZendTarget finalTarget = target;
 			openTunnel(target, new INotificationChangeListener() {

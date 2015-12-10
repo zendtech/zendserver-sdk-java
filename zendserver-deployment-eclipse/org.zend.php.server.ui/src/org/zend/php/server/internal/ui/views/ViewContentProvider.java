@@ -97,9 +97,6 @@ class ViewContentProvider implements IStructuredContentProvider,
 
 	private boolean hasDatabaseSupport(IZendTarget target) {
 		if (target != null) {
-			if (TargetsManager.isPhpcloud(target)) {
-				return true;
-			}
 			if (TargetsManager.isOpenShift(target)
 					&& OpenShiftTarget.hasDatabaseSupport(target)) {
 				return true;

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,80 +17,18 @@ import org.eclipse.jsch.internal.core.IConstants;
 import org.eclipse.jsch.internal.core.JSchCorePlugin;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
-import org.zend.sdklib.internal.target.ZendDevCloud;
-import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.target.IZendTarget;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPairRSA;
 
 public class EclipseSSH2Settings {
+	
+	public static final String RSA = IConstants.RSA;
+	public static final String SSH_PRIVATE_KEY_PATH = "ssh-private-key"; //$NON-NLS-1$
 
-	private static final String PEM = ".pem"; //$NON-NLS-1$
 	private static final String KEY_NAME_SEPARATOR = ","; //$NON-NLS-1$
 
-	public static boolean registerDevCloudTarget(IZendTarget target, boolean overwrite) {
-		String keyPath = target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
-		
-		if (keyPath == null) {
-			return false;
-		}
-		
-		try {
-			String newPath = copySSHKey(keyPath, target.getId(), overwrite);
-			if (!keyPath.equals(newPath)) {
-				ZendTarget zsTarget = (ZendTarget) target;
-				zsTarget.addProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH, newPath);
-				return true;
-			}
-		} catch (IOException e) {
-			// TODO handle error adding key
-		}
-		return false;
-	}
-	
-	public static void unregisterDevCloudTarget(IZendTarget target) {
-		String keyPath = target.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH);
-		if (keyPath == null) {
-			return;
-		}
-		Preferences preferences = JSchCorePlugin.getPlugin()
-				.getPluginPreferences();
-		String ssh2Home = preferences.getString(IConstants.KEY_SSH2HOME);
-		String existingPrivateKeys = preferences
-				.getString(IConstants.KEY_PRIVATEKEY);
-		List<String> existingKeys = new ArrayList<String>(Arrays.asList(existingPrivateKeys
-				.split(KEY_NAME_SEPARATOR)));
-
-		File keyFile = new File(keyPath);
-		String keyName = keyFile.getName();
-		String parent = keyFile.getParent();
-
-		if (parent != null && parent.equals(ssh2Home)) {
-			if (existingKeys.contains(keyName)) {
-				existingKeys.remove(keyName);
-				StringBuilder updatedKey = new StringBuilder();
-				for (String key : existingKeys) {
-					updatedKey.append(key);
-					updatedKey.append(KEY_NAME_SEPARATOR);
-				}
-				if (updatedKey.toString().endsWith(KEY_NAME_SEPARATOR)) {
-					existingPrivateKeys = updatedKey.substring(0,
-							updatedKey.length() - 1);
-				} else {
-					existingPrivateKeys = updatedKey.toString();
-				}
-				preferences.setValue(IConstants.KEY_PRIVATEKEY,
-						existingPrivateKeys);
-
-				JSchCorePlugin.getPlugin().setNeedToLoadKnownHosts(true);
-				JSchCorePlugin.getPlugin().setNeedToLoadKeys(true);
-				JSchCorePlugin.getPlugin().savePluginPreferences();
-			}
-		}
-	}
-	
 	public static File getPrivateKey(String type) {
 		Preferences preferences = JSchCorePlugin.getPlugin()
 				.getPluginPreferences();
@@ -100,7 +37,7 @@ public class EclipseSSH2Settings {
 	}
 	
 	public static void createPrivateKey(String type, String path) throws CoreException {
-		Assert.isTrue(IConstants.RSA.equals(type));
+		Assert.isTrue(RSA.equals(type));
 		
 		JSch jsch = JSchCorePlugin.getPlugin().getJSch();
 		KeyPairRSA pair = new KeyPairRSA(jsch);

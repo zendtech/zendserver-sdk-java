@@ -35,7 +35,6 @@ import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.database.ConnectionState;
 import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnel.State;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelManager;
@@ -381,8 +380,6 @@ public abstract class TargetDatabase implements ITargetDatabase {
 	private void savePassword() {
 		Properties props = profile.getBaseProperties();
 		if (savePassword) {
-			TargetsManagerService.INSTANCE.storeContainerPassword(target,
-					password);
 			props.setProperty(
 					IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID,
 					String.valueOf(savePassword));

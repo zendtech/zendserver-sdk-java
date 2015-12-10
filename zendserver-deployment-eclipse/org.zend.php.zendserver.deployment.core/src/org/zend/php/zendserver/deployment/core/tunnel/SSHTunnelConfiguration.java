@@ -16,7 +16,6 @@ import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding.Side;
 import org.zend.sdklib.internal.target.OpenShiftTarget;
-import org.zend.sdklib.internal.target.ZendDevCloud;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -201,34 +200,6 @@ public class SSHTunnelConfiguration {
 
 	public void setHost(String host) {
 		this.host = host;
-	}
-
-	/**
-	 * Create SSH tunnel configuration for Phpcloud server.
-	 * 
-	 * @param server
-	 * @param target
-	 * @return {@link SSHTunnelConfiguration} for Phpcloud server
-	 */
-	public static SSHTunnelConfiguration createPhpcloudConfiguration(
-			Server server, IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String host = target.getHost().getHost();
-		String username = host.substring(0, host.indexOf('.'));
-		config.setUsername(username);
-		config.setPrivateKey(target
-				.getProperty(ZendDevCloud.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		portForwardings.add(PortForwarding.createRemote(10137, "127.0.0.1", //$NON-NLS-1$
-				10137));
-		String baseUrl = host.substring(host.indexOf('.'));
-		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(),
-				username + "-db" + baseUrl, 3306)); //$NON-NLS-1$
-		config.setPortForwardings(portForwardings);
-		config.setHttpProxyHost(host);
-		config.setHttpProxyPort("21653"); //$NON-NLS-1$
-		return config;
 	}
 
 	/**

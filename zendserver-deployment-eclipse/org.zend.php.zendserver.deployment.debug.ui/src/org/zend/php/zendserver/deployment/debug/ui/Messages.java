@@ -175,8 +175,6 @@ public class Messages extends NLS {
 	public static String DeploymentHandler_sshTunnelErrorMessage;
 	public static String DeploymentHandler_sshTunnelErrorTitle;
 
-	public static String updateExistingAppDevCloudDialog_Message;
-
 	public static String DeploymentParameters_Title;
 
 	public static String DeploymentWizard_DebugDesc;
@@ -203,7 +201,7 @@ public class Messages extends NLS {
 
 	public static String OpenTunnelCommand_TunnelOpenedMessage;
 
-	public static String OpenTunnelCommand_UnknownContainer;
+	public static String OpenTunnelCommand_NoTarget;
 
 	public static String PasswordValidator_InvalidPassword;
 

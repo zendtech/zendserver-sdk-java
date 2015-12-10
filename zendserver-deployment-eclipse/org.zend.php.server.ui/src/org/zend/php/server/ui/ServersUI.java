@@ -48,10 +48,6 @@ public class ServersUI extends AbstractUIPlugin {
 	public static final String OPENSHIFT_TYPE_ICON = "icons/obj32/openshift.png"; //$NON-NLS-1$
 	public static final String OPENSHIFT_WIZ = "icons/wizban/openshift_wiz.png"; //$NON-NLS-1$
 
-	public static final String PHPCLOUD_ICON = "icons/obj16/phpcloud.png"; //$NON-NLS-1$
-	public static final String PHPCLOUD_TYPE_ICON = "icons/obj32/phpcloud.png"; //$NON-NLS-1$
-	public static final String PHPCLOUD_WIZ = "icons/wizban/phpcloud_wiz.png"; //$NON-NLS-1$
-
 	public static final String IMAGE_DATABASE = "icons/obj16/database.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DATABASE_CREATE = "icons/obj16/database_create.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DATABASE_ON = "icons/obj16/database_on.gif"; //$NON-NLS-1$

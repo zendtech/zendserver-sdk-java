@@ -11,7 +11,7 @@ import org.eclipse.datatools.connectivity.IConnectionProfile;
 import org.zend.php.zendserver.deployment.core.Messages;
 
 /**
- * Represents possible connection state for phpcloud database.
+ * Represents possible connection state for cloud database.
  * 
  * @author Wojciech Galanciak, 2012
  * 

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.database;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,10 +50,10 @@ public class TargetsDatabaseManager {
 	}
 
 	/**
-	 * Create {@link ITargetDatabase} instance for specified phpcloud container.
+	 * Create {@link ITargetDatabase} instance for specified cloud container.
 	 * 
 	 * @param target
-	 *            phpcloud container
+	 *            cloud container
 	 * @return TargetDatabase instance
 	 */
 	public ITargetDatabase getConnection(IZendTarget target) {
@@ -74,36 +73,6 @@ public class TargetsDatabaseManager {
 	}
 
 	/**
-	 * Connect to the database of specified phpcloud container.
-	 * 
-	 * @param target
-	 *            phpcloud container
-	 * @param monitor
-	 *            progress monitor
-	 * @return <code>true</code> if connected successfully; otherwise return
-	 *         <code>false</code>
-	 * @throws IOException
-	 */
-	public boolean connect(IZendTarget target, IProgressMonitor monitor)
-			throws IOException {
-		ITargetDatabase connection = getConnection(target);
-		return openConnection(connection, monitor);
-	}
-
-	/**
-	 * Disconnect database connection for specified phpcloud container.
-	 * 
-	 * @param target
-	 *            phpcloud container
-	 */
-	public void disconnect(IZendTarget target) {
-		ITargetDatabase connection = connections.get(target);
-		if (connection != null) {
-			connection.disconnect();
-		}
-	}
-
-	/**
 	 * Propagate connection state change of spacified {@link ITargetDatabase}.
 	 * 
 	 * @param targetDatabase
@@ -115,16 +84,6 @@ public class TargetsDatabaseManager {
 			ConnectionState state) {
 		for (ITargetDatabaseListener listener : listeners) {
 			listener.stateChanged(targetDatabase, state);
-		}
-	}
-
-	/**
-	 * Disconnect all database connections for phpcloud containers.
-	 */
-	public void disconnectAll() {
-		Set<IZendTarget> targetsSet = connections.keySet();
-		for (IZendTarget target : targetsSet) {
-			disconnect(target);
 		}
 	}
 

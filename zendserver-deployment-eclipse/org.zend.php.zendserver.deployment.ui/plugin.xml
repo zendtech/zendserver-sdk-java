@@ -38,11 +38,6 @@
             id="org.zend.php.zendserver.deployment.ui.configureNature"
             name="%command.name">
       </command>
-      <command
-            defaultHandler="org.zend.php.zendserver.deployment.ui.commands.OpenCodeTracingCommand"
-            id="org.zend.php.zendserver.deployment.ui.OpenCodeTracingSnapshot"
-            name="%command.name.4">
-      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">

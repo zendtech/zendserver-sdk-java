@@ -37,7 +37,7 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
 
 /**
  * Class responsible for testing connection with specified target(s). It can
- * handle different type of servers, including Phpcloud, OpenShift and
+ * handle different type of servers, including OpenShift and
  * local/remote Zend Server.
  * 
  * 
@@ -90,7 +90,6 @@ public class TargetConnectionTester {
 	}
 
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
-	private static final int[] possiblePhpcloudPorts = new int[] { 10082 };
 
 	private IZendTarget[] finalTargets;
 
@@ -215,9 +214,6 @@ public class TargetConnectionTester {
 			LicenseExpiredException {
 		WebApiException catchedException = null;
 		int[] portToTest = possiblePorts;
-		if (TargetsManager.isPhpcloud(target)) {
-			portToTest = possiblePhpcloudPorts;
-		}
 		if (target.getHost().getPort() == -1) {
 			for (int port : portToTest) {
 				URL old = target.getHost();

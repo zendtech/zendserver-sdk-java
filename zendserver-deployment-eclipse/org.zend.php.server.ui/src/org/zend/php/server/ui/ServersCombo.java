@@ -74,23 +74,6 @@ public class ServersCombo {
 	};
 
 	/**
-	 * Get all Phpcloud servers.
-	 */
-	public static final IServerFilter PHPCLOUD_FILTER = new IServerFilter() {
-		@Override
-		public Server[] filter(Server[] servers) {
-			List<Server> result = new ArrayList<Server>();
-			for (Server server : servers) {
-				IZendTarget target = ServerUtils.getTarget(server);
-				if (TargetsManager.isPhpcloud(target)) {
-					result.add(server);
-				}
-			}
-			return result.toArray(new Server[result.size()]);
-		}
-	};
-
-	/**
 	 * Get all OpenShift servers.
 	 */
 	public static final IServerFilter OPENSHIFT_FILTER = new IServerFilter() {

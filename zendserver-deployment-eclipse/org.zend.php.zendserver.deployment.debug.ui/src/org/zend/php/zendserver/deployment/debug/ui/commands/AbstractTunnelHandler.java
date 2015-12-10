@@ -43,8 +43,6 @@ import com.jcraft.jsch.JSchException;
  */
 public abstract class AbstractTunnelHandler extends AbstractHandler {
 
-	private static final String CONTAINER = "container"; //$NON-NLS-1$
-
 	protected void openTunnel(final IZendTarget target) {
 		NotificationManager.registerProgress(Messages.OpenTunnelCommand_Title,
 				Messages.OpenTunnelCommand_Message,
@@ -82,28 +80,21 @@ public abstract class AbstractTunnelHandler extends AbstractHandler {
 
 	protected IZendTarget getTarget(ExecutionEvent event)
 			throws ExecutionException {
-		String containerName = event.getParameter(CONTAINER);
 		IZendTarget target = null;
-		if (containerName != null) {
-			target = TargetsManagerService.INSTANCE
-					.getContainerByName(containerName);
-		} else {
-			IEvaluationContext ctx = (IEvaluationContext) event
-					.getApplicationContext();
-			Object element = ctx.getDefaultVariable();
-			if (element instanceof List) {
-				List<?> list = (List<?>) element;
-				if (list.size() > 0) {
-					element = list.get(0);
-				}
-			}
-			if (element instanceof IZendTarget) {
-				target = (IZendTarget) element;
+		IEvaluationContext ctx = (IEvaluationContext) event
+				.getApplicationContext();
+		Object element = ctx.getDefaultVariable();
+		if (element instanceof List) {
+			List<?> list = (List<?>) element;
+			if (list.size() > 0) {
+				element = list.get(0);
 			}
 		}
+		if (element instanceof IZendTarget) {
+			target = (IZendTarget) element;
+		}
 		if (target == null) {
-			throw new ExecutionException(NLS.bind(
-					Messages.OpenTunnelCommand_UnknownContainer, containerName));
+			throw new ExecutionException(Messages.OpenTunnelCommand_NoTarget);
 		}
 		return target;
 	}
@@ -111,8 +102,7 @@ public abstract class AbstractTunnelHandler extends AbstractHandler {
 	private boolean doOpenTunnel(IZendTarget target) {
 		try {
 			State result = null;
-			if (TargetsManager.isPhpcloud(target)
-					|| TargetsManager.isOpenShift(target)) {
+			if (TargetsManager.isOpenShift(target)) {
 				String serverName = target.getServerName();
 				Server server = ServersManager.getServer(serverName);
 				SSHTunnelConfiguration config = SSHTunnelConfiguration
