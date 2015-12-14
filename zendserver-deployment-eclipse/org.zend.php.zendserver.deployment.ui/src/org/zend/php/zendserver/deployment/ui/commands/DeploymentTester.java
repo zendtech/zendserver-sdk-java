@@ -34,8 +34,8 @@ import org.zend.php.zendserver.deployment.ui.Messages;
 @SuppressWarnings("restriction")
 public class DeploymentTester extends PropertyTester {
 
-	public boolean test(Object receiver, String property, Object[] args,
-			Object expectedValue) {
+	@Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		boolean result = false;
 		if (receiver instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) receiver;
@@ -64,7 +64,16 @@ public class DeploymentTester extends PropertyTester {
 						.openDescriptorContainer((IFile) deploymentDescriptor);
 				IDeploymentDescriptor descriptor = model.getDescriptorModel();
 				ProjectType projectType = descriptor.getType();
-				return (projectType == ProjectType.UNKNOWN || projectType == ProjectType.APPLICATION);
+				
+				ProjectType allowedTypes[] = new ProjectType[args.length];
+				for (int i = 0; i < args.length; i++) {
+					allowedTypes[i] = ProjectType.byName((String) args[i]);
+				}
+				for (ProjectType allowedType : allowedTypes) {
+					if(projectType == allowedType)
+						return true;
+				}
+				return false;
 				
 			} catch (CoreException e) {
 				Activator.logError(Messages.DeploymentTester_CouldNotTest_Error, e);
@@ -72,4 +81,5 @@ public class DeploymentTester extends PropertyTester {
 		}
 		return result == (Boolean) expectedValue;
 	}
+
 }
