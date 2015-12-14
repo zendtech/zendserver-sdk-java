@@ -37,22 +37,7 @@
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployProjectHandler"
             id="org.zend.php.zendserver.deployment.debug.ui.deployProject"
-            name="Deploy Project">
-               <visibleWhen
-                  checkEnabled="false">
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                     </adapt>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.zend.php.zendserver.deployment.ui.deploy"
-                        value="true">
-                     </test>
-                  </iterate>
-            </visibleWhen>
+            name="%command.name.7">
          </command>
       <command
             defaultHandler="org.zend.php.zendserver.deployment.debug.ui.commands.DeployLibraryHandler"
@@ -147,6 +132,7 @@
                         type="org.eclipse.core.resources.IResource">
                   </adapt>
                   <test
+                        args="application, unknown"
                         forcePluginActivation="true"
                         property="org.zend.php.zendserver.deployment.ui.deploy"
                         value="true">
@@ -172,6 +158,7 @@
                         type="org.eclipse.core.resources.IResource">
                   </adapt>
                   <test
+                        args="library"
                         forcePluginActivation="true"
                         property="org.zend.php.zendserver.deployment.ui.deploy"
                         value="true">

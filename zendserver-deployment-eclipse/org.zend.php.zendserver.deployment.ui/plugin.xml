@@ -42,15 +42,8 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.zend.php.zendserver.deployment.ui.commands.DeployVisibilityTester"
-            id="org.zend.php.zendserver.deployment.ui.deployVisibilityTester"
-            namespace="propertyTester.deploy"
-            properties="visible"
-            type="java.lang.Object">
-      </propertyTester>
-      <propertyTester
             class="org.zend.php.zendserver.deployment.ui.commands.DeploymentTester"
-            id="org.zend.php.zendserver.deployment.ui.deploymentTester"
+            id="org.zend.php.zendserver.deployment.ui.DeploymentTester"
             namespace="org.zend.php.zendserver.deployment.ui"
             properties="deploy"
             type="java.lang.Object">
