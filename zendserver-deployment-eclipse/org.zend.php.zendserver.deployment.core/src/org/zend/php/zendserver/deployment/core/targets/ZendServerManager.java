@@ -123,10 +123,10 @@ public class ZendServerManager {
 			return;
 		}
 		
-		String boundleName = "org.zend.php.framework.resource"; //$NON-NLS-1$
-		Bundle bundle = Platform.getBundle(boundleName); 
+		String bundleName = "org.zend.php.framework.resource"; //$NON-NLS-1$
+		Bundle bundle = Platform.getBundle(bundleName); 
 		if(bundle == null) {
-			String message = MessageFormat.format(Messages.ZendServerManager_SetupPathMapping_NoBoundleAvailable_Error, boundleName);
+			String message = MessageFormat.format(Messages.ZendServerManager_SetupPathMapping_NoBundleAvailable_Error, bundleName);
 			DeploymentCore.logError(message);
 			return;
 		}
