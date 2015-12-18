@@ -9,12 +9,15 @@ package org.zend.php.zendserver.deployment.ui;
 
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.mylyn.commons.notifications.core.AbstractNotification;
+import org.eclipse.mylyn.commons.notifications.ui.NotificationsUi;
 import org.eclipse.php.internal.debug.core.debugger.DebuggerSettingsManager;
 import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettings;
 import org.eclipse.php.internal.debug.core.debugger.IDebuggerSettingsWorkingCopy;
@@ -25,7 +28,6 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.php.server.core.types.ServerTypesManager;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -36,6 +38,8 @@ import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
+import org.zend.php.zendserver.deployment.ui.notifications.AdditionalEvent1Notification;
+import org.zend.php.zendserver.deployment.ui.notifications.LocalZendServerDetectedNotification;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
@@ -70,11 +74,21 @@ public class LocalZendServerStartup implements IStartup {
 
 		@Override
 		public void run() {
-			final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			//final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			String message = Messages.LocalZendServerStartup_ServerDetectedMessage;
 			if (willDetectWebApi)
 				message = Messages.LocalZendServerStartup_ServerDetectedWebApiMessage;
-			addServer = MessageDialog.openConfirm(shell, Messages.LocalZendServerStartup_LocalZendServer, message);
+			//addServer = MessageDialog.openConfirm(shell, Messages.LocalZendServerStartup_LocalZendServer, message);
+			LocalZendServerDetectedNotification notification = new LocalZendServerDetectedNotification();
+			notification.setDescription(message);
+			List<AbstractNotification> notifications = new ArrayList<AbstractNotification>();
+			notifications.add(notification);
+			notifications.add(new AdditionalEvent1Notification());
+//			notifications.add(new AdditionalEvent2Notification());
+//			notifications.add(new AdditionalEvent3Notification());
+//			notifications.add(new AdditionalEvent4Notification());
+//			notifications.add(new AdditionalEvent5Notification());
+			NotificationsUi.getService().notify(notifications);
 		}
 
 	}
