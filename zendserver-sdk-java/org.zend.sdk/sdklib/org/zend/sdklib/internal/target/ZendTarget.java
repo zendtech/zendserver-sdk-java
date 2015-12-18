@@ -336,9 +336,6 @@ public class ZendTarget implements IZendTarget {
 				client.setCustomVersion(version);
 			}
 			client.setServerType(serverType);
-			if (TargetsManager.isOpenShift(this)) {
-				client.setServerType(ServerType.ZEND_SERVER);
-			}
 			final SystemInfo info = client.getSystemInfo();
 			if (info.getLicenseInfo().getStatus() == LicenseInfoStatus.EXPIRED) {
 				throw new LicenseExpiredException(info.getLicenseInfo()
@@ -387,9 +384,6 @@ public class ZendTarget implements IZendTarget {
 		if (TargetsManager.checkMinVersion(this, ZendServerVersion.v6_0_0)) {
 			return ServerType.ZEND_SERVER;
 		} else {
-			if (TargetsManager.isOpenShift(this)) {
-				return ServerType.ZEND_SERVER;
-			}
 			String system = getProperty(OPERATING_SYSTEM);
 			if (system != null) {
 				system = system.toLowerCase();

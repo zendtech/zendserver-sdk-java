@@ -4,8 +4,6 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.zend.php.zendserver.deployment.ui.servers.messages"; //$NON-NLS-1$
-	public static String AbstarctCloudCompositeFragment_GenerateKeyMessage;
-	public static String AbstarctCloudCompositeFragment_GenerateKeyTitle;
 	public static String WebApiCompositeFragment_Title;
 	public static String WebApiCompositeFragment_Description;
 	public static String WebApiCompositeFragment_DetectingCredentials;

@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.zend.sdklib.manager.TargetsManager;
 
 /**
  * Zend Server credentials dialog for local target detection.
@@ -34,23 +33,16 @@ public class ZendServerCredentialsDialog extends Dialog {
 	private String password;
 	private String username;
 	private String message;
-	private String name;
-
-	public ZendServerCredentialsDialog(Shell parentShell, String title,
-			String message, String name) {
-		super(parentShell);
-		this.title = title;
-		this.message = message;
-		this.name = name;
-	}
 
 	public ZendServerCredentialsDialog(Shell parentShell, String title,
 			String message) {
-		this(parentShell, title, null, null);
+		super(parentShell);
+		this.title = title;
+		this.message = message;
 	}
 
 	public ZendServerCredentialsDialog(Shell parentShell, String title) {
-		this(parentShell, title, null, null);
+		this(parentShell, title, null);
 	}
 
 	public String getPassword() {
@@ -94,22 +86,6 @@ public class ZendServerCredentialsDialog extends Dialog {
 					SWT.COLOR_RED));
 			messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 					false, 2, 1));
-		}
-		if (name != null && TargetsManager.isOpenShift(name)) {
-			int index = name.lastIndexOf('-');
-			if (index != -1) {
-				name = name.substring(0, index);
-				index = name.lastIndexOf('/');
-				if (index != -1) {
-					name = name.substring(index + 1);
-				}
-			}
-			Label appLabel = new Label(comp, SWT.RIGHT);
-			appLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
-					false));
-			appLabel.setText(Messages.ZendServerCredentialsDialog_Application);
-			Label appName = new Label(comp, SWT.RIGHT);
-			appName.setText(name);
 		}
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
 		usernameLabel.setText(Messages.ZendServerCredentialsDialog_0);

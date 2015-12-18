@@ -26,7 +26,4 @@ public interface HelpContextIds {
 	public static final String DEPLOYMENT_XML_TAB = PREFIX
 			+ "deployment.xml_tab" + SUFFIX; //$NON-NLS-1$
 
-	public static final String ADDING_A_SERVER_OPENSHFIT_SERVER = PREFIX
-			+ "adding_an_openshift_php_server" + SUFFIX; //$NON-NLS-1$
-
 }

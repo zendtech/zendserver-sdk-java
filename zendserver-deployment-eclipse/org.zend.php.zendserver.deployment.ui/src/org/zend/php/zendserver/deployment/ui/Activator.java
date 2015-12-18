@@ -68,10 +68,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public static final String IMAGE_DESCRIPTOR_HELP = "icons/obj16/help.gif"; //$NON-NLS-1$
 
 	public static final String IMAGE_TARGET = "icons/obj16/server.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DATABASE = "icons/obj16/database.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DATABASE_CREATE = "icons/obj16/database_create.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DATABASE_ON = "icons/obj16/database_on.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DATABASE_OFF = "icons/obj16/database_off.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DETECT_TARGET = "icons/obj16/detect_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ADD_TARGET = "icons/obj16/new_target.gif"; //$NON-NLS-1$
 	public static final String IMAGE_EDIT_TARGET = "icons/obj16/edit_target.gif"; //$NON-NLS-1$
@@ -84,11 +80,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public static final String IMAGE_APPLICATION = "icons/obj16/application.gif"; //$NON-NLS-1$
 
 	public static final String IMAGE_ZEND = "icons/obj64/zend.gif"; //$NON-NLS-1$
-
-	public static final String IMAGE_CLOUD = "icons/obj64/cloud.gif"; //$NON-NLS-1$
-	
-	public static final String IMAGE_OPENSHIFT = "icons/obj64/openshift.gif"; //$NON-NLS-1$
-	public static final String IMAGE_WIZ_OPENSHIFT = "icons/wizban/openshift_wiz.png"; //$NON-NLS-1$
 
 	public static final String IMAGE_DETECT = "icons/obj64/detect.gif"; //$NON-NLS-1$
 	

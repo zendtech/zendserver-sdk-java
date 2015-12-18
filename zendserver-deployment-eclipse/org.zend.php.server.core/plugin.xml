@@ -25,13 +25,5 @@
             name="Local Apache HTTP Server">
       </type>
    </extension>
-   <extension
-         point="org.eclipse.php.server.core.serverType">
-      <type
-            description="Creates a new server for each OpenShift application with a zend-6.1 cartridge."
-            id="org.zend.php.server.ui.types.OpenShiftServerType"
-            name="RedHat OpenShift">
-      </type>
-   </extension>
 
 </plugin>

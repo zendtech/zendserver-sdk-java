@@ -17,15 +17,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.wizards.OpenShiftInitializationWizard;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendTarget;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.sdklib.target.LicenseExpiredException;
 import org.zend.webapi.core.WebApiException;
@@ -37,57 +30,13 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
 
 /**
  * Class responsible for testing connection with specified target(s). It can
- * handle different type of servers, including OpenShift and
- * local/remote Zend Server.
+ * handle different type of servers, including local/remote Zend Server.
  * 
  * 
  * @author Wojciech Galanciak, 2014
  * 
  */
 public class TargetConnectionTester {
-
-	private class OpenShiftInitializer {
-
-		private IZendTarget target;
-		private IProgressMonitor monitor;
-		private IStatus status;
-
-		public OpenShiftInitializer(IZendTarget target, IProgressMonitor monitor) {
-			super();
-			this.target = target;
-		}
-
-		public IZendTarget getTarget() {
-			return target;
-		}
-
-		public IStatus getStatus() {
-			return status;
-		}
-
-		public void init() {
-			Display.getDefault().syncExec(new Runnable() {
-
-				public void run() {
-					Shell shell = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell();
-					WizardDialog dialog = new WizardDialog(shell,
-							new OpenShiftInitializationWizard(target));
-					dialog.open();
-				}
-			});
-			try {
-				target = testConnectAndDetectPort(target, monitor);
-			} catch (WebApiException e) {
-				status = getError(e.getMessage(), e);
-			} catch (RuntimeException e) {
-				status = getError(e.getMessage(), e);
-			} catch (LicenseExpiredException e) {
-				status = getError(e.getMessage(), e);
-			}
-		}
-
-	}
 
 	private static final int[] possiblePorts = new int[] { 10081, 10082, 10088 };
 
@@ -146,44 +95,11 @@ public class TargetConnectionTester {
 			}
 
 			// if (target.isTemporary()) {
-			if (TargetsManager.isOpenShift(target)
-					&& Boolean.valueOf(target
-							.getProperty(OpenShiftTarget.BOOTSTRAP))) {
-				OpenShiftInitializer initializer = new OpenShiftInitializer(
-						target, monitor);
-				initializer.init();
-				if (results[i] == null) {
-					target = initializer.getTarget();
-				} else {
-					results[i] = initializer.getStatus();
-					continue;
-				}
-			}
 			try {
 				target = testConnectAndDetectPort(target, monitor);
 			} catch (UnexpectedResponseCode e) {
-				if (TargetsManager.isOpenShift(target)) {
-					if (e.getResponseCode() == ResponseCode.SERVER_NOT_CONFIGURED) {
-						OpenShiftInitializer initializer = new OpenShiftInitializer(
-								target, monitor);
-						initializer.init();
-						if (results[i] == null) {
-							target = initializer.getTarget();
-						} else {
-							results[i] = initializer.getStatus();
-							continue;
-						}
-					}
-				}
-				if (target == null) {
-					results[i] = getError(MessageFormat.format(
-							Messages.WebApiTester_UnexpectedError,
-							e.getMessage()), e);
-					continue;
-				} else {
-					results[i] = getError(e.getMessage());
-					continue;
-				}
+				results[i] = getError(e.getMessage());
+				continue;
 			} catch (WebApiException e) {
 				results[i] = getError(MessageFormat.format(
 						Messages.WebApiTester_UnexpectedError,

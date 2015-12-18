@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.php.internal.server.core.Server;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.manager.TargetException;
 import org.zend.sdklib.manager.TargetsManager;
@@ -29,14 +28,6 @@ public class EclipseTargetsManager extends TargetsManager {
 	
 	public EclipseTargetsManager() {
 		super();
-		IEclipsePreferences prefs = InstanceScope.INSTANCE
-				.getNode(DeploymentCore.PLUGIN_ID);
-		OpenShiftTarget.iniLibraServer(prefs.get(
-				OpenShiftTarget.LIBRA_SERVER_PROP,
-				OpenShiftTarget.getDefaultLibraServer()));
-		OpenShiftTarget.iniLibraDomain(prefs.get(
-				OpenShiftTarget.LIBRA_DOMAIN_PROP,
-				OpenShiftTarget.getDefaultLibraDomain()));
 		this.listeners = getManagerListeners();
 		// TODO on startup check if there are targets added from command-line
 	}

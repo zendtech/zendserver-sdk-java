@@ -7,18 +7,13 @@
  *******************************************************************************/
 package org.zend.php.server.internal.ui.startup;
 
-import java.net.MalformedURLException;
-
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.zend.php.server.core.utils.ServerUtils;
-import org.zend.php.server.ui.ServersUI;
 import org.zend.php.server.ui.migration.AbstractMigrationService;
 import org.zend.php.server.ui.types.LocalApacheType;
-import org.zend.php.server.ui.types.OpenShiftServerType;
 import org.zend.php.server.ui.types.ZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
-import org.zend.php.zendserver.deployment.core.tunnel.SSHTunnelConfiguration;
 import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
@@ -27,7 +22,6 @@ import org.zend.sdklib.target.IZendTarget;
  * migrating old PHP servers which do not have server type defined. It checks
  * following types:
  * <ul>
- * <li>OpenShift</li>
  * <li>Zend Server</li>
  * <li>Local Apache HTTP Server</li>
  * </ul>
@@ -46,13 +40,7 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 		}
 		String typeId = getServerType(server);
 		if (typeId == null) {
-			if (isOpenShift(server)) {
-				SSHTunnelConfiguration config = SSHTunnelConfiguration
-						.createOpenShiftConfiguration(ServerUtils
-								.getTarget(server));
-				config.store(server);
-				typeId = OpenShiftServerType.ID;
-			} else if (isZendServer(server)) {
+			if (isZendServer(server)) {
 				typeId = ZendServerType.ID;
 				return true;
 			} else if (isLocalApache(server)) {
@@ -69,11 +57,6 @@ public class ServersMigrationStartup extends AbstractMigrationService {
 	private boolean isLocalApache(Server server) {
 		// TODO how we can check that?
 		return false;
-	}
-
-	private boolean isOpenShift(Server server) {
-		IZendTarget target = ServerUtils.getTarget(server);
-		return TargetsManager.isOpenShift(target);
 	}
 
 	private boolean isZendServer(Server server) {

@@ -28,8 +28,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.zend.php.server.internal.ui.Messages;
 import org.zend.php.server.ui.ServersUI;
-import org.zend.php.zendserver.deployment.core.database.ConnectionState;
-import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
 
 /**
  * Label provider for PHP Servers view.
@@ -58,9 +56,6 @@ class ViewLabelProvider extends LabelProvider implements IFontProvider {
 			return MessageFormat.format(
 					Messages.ViewLabelProvider_ServersViewLabel,
 					server.getName(), server.getBaseURL());
-		} else if (obj instanceof ITargetDatabase) {
-			ConnectionState state = ((ITargetDatabase) obj).getState();
-			return "MySQL Connection (" + state.getLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return super.getText(obj);
 	}
@@ -79,28 +74,6 @@ class ViewLabelProvider extends LabelProvider implements IFontProvider {
 				return ServersUI.getDefault().getImage(
 						ServersUI.DEFAULT_SERVER_ICON);
 			}
-		} else if (obj instanceof ITargetDatabase) {
-			Image result = null;
-			ConnectionState state = ((ITargetDatabase) obj).getState();
-			switch (state) {
-			case CONNECTED:
-				result = ServersUI.getDefault().getImage(
-						ServersUI.IMAGE_DATABASE_ON);
-				break;
-			case DISCONNECTED:
-				result = ServersUI.getDefault().getImage(
-						ServersUI.IMAGE_DATABASE_OFF);
-				break;
-			case UNAVAILABLE:
-				result = ServersUI.getDefault().getImage(
-						ServersUI.IMAGE_DATABASE_CREATE);
-				break;
-			default:
-				result = ServersUI.getDefault().getImage(
-						ServersUI.IMAGE_DATABASE);
-				break;
-			}
-			return result;
 		}
 		return super.getImage(obj);
 	}

@@ -149,9 +149,6 @@ public class DebugModeManager {
 	}
 
 	private String getDebugHosts(IZendTarget target) {
-		if (TargetsManager.isOpenShift(target)) {
-			return LOCALHOST;
-		}
 		String host = target.getHost().getHost();
 		if (host.equals(LOCALHOST)) {
 			return LOCALHOST;

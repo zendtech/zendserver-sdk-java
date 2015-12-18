@@ -23,8 +23,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,13 +49,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.zend.php.server.internal.ui.actions.ActionContributionsManager;
 import org.zend.php.server.internal.ui.actions.AddServerAction;
 import org.zend.php.server.internal.ui.actions.EditServerAction;
-import org.zend.php.server.internal.ui.actions.OpenDatabaseConnectionAction;
 import org.zend.php.server.internal.ui.actions.RemoveServerAction;
 import org.zend.php.server.internal.ui.actions.SetDefaultServerAction;
-import org.zend.php.zendserver.deployment.core.database.ConnectionState;
-import org.zend.php.zendserver.deployment.core.database.ITargetDatabase;
-import org.zend.php.zendserver.deployment.core.database.ITargetDatabaseListener;
-import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
 
 /**
  * @author Wojciech Galanciak, 2014
@@ -65,7 +58,7 @@ import org.zend.php.zendserver.deployment.core.database.TargetsDatabaseManager;
  */
 @SuppressWarnings("restriction")
 public class ServersView extends ViewPart implements IServersManagerListener,
-		IPreferenceChangeListener, ITargetDatabaseListener {
+		IPreferenceChangeListener {
 
 	public static final String ID = "org.zend.php.server.ui.views.ServersView"; //$NON-NLS-1$
 
@@ -79,7 +72,6 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(Activator.PLUGIN_ID);
 		prefs.addPreferenceChangeListener(this);
-		TargetsDatabaseManager.getManager().addTargetDatabaseListener(this);
 	}
 
 	@Override
@@ -100,7 +92,6 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		createActions();
 
 		contributeToActionBars();
-		hookDoubleClickAction();
 
 		hookContextMenu();
 
@@ -118,7 +109,6 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(Activator.PLUGIN_ID);
 		prefs.removePreferenceChangeListener(this);
-		TargetsDatabaseManager.getManager().removeTargetDatabaseListener(this);
 		super.dispose();
 	}
 
@@ -150,12 +140,6 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		}
 	}
 
-	@Override
-	public void stateChanged(ITargetDatabase targetDatabase,
-			ConnectionState state) {
-		refreshViewer();
-	}
-
 	public ISelectionProvider getSelectionProvider() {
 		return viewer;
 	}
@@ -173,24 +157,6 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		toolBarManager.add(setDefaultAction);
 		toolBarManager.add(editAction);
 		toolBarManager.add(removeAction);
-	}
-
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = event.getSelection();
-				Object[] selectedElements = ((IStructuredSelection) selection)
-						.toArray();
-				if (selectedElements.length == 1
-						&& selectedElements[0] instanceof ITargetDatabase) {
-					OpenDatabaseConnectionAction action = new OpenDatabaseConnectionAction(
-							(ITargetDatabase) selectedElements[0]);
-					action.run();
-				} else {
-					editAction.run();
-				}
-			}
-		});
 	}
 
 	private void refreshViewer() {

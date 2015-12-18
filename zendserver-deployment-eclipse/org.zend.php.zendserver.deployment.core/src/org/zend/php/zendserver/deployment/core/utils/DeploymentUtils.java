@@ -23,7 +23,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -231,9 +230,6 @@ public class DeploymentUtils {
 					"Zend Target (id: " + target.getId() + " host: " + url.getHost() //$NON-NLS-1$ //$NON-NLS-2$
 							+ ")", target.getDefaultServerURL().toString(), urlString, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			int zsPort = 10081;
-			if (TargetsManager.isOpenShift(target)) {
-				zsPort = 80;
-			}
 			server.setAttribute(ZendServerManager.ZENDSERVER_PORT_KEY,
 					String.valueOf(zsPort));
 			server.setAttribute(ZendServerManager.ZENDSERVER_ENABLED_KEY,
