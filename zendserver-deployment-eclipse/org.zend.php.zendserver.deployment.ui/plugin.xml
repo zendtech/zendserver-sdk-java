@@ -167,18 +167,23 @@
    </extension>
    <extension
          point="org.eclipse.mylyn.commons.notifications.ui.notifications">
-               <category
+      <category
                      icon="icons/obj16/zend_server.png"
                      id="org.zend.php.zendserver.deployment.ui.startup"
-                     label="Zend Studio Startup">
+                     label="%category.name.1">
       </category>
+      <sink
+            class="org.zend.php.zendserver.deployment.ui.notifications.base.PopupNotificationSink"
+            id="org.zend.php.zendserver.deployment.ui.sink.popup"
+            label="%sink.name.0">
+      </sink>
       <event
             categoryId="org.zend.php.zendserver.deployment.ui.startup"
             icon="icons/obj16/server.gif"
             id="org.zend.php.zendserver.deployment.ui.localZendServerDetection"
-            label="Local Zend Server Detected">
+            label="%event.name.0">
          <description>
-            This event is triggered when local Zend Server installation has been detected. Server can be added to already available servers.
+            %event.description.0
          </description>
          <defaultHandler
                sinkId="org.zend.php.zendserver.deployment.ui.sink.popup">
@@ -186,48 +191,14 @@
       </event>
       <event
             categoryId="org.zend.php.zendserver.deployment.ui.startup"
-            id="org.zend.php.zendserver.deployment.ui.event1"
-            label="Additional Event 1">
+            id="org.zend.php.zendserver.deployment.ui.addingLocalZendServer"
+            label="%event.name.1">
+         <description>
+            %event.description.1
+         </description>
          <defaultHandler
                sinkId="org.zend.php.zendserver.deployment.ui.sink.popup">
          </defaultHandler>
       </event>
-      <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
-            id="org.zend.php.zendserver.deployment.ui.event2"
-            label="Additional Event 2">
-         <defaultHandler
-               sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
-         </defaultHandler>
-      </event>
-      <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
-            id="org.zend.php.zendserver.deployment.ui.event3"
-            label="Additional Event 3">
-                     <defaultHandler
-               sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
-         </defaultHandler>
-      </event>
-      <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
-            id="org.zend.php.zendserver.deployment.ui.event4"
-            label="Additional Event 4">
-         <defaultHandler
-               sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
-         </defaultHandler>
-      </event>
-      <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
-            id="org.zend.php.zendserver.deployment.ui.event5"
-            label="Additional Event 5">
-         <defaultHandler
-               sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
-         </defaultHandler>
-      </event>
-      <sink
-            class="org.zend.php.zendserver.deployment.ui.notifications.base.PopupNotificationSink"
-            id="org.zend.php.zendserver.deployment.ui.sink.popup"
-            label="Zend Studio Desktop Popup">
-      </sink>
    </extension>
 </plugin>

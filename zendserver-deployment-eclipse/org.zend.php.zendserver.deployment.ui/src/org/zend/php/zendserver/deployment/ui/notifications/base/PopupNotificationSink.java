@@ -25,11 +25,13 @@ import org.eclipse.ui.PlatformUI;
 @SuppressWarnings("restriction")
 public class PopupNotificationSink extends NotificationSink {
 
+	public static String ID = "org.zend.php.zendserver.deployment.ui.sink.popup"; //$NON-NLS-1$
+	
 	private static final long DELAY_OPEN = 1 * 1000;
 	
 	private final Set<AbstractNotification> currentlyNotifying = Collections.synchronizedSet(new HashSet<AbstractNotification>());
 	
-	private final Job openJob = new Job("Popup Notifier") {
+	private final Job openJob = new Job(Messages.PopupNotificationSink_JobName) {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {

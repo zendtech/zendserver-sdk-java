@@ -36,17 +36,16 @@ public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
 	protected void createContentArea(Composite parent) {
 		int count = 0;
 		for (final AbstractNotification notification : notifications) {
-			Composite notificationComposite = getNotificationComposite(notification, parent);
 			
 			if (count < NUM_NOTIFICATIONS_TO_DISPLAY) {
 				if (notification instanceof INotificationExtension) {
 					INotificationExtension notificationExt = (INotificationExtension) notification;
-					notificationExt.createContent(notificationComposite);
+					notificationExt.createContent(parent);
 					continue;
 				}
 				createMylynNotificationArea(notification, parent);
 			} else {
-				createSummaryArea(notificationComposite, count);
+				createSummaryArea(parent, count);
 				break;
 			}
 			count++;
@@ -59,15 +58,6 @@ public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
 
 	public void setNotifications(List<AbstractNotification> notifications) {
 		this.notifications = notifications;
-	}
-	
-	protected Composite getNotificationComposite(AbstractNotification notification, Composite parent) {
-		Composite composite = new Composite(parent, SWT.NO_FOCUS);
-		GridLayout gridLayout = new GridLayout();
-		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(composite);
-		composite.setLayout(gridLayout);
-		composite.setBackground(parent.getBackground());
-		return composite;
 	}
 	
 	protected void createMylynNotificationArea(final AbstractNotification notification, Composite parent) {
