@@ -30,7 +30,7 @@ public class LibraryConfigurationPage extends WizardPage implements
 	protected LibraryConfigurationPage(LibraryDeployData data) {
 		super("Configuration Page"); //$NON-NLS-1$
 		setTitle(Messages.LibraryConfigurationPage_Title);
-		this.block = new LibraryConfigurationBlock(this, data);
+		this.block = new LibraryConfigurationBlock(this, data, getDialogSettings());
 	}
 
 	/*
@@ -43,8 +43,6 @@ public class LibraryConfigurationPage extends WizardPage implements
 	public void createControl(Composite parent) {
 		Composite container = block.createContents(parent, true);
 		setControl(container);
-		block.setDialogSettings(getDialogSettings());
-		block.initializeFields();
 		parent.setData(WorkbenchHelpSystem.HELP_KEY, HelpContextIds.DEPLOY_PHP_LIBRARY);
 		parent.addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent arg0) {

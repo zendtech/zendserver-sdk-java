@@ -28,9 +28,12 @@ public class LibraryDeployData {
 	private boolean warnSynchronize;
 	private boolean enableAddLibrary;
 	private boolean zpkPackage;
+	private boolean makeDefault;
+	private int versionId;
 
 	public LibraryDeployData() {
 		this.enableAddLibrary = true;
+		this.versionId = -1;
 	}
 
 	public String getTargetId() {
@@ -69,6 +72,14 @@ public class LibraryDeployData {
 		return zpkPackage;
 	}
 
+	public boolean makeDefault() {
+		return makeDefault;
+	}
+	
+	public int getVersionId() {
+		return versionId;
+	}
+	
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
 	}
@@ -105,4 +116,11 @@ public class LibraryDeployData {
 		this.zpkPackage = zpkPackage;
 	}
 
+	public void setMakeDefault(boolean makeDefault) {
+		this.makeDefault = makeDefault;
+	}
+	
+	public void setVersionId(int id) {
+		this.versionId = id;
+	}
 }

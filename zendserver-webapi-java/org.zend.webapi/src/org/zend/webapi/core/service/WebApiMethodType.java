@@ -36,6 +36,7 @@ import org.zend.webapi.internal.core.connection.request.ConfigurationImportReque
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.GetSystemInfoRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibrarySetDefaultRequest;
 import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
@@ -295,6 +296,11 @@ public enum WebApiMethodType {
 	 */
 	LIBRARY_SYNCHRONIZE("librarySynchronize", LibrarySynchronizeRequest.class), //$NON-NLS-1$
 
+	/**
+	 * @see LibrarySetDefault
+	 */
+	LIBRARY_SET_DEFAULT("librarySetDefault", LibrarySetDefaultRequest.class), //$NON-NLS-1$
+	
 	/**
 	 * @see DownloadLibraryVersionFileRequest
 	 */

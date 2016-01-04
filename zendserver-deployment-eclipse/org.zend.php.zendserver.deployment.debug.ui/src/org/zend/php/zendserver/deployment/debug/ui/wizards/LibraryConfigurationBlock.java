@@ -11,8 +11,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -37,93 +40,129 @@ import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 public class LibraryConfigurationBlock extends AbstractLibraryBlock {
 
 	private ServersCombo serversCombo;
-
-	private Button addPHPLibrary;
-
-	private String description;
-
-	private Label libraryNameLabel;
-	private Label libraryVersionLabel;
-	private Text libraryNameText;
-	private Text libraryVersionText;
+	private Button addLibraryButton;
+	private Button setAsDefaultButton;
+	private Text nameText;
+	private Text versionText;
 
 	private LibraryDeployData data;
+	private boolean isUpdating = false;
 
-	public LibraryConfigurationBlock(IStatusChangeListener listener,
-			LibraryDeployData data) {
-		super(listener);
+	public LibraryConfigurationBlock(IStatusChangeListener listener, LibraryDeployData data,
+			IDialogSettings dialogSettings) {
+		super(listener, dialogSettings);
 		this.data = data;
-		this.description = Messages.LibraryDeploymentWizard_Description;
 	}
 
-	public Composite createContents(final Composite parent,
-			final boolean resizeShell) {
+	public Composite createContents(final Composite parent, final boolean resizeShell) {
 		Composite container = super.createContents(parent, resizeShell);
-		createServersGroup(container);
-		if (data.getName() != null) {
-			libraryNameLabel = createLabelWithLabel(
-					Messages.LibraryConfigurationBlock_Name, null, container);
-		} else {
-			libraryNameText = createLabelWithText(
-					Messages.LibraryConfigurationBlock_Name, null, container,
-					false, 0);
-		}
-		if (data.getVersion() != null) {
-			libraryVersionLabel = createLabelWithLabel(
-					Messages.LibraryConfigurationBlock_Version, null, container);
-		} else {
-			libraryVersionText = createLabelWithText(
-					Messages.LibraryConfigurationBlock_Version, null,
-					container, false, 0);
-		}
-		new Label(container, SWT.NONE);
+
+		serversCombo = new ServersCombo(ServersCombo.DEPLOYMENT_FILTER, true, false);
+		serversCombo.createControl(container);
+		serversCombo.getCombo().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				listener.statusChanged(validatePage());
+			}
+		});
+		serversCombo.setListener(new IAddServerListener() {
+			public void serverAdded(String name) {
+				listener.statusChanged(validatePage());
+			}
+		});
+
+		Label lblName = new Label(container, SWT.NONE);
+		lblName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		lblName.setText(Messages.LibraryConfigurationBlock_Name);
+
+		nameText = new Text(container, SWT.BORDER);
+		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		nameText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (isUpdating)
+					return;
+
+				listener.statusChanged(validatePage());
+			}
+		});
+
+		Label lblVersion = new Label(container, SWT.NONE);
+		lblVersion.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		lblVersion.setText(Messages.LibraryConfigurationBlock_Version);
+
+		versionText = new Text(container, SWT.BORDER);
+		versionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		versionText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (isUpdating)
+					return;
+
+				listener.statusChanged(validatePage());
+			}
+		});
+
+		new Label(container, SWT.NULL);
+		setAsDefaultButton = new Button(container, SWT.CHECK);
+		setAsDefaultButton.setText(Messages.LibraryConfigurationBlock_SetAsDefaultVersion);
+		setAsDefaultButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (data.isEnableAddLibrary()) {
-			addPHPLibrary = createLabelWithCheckbox(
-					Messages.LibraryConfigurationBlock_AddPHPLibrary, null,
-					container);
+			new Label(container, SWT.NULL);
+			addLibraryButton = new Button(container, SWT.CHECK);
+			addLibraryButton.setText(Messages.LibraryConfigurationBlock_AddPHPLibrary);
+			addLibraryButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		}
+
+		initializeFields();
+		updateEnablement();
+
 		return container;
 	}
 
-	public void initializeFields() {
-		if (data.getName() != null) {
-			libraryNameLabel.setText(data.getName());
-		}
-		if (data.getVersion() != null) {
-			libraryVersionLabel.setText(data.getVersion());
-		}
-		String targetId = data.getTargetId();
-		if ((targetId == null || targetId.isEmpty())) {
+	private void initializeFields() {
+		try {
+			isUpdating = true;
+
+			String name = data.getName();
+			nameText.setText(name != null ? name : ""); //$NON-NLS-1$
+
+			String version = data.getVersion();
+			versionText.setText(version != null ? version : ""); //$NON-NLS-1$
+
+			String targetId = data.getTargetId();
+			if ((targetId == null || targetId.isEmpty())) {
+				IDialogSettings settings = getDialogSettings();
+				if (settings != null) {
+					serversCombo.selectByTarget(settings.get(LibraryDeploymentAttributes.TARGET_ID.getName()));
+				}
+			} else {
+				if (data.getProject() != null) {
+					IZendTarget target = LaunchUtils.getTargetFromPreferences(data.getProject().getName());
+					if (target != null && targetId.equals(target.getId())) {
+						targetId = target.getId();
+					}
+				}
+				serversCombo.selectByTarget(targetId);
+			}
+
 			IDialogSettings settings = getDialogSettings();
+			boolean setAsDefault = false;
+			boolean addLibrary = true;
 			if (settings != null) {
-				serversCombo.selectByTarget(settings
-						.get(LibraryDeploymentAttributes.TARGET_ID.getName()));
-			}
-		} else {
-			if (data.getProject() != null) {
-				IZendTarget target = LaunchUtils.getTargetFromPreferences(data
-						.getProject().getName());
-				if (target != null && targetId.equals(target.getId())) {
-					targetId = target.getId();
-				}
-			}
-			serversCombo.selectByTarget(targetId);
-		}
-		IDialogSettings settings = getDialogSettings();
-		if (settings != null) {
-			String addLib = settings
-					.get(LibraryDeploymentAttributes.ADD_LIBRARY.getName());
-			if (addPHPLibrary != null) {
+				String addLib = settings.get(LibraryDeploymentAttributes.ADD_LIBRARY.getName());
 				if (addLib != null) {
-					addPHPLibrary.setSelection(Boolean.valueOf(addLib));
-				} else {
-					addPHPLibrary.setSelection(true);
+					addLibrary = Boolean.valueOf(addLib);
 				}
+				setAsDefault = settings.getBoolean(LibraryDeploymentAttributes.SET_AS_DEFAULT.getName());
 			}
-		} else {
-			if (addPHPLibrary != null) {
-				addPHPLibrary.setSelection(true);
+			if (addLibraryButton != null) {
+				addLibraryButton.setSelection(addLibrary);
 			}
+			setAsDefaultButton.setSelection(setAsDefault);
+		} finally {
+			isUpdating = false;
 		}
 	}
 
@@ -135,72 +174,50 @@ public class LibraryConfigurationBlock extends AbstractLibraryBlock {
 	 */
 	public IStatus validatePage() {
 		if (getTarget() == null) {
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					Messages.LibraryConfigurationBlock_NoTargetMessage);
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.LibraryConfigurationBlock_NoTargetMessage);
 		}
-		if (!TargetsManager.checkMinVersion(getTarget(),
-				ZendServerVersion.byName("6.1.0"))) { //$NON-NLS-1$
+		if (!TargetsManager.checkMinVersion(getTarget(), ZendServerVersion.byName("6.1.0"))) { //$NON-NLS-1$
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					Messages.LibraryConfigurationBlock_DeployNotSupportedError);
 		}
-		if (libraryNameText != null && libraryNameText.getText().isEmpty()) {
+		if (nameText.getText().isEmpty()) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.LibraryConfigurationBlock_NameRequiredError);
+		}
+		if (versionText.getText().isEmpty()) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					Messages.LibraryConfigurationBlock_NameRequiredError);
+					Messages.LibraryConfigurationBlock_VersionRequiredError);
 		}
-		if (libraryVersionText != null) {
-			if (libraryVersionText.getText().isEmpty()) {
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						Messages.LibraryConfigurationBlock_VersionRequiredError);
-			} else {
-				LibraryVersion version = LibraryVersion
-						.byName(libraryVersionText.getText());
-				if (version == null || version.getMajor() == -1
-						|| version.getMinor() == -1 || version.getBuild() == -1) {
-					return new Status(
-							IStatus.ERROR,
-							Activator.PLUGIN_ID,
-							Messages.LibraryConfigurationBlock_VersionInvalidError);
-				}
-			}
+		LibraryVersion version = LibraryVersion.byName(versionText.getText());
+		if (version == null || version.getMajor() == -1 || version.getMinor() == -1 || version.getBuild() == -1) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					Messages.LibraryConfigurationBlock_VersionInvalidError);
 		}
-		return new Status(IStatus.OK, Activator.PLUGIN_ID, description);
+		return new Status(IStatus.OK, Activator.PLUGIN_ID, Messages.LibraryDeploymentWizard_Description);
 	}
 
 	public LibraryDeployData getData() {
 		if (getTarget() != null) {
 			data.setTargetId(getTarget().getId());
 		}
-		if (libraryNameText != null) {
-			data.setName(libraryNameText.getText());
-		}
-		if (libraryVersionText != null) {
-			data.setVersion(libraryVersionText.getText());
-		}
-		if (data.isEnableAddLibrary() && addPHPLibrary.isEnabled()) {
-			data.setAddPHPLibrary(addPHPLibrary.getSelection());
+		data.setName(nameText.getText());
+		data.setVersion(versionText.getText());
+		if (data.isEnableAddLibrary() && addLibraryButton.isEnabled()) {
+			data.setAddPHPLibrary(addLibraryButton.getSelection());
 		} else {
 			data.setAddPHPLibrary(false);
 		}
+		data.setMakeDefault(setAsDefaultButton.getSelection());
 		return data;
+	}
+
+	protected void updateEnablement() {
+		String name = data.getName();
+		nameText.setEnabled(name == null || name.isEmpty());
+		String version = data.getVersion();
+		versionText.setEnabled(version == null || version.isEmpty());
 	}
 
 	private IZendTarget getTarget() {
 		return serversCombo.getSelectedTarget();
 	}
-
-	private void createServersGroup(Composite parent) {
-		serversCombo = new ServersCombo(ServersCombo.DEPLOYMENT_FILTER, true, false);
-		serversCombo.createControl(parent);
-		serversCombo.getCombo().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				listener.statusChanged(validatePage());
-			}
-		});
-		serversCombo.setListener(new IAddServerListener() {
-			public void serverAdded(String name) {
-				listener.statusChanged(validatePage());
-			}
-		});
-	}
-
 }

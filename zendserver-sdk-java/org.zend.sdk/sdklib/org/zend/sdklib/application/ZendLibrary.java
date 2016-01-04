@@ -185,6 +185,28 @@ public class ZendLibrary extends ZendConnection {
 		return synchronize(path, path, id, targetId);
 	}
 
+	public LibraryList setDefaultVersion(String targetId, int libaryVersionId) {
+		try {
+			WebApiClient client = getClient(targetId);
+			notifier.statusChanged(new BasicStatus(StatusCode.STARTING, "Set Default Library Version",
+					"Setting default library version...", -1));
+			LibraryList result = client.librarySetDefault(libaryVersionId);
+			notifier.statusChanged(new BasicStatus(StatusCode.STOPPING, "Set Default Library Version",
+					"Library default version set successfully. "));
+			return result;
+		} catch (MalformedURLException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Set Default Library Version",
+					"Error during setting library default version at '" + targetId + "'", e));
+			log.error(e);
+		} catch (WebApiException e) {
+			notifier.statusChanged(new BasicStatus(StatusCode.ERROR, "Set Default Library Version",
+					"Error during setting library default version at '" + targetId + "'", e));
+			log.error("Error during setting library default version at '" + targetId + "'.");
+			log.error("\tpossible error: " + e.getMessage());
+		}
+		return null;
+	}
+
 	private File createPackage(String path, String configLocation) {
 		File file = new File(path);
 		if (!file.exists()) {

@@ -18,6 +18,8 @@ import org.zend.php.zendserver.deployment.core.DeploymentCore;
 public enum LibraryDeploymentAttributes {
 
 	ADD_LIBRARY("addLibrary"), //$NON-NLS-1$
+	
+	SET_AS_DEFAULT("setAsDefault"), //$NON-NLS-1$
 
 	TARGET_ID("targetId"); //$NON-NLS-1$
 

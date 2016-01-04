@@ -26,6 +26,7 @@ import org.zend.php.zendserver.deployment.core.utils.LibraryUtils;
 import org.zend.php.zendserver.deployment.debug.core.Activator;
 import org.zend.php.zendserver.deployment.debug.core.Messages;
 import org.zend.sdklib.application.ZendLibrary;
+import org.zend.webapi.core.connection.data.GenericResponseDataVisitor;
 import org.zend.webapi.core.connection.data.LibraryInfo;
 import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.LibraryVersion;
@@ -40,6 +41,20 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
  * 
  */
 public class DeployLibraryJob extends AbstractLibraryJob {
+
+	private class DeployLibraryResponseDataVisitor extends GenericResponseDataVisitor {
+		private int libraryVersionId = -1;
+		
+		@Override
+		public boolean visit(LibraryVersion libraryVersion) {
+			libraryVersionId = libraryVersion.getLibraryVersionId();
+			return true;
+		}
+
+		public int getLibraryVersionId() {
+			return libraryVersionId;
+		}
+	}
 
 	public DeployLibraryJob(LibraryDeployData data) {
 		super(Messages.DeployLibraryJob_Name, data);
@@ -71,13 +86,14 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 			}
 
 			monitor.subTask(Messages.DeployLibraryJob_PreparingDeploymenySubTask_Name);
+			LibraryList result = null;
 			if ((data.isZpkPackage() && data.getRoot().getName().endsWith(".zpk")) //$NON-NLS-1$
 					|| new File(data.getRoot(), DescriptorContainerManager.DESCRIPTOR_PATH).exists()) {
-				lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId(), data.isZpkPackage());
+				result = lib.deploy(data.getRoot().getAbsolutePath(), data.getTargetId(), data.isZpkPackage());
 			} else {
 				try {
 					File root = LibraryUtils.getTemporaryDescriptor(data.getName(), data.getVersion());
-					lib.deploy(data.getRoot().getAbsolutePath(), root.getAbsolutePath(), data.getTargetId(),
+					result = lib.deploy(data.getRoot().getAbsolutePath(), root.getAbsolutePath(), data.getTargetId(),
 							data.isZpkPackage());
 					FileUtils.deleteDirectory(root);
 				} catch (IOException e) {
@@ -90,6 +106,11 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 			if (exception instanceof WebApiCommunicationError) {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						Messages.DeployLibraryJob_ConnectionRefused_Error, exception);
+			}
+			if(listener.getStatus() == Status.OK_STATUS) {
+				DeployLibraryResponseDataVisitor dataVisitor = new DeployLibraryResponseDataVisitor();
+				result.accept(dataVisitor);
+				data.setVersionId(dataVisitor.getLibraryVersionId());
 			}
 			return new SdkStatus(listener.getStatus());
 		} finally {

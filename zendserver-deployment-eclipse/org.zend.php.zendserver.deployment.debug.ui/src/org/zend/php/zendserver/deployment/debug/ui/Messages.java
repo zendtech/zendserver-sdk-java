@@ -59,6 +59,7 @@ public class Messages extends NLS {
 	public static String LibraryConfigurationBlock_Name;
 	public static String LibraryConfigurationBlock_NameRequiredError;
 	public static String LibraryConfigurationBlock_NoTargetMessage;
+	public static String LibraryConfigurationBlock_SetAsDefaultVersion;
 	public static String LibraryConfigurationBlock_Version;
 	public static String LibraryConfigurationBlock_VersionInvalidError;
 	public static String LibraryConfigurationBlock_VersionRequiredError;

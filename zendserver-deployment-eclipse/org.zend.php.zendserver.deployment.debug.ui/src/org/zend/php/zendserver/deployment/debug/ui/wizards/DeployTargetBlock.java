@@ -21,11 +21,22 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dltk.core.*;
+import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IBuildpathContainer;
+import org.eclipse.dltk.core.IBuildpathEntry;
+import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.internal.core.UserLibraryManager;
 import org.eclipse.dltk.ui.preferences.UserLibraryPreferencePage;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -34,7 +45,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.w3c.dom.Document;
@@ -73,7 +88,7 @@ public class DeployTargetBlock extends AbstractLibraryBlock {
 	private boolean isUpdating = false;
 
 	protected DeployTargetBlock(IStatusChangeListener listener, LibraryDeployData data) {
-		super(listener);
+		super(listener, null);
 		this.data = data;
 		this.tempProject = createPlaceholderProject();
 	}

@@ -24,7 +24,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.zend.php.zendserver.deployment.core.descriptor.ProjectType;
@@ -46,7 +50,7 @@ public class ImportZpkBlock extends AbstractLibraryBlock {
 	private Text zpkPathText;
 
 	public ImportZpkBlock(IStatusChangeListener listener) {
-		super(listener);
+		super(listener, null);
 	}
 
 	public Composite createContents(final Composite parent, boolean resizeShell) {

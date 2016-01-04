@@ -84,6 +84,7 @@ import org.zend.webapi.internal.core.connection.request.ConfigurationExtensionsL
 import org.zend.webapi.internal.core.connection.request.ConfigurationImportRequest;
 import org.zend.webapi.internal.core.connection.request.DownloadLibraryVersionFileRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryGetStatusRequest;
+import org.zend.webapi.internal.core.connection.request.LibrarySetDefaultRequest;
 import org.zend.webapi.internal.core.connection.request.LibrarySynchronizeRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionDeployRequest;
 import org.zend.webapi.internal.core.connection.request.LibraryVersionGetStatusRequest;
@@ -1753,6 +1754,25 @@ public class WebApiClient {
 					}
 				});
 		return (LibraryFile) handle.getData();
+	}
+
+	/**
+	 * Change library version to be the default version for the library.
+	 * 
+	 * @see WebApiMethodType#LIBRARY_SET_DEFAULT
+	 * 
+	 * @return libraries list
+	 * @throws WebApiException
+	 * @since 1.6
+	 */
+	public LibraryList librarySetDefault(final int id) throws WebApiException {
+		final IResponse handle = this.handle(WebApiMethodType.LIBRARY_SET_DEFAULT, getVersion(WebApiVersion.V1_6),
+				new IRequestInitializer() {
+					public void init(IRequest request) throws WebApiException {
+						((LibrarySetDefaultRequest) request).setLibraryVersionId(id);
+					}
+				});
+		return (LibraryList) handle.getData();
 	}
 
 	/**

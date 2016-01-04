@@ -9,7 +9,11 @@ package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
@@ -140,6 +144,7 @@ public class LibraryDeploymentWizard extends AbstractLibraryWizard {
 			if (data.isEnableAddLibrary()) {
 				settings.put(LibraryDeploymentAttributes.ADD_LIBRARY.getName(), data.isAddPHPLibrary());
 			}
+			settings.put(LibraryDeploymentAttributes.SET_AS_DEFAULT.getName(), data.makeDefault());
 		}
 	}
 

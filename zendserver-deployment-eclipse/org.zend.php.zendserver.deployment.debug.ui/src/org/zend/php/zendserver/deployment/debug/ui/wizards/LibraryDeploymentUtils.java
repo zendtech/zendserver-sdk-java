@@ -26,6 +26,7 @@ import org.zend.php.zendserver.deployment.core.utils.DeploymentUtils;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AbstractLibraryJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.AddLibraryJob;
 import org.zend.php.zendserver.deployment.debug.core.jobs.DeployLibraryJob;
+import org.zend.php.zendserver.deployment.debug.core.jobs.MakeLibraryVersionDefaultJob;
 import org.zend.php.zendserver.deployment.debug.ui.Messages;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.connection.response.ResponseCode;
@@ -39,17 +40,20 @@ public class LibraryDeploymentUtils {
 	private AbstractLibraryJob job;
 
 	public void openLibraryDeploymentWizard(IProject project, String targetId) {
-		doOpenLibraryDeploymentWizard(project, targetId);
+		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(project, targetId);
+		doOpenLibraryDeploymentWizard(wizard);
 		runDeployment();
 	}
 
 	public void openLibraryDeploymentWizard(LibraryDeployData data) {
-		doOpenLibraryDeploymentWizard(data);
+		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(data);
+		doOpenLibraryDeploymentWizard(wizard);
 		runDeployment();
 	}
 
 	public void openLibraryDeploymentWizard(IZendTarget target) {
-		doOpenLibraryDeploymentWizard(target);
+		AbstractLibraryWizard wizard = new DeployTargetWizard(target);
+		doOpenLibraryDeploymentWizard(wizard);
 		runDeployment();
 	}
 
@@ -73,8 +77,14 @@ public class LibraryDeploymentUtils {
 		if (event.getResult() == Status.CANCEL_STATUS)
 			return;
 
-		AbstractLibraryJob job = (AbstractLibraryJob) event.getJob();
+		DeployLibraryJob job = (DeployLibraryJob) event.getJob();
 		LibraryDeployData data = job.getData();
+
+		if (data.makeDefault()) {
+			Job makeDefaultJob = new MakeLibraryVersionDefaultJob(data);
+			makeDefaultJob.schedule();
+		}
+
 		if (data.isAddPHPLibrary()) {
 			Job addJob = new AddLibraryJob(data);
 			addJob.schedule();
@@ -94,21 +104,6 @@ public class LibraryDeploymentUtils {
 		if (data.getProject() != null) {
 			DeploymentUtils.updatePreferences(data.getProject(), data.getTargetId(), null);
 		}
-	}
-
-	private void doOpenLibraryDeploymentWizard(IZendTarget target) {
-		AbstractLibraryWizard wizard = new DeployTargetWizard(target);
-		doOpenLibraryDeploymentWizard(wizard);
-	}
-
-	private void doOpenLibraryDeploymentWizard(IProject project, String targetId) {
-		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(project, targetId);
-		doOpenLibraryDeploymentWizard(wizard);
-	}
-
-	private void doOpenLibraryDeploymentWizard(LibraryDeployData data) {
-		AbstractLibraryWizard wizard = new LibraryDeploymentWizard(data);
-		doOpenLibraryDeploymentWizard(wizard);
 	}
 
 	private void doOpenLibraryDeploymentWizard(final AbstractLibraryWizard wizard) {
