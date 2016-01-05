@@ -20,13 +20,11 @@ import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.php.server.core.types.ServerTypesManager;
 import org.eclipse.ui.IStartup;
 import org.zend.php.server.ui.types.LocalZendServerType;
-import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.ui.notifications.AddingLocalZendServerNotification;
 import org.zend.php.zendserver.deployment.ui.notifications.LocalZendServerDetectedNotification;
 import org.zend.php.zendserver.deployment.ui.notifications.base.NotificationHelper;
 import org.zend.sdklib.manager.DetectionException;
-import org.zend.sdklib.target.IZendTarget;
 
 /**
  * {@link IStartup} implementation responsible for detection of a local Zend
@@ -81,8 +79,7 @@ public class LocalZendServerStartup implements IStartup {
 				}
 				server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 
-				IZendTarget zendTarget = TargetsManagerService.INSTANCE.getTargetManager().getExistingLocalhost();
-				LocalZendServerDetectedNotification notification = new LocalZendServerDetectedNotification(zendTarget != null);
+				LocalZendServerDetectedNotification notification = new LocalZendServerDetectedNotification();
 				NotificationHelper.notify(notification);
 				return Status.OK_STATUS;
 			}

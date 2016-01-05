@@ -8,13 +8,19 @@
 package org.zend.php.zendserver.deployment.core.targets;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.zend.sdklib.manager.TargetsManager;
@@ -82,9 +88,31 @@ public class ZendServerCredentialsDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		GridData gd = (GridData) comp.getLayoutData();
-		gd.widthHint = 250;
+		gd.widthHint = 350;
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 2;
+		
+		Composite infoComposite = new Composite(comp, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0, 0).applyTo(infoComposite);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(infoComposite);
+		
+		Label infoLabel = new Label(infoComposite, SWT.WRAP);
+		infoLabel.setText(Messages.ZendServerCredentialsDialog_Info1_Text);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(infoLabel);
+		Label infoIcon = new Label(infoComposite, SWT.NONE);
+		infoIcon.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO));
+		GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.TOP).applyTo(infoIcon);
+		Link infoLink = new Link(infoComposite, SWT.WRAP);
+		infoLink.setText(Messages.ZendServerCredentialsDialog_Info2_Text);
+		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(infoLink);
+		infoLink.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				org.eclipse.swt.program.Program.launch("http://files.zend.com/help/Zend-Server/content/web_api_reference_guide.htm"); //$NON-NLS-1$
+			}
+		});
+		
 		if (message != null) {
 			Label messageLabel = new Label(comp, SWT.NONE);
 			messageLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,

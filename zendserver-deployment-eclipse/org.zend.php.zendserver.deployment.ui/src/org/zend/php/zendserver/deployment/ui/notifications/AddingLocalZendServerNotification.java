@@ -18,6 +18,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.zend.php.server.ui.IHelpContextIds;
+import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.notifications.base.INotificationExtension;
 
 @SuppressWarnings("restriction")
@@ -94,16 +95,13 @@ public class AddingLocalZendServerNotification extends AbstractUiNotification im
 
 	@Override
 	public Image getNotificationKindImage() {
-		String imageId = ISharedImages.IMG_OBJS_INFO_TSK;
 		switch(this.type) {
 		case WARNING:
-			imageId = ISharedImages.IMG_OBJS_WARN_TSK;
-			break;
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
 		case ERROR:
-			imageId = ISharedImages.IMG_OBJS_ERROR_TSK;
-			break;
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 		}
-		return PlatformUI.getWorkbench().getSharedImages().getImage(imageId);
+		return Activator.getDefault().getImage(Activator.IMAGE_ZEND_SERVER_ICON);
 	}
 
 	@Override

@@ -7,6 +7,8 @@ public class Messages extends NLS {
 	public static String ZendServerCredentialsDialog_0;
 	public static String ZendServerCredentialsDialog_1;
 	public static String ZendServerCredentialsDialog_Application;
+	public static String ZendServerCredentialsDialog_Info1_Text;
+	public static String ZendServerCredentialsDialog_Info2_Text;
 	public static String ZendServerManager_ConfigurationFilesNotFound_Error;
 	public static String ZendServerManager_ErrorReadingInstallationParameters_Error;
 	public static String ZendServerManager_InstallationLocationNotFound_Error;
