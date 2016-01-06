@@ -23,6 +23,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -90,9 +92,8 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 				transferListener);
 
 		createActions();
-
 		contributeToActionBars();
-
+		hookDoubleClickAction();
 		hookContextMenu();
 
 		viewer.getControl().setData(WorkbenchHelpSystem.HELP_KEY, ID);
@@ -171,6 +172,14 @@ public class ServersView extends ViewPart implements IServersManagerListener,
 		});
 	}
 
+	private void hookDoubleClickAction() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				editAction.run();
+			}
+		});
+	}
+	
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
