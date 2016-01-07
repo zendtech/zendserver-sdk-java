@@ -13,9 +13,11 @@ import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerConfigurati
 import org.eclipse.php.internal.debug.core.zend.debugger.ZendDebuggerSettingsConstants;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
+import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
@@ -51,6 +53,7 @@ public class AddLocalZendServerJob extends Job {
 				notifyWarning(message);
 				return Status.CANCEL_STATUS;
 			}
+			server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 
 			IZendTarget zendTarget = TargetsManagerService.INSTANCE.getTargetManager().getExistingLocalhost();
 			if (zendTarget == null) {

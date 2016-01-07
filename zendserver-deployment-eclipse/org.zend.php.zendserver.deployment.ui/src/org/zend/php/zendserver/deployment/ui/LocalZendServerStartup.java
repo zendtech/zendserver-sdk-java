@@ -66,9 +66,8 @@ public class LocalZendServerStartup implements IStartup {
 				}
 				
 				monitor.subTask(Messages.LocalZendServerStartup_FetchingConfiguration);
-				final Server server;
 				try {
-					server = ZendServerManager.getInstance().getLocalZendServer();
+					ZendServerManager.getInstance().getLocalZendServer();
 				} catch (DetectionException e) {
 					String message = Messages.LocalZendServerStartup_NotFoundMessage;
 					Activator.logError(message, e);
@@ -77,7 +76,6 @@ public class LocalZendServerStartup implements IStartup {
 					NotificationHelper.notify(notification);
 					return Status.CANCEL_STATUS;
 				}
-				server.setAttribute(IServerType.TYPE, LocalZendServerType.ID);
 
 				LocalZendServerDetectedNotification notification = new LocalZendServerDetectedNotification();
 				NotificationHelper.notify(notification);
