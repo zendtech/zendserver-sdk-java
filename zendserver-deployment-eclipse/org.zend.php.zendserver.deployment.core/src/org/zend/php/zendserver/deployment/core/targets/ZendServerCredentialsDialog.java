@@ -141,7 +141,7 @@ public class ZendServerCredentialsDialog extends Dialog {
 		}
 		Label usernameLabel = new Label(comp, SWT.RIGHT);
 		usernameLabel.setText(Messages.ZendServerCredentialsDialog_0);
-		usernameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+		usernameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		usernameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -149,7 +149,7 @@ public class ZendServerCredentialsDialog extends Dialog {
 		usernameText.setText("admin"); //$NON-NLS-1$
 		Label passwordLabel = new Label(comp, SWT.RIGHT);
 		passwordLabel.setText(Messages.ZendServerCredentialsDialog_1);
-		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,
+		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		passwordText = new Text(comp, SWT.SINGLE | SWT.PASSWORD | SWT.BORDER);
 		passwordText.setLayoutData(data);
