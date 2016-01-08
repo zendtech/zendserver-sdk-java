@@ -12,6 +12,7 @@ import org.eclipse.mylyn.commons.workbench.AbstractWorkbenchNotificationPopup;
 import org.eclipse.mylyn.commons.workbench.forms.ScalingHyperlink;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -22,25 +23,72 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 @SuppressWarnings("restriction")
-public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
+public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 
 	private static final int NUM_NOTIFICATIONS_TO_DISPLAY = 4;
 
-	private List<AbstractNotification> notifications;
-	
+	private List<AbstractNotification> notifications = new ArrayList<AbstractNotification>();
+
 	public NotificationPopup(Shell parent) {
 		super(parent.getDisplay());
 	}
 
 	@Override
 	protected void createContentArea(Composite parent) {
+		if (notifications.size() == 1) {
+			createSingleNotificationContentArea(parent);
+			return;
+		}
+		createMultiNotificationsContentArea(parent);
+	}
+
+	public List<AbstractNotification> getNotifications() {
+		return new ArrayList<AbstractNotification>(notifications);
+	}
+
+	public void setNotifications(List<AbstractNotification> notifications) {
+		this.notifications.clear();
+		this.notifications.addAll(notifications);
+	}
+
+	@Override
+	protected Image getPopupShellImage(int maximumHeight) {
+		if(notifications.size() == 1 && notifications.get(0) instanceof AbstractUiNotification) {
+			AbstractUiNotification notification = (AbstractUiNotification) notifications.get(0);
+			return notification.getNotificationKindImage();
+		}
+		
+		return super.getPopupShellImage(maximumHeight);
+	}
+
+    @Override
+    protected String getPopupShellTitle() {
+    	if(notifications.size() == 1) {
+    		AbstractNotification notification = notifications.get(0);
+    		return notification.getLabel();
+    	}
+    	
+        return super.getPopupShellTitle();
+    }
+
+	protected void createSingleNotificationContentArea(Composite parent) {
+		AbstractNotification notification = notifications.get(0);
+		if (notification instanceof INotificationExtension) {
+			INotificationExtension notificationExt = (INotificationExtension) notification;
+			notificationExt.createContent(parent, true);
+			return;
+		}
+		createMylynNotificationArea(notification, parent);
+	}
+
+	protected void createMultiNotificationsContentArea(Composite parent) {
 		int count = 0;
 		for (final AbstractNotification notification : notifications) {
-			
+
 			if (count < NUM_NOTIFICATIONS_TO_DISPLAY) {
 				if (notification instanceof INotificationExtension) {
 					INotificationExtension notificationExt = (INotificationExtension) notification;
-					notificationExt.createContent(parent);
+					notificationExt.createContent(parent, false);
 					continue;
 				}
 				createMylynNotificationArea(notification, parent);
@@ -52,14 +100,6 @@ public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
 		}
 	}
 
-	public List<AbstractNotification> getNotifications() {
-		return new ArrayList<AbstractNotification>(notifications);
-	}
-
-	public void setNotifications(List<AbstractNotification> notifications) {
-		this.notifications = notifications;
-	}
-	
 	protected void createMylynNotificationArea(final AbstractNotification notification, Composite parent) {
 		Composite notificationComposite = new Composite(parent, SWT.NO_FOCUS);
 		GridLayout gridLayout = new GridLayout(2, false);
@@ -114,7 +154,7 @@ public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
 					.applyTo(descriptionLabel);
 		}
 	}
-	
+
 	protected void createSummaryArea(Composite parent, int count) {
 		int numNotificationsRemain = notifications.size() - count;
 		ScalingHyperlink remainingLink = new ScalingHyperlink(parent, SWT.NO_FOCUS);
@@ -127,14 +167,15 @@ public class NotificationPopup  extends AbstractWorkbenchNotificationPopup {
 		remainingLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-//				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//				if (window != null) {
-//					Shell windowShell = window.getShell();
-//					if (windowShell != null) {
-//						windowShell.setMaximized(true);
-//						windowShell.open();
-//					}
-//				}
+				// IWorkbenchWindow window =
+				// PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				// if (window != null) {
+				// Shell windowShell = window.getShell();
+				// if (windowShell != null) {
+				// windowShell.setMaximized(true);
+				// windowShell.open();
+				// }
+				// }
 			}
 		});
 	}

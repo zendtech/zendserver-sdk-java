@@ -1,28 +1,21 @@
 package org.zend.php.zendserver.deployment.ui.notifications;
 
-import java.util.Date;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.mylyn.commons.notifications.ui.AbstractUiNotification;
 import org.eclipse.mylyn.commons.ui.compatibility.CommonColors;
 import org.eclipse.mylyn.commons.workbench.forms.ScalingHyperlink;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.zend.php.server.ui.IHelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.notifications.base.INotificationExtension;
+import org.zend.php.zendserver.deployment.ui.notifications.base.AbstractExtendedUiNotification;
 
-@SuppressWarnings("restriction")
-public class AddingLocalZendServerNotification extends AbstractUiNotification implements INotificationExtension {
+public class AddingLocalZendServerNotification extends AbstractExtendedUiNotification {
 
 	public enum NotificationTypes {
 		INFORMATION,
@@ -42,38 +35,12 @@ public class AddingLocalZendServerNotification extends AbstractUiNotification im
 	}
 
 	@Override
-	public <T> T getAdapter(Class<T> arg0) {
-		return Platform.getAdapterManager().getAdapter(this, arg0);
-	}
-
-	@Override
-	public void createContent(Composite parent) {
-		Composite notificationComposite = new Composite(parent, SWT.NO_FOCUS);
-		GridLayout gridLayout = new GridLayout(2, false);
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;
-		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(notificationComposite);
-		notificationComposite.setLayout(gridLayout);
-		notificationComposite.setBackground(parent.getBackground());
-
-		final Label notificationLabelIcon = new Label(notificationComposite, SWT.NO_FOCUS);
-		notificationLabelIcon.setBackground(parent.getBackground());
-		notificationLabelIcon.setImage(getNotificationKindImage());
-
-		final Label notificationLabel = new Label(notificationComposite, SWT.NO_FOCUS);
-		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(notificationLabel);
-		notificationLabel.setText(LegacyActionTools.escapeMnemonics(getLabel()));
-		notificationLabel.setBackground(parent.getBackground());
-
-		Label descriptionLabel = new Label(notificationComposite, SWT.NO_FOCUS);
-		GridDataFactory.fillDefaults().span(2, SWT.DEFAULT).grab(true, false).align(SWT.FILL, SWT.TOP)
-				.applyTo(descriptionLabel);
-		descriptionLabel.setText(LegacyActionTools.escapeMnemonics(getDescription()));
-		descriptionLabel.setBackground(parent.getBackground());
+	public void createBody(Composite parent, boolean isSingle) {
+		super.createBody(parent, isSingle);
 		
-		ScalingHyperlink itemLink = new ScalingHyperlink(notificationComposite, SWT.BEGINNING
+		ScalingHyperlink itemLink = new ScalingHyperlink(parent, SWT.BEGINNING
 				| SWT.NO_FOCUS);
-		GridDataFactory.fillDefaults().span(2, SWT.DEFAULT).grab(true, false).align(SWT.FILL, SWT.TOP).applyTo(itemLink);
+		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(itemLink);
 		itemLink.setForeground(CommonColors.HYPERLINK_WIDGET);
 		itemLink.registerMouseTrackListener();
 		itemLink.setText(LegacyActionTools.escapeMnemonics(Messages.AddingLocalZendServerNotification_MoreAboutZendServer_LinkText));
@@ -89,11 +56,6 @@ public class AddingLocalZendServerNotification extends AbstractUiNotification im
 	}
 
 	@Override
-	public Image getNotificationImage() {
-		return null;
-	}
-
-	@Override
 	public Image getNotificationKindImage() {
 		switch(this.type) {
 		case WARNING:
@@ -102,15 +64,6 @@ public class AddingLocalZendServerNotification extends AbstractUiNotification im
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 		}
 		return Activator.getDefault().getImage(Activator.IMAGE_ZEND_SERVER_ICON);
-	}
-
-	@Override
-	public void open() {
-	}
-
-	@Override
-	public Date getDate() {
-		return new Date();
 	}
 
 	@Override
