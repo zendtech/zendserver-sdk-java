@@ -9,9 +9,12 @@ import org.eclipse.swt.widgets.Composite;
 public interface INotificationExtension {
 
 	/**
-	 * Provides notification content. The <code>isSingle</code> parameter
-	 * indicates whether notification is only one notification displayed within
-	 * the dialog.
+	 * Provides notification content.
+	 * 
+	 * <p>
+	 * The <code>isSingle</code> parameter indicates whether notification is the
+	 * only one notification displayed within the dialog. If so, notification
+	 * should not display its icon and label.
 	 * 
 	 * @param parent
 	 *            - composite parent for notification content

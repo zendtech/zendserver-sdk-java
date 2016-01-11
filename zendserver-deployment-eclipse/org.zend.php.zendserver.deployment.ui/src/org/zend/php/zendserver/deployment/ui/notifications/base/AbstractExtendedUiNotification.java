@@ -70,15 +70,18 @@ public abstract class AbstractExtendedUiNotification extends AbstractUiNotificat
 	abstract public String getLabel();
 	
 	protected void createHeader(Composite parent, boolean isSingle) {
+		if(isSingle)
+			return;
+		
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0, 0).applyTo(parent);
 		
 		final Label notificationLabelIcon = new Label(parent, SWT.NO_FOCUS);
-		GridDataFactory.fillDefaults().exclude(isSingle).applyTo(notificationLabelIcon);
+		GridDataFactory.fillDefaults().applyTo(notificationLabelIcon);
 		notificationLabelIcon.setImage(getNotificationKindImage());
 		notificationLabelIcon.setBackground(parent.getBackground());
 
 		final Label notificationLabel = new Label(parent, SWT.NO_FOCUS);
-		GridDataFactory.fillDefaults().exclude(isSingle).grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(notificationLabel);
+		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(notificationLabel);
 		notificationLabel.setText(LegacyActionTools.escapeMnemonics(getLabel()));
 		notificationLabel.setBackground(parent.getBackground());
 	}
