@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.mylyn.commons.notifications.core.AbstractNotification;
 import org.eclipse.mylyn.commons.notifications.ui.AbstractUiNotification;
 import org.eclipse.mylyn.commons.ui.compatibility.CommonColors;
@@ -164,7 +166,7 @@ public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 
 		int numNotificationsRemain = notifications.size() - count;
 		ScalingHyperlink remainingLink = new ScalingHyperlink(parent, SWT.NO_FOCUS);
-		remainingLink.setForeground(CommonColors.HYPERLINK_WIDGET);
+		remainingLink.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR));
 		remainingLink.registerMouseTrackListener();
 		remainingLink.setBackground(parent.getBackground());
 

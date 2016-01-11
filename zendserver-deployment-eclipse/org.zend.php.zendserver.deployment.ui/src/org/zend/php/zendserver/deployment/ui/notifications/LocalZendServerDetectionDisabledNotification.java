@@ -3,7 +3,6 @@ package org.zend.php.zendserver.deployment.ui.notifications;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.mylyn.commons.ui.compatibility.CommonColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,7 +27,8 @@ public class LocalZendServerDetectionDisabledNotification extends AbstractExtend
 	protected void createBody(Composite parent, boolean isSingle) {
 		Link descriptionLabel = new Link(parent, SWT.NO_FOCUS | SWT.WRAP);
 		descriptionLabel.setText(LegacyActionTools.escapeMnemonics(getDescription()));
-		descriptionLabel.setForeground(CommonColors.HYPERLINK_WIDGET);
+		//does not work
+		//descriptionLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR));
 		descriptionLabel.setBackground(parent.getBackground());
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.END)
 				.applyTo(descriptionLabel);

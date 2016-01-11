@@ -2,7 +2,8 @@ package org.zend.php.zendserver.deployment.ui.notifications;
 
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.mylyn.commons.ui.compatibility.CommonColors;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.mylyn.commons.workbench.forms.ScalingHyperlink;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -41,7 +42,7 @@ public class AddingLocalZendServerNotification extends AbstractExtendedUiNotific
 		ScalingHyperlink itemLink = new ScalingHyperlink(parent, SWT.BEGINNING
 				| SWT.NO_FOCUS);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(itemLink);
-		itemLink.setForeground(CommonColors.HYPERLINK_WIDGET);
+		itemLink.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR));
 		itemLink.registerMouseTrackListener();
 		itemLink.setText(LegacyActionTools.escapeMnemonics(Messages.AddingLocalZendServerNotification_MoreAboutZendServer_LinkText));
 		itemLink.setBackground(parent.getBackground());

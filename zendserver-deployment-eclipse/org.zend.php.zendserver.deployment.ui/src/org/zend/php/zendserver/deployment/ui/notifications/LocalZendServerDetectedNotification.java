@@ -6,10 +6,11 @@ import java.util.List;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.mylyn.commons.notifications.core.AbstractNotification;
 import org.eclipse.mylyn.commons.notifications.core.NotificationSink;
 import org.eclipse.mylyn.commons.notifications.core.NotificationSinkEvent;
-import org.eclipse.mylyn.commons.ui.compatibility.CommonColors;
 import org.eclipse.mylyn.commons.workbench.forms.ScalingHyperlink;
 import org.eclipse.mylyn.internal.commons.notifications.ui.NotificationAction;
 import org.eclipse.mylyn.internal.commons.notifications.ui.NotificationsPlugin;
@@ -59,7 +60,7 @@ public class LocalZendServerDetectedNotification extends AbstractExtendedUiNotif
 
 		final ScalingHyperlink addServerLink = new ScalingHyperlink(buttonsComposite, SWT.BEGINNING | SWT.NO_FOCUS);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.RIGHT, SWT.CENTER).applyTo(addServerLink);
-		addServerLink.setForeground(CommonColors.HYPERLINK_WIDGET);
+		addServerLink.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR));
 		addServerLink.registerMouseTrackListener();
 		addServerLink.setText(Messages.LocalZendServerDetectedNotification_AddServer_Text);
 		addServerLink.setBackground(parent.getBackground());
@@ -75,7 +76,7 @@ public class LocalZendServerDetectedNotification extends AbstractExtendedUiNotif
 
 		final ScalingHyperlink doNotShowLink = new ScalingHyperlink(buttonsComposite, SWT.BEGINNING | SWT.NO_FOCUS);
 		GridDataFactory.fillDefaults().grab(false, false).align(SWT.RIGHT, SWT.TOP).applyTo(doNotShowLink);
-		doNotShowLink.setForeground(CommonColors.HYPERLINK_WIDGET);
+		doNotShowLink.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR));
 		doNotShowLink.registerMouseTrackListener();
 		doNotShowLink.setText(Messages.LocalZendServerDetectedNotification_DoNotNotifyAgain_Text);
 		doNotShowLink.setBackground(parent.getBackground());
