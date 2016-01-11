@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -26,6 +27,8 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 
 	private static final int NUM_NOTIFICATIONS_TO_DISPLAY = 4;
+	
+	private boolean groupNotifications = true;
 
 	private List<AbstractNotification> notifications = new ArrayList<AbstractNotification>();
 
@@ -53,23 +56,24 @@ public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 
 	@Override
 	protected Image getPopupShellImage(int maximumHeight) {
-		if(notifications.size() == 1 && notifications.get(0) instanceof AbstractUiNotification) {
+		if (notifications.size() == 1 && notifications.get(0) instanceof INotificationExtension
+				&& notifications.get(0) instanceof AbstractUiNotification) {
 			AbstractUiNotification notification = (AbstractUiNotification) notifications.get(0);
 			return notification.getNotificationKindImage();
 		}
-		
+
 		return super.getPopupShellImage(maximumHeight);
 	}
 
-    @Override
-    protected String getPopupShellTitle() {
-    	if(notifications.size() == 1) {
-    		AbstractNotification notification = notifications.get(0);
-    		return notification.getLabel();
-    	}
-    	
-        return super.getPopupShellTitle();
-    }
+	@Override
+	protected String getPopupShellTitle() {
+		if (notifications.size() == 1 && notifications.get(0) instanceof INotificationExtension) {
+			AbstractNotification notification = notifications.get(0);
+			return notification.getLabel();
+		}
+
+		return super.getPopupShellTitle();
+	}
 
 	protected void createSingleNotificationContentArea(Composite parent) {
 		AbstractNotification notification = notifications.get(0);
@@ -85,13 +89,13 @@ public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 		int count = 0;
 		for (final AbstractNotification notification : notifications) {
 
-			if (count < NUM_NOTIFICATIONS_TO_DISPLAY) {
+			if (count < NUM_NOTIFICATIONS_TO_DISPLAY || !groupNotifications) {
 				if (notification instanceof INotificationExtension) {
 					INotificationExtension notificationExt = (INotificationExtension) notification;
 					notificationExt.createContent(parent, false);
-					continue;
+				} else {
+					createMylynNotificationArea(notification, parent);
 				}
-				createMylynNotificationArea(notification, parent);
 			} else {
 				createSummaryArea(parent, count);
 				break;
@@ -156,6 +160,8 @@ public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 	}
 
 	protected void createSummaryArea(Composite parent, int count) {
+		final NotificationPopup popup = this;
+
 		int numNotificationsRemain = notifications.size() - count;
 		ScalingHyperlink remainingLink = new ScalingHyperlink(parent, SWT.NO_FOCUS);
 		remainingLink.setForeground(CommonColors.HYPERLINK_WIDGET);
@@ -167,15 +173,15 @@ public class NotificationPopup extends AbstractWorkbenchNotificationPopup {
 		remainingLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				// IWorkbenchWindow window =
-				// PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				// if (window != null) {
-				// Shell windowShell = window.getShell();
-				// if (windowShell != null) {
-				// windowShell.setMaximized(true);
-				// windowShell.open();
-				// }
-				// }
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						popup.getShell().dispose();
+						popup.groupNotifications = false;
+						popup.open();
+					}
+				});
 			}
 		});
 	}
