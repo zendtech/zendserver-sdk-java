@@ -51,7 +51,7 @@
 <unit id="org.eclipse.datatools.connectivity.feature.feature.group"  version="0.0.0"/>
 <unit id="org.eclipse.mylyn.commons.feature.group"  version="0.0.0"/>
 <unit id="org.eclipse.mylyn.commons.notifications.feature.group"  version="0.0.0"/>
-<repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
+<repository location="http://il-studiodev2.zend.net:8080/job/MirrorMars/lastSuccessfulBuild/artifact/mirrors/mars/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.zend.notifications.feature.feature.group" version="0.0.0"/>
