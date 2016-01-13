@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.zend.php.notifications.core.AbstractExtendedUiNotification;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.notifications.base.AbstractExtendedUiNotification;
 
 public class LocalZendServerDetectionDisabledNotification extends AbstractExtendedUiNotification {
 

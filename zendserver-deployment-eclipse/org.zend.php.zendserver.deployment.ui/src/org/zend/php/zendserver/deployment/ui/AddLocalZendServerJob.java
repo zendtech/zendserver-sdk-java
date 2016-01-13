@@ -17,12 +17,12 @@ import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.zend.php.notifications.util.NotificationsHelper;
 import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.debug.core.DebugUtils;
 import org.zend.php.zendserver.deployment.ui.notifications.AddingLocalZendServerNotification;
-import org.zend.php.zendserver.deployment.ui.notifications.base.NotificationHelper;
 import org.zend.sdklib.manager.DetectionException;
 import org.zend.sdklib.target.IZendTarget;
 import org.zend.webapi.core.WebApiClient;
@@ -183,6 +183,6 @@ public class AddLocalZendServerJob extends Job {
 		AddingLocalZendServerNotification notification = new AddingLocalZendServerNotification(type);
 		notification.setDescription(message);
 		notification.setLabel(label);
-		NotificationHelper.notify(notification);
+		NotificationsHelper.notify(notification);
 	}
 }

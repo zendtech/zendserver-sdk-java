@@ -167,18 +167,8 @@
    </extension>
    <extension
          point="org.eclipse.mylyn.commons.notifications.ui.notifications">
-      <category
-                     icon="icons/obj16/zend_server.png"
-                     id="org.zend.php.zendserver.deployment.ui.startup"
-                     label="%category.name.1">
-      </category>
-      <sink
-            class="org.zend.php.zendserver.deployment.ui.notifications.base.PopupNotificationSink"
-            id="org.zend.php.zendserver.deployment.ui.sink.popup"
-            label="%sink.name.0">
-      </sink>
       <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
+            categoryId="org.zend.php.notifications.studio.startup"
             icon="icons/obj16/server.gif"
             id="org.zend.php.zendserver.deployment.ui.localZendServerDetection"
             label="%event.name.0">
@@ -186,18 +176,18 @@
             %event.description.0
          </description>
          <defaultHandler
-               sinkId="org.zend.php.zendserver.deployment.ui.sink.popup">
+               sinkId="org.zend.php.notifications.sink.popup">
          </defaultHandler>
       </event>
       <event
-            categoryId="org.zend.php.zendserver.deployment.ui.startup"
+            categoryId="org.zend.php.notifications.studio.startup"
             id="org.zend.php.zendserver.deployment.ui.addingLocalZendServer"
             label="%event.name.1">
          <description>
             %event.description.1
          </description>
          <defaultHandler
-               sinkId="org.zend.php.zendserver.deployment.ui.sink.popup">
+               sinkId="org.zend.php.notifications.sink.popup">
          </defaultHandler>
       </event>
    </extension>

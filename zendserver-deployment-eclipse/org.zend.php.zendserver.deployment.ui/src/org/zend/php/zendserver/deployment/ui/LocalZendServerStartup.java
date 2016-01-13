@@ -19,11 +19,11 @@ import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.php.server.core.types.IServerType;
 import org.eclipse.php.server.core.types.ServerTypesManager;
 import org.eclipse.ui.IStartup;
+import org.zend.php.notifications.util.NotificationsHelper;
 import org.zend.php.server.ui.types.LocalZendServerType;
 import org.zend.php.zendserver.deployment.core.targets.ZendServerManager;
 import org.zend.php.zendserver.deployment.ui.notifications.AddingLocalZendServerNotification;
 import org.zend.php.zendserver.deployment.ui.notifications.LocalZendServerDetectedNotification;
-import org.zend.php.zendserver.deployment.ui.notifications.base.NotificationHelper;
 import org.zend.sdklib.manager.DetectionException;
 
 /**
@@ -47,7 +47,7 @@ public class LocalZendServerStartup implements IStartup {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.LocalZendServerStartup_RegisteringZendServer, IProgressMonitor.UNKNOWN);
-				NotificationAction notificationAction = NotificationHelper.getNotificationAction(LocalZendServerDetectedNotification.ID);
+				NotificationAction notificationAction = NotificationsHelper.getNotificationAction(LocalZendServerDetectedNotification.ID);
 				if(notificationAction != null && !notificationAction.isSelected())
 					return Status.OK_STATUS;
 				
@@ -73,12 +73,12 @@ public class LocalZendServerStartup implements IStartup {
 					Activator.logError(message, e);
 					AddingLocalZendServerNotification notification = new AddingLocalZendServerNotification(AddingLocalZendServerNotification.NotificationTypes.WARNING);
 					notification.setDescription(message);
-					NotificationHelper.notify(notification);
+					NotificationsHelper.notify(notification);
 					return Status.CANCEL_STATUS;
 				}
 
 				LocalZendServerDetectedNotification notification = new LocalZendServerDetectedNotification();
-				NotificationHelper.notify(notification);
+				NotificationsHelper.notify(notification);
 				return Status.OK_STATUS;
 			}
 		};

@@ -12,9 +12,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.zend.php.notifications.core.AbstractExtendedUiNotification;
 import org.zend.php.server.ui.IHelpContextIds;
 import org.zend.php.zendserver.deployment.ui.Activator;
-import org.zend.php.zendserver.deployment.ui.notifications.base.AbstractExtendedUiNotification;
 
 public class AddingLocalZendServerNotification extends AbstractExtendedUiNotification {
 

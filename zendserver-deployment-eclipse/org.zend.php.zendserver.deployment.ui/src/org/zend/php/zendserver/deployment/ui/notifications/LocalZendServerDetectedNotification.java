@@ -19,10 +19,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.zend.php.notifications.core.AbstractExtendedUiNotification;
+import org.zend.php.notifications.util.NotificationsHelper;
 import org.zend.php.zendserver.deployment.ui.Activator;
 import org.zend.php.zendserver.deployment.ui.AddLocalZendServerJob;
-import org.zend.php.zendserver.deployment.ui.notifications.base.AbstractExtendedUiNotification;
-import org.zend.php.zendserver.deployment.ui.notifications.base.NotificationHelper;
 
 @SuppressWarnings("restriction")
 public class LocalZendServerDetectedNotification extends AbstractExtendedUiNotification {
@@ -83,7 +83,7 @@ public class LocalZendServerDetectedNotification extends AbstractExtendedUiNotif
 		doNotShowLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				NotificationAction notificationAction = NotificationHelper.getNotificationAction(ID);
+				NotificationAction notificationAction = NotificationsHelper.getNotificationAction(ID);
 				notificationAction.setSelected(!notificationAction.isSelected());
 				NotificationsPlugin.getDefault().getModel().setDirty(true);
 				NotificationsPlugin.getDefault().saveModel();
