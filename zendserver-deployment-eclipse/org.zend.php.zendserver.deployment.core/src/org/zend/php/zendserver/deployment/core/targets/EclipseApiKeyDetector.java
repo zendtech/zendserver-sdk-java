@@ -70,7 +70,7 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 			public void run() {
 				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						"Zend Server Credentials", message, serverName); //$NON-NLS-1$
+						"Zend Server Credentials", message); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					setUsername(dialog.getUsername());
 					setPassword(dialog.getPassword());

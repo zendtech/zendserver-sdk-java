@@ -70,14 +70,10 @@ public class DeployJobChangeListener extends JobChangeAdapter {
 		LaunchUtils.updateLaunchConfiguration(project, helper, wc);
 		if (helper.getOperationType() == IDeploymentHelper.DEPLOY) {
 			String host = helper.getTargetHost();
-			if (LaunchUtils.isAutoDeployAvailable()
-					&& (TargetsManager.isOpenShift(host) || TargetsManager
-								.isLocalhost(host))) {
-				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
-						IDeploymentHelper.NO_ACTION);
+			if (LaunchUtils.isAutoDeployAvailable() && TargetsManager.isLocalhost(host)) {
+				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.NO_ACTION);
 			} else {
-				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(),
-						IDeploymentHelper.UPDATE);
+				wc.setAttribute(DeploymentAttributes.OPERATION_TYPE.getName(), IDeploymentHelper.UPDATE);
 			}
 		}
 		wc.doSave();

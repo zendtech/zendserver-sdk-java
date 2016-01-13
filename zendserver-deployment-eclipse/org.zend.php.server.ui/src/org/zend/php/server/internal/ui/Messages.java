@@ -36,13 +36,6 @@ public class Messages extends NLS {
 	public static String ContainerPasswordDialog_SaveLabel;
 	public static String ContainerPasswordDialog_UsernameLabel;
 	public static String EditServerAction_EditLabel;
-	public static String OpenDatabaseConnectionAction_CannotConnectError;
-	public static String OpenDatabaseConnectionAction_ContainerPassword;
-	public static String OpenDatabaseConnectionAction_DatabasePassword;
-	public static String OpenDatabaseConnectionAction_JobTitle;
-	public static String OpenDatabaseConnectionAction_TaskName;
-	public static String OpenShiftServerType_Description;
-	public static String OpenShiftServerType_Name;
 	public static String RemoveServerAction_RemoveLabel;
 	public static String ServerLaunchDelegateListener_ErrorMessage;
 	public static String ServerLaunchDelegateListener_ErrorTitle;

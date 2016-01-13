@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.zend.sdklib.internal.library.AbstractChangeNotifier;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
 import org.zend.sdklib.internal.target.UserBasedTargetLoader;
 import org.zend.sdklib.internal.target.ZendTarget;
 import org.zend.sdklib.internal.target.ZendTargetAutoDetect;
@@ -650,29 +649,6 @@ public class TargetsManager extends AbstractChangeNotifier {
 		} while (!isIdAvailable(id));
 
 		return id;
-	}
-
-	/**
-	 * Allows to check if specified target is an OpenShift container.
-	 * 
-	 * @param target
-	 * @return <code>true</code> if provided target is an OpenShift container;
-	 *         otherwise return <code>false</code>
-	 */
-	public static boolean isOpenShift(IZendTarget target) {
-		return target != null && isOpenShift(target.getHost().getHost());
-	}
-
-	/**
-	 * Allows to check if specified host is an OpenShift container's host.
-	 * 
-	 * @param targetHost
-	 * @return <code>true</code> if provided host is an OpenShift container's
-	 *         host; otherwise return <code>false</code>
-	 */
-	public static boolean isOpenShift(String targetHost) {
-		return targetHost != null
-				&& targetHost.contains(OpenShiftTarget.getLibraDomain());
 	}
 
 	/**

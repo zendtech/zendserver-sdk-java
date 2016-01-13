@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.zend.php.server.core.utils.ServerUtils;
 import org.zend.php.server.internal.ui.Messages;
-import org.zend.sdklib.manager.TargetsManager;
 import org.zend.sdklib.target.IZendTarget;
 
 /**
@@ -66,23 +65,6 @@ public class ServersCombo {
 			List<Server> result = new ArrayList<Server>();
 			for (Server server : servers) {
 				if (ServerUtils.getTarget(server) != null) {
-					result.add(server);
-				}
-			}
-			return result.toArray(new Server[result.size()]);
-		}
-	};
-
-	/**
-	 * Get all OpenShift servers.
-	 */
-	public static final IServerFilter OPENSHIFT_FILTER = new IServerFilter() {
-		@Override
-		public Server[] filter(Server[] servers) {
-			List<Server> result = new ArrayList<Server>();
-			for (Server server : servers) {
-				IZendTarget target = ServerUtils.getTarget(server);
-				if (TargetsManager.isOpenShift(target)) {
 					result.add(server);
 				}
 			}

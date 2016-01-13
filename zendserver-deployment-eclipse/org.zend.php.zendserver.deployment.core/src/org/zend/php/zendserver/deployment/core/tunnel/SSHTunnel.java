@@ -11,7 +11,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.php.zendserver.deployment.core.Messages;
 import org.zend.php.zendserver.deployment.core.targets.JSCHPubKeyDecryptor;
 import org.zend.sdklib.internal.target.PublicKeyNotFoundException;
@@ -23,8 +22,8 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
 /**
- * Represents SSH tunnel which can be used e.g. for debugging or database
- * connection. It is configured using {@link SSHTunnelConfiguration} dedicated
+ * Represents SSH tunnel which can be used e.g. for debugging connection.
+ * It is configured using {@link SSHTunnelConfiguration} dedicated
  * to a particular server instance.
  * 
  * @author Wojeciech Galanciak, 2014
@@ -53,13 +52,11 @@ public class SSHTunnel {
 	// connection timeout in ms
 	private static final int TIMEOUT = 10000;
 
-	private UserInfo userInfo;
 	private Session session;
 	private SSHTunnelConfiguration config;
 
 	public SSHTunnel(SSHTunnelConfiguration config, UserInfo userInfo) {
 		this.config = config;
-		this.userInfo = userInfo;
 	}
 
 	public SSHTunnel(SSHTunnelConfiguration config) {
@@ -114,25 +111,6 @@ public class SSHTunnel {
 	 */
 	public boolean isConnected() {
 		return session != null ? session.isConnected() : false;
-	}
-
-	public int getDatabasePort() {
-		int result = -1;
-		if (session != null) {
-			try {
-				String[] locals = session.getPortForwardingL();
-				for (String local : locals) {
-					String[] segments = local.split(":"); //$NON-NLS-1$
-					if (segments.length == 3) {
-						result = Integer.valueOf(segments[0]);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				DeploymentCore.log(e);
-			}
-		}
-		return result;
 	}
 
 	private void configurePortForwarding() throws JSchException {

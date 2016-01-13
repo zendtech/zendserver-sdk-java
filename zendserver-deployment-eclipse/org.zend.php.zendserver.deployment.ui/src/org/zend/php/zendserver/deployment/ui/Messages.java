@@ -177,8 +177,6 @@ public class Messages extends NLS {
 	public static String TargetDetailsPage_3;
 
 	public static String TargetDetailsPage_4;
-	public static String TargetDetailsPage_5;
-	public static String TargetDetailsPage_6;
 	public static String TargetDetailsPage_7;
 	public static String TargetDetailsPage_8;
 
@@ -229,16 +227,6 @@ public class Messages extends NLS {
 	public static String ZendFrameworkDependencyDetailsPage_ZF2DepVersion;
 	public static String ZendServerDependencyDetailsPage_Details;
 	public static String ZendServerDependencyDetailsPage_Version;
-	public static String OpenDatabaseConnectionAction_0;
-	public static String OpenDatabaseConnectionAction_1;	
-	public static String OpenshiftDetailsComposite_0;
-	public static String OpenshiftDetailsComposite_1;
-	public static String OpenshiftDetailsComposite_2;
-	public static String OpenshiftDetailsComposite_3;
-	public static String OpenshiftDetailsComposite_4;
-	public static String OpenshiftDetailsComposite_5;
-	public static String OpenshiftDetailsComposite_6;
-	public static String OpenshiftDetailsComposite_7;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

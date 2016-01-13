@@ -85,20 +85,6 @@
       <startup
             class="org.zend.php.zendserver.deployment.ui.Activator"></startup>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftPreferencesPage"
-            id="org.zend.php.zendserver.deployment.ui.OpenShiftPreferences"
-            name="%page.name">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftPreferenceInitializer">
-      </initializer>
-   </extension>
  <extension
          id="com.zend.php.platform.ui.platformWizardFragment"
          name="Deployment"
@@ -126,15 +112,6 @@
             fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
             id="org.zend.php.zendserver.deployment.ui.zendserver.LocalZendServerFragmentFactory"
             name="Local Zend Server Fragment">
-      </wizardAndCompositeFragment>
-   </extension>
-    <extension
-         point="org.eclipse.php.ui.wizardAndCompositeFragments">
-      <wizardAndCompositeFragment
-            class="org.zend.php.zendserver.deployment.ui.openshift.OpenShiftFragmentFactory"
-            fragmentsGroupID="org.eclipse.php.server.ui.serverWizardAndComposite"
-            id="org.zend.php.zendserver.deployment.ui.preferences.OpenShiftFragmentFactory"
-            name="RedHat OpenShift Fragment">
       </wizardAndCompositeFragment>
    </extension>
    <extension

@@ -18,13 +18,6 @@ public class Messages extends NLS {
 	public static String JSCHPubKeyDecryptor_SshError;
 	public static String JSCHPubKeyDecryptor_SshErrorTitle;
 	public static String ModelContainer_UnknownList;
-	public static String OpenShiftTargetInitializer_AcceptLicenseFailed;
-	public static String OpenShiftTargetInitializer_InitSessionFailed;
-	public static String OpenShiftTargetInitializer_SettingPasswordFailed;
-	public static String OpenShiftTargetInitializer_UnsupportedCartridgeMessage;
-	public static String OpenShiftTunnel_CannotFindKey;
-	public static String TargetDatabase_1;
-	public static String TargetDatabase_NoDriversError;
 	public static String TargetsManagerService_RemoveTargetJob;
 	public static String VersionTester_IsNotValidVersionNumber;
 

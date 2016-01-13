@@ -7,16 +7,10 @@
  *******************************************************************************/
 package org.zend.php.zendserver.deployment.core.tunnel;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.php.internal.server.core.Server;
-import org.eclipse.php.internal.server.core.manager.ServersManager;
-import org.zend.php.zendserver.deployment.core.tunnel.PortForwarding.Side;
-import org.zend.sdklib.internal.target.OpenShiftTarget;
-import org.zend.sdklib.target.IZendTarget;
 
 /**
  * SSH tunnel configuration. It contains all settings required to set up ssh
@@ -48,8 +42,6 @@ public class SSHTunnelConfiguration {
 	private String httpProxyHost;
 	private String httpProxyPort;
 
-	private static int databasePort;
-
 	public SSHTunnelConfiguration() {
 		this.portForwardings = new ArrayList<PortForwarding>();
 	}
@@ -67,30 +59,6 @@ public class SSHTunnelConfiguration {
 		config.setHttpProxyHost(server.getAttribute(HTTP_PROXY_HOST, null));
 		config.setHttpProxyPort(server.getAttribute(HTTP_PROXY_PORT, null));
 		return config;
-	}
-
-	/**
-	 * Generate new port for database local port forwarding which is not in
-	 * conflict of any existing SSH tunnel configuration.
-	 * 
-	 * @return port for local port forwarding for database connection
-	 */
-	public static int getNewDatabasePort() {
-		initDatabasePort();
-		Server[] servers = ServersManager.getServers();
-		for (Server server : servers) {
-			SSHTunnelConfiguration config = SSHTunnelConfiguration.read(server);
-			List<PortForwarding> forwardings = config.getPortForwardings();
-			for (PortForwarding portForwarding : forwardings) {
-				if (portForwarding.getSide() == Side.LOCAL) {
-					int port = portForwarding.getLocalPort();
-					if (port >= databasePort) {
-						databasePort = port + 1;
-					}
-				}
-			}
-		}
-		return databasePort++;
 	}
 
 	/**
@@ -217,32 +185,6 @@ public class SSHTunnelConfiguration {
 		server.removeAttribute(HTTP_PROXY_PORT);
 	}
 
-	/**
-	 * Create SSH tunnel configuration for OpenShift server.
-	 * 
-	 * @param target
-	 * @return {@link SSHTunnelConfiguration} for OpenShift server
-	 */
-	public static SSHTunnelConfiguration createOpenShiftConfiguration(
-			IZendTarget target) {
-		SSHTunnelConfiguration config = new SSHTunnelConfiguration();
-		config.setEnabled(true);
-		String uuid = target.getProperty(OpenShiftTarget.TARGET_UUID);
-		config.setUsername(uuid);
-		config.setPrivateKey(target.getProperty(OpenShiftTarget.SSH_PRIVATE_KEY_PATH));
-		List<PortForwarding> portForwardings = new ArrayList<PortForwarding>();
-		String internalHost = target.getProperty(OpenShiftTarget.TARGET_INTERNAL_HOST);
-		portForwardings.add(PortForwarding.createRemote(internalHost, 17000, "127.0.0.1", 17000)); //$NON-NLS-1$
-		String mysqlInternalHost = target.getProperty(OpenShiftTarget.MYSQL_INTERNAL_HOST);
-		if(mysqlInternalHost == null) {
-			// for backward compatibility
-			mysqlInternalHost = internalHost;
-		}
-		portForwardings.add(PortForwarding.createLocal(getNewDatabasePort(), mysqlInternalHost, 3306));
-		config.setPortForwardings(portForwardings);
-		return config;
-	}
-
 	private static List<PortForwarding> deserializeForwarding(String input) {
 		List<PortForwarding> result = new ArrayList<PortForwarding>();
 		if (input != null) {
@@ -270,18 +212,4 @@ public class SSHTunnelConfiguration {
 		return result.toString();
 	}
 	
-	private static void initDatabasePort() {
-		int port = 12306;
-		while (databasePort == 0) {
-			try {
-				ServerSocket socket = new ServerSocket(port);
-				databasePort = port;
-				socket.close();
-			} catch (IOException e) {
-				// just continue to find a free port
-				port++;
-			}
-		}
-	}
-
 }

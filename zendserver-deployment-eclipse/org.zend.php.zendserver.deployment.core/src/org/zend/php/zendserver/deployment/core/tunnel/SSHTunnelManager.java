@@ -120,16 +120,4 @@ public class SSHTunnelManager {
 		return false;
 	}
 
-	/**
-	 * @param host
-	 * @return database port
-	 */
-	public int getDatabasePort(String host) {
-		SSHTunnel tunnel = tunnels.get(host);
-		if (tunnel != null) {
-			return tunnel.getDatabasePort();
-		}
-		return -1;
-	}
-
 }

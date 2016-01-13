@@ -13,7 +13,7 @@ public class Messages extends NLS {
 	public static String ZendServerManager_ErrorReadingInstallationParameters_Error;
 	public static String ZendServerManager_InstallationLocationNotFound_Error;
 	public static String ZendServerManager_InstallationLocationNotValid_Error;
-	public static String ZendServerManager_SetupPathMapping_NoBoundleAvailable_Error;
+	public static String ZendServerManager_SetupPathMapping_NoBundleAvailable_Error;
 	public static String ZendServerManager_SetupPathMapping_NoServerLocationAvialable_Error;
 	public static String ZendServerManager_UnsupportedOS_Error;
 	static {

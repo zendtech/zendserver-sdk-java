@@ -6,16 +6,6 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Zend Technologies Ltd.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: com.ice.jni.registry,
- com.openshift.client,
- com.openshift.client.cartridge,
- com.openshift.client.cartridge.selector,
- com.openshift.client.configuration,
- com.openshift.client.utils,
- com.openshift.internal.client,
- com.openshift.internal.client.httpclient,
- com.openshift.internal.client.response,
- com.openshift.internal.client.ssh,
- com.openshift.internal.client.utils,
  org.jboss.dmr,
  org.zend.sdklib,
  org.zend.sdklib.application,
@@ -47,8 +37,7 @@ Bundle-NativeCode: lib/x86/ICE_JNIRegistry.dll; selection-filter="(&(osgi.arch=x
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
  lib/registry.jar,
- lib/jboss-dmr-1.1.6.Final.jar,
- lib/openshift-java-client-2.5.0.Final.jar
+ lib/jboss-dmr-1.1.6.Final.jar
 Require-Bundle: org.apache.commons.codec,
  org.apache.commons.httpclient,
  org.apache.commons.logging,
