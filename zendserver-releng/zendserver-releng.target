@@ -7,7 +7,6 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.apache.commons.cli" version="0.0.0"/>
-<unit id="org.apache.commons.lang" version="0.0.0"/>
 <unit id="org.apache.xerces" version="0.0.0"/>
 <unit id="org.hamcrest.integration" version="0.0.0"/>
 <unit id="org.hamcrest.library" version="0.0.0"/>
@@ -36,6 +35,9 @@
 <repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorDLTK/lastSuccessfulBuild/artifact/mirrors/dltk/target/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.apache.commons.lang" version="0.0.0"/>
+<unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
+<unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
 <unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
@@ -47,8 +49,8 @@
 <unit id="org.eclipse.wst.web_ui.feature.feature.group"  version="0.0.0"/>
 <unit id="org.eclipse.rse.core.feature.group"  version="0.0.0"/>
 <unit id="org.eclipse.datatools.connectivity.feature.feature.group"  version="0.0.0"/>
-<unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
-<unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
+<unit id="org.eclipse.mylyn.commons.feature.group"  version="0.0.0"/>
+<unit id="org.eclipse.mylyn.commons.notifications.feature.group"  version="0.0.0"/>
 <repository location="http://il-studiodev2.zend.net:8080/job/MirrorKepler/lastSuccessfulBuild/artifact/mirrors/kepler/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
