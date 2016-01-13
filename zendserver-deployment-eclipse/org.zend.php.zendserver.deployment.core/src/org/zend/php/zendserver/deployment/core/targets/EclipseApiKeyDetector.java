@@ -14,6 +14,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.server.core.Server;
 import org.eclipse.php.internal.server.core.manager.ServersManager;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.zend.php.zendserver.deployment.core.DeploymentCore;
 import org.zend.sdklib.internal.target.ApiKeyDetector;
 
@@ -21,6 +22,7 @@ import org.zend.sdklib.internal.target.ApiKeyDetector;
  * @author Wojciech Galanciak, 2012
  * 
  */
+@SuppressWarnings("restriction")
 public class EclipseApiKeyDetector extends ApiKeyDetector {
 
 	public EclipseApiKeyDetector(String username, String password,
@@ -40,7 +42,6 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 		super(getLocalServerUrl());
 	}
 
-	@SuppressWarnings("restriction")
 	private static String getLocalServerUrl() {
 		try {
 			Server[] servers = ServersManager.getServers();
@@ -68,7 +69,7 @@ public class EclipseApiKeyDetector extends ApiKeyDetector {
 
 			public void run() {
 				ZendServerCredentialsDialog dialog = new ZendServerCredentialsDialog(
-						Display.getDefault().getActiveShell(),
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 						"Zend Server Credentials", message); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					setUsername(dialog.getUsername());

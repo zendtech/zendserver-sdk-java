@@ -142,4 +142,30 @@
       </contentTypeIdentifier>
       </validator>
    </extension>
+   <extension
+         point="org.eclipse.mylyn.commons.notifications.ui.notifications">
+      <event
+            categoryId="org.zend.php.notifications.studio.startup"
+            icon="icons/obj16/server.gif"
+            id="org.zend.php.zendserver.deployment.ui.localZendServerDetection"
+            label="%event.name.0">
+         <description>
+            %event.description.0
+         </description>
+         <defaultHandler
+               sinkId="org.zend.php.notifications.sink.popup">
+         </defaultHandler>
+      </event>
+      <event
+            categoryId="org.zend.php.notifications.studio.startup"
+            id="org.zend.php.zendserver.deployment.ui.addingLocalZendServer"
+            label="%event.name.1">
+         <description>
+            %event.description.1
+         </description>
+         <defaultHandler
+               sinkId="org.zend.php.notifications.sink.popup">
+         </defaultHandler>
+      </event>
+   </extension>
 </plugin>

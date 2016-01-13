@@ -10,6 +10,19 @@ public class Messages extends NLS {
 	public static String TargetDetailsPage_AddTarget;
 	public static String TargetDetailsPage_SpecifyTargetDetails;
 	
+	public static String AddLocalZendServerJob_AddingServer_TaskName;
+	public static String AddLocalZendServerJob_AddingServerFailed_Title;
+	public static String AddLocalZendServerJob_AddingServerSucceeded_Title;
+	public static String AddLocalZendServerJob_CouldNotObtainAllProperties_Message;
+	public static String AddLocalZendServerJob_DetectingDebuggerSettings;
+	public static String AddLocalZendServerJob_DetectingWebAPIKeys;
+	public static String AddLocalZendServerJob_JobName;
+	public static String AddLocalZendServerJob_NoLocalInstallationFound_Message;
+	public static String AddLocalZendServerJob_NoLocalTargetFound_Message;
+	public static String AddLocalZendServerJob_SavingConfiguration;
+	public static String AddLocalZendServerJob_ServerAdded_message;
+	public static String AddLocalZendServerJob_UpdatingServerProperties;
+	
 	public static String AddTargetAction_AddNewTarget;
 	public static String AddTargetAction_AddTargetMessage;
 	public static String AddTargetAction_AddTarget;
@@ -73,44 +86,21 @@ public class Messages extends NLS {
 	public static String FileField_SelectFile;
 	
 	public static String LocalZendServerStartup_CheckingExistingServers;
-
-	public static String LocalZendServerStartup_CouldNotObtainAllProperties;
-
-	public static String LocalZendServerStartup_ServerDetectedMessage;
-
-	public static String LocalZendServerStartup_ServerDetectedWebApiMessage;
 	public static String LocalZendServerStartup_RegisteringZendServer;
-	public static String LocalZendServerStartup_NoLocalTargetFound_Error;
-
-	public static String LocalZendServerStartup_NoLocalTargetFound_Warning;
-
-	public static String LocalZendServerStartup_NotFoundTitle;
 	public static String LocalZendServerStartup_NotFoundMessage;
-	public static String LocalZendServerStartup_FoundTitle;
-	public static String LocalZendServerStartup_FoundMessage;
-	public static String LocalZendServerStartup_DetectingDebuggerSettings;
-
-	public static String LocalZendServerStartup_DetectingLocalZendServer_Error;
-
-	public static String LocalZendServerStartup_DetectingLocalZendServerSkipped_Message;
-	public static String LocalZendServerStartup_DetectingWebAPIKeys;
 	public static String LocalZendServerStartup_FetchingConfiguration;
-	public static String LocalZendServerStartup_LocalZendServer;
-
 	public static String LocalZendServerStartup_LocalZendServerExists_Info;
-	public static String LocalZendServerStartup_SavingConfiguration;
 
-	public static String LocalZendServerStartup_UpdatingServerProperties;
-
-	public static String LocalZendServerStartup_UpdatingServerProperties_Error;
-	
 	public static String MessageTranslator_DoesntLookLikeZendServer;
-
 	public static String MessageTranslator_UnknownEOF;
-
 	public static String MessageTranslator_UnknownResponseCode;
 
+	public static String NewTargetContributionsFactory_0;
 	public static String NewTargetContributionsFactory_1;
+
+	public static String OpenDatabaseConnectionAction_OpenConnectionError;
+	public static String OpenDatabaseConnectionAction_OpenConnectionJobTitle;
+	public static String OpenDatabaseConnectionAction_OpenConnectionTaskTitle;
 
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;

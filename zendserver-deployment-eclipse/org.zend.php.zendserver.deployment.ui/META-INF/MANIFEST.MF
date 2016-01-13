@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help,
  org.eclipse.debug.core,
  org.eclipse.php.ui,
- org.zend.core.notifications,
  org.eclipse.php.server.core,
  org.eclipse.dltk.core,
  org.eclipse.php.core,
@@ -25,10 +24,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.sse.ui,
  org.eclipse.jdt.ui,
  org.eclipse.wst.validation,
- org.zend.php.zendserver.deployment.debug.core
+ org.zend.php.zendserver.deployment.debug.core,
+ org.eclipse.mylyn.commons.notifications.core,
+ org.eclipse.mylyn.commons.notifications.ui,
+ org.eclipse.mylyn.commons.workbench,
+ org.eclipse.ui.workbench,
+ org.zend.php.notifications
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.core.expressions
 Export-Package: org.zend.php.zendserver.deployment.ui,
  org.zend.php.zendserver.deployment.ui.actions,
  org.zend.php.zendserver.deployment.ui.commands,
