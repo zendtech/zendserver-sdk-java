@@ -6,6 +6,7 @@
 <repository location="http://il-studiodev2.zend.net:8080/view/Mirrors/job/MirrorNebula/lastSuccessfulBuild/artifact/mirrors/nebula/target/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.apache.commons.codec" version="0.0.0"/>
 <unit id="org.apache.commons.cli" version="0.0.0"/>
 <unit id="org.apache.xerces" version="0.0.0"/>
 <unit id="org.hamcrest.integration" version="0.0.0"/>
