@@ -9,7 +9,6 @@ public class Messages extends NLS {
 	public static String TargetDetailsPage_TargetDetails;
 	public static String TargetDetailsPage_AddTarget;
 	public static String TargetDetailsPage_SpecifyTargetDetails;
-	
 	public static String AddLocalZendServerJob_AddingServer_TaskName;
 	public static String AddLocalZendServerJob_AddingServerFailed_Title;
 	public static String AddLocalZendServerJob_AddingServerSucceeded_Title;
@@ -22,16 +21,13 @@ public class Messages extends NLS {
 	public static String AddLocalZendServerJob_SavingConfiguration;
 	public static String AddLocalZendServerJob_ServerAdded_message;
 	public static String AddLocalZendServerJob_UpdatingServerProperties;
-	
 	public static String AddTargetAction_AddNewTarget;
 	public static String AddTargetAction_AddTargetMessage;
 	public static String AddTargetAction_AddTarget;
 	public static String AppTreeSection_AppDirMapping;
 	public static String AppTreeSection_InfoAboutAppdirFolder;
 	public static String AutomationPage_Description;
-
 	public static String AutomationPage_WhatsAutomation;
-
 	public static String DependenciesMasterDetailsProvider_Add;
 	public static String DependenciesMasterDetailsProvider_DependencyType;
 	public static String DependenciesMasterDetailsProvider_Description;
@@ -84,24 +80,15 @@ public class Messages extends NLS {
 	public static String ExtensionDependencyDetailsPage_SpecifyExtensionDependencyDetails;
 	public static String FileField_Browse;
 	public static String FileField_SelectFile;
-	
 	public static String LocalZendServerStartup_CheckingExistingServers;
 	public static String LocalZendServerStartup_RegisteringZendServer;
 	public static String LocalZendServerStartup_NotFoundMessage;
 	public static String LocalZendServerStartup_FetchingConfiguration;
 	public static String LocalZendServerStartup_LocalZendServerExists_Info;
-
 	public static String MessageTranslator_DoesntLookLikeZendServer;
 	public static String MessageTranslator_UnknownEOF;
 	public static String MessageTranslator_UnknownResponseCode;
-
-	public static String NewTargetContributionsFactory_0;
 	public static String NewTargetContributionsFactory_1;
-
-	public static String OpenDatabaseConnectionAction_OpenConnectionError;
-	public static String OpenDatabaseConnectionAction_OpenConnectionJobTitle;
-	public static String OpenDatabaseConnectionAction_OpenConnectionTaskTitle;
-
 	public static String OverviewPage_0;
 	public static String OverviewPage_1;
 	public static String OverviewPage_2;
@@ -173,13 +160,8 @@ public class Messages extends NLS {
 	public static String SelectTargetTypePage_SelectTargetType;
 	public static String SelectTargetTypePage_ZendServer;
 	public static String TargetDetailsPage_1;
-
-	public static String TargetDetailsPage_3;
-
-	public static String TargetDetailsPage_4;
 	public static String TargetDetailsPage_7;
 	public static String TargetDetailsPage_8;
-
 	public static String TargetDialog_BaseUrl;
 	public static String TargetDialog_ConfigureBaseUrl;
 	public static String TargetDialog_Host;
@@ -195,7 +177,6 @@ public class Messages extends NLS {
 	public static String TargetDialog_HostConflictError;
 	public static String TargetsLabelProvider_TargetLabel;
 	public static String TextHintField_0;
-
 	public static String UninstallApplicationHandler_0;
 	public static String ValidateTargetJob_ValidatingTarget;
 	public static String VariableDetailsPage_Details;
