@@ -85,6 +85,7 @@ public class Messages extends NLS {
 	public static String LocalZendServerStartup_NotFoundMessage;
 	public static String LocalZendServerStartup_FetchingConfiguration;
 	public static String LocalZendServerStartup_LocalZendServerExists_Info;
+	public static String LocalZendServerStartup_ServerNotFound_Label;
 	public static String MessageTranslator_DoesntLookLikeZendServer;
 	public static String MessageTranslator_UnknownEOF;
 	public static String MessageTranslator_UnknownResponseCode;

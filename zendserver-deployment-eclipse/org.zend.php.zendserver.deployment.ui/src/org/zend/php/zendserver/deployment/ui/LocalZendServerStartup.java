@@ -72,6 +72,7 @@ public class LocalZendServerStartup implements IStartup {
 					String message = Messages.LocalZendServerStartup_NotFoundMessage;
 					Activator.logError(message, e);
 					AddingLocalZendServerNotification notification = new AddingLocalZendServerNotification(AddingLocalZendServerNotification.NotificationTypes.WARNING);
+					notification.setLabel(Messages.LocalZendServerStartup_ServerNotFound_Label);
 					notification.setDescription(message);
 					NotificationsHelper.notify(notification);
 					return Status.CANCEL_STATUS;
