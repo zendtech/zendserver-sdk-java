@@ -32,6 +32,7 @@ import org.zend.webapi.core.connection.data.LibraryList;
 import org.zend.webapi.core.connection.data.LibraryVersion;
 import org.zend.webapi.core.connection.data.LibraryVersions;
 import org.zend.webapi.core.connection.response.ResponseCode;
+import org.zend.webapi.core.progress.StatusCode;
 import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationError;
 
 /**
@@ -44,15 +45,21 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 
 	private class DeployLibraryResponseDataVisitor extends GenericResponseDataVisitor {
 		private int libraryVersionId = -1;
+		private boolean isLibraryVersionDefault = false;
 		
 		@Override
 		public boolean visit(LibraryVersion libraryVersion) {
 			libraryVersionId = libraryVersion.getLibraryVersionId();
+			isLibraryVersionDefault = libraryVersion.getIsDefault();
 			return true;
 		}
 
 		public int getLibraryVersionId() {
 			return libraryVersionId;
+		}
+
+		public boolean getIsLibraryVersionDefault() {
+			return isLibraryVersionDefault;
 		}
 	}
 
@@ -107,10 +114,11 @@ public class DeployLibraryJob extends AbstractLibraryJob {
 				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 						Messages.DeployLibraryJob_ConnectionRefused_Error, exception);
 			}
-			if(listener.getStatus() == Status.OK_STATUS) {
+			if (listener.getStatus().getCode() == StatusCode.STOPPING) {
 				DeployLibraryResponseDataVisitor dataVisitor = new DeployLibraryResponseDataVisitor();
 				result.accept(dataVisitor);
 				data.setVersionId(dataVisitor.getLibraryVersionId());
+				data.setIsVersionDefault(dataVisitor.getIsLibraryVersionDefault());
 			}
 			return new SdkStatus(listener.getStatus());
 		} finally {

@@ -88,7 +88,7 @@ public class DeployTargetBlock extends AbstractLibraryBlock {
 	private boolean isUpdating = false;
 
 	protected DeployTargetBlock(IStatusChangeListener listener, LibraryDeployData data) {
-		super(listener, null);
+		super(listener);
 		this.data = data;
 		this.tempProject = createPlaceholderProject();
 	}

@@ -80,7 +80,7 @@ public class LibraryDeploymentUtils {
 		DeployLibraryJob job = (DeployLibraryJob) event.getJob();
 		LibraryDeployData data = job.getData();
 
-		if (data.makeDefault()) {
+		if (!data.isVersionDefault() && data.makeDefault()) {
 			Job makeDefaultJob = new MakeLibraryVersionDefaultJob(data);
 			makeDefaultJob.schedule();
 		}

@@ -8,7 +8,6 @@
 package org.zend.php.zendserver.deployment.debug.ui.wizards;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,12 +23,10 @@ import org.zend.php.zendserver.deployment.debug.ui.listeners.IStatusChangeListen
  */
 public abstract class AbstractLibraryBlock {
 
-	protected IDialogSettings dialogSettings;
 	protected IStatusChangeListener listener;
 
-	protected AbstractLibraryBlock(IStatusChangeListener listener, IDialogSettings dialogSettings) {
+	protected AbstractLibraryBlock(IStatusChangeListener listener) {
 		this.listener = listener;
-		this.dialogSettings = dialogSettings;
 	}
 
 	protected Composite createContents(final Composite parent,
@@ -44,10 +41,6 @@ public abstract class AbstractLibraryBlock {
 	}
 
 	public abstract IStatus validatePage();
-
-	protected IDialogSettings getDialogSettings() {
-		return dialogSettings;
-	}
 
 	protected Button createLabelWithCheckbox(String desc, String tooltip,
 			Composite composite) {

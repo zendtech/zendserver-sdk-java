@@ -1113,6 +1113,8 @@ public class DataDigster extends GenericResponseDataVisitor {
 		libraryVersion.setLibraryVersionId(Integer.valueOf(value));
 		value = getValue(currentPath + "/version", occurrence); //$NON-NLS-1$
 		libraryVersion.setVersion(value);
+		value = getValue(currentPath + "/default", occurrence); //$NON-NLS-1$
+		libraryVersion.setIsDefault(Boolean.valueOf(value));
 		value = getValue(currentPath + "/installedLocation", occurrence); //$NON-NLS-1$
 		libraryVersion.setInstalledLocation(value);
 		value = getValue(currentPath + "/creationTime", occurrence); //$NON-NLS-1$

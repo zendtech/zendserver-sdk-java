@@ -46,11 +46,13 @@ public class LibraryConfigurationBlock extends AbstractLibraryBlock {
 	private Text versionText;
 
 	private LibraryDeployData data;
+	protected IDialogSettings dialogSettings;
 	private boolean isUpdating = false;
 
 	public LibraryConfigurationBlock(IStatusChangeListener listener, LibraryDeployData data,
 			IDialogSettings dialogSettings) {
-		super(listener, dialogSettings);
+		super(listener);
+		this.dialogSettings = dialogSettings;
 		this.data = data;
 	}
 
@@ -133,7 +135,7 @@ public class LibraryConfigurationBlock extends AbstractLibraryBlock {
 
 			String targetId = data.getTargetId();
 			if ((targetId == null || targetId.isEmpty())) {
-				IDialogSettings settings = getDialogSettings();
+				IDialogSettings settings = dialogSettings;
 				if (settings != null) {
 					serversCombo.selectByTarget(settings.get(LibraryDeploymentAttributes.TARGET_ID.getName()));
 				}
@@ -147,7 +149,7 @@ public class LibraryConfigurationBlock extends AbstractLibraryBlock {
 				serversCombo.selectByTarget(targetId);
 			}
 
-			IDialogSettings settings = getDialogSettings();
+			IDialogSettings settings = dialogSettings;
 			boolean setAsDefault = false;
 			boolean addLibrary = true;
 			if (settings != null) {

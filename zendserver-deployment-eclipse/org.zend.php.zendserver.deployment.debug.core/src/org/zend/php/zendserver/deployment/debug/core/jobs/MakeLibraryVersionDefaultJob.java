@@ -17,13 +17,13 @@ import org.zend.webapi.internal.core.connection.exception.WebApiCommunicationErr
 public class MakeLibraryVersionDefaultJob extends AbstractLibraryJob {
 
 	public MakeLibraryVersionDefaultJob(LibraryDeployData data) {
-		super("Setting library version default", data);
+		super("Setting library version as default", data);
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			String taskName = MessageFormat.format("Setting library version ''{0} [{1}]'' default...",
+			String taskName = MessageFormat.format("Setting library version ''{0} [{1}]'' as default...",
 					getData().getName(), getData().getVersion());
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 			StatusChangeListener2 listener = new StatusChangeListener2(monitor);

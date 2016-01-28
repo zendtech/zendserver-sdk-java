@@ -18,6 +18,7 @@ public class LibraryVersion extends AbstractResponseData {
 	private static final String LIBRARY_VERSION = "/libraryVersion";
 	
 	private int libraryVersionId;
+	private boolean isDefault;
 	private String version;
 	private String status;
 	private String installedLocation;
@@ -38,6 +39,10 @@ public class LibraryVersion extends AbstractResponseData {
 
 	public int getLibraryVersionId() {
 		return libraryVersionId;
+	}
+
+	public boolean getIsDefault() {
+		return isDefault;
 	}
 
 	public String getVersion() {
@@ -88,6 +93,10 @@ public class LibraryVersion extends AbstractResponseData {
 
 	protected void setLibraryVersionId(int libraryVersionId) {
 		this.libraryVersionId = libraryVersionId;
+	}
+
+	protected void setIsDefault(boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 	protected void setVersion(String version) {

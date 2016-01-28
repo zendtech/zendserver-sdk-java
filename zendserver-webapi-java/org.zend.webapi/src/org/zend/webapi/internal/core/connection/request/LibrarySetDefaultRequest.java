@@ -29,7 +29,7 @@ import org.zend.webapi.core.connection.response.ResponseCode;
  */
 public class LibrarySetDefaultRequest extends AbstractRequest {
 
-	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.ACCEPTED };
+	private static final ResponseCode[] RESPONSE_CODES = new ResponseCode[] { ResponseCode.OK };
 
 	public LibrarySetDefaultRequest(WebApiVersion version, Date date, String keyName, String userAgent, String host,
 			String secretKey, ServerType type) {

@@ -50,7 +50,7 @@ public class ImportZpkBlock extends AbstractLibraryBlock {
 	private Text zpkPathText;
 
 	public ImportZpkBlock(IStatusChangeListener listener) {
-		super(listener, null);
+		super(listener);
 	}
 
 	public Composite createContents(final Composite parent, boolean resizeShell) {
