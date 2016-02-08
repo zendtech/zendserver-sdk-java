@@ -48,7 +48,9 @@ public class ExtensionsList extends AbstractResponseData {
 	}
 
 	protected void setExtensionsInfo(List<ExtensionInfo> extensionsInfo) {
-		this.extensionsInfo = extensionsInfo;
+		if (extensionsInfo != null) {
+			this.extensionsInfo = extensionsInfo;
+		}
 	}
 
 }

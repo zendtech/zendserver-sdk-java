@@ -11,6 +11,7 @@
 package org.zend.php.zendserver.deployment.debug.core;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
 import org.eclipse.php.internal.debug.core.xdebug.dbgp.XDebugDebuggerConfiguration;
@@ -25,7 +26,6 @@ import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.DirectiveInfo;
 import org.zend.webapi.core.connection.data.DirectivesList;
 import org.zend.webapi.core.connection.data.ExtensionInfo;
-import org.zend.webapi.core.connection.data.ExtensionsList;
 
 @SuppressWarnings("restriction")
 public class DebugUtils {
@@ -46,18 +46,18 @@ public class DebugUtils {
 			return PHPDebuggersRegistry.NONE_DEBUGGER_ID;
 		ZendConnection zendConnection = new ZendConnection() {
 		};
-		ExtensionsList extensionsList;
+		List<ExtensionInfo> extensionsListInfo;
 		try {
 			WebApiClient webApiClient = zendConnection.getClient(target);
-			extensionsList = webApiClient.configurationExtensionsList(ZEND_DEBUGGER_EXT_NAME);
-			if (extensionsList.getExtensionsInfo() != null) {
-				ExtensionInfo extensionInfo = extensionsList.getExtensionsInfo().get(0);
+			extensionsListInfo = webApiClient.configurationExtensionsList(ZEND_DEBUGGER_EXT_NAME).getExtensionsInfo();
+			if (!extensionsListInfo.isEmpty()) {
+				ExtensionInfo extensionInfo = extensionsListInfo.get(0);
 				if (extensionInfo.isInstalled() && extensionInfo.isLoaded())
 					return ZendDebuggerConfiguration.ID;
 			}
-			extensionsList = webApiClient.configurationExtensionsList(XDEBUG_EXT_NAME);
-			if (extensionsList.getExtensionsInfo() != null) {
-				ExtensionInfo extensionInfo = extensionsList.getExtensionsInfo().get(0);
+			extensionsListInfo = webApiClient.configurationExtensionsList(XDEBUG_EXT_NAME).getExtensionsInfo();
+			if (!extensionsListInfo.isEmpty()) {
+				ExtensionInfo extensionInfo = extensionsListInfo.get(0);
 				if (extensionInfo.isInstalled() && extensionInfo.isLoaded())
 					return XDebugDebuggerConfiguration.ID;
 			}
