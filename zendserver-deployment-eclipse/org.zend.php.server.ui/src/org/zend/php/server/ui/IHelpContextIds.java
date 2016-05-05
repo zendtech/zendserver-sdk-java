@@ -16,7 +16,7 @@ package org.zend.php.server.ui;
  */
 public interface IHelpContextIds {
 
-	String PREFIX = "http://files.zend.com/help/Zend-Studio-13/content/"; //$NON-NLS-1$
+	String PREFIX = "http://files.zend.com/help/Zend-Studio-13.5/content/"; //$NON-NLS-1$
 	String SUFFIX = ".htm?zs"; //$NON-NLS-1$
 
 	String ZEND_SERVER = PREFIX + "zend_certified_php_distribution" + SUFFIX; //$NON-NLS-1$
