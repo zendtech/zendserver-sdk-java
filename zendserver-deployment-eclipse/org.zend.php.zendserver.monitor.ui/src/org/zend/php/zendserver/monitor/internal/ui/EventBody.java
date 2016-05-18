@@ -8,6 +8,7 @@
 package org.zend.php.zendserver.monitor.internal.ui;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -38,14 +39,20 @@ import org.zend.core.notifications.ui.IBody;
 import org.zend.core.notifications.ui.NotificationSettings;
 import org.zend.core.notifications.ui.dialogs.ReadMoreDialog;
 import org.zend.core.notifications.util.Fonts;
+import org.zend.php.zendserver.deployment.core.targets.TargetsManagerService;
 import org.zend.php.zendserver.monitor.core.EventType;
 import org.zend.php.zendserver.monitor.core.IEventDetails;
 import org.zend.php.zendserver.monitor.core.MonitorManager;
 import org.zend.php.zendserver.monitor.ui.ICodeTraceEditorProvider;
 import org.zend.sdklib.application.ZendCodeTracing;
+import org.zend.sdklib.internal.application.ZendConnection;
 import org.zend.sdklib.monitor.IZendIssue;
+import org.zend.sdklib.target.IZendTarget;
+import org.zend.webapi.core.WebApiClient;
 import org.zend.webapi.core.WebApiException;
 import org.zend.webapi.core.connection.data.EventsGroupDetails;
+import org.zend.webapi.core.connection.data.SystemInfo;
+import org.zend.webapi.core.connection.data.values.ZendServerVersion;
 import org.zend.webapi.internal.core.connection.exception.InvalidResponseException;
 
 /**
@@ -67,8 +74,7 @@ public class EventBody implements IBody {
 
 	private static ICodeTraceEditorProvider editorProvider;
 
-	public EventBody(String targetId, IEventDetails eventSource,
-			IZendIssue zendIssue, int actionsAvailable) {
+	public EventBody(String targetId, IEventDetails eventSource, IZendIssue zendIssue, int actionsAvailable) {
 		this.zendIssue = zendIssue;
 		this.targetId = targetId;
 		this.eventDetails = eventSource;
@@ -78,12 +84,10 @@ public class EventBody implements IBody {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.zend.core.notifications.ui.IBody#createContent(org.eclipse.swt.widgets
-	 * .Composite, org.zend.core.notifications.ui.NotificationSettings)
+	 * @see org.zend.core.notifications.ui.IBody#createContent(org.eclipse.swt.
+	 * widgets .Composite, org.zend.core.notifications.ui.NotificationSettings)
 	 */
-	public Composite createContent(Composite container,
-			NotificationSettings settings) {
+	public Composite createContent(Composite container, NotificationSettings settings) {
 		Composite composite = createEntryComposite(container);
 		createDescription(composite, settings);
 		boolean isRepeat = (actionAvailable & MonitorManager.REPEAT) == MonitorManager.REPEAT;
@@ -137,30 +141,47 @@ public class EventBody implements IBody {
 
 	private void createTraceLink(Composite composite, int align) {
 		if (getProvider() != null) {
-			Link traceLink = createLink(composite,
-					getLinkText(Messages.EventBody_CodetraceLink), align);
+			Link traceLink = createLink(composite, getLinkText(Messages.EventBody_CodetraceLink), align);
 			traceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					Job showCodeTraceJob = new Job(
-							Messages.EventBody_CodetraceJobTitle) {
+					Job showCodeTraceJob = new Job(Messages.EventBody_CodetraceJobTitle) {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-							monitor.beginTask(
-									Messages.EventBody_CodetraceJobTitle,
-									IProgressMonitor.UNKNOWN);
+							IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+									.getTargetById(targetId);
+
+							ZendConnection zendConnection = new ZendConnection() {
+							};
+
+							WebApiClient webApiClient;
+							try {
+								webApiClient = zendConnection.getClient(target);
+								SystemInfo systemInfo = webApiClient.getSystemInfo();
+
+								if (systemInfo != null && ZendServerVersion.byName("9.0.0") //$NON-NLS-1$
+										.compareTo(systemInfo.getVersion()) <= 0) {
+									showMessage(Messages.EventBody_CodeTraceTitle,
+											Messages.EventBody_UnsuportedServerVersion);
+									return Status.OK_STATUS;
+								}
+							} catch (MalformedURLException e1) {
+								Activator.log(e1);
+							} catch (WebApiException e) {
+								Activator.log(e);
+							}
+
+							monitor.beginTask(Messages.EventBody_CodetraceJobTitle, IProgressMonitor.UNKNOWN);
 							List<EventsGroupDetails> groups;
 							try {
 								groups = zendIssue.getGroupDetails();
 							} catch (InvalidResponseException e) {
-								showMessage(
-										Messages.EventBody_CodeTraceTitle,
+								showMessage(Messages.EventBody_CodeTraceTitle,
 										Messages.EventBody_CodeTraceNotSupportedMessage);
 								return Status.OK_STATUS;
 							} catch (WebApiException e) {
-								showMessage(
-										Messages.EventBody_CodeTraceTitle,
+								showMessage(Messages.EventBody_CodeTraceTitle,
 										Messages.EventBody_CodeTraceFailedMessage);
 								return Status.OK_STATUS;
 							}
@@ -171,17 +192,14 @@ public class EventBody implements IBody {
 									traceId = group.getEvent().getCodeTracing();
 								}
 								if (traceId != null) {
-									ZendCodeTracing tracing = new ZendCodeTracing(
-											targetId);
+									ZendCodeTracing tracing = new ZendCodeTracing(targetId);
 									File codeTrace = tracing.get(traceId);
 									if (codeTrace != null) {
-										getProvider().openInEditor(
-												codeTrace.getAbsolutePath());
+										getProvider().openInEditor(codeTrace.getAbsolutePath());
 										return Status.OK_STATUS;
 									}
 								}
-								showMessage(
-										Messages.EventBody_CodeTraceTitle,
+								showMessage(Messages.EventBody_CodeTraceTitle,
 										Messages.EventBody_CodetraceJobErrorMessage);
 							}
 							return Status.OK_STATUS;
@@ -195,8 +213,7 @@ public class EventBody implements IBody {
 	}
 
 	private void createSourceLink(Composite composite) {
-		Link sourceLink = createLink(composite,
-				getLinkText(Messages.EventBody_SourceLink), SWT.RIGHT);
+		Link sourceLink = createLink(composite, getLinkText(Messages.EventBody_SourceLink), SWT.RIGHT);
 		sourceLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -208,8 +225,7 @@ public class EventBody implements IBody {
 	}
 
 	private void createRepeatLink(Composite composite, int align) {
-		Link repeatLink = createLink(composite,
-				getLinkText(Messages.EventBody_2), align);
+		Link repeatLink = createLink(composite, getLinkText(Messages.EventBody_2), align);
 		repeatLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -235,13 +251,11 @@ public class EventBody implements IBody {
 		return link;
 	}
 
-	private void createDescription(Composite composite,
-			NotificationSettings settings) {
+	private void createDescription(Composite composite, NotificationSettings settings) {
 		Link label = new Link(composite, SWT.WRAP);
 		label.setFont(Fonts.DEFAULT.getFont());
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 3, 1));
-		label.setForeground(Display.getDefault()
-				.getSystemColor(SWT.COLOR_BLACK));
+		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		String text = zendIssue.getIssue().getGeneralDetails().getErrorString();
 		if (text == null || text.isEmpty()) {
 			text = zendIssue.getIssue().getRule();
@@ -249,15 +263,13 @@ public class EventBody implements IBody {
 		initializeDescription(settings, label, text);
 	}
 
-	private void initializeDescription(NotificationSettings settings,
-			Link label, String text) {
+	private void initializeDescription(NotificationSettings settings, Link label, String text) {
 		final EventType type = eventDetails.getType();
 		if (text != null) {
 			text = StringEscapeUtils.unescapeHtml(text);
 			label.setText(text);
 		}
-		int width = Math.max(settings.getWidth(),
-				NotificationSettings.DEFAULT_WIDTH);
+		int width = Math.max(settings.getWidth(), NotificationSettings.DEFAULT_WIDTH);
 		Point size = label.computeSize(width, SWT.DEFAULT);
 		int height = Fonts.DEFAULT.getFont().getFontData()[0].getHeight();
 		if (text != null && size.y > 5 * height) {
@@ -274,8 +286,7 @@ public class EventBody implements IBody {
 			label.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					new ReadMoreDialog(org.zend.core.notifications.Activator
-							.getDefault().getParent(), type.getRule(),
+					new ReadMoreDialog(org.zend.core.notifications.Activator.getDefault().getParent(), type.getRule(),
 							finalText, type.getLink()).open();
 				}
 			});
@@ -285,8 +296,7 @@ public class EventBody implements IBody {
 					if (!text.endsWith("\\.")) { //$NON-NLS-1$
 						text += '.';
 					}
-					label.setText(text + ' '
-							+ getLinkText(Messages.EventBody_ReadMore));
+					label.setText(text + ' ' + getLinkText(Messages.EventBody_ReadMore));
 				} else {
 					label.setText(getLinkText(Messages.EventBody_ReadMore));
 				}
@@ -294,8 +304,7 @@ public class EventBody implements IBody {
 					@Override
 					public void widgetSelected(SelectionEvent event) {
 						try {
-							PlatformUI.getWorkbench().getBrowserSupport()
-									.getExternalBrowser()
+							PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
 									.openURL(new URL(type.getLink()));
 						} catch (Exception e) {
 							Activator.log(e);
@@ -321,8 +330,7 @@ public class EventBody implements IBody {
 			for (IConfigurationElement element : elements) {
 				if ("codeTracingEditor".equals(element.getName())) { //$NON-NLS-1$
 					try {
-						Object listener = element
-								.createExecutableExtension("class"); //$NON-NLS-1$
+						Object listener = element.createExecutableExtension("class"); //$NON-NLS-1$
 						if (listener instanceof ICodeTraceEditorProvider) {
 							editorProvider = (ICodeTraceEditorProvider) listener;
 							break;
@@ -339,9 +347,8 @@ public class EventBody implements IBody {
 	private void showMessage(final String title, final String message) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(
-						org.zend.core.notifications.Activator.getDefault()
-								.getParent(), title, message);
+				MessageDialog.openInformation(org.zend.core.notifications.Activator.getDefault().getParent(), title,
+						message);
 			}
 		});
 	}

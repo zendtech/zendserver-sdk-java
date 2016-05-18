@@ -28,6 +28,7 @@ public class Messages extends NLS {
 	public static String EventBody_DoubleClickLabel;
 	public static String EventBody_ReadMore;
 	public static String EventBody_SourceLink;
+	public static String EventBody_UnsuportedServerVersion;
 	public static String EventDetailsDialog_ActionsLabel;
 	public static String EventDetailsDialog_6;
 	public static String EventDetailsDialog_Description;
