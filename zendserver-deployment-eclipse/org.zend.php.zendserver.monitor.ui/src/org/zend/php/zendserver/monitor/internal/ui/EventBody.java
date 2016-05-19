@@ -149,7 +149,7 @@ public class EventBody implements IBody {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-							IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
+							final IZendTarget target = TargetsManagerService.INSTANCE.getTargetManager()
 									.getTargetById(targetId);
 
 							ZendConnection zendConnection = new ZendConnection() {
@@ -162,8 +162,13 @@ public class EventBody implements IBody {
 
 								if (systemInfo != null && ZendServerVersion.byName("9.0.0") //$NON-NLS-1$
 										.compareTo(systemInfo.getVersion()) <= 0) {
-									showMessage(Messages.EventBody_CodeTraceTitle,
-											Messages.EventBody_UnsuportedServerVersion);
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											org.eclipse.swt.program.Program.launch(target.getDefaultServerURL()
+													+ ":10081/ZendServer/#!/monitoring/events/" //$NON-NLS-1$
+													+ zendIssue.getIssue().getId());
+										}
+									});
 									return Status.OK_STATUS;
 								}
 							} catch (MalformedURLException e1) {
