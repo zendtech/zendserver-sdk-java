@@ -4,7 +4,7 @@
 
 	<groupId>com.zend</groupId>
 	<artifactId>org.zend.webapi.releng</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.zend</groupId>

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.zend</groupId>
 		<artifactId>org.zend.sdk.releng</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 		<relativePath>../org.zend.sdk.releng</relativePath>
 	</parent>
 
@@ -37,5 +37,5 @@
 		</plugins>
 	</build>
 
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 </project>

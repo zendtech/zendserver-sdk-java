@@ -5,13 +5,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zend</groupId>
 	<artifactId>org.zend.sdk.cli.win32</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 	<parent>
 		<groupId>com.zend</groupId>
 		<artifactId>org.zend.sdk.releng</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 		<relativePath>../org.zend.sdk.releng</relativePath>
 	</parent>
 
