@@ -7,11 +7,8 @@
  *******************************************************************************/
 package org.zend.php.zendserver.monitor.internal.ui;
 
-import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -167,14 +164,9 @@ public class EventBody implements IBody {
 										.compareTo(systemInfo.getVersion()) <= 0) {
 									Display.getDefault().asyncExec(new Runnable() {
 										public void run() {
-											URI uri = URI.create(target.getDefaultServerURL()
+											org.eclipse.swt.program.Program.launch(target.getDefaultServerURL()
 													+ ":10081/ZendServer/#!/monitoring/events/" //$NON-NLS-1$
 													+ zendIssue.getIssue().getId());
-											try {
-												Desktop.getDesktop().browse(uri);
-											} catch (IOException e) {
-												Activator.log(e);
-											}
 										}
 									});
 									return Status.OK_STATUS;
