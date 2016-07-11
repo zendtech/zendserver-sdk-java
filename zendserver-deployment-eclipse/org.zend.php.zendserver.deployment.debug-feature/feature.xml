@@ -2,7 +2,7 @@
 <feature
       id="org.zend.php.zendserver.deployment.debug"
       label="%featureName"
-      version="1.0.3.qualifier"
+      version="1.0.4.qualifier"
       provider-name="%providerName">
 
    <description>

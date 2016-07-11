@@ -2,7 +2,7 @@
 <feature
       id="org.zend.php.zendserver.deployment.all"
       label="Zend Application Deployment Features"
-      version="1.0.3.qualifier">
+      version="1.0.4.qualifier">
 
    <includes
          id="org.zend.php.zendserver.deployment"

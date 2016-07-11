@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>com.zend</groupId>
 		<artifactId>org.zend.webapi.releng</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4</version>
 		<relativePath>../org.zend.webapi.releng</relativePath>
 	</parent>
 
 	<artifactId>org.zend.webapi.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
+	<version>1.0.4-SNAPSHOT</version>
 
 	<build>
 		<plugins>
@@ -62,6 +63,4 @@
       </plugin>
 		</plugins>
 	</build>
-
-	<version>1.0.3-SNAPSHOT</version>
 </project>
