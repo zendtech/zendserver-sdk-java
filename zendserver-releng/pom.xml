@@ -100,7 +100,7 @@
 						<artifactId>maven-jarsigner-plugin</artifactId>
 						<version>1.4</version>
 						<configuration>
-							<tsa>https://timestamp.geotrust.com/tsa</tsa>
+							<tsa>http://timestamp.digicert.com</tsa>
 						</configuration>
 						<executions>
 							<execution>
