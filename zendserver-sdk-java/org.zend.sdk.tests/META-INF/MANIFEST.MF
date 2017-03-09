@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.zend.sdk
 Bundle-SymbolicName: org.zend.sdk.tests;singleton:=true
 Bundle-Version: 0.6.0.qualifier
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .

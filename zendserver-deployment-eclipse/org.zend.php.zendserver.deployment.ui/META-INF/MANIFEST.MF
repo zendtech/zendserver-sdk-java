@@ -4,7 +4,7 @@ Bundle-Name: Zend Application Deployment UI
 Bundle-SymbolicName: org.zend.php.zendserver.deployment.ui;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Activator: org.zend.php.zendserver.deployment.ui.Activator
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,

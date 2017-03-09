@@ -4,7 +4,7 @@ Bundle-Name: Core
 Bundle-SymbolicName: org.zend.php.zendserver.monitor.core;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Activator: org.zend.php.zendserver.monitor.core.Activator
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core,

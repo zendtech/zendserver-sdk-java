@@ -4,7 +4,7 @@ Bundle-Name: Zend Application Deployment Core
 Bundle-SymbolicName: org.zend.php.zendserver.deployment.core;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Activator: org.zend.php.zendserver.deployment.core.DeploymentCore
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.zend.sdk;visibility:=reexport,

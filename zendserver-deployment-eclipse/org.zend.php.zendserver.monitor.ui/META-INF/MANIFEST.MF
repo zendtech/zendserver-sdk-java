@@ -4,7 +4,7 @@ Bundle-Name: Monitor
 Bundle-SymbolicName: org.zend.php.zendserver.monitor.ui;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Activator: org.zend.php.zendserver.monitor.internal.ui.Activator
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,

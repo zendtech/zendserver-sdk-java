@@ -16,4 +16,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.zend.php.zendserver.deployment.debug.core,
  org.zend.php.zendserver.deployment.debug.core.config,
  org.zend.php.zendserver.deployment.debug.core.jobs
-Bundle-Vendor: Zend Technologies Ltd.
+Bundle-Vendor: Rogue Wave Software, Inc.
