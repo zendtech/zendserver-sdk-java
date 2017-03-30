@@ -9,7 +9,7 @@ package org.zend.php.zendserver.deployment.debug.ui;
 
 public interface HelpContextIds {
 
-	public static final String PREFIX = "http://files.zend.com/help/Zend-Studio-13.5/content/"; //$NON-NLS-1$
+	public static final String PREFIX = "http://files.zend.com/help/Zend-Studio-13.6/content/"; //$NON-NLS-1$
 	public static final String SUFFIX = ".htm?zs"; //$NON-NLS-1$
 
 	public static final String LAUNCHING_AN_APPLICATION = PREFIX
